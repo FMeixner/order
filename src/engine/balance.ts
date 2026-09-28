@@ -1,9 +1,13 @@
 /* Jahresbalance: wie breit oder spezialisiert ist das Trainingsjahr?
    Jeder Orden verteilt sich auf acht Bereiche: Hauptziel 70 %, Nebenziele teilen sich 30 %.
-   Testen zählt gleichmäßig für alle Bereiche. Die Phasen werden nach Tagen im gewählten Zeitraum gewichtet.
+   Testen zählt gleichmäßig für alle Bereiche. Warm-up und Cool-down zählen anteilig nach ihrer Dauer für Beweglichkeit
+   (ruhige Cool-downs mit Atemarbeit für Erholung), das Warm-up zur Hälfte, der Rest für die Ziele des Ordens.
+   Die Phasen werden nach Tagen im gewählten Zeitraum gewichtet.
    Balance = normierte Shannon-Entropie der Verteilung: 0 = nur ein Bereich, 1 = alle gleich. */
 import { FOCUS_BY_ID } from "../data";
 import type { Focus, Goal, PlanBlock } from "../types";
+import { EQUIPMENT_PRESETS } from "../store";
+import { estimateRole } from "./duration";
 import { addDays } from "./plan";
 
 export const AXES = [
@@ -27,13 +31,44 @@ function add(v: Record<string, number>, g: Goal, w: number) {
   if (a) v[a] = (v[a] ?? 0) + w;
 }
 
-/** Verteilung eines Ordens auf die Bereiche (Summe 1) */
-export function focusVector(f: Focus): Record<AxisId, number> {
+/** Verteilung der Ziele eines Ordens (nur Hauptteil, Summe 1) */
+export function goalVector(f: Focus): Record<AxisId, number> {
   const v: Record<string, number> = {};
   const sec = f.goals.secondary.filter((g) => g !== f.goals.primary);
   add(v, f.goals.primary, sec.length ? PRIMARY : 1);
   for (const g of sec) add(v, g, (1 - PRIMARY) / sec.length);
   return Object.fromEntries(AXES.map((a) => [a.id, v[a.id] ?? 0])) as Record<AxisId, number>;
+}
+
+const FULL = (() => {
+  const p = EQUIPMENT_PRESETS[0].make();
+  return { ...p, has: Object.fromEntries(Object.keys(p.has).map((k) => [k, true])) as typeof p.has };
+})();
+const CALM_COOLDOWNS = ["cd_calm"];
+const WARMUP_MOBILITY = 0.5;
+const cache = new Map<string, Record<AxisId, number>>();
+
+/** Verteilung eines Ordens auf die Bereiche (Summe 1): Hauptteil nach Zielen, Warm-up und Cool-down nach Dauer. */
+export function focusVector(f: Focus): Record<AxisId, number> {
+  const hit = cache.get(f.id);
+  if (hit) return hit;
+  const goals = goalVector(f);
+  const v: Record<string, number> = Object.fromEntries(AXES.map((a) => [a.id, 0]));
+  let total = 0;
+  for (const rk of f.week_4) {
+    const role = f.roles[rk];
+    if (!role) continue;
+    const e = estimateRole(role, FULL);
+    // Warm-up ist zur Hälfte Mobilisation, zur Hälfte Vorbereitung auf den Hauptteil
+    for (const a of AXES) v[a.id] += goals[a.id] * (e.main + e.warmup * (1 - WARMUP_MOBILITY));
+    v.beweglichkeit += e.warmup * WARMUP_MOBILITY;
+    const calm = (role.cooldown ?? []).some((c) => CALM_COOLDOWNS.includes(c));
+    v[calm ? "ruhe" : "beweglichkeit"] += e.cooldown;
+    total += e.total;
+  }
+  const out = (total ? Object.fromEntries(AXES.map((a) => [a.id, v[a.id] / total])) : goals) as Record<AxisId, number>;
+  cache.set(f.id, out);
+  return out;
 }
 
 export interface Balance {
@@ -65,7 +100,7 @@ export function balanceOf(plan: PlanBlock[], from: string, to: string): Balance 
   if (!total) return { share, score: null, label: "keine Phasen im Zeitraum", weeks: 0 };
   const h = -Object.values(share).filter((p) => p > 0).reduce((acc, p) => acc + p * Math.log(p), 0);
   const score = h / Math.log(AXES.length);
-  const label = score < 0.5 ? "spezialisiert" : score < 0.75 ? "mit Schwerpunkt" : "allround";
+  const label = score < 0.62 ? "spezialisiert" : score < 0.8 ? "mit Schwerpunkt" : "allround";
   return { share, score, label, weeks: Math.round(total / 7) };
 }
 

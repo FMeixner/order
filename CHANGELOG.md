@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.6.1] – 2026-09-28
+
+### Geändert
+- Jahresbalance zählt Warm-up und Cool-down anteilig: Cool-down nach Dauer für Beweglichkeit (ruhige Cool-downs für Erholung), Warm-up zur Hälfte. Grenzen der Skala: unter 0,62 spezialisiert, ab 0,80 allround.
+- Troubadour: Hauptziel Kraft statt Wohlbefinden, passend zum Inhalt.
+
 ## [0.6.0] – 2026-09-28
 
 ### Neu

@@ -40,7 +40,7 @@ export function YearBalance({ plan }: { plan: PlanBlock[] }) {
             {missing.length > 0 && <div className="muted small">Kaum vertreten: {missing.join(", ")}.</div>}
             <details className="small muted">
               <summary>Wie wird das berechnet?</summary>
-              <p>Jeder Orden zählt zu 70 % für sein Hauptziel, die Nebenziele teilen sich 30 %. Testphasen zählen für alle Bereiche gleich. Jede Phase wird nach ihren Tagen im Zeitraum gewichtet. Die Skala zeigt, wie gleichmäßig sich das Jahr auf die acht Bereiche verteilt: ganz links nur ein Bereich, ganz rechts alle gleich viel.</p>
+              <p>Der Hauptteil jeder Einheit zählt zu 70 % für das Hauptziel des Ordens, die Nebenziele teilen sich 30 %; Testphasen zählen für alle Bereiche gleich. Das Cool-down zählt nach seiner Dauer für Beweglichkeit (ruhige Cool-downs mit Atemarbeit für Erholung), das Warm-up zur Hälfte; die andere Hälfte bereitet den Hauptteil vor. Jede Phase wird nach ihren Tagen im Zeitraum gewichtet. Die Skala zeigt, wie gleichmäßig sich das Jahr auf die acht Bereiche verteilt: ganz links nur ein Bereich, ganz rechts alle gleich viel.</p>
             </details>
           </>
         )}

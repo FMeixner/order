@@ -4,7 +4,7 @@
   "name": "Troubadour",
   "tagline": "Kraft und Ausdauer im Verhältnis 1:1.",
   "description": "Ein ausgewogenes Grundgerüst für alle, die nichts verlieren und alles erhalten wollen. Kraft und Ausdauer an getrennten Tagen. Die Sorge vor dem Interferenzeffekt ist für Muskelmasse und Maximalkraft weitgehend unbegründet.",
-  "goals": {"primary": "wellbeing", "secondary": ["strength", "endurance"]},
+  "goals": {"primary": "strength", "secondary": ["endurance", "wellbeing"]},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "beginner–intermediate",
