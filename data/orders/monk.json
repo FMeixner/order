@@ -18,7 +18,7 @@
   "week_3": ["kraft_a", "yoga_flow", "kraft_b"],
   "roles": {
     "kraft_a": {
-      "name": "Kraft A", "location": "home", "minutes": 45,
+      "name": "Kraft A", "location": "home", "minutes": 40,
       "warmup": ["base"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "zw-a-1", "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
@@ -37,7 +37,7 @@
       ]
     },
     "kraft_b": {
-      "name": "Kraft B", "location": "home", "minutes": 45,
+      "name": "Kraft B", "location": "home", "minutes": 40,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "zw-b-1", "name": "Reverse Lunge", "reise": {"name": "Reverse Lunge", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},

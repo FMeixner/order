@@ -26,14 +26,18 @@
       ]
     },
     "haltung_kraft": {
-      "name": "Kraft in Endpositionen", "location": "home", "minutes": 40,
+      "name": "Kraft in Endpositionen", "location": "home", "minutes": 35,
       "warmup": ["base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "ma-h-1", "name": "Scapular Wall Slide", "sets": 3, "reps": "10-12", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "ma-h-2", "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "ma-h-3", "name": "Chin Tuck mit Halten", "kind": "hold", "hold": 5, "sets": 10, "prog": "none", "rest": 5}},
         {"type": "single", "slot": {"id": "ma-h-4", "name": "Jefferson Curl", "reise": {"name": "Jefferson Curl (ohne Last)", "prog": "reps"}, "sets": 2, "reps": "8", "prog": "weight", "rest": 60}},
-        {"type": "single", "slot": {"id": "ma-h-5", "name": "Stock-Ausschultern", "sets": 2, "reps": "10", "prog": "none", "rest": 30, "note": "Griff enger, wenn es leicht geht."}}
+        {"type": "single", "slot": {"id": "ma-h-5", "name": "Stock-Ausschultern", "sets": 2, "reps": "10", "prog": "none", "rest": 30, "note": "Griff enger, wenn es leicht geht."}},
+        {"type": "superset", "label": "Rumpf", "rest": 45, "slots": [
+          {"id": "ma-h-6a", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"},
+          {"id": "ma-h-6b", "name": "Glute Bridge", "sets": 3, "reps": "12", "prog": "reps"}
+        ]}
       ]
     },
     "statik": {

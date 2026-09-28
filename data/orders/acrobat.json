@@ -17,17 +17,18 @@
   "week_3": ["skill_zug", "skill_druck", "animal_flow"],
   "roles": {
     "skill_zug": {
-      "name": "Skill Zug", "location": "home", "minutes": 45,
+      "name": "Skill Zug", "location": "home", "minutes": 40,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-z-1", "name": "Front Lever (Tuck)", "kind": "hold", "hold": 8, "sets": 5, "prog": "ladder", "ladder": ["Front Lever (Tuck)", "Front Lever (Advanced Tuck)", "Front Lever (ein Bein)", "Front Lever (Straddle)"], "rest": 90, "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}}},
         {"type": "single", "slot": {"id": "pm-z-2", "name": "Pull-Up", "sets": 4, "reps": "3-8", "prog": "ladder", "ladder": ["Pull-Up", "Chest-to-Bar Pull-Up", "Muscle-Up-Übergang (Band)"], "rest": 120, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}}},
         {"type": "single", "slot": {"id": "pm-z-3", "name": "L-Sit (Tuck)", "kind": "hold", "hold": 10, "sets": 4, "prog": "ladder", "ladder": ["L-Sit (Tuck)", "L-Sit (ein Bein)", "L-Sit"], "rest": 60}},
-        {"type": "single", "slot": {"id": "pm-z-4", "name": "Skin the Cat", "reise": null, "sets": 3, "reps": "3", "prog": "reps", "rest": 60}}
+        {"type": "single", "slot": {"id": "pm-z-4", "name": "Skin the Cat", "reise": null, "sets": 3, "reps": "3", "prog": "reps", "rest": 60}},
+        {"type": "single", "slot": {"id": "pm-z-5", "name": "Hanging Leg Raise", "sets": 3, "reps": "8-12", "prog": "reps", "rest": 60}}
       ]
     },
     "animal_flow": {
-      "name": "Animal Flow", "location": "reise", "minutes": 40,
+      "name": "Animal Flow", "location": "reise", "minutes": 30,
       "warmup": ["base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-a-1", "name": "Bear Crawl, Crab Walk, Ape Walk (Zirkel)", "sets": 3, "reps": "20 m je Form", "prog": "none", "rest": 60}},
@@ -36,13 +37,14 @@
       ]
     },
     "skill_druck": {
-      "name": "Skill Druck", "location": "home", "minutes": 45,
+      "name": "Skill Druck", "location": "home", "minutes": 40,
       "warmup": ["base", "dislocate"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-d-1", "name": "Wall Handstand (Brust zur Wand)", "kind": "hold", "hold": 30, "sets": 5, "prog": "ladder", "ladder": ["Wall Handstand (Brust zur Wand)", "Wall Handstand (Zehen weg)", "Freier Handstand (Versuche)"], "rest": 60}},
         {"type": "single", "slot": {"id": "pm-d-2", "name": "Pike Push-Up", "sets": 4, "reps": "5-8", "prog": "ladder", "ladder": ["Pike Push-Up", "Pike Push-Up (Füße erhöht)", "Wall Handstand Push-Up (Teilbereich)"], "rest": 90}},
         {"type": "single", "slot": {"id": "pm-d-3", "name": "Pistol Squat (Box)", "sets": 4, "reps": "3-6/Seite", "prog": "ladder", "ladder": ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"], "rest": 90}},
-        {"type": "single", "slot": {"id": "pm-d-4", "name": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "5-10", "prog": "ladder", "ladder": ["Ring Dip", "RTO Ring Dip"], "rest": 90}}
+        {"type": "single", "slot": {"id": "pm-d-4", "name": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "5-10", "prog": "ladder", "ladder": ["Ring Dip", "RTO Ring Dip"], "rest": 90}},
+        {"type": "single", "slot": {"id": "pm-d-5", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 45}}
       ]
     },
     "flow_frei": {

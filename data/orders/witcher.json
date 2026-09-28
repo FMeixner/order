@@ -40,7 +40,8 @@
       "blocks": [
         {"type": "single", "slot": {"id": "w-di-1", "name": "Cable Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "w-di-2", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "w-di-3", "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 2, "reps": "12-15", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "w-di-3", "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 2, "reps": "12-15", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "w-di-4", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}}
       ]
     },
     "home_hypertrophie": {

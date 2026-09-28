@@ -18,7 +18,7 @@
   "week_3": ["flash_a", "flash_b", "flash_c"],
   "roles": {
     "flash_a": {
-      "name": "Herald A", "location": "home", "minutes": 25,
+      "name": "Herald A", "location": "home", "minutes": 20,
       "warmup": ["short_base"], "cooldown": [],
       "blocks": [
         {"type": "superset", "label": "Superset, 3 Runden", "rest": 60, "slots": [
@@ -32,7 +32,7 @@
       ]
     },
     "flash_b": {
-      "name": "Herald B", "location": "home", "minutes": 25,
+      "name": "Herald B", "location": "home", "minutes": 20,
       "warmup": ["short_base"], "cooldown": [],
       "blocks": [
         {"type": "superset", "label": "Superset, 3 Runden", "rest": 60, "slots": [
@@ -46,7 +46,7 @@
       ]
     },
     "flash_c": {
-      "name": "Herald C", "location": "home", "minutes": 25,
+      "name": "Herald C", "location": "home", "minutes": 20,
       "warmup": ["short_base"], "cooldown": [],
       "blocks": [
         {"type": "superset", "label": "Superset, 3 Runden", "rest": 60, "slots": [
@@ -60,7 +60,7 @@
       ]
     },
     "bestie_kurz": {
-      "name": "Kurze Bestie", "location": "home", "minutes": 15, "optional": true,
+      "name": "Kurze Bestie", "location": "home", "minutes": 12, "optional": true,
       "warmup": ["short_base"], "cooldown": [],
       "blocks": [
         {"type": "beast", "id": "fl-s-1", "classes": ["plage"], "draw": "rotate"}

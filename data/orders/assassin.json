@@ -18,7 +18,7 @@
   "week_3": ["kraft_a", "skill_kondition", "kraft_b"],
   "roles": {
     "kraft_a": {
-      "name": "Kraft A", "location": "gym", "minutes": 50,
+      "name": "Kraft A", "location": "gym", "minutes": 55,
       "warmup": ["short_base", "thoracic_roller", "dislocate", "lower_prep", "hip9090", "muscleup_tech"],
       "cooldown": ["cd_mdf"],
       "blocks": [
@@ -53,7 +53,7 @@
       ]
     },
     "kraft_b": {
-      "name": "Kraft B", "location": "gym", "minutes": 50,
+      "name": "Kraft B", "location": "gym", "minutes": 55,
       "warmup": ["short_base", "lat_box", "dislocate", "core_prep", "hip9090"],
       "cooldown": ["cd_mdf"],
       "blocks": [

@@ -28,10 +28,10 @@
       ]
     },
     "bewegung_leicht": {
-      "name": "Bewegung leicht", "location": "reise", "minutes": 35,
+      "name": "Bewegung leicht", "location": "reise", "minutes": 40,
       "warmup": ["gentle"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "single", "slot": {"id": "r-l-1", "name": "Zügiger Spaziergang", "kind": "timer", "minutes": 20, "prog": "none"}},
+        {"type": "single", "slot": {"id": "r-l-1", "name": "Zügiger Spaziergang", "kind": "timer", "minutes": 15, "prog": "none"}},
         {"type": "single", "slot": {"id": "r-l-2", "name": "Mobility-Block Hüfte und Schulter", "kind": "timer", "minutes": 15, "prog": "none"}}
       ]
     },

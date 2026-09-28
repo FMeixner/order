@@ -70,6 +70,7 @@ textarea { resize: vertical; }
 .label.amber, .block-label.amber { color: var(--amber); }
 .block-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
 
+.slot-title .tag { margin-left: 0; }
 .tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; padding: 2px 7px; border-radius: 6px; border: 1px solid var(--border-lit); color: var(--muted); margin-left: 6px; vertical-align: middle; }
 .tag.teal { border-color: var(--teal); color: var(--teal); }
 .tags { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -149,10 +150,14 @@ details.card[open] summary { margin-bottom: 10px; }
 .session-head { display: flex; flex-direction: column; gap: 6px; }
 .slot { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 12px; }
 .slot + .slot { border-top: 1px solid var(--border); padding-top: 12px; }
-.slot-head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
-.slot-title { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.slot-head { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.slot-icons { display: contents; }
+.slot-head .info-btn { flex-shrink: 0; }
+.slot-head .desc { flex-basis: 100%; order: 10; }
+.slot-title { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0; }
 .slot-name { font-weight: 600; font-size: 15.5px; }
-.slot-dose { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.slot-dose { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin-top: -4px; }
+.slot-dose strong { color: var(--text); font-weight: 600; }
 .info-btn { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border-lit); background: none; color: var(--muted); font-size: 11px; font-family: var(--mono); cursor: pointer; padding: 0; }
 .desc { width: 100%; font-size: 13px; color: var(--muted); background: var(--surface2); border-radius: 8px; padding: 8px 10px; }
 .sets { display: flex; flex-direction: column; gap: 6px; }

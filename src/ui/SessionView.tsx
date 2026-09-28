@@ -111,9 +111,9 @@ export function SessionView(ctx: SessionCtx) {
     <div className="stack session">
       <div className="session-head">
         <h2>{role.name}</h2>
-        <div className="muted small">{ctx.profile.name} · etwa {role.minutes} Min · {isAWeek(week) ? "A-Woche" : "B-Woche"}{ctx.reduced ? " · −1 Satz" : ""}</div>
+        <div className="muted small">{ctx.profile.name} · etwa {role.minutes} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
         {role.note && <p className="note">{role.note}</p>}
-        {items.some((it) => it.resolved.some((r) => r.loadable && !state.slots[r.key]?.weight)) && !session?.done && <p className="note">Neue Übungen: Wähle ein Startgewicht, bei dem am Ende noch 2–3 Wiederholungen gegangen wären. Danach rechnet die App. Was die Feedback-Knöpfe bedeuten, steht unter „?“ oben rechts.</p>}
+        {items.some((it) => it.resolved.some((r) => r.loadable && !state.slots[r.key]?.weight)) && !session?.done && <p className="note">Neue Übungen: Startgewicht so wählen, dass am Ende noch 2–3 Wiederholungen gegangen wären. Danach rechnet die App.</p>}
         {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
       </div>
@@ -351,36 +351,33 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
     : r.kind === "interval" && r.interval ? `${r.interval.rounds} × ${fmt(r.interval.work)} Arbeit, ${fmt(r.interval.rest)} Pause`
     : r.kind === "hold" ? `${r.sets} × ${sug.seconds} s`
     : `${r.sets} × ${sug.repsLabel}`;
-  const showFb = r.prog !== "none";
+  const showFb = r.prog !== "none" && (sets.some((x) => x.done) || !!entry.feedback || !!session?.done);
 
   return (
     <div className="slot">
       <div className="slot-head">
         <div className="slot-title">
           <span className="slot-name">{sug.name}</span>
-          <Desc text={desc} />
           {r.ladder && <span className="tag">Stufe {sug.stage + 1}/{r.ladder.length}</span>}
           {r.proposal && <span className="tag">Vorschlag</span>}
           {r.guided && <span className="tag teal" title="Phase mit hoher Alltagslast">geführt</span>}
           {r.swapped && <span className="tag amber" title={`statt ${r.original}`}>getauscht</span>}
+        </div>
+        <div className="slot-icons">
+          <Desc text={desc} />
           {canSwap && <button className="info-btn swap-btn" onClick={() => setSwapOpen(true)} aria-label="Übung tauschen" title="Übung tauschen">⇄</button>}
         </div>
-        <div className="slot-dose">{doseLabel}</div>
+      </div>
+      <div className="slot-dose">
+        {doseLabel}
+        {r.loadable && sug.weight != null && (r.prog === "topset" ? <> · Top <strong>{kg(sug.weight)}</strong>, dann {kg(topBack)}</> : <> · <strong>{kg(sug.weight)}</strong></>)}
       </div>
       {swapOpen && <SwapDialog r={r} ctx={ctx} onClose={() => setSwapOpen(false)} />}
       {r.swapped && <div className="muted small">Statt {r.original}.</div>}
       {r.swapUnavailable && <div className="muted small">Dein Tausch „{r.swapUnavailable}“ geht mit „{ctx.profile.name}“ nicht, heute deshalb das Original.</div>}
       {r.missingEquipment && <div className="note warn small">Für diese Übung fehlt im Profil „{ctx.profile.name}“ Equipment. Nimm eine passende Alternative.</div>}
       {r.note && <div className="muted small">{r.note}</div>}
-      {r.loadable && (
-        <div className="muted small">
-          {sug.weight != null
-            ? r.prog === "topset" ? <>Top-Satz <strong>{kg(sug.weight)}</strong>, danach {kg(topBack)}</> : <>Vorschlag <strong>{kg(sug.weight)}</strong></>
-            : sug.hint}
-          {sug.gap && <div className="gap-note">{sug.gap}</div>}
-        </div>
-      )}
-
+      {sug.gap && <div className="gap-note small">{sug.gap}</div>}
       {r.kind === "strength" && (
         <div className="sets">
           {sets.map((s, i) => (
@@ -388,9 +385,9 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
               <button className={`set-btn ${s.done ? "done" : ""}`} onClick={() => markDone(i)} aria-label={`Satz ${i + 1}`}>{s.done ? "✓" : i + 1}</button>
               <input type="number" inputMode="numeric" className="reps-in" placeholder={sug.targetReps != null ? String(sug.targetReps) : "Wdh"}
                 value={s.reps ?? ""} onChange={(e) => writeSet(i, { reps: e.target.value === "" ? undefined : parseInt(e.target.value) })} aria-label="Wiederholungen" />
-              <span className="muted small">Wdh</span>
               {r.loadable && (
                 <>
+                  <span className="muted small">×</span>
                   <input type="number" inputMode="decimal" className="kg-in" placeholder={defaultWeight(i) != null ? String(defaultWeight(i)) : "kg"}
                     value={s.weight ?? ""} onChange={(e) => writeSet(i, { weight: e.target.value === "" ? undefined : parseFloat(e.target.value.replace(",", ".")) })}
                     onBlur={(e) => { const v = parseFloat(e.target.value.replace(",", ".")); if (!isNaN(v)) writeSet(i, { weight: snapNearest(ctx.profile, r.equip, v) }); }}
@@ -473,7 +470,7 @@ function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ct
       </div>
       <div className="small">
         {saved ? <>Heute: <strong>{fmt(saved)}</strong>{pr && saved < pr ? " · neue Bestzeit" : ""}</> : null}
-        {pr ? <span className="muted"> · Bestzeit {fmt(pr)}</span> : <span className="muted"> · noch keine Zeit</span>}
+        {pr ? <span className="muted">{saved ? " · " : ""}Bestzeit {fmt(pr)}</span> : !saved ? <span className="muted">Noch keine Zeit</span> : null}
       </div>
     </section>
   );

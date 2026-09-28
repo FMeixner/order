@@ -27,8 +27,14 @@
           {"id": "c-s-1b", "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"},
           {"id": "c-s-1c", "name": "Weighted Pull-Up", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"}
         ]},
-        {"type": "single", "slot": {"id": "c-s-2", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "reps": "10-12/Seite", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "c-s-3", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 90}}
+        {"type": "single", "slot": {"id": "c-s-2", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "reps": "10-12/Seite", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "c-s-3", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 90}},
+        {"type": "single", "slot": {"id": "c-s-4", "name": "Bulgarian Split Squat", "sets": 3, "reps": "8/Seite", "prog": "double", "rest": 90}},
+        {"type": "superset", "label": "Zusatz", "rest": 60, "slots": [
+          {"id": "c-s-5a", "name": "Seated DB Shoulder Press", "sets": 3, "reps": "8-10", "prog": "double"},
+          {"id": "c-s-5b", "name": "Hanging Leg Raise", "sets": 3, "reps": "8-12", "prog": "reps"}
+        ]},
+        {"type": "single", "slot": {"id": "c-s-6", "name": "Seated Cable Row", "home": "1-Arm DB Row", "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
       ]
     },
     "unterwegs_kraft": {

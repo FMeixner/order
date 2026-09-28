@@ -51,7 +51,7 @@
       ]
     },
     "nacken_rumpf": {
-      "name": "Nacken und Rumpf", "location": "home", "minutes": 40,
+      "name": "Nacken und Rumpf", "location": "home", "minutes": 35,
       "warmup": ["base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "fi-n-1", "name": "Nackenisometrie, 4 Richtungen", "kind": "hold", "hold": 20, "max": 40, "step": 5, "sets": 4, "prog": "hold", "rest": 20, "note": "Hand gegen den Kopf, je Richtung ein Satz."}},
@@ -60,7 +60,8 @@
           {"id": "fi-n-2b", "name": "Band Pallof Press", "sets": 3, "reps": "12/Seite", "prog": "reps"}
         ]},
         {"type": "single", "slot": {"id": "fi-n-3", "name": "Turkish Get-Up", "reise": {"name": "Turkish Get-Up (ohne Last)", "prog": "reps"}, "sets": 3, "reps": "2/Seite", "prog": "weight", "rest": 60}},
-        {"type": "single", "slot": {"id": "fi-n-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}}
+        {"type": "single", "slot": {"id": "fi-n-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
+        {"type": "single", "slot": {"id": "fi-n-5", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 2, "prog": "hold", "rest": 30, "note": "pro Seite"}}
       ]
     }
   }

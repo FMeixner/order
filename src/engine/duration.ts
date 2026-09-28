@@ -1,0 +1,99 @@
+/* Schätzt die Dauer einer Einheit aus ihren Bausteinen. Grob, aber ehrlich:
+   Arbeitszeit je Wiederholung, Pausen aus der Orden-Datei, Aufwärmsätze vor schweren Grundübungen,
+   Umbau zwischen den Übungen, Warm-up und Cool-down aus den Listen. */
+import { BEAST_BY_ID, DM_VARIANTS } from "../data";
+import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile } from "../types";
+import { expandDrills } from "./plan";
+import { parseReps, resolveSlot } from "./resolve";
+
+const SEC_PER_REP = 3.5;
+const SETUP = 45; // Umbau, Gewicht holen, einstellen
+const RAMP_HEAVY = 240; // Steigerungssätze vor einer schweren Grundübung (≤ 6 Wdh, Langhantel)
+const CLASS_MIN: Record<BeastClass, number> = { plage: 8, bestie: 14, ungeheuer: 21, uralte: 32, verfluchte: 45 };
+const NEUTRAL_USER: UserProfile = { name: "", asym: { hip: null, neck: null, shoulder_ir: null, shoulder_er: null } };
+
+function repsOf(reps: string | undefined): number {
+  const rp = parseReps(reps ?? "");
+  const perSide = /\/Seite/.test(reps ?? "") ? 2 : 1;
+  if (rp.amrap) return 12;
+  if (rp.lo != null) return ((rp.lo + (rp.hi ?? rp.lo)) / 2) * perSide;
+  const m = (reps ?? "").match(/(\d+)\s*m\b/); // "30 m", "6×20 m"
+  if (m) return 8;
+  return 8;
+}
+
+/** Sekunden Arbeit in einem Satz */
+function workOf(s: Slot, p: EquipmentProfile): number {
+  const r = resolveSlot(s, p);
+  if (!r) return 0;
+  if (r.kind === "timer") return (r.minutes ?? 10) * 60;
+  if (r.kind === "interval" && r.interval) return r.interval.rounds * (r.interval.work + r.interval.rest);
+  if (r.kind === "hold") return (r.hold ?? 20) * (/\/Seite/.test(r.reps) ? 2 : 1);
+  return repsOf(r.reps) * SEC_PER_REP;
+}
+function setsOf(s: Slot, p: EquipmentProfile): number {
+  const r = resolveSlot(s, p);
+  if (!r) return 0;
+  return r.kind === "timer" || r.kind === "interval" ? 1 : r.sets;
+}
+function heavy(s: Slot, p: EquipmentProfile): boolean {
+  const r = resolveSlot(s, p);
+  if (!r || r.equip !== "barbell") return false;
+  const rp = parseReps(r.reps);
+  return (rp.hi ?? 99) <= 6 || r.prog === "topset";
+}
+
+export function drillSeconds(d: Drill, groups: { value: number; sets: number }[]): number {
+  return groups.reduce((sum, g) => sum + g.sets * (d.mode === "reps" ? g.value * 3 : g.value), 0) + 10;
+}
+
+export function blockSeconds(b: Block, p: EquipmentProfile): number {
+  switch (b.type) {
+    case "single": {
+      const s = b.slot;
+      const n = setsOf(s, p);
+      if (!n) return 0;
+      const r = resolveSlot(s, p)!;
+      const rest = r.kind === "timer" || r.kind === "interval" ? 0 : (n - 1) * r.rest;
+      return SETUP + n * workOf(s, p) + rest + (heavy(s, p) ? RAMP_HEAVY : 0);
+    }
+    case "superset": {
+      const rounds = Math.max(...b.slots.map((s) => setsOf(s, p)));
+      const work = b.slots.reduce((sum, s) => sum + workOf(s, p) + 15, 0);
+      return SETUP * b.slots.length + rounds * work + (rounds - 1) * (b.rest ?? 60);
+    }
+    case "contrast": {
+      const rounds = setsOf(b.heavy, p);
+      return SETUP * 2 + rounds * (workOf(b.heavy, p) + (b.transfer ?? 30) + workOf(b.explosive, p)) + (rounds - 1) * (b.rest ?? 180) + (heavy(b.heavy, p) ? RAMP_HEAVY : 0);
+    }
+    case "beast": {
+      if (b.pool?.length) {
+        const ms = b.pool.map((id) => BEAST_BY_ID[id]?.minutes ?? 15);
+        return (ms.reduce((a, c) => a + c, 0) / ms.length) * 60 + SETUP;
+      }
+      const cls = b.classes?.length ? b.classes : (["bestie"] as BeastClass[]);
+      return (cls.reduce((a, c) => a + CLASS_MIN[c], 0) / cls.length) * 60 + SETUP;
+    }
+    case "module": {
+      if (p.has.sword) return (DM_VARIANTS[b.variant] ?? []).reduce((sum, d) => sum + d.value * (d.sets ?? 1) * (d.sides ? 2 : 1), 0) + SETUP;
+      return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p) : 0;
+    }
+    case "menu": {
+      const first = Object.values(b.options)[0];
+      return first ? blockSeconds({ type: "single", slot: first }, p) : 0;
+    }
+  }
+}
+
+export interface DurationEstimate { warmup: number; main: number; cooldown: number; total: number }
+
+/** Geschätzte Minuten einer Einheit (A-Woche, ohne −1 Satz). */
+export function estimateRole(role: Role, p: EquipmentProfile, user: UserProfile = NEUTRAL_USER, week = 1): DurationEstimate {
+  const ab = week % 2 === 1 ? "A" : "B";
+  const blocks = role.blocks.filter((b) => !b.rotation || b.rotation === ab);
+  const drills = (lists: string[]) => expandDrills(lists, user, week).reduce((s, d) => s + drillSeconds(d, d.groups), 0);
+  const warmup = drills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || p.has.sword)) / 60;
+  const cooldown = drills(role.cooldown ?? ["cd_general"]) / 60;
+  const main = blocks.reduce((s, b) => s + blockSeconds(b, p), 0) / 60;
+  return { warmup, main, cooldown, total: warmup + main + cooldown };
+}

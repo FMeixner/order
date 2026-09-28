@@ -26,11 +26,15 @@
         {"type": "single", "slot": {"id": "gl-mo-2", "name": "Weighted Pull-Up", "home": {"name": "Pull-Up + Weste", "reps": "6-8"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "gl-mo-3", "name": "Weighted Dip", "home": "Ring Dip + Weste", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "gl-mo-4", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "gl-mo-5", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "gl-mo-5", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}},
+        {"type": "superset", "label": "Arme", "rest": 60, "slots": [
+          {"id": "gl-mo-6a", "name": "Cable Curl", "home": "DB Biceps Curl", "sets": 3, "reps": "10-12", "prog": "double"},
+          {"id": "gl-mo-6b", "name": "Rope Pushdown", "home": "DB Overhead Triceps Extension", "sets": 3, "reps": "10-12", "prog": "double"}
+        ]}
       ]
     },
     "arme_kurz": {
-      "name": "Arme kurz", "location": "gym", "minutes": 30,
+      "name": "Arme kurz", "location": "gym", "minutes": 25,
       "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"], "cooldown": ["cd_di"],
       "blocks": [
         {"type": "single", "slot": {"id": "gl-di-1", "name": "Bayesian Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},

@@ -21,50 +21,54 @@
       "name": "Oberkörper A", "location": "gym", "minutes": 55,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "cl-ua-1", "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "cl-ua-2", "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "cl-ua-1", "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "cl-ua-2", "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-ua-3", "name": "Seated Cable Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "cl-ua-4", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "superset", "label": "Arme", "rest": 60, "slots": [
           {"id": "cl-ua-5a", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"},
           {"id": "cl-ua-5b", "name": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"}
-        ]}
+        ]},
+        {"type": "single", "slot": {"id": "cl-ua-6", "name": "Chest Press Machine", "home": "DB Floor Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
       ]
     },
     "lower_a": {
       "name": "Unterkörper A", "location": "gym", "minutes": 55,
       "warmup": ["base", "lower_prep"], "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "single", "slot": {"id": "cl-la-1", "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "cl-la-2", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "cl-la-1", "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "cl-la-2", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-la-3", "name": "Seated Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "cl-la-4", "name": "Standing Calf Raise", "home": {"name": "Single-Leg Calf Raise", "reps": "12-20/Seite", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "cl-la-5", "name": "Cable Crunch", "home": {"name": "Ab Wheel Rollout", "reps": "8-12", "prog": "reps"}, "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "10-15", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "cl-la-5", "name": "Cable Crunch", "home": {"name": "Ab Wheel Rollout", "reps": "8-12", "prog": "reps"}, "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "10-15", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "cl-la-6", "name": "Leg Press", "home": "Split Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 120}}
       ]
     },
     "upper_b": {
       "name": "Oberkörper B", "location": "gym", "minutes": 55,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "cl-ub-1", "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "cl-ub-2", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "cl-ub-1", "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "cl-ub-2", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-ub-3", "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-ub-4", "name": "Cable Fly (tief nach hoch)", "home": "DB Fly", "reise": {"name": "Band Fly", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "superset", "label": "Superset", "rest": 60, "slots": [
           {"id": "cl-ub-5a", "name": "Reverse Pec Deck", "home": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 2, "reps": "12-15", "prog": "double"},
           {"id": "cl-ub-5b", "name": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"}
-        ]}
+        ]},
+        {"type": "single", "slot": {"id": "cl-ub-6", "name": "Lat Pulldown (Untergriff)", "home": {"name": "Chin-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
       ]
     },
     "lower_b": {
       "name": "Unterkörper B", "location": "gym", "minutes": 55,
       "warmup": ["base", "lower_prep"], "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "single", "slot": {"id": "cl-lb-1", "name": "Bulgarian Split Squat", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "cl-lb-2", "name": "Hip Thrust", "home": "DB Hip Thrust", "reise": {"name": "Single-Leg Glute Bridge", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "cl-lb-1", "name": "Bulgarian Split Squat", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 4, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "cl-lb-2", "name": "Hip Thrust", "home": "DB Hip Thrust", "reise": {"name": "Single-Leg Glute Bridge", "prog": "reps"}, "sets": 4, "reps": "8-12", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-lb-3", "name": "Leg Extension", "home": {"name": "Sissy Squat", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "cl-lb-4", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": null, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "cl-lb-5", "name": "Hanging Leg Raise", "reise": {"name": "Reverse Crunch", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "reps", "rest": 60}}
+        {"type": "single", "slot": {"id": "cl-lb-5", "name": "Hanging Leg Raise", "reise": {"name": "Reverse Crunch", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "reps", "rest": 60}},
+        {"type": "single", "slot": {"id": "cl-lb-6", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
       ]
     }
   }
