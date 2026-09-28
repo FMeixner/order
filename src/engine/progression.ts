@@ -1,6 +1,7 @@
 /* Progression: Vorschlag für die nächste Einheit und Fortschreiben nach der Einheit.
    Regeln :
-   - double: im Wiederholungsbereich hocharbeiten. Alle Sätze am oberen Ende oder Feedback »leicht« → eine Laststufe hoch, Wiederholungen wieder unten.
+   - double: im Wiederholungsbereich hocharbeiten. Der schwächste Satz zählt: Er setzt das nächste Ziel (+1),
+             und liegt er 2 oder mehr Wiederholungen unter dem unteren Ende, geht es eine Stufe runter. Alle Sätze am oberen Ende oder Feedback »leicht« → eine Laststufe hoch, Wiederholungen wieder unten.
              »sehr leicht« → zwei Stufen. Zweimal »schwer« hintereinander → −5 %.
    - weight: feste Wiederholungen. »OK« hält, »leicht« +1 Stufe, »sehr leicht« +2, zweimal »schwer« −5 %.
    - topset: Top-Satz wie weight, Back-off-Sätze mit −10 %.
@@ -150,7 +151,11 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
           s.weight = stepLoad(p, r.equip, usedW, n);
           s.target = s.weight > usedW ? landingReps(usedW, minReps, fb, s.weight, lo) : lo;
         };
+        // Satz deutlich verfehlt: 2 oder mehr Wiederholungen unter dem Ziel (bzw. dem unteren Ende) → eine Stufe runter
+        const aim = Math.min(lo, st?.target ?? lo);
+        const missed = rp.lo !== null && minReps <= aim - 2;
         if (twiceHard) { s.weight = snapDown(p, r.equip, usedW * 0.95); s.target = rp.lo; }
+        else if (missed) { s.weight = stepLoad(p, r.equip, usedW, -1); s.target = lo; }
         else if (allTop && fb !== "schwer") jump(fb === "sehrleicht" && !extended ? 2 : 1);
         else if (!extended && fb === "sehrleicht") jump(2);
         else if (!extended && fb === "leicht") jump(1);

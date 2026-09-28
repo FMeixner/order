@@ -280,3 +280,17 @@ describe("Jahresbalance", () => {
     expect(b.label).toBe("allround");
   });
 });
+
+describe("Letzter Satz verfehlt", () => {
+  it("schwächster Satz setzt das Ziel, deutlich verfehlt → eine Stufe runter", () => {
+    const fine: EquipmentProfile = { ...home, dumbbells: [14, 15, 16, 17, 18] };
+    const r = resolveSlot({ id: "m", name: "DB Bench Press", sets: 3, reps: "8-10", prog: "double" }, fine)!;
+    const e = (reps: number[]): SessionEntry => ({ key: r.key, slotId: "m", name: r.name, prog: "double", feedback: "ok", sets: reps.map((x) => ({ done: true, reps: x, weight: 16 })) });
+    const a = advance(r, undefined, e([9, 9, 7]), fine, "d1");
+    expect(a.weight).toBe(16);
+    expect(a.target).toBe(8);
+    const b = advance(r, undefined, e([8, 7, 6]), fine, "d1");
+    expect(b.weight).toBe(15);
+    expect(b.target).toBe(8);
+  });
+});

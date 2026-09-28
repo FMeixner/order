@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.0] – 2026-09-28
+
+### Geändert
+- Eingabe: ein Gewicht pro Übung (Top-Satz: Back-off rechnet die App), Wiederholungen je Satz als kompakte Zeile. Antippen übernimmt die Zielwiederholungen.
+- Progression: Liegt der schwächste Satz 2 oder mehr Wiederholungen unter dem unteren Ende, geht es eine Laststufe runter.
+- Hinweis zu Startgewichten entfernt.
+- Vorschau zeigt die Übungen der Bestie.
+
 ## [0.7.0] – 2026-09-28
 
 ### Neu

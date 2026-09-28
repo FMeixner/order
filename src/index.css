@@ -250,3 +250,14 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .preview-group { padding-top: 6px; }
 .preview-group .preview-row { padding-left: 10px; }
 .back-now { align-self: flex-start; }
+
+/* Satz-Eingabe: ein Gewicht, Wiederholungen je Satz */
+.kg-line { display: flex; align-items: center; gap: 8px; }
+.set-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.set-pill { display: flex; align-items: center; gap: 4px; padding: 3px 5px 3px 3px; border: 1px solid var(--border); border-radius: 24px; }
+.set-pill.done { border-color: var(--teal-dim); }
+.set-pill .reps-in { width: 48px; text-align: center; padding-left: 4px; padding-right: 4px; }
+.kg-line .kg-in { width: 96px; }
+.set-pills input[type=number]::-webkit-inner-spin-button, .kg-line input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.set-pills input[type=number], .kg-line input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+.set-pill .set-btn { min-width: 34px; height: 34px; padding: 0 6px; }

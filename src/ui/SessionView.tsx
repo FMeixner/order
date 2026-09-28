@@ -113,7 +113,6 @@ export function SessionView(ctx: SessionCtx) {
         <h2>{role.name}</h2>
         <div className="muted small">{ctx.profile.name} · etwa {role.minutes} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
         {role.note && <p className="note">{role.note}</p>}
-        {items.some((it) => it.resolved.some((r) => r.loadable && !state.slots[r.key]?.weight)) && !session?.done && <p className="note">Neue Übungen: Startgewicht so wählen, dass am Ende noch 2–3 Wiederholungen gegangen wären. Danach rechnet die App.</p>}
         {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
       </div>
@@ -318,8 +317,11 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const entry: SessionEntry = session?.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
   const sets: SetEntry[] = Array.from({ length: r.kind === "timer" || r.kind === "interval" ? 1 : r.sets }, (_, i) => entry.sets[i] ?? { done: false });
   const desc = EXERCISES[sug.name]?.desc ?? EXERCISES[r.name]?.desc;
-  const topBack = r.prog === "topset" && sug.weight != null ? backoffLoad(ctx.profile, r, sug.weight) : null;
-  const defaultWeight = (i: number) => (r.prog === "topset" && i > 0 ? topBack : sug.weight);
+  /** Ein Gewicht pro Übung: das eingetragene, sonst der Vorschlag. Beim Top-Satz gilt es für Satz 1, die Back-off-Sätze rechnet die App. */
+  const enteredW = entry.sets[0]?.weight ?? null;
+  const baseW = enteredW ?? sug.weight;
+  const topBack = r.prog === "topset" && baseW != null ? backoffLoad(ctx.profile, r, baseW) : null;
+  const defaultWeight = (i: number) => (r.prog === "topset" && i > 0 ? topBack : baseW);
 
   const writeSet = (i: number, patch: Partial<SetEntry>) =>
     mut((s) => {
@@ -329,14 +331,22 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
       return { ...s, entries: { ...s.entries, [r.key]: { ...e, name: sug.name, stage: sug.stage, sets: arr } } };
     });
 
+  /** Gewicht für alle Sätze setzen (Top-Satz: Satz 1, Back-off automatisch) */
+  const setWeight = (w: number | null) =>
+    mut((s) => {
+      const e: SessionEntry = s.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
+      const back = r.prog === "topset" && w != null ? backoffLoad(ctx.profile, r, w) : w;
+      const arr = Array.from({ length: sets.length }, (_, k) => ({ ...(e.sets[k] ?? { done: false }), weight: k > 0 && r.prog === "topset" ? back : w }));
+      return { ...s, entries: { ...s.entries, [r.key]: { ...e, name: sug.name, stage: sug.stage, sets: arr } } };
+    });
+
   const markDone = (i: number) => {
     const cur = sets[i];
     if (cur.done) return writeSet(i, { done: false });
-    const prev = i > 0 ? sets[i - 1] : undefined;
     writeSet(i, {
       done: true,
-      reps: cur.reps ?? prev?.reps ?? sug.targetReps ?? undefined,
-      weight: cur.weight !== undefined ? cur.weight : r.loadable ? (i > 0 && r.prog !== "topset" ? prev?.weight ?? defaultWeight(i) : defaultWeight(i)) : null,
+      reps: cur.reps ?? sug.targetReps ?? undefined,
+      weight: r.loadable ? cur.weight ?? defaultWeight(i) : null,
     });
     onSetDone();
   };
@@ -370,7 +380,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
       </div>
       <div className="slot-dose">
         {doseLabel}
-        {r.loadable && sug.weight != null && (r.prog === "topset" ? <> · Top <strong>{kg(sug.weight)}</strong>, dann {kg(topBack)}</> : <> · <strong>{kg(sug.weight)}</strong></>)}
+
       </div>
       {swapOpen && <SwapDialog r={r} ctx={ctx} onClose={() => setSwapOpen(false)} />}
       {r.swapped && <div className="muted small">Statt {r.original}.</div>}
@@ -380,24 +390,24 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
       {sug.gap && <div className="gap-note small">{sug.gap}</div>}
       {r.kind === "strength" && (
         <div className="sets">
-          {sets.map((s, i) => (
-            <div key={i} className={`set-row ${s.done ? "done" : ""}`}>
-              <button className={`set-btn ${s.done ? "done" : ""}`} onClick={() => markDone(i)} aria-label={`Satz ${i + 1}`}>{s.done ? "✓" : i + 1}</button>
-              <input type="number" inputMode="numeric" className="reps-in" placeholder={sug.targetReps != null ? String(sug.targetReps) : "Wdh"}
-                value={s.reps ?? ""} onChange={(e) => writeSet(i, { reps: e.target.value === "" ? undefined : parseInt(e.target.value) })} aria-label="Wiederholungen" />
-              {r.loadable && (
-                <>
-                  <span className="muted small">×</span>
-                  <input type="number" inputMode="decimal" className="kg-in" placeholder={defaultWeight(i) != null ? String(defaultWeight(i)) : "kg"}
-                    value={s.weight ?? ""} onChange={(e) => writeSet(i, { weight: e.target.value === "" ? undefined : parseFloat(e.target.value.replace(",", ".")) })}
-                    onBlur={(e) => { const v = parseFloat(e.target.value.replace(",", ".")); if (!isNaN(v)) writeSet(i, { weight: snapNearest(ctx.profile, r.equip, v) }); }}
-                    aria-label="Gewicht" />
-                  <span className="muted small">kg</span>
-                </>
-              )}
-              {r.prog === "topset" && <span className="muted small">{i === 0 ? "Top" : "Back-off"}</span>}
+          {r.loadable && (
+            <div className="kg-line">
+              <input type="number" inputMode="decimal" className="kg-in" placeholder={sug.weight != null ? String(sug.weight) : "kg"}
+                value={enteredW ?? ""} onChange={(e) => setWeight(e.target.value === "" ? null : parseFloat(e.target.value.replace(",", ".")))}
+                onBlur={(e) => { const v = parseFloat(e.target.value.replace(",", ".")); if (!isNaN(v)) setWeight(snapNearest(ctx.profile, r.equip, v)); }}
+                aria-label="Gewicht" />
+              <span className="muted small">kg{r.prog === "topset" && topBack != null ? ` Top-Satz, danach ${kg(topBack)}` : ""}</span>
             </div>
-          ))}
+          )}
+          <div className="set-pills">
+            {sets.map((s, i) => (
+              <div key={i} className={`set-pill ${s.done ? "done" : ""}`}>
+                <button className={`set-btn ${s.done ? "done" : ""}`} onClick={() => markDone(i)} aria-label={`Satz ${i + 1}`}>{s.done ? "✓" : i + 1}</button>
+                <input type="number" inputMode="numeric" className="reps-in" placeholder={sug.targetReps != null ? String(sug.targetReps) : "Wdh"}
+                  value={s.reps ?? ""} onChange={(e) => writeSet(i, { reps: e.target.value === "" ? undefined : parseInt(e.target.value) })} aria-label={`Wiederholungen Satz ${i + 1}`} />
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -500,7 +510,12 @@ export function SessionPreview(ctx: SessionCtx) {
         <div className="preview-row muted"><span>Warm-up</span><span>{warm.length} Übungen</span></div>
         {items.map((it, i) => {
           const title = BLOCK_TITLE[it.block.type];
-          if (it.beast !== undefined) return <div key={i} className="preview-row"><span>Bestie: {it.beast?.name ?? "passend zum Equipment"}</span><span className="muted">{it.beast ? `${it.beast.rounds} Runden` : ""}</span></div>;
+          if (it.beast !== undefined) return (
+            <div key={i} className="preview-group">
+              <div className="block-label amber">Bestie: {it.beast?.name ?? "passend zum Equipment"}{it.beast ? ` · ${it.beast.rounds} ${it.beast.rounds === 1 ? "Durchgang" : "Runden"}` : ""}</div>
+              {it.beast?.work.split(" · ").map((w, k) => <div key={k} className="preview-row"><span>{w}</span></div>)}
+            </div>
+          );
           if (it.drills) return <div key={i} className="preview-row"><span>Schwert: {it.drills.map((d) => d.name).join(", ")}</span></div>;
           if (it.block.type === "menu" && !it.resolved.length) return <div key={i} className="preview-row"><span>{it.block.label}</span><span className="muted">Wahl am Tag</span></div>;
           return (
