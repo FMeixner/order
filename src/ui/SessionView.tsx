@@ -314,7 +314,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const [swapOpen, setSwapOpen] = useState(false);
   const canSwap = r.kind === "strength" || r.kind === "hold";
   const st = ctx.state.slots[r.key];
-  const sug: Suggestion = suggest(r, st, ctx.week);
+  const sug: Suggestion = suggest(r, st, ctx.week, ctx.profile);
   const entry: SessionEntry = session?.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
   const sets: SetEntry[] = Array.from({ length: r.kind === "timer" || r.kind === "interval" ? 1 : r.sets }, (_, i) => entry.sets[i] ?? { done: false });
   const desc = EXERCISES[sug.name]?.desc ?? EXERCISES[r.name]?.desc;
@@ -377,6 +377,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
           {sug.weight != null
             ? r.prog === "topset" ? <>Top-Satz <strong>{kg(sug.weight)}</strong>, danach {kg(topBack)}</> : <>Vorschlag <strong>{kg(sug.weight)}</strong></>
             : sug.hint}
+          {sug.gap && <div className="gap-note">{sug.gap}</div>}
         </div>
       )}
 

@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.4.0] – 2026-09-28
+
+### Neu
+- Lückenregel für große Gewichtssprünge: Fängt der Wiederholungsbereich den Sprung zur nächsten vorhandenen Last nicht ab, hebt die App die Obergrenze an (höchstens 20), bis man nach dem Sprung wieder unten im Bereich landet. Nach dem Sprung werden die Zielwiederholungen aus der Leistung vorher geschätzt (Epley). Bei festen Wiederholungen und Sprüngen über 7,5 % kommen bei „Leicht“ erst +1 bis +2 Wiederholungen, dann die Last. Hinweis direkt bei der Übung.
+
 ## [0.3.0] – 2026-09-28
 
 ### Neu

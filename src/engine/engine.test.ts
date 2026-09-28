@@ -78,10 +78,43 @@ describe("Progression", () => {
     key: r.key, slotId: "s", name: r.name, prog: "double", feedback: fb,
     sets: reps.map((x) => ({ done: true, reps: x, weight: w })),
   });
-  it("oberes Ende in allen Sätzen: eine Stufe hoch, Wiederholungen unten", () => {
-    const s = advance(r, undefined, entry([10, 10, 10], 16), home, "2026-10-01");
-    expect(s.weight).toBe(18);
+  it("oberes Ende in allen Sätzen: eine Stufe hoch, Wiederholungen unten (kleiner Sprung)", () => {
+    const fine: EquipmentProfile = { ...home, dumbbells: [16, 16.5, 17, 18, 20] };
+    const s = advance(r, undefined, entry([10, 10, 10], 16), fine, "2026-10-01");
+    expect(s.weight).toBe(16.5);
     expect(s.target).toBe(8);
+  });
+  it("Lückenregel: großer Sprung hebt die Obergrenze an, danach Zielwiederholungen geschätzt", async () => {
+    const { gapCeiling, landingReps } = await import("./progression");
+    const studio: EquipmentProfile = { ...gym, dumbbells: parseWeightList("1-10/1; 12-40/2") };
+    expect(gapCeiling(studio, "dumbbell", 10, 8, 10)).toBe(16);
+    expect(gapCeiling(studio, "dumbbell", 20, 8, 10)).toBe(12);
+    expect(gapCeiling(studio, "dumbbell", 38, 8, 10)).toBe(10);
+    const lr = resolveSlot({ id: "lat", name: "DB Lateral Raise", sets: 3, reps: "8-10", prog: "double" }, studio)!;
+    const e = (reps: number[], fb?: SessionEntry["feedback"]): SessionEntry => ({ key: lr.key, slotId: "lat", name: lr.name, prog: "double", feedback: fb, sets: reps.map((x) => ({ done: true, reps: x, weight: 10 })) });
+    let st = advance(lr, undefined, e([10, 10, 10]), studio, "d1");
+    expect(st.weight).toBe(10);
+    expect(st.target).toBe(11);
+    expect(suggest(lr, st, 1, studio).gap).toContain("12 kg");
+    st = advance(lr, st, e([16, 16, 16]), studio, "d2");
+    expect(st.weight).toBe(12);
+    expect(st.target).toBe(8);
+    expect(landingReps(10, 12, "ok", 12, 8)).toBe(5);
+    const home2: EquipmentProfile = { ...home, dumbbells: parseWeightList("4-41,5/1,5") };
+    expect(gapCeiling(home2, "dumbbell", 4, 8, 10)).toBe(20);
+  });
+  it("Lückenregel bei festen Wiederholungen: erst mehr Wiederholungen, dann Last", () => {
+    const studio: EquipmentProfile = { ...gym, dumbbells: parseWeightList("1-10/1; 12-40/2") };
+    const fr = resolveSlot({ id: "f", name: "DB Shoulder Press", sets: 3, reps: "6", prog: "weight" }, studio)!;
+    const e = (fb: SessionEntry["feedback"]): SessionEntry => ({ key: fr.key, slotId: "f", name: fr.name, prog: "weight", feedback: fb, sets: [6, 6, 6].map((x) => ({ done: true, reps: x, weight: 10 })) });
+    let st = advance(fr, undefined, e("leicht"), studio, "d1");
+    expect(st.weight).toBe(10);
+    expect(st.target).toBe(7);
+    st = advance(fr, st, e("leicht"), studio, "d2");
+    expect(st.target).toBe(8);
+    st = advance(fr, st, e("leicht"), studio, "d3");
+    expect(st.weight).toBe(12);
+    expect(st.target).toBe(6);
   });
   it("sonst Wiederholungen hocharbeiten, Gewicht halten", () => {
     const s = advance(r, undefined, entry([9, 8, 8], 16, "ok"), home, "2026-10-01");

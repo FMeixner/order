@@ -74,6 +74,10 @@ Jeder Block kann `rotation: "A"` (ungerade Blockwoche) oder `"B"` tragen.
 
 Laststufen kommen aus dem Equipment-Profil: Kurzhanteln und Kettlebells als Liste, Langhantel als Stange plus zwei kleinste Scheiben, Kabel und Maschinen als Schrittweite, Weste als Liste.
 
+### Lückenregel
+
+Sind die Lasten grob gestuft, reicht der Wiederholungsbereich oft nicht, um den Sprung abzufangen (8–10 fängt etwa 7 % ab). Die App rechnet mit Epley aus, wie viele Wiederholungen bei der aktuellen Last nötig sind, um nach dem Sprung am unteren Ende zu landen, und hebt die Obergrenze bis dahin an (höchstens 20). Nach dem Sprung schätzt sie die Zielwiederholungen aus der letzten Leistung. Bei `weight` und `topset` gibt es bei Sprüngen über 7,5 % erst +1 bis +2 Wiederholungen.
+
 ## Geführte Varianten
 
 `data/modules/guided.json` ordnet freien Übungen eine Maschinen- oder Kabelvariante zu. In Phasen mit Alltagslast „hoch“ tauscht die App etwa die Hälfte der freien Übungen eines Tages, beginnend bei den späteren; der erste freie Lift und schwere Sätze in Kontrastpaaren bleiben frei. Getauscht wird nur, wenn das Equipment-Profil Maschinen bzw. Kabel hat.
