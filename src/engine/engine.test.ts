@@ -264,3 +264,17 @@ describe("Normen", () => {
     expect(noProfile.missingProfile).toBe(true);
   });
 });
+
+describe("Jahresbalance", () => {
+  const blk = (id: string, focusId: string, start: string, end: string) => ({ id, focusId, start, end, label: "", load: "medium" as const, travel: false });
+  it("fünfmal Witcher ist spezialisiert, ein gemischtes Jahr breiter", async () => {
+    const { balanceOf } = await import("./balance");
+    const witcher5 = ["2026-09-28", "2026-12-07", "2027-02-22", "2027-05-03", "2027-07-12"].map((s, i) => blk(`w${i}`, "witcher", s, i < 4 ? ["2026-12-06", "2027-02-21", "2027-05-02", "2027-07-11"][i] : "2027-09-26"));
+    const a = balanceOf(witcher5, "2026-09-28", "2027-09-27");
+    expect(a.label).toBe("spezialisiert");
+    expect(a.share.muskel).toBeCloseTo(0.7, 2);
+    const mixed = [blk("1", "assassin", "2026-09-28", "2026-12-06"), blk("2", "witcher", "2026-12-07", "2027-02-23"), blk("3", "soldier", "2027-02-24", "2027-03-31"), blk("4", "gladiator", "2027-04-01", "2027-07-15"), blk("5", "conqueror", "2027-07-16", "2027-09-24")];
+    const b = balanceOf(mixed, "2026-09-28", "2027-09-27");
+    expect(b.score!).toBeGreaterThan(a.score!);
+  });
+});

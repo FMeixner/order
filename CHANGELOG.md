@@ -2,14 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.6.0] – 2026-09-28
+
+### Neu
+- Jahresbalance im Plan: Skala von Spezialist bis Allrounder und Verteilung auf acht Bereiche, für das Planjahr oder ein Kalenderjahr.
+
+### Geändert
+- Witcher, Kontrast-Tag: 3 statt 4 Runden je Kontrastpaar, schwere Einzelübungen 3 Sätze. Schulterdrücken und der Arm-Superset liegen jetzt am Armtag (40 Min). Kontrast-Tag etwa 60 Min.
+
 ## [0.5.0] – 2026-09-28
 
 ### Geändert
 - Einheiten auf ihre angegebene Dauer gebracht. Neu: eine Schätzung der Dauer aus Sätzen, Pausen, Aufwärmsätzen, Umbau, Warm-up und Cool-down; ein Test prüft jede Einheit auf ±8 Min. Ergänzt: Smith (je 2–3 Zusatzübungen), Knight (4 Sätze auf den ersten beiden Übungen, je eine Übung mehr), Olympian, Troubadour, Gladiator Oberkörper, Conqueror Studio, Witcher Arme, Acrobat, Alchemist, Pugilist. Angaben korrigiert bei Monk, Herald, Initiate, Assassin.
 - Tagesansicht aufgeräumt: Dosis und Gewichtsvorschlag in einer Zeile, Symbole rechts, keine wiederholten Einheiten-Wörter in den Satzzeilen, Feedback-Knöpfe erst nach dem ersten Satz, A/B-Woche nur noch oben.
-
-### Offen
-- Witcher, Kontrast-Tag: geschätzt 80–90 statt 60 Minuten.
 
 ## [0.4.0] – 2026-09-28
 

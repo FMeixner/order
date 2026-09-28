@@ -7,9 +7,7 @@ import { estimateRole } from "./duration";
    Tabelle ausgeben: REPORT=1 npx vitest run src/engine/duration.test.ts */
 const TOLERANCE = 8;
 /** Bewusst offen, mit Begründung */
-const OPEN: Record<string, string> = {
-  "witcher.kraft_contrast": "zwei Kontrastpaare plus zwei schwere Grundübungen, 3 Min Pausen: Umbau steht zur Entscheidung",
-};
+const OPEN: Record<string, string> = {};
 
 describe("Dauer der Einheiten", () => {
   const P = { gym: EQUIPMENT_PRESETS[0].make(), home: EQUIPMENT_PRESETS[1].make(), reise: EQUIPMENT_PRESETS[2].make() };
