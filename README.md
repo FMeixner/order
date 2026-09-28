@@ -58,7 +58,7 @@ npm run build        # Web-Ausgabe in dist/
 npm run build:single # eine einzelne HTML-Datei in dist-single/
 ```
 
-Versionen folgen [Semantic Versioning](https://semver.org/lang/de/). Ein Tag `vX.Y.Z` baut die App und veröffentlicht sie über GitHub Pages. Änderungen stehen im [CHANGELOG](CHANGELOG.md).
+Versionen folgen [Semantic Versioning](https://semver.org/lang/de/). Jede Änderung auf `main` baut die App und veröffentlicht sie über GitHub Pages. Versionen stehen in `package.json` und als Releases auf GitHub. Änderungen stehen im [CHANGELOG](CHANGELOG.md).
 
 ## Auf dem Handy installieren
 
