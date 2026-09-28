@@ -4,7 +4,7 @@ export function Help() {
     <div className="stack help-body">
       <h3>Der Ablauf</h3>
       <ul>
-        <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche.</li>
+        <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche. Mit ‹ › neben der Wochenzahl blätterst du: künftige Wochen als Vorschau, vergangene zum Nachtragen.</li>
         <li><strong>Plan</strong> ist dein Jahr in Phasen. Jede Phase hat einen Orden und eine Alltagslast.</li>
         <li><strong>Orden</strong> listet alle Programme mit Details.</li>
         <li><strong>Log</strong> zeigt abgeschlossene Einheiten, Bestzeiten und Tests.</li>

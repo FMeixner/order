@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { FOCUS_BY_ID } from "../data";
-import { blockAt, blockWeeks, dayRoleMap, fmtDate, isAWeek, isDeloadWeek, isTestWeek, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
+import { addDays, blockAt, blockWeeks, dayRoleMap, fmtDate, isAWeek, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
+import { TESTWEEK } from "../data";
 import type { AppState, Weekday } from "../types";
-import { SessionView, sessionId } from "./SessionView";
+import { WEEKDAYS } from "../types";
+import { SessionPreview, SessionView, sessionId } from "./SessionView";
 import { TestWeek } from "./TestWeek";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -11,6 +13,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const block = blockAt(state.plan, today);
   const [pick, setPick] = useState<Weekday | null>(null);
   const [showTraining, setShowTraining] = useState(false);
+  const [viewWeek, setViewWeek] = useState<number | null>(null);
   if (!block) {
     const nb = nextBlock(state.plan, today);
     return (
@@ -25,8 +28,13 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   }
   const focus = FOCUS_BY_ID[block.focusId];
   if (!focus) return <div className="card">Der Orden dieser Phase fehlt. <button className="btn small" onClick={goPlan}>Plan öffnen</button></div>;
-  const week = weekInBlock(block, today);
+  const curWeek = weekInBlock(block, today);
   const total = blockWeeks(block);
+  const week = viewWeek ?? curWeek;
+  const isCur = week === curWeek;
+  const future = week > curWeek;
+  const weekStart = addDays(mondayOf(block.start), (week - 1) * 7);
+  const go = (w: number) => { setViewWeek(w === curWeek ? null : w); setPick(null); setShowTraining(false); };
   const test = isTestWeek(focus, block, week);
   const deload = isDeloadWeek(focus, week);
   const rkey = `${block.id}:${week}`;
@@ -34,7 +42,11 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const days = dayRoleMap(state, block);
   const todayWd = weekdayOf(today);
   const doneRoles = new Set(state.sessions.filter((s) => s.blockId === block.id && s.week === week && s.done).map((s) => s.role));
-  const defaultDay = days.find((d) => d.day === todayWd && !doneRoles.has(d.role))?.day ?? days.find((d) => !doneRoles.has(d.role))?.day ?? days[0]?.day;
+  const defaultDay = isCur
+    ? days.find((d) => d.day === todayWd && !doneRoles.has(d.role))?.day ?? days.find((d) => !doneRoles.has(d.role))?.day ?? days[0]?.day
+    : days[0]?.day;
+  /** Datum für Einträge: heute in der laufenden Woche, sonst der Wochentag der gewählten Woche */
+  const dateFor = (d: Weekday) => (isCur ? today : addDays(weekStart, WEEKDAYS.indexOf(d)));
   const sel = days.find((d) => d.day === (pick ?? defaultDay));
   const profile = sel ? state.equipment.find((e) => e.id === sel.profileId) : undefined;
 
@@ -46,16 +58,22 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
             <div className="hero-focus">{focus.name}</div>
             <div className="muted small">{block.label || focus.tagline}</div>
           </div>
-          <div className="hero-week">Woche {Math.min(week, total)}<span className="muted">/{total}</span></div>
+          <div className="week-nav">
+            <button onClick={() => go(week - 1)} disabled={week <= 1} aria-label="Vorige Woche">‹</button>
+            <div className="hero-week">Woche {Math.min(week, total)}<span className="muted">/{total}</span></div>
+            <button onClick={() => go(week + 1)} disabled={week >= total} aria-label="Nächste Woche">›</button>
+          </div>
         </div>
         <div className="progress"><div style={{ width: `${Math.min(100, (100 * week) / total)}%` }} /></div>
         <div className="tags">
+          {!isCur && <span className="tag amber">{future ? "Vorschau" : "vergangen"} · ab {fmtDate(weekStart)}</span>}
           <span className="tag">{isAWeek(week) ? "A-Woche" : "B-Woche"}</span>
           {test && <span className="tag teal">Testwoche</span>}
           {deload && <span className="tag">Entlastung −1 Satz</span>}
           {!deload && isTestWeek(focus, block, week + 1) && <span className="tag">vor der Testwoche −1 Satz</span>}
         </div>
-        {!deload && (
+        {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
+        {!deload && !future && (
           <label className="check small">
             <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => ({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }))} />
             <span>Diese Woche −1 Satz (müde, krank, viel los)</span>
@@ -63,7 +81,14 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
         )}
       </div>
 
-      {test && !showTraining ? (
+      {test && future ? (
+        <div className="card stack">
+          <strong>Testwoche</strong>
+          <ul className="slot-list">{TESTWEEK.cups.map((c) => <li key={c.id}><strong>{c.name}</strong> · {c.place}: {c.tests.map((t) => t.name).join(", ")}</li>)}</ul>
+          <button className="btn ghost small" onClick={() => setShowTraining(true)}>Trainingswoche stattdessen ansehen</button>
+        </div>
+      ) : null}
+      {test && future && !showTraining ? null : test && !showTraining ? (
         <>
           <TestWeek state={state} update={update} block={block} />
           <button className="btn ghost" onClick={() => setShowTraining(true)}>Stattdessen normal trainieren</button>
@@ -76,7 +101,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
               const p = state.equipment.find((e) => e.id === d.profileId);
               const done = doneRoles.has(d.role);
               return (
-                <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
+                <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${isCur && d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
                   <span className="day">{d.day}</span>
                   <span className="day-role">{r?.name ?? d.role}</span>
                   <span className="muted small">{p?.name ?? "?"}{done ? " · ✓" : ""}</span>
@@ -84,8 +109,10 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
               );
             })}
           </div>
-          {sel && profile ? (
-            <SessionView key={sessionId(block.id, week, sel.role) + profile.id} state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={today} reduced={reduced} />
+          {sel && profile && future ? (
+            <SessionPreview state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} />
+          ) : sel && profile ? (
+            <SessionView key={sessionId(block.id, week, sel.role) + profile.id} state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} />
           ) : (
             <div className="card muted">Kein Trainingstag eingerichtet oder Equipment-Profil fehlt. Unter Setup den Wochenplan prüfen.</div>
           )}

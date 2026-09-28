@@ -475,3 +475,49 @@ function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ct
     </section>
   );
 }
+
+/* ---------- Vorschau einer künftigen Woche: nur Übungen und Dosis, keine Eingaben ---------- */
+function previewDose(r: Resolved): string {
+  if (r.kind === "timer") return `${r.minutes ?? 10} Min`;
+  if (r.kind === "interval" && r.interval) return `${r.interval.rounds} × ${fmt(r.interval.work)} / ${fmt(r.interval.rest)}`;
+  if (r.kind === "hold") return `${r.sets} × ${r.hold ?? 20} s`;
+  return `${r.sets} × ${r.reps}`;
+}
+const BLOCK_TITLE: Partial<Record<Block["type"], string>> = { superset: "Superset", contrast: "Kontrastpaar", menu: "Wahl" };
+
+export function SessionPreview(ctx: SessionCtx) {
+  const role = ctx.focus.roles[ctx.roleKey];
+  const items = collectItems(ctx);
+  const warm = expandDrills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || ctx.profile.has.sword), ctx.state.user, ctx.week);
+  const cool = expandDrills(role.cooldown ?? ["cd_general"], ctx.state.user, ctx.week);
+  return (
+    <div className="stack session">
+      <div className="session-head">
+        <h2>{role.name}</h2>
+        <div className="muted small">{ctx.profile.name} · etwa {role.minutes} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
+      </div>
+      <section className="card preview">
+        <div className="preview-row muted"><span>Warm-up</span><span>{warm.length} Übungen</span></div>
+        {items.map((it, i) => {
+          const title = BLOCK_TITLE[it.block.type];
+          if (it.beast !== undefined) return <div key={i} className="preview-row"><span>Bestie: {it.beast?.name ?? "passend zum Equipment"}</span><span className="muted">{it.beast ? `${it.beast.rounds} Runden` : ""}</span></div>;
+          if (it.drills) return <div key={i} className="preview-row"><span>Schwert: {it.drills.map((d) => d.name).join(", ")}</span></div>;
+          if (it.block.type === "menu" && !it.resolved.length) return <div key={i} className="preview-row"><span>{it.block.label}</span><span className="muted">Wahl am Tag</span></div>;
+          return (
+            <div key={i} className={title ? "preview-group" : ""}>
+              {title && <div className="block-label teal">{title}</div>}
+              {it.resolved.map((r) => (
+                <div key={r.key} className="preview-row">
+                  <span>{r.name}{r.guided ? <span className="tag teal">geführt</span> : null}{r.swapped ? <span className="tag amber">getauscht</span> : null}</span>
+                  <span className="mono muted">{previewDose(r)}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })}
+        <div className="preview-row muted"><span>Cool-down</span><span>{cool.length} Übungen</span></div>
+      </section>
+      <p className="muted small">Gewichte rechnet die App erst, wenn die Woche dran ist, aus deinen Einheiten bis dahin.</p>
+    </div>
+  );
+}

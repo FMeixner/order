@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.7.0] – 2026-09-28
+
+### Neu
+- Wochen blättern: Pfeile neben der Wochenzahl. Künftige Wochen als Vorschau (Übungen, Dosis, A/B-Wechsel, Entlastung, Testwoche), vergangene Wochen zum Nachtragen mit dem passenden Datum.
+
 ## [0.6.1] – 2026-09-28
 
 ### Geändert

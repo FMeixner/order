@@ -238,3 +238,15 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .balance-row { display: grid; grid-template-columns: 110px 1fr 44px; align-items: center; gap: 8px; }
 .balance-row.dim { opacity: 0.45; }
 .balance-row .mono { font-family: var(--mono); text-align: right; }
+
+/* Wochen blättern und Vorschau */
+.week-nav { display: flex; align-items: center; gap: 4px; }
+.week-nav button { background: none; border: 1px solid var(--border); color: var(--text); border-radius: 8px; width: 30px; height: 30px; font-size: 16px; cursor: pointer; }
+.week-nav button:disabled { opacity: 0.3; cursor: default; }
+.preview { display: flex; flex-direction: column; gap: 2px; }
+.preview-row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.preview-row:last-child { border-bottom: none; }
+.preview-row .mono { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+.preview-group { padding-top: 6px; }
+.preview-group .preview-row { padding-left: 10px; }
+.back-now { align-self: flex-start; }
