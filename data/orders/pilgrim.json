@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "id": "pilgrim",
+  "name": "Pilgrim",
+  "tagline": "Herz-Kreislauf zuerst, Kraft bleibt.",
+  "description": "Einmal hohe Intensität (4 × 4 Min), einmal lange Grundlage im Sprechtempo, eine lange Bestie und eine kurze Kraft-Erhaltung. Herz-Kreislauf-Fitness ist einer der stärksten Einzelmarker für Langlebigkeit.",
+  "goals": {"primary": "endurance", "secondary": ["conditioning", "strength"]},
+  "nutrition": "any",
+  "load_fit": "medium",
+  "level": "beginner–intermediate",
+  "session_min": 45,
+  "weeks": {"min": 8, "max": 12},
+  "test_week": true,
+  "travel": true,
+  "modules": ["correctives", "beast"],
+  "successors": ["troubadour", "olympian", "knight"],
+  "sources": ["Helgerud et al. (2007)", "Mandsager et al. (2018)"],
+  "week_4": ["intervalle", "kraft_kurz", "bestie_lang", "grundlage"],
+  "week_3": ["intervalle", "kraft_kurz", "grundlage"],
+  "roles": {
+    "intervalle": {
+      "name": "Intervalle", "location": "reise", "minutes": 45,
+      "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "rh-i-1", "name": "Intervalle 4 × 4 Min", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none", "note": "85–95 % der maximalen Herzfrequenz. Lauf, Rad oder Rudern."}},
+        {"type": "superset", "label": "Kraft kurz", "rest": 60, "slots": [
+          {"id": "rh-i-2a", "name": "Goblet Squat", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"},
+          {"id": "rh-i-2b", "name": "Push-Up", "sets": 2, "reps": "8-15", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"]}
+        ]}
+      ]
+    },
+    "kraft_kurz": {
+      "name": "Kraft-Erhaltung", "location": "home", "minutes": 45,
+      "warmup": ["base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "rh-k-1", "name": "KB Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "rh-k-2", "name": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "rh-k-3", "name": "Split Squat", "sets": 2, "reps": "10/Seite", "prog": "reps", "rest": 60}},
+        {"type": "single", "slot": {"id": "rh-k-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
+        {"type": "single", "slot": {"id": "rh-k-5", "name": "Lockeres Ausfahren", "kind": "timer", "minutes": 15, "prog": "none"}}
+      ]
+    },
+    "bestie_lang": {
+      "name": "Lange Bestie", "location": "home", "minutes": 40,
+      "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
+      "blocks": [
+        {"type": "beast", "id": "rh-b-1", "classes": ["uralte"], "draw": "rotate"}
+      ]
+    },
+    "grundlage": {
+      "name": "Grundlage", "location": "reise", "minutes": 60,
+      "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "rh-g-1", "name": "Lockere Grundlage", "kind": "timer", "minutes": 45, "max": 75, "step": 5, "prog": "minutes", "note": "Sprechtempo. Lauf, Rad, Rudern oder Wandern."}}
+      ]
+    }
+  }
+}

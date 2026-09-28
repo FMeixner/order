@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "id": "initiate",
+  "name": "Initiate",
+  "tagline": "Der ehrliche Wiedereinstieg.",
+  "description": "Für Einsteiger und alle nach einer Pause. Kurze Einheiten, einfache Bewegungen, Progression über Variantenleitern statt über Gewicht: Wer in zwei Einheiten hintereinander alle Sätze am oberen Ende schafft, steigt eine Stufe auf.",
+  "goals": {"primary": "wellbeing", "secondary": ["strength", "mobility"]},
+  "nutrition": "maintenance",
+  "load_fit": "high",
+  "level": "beginner",
+  "session_min": 35,
+  "weeks": {"min": 6, "max": 9},
+  "travel": true,
+  "modules": ["correctives"],
+  "successors": ["assassin", "knight", "troubadour"],
+  "week_4": ["ganzkoerper_a", "bewegung_leicht", "ganzkoerper_b", "ausdauer_ruhig"],
+  "week_3": ["ganzkoerper_a", "ausdauer_ruhig", "ganzkoerper_b"],
+  "roles": {
+    "ganzkoerper_a": {
+      "name": "Ganzkörper A", "location": "home", "minutes": 35,
+      "warmup": ["gentle", "dislocate"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "r-a-1", "name": "Box Squat", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Box Squat", "Goblet Squat", "Goblet Squat mit Pause"], "rest": 90}},
+        {"type": "single", "slot": {"id": "r-a-2", "name": "Incline Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Knee Push-Up", "Push-Up"], "rest": 90}},
+        {"type": "single", "slot": {"id": "r-a-3", "name": "Table Row", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 90}},
+        {"type": "single", "slot": {"id": "r-a-4", "name": "Glute Bridge", "sets": 2, "reps": "12-15", "prog": "ladder", "ladder": ["Glute Bridge", "Single-Leg Glute Bridge"], "rest": 60}},
+        {"type": "single", "slot": {"id": "r-a-5", "name": "Dead Bug", "sets": 2, "reps": "8/Seite", "prog": "reps", "rest": 45}}
+      ]
+    },
+    "bewegung_leicht": {
+      "name": "Bewegung leicht", "location": "reise", "minutes": 35,
+      "warmup": ["gentle"], "cooldown": ["cd_calm"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "r-l-1", "name": "Zügiger Spaziergang", "kind": "timer", "minutes": 20, "prog": "none"}},
+        {"type": "single", "slot": {"id": "r-l-2", "name": "Mobility-Block Hüfte und Schulter", "kind": "timer", "minutes": 15, "prog": "none"}}
+      ]
+    },
+    "ausdauer_ruhig": {
+      "name": "Ausdauer ruhig", "location": "reise", "minutes": 35,
+      "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "r-c-1", "name": "Ruhiges Cardio (Gehen, Rad, Rudern)", "kind": "timer", "minutes": 30, "max": 45, "step": 5, "prog": "minutes", "note": "Sprechtempo: du kannst in ganzen Sätzen reden."}}
+      ]
+    },
+    "ganzkoerper_b": {
+      "name": "Ganzkörper B", "location": "home", "minutes": 35,
+      "warmup": ["gentle", "shoulder_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "r-b-1", "name": "Band-Assisted Negative Chin-Up", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Band-Assisted Negative Chin-Up", "Negative Chin-Up", "Chin-Up"], "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "rest": 120}},
+        {"type": "single", "slot": {"id": "r-b-2", "name": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "r-b-3", "name": "Split Squat", "sets": 2, "reps": "8-10/Seite", "prog": "ladder", "ladder": ["Split Squat", "Reverse Lunge"], "rest": 90}},
+        {"type": "single", "slot": {"id": "r-b-4", "name": "Knee Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Knee Push-Up", "Push-Up"], "rest": 90}},
+        {"type": "single", "slot": {"id": "r-b-5", "name": "Side Plank (Knie)", "kind": "hold", "hold": 20, "sets": 2, "prog": "ladder", "ladder": ["Side Plank (Knie)", "Side Plank"], "rest": 45, "note": "pro Seite"}}
+      ]
+    }
+  }
+}

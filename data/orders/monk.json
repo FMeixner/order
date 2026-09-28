@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "id": "monk",
+  "name": "Monk",
+  "tagline": "Kraft und Ruhe im Gleichgewicht.",
+  "description": "Zwei Ganzkörper-Krafttage, zwei Tage Yoga mit Meditation. Yoga und Krafttraining gehören zu den wirksamsten Bewegungsformen gegen depressive Symptome. Antidepressive Effekte brauchen Zeit, deshalb läuft der Block 12 Wochen.",
+  "goals": {"primary": "wellbeing", "secondary": ["strength", "mobility"]},
+  "nutrition": "maintenance",
+  "load_fit": "high",
+  "level": "beginner–intermediate",
+  "session_min": 45,
+  "weeks": {"min": 12, "max": 12},
+  "travel": true,
+  "modules": ["correctives"],
+  "successors": ["troubadour", "alchemist", "knight"],
+  "sources": ["Noetel et al. (2024)"],
+  "week_4": ["kraft_a", "yoga_flow", "kraft_b", "yoga_ruhe"],
+  "week_3": ["kraft_a", "yoga_flow", "kraft_b"],
+  "roles": {
+    "kraft_a": {
+      "name": "Kraft A", "location": "home", "minutes": 45,
+      "warmup": ["base"], "cooldown": ["cd_calm"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "zw-a-1", "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-a-2", "name": "Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"], "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-a-3", "name": "Ring Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-a-4", "name": "KB Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "weight", "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-a-5", "name": "Atemfokus", "kind": "timer", "minutes": 5, "max": 10, "step": 1, "prog": "minutes"}}
+      ]
+    },
+    "yoga_flow": {
+      "name": "Yoga-Flow", "location": "reise", "minutes": 40,
+      "warmup": ["gentle"], "cooldown": [],
+      "blocks": [
+        {"type": "single", "slot": {"id": "zw-f-1", "name": "Yoga-Flow: Sonnengruß, Krieger I und II, Dreieck", "kind": "timer", "minutes": 25, "prog": "none"}},
+        {"type": "single", "slot": {"id": "zw-f-2", "name": "Atemmeditation", "kind": "timer", "minutes": 10, "max": 20, "step": 1, "prog": "minutes"}}
+      ]
+    },
+    "kraft_b": {
+      "name": "Kraft B", "location": "home", "minutes": 45,
+      "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_calm"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "zw-b-1", "name": "Reverse Lunge", "reise": {"name": "Reverse Lunge", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-b-2", "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-b-3", "name": "Chin-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "3-8", "prog": "ladder", "ladder": ["Band-Assisted Negative Chin-Up", "Negative Chin-Up", "Chin-Up"], "rest": 120}},
+        {"type": "single", "slot": {"id": "zw-b-4", "name": "Glute Bridge", "sets": 3, "reps": "12", "prog": "ladder", "ladder": ["Glute Bridge", "Single-Leg Glute Bridge"], "rest": 60}},
+        {"type": "single", "slot": {"id": "zw-b-5", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 2, "prog": "hold", "rest": 45, "note": "pro Seite"}}
+      ]
+    },
+    "yoga_ruhe": {
+      "name": "Yoga-Ruhe", "location": "reise", "minutes": 35,
+      "warmup": [], "cooldown": [],
+      "blocks": [
+        {"type": "single", "slot": {"id": "zw-r-1", "name": "Yin-Haltungen: Taube, Brücke, Kindhaltung, Drehsitz", "kind": "timer", "minutes": 20, "prog": "none"}},
+        {"type": "single", "slot": {"id": "zw-r-2", "name": "Body Scan", "kind": "timer", "minutes": 15, "prog": "none"}}
+      ]
+    }
+  }
+}

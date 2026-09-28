@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "id": "soldier",
+  "name": "Soldier",
+  "tagline": "Entlasten, messen, Lücken schließen.",
+  "description": "Kurzer Block für Phasen mit wenig Alltagslast. Woche 1 Entlastung, Woche 2 Testwoche, danach allgemeine Vorbereitung: feste Erhaltungsübungen plus drei Schwerpunkt-Plätze, die du nach dem Testergebnis wählst (Schnelligkeit, Sprungkraft, Kraft, Kraftausdauer, Belastbarkeit, aerob, anaerob, Beweglichkeit).",
+  "goals": {"primary": "test", "secondary": ["conditioning", "strength"]},
+  "nutrition": "maintenance",
+  "load_fit": "low",
+  "level": "intermediate",
+  "session_min": 55,
+  "weeks": {"min": 5, "max": 6},
+  "deload_weeks": [1],
+  "test_weeks": [2],
+  "travel": false,
+  "modules": ["correctives", "doppelmesser", "beast"],
+  "successors": ["gladiator", "knight", "olympian"],
+  "week_4": ["studio_a", "home_skill", "studio_b", "outdoor_aerob"],
+  "week_3": ["studio_a", "home_skill", "studio_b"],
+  "roles": {
+    "studio_a": {
+      "name": "Studio A", "location": "gym", "minutes": 55,
+      "warmup": ["base", "lower_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "so-a-1", "name": "Back Squat", "home": "Goblet Squat", "sets": 3, "reps": "5", "prog": "weight", "rest": 180}},
+        {"type": "single", "slot": {"id": "so-a-2", "name": "Bench Press", "home": "DB Bench Press", "sets": 3, "reps": "5", "prog": "weight", "rest": 180}},
+        {"type": "single", "slot": {"id": "so-a-3", "name": "Weighted Pull-Up", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "5", "prog": "weight", "rest": 150}},
+        {"type": "menu", "id": "so-a-4", "label": "Schwerpunkt 1", "options": {
+          "Speed": {"id": "gpp-speed", "name": "Fliegende 20 m", "sets": 6, "reps": "20 m", "prog": "none", "rest": 120, "note": "Nur draußen. Im Studio: Rad-Sprints 6 × 10 s."},
+          "Power": {"id": "gpp-power", "name": "Box Jump", "sets": 5, "reps": "3", "prog": "none", "rest": 120},
+          "Strength": {"id": "gpp-strength", "name": "Back Squat Top-Satz", "sets": 1, "reps": "3", "prog": "topset", "step": 1, "rest": 180, "note": "Ein Top-Satz bei gefühlt 2 Wdh in Reserve."},
+          "Kraftausdauer": {"id": "gpp-endurance-str", "name": "Push-Up und Pull-Up Leiter", "sets": 1, "reps": "1-10", "prog": "none", "note": "1 Pull-Up, 1 Push-Up, 2, 2 … bis 10 oder Formverlust."},
+          "Work Capacity": {"id": "gpp-work", "name": "Assault-Bike oder Rudern 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 30, "rounds": 10}, "prog": "none"},
+          "Aerob": {"id": "gpp-aerob", "name": "Intervalle 4 × 4 Min (Rudern)", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none"},
+          "Anaerob": {"id": "gpp-anaerob", "name": "Rudern 6 × 250 m", "sets": 6, "reps": "250 m", "prog": "none", "rest": 90},
+          "Mobility": {"id": "gpp-mob", "name": "Mobility-Block: Sit and Reach, Ausschultern, 90/90", "kind": "timer", "minutes": 10, "prog": "none"}
+        }}
+      ]
+    },
+    "home_skill": {
+      "name": "Home-Skill", "location": "home", "minutes": 45,
+      "warmup": ["base", "doppelmesser_prep"], "cooldown": ["cd_general", "cd_ball"],
+      "blocks": [
+        {"type": "module", "module": "doppelmesser", "variant": "technik20", "fallback": {"id": "so-h-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 15, "prog": "none"}},
+        {"type": "menu", "id": "so-h-2", "label": "Schwerpunkt 3", "options": {
+          "Work Capacity": {"id": "gpp-work-h", "name": "Bestie Klasse Ungeheuer (frei wählen)", "kind": "timer", "minutes": 20, "prog": "none"},
+          "Kraftausdauer": {"id": "gpp-endurance-h", "name": "Push-Up und Pull-Up Leiter", "sets": 1, "reps": "1-10", "prog": "none"},
+          "Mobility": {"id": "gpp-mob-h", "name": "Mobility-Block: Sit and Reach, Ausschultern, 90/90", "kind": "timer", "minutes": 12, "prog": "none"},
+          "Power": {"id": "gpp-power-h", "name": "KB Swing, schwer", "sets": 5, "reps": "10", "prog": "weight", "rest": 90},
+          "Anaerob": {"id": "gpp-anaerob-h", "name": "Rudern 6 × 250 m", "sets": 6, "reps": "250 m", "prog": "none", "rest": 90}
+        }}
+      ]
+    },
+    "studio_b": {
+      "name": "Studio B", "location": "gym", "minutes": 55,
+      "warmup": ["base", "lat_box"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "so-b-1", "name": "Deadlift", "home": "KB Deadlift", "sets": 3, "reps": "3-5", "prog": "double", "rest": 180}},
+        {"type": "single", "slot": {"id": "so-b-2", "name": "Overhead Press", "home": "DB Shoulder Press", "sets": 3, "reps": "5", "prog": "weight", "rest": 150}},
+        {"type": "single", "slot": {"id": "so-b-3", "name": "Barbell Row", "home": "1-Arm DB Row", "sets": 3, "reps": "8", "prog": "double", "rest": 120}},
+        {"type": "menu", "id": "so-b-4", "label": "Schwerpunkt 2", "options": {
+          "Speed": {"id": "gpp-speed", "name": "Fliegende 20 m", "sets": 6, "reps": "20 m", "prog": "none", "rest": 120},
+          "Power": {"id": "gpp-power2", "name": "Medizinball-Brustwurf", "sets": 5, "reps": "3", "prog": "none", "rest": 90},
+          "Strength": {"id": "gpp-strength2", "name": "Deadlift Top-Satz", "sets": 1, "reps": "3", "prog": "topset", "step": 1, "rest": 180},
+          "Kraftausdauer": {"id": "gpp-endurance-str", "name": "Push-Up und Pull-Up Leiter", "sets": 1, "reps": "1-10", "prog": "none"},
+          "Work Capacity": {"id": "gpp-work", "name": "Assault-Bike oder Rudern 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 30, "rounds": 10}, "prog": "none"},
+          "Aerob": {"id": "gpp-aerob", "name": "Intervalle 4 × 4 Min (Rudern)", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none"},
+          "Anaerob": {"id": "gpp-anaerob", "name": "Rudern 6 × 250 m", "sets": 6, "reps": "250 m", "prog": "none", "rest": 90},
+          "Mobility": {"id": "gpp-mob", "name": "Mobility-Block: Sit and Reach, Ausschultern, 90/90", "kind": "timer", "minutes": 10, "prog": "none"}
+        }}
+      ]
+    },
+    "outdoor_aerob": {
+      "name": "Draußen aerob", "location": "reise", "minutes": 40,
+      "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "so-s-1", "name": "Lauf oder Rudern, locker", "kind": "timer", "minutes": 30, "max": 45, "step": 5, "prog": "minutes"}}
+      ]
+    }
+  }
+}

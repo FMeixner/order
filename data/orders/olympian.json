@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "id": "olympian",
+  "name": "Olympian",
+  "tagline": "Schnell und sprungkräftig auf einer Kraftbasis.",
+  "description": "Kontrastpaare (30 s vom schweren zum explosiven Satz, 3 Min bis zum nächsten Paar), Sprints und Sprünge mit voller Pause. Explosive Arbeit immer am Anfang, solange du frisch bist. Nordic Curls als Schutz für die hinteren Oberschenkel.",
+  "goals": {"primary": "power", "secondary": ["speed", "strength"]},
+  "nutrition": "maintenance",
+  "load_fit": "medium",
+  "level": "intermediate",
+  "session_min": 50,
+  "weeks": {"min": 8, "max": 10},
+  "test_week": true,
+  "travel": true,
+  "modules": ["correctives", "beast"],
+  "successors": ["smith", "huntsman", "soldier"],
+  "sources": ["Seitz & Haff (2016)", "van Dyk et al. (2019)"],
+  "week_4": ["power_unten", "kraft_oben", "sprint", "power_hinge"],
+  "week_3": ["power_unten", "kraft_oben", "sprint"],
+  "roles": {
+    "power_unten": {
+      "name": "Power Beine", "location": "gym", "minutes": 50,
+      "warmup": ["base", "jump_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "contrast", "transfer": 30, "rest": 180,
+          "heavy": {"id": "at-u-2", "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 4, "reps": "4-5", "prog": "double"},
+          "explosive": {"id": "at-u-2x", "name": "Squat Jump", "reise": "Split Jump", "sets": 4, "reps": "5", "prog": "none"}},
+        {"type": "single", "slot": {"id": "at-u-3", "name": "Bulgarian Split Squat", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "at-u-4", "name": "Copenhagen Plank", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 45, "note": "pro Seite"}}
+      ]
+    },
+    "kraft_oben": {
+      "name": "Kraft Oberkörper", "location": "gym", "minutes": 50,
+      "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "at-o-1", "name": "Medicine Ball Chest Pass", "reise": "Clap Push-Up", "sets": 4, "reps": "3", "prog": "none", "rest": 90}},
+        {"type": "superset", "label": "Superset", "rest": 150, "slots": [
+          {"id": "at-o-2a", "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"},
+          {"id": "at-o-2b", "name": "Weighted Pull-Up", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"}
+        ]},
+        {"type": "single", "slot": {"id": "at-o-3", "name": "Landmine Rotational Press", "home": "KB Half-Kneeling Press", "reise": {"name": "Band Rotational Press", "prog": "reps"}, "sets": 3, "reps": "6/Seite", "prog": "double", "rest": 90}}
+      ]
+    },
+    "sprint": {
+      "name": "Sprint", "location": "reise", "minutes": 40,
+      "note": "Draußen, auf ebener Fläche. Jeder Lauf mit voller Konzentration.",
+      "warmup": ["run_prep", "jump_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "at-s-1", "name": "Beschleunigung 10 m", "sets": 6, "reps": "10 m", "prog": "none", "rest": 90}},
+        {"type": "single", "slot": {"id": "at-s-2", "name": "Fliegende 20 m", "sets": 4, "reps": "20 m", "prog": "none", "rest": 180}},
+        {"type": "single", "slot": {"id": "at-s-3", "name": "5-10-5 Shuttle", "sets": 4, "reps": "1", "prog": "none", "rest": 120}}
+      ]
+    },
+    "power_hinge": {
+      "name": "Power Hüfte", "location": "gym", "minutes": 50,
+      "warmup": ["base", "jump_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "at-h-1", "name": "Broad Jump", "sets": 5, "reps": "3", "prog": "none", "rest": 90}},
+        {"type": "single", "slot": {"id": "at-h-2", "name": "Trap Bar Deadlift", "home": "KB Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 4, "reps": "4-6", "prog": "double", "rest": 180}},
+        {"type": "single", "slot": {"id": "at-h-3", "name": "KB Swing", "reise": {"name": "Band Pull-Through", "prog": "reps"}, "sets": 4, "reps": "10", "prog": "weight", "rest": 90}},
+        {"type": "single", "slot": {"id": "at-h-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}}
+      ]
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "id": "troubadour",
+  "name": "Troubadour",
+  "tagline": "Kraft und Ausdauer im Verhältnis 1:1.",
+  "description": "Ein ausgewogenes Grundgerüst für alle, die nichts verlieren und alles erhalten wollen. Kraft und Ausdauer an getrennten Tagen. Die Sorge vor dem Interferenzeffekt ist für Muskelmasse und Maximalkraft weitgehend unbegründet.",
+  "goals": {"primary": "wellbeing", "secondary": ["strength", "endurance"]},
+  "nutrition": "maintenance",
+  "load_fit": "high",
+  "level": "beginner–intermediate",
+  "session_min": 45,
+  "weeks": {"min": 8, "max": 12},
+  "travel": true,
+  "modules": ["correctives", "beast"],
+  "successors": ["knight", "pilgrim", "olympian"],
+  "sources": ["Schumann et al. (2022)"],
+  "week_4": ["kraft_a", "ausdauer_ruhig", "kraft_b", "ausdauer_intensiv"],
+  "week_3": ["kraft_a", "ausdauer_ruhig", "kraft_b"],
+  "roles": {
+    "kraft_a": {
+      "name": "Kraft A", "location": "gym", "minutes": 45,
+      "warmup": ["base", "lower_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "lo-a-1", "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "lo-a-2", "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "lo-a-3", "name": "Pull-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "3-8", "prog": "ladder", "ladder": ["Band-Assisted Pull-Up", "Pull-Up", "Weighted Pull-Up"], "rest": 120}},
+        {"type": "single", "slot": {"id": "lo-a-4", "name": "Band Pallof Press", "sets": 2, "reps": "12/Seite", "prog": "reps", "rest": 45}}
+      ]
+    },
+    "ausdauer_ruhig": {
+      "name": "Ausdauer ruhig", "location": "reise", "minutes": 45,
+      "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "lo-r-1", "name": "Lockere Grundlage", "kind": "timer", "minutes": 35, "max": 50, "step": 5, "prog": "minutes", "note": "Sprechtempo. Lauf, Rad oder Rudern."}}
+      ]
+    },
+    "kraft_b": {
+      "name": "Kraft B", "location": "gym", "minutes": 45,
+      "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "lo-b-1", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "lo-b-2", "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "lo-b-3", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "lo-b-4", "name": "Walking Lunge", "reise": {"name": "Walking Lunge", "prog": "reps"}, "sets": 2, "reps": "10/Seite", "prog": "double", "rest": 90}}
+      ]
+    },
+    "ausdauer_intensiv": {
+      "name": "Ausdauer intensiv", "location": "home", "minutes": 30,
+      "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
+      "blocks": [
+        {"type": "beast", "id": "lo-i-1", "classes": ["bestie"], "draw": "rotate"}
+      ]
+    }
+  }
+}

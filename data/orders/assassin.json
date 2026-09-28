@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "id": "assassin",
+  "name": "Assassin",
+  "tagline": "Fett runter, Kraft halten, Bewegung schärfen.",
+  "description": "Leichtes Defizit bei vollem Kraftreiz über Maschinen und Kabel, dazu ein Tag für Doppelmesser und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
+  "goals": {"primary": "fatloss", "secondary": ["strength", "skill"]},
+  "nutrition": "deficit",
+  "load_fit": "high",
+  "level": "intermediate",
+  "session_min": 45,
+  "weeks": {"min": 8, "max": 10},
+  "test_week": true,
+  "travel": true,
+  "modules": ["correctives", "doppelmesser", "beast"],
+  "successors": ["witcher", "soldier"],
+  "week_4": ["kraft_a", "arme_schultern", "skill_kondition", "kraft_b"],
+  "week_3": ["kraft_a", "skill_kondition", "kraft_b"],
+  "roles": {
+    "kraft_a": {
+      "name": "Kraft A", "location": "gym", "minutes": 50,
+      "warmup": ["short_base", "thoracic_roller", "dislocate", "lower_prep", "hip9090", "muscleup_tech"],
+      "cooldown": ["cd_mdf"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "ka-5", "name": "Cable Chest Fly", "home": "DB Fly", "reise": {"name": "Band Fly", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "ka-8", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "ka-1", "name": "Leg Press", "home": "Goblet Squat", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "ka-2", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "6-8", "prog": "reps"}, "reise": {"name": "Nordic Curl Negative", "reps": "6-8", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "ka-3", "name": "Lat Pulldown (Overhand)", "home": {"name": "Pull-Up", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "ka-4", "name": "Seated Cable Row (Untergriff)", "home": {"name": "1-Arm DB Row", "reps": "8-10/Seite"}, "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "ka-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "ka-7", "name": "Cable Woodchopper", "home": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double", "rest": 60}}
+      ]
+    },
+    "arme_schultern": {
+      "name": "Arme und Schultern", "location": "gym", "minutes": 30,
+      "note": "Kurz und ohne Schwitzen, passt ins Büro.",
+      "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"],
+      "cooldown": ["cd_di"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "kas-1", "name": "Shoulder Press Machine", "home": "DB Shoulder Press", "reise": {"name": "Pike Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "kas-3", "name": "Cable Rear Delt Fly", "home": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "kas-5", "name": "Cable Biceps Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 60}}
+      ]
+    },
+    "skill_kondition": {
+      "name": "Schwert und Bestie", "location": "home", "minutes": 45,
+      "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep", "neck_complex", "doppelmesser_prep"],
+      "cooldown": ["cd_mdf", "cd_ball"],
+      "blocks": [
+        {"type": "module", "module": "doppelmesser", "variant": "einzelmesser", "fallback": {"id": "sk-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 12, "prog": "none"}},
+        {"type": "beast", "id": "sk-beast", "pool": ["ng-agir", "ng-saga", "ng-odin", "ng-jormungandr", "ng-nanna", "ng-ran", "ng-fenja", "ng-thorsson", "ng-kvasir", "ng-hel", "ng-garm", "ng-orvar"], "draw": "rotate", "note": "Auf Zeit. Bei −1 Satz eine Bestie der Klasse Plage."}
+      ]
+    },
+    "kraft_b": {
+      "name": "Kraft B", "location": "gym", "minutes": 50,
+      "warmup": ["short_base", "lat_box", "dislocate", "core_prep", "hip9090"],
+      "cooldown": ["cd_mdf"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "kb-1", "name": "Cable Pull-Through", "home": "DB Romanian Deadlift", "reise": {"name": "Band Pull-Through", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "kb-2", "name": "Leg Extension", "home": {"name": "Bulgarian Split Squat", "reps": "8-10/Seite"}, "reise": {"name": "Bulgarian Split Squat", "reps": "12-15/Seite", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "kb-3", "name": "Chest Press Machine", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "kb-4", "name": "Lat Pulldown (V-Griff)", "home": {"name": "Pull-Up (Close Grip)", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "kb-5", "name": "Seated Row (zwei Seilzüge)", "home": {"name": "1-Arm DB Row", "reps": "8-10/Seite"}, "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "kb-6", "name": "Rope Crunch", "home": "Weighted Sit-Up", "reise": {"name": "Sit-Up", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "kb-7", "name": "Cable Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "kb-8", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": {"name": "Single-Leg Calf Raise", "reps": "15-20/Seite", "prog": "reps"}, "sets": 3, "reps": "15", "prog": "double", "rest": 60}}
+      ]
+    }
+  }
+}

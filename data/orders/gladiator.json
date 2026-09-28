@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "id": "gladiator",
+  "name": "Gladiator",
+  "tagline": "Physis aufbauen, Kondition über das Schwert.",
+  "description": "Zweite Aufbauwelle ohne Kontrasttraining. Oberkörper und Unterkörper im Studio, kurze Arm-Einheit, zuhause mit Gewichtsweste und Schwert-Intervallen. Übungen variieren gegenüber Witcher. In Woche 8 ein kurzer Kraftcheck über Top-Sätze.",
+  "goals": {"primary": "hypertrophy", "secondary": ["skill", "conditioning"]},
+  "nutrition": "surplus",
+  "load_fit": "high",
+  "level": "intermediate",
+  "session_min": 60,
+  "weeks": {"min": 12, "max": 15},
+  "deload_weeks": [8],
+  "travel": true,
+  "modules": ["correctives", "doppelmesser"],
+  "successors": ["conqueror", "troubadour"],
+  "sources": ["Iraki et al. (2019)", "Maeo et al. (2021)"],
+  "week_4": ["oberkoerper", "arme_kurz", "home_weste_schwert", "unterkoerper"],
+  "week_3": ["oberkoerper", "home_weste_schwert", "unterkoerper"],
+  "roles": {
+    "oberkoerper": {
+      "name": "Oberkörper", "location": "gym", "minutes": 60,
+      "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep"], "cooldown": ["cd_mdf"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "gl-mo-1", "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "gl-mo-2", "name": "Weighted Pull-Up", "home": {"name": "Pull-Up + Weste", "reps": "6-8"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "gl-mo-3", "name": "Weighted Dip", "home": "Ring Dip + Weste", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "gl-mo-4", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "gl-mo-5", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}}
+      ]
+    },
+    "arme_kurz": {
+      "name": "Arme kurz", "location": "gym", "minutes": 30,
+      "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"], "cooldown": ["cd_di"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "gl-di-1", "name": "Bayesian Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "gl-di-2", "name": "Rope Pushdown", "home": "DB Kickback", "reise": {"name": "Band Pushdown", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "gl-di-3", "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 2, "reps": "15", "prog": "double", "rest": 60}}
+      ]
+    },
+    "home_weste_schwert": {
+      "name": "Weste und Schwert", "location": "home", "minutes": 55,
+      "warmup": ["short_base", "thoracic_roller", "dislocate", "doppelmesser_prep"], "cooldown": ["cd_mdf", "cd_ball"],
+      "blocks": [
+        {"type": "module", "module": "doppelmesser", "variant": "wechselhau", "fallback": {"id": "gl-do-fb", "name": "Shadow Boxing", "kind": "timer", "minutes": 8, "prog": "none"}},
+        {"type": "single", "slot": {"id": "gl-do-2", "name": "Deficit Push-Up + Weste", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "gl-do-3", "name": "Chin-Up + Weste", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "6-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "gl-do-4", "name": "Bulgarian Split Squat + Weste", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
+        {"type": "module", "module": "doppelmesser", "variant": "intervalle", "fallback": {"id": "gl-do-fb2", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 40, "rounds": 8}, "prog": "none"}}
+      ]
+    },
+    "unterkoerper": {
+      "name": "Unterkörper", "location": "gym", "minutes": 60,
+      "warmup": ["short_base", "lat_box", "lower_prep", "hip9090"], "cooldown": ["cd_mdf"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "gl-fr-1", "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 180}},
+        {"type": "single", "slot": {"id": "gl-fr-2", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "gl-fr-3", "name": "Leg Press", "home": "Sandbag Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "gl-fr-4", "name": "Seated Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "gl-fr-5", "name": "Standing Calf Raise", "home": {"name": "Single-Leg Calf Raise", "reps": "12-20/Seite", "prog": "reps"}, "sets": 4, "reps": "10-15", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "gl-fr-6", "name": "Overhead Press", "home": "DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "gl-fr-7", "name": "Hanging Leg Raise", "sets": 3, "reps": "10-15", "prog": "reps", "rest": 60}}
+      ]
+    }
+  }
+}

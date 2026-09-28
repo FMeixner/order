@@ -1,0 +1,38 @@
+{
+  "name": "order",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "validate": "node scripts/validate.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -b",
+    "build": "npm run validate && tsc -b && vite build",
+    "build:single": "SINGLE=1 vite build",
+    "preview": "vite preview",
+    "lint": "oxlint"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^5.0.2"
+  },
+  "description": "Order: Trainingsjahr in Blöcken. Orden wählen, Equipment eintragen, trainieren.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FMeixner/order"
+  },
+  "homepage": "https://fmeixner.github.io/order/"
+}

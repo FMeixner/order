@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "id": "alchemist",
+  "name": "Alchemist",
+  "tagline": "Langsam, statisch, kontrolliert.",
+  "description": "Langsame Bewegung, statische Kraft, Meditation und Arbeit an Kraft und Kontrolle in den Endpositionen. Keine Haltungskorrektur versprochen: Dass eine „schlechte“ Haltung Rückenschmerzen verursacht, ist nicht belegt. Isometrische Halte senken nachweislich den Ruheblutdruck.",
+  "goals": {"primary": "mobility", "secondary": ["wellbeing", "strength"]},
+  "nutrition": "maintenance",
+  "load_fit": "high",
+  "level": "beginner",
+  "session_min": 40,
+  "weeks": {"min": 8, "max": 12},
+  "travel": true,
+  "modules": ["correctives"],
+  "successors": ["monk", "acrobat", "troubadour"],
+  "sources": ["Swain et al. (2020)", "Edwards et al. (2023)"],
+  "week_4": ["flow", "haltung_kraft", "statik", "flow_ruhe"],
+  "week_3": ["flow", "haltung_kraft", "statik"],
+  "roles": {
+    "flow": {
+      "name": "Flow", "location": "reise", "minutes": 35,
+      "warmup": ["gentle"], "cooldown": [],
+      "blocks": [
+        {"type": "single", "slot": {"id": "ma-f-1", "name": "Langsamer Flow (Tai-Chi-artig)", "kind": "timer", "minutes": 20, "prog": "none", "note": "Gewicht langsam von Bein zu Bein verlagern, Arme folgen dem Atem."}},
+        {"type": "single", "slot": {"id": "ma-f-2", "name": "Meditation", "kind": "timer", "minutes": 10, "max": 20, "step": 1, "prog": "minutes"}}
+      ]
+    },
+    "haltung_kraft": {
+      "name": "Kraft in Endpositionen", "location": "home", "minutes": 40,
+      "warmup": ["base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "ma-h-1", "name": "Scapular Wall Slide", "sets": 3, "reps": "10-12", "prog": "reps", "rest": 45}},
+        {"type": "single", "slot": {"id": "ma-h-2", "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "reps", "rest": 45}},
+        {"type": "single", "slot": {"id": "ma-h-3", "name": "Chin Tuck mit Halten", "kind": "hold", "hold": 5, "sets": 10, "prog": "none", "rest": 5}},
+        {"type": "single", "slot": {"id": "ma-h-4", "name": "Jefferson Curl", "reise": {"name": "Jefferson Curl (ohne Last)", "prog": "reps"}, "sets": 2, "reps": "8", "prog": "weight", "rest": 60}},
+        {"type": "single", "slot": {"id": "ma-h-5", "name": "Stock-Ausschultern", "sets": 2, "reps": "10", "prog": "none", "rest": 30, "note": "Griff enger, wenn es leicht geht."}}
+      ]
+    },
+    "statik": {
+      "name": "Statik", "location": "home", "minutes": 35,
+      "warmup": ["base"], "cooldown": ["cd_calm"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "ma-s-1", "name": "Wall Sit", "kind": "hold", "hold": 45, "max": 120, "step": 10, "sets": 4, "prog": "hold", "rest": 120}},
+        {"type": "single", "slot": {"id": "ma-s-2", "name": "L-Sit (Tuck)", "kind": "hold", "hold": 10, "sets": 4, "prog": "ladder", "ladder": ["L-Sit (Tuck)", "L-Sit (ein Bein)", "L-Sit"], "rest": 60}},
+        {"type": "single", "slot": {"id": "ma-s-3", "name": "Dead Hang", "kind": "hold", "hold": 30, "max": 90, "step": 5, "sets": 3, "prog": "hold", "rest": 60}},
+        {"type": "single", "slot": {"id": "ma-s-4", "name": "Hollow Hold", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 3, "prog": "hold", "rest": 45}}
+      ]
+    },
+    "flow_ruhe": {
+      "name": "Flow und Gehen", "location": "reise", "minutes": 35,
+      "warmup": [], "cooldown": [],
+      "blocks": [
+        {"type": "single", "slot": {"id": "ma-r-1", "name": "Langsamer Flow, freie Sequenz", "kind": "timer", "minutes": 20, "prog": "none"}},
+        {"type": "single", "slot": {"id": "ma-r-2", "name": "Zügiger Spaziergang", "kind": "timer", "minutes": 15, "prog": "none"}}
+      ]
+    }
+  }
+}

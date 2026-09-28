@@ -1,0 +1,52 @@
+import { useState } from "react";
+import { isoDate } from "./engine/plan";
+import { useAppState } from "./store";
+import { FociBrowser } from "./ui/FociBrowser";
+import { LogView } from "./ui/LogView";
+import { Onboarding } from "./ui/Onboarding";
+import { PlanList } from "./ui/PlanEditor";
+import { Setup } from "./ui/Setup";
+import { TimerBar, TimerProvider } from "./ui/Timer";
+import { Today } from "./ui/Today";
+import { unlockAudio } from "./audio";
+
+type Tab = "heute" | "plan" | "foki" | "log" | "setup";
+const TABS: { k: Tab; l: string }[] = [
+  { k: "heute", l: "Heute" }, { k: "plan", l: "Plan" }, { k: "foki", l: "Orden" }, { k: "log", l: "Log" }, { k: "setup", l: "Setup" },
+];
+
+export default function App() {
+  const [state, update, replace] = useAppState();
+  const [tab, setTab] = useState<Tab>("heute");
+  const today = isoDate(new Date());
+
+  if (!state.onboarded) {
+    return <div className="app" onPointerDown={unlockAudio}><Onboarding state={state} update={update} replace={replace} today={today} /></div>;
+  }
+  return (
+    <TimerProvider>
+      <div className="app" onPointerDown={unlockAudio}>
+        <header className="topbar">
+          <div className="brand">Order</div>
+          {state.user.name && <div className="muted small">{state.user.name}</div>}
+        </header>
+        <main className="main">
+          {tab === "heute" && <Today state={state} update={update} today={today} goPlan={() => setTab("plan")} />}
+          {tab === "plan" && (
+            <div className="stack">
+              <p className="muted">Dein Jahr in Phasen. Tippe eine Phase an, um Zeitraum, Alltagslast oder Orden zu ändern.</p>
+              <PlanList plan={state.plan} profiles={state.equipment} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
+            </div>
+          )}
+          {tab === "foki" && <FociBrowser />}
+          {tab === "log" && <LogView state={state} />}
+          {tab === "setup" && <Setup state={state} update={update} replace={replace} today={today} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
+        </main>
+        <TimerBar />
+        <nav className="tabbar">
+          {TABS.map((t) => <button key={t.k} className={tab === t.k ? "on" : ""} onClick={() => setTab(t.k)}>{t.l}</button>)}
+        </nav>
+      </div>
+    </TimerProvider>
+  );
+}

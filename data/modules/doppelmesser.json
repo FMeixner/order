@@ -1,0 +1,25 @@
+{
+  "_info": "Doppelmesser-Modul. Nur aktiv, wenn es im Profil eingeschaltet ist. Sonst greift der fallback-Slot der Rolle. rotation A = ungerade Blockwoche, B = gerade.",
+  "variants": {
+    "einzelmesser": [
+      {"id": "md-zornhau", "name": "Zornhau", "mode": "reps", "value": 15, "sets": 2, "sides": true, "note": "Einzelmesser · bewusst langsam", "desc": "Startposition Mittelwache. Diagonal von der Schulter schräg nach unten zur gegenüberliegenden Hüfte. Bewegung kommt aus einer kleinen Rumpfdrehung, nicht nur dem Arm. Kontrolliertes Abbremsen am Endpunkt."},
+      {"id": "md-zwerchhau", "name": "Zwerchhau", "mode": "reps", "value": 15, "sets": 2, "sides": true, "note": "Einzelmesser · bewusst langsam", "desc": "Ellbogen auf Schulterhöhe angehoben. Rohr horizontal auf Kopfhöhe von einer Seite zur anderen führen, zurück in die Ausgangsposition."},
+      {"id": "md-scheitelhau", "name": "Scheitelhau", "mode": "reps", "value": 15, "sets": 2, "sides": true, "note": "Einzelmesser · bewusst langsam", "desc": "Rohr über der Schulter, Spitze schräg nach hinten-oben. Senkrecht von oben nach unten vor dem Körper führen, am unteren Punkt abbremsen, nicht durchschlagen."},
+      {"id": "md-kombi", "name": "Kombiform: Zorn → Zwerch → Scheitel", "mode": "reps", "value": 5, "sets": 2, "sides": true, "rotation": "A", "note": "Woche A · fließende Übergänge", "desc": "Die drei Hiebe ohne Rückkehr in die Wache verbinden: Zornhau endet unten-innen an der Hüfte, das Rohr steigt über die Gegenseite direkt in die Zwerchhau-Position, Zwerchhau auf Kopfhöhe, Rohr über die Schulter nach hinten-oben, Scheitelhau senkrecht, unten abbremsen, erst jetzt zurück in die Mittelwache."},
+      {"id": "md-kombi-b", "name": "Kombiform: Scheitel → Zorn → Zwerch", "mode": "reps", "value": 5, "sets": 2, "sides": true, "rotation": "B", "note": "Woche B · andere Übergänge", "desc": "Scheitelhau senkrecht, unten abbremsen, Rohr steigt diagonal auf die Schulter der Hiebseite direkt in die Zornhau-Ausholbewegung, Zornhau endet an der gegenüberliegenden Hüfte, Ellbogen hebt sich auf Schulterhöhe, Zwerchhau auf Kopfhöhe, dann Mittelwache. Schwierigste Stelle: Übergang von unten nach oben, Rohr eng am Körper führen."}
+    ],
+    "bookend": [
+      {"id": "md-bookend", "name": "Doppelmesser: Hiebe fließend (Einzelmesser)", "mode": "activity", "value": 300, "note": "5 Minuten · locker, sauber", "desc": "Zornhau, Zwerchhau und Scheitelhau im Wechsel, beide Seiten, ruhiges Tempo. Als Einstieg und als Ausklang des Tages."}
+    ],
+    "wechselhau": [
+      {"id": "md-wechselhau", "name": "Wechselhau", "mode": "reps", "value": 10, "sets": 2, "sides": true, "note": "Technik · Zeitlupe zuerst", "desc": "Mittelwache. Diagonal wie beim Zornhau, aber mit Handumkehr in der Bewegung: Die Handfläche dreht sich während der Bahn. Zurück in die Mittelwache, Griff wieder normal."},
+      {"id": "md-wechselreihe", "name": "Wechselreihe: Zorn → Wechsel → Scheitel", "mode": "reps", "value": 5, "sets": 2, "sides": true, "note": "fließende Übergänge", "desc": "Zornhau, ohne Rückkehr in die Wache direkt in den Wechselhau, dann Scheitelhau. Erst langsam, Tempo erst steigern, wenn die Handumkehr sauber sitzt."}
+    ],
+    "intervalle": [
+      {"id": "md-intervals", "name": "Schwert-Intervalle: Wechselhau-Serien", "mode": "activity", "value": 45, "sets": 8, "weekly_step": 5, "max": 60, "note": "8 × 45 s Arbeit, 45 s Pause · +5 s pro Woche bis 60 s", "desc": "Hiebserien mit Wechselhau im zügigen Tempo, beide Seiten im Wechsel. Technik geht vor Tempo: Wenn die Hiebe unsauber werden, Serie beenden."}
+    ],
+    "technik20": [
+      {"id": "md-tech20", "name": "Doppelmesser: Einzelmesser und Kombiformen", "mode": "activity", "value": 1200, "note": "20 Minuten", "desc": "Hiebe einzeln, dann die Kombiformen der Woche. Ruhiges Tempo, saubere Übergänge."}
+    ]
+  }
+}

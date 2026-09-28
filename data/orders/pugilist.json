@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "id": "pugilist",
+  "name": "Pugilist",
+  "tagline": "Rumpf, Nacken, Runden.",
+  "description": "Kampfsportnahes Training: Rumpf, Nacken, Rotationskraft und Kondition in Runden (Arbeit und Pause wie im Ring). Das Kampfmodul ist Schattenboxen, bei eingeschaltetem Doppelmesser das Schwert.",
+  "goals": {"primary": "conditioning", "secondary": ["skill", "strength"]},
+  "nutrition": "maintenance",
+  "load_fit": "medium",
+  "level": "beginner–intermediate",
+  "session_min": 45,
+  "weeks": {"min": 8, "max": 10},
+  "test_week": true,
+  "travel": true,
+  "modules": ["correctives", "beast", "doppelmesser"],
+  "successors": ["huntsman", "king", "olympian"],
+  "week_4": ["runden_technik", "kraft_rotation", "runden_kondition", "nacken_rumpf"],
+  "week_3": ["runden_technik", "kraft_rotation", "runden_kondition"],
+  "roles": {
+    "runden_technik": {
+      "name": "Technikrunden", "location": "reise", "minutes": 40,
+      "warmup": ["base", "neck_complex"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "module", "module": "doppelmesser", "variant": "einzelmesser", "fallback": {"id": "fi-t-1", "name": "Schattenboxen: Technikrunden", "kind": "interval", "interval": {"work": 180, "rest": 60, "rounds": 4}, "prog": "none"}},
+        {"type": "single", "slot": {"id": "fi-t-2", "name": "Beinarbeit-Drill (Linien)", "kind": "interval", "interval": {"work": 60, "rest": 30, "rounds": 3}, "prog": "none"}},
+        {"type": "superset", "label": "Nacken", "rest": 45, "slots": [
+          {"id": "fi-t-3a", "name": "Neck Curl", "sets": 2, "reps": "15", "prog": "reps"},
+          {"id": "fi-t-3b", "name": "Neck Extension", "sets": 2, "reps": "15", "prog": "reps"}
+        ]}
+      ]
+    },
+    "kraft_rotation": {
+      "name": "Kraft und Rotation", "location": "home", "minutes": 45,
+      "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "fi-r-1", "name": "Medicine Ball Rotational Throw", "reise": {"name": "Band Woodchopper", "reps": "10/Seite", "prog": "reps"}, "sets": 4, "reps": "5/Seite", "prog": "none", "rest": 60}},
+        {"type": "single", "slot": {"id": "fi-r-2", "name": "Cable Woodchopper", "home": "KB Woodchop", "reise": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "10/Seite", "prog": "double", "rest": 60}},
+        {"type": "superset", "label": "Superset", "rest": 60, "slots": [
+          {"id": "fi-r-3a", "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "double"},
+          {"id": "fi-r-3b", "name": "Push-Up", "sets": 3, "reps": "8-15", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"]}
+        ]},
+        {"type": "single", "slot": {"id": "fi-r-4", "name": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "double", "rest": 60}}
+      ]
+    },
+    "runden_kondition": {
+      "name": "Konditionsrunden", "location": "home", "minutes": 40,
+      "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "fi-k-1", "name": "Intensivrunden: Serien, hohes Tempo", "kind": "interval", "interval": {"work": 120, "rest": 60, "rounds": 5}, "prog": "none", "note": "Schattenboxen oder Doppelmesser, je nach Modul."}},
+        {"type": "beast", "id": "fi-k-2", "classes": ["plage", "bestie"], "draw": "rotate"}
+      ]
+    },
+    "nacken_rumpf": {
+      "name": "Nacken und Rumpf", "location": "home", "minutes": 40,
+      "warmup": ["base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "fi-n-1", "name": "Nackenisometrie, 4 Richtungen", "kind": "hold", "hold": 20, "max": 40, "step": 5, "sets": 4, "prog": "hold", "rest": 20, "note": "Hand gegen den Kopf, je Richtung ein Satz."}},
+        {"type": "superset", "label": "Rumpf", "rest": 45, "slots": [
+          {"id": "fi-n-2a", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"},
+          {"id": "fi-n-2b", "name": "Band Pallof Press", "sets": 3, "reps": "12/Seite", "prog": "reps"}
+        ]},
+        {"type": "single", "slot": {"id": "fi-n-3", "name": "Turkish Get-Up", "reise": {"name": "Turkish Get-Up (ohne Last)", "prog": "reps"}, "sets": 3, "reps": "2/Seite", "prog": "weight", "rest": 60}},
+        {"type": "single", "slot": {"id": "fi-n-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}}
+      ]
+    }
+  }
+}

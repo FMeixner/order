@@ -1,0 +1,108 @@
+{
+  "_info": "Warm-up- und Cool-down-Listen. Rollen verweisen per Name auf diese Listen. mode: hold (Sekunden halten), reps (Wiederholungen), activity (Sekunden in Bewegung). sides: true = links/rechts. asym: Seite mit Defizit bekommt mehr (Einstellung im Profil).",
+  "lists": {
+    "base": [
+      {"id": "wu-catcow", "name": "Cat-Cow", "mode": "activity", "value": 40, "desc": "Auf allen Vieren abwechselnd Rücken rund machen (ausatmen, Kinn zur Brust) und ins Hohlkreuz gehen (einatmen, Blick nach vorn). Fließend, volle Wirbelsäulenbewegung."},
+      {"id": "wu-neck", "name": "Neck Lateral Stretch", "mode": "hold", "value": 20, "sides": true, "asym": "neck", "desc": "Ohr sanft zur Schulter neigen, bis seitlich am Hals Zug spürbar ist. Gegenüberliegende Schulter bewusst unten lassen."},
+      {"id": "wu-chin", "name": "Chin Tucks", "mode": "reps", "value": 10, "desc": "Aufrecht, Blick geradeaus. Kinn waagerecht nach hinten schieben (Doppelkinn), 2 Sekunden halten, lösen. Nicht nicken."},
+      {"id": "wu-dislocate", "name": "Stock-Ausschultern", "mode": "reps", "value": 10, "desc": "Stock oder Band mit gestreckten Armen weit greifen, über den Kopf nach hinten und zurück. Ellbogen gestreckt, kein Hohlkreuz."},
+      {"id": "wu-9090", "name": "90/90 Hip Rotations", "mode": "hold", "value": 25, "sides": true, "asym": "hip", "desc": "Am Boden sitzend beide Beine im 90°-Winkel ablegen. Aus der Hüfte zur Seite rotieren und in der Endposition halten, Oberkörper aufrecht."}
+    ],
+    "short_base": [
+      {"id": "wu-catcow", "name": "Cat-Cow", "mode": "activity", "value": 40, "desc": "Auf allen Vieren abwechselnd Rücken rund machen und ins Hohlkreuz gehen. Fließend und langsam."},
+      {"id": "wu-neck", "name": "Neck Lateral Stretch", "mode": "hold", "value": 20, "sides": true, "asym": "neck", "desc": "Ohr sanft zur Schulter neigen. Gegenüberliegende Schulter unten lassen."},
+      {"id": "wu-chin", "name": "Chin Tucks", "mode": "reps", "value": 10, "desc": "Kinn waagerecht nach hinten schieben, 2 Sekunden halten. Nicht nicken."}
+    ],
+    "hip9090": [
+      {"id": "wu-9090", "name": "90/90 Hip Rotations", "mode": "hold", "value": 25, "sides": true, "asym": "hip", "desc": "Beide Beine im 90°-Winkel ablegen, aus der Hüfte zur Seite rotieren und halten."}
+    ],
+    "dislocate": [
+      {"id": "wu-dislocate", "name": "Stock-Ausschultern", "mode": "reps", "value": 10, "desc": "Stock mit gestreckten Armen weit greifen, über den Kopf nach hinten und zurück."}
+    ],
+    "windmill": [
+      {"id": "wu-windmill", "name": "Armwindmühle, langsam", "mode": "reps", "value": 10, "sides": ["vorwärts", "rückwärts"], "desc": "Gestreckte Arme in großen, langsamen Kreisen. Keine Schwungbewegung."}
+    ],
+    "thoracic_roller": [
+      {"id": "wu-thor-roll", "name": "Thoracic Extension: Foamroller + Stock", "mode": "activity", "value": 60, "desc": "Foamroller quer unter der Brustwirbelsäule, Stock über Kopf. Segmentweise über die Rolle nach hinten strecken, Becken bleibt am Boden."}
+    ],
+    "thoracic_standing": [
+      {"id": "wu-thor-stand", "name": "Thoracic Extension: Bend Back im Stehen", "mode": "reps", "value": 8, "desc": "Stehend, Brustbein nach oben-hinten führen, Becken bleibt über den Füßen. Kein Knick in der Lendenwirbelsäule."}
+    ],
+    "lat_box": [
+      {"id": "wu-latbox", "name": "Lat Stretch an der Box", "mode": "hold", "value": 30, "sets": 2, "desc": "Kniend vor Box oder Bank, Ellbogen auflegen, Brust Richtung Boden sinken lassen, Gesäß zurück."}
+    ],
+    "lower_prep": [
+      {"id": "wu-sqtoe", "name": "Squat to Toe Touch", "mode": "reps", "value": 10, "desc": "Zehen greifen, Gesäß tief in die Hocke, Brust aufrichten, dann Beine strecken, ohne die Zehen loszulassen."},
+      {"id": "wu-bridge", "name": "Glute Bridge", "mode": "reps", "value": 12, "desc": "Rückenlage, Füße aufgestellt, Becken heben, bis Knie, Hüfte und Schulter eine Linie bilden. Oben kurz halten."}
+    ],
+    "shoulder_prep": [
+      {"id": "wu-bander", "name": "Band External Rotation", "mode": "reps", "value": 15, "sides": true, "asym": "shoulder_er", "desc": "Oberarm am Körper, Ellbogen 90°, Band nach außen rotieren. Leichtes Band, ruhiges Tempo."},
+      {"id": "wu-wallslide", "name": "Scapular Wall Slides", "mode": "reps", "value": 10, "desc": "Rücken und Unterarme an der Wand, Arme langsam nach oben gleiten lassen, Wandkontakt halten."}
+    ],
+    "db_er": [
+      {"id": "wu-dber", "name": "DB External Rotation", "mode": "reps", "value": 12, "sides": true, "asym": "shoulder_er", "desc": "Oberarm am Körper, Ellbogen 90°, leichte Kurzhantel kontrolliert nach außen rotieren."},
+      {"id": "wu-wallslide", "name": "Scapular Wall Slides", "mode": "reps", "value": 10, "desc": "Rücken und Unterarme an der Wand, Arme langsam nach oben gleiten lassen."}
+    ],
+    "neck_complex": [
+      {"id": "wu-neckkb", "name": "Neck Curl Complex (leichte KB)", "mode": "reps", "value": 20, "sets": 2, "sides": ["vorwärts", "links", "rückwärts", "rechts"], "desc": "Je 20 Wiederholungen in alle vier Richtungen, 2 Runden. Langsam, voller Bewegungsumfang, kein Ruck."}
+    ],
+    "core_prep": [
+      {"id": "wu-trxjack", "name": "TRX Plank Jacks", "mode": "reps", "value": 14, "sets": 2, "desc": "Füße in den Schlaufen, Stütz. Beine auseinander und zusammen springen, Becken bleibt ruhig."},
+      {"id": "wu-sidebend", "name": "Side Bends", "mode": "reps", "value": 20, "sides": true, "desc": "Stehend locker zur Seite neigen. Warm-up, nicht bis zur Ermüdung."},
+      {"id": "wu-slraise", "name": "Single Leg Raises", "mode": "reps", "value": 8, "sets": 2, "sides": true, "desc": "Rückenlage, ein Bein gestreckt langsam heben und senken, Lendenwirbelsäule bleibt am Boden."}
+    ],
+    "muscleup_tech": [
+      {"id": "wu-mu", "name": "Muscle-Ups (Technik)", "mode": "reps", "value": 5, "desc": "5 saubere, kontrollierte Wiederholungen als Technikübung. Beim ersten Ziehen im Ellbogen für heute streichen."}
+    ],
+    "jump_prep": [
+      {"id": "wu-askip", "name": "A-Skips", "mode": "activity", "value": 30, "desc": "Knie abwechselnd hochziehen, kurzer aktiver Bodenkontakt auf dem Vorfuß."},
+      {"id": "wu-pogo", "name": "Pogo Hops", "mode": "reps", "value": 15, "sets": 2, "desc": "Kleine, schnelle Sprünge aus dem Sprunggelenk, Knie fast gestreckt."},
+      {"id": "wu-landing", "name": "Landing Practice", "mode": "reps", "value": 5, "sets": 2, "desc": "Aus kleinem Sprung leise landen: Hüfte zurück, Knie über den Zehen, sofort stabil."}
+    ],
+    "run_prep": [
+      {"id": "wu-walk", "name": "Zügig Gehen", "mode": "activity", "value": 180, "desc": "Drei Minuten zügig gehen, dann in lockeres Traben übergehen."},
+      {"id": "wu-legswing", "name": "Leg Swings", "mode": "reps", "value": 10, "sides": true, "desc": "An einer Wand abstützen, Bein locker vor und zurück schwingen."}
+    ],
+    "gentle": [
+      {"id": "wu-catcow", "name": "Cat-Cow", "mode": "activity", "value": 40, "desc": "Auf allen Vieren abwechselnd Rücken rund und ins Hohlkreuz. Fließend."},
+      {"id": "wu-breath", "name": "Ruhig atmen im Sitzen", "mode": "activity", "value": 60, "desc": "Aufrecht sitzen, vier Sekunden ein, sechs Sekunden aus."},
+      {"id": "wu-9090", "name": "90/90 Hip Rotations", "mode": "hold", "value": 25, "sides": true, "asym": "hip", "desc": "Beide Beine im 90°-Winkel, aus der Hüfte rotieren und halten."}
+    ],
+    "doppelmesser_prep": [
+      {"id": "dm-glide", "name": "Gleitschritt", "mode": "reps", "value": 10, "sides": ["vorwärts", "rückwärts"], "desc": "Aus der Grundauslage kleiner Schritt nach vorne, hinterer Fuß zieht im gleichen Abstand nach. Fußsohlen nah am Boden, kein Hüpfen."},
+      {"id": "dm-still", "name": "Stillschritt", "mode": "reps", "value": 10, "sides": ["vorwärts", "rückwärts"], "desc": "Wie der Gleitschritt, aber so leise wie möglich abrollen, erst Ballen, dann Ferse."}
+    ],
+
+    "cd_general": [
+      {"id": "cd-neckfwd", "name": "Neck Forward Flexion Stretch", "mode": "hold", "value": 30, "desc": "Kinn sanft zur Brust, Schultern unten lassen."},
+      {"id": "cd-pigeon", "name": "Pigeon Stretch", "mode": "hold", "value": 30, "sides": true, "asym": "hip", "desc": "Vorderes Bein angewinkelt vor dem Körper, hinteres lang nach hinten. Dehnt Hüftaußenrotatoren und Gesäß."},
+      {"id": "cd-doorway", "name": "Doorway Stretch", "mode": "hold", "value": 30, "sides": true, "desc": "Unterarm in 90° an den Türrahmen, Körper langsam nach vorn drehen, bis die Brust dehnt."},
+      {"id": "cd-child", "name": "Child's Pose", "mode": "hold", "value": 45, "desc": "Kniend, Gesäß zu den Fersen, Arme lang nach vorn, ruhig atmen."}
+    ],
+    "cd_lower": [
+      {"id": "cd-couch", "name": "Couch Stretch", "mode": "hold", "value": 30, "sides": true, "desc": "Hinteres Knie an der Wand oder am Sofa, Fuß hoch, Becken nach vorn schieben. Dehnt Hüftbeuger und Oberschenkel vorn."},
+      {"id": "cd-wallhinge", "name": "Wall Hinge Stretch", "mode": "hold", "value": 45, "desc": "Gesäß an die Wand, Beine fast gestreckt, aus der Hüfte nach vorn beugen, Rücken lang."},
+      {"id": "cd-pigeon", "name": "Pigeon Stretch", "mode": "hold", "value": 30, "sides": true, "asym": "hip", "desc": "Vorderes Bein angewinkelt, hinteres lang nach hinten."}
+    ],
+    "cd_mdf": [
+      {"id": "cd-neckfwd", "name": "Neck Forward Flexion Stretch", "mode": "hold", "value": 30, "desc": "Kinn sanft zur Brust, Schultern unten lassen."},
+      {"id": "cd-straddle", "name": "Straddle Forward Bend", "mode": "hold", "value": 45, "desc": "Grätschsitz, Beine gestreckt, aus der Hüfte nach vorn sinken, Rücken lang."},
+      {"id": "cd-ring", "name": "Lying Ring Stretch", "mode": "hold", "value": 25, "desc": "Bauchlage, Hände neben der Brust, Oberkörper langsam aufrichten, Becken bleibt am Boden."},
+      {"id": "cd-doorway", "name": "Doorway Stretch", "mode": "hold", "value": 30, "sides": true, "desc": "Unterarm in 90° an den Türrahmen, Körper langsam nach vorn drehen."}
+    ],
+    "cd_di": [
+      {"id": "cd-neckfwd", "name": "Neck Forward Flexion Stretch", "mode": "hold", "value": 30, "desc": "Kinn sanft zur Brust, Schultern unten lassen."},
+      {"id": "cd-sleeper", "name": "Sleeper Stretch", "mode": "hold", "value": 30, "sides": true, "asym": "shoulder_ir", "desc": "Seitlich liegend, Oberarm 90° zum Körper, Unterarm sanft Richtung Boden drücken."},
+      {"id": "cd-pigeon", "name": "Pigeon Stretch", "mode": "hold", "value": 30, "sides": true, "asym": "hip", "desc": "Vorderes Bein angewinkelt, hinteres lang nach hinten."},
+      {"id": "cd-wallhinge", "name": "Wall Hinge Stretch", "mode": "hold", "value": 45, "desc": "Gesäß an die Wand, aus der Hüfte nach vorn beugen, Rücken lang."}
+    ],
+    "cd_ball": [
+      {"id": "cd-ball", "name": "Black-Roll-Ball: Schulter", "mode": "hold", "value": 30, "sets": 2, "sides": ["vorn", "seitlich", "hinten"], "desc": "Ball zwischen Schulter und Wand, alle drei Schulterköpfe. Erster Satz links, zweiter rechts."}
+    ],
+    "cd_calm": [
+      {"id": "cd-child", "name": "Child's Pose", "mode": "hold", "value": 60, "desc": "Kniend, Gesäß zu den Fersen, Arme lang nach vorn, ruhig atmen."},
+      {"id": "cd-supine-twist", "name": "Liegender Drehsitz", "mode": "hold", "value": 45, "sides": true, "desc": "Rückenlage, Knie zur Seite sinken lassen, Schultern bleiben am Boden."},
+      {"id": "cd-breath", "name": "Atem-Cooldown: 4 ein, 6 aus", "mode": "activity", "value": 120, "desc": "Rückenlage, Hand auf dem Bauch. Vier Sekunden ein, sechs Sekunden aus."}
+    ]
+  }
+}
