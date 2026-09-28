@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.2] – 2026-09-28
+
+### Geändert
+- Neues App-Symbol: Schild mit O statt Säulentempel.
+
 ## [0.8.1] – 2026-09-28
 
 ### Geändert
