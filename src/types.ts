@@ -182,6 +182,9 @@ export const WEEKDAYS: Weekday[] = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 export interface UserProfile {
   name: string;
   asym: { hip: "L" | "R" | null; neck: "L" | "R" | null; shoulder_ir: "L" | "R" | null; shoulder_er: "L" | "R" | null };
+  /** Für die Einordnung der Testwoche. Optional, bleibt auf dem Gerät. */
+  birthYear?: number | null;
+  sex?: "m" | "w" | null;
   /** Veraltet (0.1): wird beim Laden in has.sword der Heim-Profile übernommen */
   doppelmesser?: boolean;
 }
@@ -243,11 +246,39 @@ export interface AppState {
   tests: Record<string, TestResult[]>;
   who5: { date: string; blockId: string; score: number }[];
   feeling: { date: string; sessionId: string; value: number }[];
+  /** Eigene Übungswahl: "slotId:Stufe" → Übungsname. Überlebt Updates der Orden-Dateien. */
+  swaps: Record<string, string>;
 }
 
-export interface TestResult { date: string; blockId: string; value: number; raw: string }
+export interface TestResult { date: string; blockId: string; value: number; raw: string; /** gewählte Variante, z. B. "squat" oder "legpress" */ variant?: string }
 
-export interface TestDef { id: string; name: string; unit: string; attempts: number; better: "higher" | "lower"; desc?: string }
+export interface TestDef {
+  id: string; name: string; unit: string; attempts: number; better: "higher" | "lower"; desc?: string;
+  /** Varianten, zwischen denen man beim Test wählt (z. B. Kniebeuge oder Beinpresse) */
+  variants?: { id: string; name: string }[];
+}
+
+/** Norm für einen Test, gültig für ein Geschlecht und eine Altersspanne.
+    tier A: Bevölkerungs- oder Altersnorm. tier B: Orientierung (ausgewählte Stichprobe, z. B. Wettkampfsportler). */
+export interface Norm {
+  test: string;
+  variant?: string;
+  sex: "m" | "w";
+  age: [number, number];
+  tier: "A" | "B";
+  src: string;
+  type: "pct" | "bands" | "cat" | "ms";
+  /** Umrechnung des Messwerts: cm2m (cm → m), sr26 (Sit and Reach mit 26 cm Versatz), rel1rm (5RM → 1RM ÷ Körpergewicht) */
+  conv?: "cm2m" | "sr26" | "rel1rm";
+  better?: "higher" | "lower";
+  /** Nur zur Orientierung anzeigen, nicht in die Wertung */
+  noScore?: boolean;
+  anchors?: [number, number][];
+  bands?: [number, number, number];
+  cats?: [number | null, string, number][];
+  mean?: number;
+  sd?: number;
+}
 export interface Cup {
   id: string; name: string; place: string; focus: string; warmup: string[];
   tests: TestDef[]; who5?: boolean; benchmark?: { label: string; pool: string[] };

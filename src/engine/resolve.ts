@@ -1,5 +1,5 @@
 /* Wählt für einen Slot die konkrete Übung passend zum Equipment-Profil des Tages. */
-import { EXERCISES, GUIDED } from "../data";
+import { EXERCISES, GUIDED, SWAP_GROUPS } from "../data";
 import type { Choice, Equip, EquipmentProfile, Prog, Slot, SlotKind, Tier } from "../types";
 import { isLoadable, loadScale } from "./loads";
 
@@ -26,7 +26,18 @@ export interface Resolved {
   loadable: boolean;
   /** Geführte Variante statt freier Übung (Phase mit hoher Last) */
   guided?: boolean;
+  /** Vom Nutzer getauschte Übung */
+  swapped?: boolean;
+  /** Übung, die ohne Tausch dran wäre */
+  original: string;
+  /** Übungen, die im Slot selbst stehen (Studio, Zuhause, Unterwegs, Leiter) */
+  alts: string[];
+  /** Gewählter Tausch, der mit diesem Profil nicht machbar ist */
+  swapUnavailable?: string;
 }
+
+/** Schlüssel für einen Tausch: gilt je Slot und Equipment-Stufe */
+export const swapKey = (slotId: string, tier: Tier) => `${slotId}:${tier}`;
 
 const TIER_ORDER: Record<Tier, Tier[]> = {
   gym: ["gym", "home", "reise"],
@@ -66,7 +77,25 @@ export function available(name: string, p: EquipmentProfile): boolean {
   return true;
 }
 
-export function resolveSlot(slot: Slot, p: EquipmentProfile, reduced = false): Resolved | null {
+function slotNames(slot: Slot): string[] {
+  const n = (v: Slot["home"]) => (v == null ? null : typeof v === "string" ? v : v.name);
+  return [slot.name, n(slot.home), n(slot.reise), ...(slot.ladder ?? [])].filter((x): x is string => !!x);
+}
+
+export function resolveSlot(slot: Slot, p: EquipmentProfile, reduced = false, swap?: string): Resolved | null {
+  const base = resolveBase(slot, p, reduced);
+  if (!base || !swap || swap === base.name) return base;
+  if (!available(swap, p)) return { ...base, swapUnavailable: swap };
+  const equip = equipOf(swap);
+  let prog: Prog = base.prog;
+  if (prog === "ladder") prog = base.kind === "hold" ? "hold" : "reps";
+  if (isLoadable(equip) && (prog === "reps" || prog === "none") && base.kind === "strength" && slot.prog !== "none") prog = "double";
+  if ((prog === "double" || prog === "weight" || prog === "topset") && !isLoadable(equip)) prog = "reps";
+  const loadable = isLoadable(equip) && (prog === "double" || prog === "weight" || prog === "topset");
+  return { ...base, key: `${slot.id}|${swap}`, name: swap, equip, prog, loadable, ladder: undefined, missingEquipment: false, swapped: true };
+}
+
+function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean): Resolved | null {
   let chosen: { c: Choice; tier: Tier } | null = null;
   let fallback: { c: Choice; tier: Tier } | null = null;
   for (const t of TIER_ORDER[p.tier]) {
@@ -105,7 +134,23 @@ export function resolveSlot(slot: Slot, p: EquipmentProfile, reduced = false): R
     proposal: slot.proposal,
     missingEquipment: !chosen,
     loadable,
+    original: c.name,
+    alts: slotNames(slot),
   };
+}
+
+/** Tauschoptionen für eine Stelle: alle Übungen aus den passenden Tauschgruppen,
+    die Alternativen des Slots und die geführte Variante. Verfügbare zuerst. */
+export function swapOptions(r: Resolved, p: EquipmentProfile): { name: string; available: boolean }[] {
+  const seeds = new Set([r.original, ...r.alts]);
+  const out = new Set<string>(r.alts);
+  for (const members of Object.values(SWAP_GROUPS)) if (members.some((m) => seeds.has(m))) members.forEach((m) => out.add(m));
+  for (const s of seeds) if (GUIDED[s]) out.add(GUIDED[s]);
+  out.delete(r.name);
+  out.delete(r.original);
+  return [...out]
+    .map((name) => ({ name, available: available(name, p) }))
+    .sort((a, b) => Number(b.available) - Number(a.available) || a.name.localeCompare(b.name));
 }
 
 /* ---------- Geführte Varianten bei hoher Phasenlast ---------- */
@@ -127,7 +172,7 @@ export function toGuided(r: Resolved, p: EquipmentProfile): Resolved | null {
 export function guidedKeys(list: { r: Resolved; contrast: boolean }[], p: EquipmentProfile): Set<string> {
   const free = list.filter((x) => FREE_WEIGHT.includes(x.r.equip));
   const n = Math.round(free.length / 2);
-  const cands = free.slice(1).filter((x) => !x.contrast && toGuided(x.r, p));
+  const cands = free.slice(1).filter((x) => !x.contrast && !x.r.swapped && toGuided(x.r, p));
   return new Set(cands.slice(Math.max(0, cands.length - n)).map((x) => x.r.key));
 }
 

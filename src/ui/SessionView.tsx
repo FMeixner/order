@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { EXERCISES } from "../data";
 import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
-import { guidedKeys, resolveSlot, toGuided, type Resolved } from "../engine/resolve";
+import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { affectDowngrade, beastClass, beastMinutes, CLASS_LABEL, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapNearest } from "../engine/loads";
 import type { AppState, Beast, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
-import { Collapse, Desc, kg } from "./common";
+import { Collapse, Desc, kg, Modal } from "./common";
 import { fmt, useTimer } from "./Timer";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -30,7 +30,7 @@ interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drill
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
     if (s.gate_week && ctx.week < s.gate_week) return null;
-    return resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer");
+    return resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer", ctx.state.swaps?.[swapKey(s.id, ctx.profile.tier)]);
   };
   switch (b.type) {
     case "single": return [r(b.slot)].filter(Boolean) as Resolved[];
@@ -261,8 +261,58 @@ function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sessio
 
 const FB: { k: Feedback; l: string }[] = [{ k: "schwer", l: "Schwer" }, { k: "ok", l: "OK" }, { k: "leicht", l: "Leicht" }, { k: "sehrleicht", l: "Sehr leicht" }];
 
+const TIER_LABEL = { gym: "Studio", home: "Zuhause", reise: "Unterwegs" } as const;
+
+/** Übung für diese Stelle tauschen. Die Wahl gilt je Slot und Ort und bleibt bei Updates erhalten. */
+function SwapDialog({ r, ctx, onClose }: { r: Resolved; ctx: SessionCtx; onClose: () => void }) {
+  const opts = swapOptions(r, ctx.profile);
+  const key = swapKey(r.slotId, ctx.profile.tier);
+  const set = (name: string | null) => {
+    ctx.update((st) => {
+      const sw = { ...(st.swaps ?? {}) };
+      if (name == null || name === r.original) delete sw[key]; else sw[key] = name;
+      return { ...st, swaps: sw };
+    });
+    onClose();
+  };
+  const usable = opts.filter((o) => o.available);
+  const missing = opts.filter((o) => !o.available);
+  return (
+    <Modal title="Übung tauschen" onClose={onClose}>
+      <div className="stack">
+        <p className="muted small">Gilt für diese Stelle im Orden, immer wenn du {TIER_LABEL[ctx.profile.tier]} trainierst. Satz- und Wiederholungsvorgaben bleiben, das Gewicht führt die App für jede Übung getrennt.</p>
+        {(r.swapped || r.swapUnavailable) && (
+          <button className="btn wide" onClick={() => set(null)}>Zurück zum Original: {r.original}</button>
+        )}
+        {usable.length === 0 && <div className="muted small">Keine passende Alternative mit dem Equipment von „{ctx.profile.name}“.</div>}
+        <div className="swap-list">
+          {usable.map((o) => (
+            <button key={o.name} className="swap-opt" onClick={() => set(o.name)}>
+              <span>{o.name}</span>
+              {EXERCISES[o.name]?.equip && <span className="muted small">{EQUIP_LABEL[EXERCISES[o.name].equip] ?? ""}</span>}
+            </button>
+          ))}
+        </div>
+        {missing.length > 0 && (
+          <details className="small muted">
+            <summary>Nicht im Profil „{ctx.profile.name}“ ({missing.length})</summary>
+            <ul>{missing.map((o) => <li key={o.name}>{o.name}</li>)}</ul>
+          </details>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+const EQUIP_LABEL: Record<string, string> = {
+  barbell: "Langhantel", dumbbell: "Kurzhantel", kettlebell: "Kettlebell", cable: "Kabel", machine: "Maschine", plate: "Zusatzgewicht",
+  vest: "Weste", band: "Band", bodyweight: "Körpergewicht", sandbag: "Sandsack",
+};
+
 function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; onSetDone: () => void }) {
   const t = useTimer();
+  const [swapOpen, setSwapOpen] = useState(false);
+  const canSwap = r.kind === "strength" || r.kind === "hold";
   const st = ctx.state.slots[r.key];
   const sug: Suggestion = suggest(r, st, ctx.week);
   const entry: SessionEntry = session?.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
@@ -312,9 +362,14 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
           {r.ladder && <span className="tag">Stufe {sug.stage + 1}/{r.ladder.length}</span>}
           {r.proposal && <span className="tag">Vorschlag</span>}
           {r.guided && <span className="tag teal" title="Phase mit hoher Alltagslast">geführt</span>}
+          {r.swapped && <span className="tag amber" title={`statt ${r.original}`}>getauscht</span>}
+          {canSwap && <button className="info-btn swap-btn" onClick={() => setSwapOpen(true)} aria-label="Übung tauschen" title="Übung tauschen">⇄</button>}
         </div>
         <div className="slot-dose">{doseLabel}</div>
       </div>
+      {swapOpen && <SwapDialog r={r} ctx={ctx} onClose={() => setSwapOpen(false)} />}
+      {r.swapped && <div className="muted small">Statt {r.original}.</div>}
+      {r.swapUnavailable && <div className="muted small">Dein Tausch „{r.swapUnavailable}“ geht mit „{ctx.profile.name}“ nicht, heute deshalb das Original.</div>}
       {r.missingEquipment && <div className="note warn small">Für diese Übung fehlt im Profil „{ctx.profile.name}“ Equipment. Nimm eine passende Alternative.</div>}
       {r.note && <div className="muted small">{r.note}</div>}
       {r.loadable && (

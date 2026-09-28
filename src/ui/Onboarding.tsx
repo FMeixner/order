@@ -5,7 +5,7 @@ import { WEEKDAYS } from "../types";
 import { Field } from "./common";
 import { EquipmentEditor } from "./EquipmentEditor";
 import { PlanList, WeekEditor } from "./PlanEditor";
-import { AsymEditor } from "./Setup";
+import { AsymEditor, NormFields } from "./Setup";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -32,6 +32,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
           <h1>Order</h1>
           <p>Dein Trainingsjahr in Blöcken. Du legst fest, womit du trainierst, an welchen Tagen und welchem Orden du dich in welcher Phase anschließt. Den Rest rechnet die App: welche Übung heute passt, welches Gewicht als Nächstes kommt, wann eine Pause fällig ist.</p>
           <Field label="Wie heißt du?"><input type="text" value={state.user.name} onChange={(e) => update((s) => ({ ...s, user: { ...s.user, name: e.target.value } }))} /></Field>
+          <NormFields user={state.user} onChange={(user) => update((s) => ({ ...s, user }))} />
           <details className="card">
             <summary>Asymmetrien angeben (optional)</summary>
             <AsymEditor user={state.user} onChange={(user) => update((s) => ({ ...s, user }))} />

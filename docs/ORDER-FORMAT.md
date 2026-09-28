@@ -77,3 +77,11 @@ Laststufen kommen aus dem Equipment-Profil: Kurzhanteln und Kettlebells als List
 ## Geführte Varianten
 
 `data/modules/guided.json` ordnet freien Übungen eine Maschinen- oder Kabelvariante zu. In Phasen mit Alltagslast „hoch“ tauscht die App etwa die Hälfte der freien Übungen eines Tages, beginnend bei den späteren; der erste freie Lift und schwere Sätze in Kontrastpaaren bleiben frei. Getauscht wird nur, wenn das Equipment-Profil Maschinen bzw. Kabel hat.
+
+## Tauschgruppen
+
+`data/modules/swaps.json` fasst Übungen mit ähnlichem Bewegungsmuster zu Gruppen zusammen. Tippt jemand im Training auf ⇄, bietet die App alle Übungen aus den Gruppen an, in denen die aktuelle Übung oder eine Alternative des Slots steht, dazu die Alternativen des Slots selbst und die geführte Variante. Eine Übung darf in mehreren Gruppen stehen. Die Wahl speichert die App je Slot-`id` und Equipment-Stufe; sie bleibt erhalten, solange die `id` bleibt. Getauschte Stellen werden bei hoher Alltagslast nicht zusätzlich geführt.
+
+## Normen
+
+`data/modules/norms.json` enthält Normen für die Tests der Testwoche. Jede Norm gilt für `sex` (`m`/`w`) und eine Altersspanne `age: [von, bis]`; Tests mit Varianten (z. B. Beinpresse oder Kniebeuge) tragen zusätzlich `variant`. `tier` A ist eine Bevölkerungs- oder Altersnorm, B eine Orientierung an einer ausgewählten Stichprobe. Formen: `pct` (Perzentil-Stützstellen), `bands` (Bronze/Silber/Gold), `cat` (Kategorien), `ms` (Mittelwert und Standardabweichung). `domains` ordnet Tests den Bereichen der Auswertung zu; `goal` bestimmt, welche Orden bei einem schwachen Bereich vorgeschlagen werden. Fehlt eine passende Norm, zeigt die App nur den Verlauf. Weitere Altersgruppen oder Normen für Frauen einfach als neue Einträge ergänzen.

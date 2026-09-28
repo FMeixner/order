@@ -165,3 +165,69 @@ describe("Geführte Varianten bei hoher Last", () => {
     expect(s.equipment.find((e) => e.tier === "gym")!.has.sword).toBe(false);
   });
 });
+
+describe("Übung tauschen", () => {
+  const slot: Slot = { id: "x1", name: "Bulgarian Split Squat", home: "Split Squat", sets: 3, reps: "8-10", prog: "double" };
+  it("Tausch ersetzt die Übung, eigene Historie, Dosis bleibt", () => {
+    const r = resolveSlot(slot, gym, false, "Reverse Lunge")!;
+    expect(r.name).toBe("Reverse Lunge");
+    expect(r.key).toBe("x1|Reverse Lunge");
+    expect(r.swapped).toBe(true);
+    expect(r.original).toBe("Bulgarian Split Squat");
+    expect(r.sets).toBe(3);
+    expect(r.reps).toBe("8-10");
+  });
+  it("nicht machbarer Tausch fällt aufs Original zurück", () => {
+    const r = resolveSlot(slot, reise, false, "Leg Press")!;
+    expect(r.swapped).toBeFalsy();
+    expect(r.swapUnavailable).toBe("Leg Press");
+  });
+  it("Körpergewicht → Hantel wird gewichtsgesteuert", () => {
+    const r = resolveSlot({ id: "x2", name: "Push-Up", sets: 3, reps: "AMRAP-2", prog: "reps" }, gym, false, "DB Bench Press")!;
+    expect(r.loadable).toBe(true);
+    expect(r.prog).toBe("double");
+  });
+  it("Optionen aus der Tauschgruppe, verfügbare zuerst", async () => {
+    const { swapOptions } = await import("./resolve");
+    const opts = swapOptions(resolveSlot(slot, home)!, home);
+    expect(opts.find((o) => o.name === "Single-Leg Leg Press")?.available).toBe(false);
+    expect(opts[0].available).toBe(true);
+    expect(opts.map((o) => o.name)).toContain("Reverse Lunge");
+  });
+  it("getauschte Stelle wird bei hoher Last nicht geführt", async () => {
+    const { guidedKeys } = await import("./resolve");
+    const a = resolveSlot({ id: "a", name: "Back Squat", sets: 3, reps: "5", prog: "double" }, gym)!;
+    const b = resolveSlot({ id: "b", name: "Bench Press", sets: 3, reps: "8", prog: "double" }, gym, false, "DB Bench Press")!;
+    expect(guidedKeys([{ r: a, contrast: false }, { r: b, contrast: false }], gym).size).toBe(0);
+  });
+});
+
+describe("Normen", () => {
+  it("Sportabzeichen, Perzentile, 5RM relativ zum Körpergewicht", async () => {
+    const { findNorm, normScore } = await import("./norms");
+    const push = findNorm("t-pushups", undefined, "m", 37)!;
+    expect(normScore(push, 30, null)!.label).toBe("Silber-Niveau");
+    expect(findNorm("t-pushups", undefined, "w", 37)).toBeNull();
+    expect(findNorm("t-pushups", undefined, "m", 45)).toBeNull();
+    const lp = findNorm("t-5rm-squat", "legpress", "m", 37)!;
+    // 5RM 125 kg bei 84 kg: 1RM ≈ 145,8 → 1,74 × KG ≈ Mittelwert → P50
+    expect(Math.abs(normScore(lp, 125, 84)!.score - 50)).toBeLessThanOrEqual(1);
+    const vo2 = findNorm("t-vo2", undefined, "m", 35)!;
+    expect(normScore(vo2, 46.4, null)!.score).toBe(70);
+    const coop = findNorm("t-cooper", undefined, "m", 35)!;
+    expect(normScore(coop, 3000, null)!.label).toBe("exzellent");
+  });
+  it("Auswertung: schwächster Bereich und Vorschlag", async () => {
+    const { evaluateBlock } = await import("./norms");
+    const s = sample();
+    s.user = { ...s.user, sex: "m", birthYear: 1989 };
+    const T = (value: number, variant?: string) => [{ date: "2026-11-25", blockId: "b1", value, raw: String(value), ...(variant ? { variant } : {}) }];
+    s.tests = { "t-bodyweight": T(84), "t-pushups": T(45), "t-pullups": T(15), "t-sitreach": T(-10), "t-5rm-squat": T(125, "legpress") };
+    const ev = evaluateBlock(s, "b1");
+    expect(ev.weakest?.id).toBe("mobility");
+    expect(ev.suggestions.length).toBeGreaterThan(0);
+    expect(ev.suggestions[0].goals.primary).toBe("mobility");
+    const noProfile = evaluateBlock(sample(), "b1");
+    expect(noProfile.missingProfile).toBe(true);
+  });
+});

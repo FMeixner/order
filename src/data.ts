@@ -1,11 +1,13 @@
 /* Lädt alle Inhalte aus /data. Eine neue Datei in data/orders/ ist nach dem nächsten Build automatisch ein neuer Orden. */
-import type { Beast, Cup, Drill, Exercise, Focus } from "./types";
+import type { Beast, Cup, Drill, Exercise, Focus, Goal, Norm } from "./types";
 import exercisesJson from "../data/exercises.json";
 import beastsJson from "../data/beasts.json";
 import correctivesJson from "../data/modules/correctives.json";
 import swordJson from "../data/modules/sword.json";
 import testweekJson from "../data/modules/testweek.json";
 import guidedJson from "../data/modules/guided.json";
+import swapsJson from "../data/modules/swaps.json";
+import normsJson from "../data/modules/norms.json";
 
 const fociModules = import.meta.glob("../data/orders/*.json", { eager: true, import: "default" }) as Record<string, Focus>;
 
@@ -25,3 +27,7 @@ export const DM_VARIANTS = (swordJson as unknown as { variants: Record<string, D
 /** Freie Übung → geführte Variante (Maschine/Kabel) für Phasen mit hoher Last */
 export const GUIDED = (guidedJson as unknown as { map: Record<string, string> }).map;
 export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; who5: string[]; who5_intro: string; who5_scale: string[] };
+/** Tauschgruppen: Übungen mit ähnlichem Bewegungsmuster */
+export const SWAP_GROUPS = (swapsJson as unknown as { groups: Record<string, string[]> }).groups;
+export const NORMS = (normsJson as unknown as { norms: Norm[] }).norms;
+export const DOMAINS = (normsJson as unknown as { domains: { id: string; name: string; goal: Goal; tests: string[] }[] }).domains;

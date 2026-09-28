@@ -3,6 +3,7 @@ import { BEAST_BY_ID, TESTWEEK } from "../data";
 import { expandDrills, fmtDate } from "../engine/plan";
 import type { AppState, Cup, PlanBlock, TestDef } from "../types";
 import { Collapse, Desc } from "./common";
+import { Evaluation } from "./Evaluation";
 import { fmt } from "./Timer";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -23,9 +24,11 @@ function show(v: number, unit: string): string {
   return `${String(v).replace(".", ",")} ${u[unit] ?? ""}`;
 }
 
-function TestRow({ t, state, block, onSave }: { t: TestDef; state: AppState; block: PlanBlock; onSave: (value: number, raw: string) => void }) {
+function TestRow({ t, state, block, onSave }: { t: TestDef; state: AppState; block: PlanBlock; onSave: (value: number, raw: string, variant?: string) => void }) {
   const [vals, setVals] = useState<string[]>(Array(t.attempts).fill(""));
-  const hist = state.tests[t.id] ?? [];
+  const all = state.tests[t.id] ?? [];
+  const [variant, setVariant] = useState<string>(all[all.length - 1]?.variant ?? t.variants?.[0]?.id ?? "");
+  const hist = t.variants ? all.filter((h) => (h.variant ?? "") === variant) : all;
   const thisBlock = hist.filter((h) => h.blockId === block.id);
   const prev = hist.filter((h) => h.blockId !== block.id);
   const best = (arr: { value: number }[]) => arr.length ? (t.better === "higher" ? Math.max(...arr.map((x) => x.value)) : Math.min(...arr.map((x) => x.value))) : null;
@@ -35,12 +38,17 @@ function TestRow({ t, state, block, onSave }: { t: TestDef; state: AppState; blo
   return (
     <div className="test-row">
       <div className="slot-title"><span className="slot-name">{t.name}</span><Desc text={t.desc} /></div>
+      {t.variants && (
+        <select value={variant} onChange={(e) => setVariant(e.target.value)} aria-label="Variante">
+          {t.variants.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
+        </select>
+      )}
       <div className="row wrap">
         {vals.map((v, i) => (
           <input key={i} type="text" inputMode="decimal" className="test-in" placeholder={t.attempts > 1 ? `Versuch ${i + 1}` : t.unit === "mmss" ? "m:ss.z" : "Wert"}
             value={v} onChange={(e) => setVals(vals.map((x, k) => (k === i ? e.target.value : x)))} />
         ))}
-        <button className="btn small" disabled={bestNow == null} onClick={() => { onSave(bestNow!, vals.filter(Boolean).join(" / ")); setVals(Array(t.attempts).fill("")); }}>Speichern</button>
+        <button className="btn small" disabled={bestNow == null} onClick={() => { onSave(bestNow!, vals.filter(Boolean).join(" / "), t.variants ? variant : undefined); setVals(Array(t.attempts).fill("")); }}>Speichern</button>
       </div>
       <div className="muted small">
         {thisBlock.length ? <>Gespeichert: <strong>{show(best(thisBlock)!, t.unit)}</strong></> : "Noch kein Wert"}
@@ -102,8 +110,8 @@ function Benchmark({ cup, state, update }: { cup: Cup; state: AppState; update: 
 }
 
 export function TestWeek({ state, update, block }: { state: AppState; update: Update; block: PlanBlock }) {
-  const saveTest = (t: TestDef, value: number, raw: string) =>
-    update((st) => ({ ...st, tests: { ...st.tests, [t.id]: [...(st.tests[t.id] ?? []), { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw }] } }));
+  const saveTest = (t: TestDef, value: number, raw: string, variant?: string) =>
+    update((st) => ({ ...st, tests: { ...st.tests, [t.id]: [...(st.tests[t.id] ?? []), { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } }));
   return (
     <div className="stack">
       <div className="card note">
@@ -115,11 +123,12 @@ export function TestWeek({ state, update, block }: { state: AppState; update: Up
             <ul className="slot-list">{expandDrills(cup.warmup, state.user, 1).map((d) => <li key={d.id}>{d.name} · {d.groups.map((g) => `${g.label ? g.label + " " : ""}${d.mode === "reps" ? g.value + "×" : fmt(g.value)}`).join(", ")}</li>)}</ul>
           </Collapse>
           {cup.who5 && <Who5 state={state} update={update} block={block} />}
-          {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} onSave={(v, raw) => saveTest(t, v, raw)} />)}
+          {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} />)}
           <Benchmark cup={cup} state={state} update={update} />
         </Collapse>
       ))}
-      <div className="muted small">Ergebnisse stehen im Log. Die Auswertung gegen Altersnormen folgt in einer späteren Version. Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
+      <Evaluation state={state} blockId={block.id} />
+      <div className="muted small">Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
     </div>
   );
 }

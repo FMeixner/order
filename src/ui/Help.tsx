@@ -28,6 +28,19 @@ export function Help() {
         <li>In der ersten Woche wählst du die Startgewichte selbst: so, dass am Ende noch 2–3 Wiederholungen gegangen wären.</li>
       </ul>
 
+      <h3>Übung tauschen</h3>
+      <ul>
+        <li>Passt dir eine Übung nicht (Gerät besetzt, zwickt, keine Lust): auf <strong>⇄</strong> neben dem Namen tippen und eine Alternative mit ähnlichem Bewegungsmuster wählen.</li>
+        <li>Der Tausch gilt für diese Stelle, getrennt für Studio, Zuhause und Unterwegs, und bleibt bei Updates erhalten. Die neue Übung bekommt ihre eigenen Gewichte.</li>
+        <li>Zurücktauschen: wieder auf ⇄, oder unter Setup › Getauschte Übungen.</li>
+      </ul>
+
+      <h3>Testwoche</h3>
+      <ul>
+        <li>Nach dem Speichern der Werte erscheint die Auswertung: je Bereich Punkte von 0 bis 100 (etwa ein Perzentil), der Vergleich mit deinem letzten Test und ein Vorschlag für die nächste Phase.</li>
+        <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem ersten Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
+      </ul>
+
       <h3>Alltagslast</h3>
       <ul>
         <li>Ist in einer Phase viel los, läuft etwa die Hälfte der freien Übungen an Maschine oder Kabel, wenn das Studio sie hat. Der erste große Lift des Tages bleibt frei.</li>

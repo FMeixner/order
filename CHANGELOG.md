@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.3.0] – 2026-09-28
+
+### Neu
+- Übung tauschen: ⇄ neben jeder Übung bietet Alternativen mit ähnlichem Bewegungsmuster an, verfügbare zuerst. Die Wahl gilt je Stelle und Ort, bleibt bei Updates erhalten und führt eigene Gewichte. Übersicht und Zurücksetzen unter Setup. Gruppen in `data/modules/swaps.json`.
+- Auswertung der Testwoche: Punkte je Bereich gegen Alters- und Geschlechtsnormen, Vergleich mit dem letzten Test, Vorschlag für die nächste Phase (bei niedrigem WHO-5 zuerst Erholung). Normen mit Quellen in `data/modules/norms.json`; vorerst Männer, je nach Test 24–59 Jahre.
+- Geburtsjahr und Geschlecht im Profil (optional, nur für den Normvergleich).
+- Kraft-Tests mit Variante (Beinpresse oder Kniebeuge, Brustpresse oder Bankdrücken, Latziehen oder Klimmzug).
+
 ## [0.2.0] – 2026-09-28
 
 ### Neu

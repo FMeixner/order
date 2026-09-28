@@ -47,9 +47,9 @@ function range(a: number, b: number, s: number): number[] {
 export function emptyState(): AppState {
   return {
     version: 1, onboarded: false,
-    user: { name: "", asym: { hip: null, neck: null, shoulder_ir: null, shoulder_er: null } },
+    user: { name: "", birthYear: null, sex: null, asym: { hip: null, neck: null, shoulder_ir: null, shoulder_er: null } },
     equipment: [], schedule: {}, roleOrder: {}, plan: [], slots: {}, sessions: [], beastTimes: {},
-    reduced: {}, menuChoice: {}, tests: {}, who5: [], feeling: [],
+    reduced: {}, menuChoice: {}, tests: {}, who5: [], feeling: [], swaps: {},
   };
 }
 

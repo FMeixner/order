@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { FOCUS_BY_ID } from "../data";
+import { FOCI, FOCUS_BY_ID } from "../data";
 import { blockAt, rolesFor, trainingDays } from "../engine/plan";
 import { exportState, migrate } from "../store";
 import type { AppState, UserProfile } from "../types";
@@ -30,6 +30,22 @@ export function AsymEditor({ user, onChange }: { user: UserProfile; onChange: (u
   );
 }
 
+/** Geburtsjahr und Geschlecht: nur für die Einordnung der Testwoche. */
+export function NormFields({ user, onChange }: { user: UserProfile; onChange: (u: UserProfile) => void }) {
+  return (
+    <div className="row two">
+      <Field label="Geburtsjahr" hint="Für den Vergleich mit Altersnormen">
+        <input type="number" inputMode="numeric" placeholder="z. B. 1990" value={user.birthYear ?? ""}
+          onChange={(e) => { const v = parseInt(e.target.value); onChange({ ...user, birthYear: isNaN(v) ? null : v }); }} />
+      </Field>
+      <Field label="Geschlecht" hint="Normen gibt es getrennt">
+        <Seg value={(user.sex ?? "-") as "m" | "w" | "-"} options={[{ value: "-", label: "–" }, { value: "w", label: "weiblich" }, { value: "m", label: "männlich" }]}
+          onChange={(v) => onChange({ ...user, sex: v === "-" ? null : v })} />
+      </Field>
+    </div>
+  );
+}
+
 export function Setup({ state, update, replace, today, restartOnboarding }: { state: AppState; update: Update; replace: (s: AppState) => void; today: string; restartOnboarding: () => void }) {
   const file = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState("");
@@ -55,7 +71,9 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
     <div className="stack">
       <Collapse title="Profil" meta={state.user.name || "ohne Namen"} defaultOpen>
         <Field label="Name"><input type="text" value={state.user.name} onChange={(e) => update((st) => ({ ...st, user: { ...st.user, name: e.target.value } }))} /></Field>
+        <NormFields user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} />
       </Collapse>
+      <SwapList state={state} update={update} />
       <Collapse title="Equipment-Profile" meta={`${state.equipment.length}`}>
         <EquipmentEditor list={state.equipment} onChange={(equipment) => update((st) => ({ ...st, equipment }))} />
       </Collapse>
@@ -101,4 +119,46 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
       <p className="muted small center">Order {__APP_VERSION__}{__REPO_URL__ && <> · <a href={__REPO_URL__} target="_blank" rel="noreferrer">Quellcode</a></>}</p>
     </div>
   );
+}
+
+const TIER_LABEL = { gym: "Studio", home: "Zuhause", reise: "Unterwegs" } as const;
+
+/** Übersicht der eigenen Übungswahl, mit Zurücksetzen */
+function SwapList({ state, update }: { state: AppState; update: Update }) {
+  const entries = Object.entries(state.swaps ?? {});
+  if (!entries.length) return null;
+  const where = (slotId: string) => {
+    for (const f of FOCI) for (const r of Object.values(f.roles)) {
+      const hit = JSON.stringify(r.blocks).includes(`"id":"${slotId}"`);
+      if (hit) return { focus: f.name, role: r.name, orig: findSlotName(r.blocks, slotId) };
+    }
+    return null;
+  };
+  return (
+    <Collapse title="Getauschte Übungen" meta={`${entries.length}`}>
+      <p className="muted small">Deine eigene Wahl statt der Übung aus dem Orden. Gilt je Stelle und je Ort (Studio, Zuhause, Unterwegs). Gewichte werden je Übung getrennt geführt.</p>
+      <ul className="slot-list">
+        {entries.map(([k, name]) => {
+          const [slotId, tier] = k.split(":");
+          const w = where(slotId);
+          return (
+            <li key={k} className="row between">
+              <span>{w ? `${w.focus} · ${w.role}: ` : ""}{w?.orig ? <><s>{w.orig}</s> → </> : null}<strong>{name}</strong> <span className="muted">({TIER_LABEL[tier as keyof typeof TIER_LABEL] ?? tier})</span></span>
+              <button className="btn ghost small" onClick={() => update((st) => { const sw = { ...st.swaps }; delete sw[k]; return { ...st, swaps: sw }; })}>Zurück</button>
+            </li>
+          );
+        })}
+      </ul>
+    </Collapse>
+  );
+}
+
+function findSlotName(x: unknown, id: string): string | null {
+  if (Array.isArray(x)) { for (const y of x) { const r = findSlotName(y, id); if (r) return r; } return null; }
+  if (x && typeof x === "object") {
+    const o = x as Record<string, unknown>;
+    if (o.id === id && typeof o.name === "string") return o.name;
+    for (const v of Object.values(o)) { const r = findSlotName(v, id); if (r) return r; }
+  }
+  return null;
 }

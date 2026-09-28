@@ -1,0 +1,31 @@
+{
+  "_info": "Tauschgruppen: Übungen mit ähnlichem Bewegungsmuster. Tippt man im Training auf ⇄, bietet die App alle Übungen aus den Gruppen an, in denen die aktuelle Übung steht, dazu die Alternativen des Slots. Eine Übung darf in mehreren Gruppen stehen. Nur Übungen aus exercises.json. Halteübungen gehören nicht hierher.",
+  "groups": {
+    "Kniebeuge": ["Back Squat", "Front Squat", "Goblet Squat", "Goblet Squat mit Pause", "Leg Press", "Sandbag Squat", "Box Squat"],
+    "Einbeinig": ["Bulgarian Split Squat", "Bulgarian Split Squat + Weste", "Split Squat", "Walking Lunge", "Reverse Lunge", "Single-Leg Leg Press", "Cossack Squat", "Pistol Squat (Box)"],
+    "Hüftbeuge": ["Romanian Deadlift", "DB Romanian Deadlift", "KB Romanian Deadlift", "Single-Leg RDL", "Cable Pull-Through", "Band Romanian Deadlift", "Band Pull-Through"],
+    "Kreuzheben": ["Deadlift", "Trap Bar Deadlift", "KB Deadlift", "Band Deadlift"],
+    "Swing": ["KB Swing", "KB Swing, schwer", "Cable Pull-Through", "Band Pull-Through"],
+    "Hüftstrecker": ["Hip Thrust", "DB Hip Thrust", "Hip Thrust Machine", "Glute Bridge", "Single-Leg Glute Bridge"],
+    "Beinbeuger": ["Lying Leg Curl", "Seated Leg Curl", "Nordic Curl Negative", "Slider Leg Curl"],
+    "Beinstrecker": ["Leg Extension", "Sissy Squat"],
+    "Waden": ["Standing Calf Raise", "Seated Calf Raise", "DB Seated Calf Raise", "Single-Leg Calf Raise"],
+    "Drücken flach": ["Bench Press", "DB Bench Press", "DB Floor Press", "Chest Press Machine", "Push-Up", "Deficit Push-Up", "Deficit Push-Up + Weste"],
+    "Drücken schräg": ["Incline Bench Press", "Incline DB Press", "Incline Chest Press Machine"],
+    "Brust Fly": ["DB Fly", "Cable Chest Fly", "Cable Fly (tief nach hoch)", "Band Fly"],
+    "Dips": ["Weighted Dip", "Seated Dip Machine", "Ring Dip", "Ring Dip + Weste", "Chair Dip"],
+    "Drücken über Kopf": ["Overhead Press", "DB Shoulder Press", "Seated DB Shoulder Press", "Shoulder Press Machine", "KB Half-Kneeling Press", "Pike Push-Up"],
+    "Ziehen senkrecht": ["Weighted Pull-Up", "Pull-Up", "Pull-Up + Weste", "Lat Pulldown", "Lat Pulldown (Overhand)", "Band Pulldown", "Band-Assisted Pull-Up"],
+    "Ziehen senkrecht, Untergriff": ["Weighted Chin-Up", "Chin-Up", "Chin-Up + Weste", "Lat Pulldown (Untergriff)", "Lat Pulldown (V-Griff)", "Band-Assisted Chin-Up"],
+    "Rudern": ["Barbell Row", "Bent-Over Row", "1-Arm DB Row", "Chest-Supported Row", "Chest-Supported Row Machine", "Seated Cable Row", "Seated Cable Row (Untergriff)", "Seated Row (zwei Seilzüge)", "Single-Arm Cable Row", "Ring Row", "Table Row", "Band Row"],
+    "Seitheben": ["DB Lateral Raise", "Cable Lateral Raise", "Band Lateral Raise"],
+    "Hintere Schulter": ["DB Rear Delt Fly", "Reverse Pec Deck", "Cable Rear Delt Fly", "Face Pull", "Band Face Pull", "Band Pull-Apart"],
+    "Aufrechtes Rudern": ["Upright Row", "DB Upright Row", "Cable Upright Row", "Band Upright Row"],
+    "Bizeps": ["Barbell Curl", "DB Biceps Curl", "Incline DB Curl", "Hammer Curl", "Cable Curl", "Cable Biceps Curl", "Bayesian Cable Curl", "Rope Hammer Curl", "Band Curl"],
+    "Trizeps": ["DB Overhead Triceps Extension", "Cable Overhead Triceps Extension", "Band Overhead Triceps Extension", "DB Kickback", "Rope Pushdown", "Band Pushdown", "Diamond Push-Up"],
+    "Rotation": ["Landmine Rotational Press", "Cable Rotational Press", "Band Rotational Press", "KB Woodchop", "Cable Woodchopper", "Band Woodchopper", "KB Russian Twist", "Russian Twist", "Band Pallof Press"],
+    "Bauch": ["Weighted Sit-Up", "Cable Crunch", "Rope Crunch", "Sit-Up", "Reverse Crunch", "Hanging Leg Raise"],
+    "Rumpf gegen Streckung": ["Ab Wheel Rollout", "Ab Wheel Rollout (Knie)", "Ab Wheel Rollout (Knie, weit)", "Dead Bug"],
+    "Tragen": ["Farmer's Carry", "Suitcase Carry"]
+  }
+}

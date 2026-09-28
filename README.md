@@ -43,7 +43,7 @@ Alle Inhalte liegen als lesbare JSON-Dateien in [`data/`](data):
 - `data/orders/*.json`: ein Orden pro Datei. Eine neue Datei ist nach dem nächsten Build ein neuer Orden.
 - `data/exercises.json`: Übungskatalog mit Equipment-Art und Beschreibung.
 - `data/beasts.json`: das Bestiarium (81 Circuits).
-- `data/modules/`: Warm-up- und Cool-down-Listen, Schwert-Modul, Testwoche.
+- `data/modules/`: Warm-up- und Cool-down-Listen, Schwert-Modul, Testwoche, geführte Varianten, Tauschgruppen (`swaps.json`) und Normen für die Testwoche (`norms.json`).
 
 Das Format steht in [`docs/ORDER-FORMAT.md`](docs/ORDER-FORMAT.md). `npm run validate` prüft alle Dateien und meldet, was fehlt oder nicht passt.
 

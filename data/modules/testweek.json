@@ -37,9 +37,9 @@
       "id": "balmung", "name": "Balmung-Cup", "place": "Studio", "focus": "Maximalkraft",
       "warmup": ["base", "lower_prep"],
       "tests": [
-        {"id": "t-5rm-squat", "name": "5RM Beinpresse oder Kniebeuge", "unit": "kg", "attempts": 1, "better": "higher", "desc": "2–3 Steigerungssätze, dann höchstens 4 Versuche bis zum 5RM, 3–5 Min Pause. Abbruch bei Technikverlust. Immer dieselbe Übung wie beim letzten Mal."},
-        {"id": "t-5rm-push", "name": "5RM Brustpresse oder Bankdrücken", "unit": "kg", "attempts": 1, "better": "higher", "desc": "Wie oben. Übung und Einstellung notieren."},
-        {"id": "t-5rm-pull", "name": "5RM Latziehen oder Klimmzug mit Gewicht", "unit": "kg", "attempts": 1, "better": "higher", "desc": "Wie oben. Bei Klimmzug: Zusatzgewicht eintragen."},
+        {"id": "t-5rm-squat", "name": "5RM Beinpresse oder Kniebeuge", "unit": "kg", "attempts": 1, "better": "higher", "desc": "2–3 Steigerungssätze, dann höchstens 4 Versuche bis zum 5RM, 3–5 Min Pause. Abbruch bei Technikverlust. Immer dieselbe Übung wie beim letzten Mal.", "variants": [{"id": "legpress", "name": "Beinpresse"}, {"id": "squat", "name": "Kniebeuge"}]},
+        {"id": "t-5rm-push", "name": "5RM Brustpresse oder Bankdrücken", "unit": "kg", "attempts": 1, "better": "higher", "desc": "Wie oben. Übung und Einstellung notieren.", "variants": [{"id": "machine", "name": "Brustpresse"}, {"id": "bench", "name": "Bankdrücken"}]},
+        {"id": "t-5rm-pull", "name": "5RM Latziehen oder Klimmzug mit Gewicht", "unit": "kg", "attempts": 1, "better": "higher", "desc": "Wie oben. Bei Klimmzug: Zusatzgewicht eintragen.", "variants": [{"id": "pulldown", "name": "Latziehen"}, {"id": "pullup", "name": "Klimmzug mit Gewicht"}]},
         {"id": "t-burpees", "name": "Burpees 1 Min", "unit": "reps", "attempts": 1, "better": "higher", "desc": "Brust am Boden, oben Strecksprung mit Klatschen. Nur saubere Wiederholungen."}
       ]
     },

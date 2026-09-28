@@ -3,6 +3,7 @@ import { BEAST_BY_ID, FOCUS_BY_ID, TESTWEEK } from "../data";
 import { fmtDate } from "../engine/plan";
 import type { AppState, Session } from "../types";
 import { Collapse, kg } from "./common";
+import { Evaluation } from "./Evaluation";
 import { fmt } from "./Timer";
 
 function sessionText(s: Session, state: AppState): string {
@@ -29,6 +30,7 @@ export function LogView({ state }: { state: AppState }) {
     try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* ignorieren */ }
   };
   const beasts = Object.entries(state.beastTimes).filter(([, t]) => t.length);
+  const lastTest = Object.values(state.tests).flat().sort((a, b) => b.date.localeCompare(a.date))[0];
   return (
     <div className="stack">
       <div className="row between">
@@ -61,11 +63,12 @@ export function LogView({ state }: { state: AppState }) {
           </ul>
         </Collapse>
       )}
+      {lastTest && <Evaluation state={state} blockId={lastTest.blockId} />}
       {Object.keys(state.tests).length > 0 && (
         <Collapse title="Testergebnisse" meta={`${Object.keys(state.tests).length} Tests`}>
           <ul className="slot-list">
             {allTests.filter((t) => state.tests[t.id]?.length).map((t) => (
-              <li key={t.id}>{t.name}: {state.tests[t.id].map((r) => `${fmtDate(r.date)} ${r.raw}`).join(" · ")}</li>
+              <li key={t.id}>{t.name}: {state.tests[t.id].map((r) => `${fmtDate(r.date)} ${r.raw}${r.variant ? ` (${t.variants?.find((v) => v.id === r.variant)?.name ?? r.variant})` : ""}`).join(" · ")}</li>
             ))}
             {state.who5.map((w, i) => <li key={i}>WHO-5 {fmtDate(w.date)}: {w.score}</li>)}
           </ul>

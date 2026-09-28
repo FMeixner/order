@@ -17,6 +17,27 @@ const beasts = read("beasts.json");
 const correctives = read("modules/correctives.json").lists;
 const dm = read("modules/sword.json").variants;
 const beastIds = new Set(beasts.map((b) => b.id));
+const swaps = read("modules/swaps.json").groups;
+for (const [g, members] of Object.entries(swaps)) {
+  for (const m of members) if (!exercises[m]) err("swaps.json", `Gruppe "${g}": "${m}" fehlt in exercises.json`);
+  if (new Set(members).size !== members.length) err("swaps.json", `Gruppe "${g}" enthält doppelte Übungen`);
+}
+const normsFile = read("modules/norms.json");
+const testIds = new Set(read("modules/testweek.json").cups.flatMap((c) => c.tests.map((t) => t.id)));
+const testVariants = Object.fromEntries(read("modules/testweek.json").cups.flatMap((c) => c.tests.map((t) => [t.id, (t.variants ?? []).map((v) => v.id)])));
+for (const n of normsFile.norms) {
+  const where = `norms.json ${n.test}${n.variant ? "/" + n.variant : ""}`;
+  if (!testIds.has(n.test)) err(where, "Test gibt es in testweek.json nicht");
+  if (n.variant && !testVariants[n.test]?.includes(n.variant)) err(where, `Variante "${n.variant}" fehlt am Test`);
+  if (!["m", "w"].includes(n.sex)) err(where, "sex muss m oder w sein");
+  if (!Array.isArray(n.age) || n.age.length !== 2 || n.age[0] > n.age[1]) err(where, "age muss [von, bis] sein");
+  if (!["A", "B"].includes(n.tier)) err(where, "tier muss A oder B sein");
+  if (n.type === "pct" && !(n.anchors?.length >= 2)) err(where, "pct braucht mindestens zwei anchors");
+  if (n.type === "bands" && n.bands?.length !== 3) err(where, "bands braucht drei Werte");
+  if (n.type === "ms" && !(n.mean > 0 && n.sd > 0)) err(where, "ms braucht mean und sd");
+  if (n.type === "cat" && !n.cats?.length) err(where, "cat braucht cats");
+}
+for (const d of normsFile.domains) for (const t of d.tests) if (!testIds.has(t)) err("norms.json", `Bereich ${d.id}: Test ${t} fehlt in testweek.json`);
 const guided = read("modules/guided.json").map;
 for (const [free, g] of Object.entries(guided)) {
   if (!exercises[free]) err("guided.json", `freie Übung "${free}" fehlt in exercises.json`);
