@@ -13,7 +13,7 @@ export function Help() {
 
       <h3>Eine Übung eintragen</h3>
       <ul>
-        <li>Gewicht einmal pro Übung eintragen. Dann nach jedem Satz den Kreis antippen: Er übernimmt die Zielwiederholungen, die Pause startet. Nur wenn ein Satz abweicht, die Zahl daneben ändern.</li>
+        <li>Gewicht einmal pro Übung eintragen. Nach jedem Satz die geschafften Wiederholungen eintragen und den Kreis antippen, die Pause startet. Die Angabe „3 × 10–12“ ist der Bereich, in dem du landen sollst; „zuletzt“ zeigt, was du beim letzten Mal geschafft hast.</li>
         <li>Die Wiederholungen je Satz zählen: Der schwächste Satz setzt das nächste Ziel. Fehlen 2 oder mehr Wiederholungen zum unteren Ende, geht das Gewicht eine Stufe runter.</li>
         <li>Nach der letzten Serie kurz Feedback geben:
           <strong> Schwer</strong> = gerade so geschafft, <strong>OK</strong> = 1–2 Wiederholungen wären noch gegangen,

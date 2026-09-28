@@ -86,14 +86,15 @@ export function suggest(r: Resolved, st: SlotState | undefined, weekInBlock = 1,
       const hi = rp.hi ?? rp.lo;
       const ceil = p && w0 != null && r.prog === "double" ? gapCeiling(p, r.equip, w0, rp.lo, hi) : hi;
       targetReps = Math.min(ceil, Math.max(Math.max(1, rp.lo - 3), s.target ?? rp.lo));
-      repsLabel = rp.lo !== rp.hi || ceil > hi || targetReps < rp.lo ? `${targetReps}${rp.suffix} (${r.reps}${ceil > hi ? `, vor dem Sprung bis ${ceil}` : ""})` : r.reps;
+      const from = Math.min(rp.lo, targetReps);
+      repsLabel = `${from}${ceil > from ? `–${ceil}` : ""}${rp.suffix}`;
       const n = ceil > hi && p && w0 != null ? nextLoad(p, r.equip, w0) : null;
       if (n) gap = `Nächste Stufe ${fmtKg(n.next)} kg ist +${Math.round(n.jump * 100)} %. Erst ${ceil} Wdh in allen Sätzen, dann ${fmtKg(n.next)} kg.`;
     }
   } else if ((r.prog === "weight" || r.prog === "topset") && rp.lo !== null && !rp.amrap) {
     const ceil = p && w0 != null ? fixedCeiling(p, r.equip, w0, rp.lo) : rp.lo;
     targetReps = Math.min(ceil, Math.max(rp.lo, s.target ?? rp.lo));
-    if (targetReps > rp.lo) repsLabel = `${targetReps}${rp.suffix} (statt ${r.reps})`;
+    repsLabel = `${rp.lo}${ceil > rp.lo ? `–${ceil}` : ""}${rp.suffix}`;
     const n = ceil > rp.lo && p && w0 != null ? nextLoad(p, r.equip, w0) : null;
     if (n) gap = `Nächste Stufe ${fmtKg(n.next)} kg ist +${Math.round(n.jump * 100)} %. Bei „Leicht“ erst mehr Wiederholungen (bis ${ceil}), dann ${fmtKg(n.next)} kg.`;
   } else if (r.prog === "reps") {

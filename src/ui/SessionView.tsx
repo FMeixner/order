@@ -343,6 +343,9 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const markDone = (i: number) => {
     const cur = sets[i];
     if (cur.done) return writeSet(i, { done: false });
+    // Bei Übungen mit Wiederholungen trägst du die tatsächliche Zahl ein; ohne Zahl springt der Fokus ins Feld
+    const needsReps = r.kind === "strength" && r.prog !== "none";
+    if (needsReps && cur.reps == null) { document.getElementById(`reps-${r.key}-${i}`)?.focus(); return; }
     writeSet(i, {
       done: true,
       reps: cur.reps ?? sug.targetReps ?? undefined,
@@ -356,6 +359,8 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
     return { ...s, entries: { ...s.entries, [r.key]: { ...e, feedback: e.feedback === fb ? undefined : fb } } };
   });
 
+  const last = [...ctx.state.sessions].filter((x) => x.done && x.id !== session?.id && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
+  const lastLine = last && r.kind === "strength" ? last.sets.filter((y) => y.done).map((y) => y.reps ?? "?").join(" · ") + (last.sets.find((y) => y.done)?.weight != null ? ` mit ${kg(last.sets.find((y) => y.done)!.weight)}` : "") : null;
   const doseLabel =
     r.kind === "timer" ? `${sug.minutes} Min`
     : r.kind === "interval" && r.interval ? `${r.interval.rounds} × ${fmt(r.interval.work)} Arbeit, ${fmt(r.interval.rest)} Pause`
@@ -380,6 +385,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
       </div>
       <div className="slot-dose">
         {doseLabel}
+        {lastLine && <span className="muted"> · zuletzt {lastLine}</span>}
 
       </div>
       {swapOpen && <SwapDialog r={r} ctx={ctx} onClose={() => setSwapOpen(false)} />}
@@ -403,7 +409,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
             {sets.map((s, i) => (
               <div key={i} className={`set-pill ${s.done ? "done" : ""}`}>
                 <button className={`set-btn ${s.done ? "done" : ""}`} onClick={() => markDone(i)} aria-label={`Satz ${i + 1}`}>{s.done ? "✓" : i + 1}</button>
-                <input type="number" inputMode="numeric" className="reps-in" placeholder={sug.targetReps != null ? String(sug.targetReps) : "Wdh"}
+                <input id={`reps-${r.key}-${i}`} type="number" inputMode="numeric" className="reps-in" placeholder="Wdh"
                   value={s.reps ?? ""} onChange={(e) => writeSet(i, { reps: e.target.value === "" ? undefined : parseInt(e.target.value) })} aria-label={`Wiederholungen Satz ${i + 1}`} />
               </div>
             ))}

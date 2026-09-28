@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.1] – 2026-09-28
+
+### Geändert
+- Dosis als Bereich („3 × 10–12“), dazu „zuletzt“ mit den Wiederholungen und dem Gewicht der letzten Einheit. Die Wiederholungen trägst du selbst ein; ein Tipp auf den Kreis ohne Zahl springt ins Feld.
+
 ## [0.8.0] – 2026-09-28
 
 ### Geändert
