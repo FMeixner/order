@@ -8,6 +8,11 @@ import { Check, Field, Modal, Seg } from "./common";
 import { FocusDetail } from "./FociBrowser";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
+/** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
+export const LOAD_FIT_LABEL: Record<Load, string> = { high: "auch bei viel Alltagslast", medium: "bei mittlerer Alltagslast", low: "nur bei wenig Alltagslast" };
+export function levelLabel(l: string): string {
+  return l.replace("beginner", "Einsteiger").replace("intermediate", "Fortgeschrittene").replace("advanced", "Erfahrene");
+}
 export const GOAL_LABEL: Record<string, string> = {
   hypertrophy: "Muskelaufbau", strength: "Kraft", power: "Sprungkraft", speed: "Schnelligkeit", conditioning: "Kondition",
   endurance: "Ausdauer", fatloss: "Fett verlieren", skill: "Skill", mobility: "Beweglichkeit", wellbeing: "Wohlbefinden", test: "Testen",
@@ -33,17 +38,37 @@ export function WeekEditor({ schedule, profiles, onChange, allowEmpty }: { sched
   );
 }
 
+const GOAL_GROUPS: { label: string; goals: string[] }[] = [
+  { label: "Alle", goals: [] },
+  { label: "Muskeln", goals: ["hypertrophy"] },
+  { label: "Kraft & Schnelligkeit", goals: ["strength", "power", "speed"] },
+  { label: "Ausdauer & Kondition", goals: ["endurance", "conditioning", "fatloss"] },
+  { label: "Ruhe & Beweglichkeit", goals: ["wellbeing", "mobility"] },
+  { label: "Skill", goals: ["skill"] },
+  { label: "Testen", goals: ["test"] },
+];
+
 export function FocusPicker({ load, travel, value, onPick }: { load: Load; travel: boolean; value?: string; onPick: (id: string) => void }) {
   const [detail, setDetail] = useState<Focus | null>(null);
-  const ranked = [...FOCI].map((f) => ({ f, ...fitScore(f, load, travel) })).sort((a, b) => b.score - a.score);
+  const [group, setGroup] = useState(0);
+  const goals = GOAL_GROUPS[group].goals;
+  const ranked = [...FOCI]
+    .map((f) => ({ f, ...fitScore(f, load, travel) }))
+    .filter(({ f }) => !goals.length || goals.includes(f.goals.primary) || f.id === value)
+    .sort((a, b) => (b.score >= 0 ? 1 : 0) - (a.score >= 0 ? 1 : 0));
   return (
     <div className="stack">
+      <div className="chips" role="radiogroup" aria-label="Nach Ziel filtern">
+        {GOAL_GROUPS.map((g, i) => (
+          <button key={g.label} role="radio" aria-checked={group === i} className={group === i ? "on" : ""} onClick={() => setGroup(i)}>{g.label}</button>
+        ))}
+      </div>
       {ranked.map(({ f, score, reasons }) => (
         <div key={f.id} className={`focus-card ${value === f.id ? "on" : ""} ${score < 0 ? "dim" : ""}`}>
-          <button className="focus-main" onClick={() => onPick(f.id)}>
-            <div className="focus-name">{f.name}{score >= 2 && <span className="tag teal">passt</span>}</div>
+          <button className="focus-main" onClick={() => onPick(f.id)} aria-pressed={value === f.id}>
+            <div className="focus-name">{f.name}{value === f.id && <span className="tag teal">gewählt</span>}{score < 0 && <span className="tag">passt nicht</span>}</div>
             <div className="focus-tag">{f.tagline}</div>
-            <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen · {f.session_min} Min · {reasons.join(", ")}</div>
+            <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen · {f.session_min} Min{score < 0 ? ` · ${reasons.filter((r) => /braucht|keine/.test(r)).join(", ")}` : ""}</div>
           </button>
           <button className="btn ghost small" onClick={() => setDetail(f)}>Details</button>
         </div>
@@ -79,7 +104,7 @@ export function BlockForm({ block, profiles, onSave, onCancel, onDelete }: { blo
       <div className="sticky-actions">
         {onDelete && <button className="btn danger" onClick={onDelete}>Löschen</button>}
         <button className="btn ghost" onClick={onCancel}>Abbrechen</button>
-        <button className="btn primary" disabled={!valid} onClick={() => onSave(b)}>Speichern</button>
+        <button className="btn primary" disabled={!valid} onClick={() => onSave(b)}>{f ? "Speichern" : "Erst Orden wählen"}</button>
       </div>
     </div>
   );

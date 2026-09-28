@@ -15,7 +15,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Studio", tier: "gym",
       dumbbells: range(2.5, 50, 2.5), kettlebells: [8, 12, 16, 20, 24, 28, 32],
       barbell: { bar: 20, smallestPlate: 1.25 }, cableStep: 2.5, machineStep: 5, vest: [], bands: [],
-      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false },
+      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false },
     }),
   },
   {
@@ -24,7 +24,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Zuhause", tier: "home",
       dumbbells: range(2, 24, 2), kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false },
+      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false },
     }),
   },
   {
@@ -33,7 +33,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Unterwegs", tier: "reise",
       dumbbells: [], kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false },
+      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false },
     }),
   },
 ];
@@ -47,7 +47,7 @@ function range(a: number, b: number, s: number): number[] {
 export function emptyState(): AppState {
   return {
     version: 1, onboarded: false,
-    user: { name: "", asym: { hip: null, neck: null, shoulder_ir: null, shoulder_er: null }, doppelmesser: false },
+    user: { name: "", asym: { hip: null, neck: null, shoulder_ir: null, shoulder_er: null } },
     equipment: [], schedule: {}, roleOrder: {}, plan: [], slots: {}, sessions: [], beastTimes: {},
     reduced: {}, menuChoice: {}, tests: {}, who5: [], feeling: [],
   };
@@ -60,10 +60,15 @@ export function migrate(raw: unknown): AppState {
   const s = { ...base, ...(raw as Partial<AppState>) } as AppState;
   s.user = { ...base.user, ...(s.user ?? {}), asym: { ...base.user.asym, ...(s.user?.asym ?? {}) } };
   s.equipment = (s.equipment ?? []).map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
+  // 0.1 → 0.2: Schalter „Doppelmesser“ wird zum Equipment „Schwert“ an den Heim-Profilen
+  if (s.user.doppelmesser && !s.equipment.some((e) => e.has.sword)) {
+    s.equipment = s.equipment.map((e) => (e.tier === "home" ? { ...e, has: { ...e.has, sword: true } } : e));
+  }
+  delete s.user.doppelmesser;
   return s;
 }
 function base_has(): EquipmentProfile["has"] {
-  return { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false };
+  return { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false };
 }
 
 function load(): AppState {

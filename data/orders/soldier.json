@@ -13,7 +13,7 @@
   "deload_weeks": [1],
   "test_weeks": [2],
   "travel": false,
-  "modules": ["correctives", "doppelmesser", "beast"],
+  "modules": ["correctives", "sword", "beast"],
   "successors": ["gladiator", "knight", "olympian"],
   "week_4": ["studio_a", "home_skill", "studio_b", "outdoor_aerob"],
   "week_3": ["studio_a", "home_skill", "studio_b"],
@@ -39,9 +39,9 @@
     },
     "home_skill": {
       "name": "Home-Skill", "location": "home", "minutes": 45,
-      "warmup": ["base", "doppelmesser_prep"], "cooldown": ["cd_general", "cd_ball"],
+      "warmup": ["base", "sword_prep"], "cooldown": ["cd_general", "cd_ball"],
       "blocks": [
-        {"type": "module", "module": "doppelmesser", "variant": "technik20", "fallback": {"id": "so-h-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 15, "prog": "none"}},
+        {"type": "module", "module": "sword", "variant": "technik20", "fallback": {"id": "so-h-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 15, "prog": "none"}},
         {"type": "menu", "id": "so-h-2", "label": "Schwerpunkt 3", "options": {
           "Work Capacity": {"id": "gpp-work-h", "name": "Bestie Klasse Ungeheuer (frei wählen)", "kind": "timer", "minutes": 20, "prog": "none"},
           "Kraftausdauer": {"id": "gpp-endurance-h", "name": "Push-Up und Pull-Up Leiter", "sets": 1, "reps": "1-10", "prog": "none"},

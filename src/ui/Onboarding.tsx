@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { EQUIPMENT_PRESETS, migrate } from "../store";
 import type { AppState } from "../types";
 import { WEEKDAYS } from "../types";
-import { Check, Field } from "./common";
+import { Field } from "./common";
 import { EquipmentEditor } from "./EquipmentEditor";
 import { PlanList, WeekEditor } from "./PlanEditor";
 import { AsymEditor } from "./Setup";
@@ -32,7 +32,6 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
           <h1>Order</h1>
           <p>Dein Trainingsjahr in Blöcken. Du legst fest, womit du trainierst, an welchen Tagen und welchem Orden du dich in welcher Phase anschließt. Den Rest rechnet die App: welche Übung heute passt, welches Gewicht als Nächstes kommt, wann eine Pause fällig ist.</p>
           <Field label="Wie heißt du?"><input type="text" value={state.user.name} onChange={(e) => update((s) => ({ ...s, user: { ...s.user, name: e.target.value } }))} /></Field>
-          <Check checked={state.user.doppelmesser} onChange={(v) => update((s) => ({ ...s, user: { ...s.user, doppelmesser: v } }))} label="Ich trainiere mit Doppelmesser (Schwert-Modul)" />
           <details className="card">
             <summary>Asymmetrien angeben (optional)</summary>
             <AsymEditor user={state.user} onChange={(user) => update((s) => ({ ...s, user }))} />

@@ -9,6 +9,8 @@ import { Setup } from "./ui/Setup";
 import { TimerBar, TimerProvider } from "./ui/Timer";
 import { Today } from "./ui/Today";
 import { unlockAudio } from "./audio";
+import { Help } from "./ui/Help";
+import { Modal } from "./ui/common";
 
 type Tab = "heute" | "plan" | "foki" | "log" | "setup";
 const TABS: { k: Tab; l: string }[] = [
@@ -18,6 +20,7 @@ const TABS: { k: Tab; l: string }[] = [
 export default function App() {
   const [state, update, replace] = useAppState();
   const [tab, setTab] = useState<Tab>("heute");
+  const [help, setHelp] = useState(false);
   const today = isoDate(new Date());
 
   if (!state.onboarded) {
@@ -28,7 +31,10 @@ export default function App() {
       <div className="app" onPointerDown={unlockAudio}>
         <header className="topbar">
           <div className="brand">Order</div>
-          {state.user.name && <div className="muted small">{state.user.name}</div>}
+          <div className="topbar-right">
+            {state.user.name && <div className="muted small">{state.user.name}</div>}
+            <button className="help" onClick={() => setHelp(true)} aria-label="Anleitung">?</button>
+          </div>
         </header>
         <main className="main">
           {tab === "heute" && <Today state={state} update={update} today={today} goPlan={() => setTab("plan")} />}
@@ -43,6 +49,7 @@ export default function App() {
           {tab === "setup" && <Setup state={state} update={update} replace={replace} today={today} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
         </main>
         <TimerBar />
+        {help && <Modal title="Anleitung" onClose={() => setHelp(false)} wide><Help /></Modal>}
         <nav className="tabbar">
           {TABS.map((t) => <button key={t.k} className={tab === t.k ? "on" : ""} onClick={() => setTab(t.k)}>{t.l}</button>)}
         </nav>

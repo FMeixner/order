@@ -68,7 +68,7 @@
       {"id": "wu-breath", "name": "Ruhig atmen im Sitzen", "mode": "activity", "value": 60, "desc": "Aufrecht sitzen, vier Sekunden ein, sechs Sekunden aus."},
       {"id": "wu-9090", "name": "90/90 Hip Rotations", "mode": "hold", "value": 25, "sides": true, "asym": "hip", "desc": "Beide Beine im 90°-Winkel, aus der Hüfte rotieren und halten."}
     ],
-    "doppelmesser_prep": [
+    "sword_prep": [
       {"id": "dm-glide", "name": "Gleitschritt", "mode": "reps", "value": 10, "sides": ["vorwärts", "rückwärts"], "desc": "Aus der Grundauslage kleiner Schritt nach vorne, hinterer Fuß zieht im gleichen Abstand nach. Fußsohlen nah am Boden, kein Hüpfen."},
       {"id": "dm-still", "name": "Stillschritt", "mode": "reps", "value": 10, "sides": ["vorwärts", "rückwärts"], "desc": "Wie der Gleitschritt, aber so leise wie möglich abrollen, erst Ballen, dann Ferse."}
     ],

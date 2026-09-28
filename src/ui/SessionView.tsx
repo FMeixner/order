@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { EXERCISES } from "../data";
 import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
-import { resolveSlot, type Resolved } from "../engine/resolve";
+import { guidedKeys, resolveSlot, toGuided, type Resolved } from "../engine/resolve";
 import { affectDowngrade, beastClass, beastMinutes, CLASS_LABEL, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapNearest } from "../engine/loads";
 import type { AppState, Beast, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
@@ -41,7 +41,7 @@ function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
       const s = choice ? b.options[choice] : null;
       return s ? ([r(s)].filter(Boolean) as Resolved[]) : [];
     }
-    case "module": return !ctx.state.user.doppelmesser && b.fallback ? ([r(b.fallback)].filter(Boolean) as Resolved[]) : [];
+    case "module": return !ctx.profile.has.sword && b.fallback ? ([r(b.fallback)].filter(Boolean) as Resolved[]) : [];
     default: return [];
   }
 }
@@ -49,16 +49,23 @@ function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
 export function collectItems(ctx: SessionCtx): Item[] {
   const role = ctx.focus.roles[ctx.roleKey];
   const ab = isAWeek(ctx.week) ? "A" : "B";
-  return role.blocks
+  const items: Item[] = role.blocks
     .filter((b) => !b.rotation || b.rotation === ab)
     .map((b) => {
       if (b.type === "beast") {
         return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
       }
-      if (b.type === "module" && ctx.state.user.doppelmesser) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week) };
+      if (b.type === "module" && ctx.profile.has.sword) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week) };
       return { block: b, resolved: slotsOf(b, ctx) };
     })
     .filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
+  // Phase mit hoher Alltagslast: etwa die Hälfte der freien Übungen geführt, sofern das Profil Maschinen oder Kabel hat
+  if (ctx.block.load === "high") {
+    const all = items.flatMap((it) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0 })));
+    const keys = guidedKeys(all, ctx.profile);
+    if (keys.size) for (const it of items) it.resolved = it.resolved.map((r) => (keys.has(r.key) ? toGuided(r, ctx.profile) ?? r : r));
+  }
+  return items;
 }
 
 /* ---------- Hauptansicht ---------- */
@@ -68,7 +75,7 @@ export function SessionView(ctx: SessionCtx) {
   const id = sessionId(block.id, week, roleKey);
   const session = state.sessions.find((s) => s.id === id);
   const items = useMemo(() => collectItems(ctx), [ctx]);
-  const warm = expandDrills(role.warmup ?? ["base"], state.user, week);
+  const warm = expandDrills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || ctx.profile.has.sword), state.user, week);
   const cool = expandDrills(role.cooldown ?? ["cd_general"], state.user, week);
   const [feeling, setFeeling] = useState<number | null>(null);
   const hard = items.some((it) => it.beast || it.resolved.some((r) => r.kind === "interval"));
@@ -106,6 +113,8 @@ export function SessionView(ctx: SessionCtx) {
         <h2>{role.name}</h2>
         <div className="muted small">{ctx.profile.name} · etwa {role.minutes} Min · {isAWeek(week) ? "A-Woche" : "B-Woche"}{ctx.reduced ? " · −1 Satz" : ""}</div>
         {role.note && <p className="note">{role.note}</p>}
+        {items.some((it) => it.resolved.some((r) => r.loadable && !state.slots[r.key]?.weight)) && !session?.done && <p className="note">Neue Übungen: Wähle ein Startgewicht, bei dem am Ende noch 2–3 Wiederholungen gegangen wären. Danach rechnet die App. Was die Feedback-Knöpfe bedeuten, steht unter „?“ oben rechts.</p>}
+        {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
       </div>
 
@@ -204,7 +213,7 @@ function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sessio
   if (b.type === "module" && it.drills) {
     return (
       <section className="card">
-        <div className="block-label amber">Doppelmesser</div>
+        <div className="block-label amber">Schwert</div>
         <DrillList drills={it.drills} done={session?.drills ?? {}} prefix="dm" onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
       </section>
     );
@@ -302,6 +311,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
           <Desc text={desc} />
           {r.ladder && <span className="tag">Stufe {sug.stage + 1}/{r.ladder.length}</span>}
           {r.proposal && <span className="tag">Vorschlag</span>}
+          {r.guided && <span className="tag teal" title="Phase mit hoher Alltagslast">geführt</span>}
         </div>
         <div className="slot-dose">{doseLabel}</div>
       </div>

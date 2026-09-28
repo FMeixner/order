@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.2.0] – 2026-09-28
+
+### Neu
+- Phasen mit hoher Alltagslast: Etwa die Hälfte der freien Übungen eines Tages läuft an Maschine oder Kabel, sofern das Studio sie hat. Der erste große Lift bleibt frei, Kontrastpaare bleiben frei. Geführte Varianten führen eigene Gewichte. Zuordnung in `data/modules/guided.json`.
+- Schwert als Equipment im Profil: schaltet Hiebe, Kombiformen und Schwert-Intervalle frei. Ohne Schwert greift eine Ersatzübung.
+- Anleitung über „?“ oben rechts.
+- Orden-Auswahl mit Filter nach Ziel; klarere Beschriftung, was ein Orden verträgt.
+- Hinweis zu Startgewichten in der ersten Woche.
+
+### Geändert
+- Der Schalter „Doppelmesser“ entfällt. Alte Sicherungen übernehmen ihn als Schwert im Heim-Profil.
+
 ## [0.1.0] – 2026-09-28
 
 Erste Version.
@@ -15,7 +27,7 @@ Erste Version.
 - Kontrastpaare mit 30 s Übergang und 3 Min Pause; Supersets; A/B-Wochen.
 - Bestiarium mit 81 Circuits, Stoppuhr, Bestzeiten, gemessene Dauer bestimmt die Klasse.
 - Warm-up und Cool-down mit Seitengewichtung für Asymmetrien.
-- Optionales Schwert-Modul (Doppelmesser).
+- Schwert als Equipment: schaltet Hiebe und Kombiformen frei.
 - Testwoche mit fünf Cups und WHO-5.
 - Einheitlicher Timer: 4 s Intro, Töne in den letzten 5 s, Pausen ohne Intro, Intervalle.
 - Feeling Scale mit Dosisanpassung (King).

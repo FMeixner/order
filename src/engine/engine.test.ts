@@ -145,3 +145,23 @@ describe("Orden und Plan", () => {
     expect(b!.equipment.every((t) => ["bodyweight_only", "wall_or_open", "band"].includes(t))).toBe(true);
   });
 });
+
+describe("Geführte Varianten bei hoher Last", () => {
+  it("etwa die Hälfte der freien Übungen, erster Lift bleibt frei", async () => {
+    const { FOCUS_BY_ID } = await import("../data");
+    const { guidedKeys, resolveSlot, toGuided } = await import("./resolve");
+    const role = FOCUS_BY_ID.witcher.roles.kraft_a;
+    const list = role.blocks.flatMap((b) => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : []))
+      .map((s) => ({ r: resolveSlot(s, gym)!, contrast: false }));
+    const keys = guidedKeys(list, gym);
+    const names = list.filter((x) => keys.has(x.r.key)).map((x) => toGuided(x.r, gym)!.name);
+    expect(names).toEqual(["Seated Dip Machine", "Seated Cable Row"]);
+    expect(guidedKeys(list, home).size).toBe(0);
+  });
+  it("Doppelmesser-Schalter wird zu Schwert am Heim-Profil", async () => {
+    const { migrate } = await import("../store");
+    const s = migrate({ ...emptyState(), user: { ...emptyState().user, doppelmesser: true }, equipment: [home, gym] });
+    expect(s.equipment.find((e) => e.tier === "home")!.has.sword).toBe(true);
+    expect(s.equipment.find((e) => e.tier === "gym")!.has.sword).toBe(false);
+  });
+});

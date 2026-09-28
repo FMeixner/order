@@ -7,7 +7,7 @@ import { Check, Field, Seg } from "./common";
 const TIER_LABEL: Record<Tier, string> = { gym: "Studio", home: "Zuhause", reise: "Unterwegs" };
 const HAS_LABEL: Record<keyof EquipmentProfile["has"], string> = {
   bar: "Klimmzugstange", rings: "Ringe", bench: "Bank", rower: "Rudergerät", bike: "Rad/Ergometer",
-  box: "Box/Stufe", sandbag: "Sandsack", cable: "Kabelzug", machines: "Maschinen", medball: "Medizinball 2 kg",
+  box: "Box/Stufe", sandbag: "Sandsack", cable: "Kabelzug", machines: "Maschinen", medball: "Medizinball 2 kg", sword: "Schwert oder Stock",
 };
 
 function ListInput({ value, onChange, placeholder }: { value: number[]; onChange: (v: number[]) => void; placeholder: string }) {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FOCI } from "../data";
 import type { Block, Focus, Slot } from "../types";
 import { Modal } from "./common";
-import { GOAL_LABEL, LOAD_LABEL } from "./PlanEditor";
+import { GOAL_LABEL, LOAD_FIT_LABEL, levelLabel } from "./PlanEditor";
 
 const NUTR: Record<string, string> = { deficit: "leichtes Defizit", maintenance: "Erhaltung", surplus: "leichter Überschuss", any: "frei" };
 
@@ -19,7 +19,7 @@ function BlockLines({ b }: { b: Block }) {
     case "superset": return <li>{b.label ?? "Superset"}{rot}: <ul>{b.slots.map((s) => <li key={s.id}>{slotLine(s)}</li>)}</ul></li>;
     case "contrast": return <li>Kontrast{rot}: {b.heavy.name} {b.heavy.sets} × {b.heavy.reps} → {b.transfer ?? 30} s → {b.explosive.name} {b.explosive.reps}, {Math.round((b.rest ?? 180) / 60)} Min Pause</li>;
     case "beast": return <li>Bestie{rot}: {b.pool ? `aus ${b.pool.length} festgelegten` : `Klasse ${(b.classes ?? []).join(" oder ")}`}{b.draw === "random" ? ", zufällig" : ""}{b.benchmark_every ? `, jede ${b.benchmark_every}. Woche Wiederholung` : ""}</li>;
-    case "module": return <li>Doppelmesser: {b.variant}{b.fallback ? ` (ohne Modul: ${b.fallback.name})` : ""}{rot}</li>;
+    case "module": return <li>Schwert: {b.variant}{b.fallback ? ` (ohne Schwert: ${b.fallback.name})` : ""}{rot}</li>;
     case "menu": return <li>{b.label}: nach Wahl aus {Object.keys(b.options).join(", ")}</li>;
   }
 }
@@ -31,9 +31,9 @@ export function FocusDetail({ f }: { f: Focus }) {
       <div className="kv">
         <span>Ziel</span><span>{GOAL_LABEL[f.goals.primary]}{f.goals.secondary.length ? `, dazu ${f.goals.secondary.map((g) => GOAL_LABEL[g]).join(", ")}` : ""}</span>
         <span>Ernährung</span><span>{NUTR[f.nutrition]}</span>
-        <span>Verträgt Alltagslast</span><span>bis {LOAD_LABEL[f.load_fit]}</span>
+        <span>Passt</span><span>{LOAD_FIT_LABEL[f.load_fit]}</span>
         <span>Dauer</span><span>{f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen, etwa {f.session_min} Min pro Einheit</span>
-        <span>Niveau</span><span>{f.level}</span>
+        <span>Niveau</span><span>{levelLabel(f.level)}</span>
         <span>Unterwegs</span><span>{f.travel ? "ja" : "nein"}</span>
         {f.test_week || f.test_weeks ? <><span>Testwoche</span><span>{f.test_weeks ? `Woche ${f.test_weeks.join(", ")}` : "letzte Woche"}</span></> : null}
         {f.sources?.length ? <><span>Grundlagen</span><span>{f.sources.join("; ")}</span></> : null}
@@ -65,7 +65,7 @@ export function FociBrowser() {
         <button key={f.id} className="focus-card solo" onClick={() => setOpen(f)}>
           <div className="focus-name">{f.name}</div>
           <div className="focus-tag">{f.tagline}</div>
-          <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · Last bis {LOAD_LABEL[f.load_fit]} · {f.session_min} Min{f.travel ? " · unterwegs möglich" : ""}</div>
+          <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {LOAD_FIT_LABEL[f.load_fit]} · {f.session_min} Min{f.travel ? " · unterwegs möglich" : ""}</div>
         </button>
       ))}
       {open && <Modal title={open.name} onClose={() => setOpen(null)} wide><FocusDetail f={open} /></Modal>}

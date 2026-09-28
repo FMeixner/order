@@ -63,7 +63,7 @@ export type Block =
       type: "beast"; id: string; classes?: BeastClass[]; pool?: string[];
       draw?: "rotate" | "random"; benchmark_every?: number; note?: string; rotation?: "A" | "B";
     }
-  | { type: "module"; module: "doppelmesser"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
+  | { type: "module"; module: "sword"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
 
 export interface Role {
@@ -161,7 +161,7 @@ export interface EquipmentProfile {
   machineStep: number;
   vest: number[];
   bands: string[];
-  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean };
+  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean };
 }
 
 export interface PlanBlock {
@@ -182,7 +182,8 @@ export const WEEKDAYS: Weekday[] = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 export interface UserProfile {
   name: string;
   asym: { hip: "L" | "R" | null; neck: "L" | "R" | null; shoulder_ir: "L" | "R" | null; shoulder_er: "L" | "R" | null };
-  doppelmesser: boolean;
+  /** Veraltet (0.1): wird beim Laden in has.sword der Heim-Profile übernommen */
+  doppelmesser?: boolean;
 }
 
 /** Feedback nach einer Übung */

@@ -12,7 +12,7 @@
   "weeks": {"min": 12, "max": 15},
   "deload_weeks": [8],
   "travel": true,
-  "modules": ["correctives", "doppelmesser"],
+  "modules": ["correctives", "sword"],
   "successors": ["conqueror", "troubadour"],
   "sources": ["Iraki et al. (2019)", "Maeo et al. (2021)"],
   "week_4": ["oberkoerper", "arme_kurz", "home_weste_schwert", "unterkoerper"],
@@ -40,13 +40,13 @@
     },
     "home_weste_schwert": {
       "name": "Weste und Schwert", "location": "home", "minutes": 55,
-      "warmup": ["short_base", "thoracic_roller", "dislocate", "doppelmesser_prep"], "cooldown": ["cd_mdf", "cd_ball"],
+      "warmup": ["short_base", "thoracic_roller", "dislocate", "sword_prep"], "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
-        {"type": "module", "module": "doppelmesser", "variant": "wechselhau", "fallback": {"id": "gl-do-fb", "name": "Shadow Boxing", "kind": "timer", "minutes": 8, "prog": "none"}},
+        {"type": "module", "module": "sword", "variant": "wechselhau", "fallback": {"id": "gl-do-fb", "name": "Shadow Boxing", "kind": "timer", "minutes": 8, "prog": "none"}},
         {"type": "single", "slot": {"id": "gl-do-2", "name": "Deficit Push-Up + Weste", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "gl-do-3", "name": "Chin-Up + Weste", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "6-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "gl-do-4", "name": "Bulgarian Split Squat + Weste", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
-        {"type": "module", "module": "doppelmesser", "variant": "intervalle", "fallback": {"id": "gl-do-fb2", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 40, "rounds": 8}, "prog": "none"}}
+        {"type": "module", "module": "sword", "variant": "intervalle", "fallback": {"id": "gl-do-fb2", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 40, "rounds": 8}, "prog": "none"}}
       ]
     },
     "unterkoerper": {

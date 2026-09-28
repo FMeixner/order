@@ -1,5 +1,5 @@
 /* Wählt für einen Slot die konkrete Übung passend zum Equipment-Profil des Tages. */
-import { EXERCISES } from "../data";
+import { EXERCISES, GUIDED } from "../data";
 import type { Choice, Equip, EquipmentProfile, Prog, Slot, SlotKind, Tier } from "../types";
 import { isLoadable, loadScale } from "./loads";
 
@@ -24,6 +24,8 @@ export interface Resolved {
   proposal?: boolean;
   missingEquipment: boolean;
   loadable: boolean;
+  /** Geführte Variante statt freier Übung (Phase mit hoher Last) */
+  guided?: boolean;
 }
 
 const TIER_ORDER: Record<Tier, Tier[]> = {
@@ -104,6 +106,29 @@ export function resolveSlot(slot: Slot, p: EquipmentProfile, reduced = false): R
     missingEquipment: !chosen,
     loadable,
   };
+}
+
+/* ---------- Geführte Varianten bei hoher Phasenlast ---------- */
+export const FREE_WEIGHT: Equip[] = ["barbell", "dumbbell", "kettlebell", "plate", "vest", "sandbag"];
+
+/** Die gleiche Stelle mit geführter Übung. null, wenn es keine gibt oder das Profil sie nicht hat. */
+export function toGuided(r: Resolved, p: EquipmentProfile): Resolved | null {
+  const name = GUIDED[r.name];
+  if (!name || !available(name, p)) return null;
+  const equip = equipOf(name);
+  if (!isLoadable(equip)) return null;
+  const prog: Prog = r.prog === "topset" || r.prog === "weight" ? r.prog : "double";
+  return { ...r, key: `${r.slotId}|${name}`, name, equip, prog, loadable: true, ladder: undefined, missingEquipment: false, guided: true };
+}
+
+/** Welche Stellen eines Tages geführt werden: etwa die Hälfte der freien Übungen,
+    der erste freie Lift bleibt frei, schwere Sätze in Kontrastpaaren bleiben frei,
+    bevorzugt die späteren Übungen des Tages. Gibt die Slot-Schlüssel zurück. */
+export function guidedKeys(list: { r: Resolved; contrast: boolean }[], p: EquipmentProfile): Set<string> {
+  const free = list.filter((x) => FREE_WEIGHT.includes(x.r.equip));
+  const n = Math.round(free.length / 2);
+  const cands = free.slice(1).filter((x) => !x.contrast && toGuided(x.r, p));
+  return new Set(cands.slice(Math.max(0, cands.length - n)).map((x) => x.r.key));
 }
 
 /** Wiederholungsangabe zerlegen: "8-10/Seite", "AMRAP-2", "12", "40 m" */

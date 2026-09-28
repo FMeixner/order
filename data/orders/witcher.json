@@ -3,7 +3,7 @@
   "id": "witcher",
   "name": "Witcher",
   "tagline": "Masse aufbauen, beweglich bleiben.",
-  "description": "Muskelaufbau mit leichtem Überschuss. Pro Muskel etwa 12 Sätze pro Woche, Übungen mit Betonung der Dehnposition. Freitag schwer mit Kontrastpaaren im A/B-Wechsel: 30 s vom schweren zum explosiven Satz, 3 Min bis zum nächsten Paar. Donnerstag zuhause mit Doppelmesser-Klammer.",
+  "description": "Muskelaufbau mit leichtem Überschuss. Pro Muskel etwa 12 Sätze pro Woche, Übungen mit Betonung der Dehnposition. Freitag schwer mit Kontrastpaaren im A/B-Wechsel: 30 s vom schweren zum explosiven Satz, 3 Min bis zum nächsten Paar. Donnerstag zuhause, mit Schwert als Klammer am Anfang und Ende.",
   "goals": {"primary": "hypertrophy", "secondary": ["strength", "power", "skill"]},
   "nutrition": "surplus",
   "load_fit": "high",
@@ -12,7 +12,7 @@
   "weeks": {"min": 10, "max": 12},
   "test_week": false,
   "travel": true,
-  "modules": ["correctives", "doppelmesser", "beast"],
+  "modules": ["correctives", "sword", "beast"],
   "successors": ["soldier", "gladiator"],
   "week_4": ["kraft_a", "arme_kurz", "home_hypertrophie", "kraft_contrast"],
   "week_3": ["kraft_a", "home_hypertrophie", "kraft_contrast"],
@@ -45,10 +45,10 @@
     },
     "home_hypertrophie": {
       "name": "Home-Hypertrophie", "location": "home", "minutes": 55,
-      "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep", "doppelmesser_prep"],
+      "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep", "sword_prep"],
       "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
-        {"type": "module", "module": "doppelmesser", "variant": "bookend"},
+        {"type": "module", "module": "sword", "variant": "bookend"},
         {"type": "single", "slot": {"id": "w-do-1", "name": "Bulgarian Split Squat", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 4, "reps": "10-12/Seite", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "w-do-2", "name": "Deficit Push-Up", "sets": 3, "reps": "AMRAP", "prog": "reps", "rest": 90, "note": "Wenn 20+ Wdh: Weste dazu"}},
         {"type": "single", "slot": {"id": "w-do-3", "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "1-Arm DB Row"], "rest": 90}},
@@ -57,7 +57,7 @@
           {"id": "w-do-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
           {"id": "w-do-5b", "name": "KB Russian Twist", "reise": {"name": "Russian Twist", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"}
         ]},
-        {"type": "module", "module": "doppelmesser", "variant": "bookend"}
+        {"type": "module", "module": "sword", "variant": "bookend"}
       ]
     },
     "kraft_contrast": {

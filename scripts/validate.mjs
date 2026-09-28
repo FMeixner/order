@@ -15,8 +15,14 @@ const warn = (f, m) => warns.push(`${f}: ${m}`);
 const exercises = read("exercises.json");
 const beasts = read("beasts.json");
 const correctives = read("modules/correctives.json").lists;
-const dm = read("modules/doppelmesser.json").variants;
+const dm = read("modules/sword.json").variants;
 const beastIds = new Set(beasts.map((b) => b.id));
+const guided = read("modules/guided.json").map;
+for (const [free, g] of Object.entries(guided)) {
+  if (!exercises[free]) err("guided.json", `freie Übung "${free}" fehlt in exercises.json`);
+  if (!exercises[g]) err("guided.json", `geführte Übung "${g}" fehlt in exercises.json`);
+  else if (!["machine", "cable"].includes(exercises[g].equip)) err("guided.json", `"${g}" ist keine Maschine und kein Kabel`);
+}
 
 const EQUIPS = new Set(["barbell", "dumbbell", "kettlebell", "cable", "machine", "plate", "vest", "band", "bodyweight", "cardio", "skill", "sandbag", "none", "other"]);
 const PROGS = new Set(["double", "weight", "reps", "hold", "minutes", "ladder", "topset", "none"]);
@@ -81,7 +87,7 @@ for (const [f, d] of allFoci) {
         case "contrast": checkSlot(b.heavy, ctx); checkSlot(b.explosive, ctx); break;
         case "menu": Object.values(b.options).forEach((s) => checkSlot(s, `${ctx}/${b.id}`)); break;
         case "module":
-          if (b.module !== "doppelmesser" || !dm[b.variant]) err(f, `${ctx}: Modul-Variante ${b.variant} unbekannt`);
+          if (b.module !== "sword" || !dm[b.variant]) err(f, `${ctx}: Modul-Variante ${b.variant} unbekannt`);
           if (b.fallback) checkSlot(b.fallback, ctx);
           break;
         case "beast":

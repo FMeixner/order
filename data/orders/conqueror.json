@@ -12,7 +12,7 @@
   "weeks": {"min": 8, "max": 10},
   "test_week": true,
   "travel": true,
-  "modules": ["correctives", "beast", "doppelmesser"],
+  "modules": ["correctives", "beast", "sword"],
   "successors": ["assassin", "knight", "troubadour"],
   "sources": ["Helgerud et al. (2007)"],
   "week_4": ["studio_kraft", "unterwegs_kraft", "work_capacity", "ausdauer"],
@@ -54,7 +54,7 @@
       "name": "Belastbarkeit", "location": "reise", "minutes": 35,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "module", "module": "doppelmesser", "variant": "bookend"},
+        {"type": "module", "module": "sword", "variant": "bookend"},
         {"type": "beast", "id": "c-w-1", "classes": ["ungeheuer"], "draw": "rotate", "benchmark_every": 3, "note": "Jede dritte Woche: Bestie aus Woche 1 als Zwischenwert."}
       ]
     },

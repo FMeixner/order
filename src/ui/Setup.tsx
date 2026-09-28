@@ -3,7 +3,7 @@ import { FOCUS_BY_ID } from "../data";
 import { blockAt, rolesFor, trainingDays } from "../engine/plan";
 import { exportState, migrate } from "../store";
 import type { AppState, UserProfile } from "../types";
-import { Check, Collapse, Field, Seg } from "./common";
+import { Collapse, Field, Seg } from "./common";
 import { EquipmentEditor } from "./EquipmentEditor";
 import { WeekEditor } from "./PlanEditor";
 
@@ -55,7 +55,6 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
     <div className="stack">
       <Collapse title="Profil" meta={state.user.name || "ohne Namen"} defaultOpen>
         <Field label="Name"><input type="text" value={state.user.name} onChange={(e) => update((st) => ({ ...st, user: { ...st.user, name: e.target.value } }))} /></Field>
-        <Check checked={state.user.doppelmesser} onChange={(v) => update((st) => ({ ...st, user: { ...st.user, doppelmesser: v } }))} label="Doppelmesser-Modul (Schwerttraining) einschalten" />
       </Collapse>
       <Collapse title="Equipment-Profile" meta={`${state.equipment.length}`}>
         <EquipmentEditor list={state.equipment} onChange={(equipment) => update((st) => ({ ...st, equipment }))} />

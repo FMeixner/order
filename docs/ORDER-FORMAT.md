@@ -41,7 +41,7 @@ Hat jemand mehr Trainingstage als `week_4` Rollen, kommen weitere Rollen aus `ro
 | `superset` | `slots`, `rest` nach der Runde |
 | `contrast` | `heavy`, `explosive`, `transfer` (Standard 30 s), `rest` (Standard 180 s) |
 | `beast` | `pool` (feste Liste) oder `classes` (plage, bestie, ungeheuer, uralte, verfluchte), `draw` rotate oder random, `benchmark_every` |
-| `module` | Doppelmesser-Variante, `fallback`-Slot ohne Modul |
+| `module` | `"module": "sword"`: Schwert-Variante aus `data/modules/sword.json`, nur wenn das Profil ein Schwert hat; sonst `fallback`-Slot |
 | `menu` | `options`: Name → Slot; der Nutzer wählt |
 
 Jeder Block kann `rotation: "A"` (ungerade Blockwoche) oder `"B"` tragen.
@@ -73,3 +73,7 @@ Jeder Block kann `rotation: "A"` (ungerade Blockwoche) oder `"B"` tragen.
 - **hold / minutes**: +`step` bis `max`, wenn nicht Schwer.
 
 Laststufen kommen aus dem Equipment-Profil: Kurzhanteln und Kettlebells als Liste, Langhantel als Stange plus zwei kleinste Scheiben, Kabel und Maschinen als Schrittweite, Weste als Liste.
+
+## Geführte Varianten
+
+`data/modules/guided.json` ordnet freien Übungen eine Maschinen- oder Kabelvariante zu. In Phasen mit Alltagslast „hoch“ tauscht die App etwa die Hälfte der freien Übungen eines Tages, beginnend bei den späteren; der erste freie Lift und schwere Sätze in Kontrastpaaren bleiben frei. Getauscht wird nur, wenn das Equipment-Profil Maschinen bzw. Kabel hat.

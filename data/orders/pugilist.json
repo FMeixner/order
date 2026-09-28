@@ -3,7 +3,7 @@
   "id": "pugilist",
   "name": "Pugilist",
   "tagline": "Rumpf, Nacken, Runden.",
-  "description": "Kampfsportnahes Training: Rumpf, Nacken, Rotationskraft und Kondition in Runden (Arbeit und Pause wie im Ring). Das Kampfmodul ist Schattenboxen, bei eingeschaltetem Doppelmesser das Schwert.",
+  "description": "Kampfsportnahes Training: Rumpf, Nacken, Rotationskraft und Kondition in Runden (Arbeit und Pause wie im Ring). Das Kampfmodul ist Schattenboxen, mit Schwert im Equipment-Profil das Schwert.",
   "goals": {"primary": "conditioning", "secondary": ["skill", "strength"]},
   "nutrition": "maintenance",
   "load_fit": "medium",
@@ -12,7 +12,7 @@
   "weeks": {"min": 8, "max": 10},
   "test_week": true,
   "travel": true,
-  "modules": ["correctives", "beast", "doppelmesser"],
+  "modules": ["correctives", "beast", "sword"],
   "successors": ["huntsman", "king", "olympian"],
   "week_4": ["runden_technik", "kraft_rotation", "runden_kondition", "nacken_rumpf"],
   "week_3": ["runden_technik", "kraft_rotation", "runden_kondition"],
@@ -21,7 +21,7 @@
       "name": "Technikrunden", "location": "reise", "minutes": 40,
       "warmup": ["base", "neck_complex"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "module", "module": "doppelmesser", "variant": "einzelmesser", "fallback": {"id": "fi-t-1", "name": "Schattenboxen: Technikrunden", "kind": "interval", "interval": {"work": 180, "rest": 60, "rounds": 4}, "prog": "none"}},
+        {"type": "module", "module": "sword", "variant": "einzelmesser", "fallback": {"id": "fi-t-1", "name": "Schattenboxen: Technikrunden", "kind": "interval", "interval": {"work": 180, "rest": 60, "rounds": 4}, "prog": "none"}},
         {"type": "single", "slot": {"id": "fi-t-2", "name": "Beinarbeit-Drill (Linien)", "kind": "interval", "interval": {"work": 60, "rest": 30, "rounds": 3}, "prog": "none"}},
         {"type": "superset", "label": "Nacken", "rest": 45, "slots": [
           {"id": "fi-t-3a", "name": "Neck Curl", "sets": 2, "reps": "15", "prog": "reps"},
@@ -46,7 +46,7 @@
       "name": "Konditionsrunden", "location": "home", "minutes": 40,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "single", "slot": {"id": "fi-k-1", "name": "Intensivrunden: Serien, hohes Tempo", "kind": "interval", "interval": {"work": 120, "rest": 60, "rounds": 5}, "prog": "none", "note": "Schattenboxen oder Doppelmesser, je nach Modul."}},
+        {"type": "single", "slot": {"id": "fi-k-1", "name": "Intensivrunden: Serien, hohes Tempo", "kind": "interval", "interval": {"work": 120, "rest": 60, "rounds": 5}, "prog": "none", "note": "Schattenboxen oder Schwert, je nach Equipment."}},
         {"type": "beast", "id": "fi-k-2", "classes": ["plage", "bestie"], "draw": "rotate"}
       ]
     },

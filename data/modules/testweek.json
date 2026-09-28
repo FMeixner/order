@@ -29,7 +29,7 @@
       "warmup": ["base"],
       "benchmark": {"label": "Bestie auf Zeit (Kraftausdauer)", "pool": ["ng-garm", "ng-ubba", "ng-orvar"]},
       "tests": [
-        {"id": "t-skill", "name": "Skill: 2 Min saubere Wiederholungen", "unit": "reps", "attempts": 1, "better": "higher", "desc": "Mit Doppelmesser: Kombiform A, gültige Kombis in 2 Minuten. Ohne: Burpee-Box-Step-Overs oder eine andere feste Koordinationsaufgabe, immer dieselbe."},
+        {"id": "t-skill", "name": "Skill: 2 Min saubere Wiederholungen", "unit": "reps", "attempts": 1, "better": "higher", "desc": "Mit Schwert: Kombiform Zorn → Zwerch → Scheitel, gültige Kombis in 2 Minuten. Ohne: Burpee-Box-Step-Overs oder eine andere feste Koordinationsaufgabe, immer dieselbe."},
         {"id": "t-row500", "name": "500 m Rudern, all-out", "unit": "mmss", "attempts": 1, "better": "lower", "desc": "Start aus dem Stillstand. Gleiche Einstellung wie beim letzten Test. Eingabe m:ss.z, z. B. 1:42.5."}
       ]
     },

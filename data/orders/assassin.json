@@ -3,7 +3,7 @@
   "id": "assassin",
   "name": "Assassin",
   "tagline": "Fett runter, Kraft halten, Bewegung schärfen.",
-  "description": "Leichtes Defizit bei vollem Kraftreiz über Maschinen und Kabel, dazu ein Tag für Doppelmesser und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
+  "description": "Leichtes Defizit bei vollem Kraftreiz über Maschinen und Kabel, dazu ein Tag für Schwert und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
   "goals": {"primary": "fatloss", "secondary": ["strength", "skill"]},
   "nutrition": "deficit",
   "load_fit": "high",
@@ -12,7 +12,7 @@
   "weeks": {"min": 8, "max": 10},
   "test_week": true,
   "travel": true,
-  "modules": ["correctives", "doppelmesser", "beast"],
+  "modules": ["correctives", "sword", "beast"],
   "successors": ["witcher", "soldier"],
   "week_4": ["kraft_a", "arme_schultern", "skill_kondition", "kraft_b"],
   "week_3": ["kraft_a", "skill_kondition", "kraft_b"],
@@ -45,10 +45,10 @@
     },
     "skill_kondition": {
       "name": "Schwert und Bestie", "location": "home", "minutes": 45,
-      "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep", "neck_complex", "doppelmesser_prep"],
+      "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep", "neck_complex", "sword_prep"],
       "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
-        {"type": "module", "module": "doppelmesser", "variant": "einzelmesser", "fallback": {"id": "sk-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 12, "prog": "none"}},
+        {"type": "module", "module": "sword", "variant": "einzelmesser", "fallback": {"id": "sk-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 12, "prog": "none"}},
         {"type": "beast", "id": "sk-beast", "pool": ["ng-agir", "ng-saga", "ng-odin", "ng-jormungandr", "ng-nanna", "ng-ran", "ng-fenja", "ng-thorsson", "ng-kvasir", "ng-hel", "ng-garm", "ng-orvar"], "draw": "rotate", "note": "Auf Zeit. Bei −1 Satz eine Bestie der Klasse Plage."}
       ]
     },

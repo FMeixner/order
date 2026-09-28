@@ -51,7 +51,7 @@ export function suggest(r: Resolved, st: SlotState | undefined, weekInBlock = 1)
   if (targetReps === null && rp.lo !== null && !rp.amrap) targetReps = rp.lo;
   const weight = r.loadable ? s.weight : null;
   const backoff: number | null = null; // Back-off-Last rechnet backoffLoad() mit dem Profil
-  if (weight == null && r.loadable) hint = "Startgewicht wählen, 2–3 Wdh in Reserve";
+  if (weight == null && r.loadable) hint = "Startgewicht wählen";
 
   let seconds: number | null = null;
   if (r.kind === "hold") seconds = r.prog === "hold" || r.prog === "ladder" ? Math.max(r.hold ?? 20, s.target ?? r.hold ?? 20) : r.hold ?? 20;
