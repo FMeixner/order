@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { EXERCISES } from "../data";
 import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { affectDowngrade, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
+import { affectDowngrade, beastById, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapNearest } from "../engine/loads";
 import type { AppState, Beast, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
 import { Collapse, Desc, kg, Modal } from "./common";
@@ -105,6 +105,7 @@ export function SessionView(ctx: SessionCtx) {
       }
       const beastTimes = { ...st.beastTimes };
       if (cur.beast?.seconds) beastTimes[cur.beast.id] = [...(beastTimes[cur.beast.id] ?? []), { date: ctx.date, seconds: cur.beast.seconds }];
+      for (const pt of cur.beastParts ?? []) if (pt.seconds) beastTimes[pt.id] = [...(beastTimes[pt.id] ?? []), { date: ctx.date, seconds: pt.seconds }];
       const feelingLog = feeling != null ? [...st.feeling, { date: ctx.date, sessionId: id, value: feeling }] : st.feeling;
       return { ...st, slots, beastTimes, feeling: feelingLog, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: true, date: ctx.date } : s)) };
     });
@@ -457,7 +458,8 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
 }
 
 /* ---------- Bestie ---------- */
-function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string }) {
+/** Stoppuhr und Zeiteingabe für eine Bestie */
+function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number }[]; label?: string; saved: number | null; onSave: (sec: number) => void }) {
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [, tick] = useState(0);
   const [manual, setManual] = useState("");
@@ -466,26 +468,64 @@ function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ct
     const iv = setInterval(() => tick((x) => x + 1), 500);
     return () => clearInterval(iv);
   }, [startedAt]);
-  if (!beast) return <section className="card"><div className="muted">Keine passende Bestie für dieses Equipment gefunden.</div></section>;
-  const times = ctx.state.beastTimes[beast.id] ?? [];
   const pr = times.length ? Math.min(...times.map((x) => x.seconds)) : null;
-  const eff = beastMinutes(beast, times);
-  const cls = beastClass(eff.min);
-  const saved = session?.beast?.id === beast.id ? session.beast.seconds : null;
   const running = startedAt != null;
   const elapsed = running ? (Date.now() - startedAt!) / 1000 : 0;
-  const save = (sec: number) => mut((s) => ({ ...s, beast: { id: beast.id, seconds: Math.round(sec) } }));
+  return (
+    <div className="stack beast-timer">
+      {label && <div className="small muted">{label}</div>}
+      <div className="row">
+        {!running
+          ? <button className="btn primary" onClick={() => setStartedAt(Date.now())}>▶ Stoppuhr</button>
+          : <button className="btn primary" onClick={() => { onSave(Math.round(elapsed)); setStartedAt(null); }}>■ Stopp {fmt(elapsed)}</button>}
+        <input type="text" inputMode="numeric" placeholder="oder mm:ss" value={manual} onChange={(e) => setManual(e.target.value)}
+          onBlur={() => { const m = manual.match(/^(\d+):(\d{1,2})$/); if (m) { onSave(parseInt(m[1]) * 60 + parseInt(m[2])); setManual(""); } }} className="time-in" />
+      </div>
+      <div className="small">
+        {saved ? <>Heute: <strong>{fmt(saved)}</strong>{pr && saved < pr ? " · neue Bestzeit" : ""}</> : null}
+        {pr ? <span className="muted">{saved ? " · " : ""}Bestzeit {fmt(pr)}</span> : !saved ? <span className="muted">Noch keine Zeit</span> : null}
+      </div>
+    </div>
+  );
+}
+
+function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string }) {
+  const t = useTimer();
+  if (!beast) return <section className="card"><div className="muted">Keine passende Bestie für dieses Equipment gefunden.</div></section>;
+  // Dauer: bei Serien aus den Teilen, mit gemessenen Zeiten, wo vorhanden
+  const effMin = beast.parts
+    ? beast.parts.reduce((m, pt) => m + beastMinutes(beastById(pt.id)!, ctx.state.beastTimes[pt.id]).min * pt.times, 0) + ((beast.parts.reduce((n, pt) => n + pt.times, 0) - 1) * COMBO_REST) / 60
+    : beastMinutes(beast, ctx.state.beastTimes[beast.id]).min;
+  const measured = beast.parts ? beast.parts.every((pt) => (ctx.state.beastTimes[pt.id] ?? []).length) : (ctx.state.beastTimes[beast.id] ?? []).length > 0;
+  const cls = beastClass(effMin);
+  const saveSingle = (sec: number) => mut((s) => ({ ...s, beast: { id: beast.id, seconds: sec } }));
+  // Serie: jeder Durchgang einzeln, jede Zeit zählt für ihre Bestie
+  const units = beast.parts ? beast.parts.flatMap((pt) => Array.from({ length: pt.times }, (_, k) => ({ id: pt.id, name: pt.name, k, times: pt.times }))) : [];
+  const saveUnit = (u: number, sec: number) => {
+    mut((s) => {
+      const arr = units.map((x, i) => (s.beastParts?.[i]?.id === x.id ? s.beastParts[i] : { id: x.id, seconds: null }));
+      arr[u] = { id: units[u].id, seconds: sec };
+      return { ...s, beastParts: arr };
+    });
+    if (u < units.length - 1) t.rest(`Pause, dann ${units[u + 1].name}`, COMBO_REST);
+  };
+  let unitIdx = 0;
   return (
     <section className="card beast">
-      <div className="block-label amber">Bestiarium · {CLASS_LABEL[cls]} · ~{Math.round(eff.min)} Min {eff.measured ? "gemessen" : "geschätzt"}</div>
+      <div className="block-label amber">Bestiarium · {CLASS_LABEL[cls]} · ~{Math.round(effMin)} Min {measured ? "gemessen" : "geschätzt"}</div>
       <div className="beast-name">{beast.name}</div>
       {beast.parts ? (
         <>
-          <div className="muted small">Serie: {beast.parts.length > 1 ? "zwei Bestien hintereinander" : `${beast.parts[0].times}-mal dieselbe Bestie`}, dazwischen {COMBO_REST / 60} Min Pause. Stoppuhr läuft über alles.</div>
+          <div className="muted small">Serie: {beast.parts.length > 1 ? "zwei Bestien hintereinander" : `${beast.parts[0].times}-mal dieselbe Bestie`}, dazwischen {COMBO_REST / 60} Min Pause. Jede Zeit zählt für die Bestzeit ihrer Bestie.</div>
           {beast.parts.map((pt, k) => (
-            <div key={k}>
-              <div className="small"><strong>{pt.times > 1 ? `${pt.times} × ` : `${k + 1}. `}{pt.name}</strong> <span className="muted">· {pt.rounds} {pt.rounds === 1 ? "Durchgang" : "Runden"}</span></div>
+            <div key={k} className="stack">
+              <div className="small"><strong>{beast.parts!.length > 1 ? `${k + 1}. ` : ""}{pt.name}</strong> <span className="muted">· {pt.rounds} {pt.rounds === 1 ? "Durchgang" : "Runden"}</span></div>
               <ul className="beast-work">{pt.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+              {Array.from({ length: pt.times }).map((_, r) => {
+                const u = unitIdx++;
+                const saved = session?.beastParts?.[u]?.id === pt.id ? session.beastParts[u].seconds : null;
+                return <BeastTimer key={u} times={ctx.state.beastTimes[pt.id] ?? []} label={pt.times > 1 ? `Durchgang ${r + 1} von ${pt.times}` : undefined} saved={saved} onSave={(sec) => saveUnit(u, sec)} />;
+              })}
             </div>
           ))}
         </>
@@ -493,20 +533,10 @@ function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ct
         <>
           <div className="muted small">{beast.rounds} {beast.rounds === 1 ? "Durchgang" : "Runden"}</div>
           <ul className="beast-work">{beast.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+          <BeastTimer times={ctx.state.beastTimes[beast.id] ?? []} saved={session?.beast?.id === beast.id ? session.beast.seconds : null} onSave={saveSingle} />
         </>
       )}
       {note && <div className="muted small">{note}</div>}
-      <div className="row">
-        {!running
-          ? <button className="btn primary" onClick={() => setStartedAt(Date.now())}>▶ Stoppuhr</button>
-          : <button className="btn primary" onClick={() => { save(elapsed); setStartedAt(null); }}>■ Stopp {fmt(elapsed)}</button>}
-        <input type="text" inputMode="numeric" placeholder="oder mm:ss" value={manual} onChange={(e) => setManual(e.target.value)}
-          onBlur={() => { const m = manual.match(/^(\d+):(\d{1,2})$/); if (m) { save(parseInt(m[1]) * 60 + parseInt(m[2])); setManual(""); } }} className="time-in" />
-      </div>
-      <div className="small">
-        {saved ? <>Heute: <strong>{fmt(saved)}</strong>{pr && saved < pr ? " · neue Bestzeit" : ""}</> : null}
-        {pr ? <span className="muted">{saved ? " · " : ""}Bestzeit {fmt(pr)}</span> : !saved ? <span className="muted">Noch keine Zeit</span> : null}
-      </div>
     </section>
   );
 }

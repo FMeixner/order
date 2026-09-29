@@ -266,3 +266,4 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .skill-group { gap: 6px; }
 .skill-row { align-items: flex-start; }
 .skill-row input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; }
+.beast-timer { gap: 6px; margin-bottom: 10px; }

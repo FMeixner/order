@@ -229,6 +229,8 @@ export interface Session {
   entries: Record<string, SessionEntry>;
   drills: Record<string, boolean[]>;
   beast?: { id: string; seconds: number | null };
+  /** Serie: Zeit je Teil, jede zählt für die Bestzeit ihrer Bestie */
+  beastParts?: { id: string; seconds: number | null }[];
   menu: Record<string, string>;
   note?: string;
   done: boolean;

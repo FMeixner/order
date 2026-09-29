@@ -182,7 +182,10 @@ function comboFor(classes: BeastClass[], pool: Beast[], seed: string, week: numb
   }
   if (!cands.length) return null;
   const order = cands.sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
-  return order[(week - 1) % order.length];
+  const pick = order[(week - 1) % order.length];
+  // Bei Paaren wechselt die Reihenfolge, damit jede Bestie auch mal frisch als erste kommt
+  if (pick.parts?.length === 2 && hash(`${seed}:${week}`) % 2 === 1) return composeBeast([...pick.parts].reverse().map((pt) => [BEAST_BY_ID[pt.id], pt.times] as [Beast, number]));
+  return pick;
 }
 
 function hash(s: string): number {

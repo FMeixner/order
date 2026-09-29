@@ -16,6 +16,7 @@ function sessionText(s: Session, state: AppState): string {
     lines.push(`- ${e.name}: ${sets}${e.feedback ? ` (${e.feedback})` : ""}`);
   }
   if (s.beast?.seconds) lines.push(`- Bestie ${beastById(s.beast.id)?.name}: ${fmt(s.beast.seconds)}`);
+  for (const pt of s.beastParts ?? []) if (pt.seconds) lines.push(`- Bestie ${beastById(pt.id)?.name}: ${fmt(pt.seconds)}`);
   if (s.note) lines.push(`- Notiz: ${s.note}`);
   void state;
   return lines.join("\n");
@@ -51,6 +52,7 @@ export function LogView({ state }: { state: AppState }) {
                 </li>
               ))}
               {s.beast?.seconds ? <li><strong>{beastById(s.beast.id)?.name}</strong>: {fmt(s.beast.seconds)}</li> : null}
+              {(s.beastParts ?? []).filter((pt) => pt.seconds).map((pt, i) => <li key={`bp${i}`}><strong>{beastById(pt.id)?.name}</strong>: {fmt(pt.seconds!)}</li>)}
             </ul>
             {s.note && <p className="muted small">{s.note}</p>}
           </Collapse>

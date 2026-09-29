@@ -339,5 +339,9 @@ describe("Bestien-Serien", () => {
     expect(beastById(b.id)?.name).toBe(b.name);
     const b2 = pickBeast(blk, { blockId: "b1", week: 2, profile: gym, state: s, reduced: false, downgrade: false })!;
     expect(b2.id).not.toBe(b.id);
+    // Reihenfolge der Paare wechselt: über viele Wochen kommt jede Bestie auch mal zuerst
+    const firsts = new Set<string>(), seconds = new Set<string>();
+    for (let w = 1; w <= 60; w++) { const x = pickBeast(blk, { blockId: "b1", week: w, profile: gym, state: s, reduced: false, downgrade: false })!; if (x.parts?.length === 2) { firsts.add(x.parts[0].id); seconds.add(x.parts[1].id); } }
+    expect([...seconds].some((id) => firsts.has(id))).toBe(true);
   });
 });
