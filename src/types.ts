@@ -185,6 +185,8 @@ export interface UserProfile {
   /** Für die Einordnung der Testwoche. Optional, bleibt auf dem Gerät. */
   birthYear?: number | null;
   sex?: "m" | "w" | null;
+  /** Skillcheck: Skills aus data/modules/skills.json, die sauber sitzen. null = noch nicht angegeben (kein Filter). */
+  skills?: string[] | null;
   /** Veraltet (0.1): wird beim Laden in has.sword der Heim-Profile übernommen */
   doppelmesser?: boolean;
 }

@@ -294,3 +294,33 @@ describe("Letzter Satz verfehlt", () => {
     expect(b.target).toBe(8);
   });
 });
+
+describe("Skillcheck", () => {
+  const none = new Set<string>();
+  it("ohne Klimmzug: Latziehen statt Klimmzug mit Gewicht", () => {
+    const r = resolveSlot({ id: "k", name: "Weighted Pull-Up", home: "Pull-Up + Weste", sets: 3, reps: "5-6", prog: "double" }, gym, false, undefined, none)!;
+    expect(r.name).toBe("Lat Pulldown");
+    expect(r.regressedFrom).toBe("Weighted Pull-Up");
+    expect(resolveSlot({ id: "k", name: "Weighted Pull-Up", sets: 3, reps: "5-6", prog: "double" }, gym, false, undefined, new Set(["pullup"]))!.name).toBe("Weighted Pull-Up");
+    expect(resolveSlot({ id: "k", name: "Weighted Pull-Up", sets: 3, reps: "5-6", prog: "double" }, gym)!.name).toBe("Weighted Pull-Up");
+  });
+  it("Leiter: leichtere Stufe davor ohne Skill, höherer Start mit Skill", () => {
+    const pl: Slot = { id: "p", name: "Pistol Squat (Box)", sets: 3, reps: "3-6/Seite", prog: "ladder", ladder: ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"] };
+    const withSkill = resolveSlot(pl, home, false, undefined, new Set(["pistol"]))!;
+    expect(suggest(withSkill, undefined).name).toBe("Pistol Squat");
+    const pu: Slot = { id: "q", name: "Pull-Up", sets: 3, reps: "3-8", prog: "ladder", ladder: ["Pull-Up", "Chest-to-Bar Pull-Up", "Muscle-Up-Übergang (Band)"] };
+    const noSkill = resolveSlot(pu, home, false, undefined, none)!;
+    expect(noSkill.ladder![0]).toBe("Band-Assisted Pull-Up");
+    expect(suggest(noSkill, undefined).name).toBe("Band-Assisted Pull-Up");
+  });
+  it("Bestien mit Muscle-Ups nur mit Skill", async () => {
+    const { beastOk, beastSkills } = await import("./skills");
+    const { BEASTS } = await import("../data");
+    const mu = BEASTS.filter((b) => beastSkills(b).includes("muscle_up"));
+    expect(mu.length).toBeGreaterThan(0);
+    expect(mu.every((b) => !beastOk(b, none))).toBe(true);
+    expect(mu.every((b) => beastOk(b, null))).toBe(true);
+    const free = BEASTS.filter((b) => beastOk(b, none));
+    expect(free.length).toBeGreaterThan(20);
+  });
+});

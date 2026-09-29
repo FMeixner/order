@@ -89,3 +89,7 @@ Sind die Lasten grob gestuft, reicht der Wiederholungsbereich oft nicht, um den 
 ## Normen
 
 `data/modules/norms.json` enthält Normen für die Tests der Testwoche. Jede Norm gilt für `sex` (`m`/`w`) und eine Altersspanne `age: [von, bis]`; Tests mit Varianten (z. B. Beinpresse oder Kniebeuge) tragen zusätzlich `variant`. `tier` A ist eine Bevölkerungs- oder Altersnorm, B eine Orientierung an einer ausgewählten Stichprobe. Formen: `pct` (Perzentil-Stützstellen), `bands` (Bronze/Silber/Gold), `cat` (Kategorien), `ms` (Mittelwert und Standardabweichung). `domains` ordnet Tests den Bereichen der Auswertung zu; `goal` bestimmt, welche Orden bei einem schwachen Bereich vorgeschlagen werden. Fehlt eine passende Norm, zeigt die App nur den Verlauf. Weitere Altersgruppen oder Normen für Frauen einfach als neue Einträge ergänzen.
+
+## Skillcheck
+
+`data/modules/skills.json` listet Skills mit Prüfkriterium (`test`). `exercises` sind Übungen, die den Skill voraussetzen; `regress` nennt je Übung leichtere Ersatzübungen in Reihenfolge. `start` sind Leiterstufen, die der Skill belegt: Mit dem Skill startet eine Leiter auf der höchsten davon. `beast` ist ein Suchausdruck für Übungen im Bestiarium; passende Bestien erscheinen nur mit dem Skill. Solange jemand keinen Skillcheck gemacht hat, filtert die App nichts.

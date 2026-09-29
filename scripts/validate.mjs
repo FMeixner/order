@@ -17,6 +17,18 @@ const beasts = read("beasts.json");
 const correctives = read("modules/correctives.json").lists;
 const dm = read("modules/sword.json").variants;
 const beastIds = new Set(beasts.map((b) => b.id));
+const skillsFile = read("modules/skills.json");
+const groupIds = new Set(skillsFile.groups.map((g) => g.id));
+for (const sk of skillsFile.skills) {
+  const w = `skills.json ${sk.id}`;
+  if (!groupIds.has(sk.group)) err(w, `Gruppe "${sk.group}" fehlt`);
+  for (const n of [...sk.exercises, ...(sk.start ?? [])]) if (!exercises[n]) err(w, `"${n}" fehlt in exercises.json`);
+  for (const [from, list] of Object.entries(sk.regress)) {
+    if (!sk.exercises.includes(from)) err(w, `regress für "${from}", die Übung steht nicht in exercises`);
+    for (const n of list) if (!exercises[n]) err(w, `Ersatz "${n}" fehlt in exercises.json`);
+  }
+  try { new RegExp(sk.beast, "i"); } catch { err(w, "beast ist kein gültiger Suchausdruck"); }
+}
 const swaps = read("modules/swaps.json").groups;
 for (const [g, members] of Object.entries(swaps)) {
   for (const m of members) if (!exercises[m]) err("swaps.json", `Gruppe "${g}": "${m}" fehlt in exercises.json`);

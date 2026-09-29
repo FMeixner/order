@@ -261,3 +261,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .set-pills input[type=number]::-webkit-inner-spin-button, .kg-line input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .set-pills input[type=number], .kg-line input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 .set-pill .set-btn { min-width: 34px; height: 34px; padding: 0 6px; }
+
+/* Skillcheck */
+.skill-group { gap: 6px; }
+.skill-row { align-items: flex-start; }
+.skill-row input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; }

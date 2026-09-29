@@ -2,6 +2,7 @@
 import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FOCUS_BY_ID } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
+import { beastOk } from "./skills";
 
 /* ---------- Datum ---------- */
 export function isoDate(d: Date): string {
@@ -158,9 +159,11 @@ export function pickBeast(
   let cands: Beast[];
   if (block.pool && !opts.reduced) cands = block.pool.map((id) => BEAST_BY_ID[id]).filter(Boolean);
   else cands = BEASTS.filter((b) => classes.includes(classOf(b)));
-  let fit = cands.filter((b) => beastFits(b, profile));
-  if (!fit.length) fit = BEASTS.filter((b) => beastFits(b, profile) && (!classes.length || classes.includes(classOf(b))));
-  if (!fit.length) fit = BEASTS.filter((b) => b.equipment.every((t) => t === "bodyweight_only"));
+  const skills = state.user.skills ? new Set(state.user.skills) : null;
+  const ok = (b: Beast) => beastFits(b, profile) && beastOk(b, skills);
+  let fit = cands.filter(ok);
+  if (!fit.length) fit = BEASTS.filter((b) => ok(b) && (!classes.length || classes.includes(classOf(b))));
+  if (!fit.length) fit = BEASTS.filter((b) => b.equipment.every((t) => t === "bodyweight_only") && beastOk(b, skills));
   if (!fit.length) return null;
   const seed = `${opts.blockId}:${block.id}`;
   const order = [...fit].sort((a, c) => hash(seed + a.id) - hash(seed + c.id));

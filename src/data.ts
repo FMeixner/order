@@ -8,6 +8,7 @@ import testweekJson from "../data/modules/testweek.json";
 import guidedJson from "../data/modules/guided.json";
 import swapsJson from "../data/modules/swaps.json";
 import normsJson from "../data/modules/norms.json";
+import skillsJson from "../data/modules/skills.json";
 
 const fociModules = import.meta.glob("../data/orders/*.json", { eager: true, import: "default" }) as Record<string, Focus>;
 
@@ -31,3 +32,5 @@ export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; who5: string[]
 export const SWAP_GROUPS = (swapsJson as unknown as { groups: Record<string, string[]> }).groups;
 export const NORMS = (normsJson as unknown as { norms: Norm[] }).norms;
 export const DOMAINS = (normsJson as unknown as { domains: { id: string; name: string; goal: Goal; tests: string[] }[] }).domains;
+export interface SkillDef { id: string; group: string; name: string; test: string; start?: string[]; exercises: string[]; regress: Record<string, string[]>; beast: string }
+export const SKILLS = skillsJson as unknown as { groups: { id: string; name: string }[]; skills: SkillDef[] };

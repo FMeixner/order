@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.9.0] – 2026-09-29
+
+### Neu
+- Skillcheck in der Einrichtung und unter Setup › Können: 15 Skills von Klimmzug bis Planche-Liegestütz. Fehlt ein Skill, ersetzt die App betroffene Übungen durch leichtere Varianten und lässt Bestien mit dieser Übung weg. Übungsleitern bekommen ohne Skill eine leichtere erste Stufe und starten mit Skill weiter oben. Daten in `data/modules/skills.json`.
+
 ## [0.8.2] – 2026-09-28
 
 ### Geändert

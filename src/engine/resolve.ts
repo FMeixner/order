@@ -2,6 +2,7 @@
 import { EXERCISES, GUIDED, SWAP_GROUPS } from "../data";
 import type { Choice, Equip, EquipmentProfile, Prog, Slot, SlotKind, Tier } from "../types";
 import { isLoadable, loadScale } from "./loads";
+import { ladderStart, regressions, skillOk, type SkillSet } from "./skills";
 
 export interface Resolved {
   slotId: string;
@@ -34,6 +35,10 @@ export interface Resolved {
   alts: string[];
   /** Gewählter Tausch, der mit diesem Profil nicht machbar ist */
   swapUnavailable?: string;
+  /** Leichtere Übung, weil der Skill fehlt: ursprünglicher Name */
+  regressedFrom?: string;
+  /** Startstufe der Leiter nach Skillcheck */
+  ladderStart?: number;
 }
 
 /** Schlüssel für einen Tausch: gilt je Slot und Equipment-Stufe */
@@ -60,8 +65,9 @@ export function equipOf(name: string): Equip {
   return EXERCISES[name]?.equip ?? "bodyweight";
 }
 
-/** Ist die Übung mit diesem Profil machbar? */
-export function available(name: string, p: EquipmentProfile): boolean {
+/** Ist die Übung mit diesem Profil (und, wenn angegeben, diesen Skills) machbar? */
+export function available(name: string, p: EquipmentProfile, skills?: SkillSet): boolean {
+  if (!skillOk(name, skills)) return false;
   const ex = EXERCISES[name];
   if (!ex) return true;
   const e = ex.equip;
@@ -82,10 +88,10 @@ function slotNames(slot: Slot): string[] {
   return [slot.name, n(slot.home), n(slot.reise), ...(slot.ladder ?? [])].filter((x): x is string => !!x);
 }
 
-export function resolveSlot(slot: Slot, p: EquipmentProfile, reduced = false, swap?: string): Resolved | null {
-  const base = resolveBase(slot, p, reduced);
+export function resolveSlot(slot: Slot, p: EquipmentProfile, reduced = false, swap?: string, skills?: SkillSet): Resolved | null {
+  const base = resolveBase(slot, p, reduced, skills);
   if (!base || !swap || swap === base.name) return base;
-  if (!available(swap, p)) return { ...base, swapUnavailable: swap };
+  if (!available(swap, p, skills)) return { ...base, swapUnavailable: swap };
   const equip = equipOf(swap);
   let prog: Prog = base.prog;
   if (prog === "ladder") prog = base.kind === "hold" ? "hold" : "reps";
@@ -95,13 +101,21 @@ export function resolveSlot(slot: Slot, p: EquipmentProfile, reduced = false, sw
   return { ...base, key: `${slot.id}|${swap}`, name: swap, equip, prog, loadable, ladder: undefined, missingEquipment: false, swapped: true };
 }
 
-function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean): Resolved | null {
+function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?: SkillSet): Resolved | null {
   let chosen: { c: Choice; tier: Tier } | null = null;
   let fallback: { c: Choice; tier: Tier } | null = null;
+  let regressedFrom: string | undefined;
   for (const t of TIER_ORDER[p.tier]) {
     const c = choiceFor(slot, t);
     if (!c) continue;
     if (!fallback) fallback = { c, tier: t };
+    const ladderHere = !!slot.ladder && (t === "gym" || c.name === slot.name);
+    if (!skillOk(c.name, skills) && !ladderHere) {
+      // Skill fehlt: erst eine leichtere Variante derselben Übung, dann die nächste Alternative des Slots
+      const easier = regressions(c.name).find((n) => available(n, p, skills));
+      if (easier) { chosen = { c: { ...c, name: easier }, tier: t }; regressedFrom = c.name; break; }
+      continue;
+    }
     if (available(c.name, p)) { chosen = { c, tier: t }; break; }
   }
   const pick = chosen ?? fallback;
@@ -110,6 +124,14 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean): Resolve
   const equip = equipOf(c.name);
   const kind: SlotKind = (c as Choice & { kind?: SlotKind }).kind ?? slot.kind ?? "strength";
   let prog: Prog = c.prog ?? slot.prog ?? "none";
+  // Leiter: fehlt der Skill für die erste Stufe, kommt eine leichtere davor; mit Skill startet sie höher
+  let ladder = pick.tier === "gym" || c.name === slot.name ? slot.ladder : undefined;
+  if (ladder && !skillOk(ladder[0], skills)) {
+    const easier = regressions(ladder[0]).find((n) => available(n, p, skills) && !ladder!.includes(n));
+    if (easier) ladder = [easier, ...ladder];
+  }
+  if (regressedFrom && ladder) ladder = undefined;
+  if (prog === "ladder" && !ladder) prog = kind === "hold" ? "hold" : "reps";
   const loadable = isLoadable(equip) && (prog === "double" || prog === "weight" || prog === "topset");
   if ((prog === "double" || prog === "weight" || prog === "topset") && !isLoadable(equip)) prog = "reps";
   const baseSets = c.sets ?? slot.sets ?? 1;
@@ -128,7 +150,9 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean): Resolve
     max: slot.max,
     step: slot.step ?? (prog === "hold" ? 5 : prog === "minutes" ? 5 : 1),
     interval: slot.interval,
-    ladder: pick.tier === "gym" || c.name === slot.name ? slot.ladder : undefined,
+    ladder,
+    ladderStart: ladder ? ladderStart(ladder, skills) : undefined,
+    regressedFrom,
     rest: slot.rest ?? 90,
     note: slot.note,
     proposal: slot.proposal,
@@ -141,7 +165,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean): Resolve
 
 /** Tauschoptionen für eine Stelle: alle Übungen aus den passenden Tauschgruppen,
     die Alternativen des Slots und die geführte Variante. Verfügbare zuerst. */
-export function swapOptions(r: Resolved, p: EquipmentProfile): { name: string; available: boolean }[] {
+export function swapOptions(r: Resolved, p: EquipmentProfile, skills?: SkillSet): { name: string; available: boolean }[] {
   const seeds = new Set([r.original, ...r.alts]);
   const out = new Set<string>(r.alts);
   for (const members of Object.values(SWAP_GROUPS)) if (members.some((m) => seeds.has(m))) members.forEach((m) => out.add(m));
@@ -149,7 +173,7 @@ export function swapOptions(r: Resolved, p: EquipmentProfile): { name: string; a
   out.delete(r.name);
   out.delete(r.original);
   return [...out]
-    .map((name) => ({ name, available: available(name, p) }))
+    .map((name) => ({ name, available: available(name, p, skills) }))
     .sort((a, b) => Number(b.available) - Number(a.available) || a.name.localeCompare(b.name));
 }
 

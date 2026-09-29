@@ -43,6 +43,12 @@ export function Help() {
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem ersten Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
+      <h3>Können</h3>
+      <ul>
+        <li>Unter Setup › Können hakst du ab, was sauber sitzt: Klimmzug, Pistol Squat, Muscle-Up und mehr. Fehlt ein Skill, nimmt die App eine leichtere Variante (Hinweis „leichter“) und lässt Bestien mit dieser Übung weg.</li>
+        <li>Übungsleitern bleiben der Lernweg zum Skill. Mit abgehaktem Skill starten sie auf der passenden Stufe.</li>
+      </ul>
+
       <h3>Alltagslast</h3>
       <ul>
         <li>Ist in einer Phase viel los, läuft etwa die Hälfte der freien Übungen an Maschine oder Kabel, wenn das Studio sie hat. Der erste große Lift des Tages bleibt frei.</li>

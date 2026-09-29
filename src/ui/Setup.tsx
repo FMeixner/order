@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { FOCI, FOCUS_BY_ID } from "../data";
+import { FOCI, FOCUS_BY_ID, SKILLS } from "../data";
 import { blockAt, rolesFor, trainingDays } from "../engine/plan";
 import { exportState, migrate } from "../store";
 import type { AppState, UserProfile } from "../types";
@@ -25,6 +25,32 @@ export function AsymEditor({ user, onChange }: { user: UserProfile; onChange: (u
           <Seg value={(user.asym[k] ?? "-") as "L" | "R" | "-"} options={[{ value: "-", label: "keine" }, { value: "L", label: "links" }, { value: "R", label: "rechts" }]}
             onChange={(v) => onChange({ ...user, asym: { ...user.asym, [k]: v === "-" ? null : v } })} />
         </Field>
+      ))}
+    </div>
+  );
+}
+
+/** Skillcheck: Was sitzt sauber? Filtert Übungen und Bestien. */
+export function SkillEditor({ user, onChange }: { user: UserProfile; onChange: (u: UserProfile) => void }) {
+  const have = new Set(user.skills ?? []);
+  const toggle = (id: string, on: boolean) => {
+    const next = new Set(have);
+    if (on) next.add(id); else next.delete(id);
+    onChange({ ...user, skills: SKILLS.skills.map((x) => x.id).filter((x) => next.has(x)) });
+  };
+  return (
+    <div className="stack">
+      <p className="muted small">Hake ab, was du heute sauber schaffst. Übungen und Bestien, die einen fehlenden Skill brauchen, ersetzt die App durch leichtere Varianten. Übungsleitern, etwa zum Pistol Squat, bleiben als Lernweg drin und starten mit abgehaktem Skill weiter oben. Jederzeit änderbar.</p>
+      {SKILLS.groups.map((g) => (
+        <div key={g.id} className="stack skill-group">
+          <div className="block-label teal">{g.name}</div>
+          {SKILLS.skills.filter((x) => x.group === g.id).map((x) => (
+            <label key={x.id} className="check skill-row">
+              <input type="checkbox" checked={have.has(x.id)} onChange={(e) => toggle(x.id, e.target.checked)} />
+              <span><strong>{x.name}</strong><span className="muted small"> · {x.test}</span></span>
+            </label>
+          ))}
+        </div>
       ))}
     </div>
   );
@@ -72,6 +98,11 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
       <Collapse title="Profil" meta={state.user.name || "ohne Namen"} defaultOpen>
         <Field label="Name"><input type="text" value={state.user.name} onChange={(e) => update((st) => ({ ...st, user: { ...st.user, name: e.target.value } }))} /></Field>
         <NormFields user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} />
+      </Collapse>
+      <Collapse title="Können" meta={state.user.skills == null ? "kein Skillcheck" : `${state.user.skills.length} von ${SKILLS.skills.length}`}>
+        {state.user.skills == null
+          ? <div className="stack"><p className="muted small">Noch kein Skillcheck: Alle Übungen und Bestien sind offen, auch Muscle-Ups und Pistol Squats.</p><button className="btn" onClick={() => update((st) => ({ ...st, user: { ...st.user, skills: [] } }))}>Skillcheck machen</button></div>
+          : <SkillEditor user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} />}
       </Collapse>
       <SwapList state={state} update={update} />
       <Collapse title="Equipment-Profile" meta={`${state.equipment.length}`}>

@@ -24,13 +24,16 @@ export interface SessionCtx {
 
 export const sessionId = (blockId: string, week: number, role: string) => `${blockId}:${week}:${role}`;
 
+/** Skills aus dem Skillcheck; null, solange keiner gemacht wurde */
+export const skillSet = (st: AppState): Set<string> | null => (st.user.skills ? new Set(st.user.skills) : null);
+
 /* ---------- Slots dieser Einheit sammeln ---------- */
 interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[] }
 
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
     if (s.gate_week && ctx.week < s.gate_week) return null;
-    return resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer", ctx.state.swaps?.[swapKey(s.id, ctx.profile.tier)]);
+    return resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer", ctx.state.swaps?.[swapKey(s.id, ctx.profile.tier)], skillSet(ctx.state));
   };
   switch (b.type) {
     case "single": return [r(b.slot)].filter(Boolean) as Resolved[];
@@ -264,7 +267,7 @@ const TIER_LABEL = { gym: "Studio", home: "Zuhause", reise: "Unterwegs" } as con
 
 /** Übung für diese Stelle tauschen. Die Wahl gilt je Slot und Ort und bleibt bei Updates erhalten. */
 function SwapDialog({ r, ctx, onClose }: { r: Resolved; ctx: SessionCtx; onClose: () => void }) {
-  const opts = swapOptions(r, ctx.profile);
+  const opts = swapOptions(r, ctx.profile, skillSet(ctx.state));
   const key = swapKey(r.slotId, ctx.profile.tier);
   const set = (name: string | null) => {
     ctx.update((st) => {
@@ -377,6 +380,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
           {r.proposal && <span className="tag">Vorschlag</span>}
           {r.guided && <span className="tag teal" title="Phase mit hoher Alltagslast">geführt</span>}
           {r.swapped && <span className="tag amber" title={`statt ${r.original}`}>getauscht</span>}
+          {r.regressedFrom && <span className="tag" title={`statt ${r.regressedFrom}: Skill noch nicht abgehakt`}>leichter</span>}
         </div>
         <div className="slot-icons">
           <Desc text={desc} />
@@ -390,6 +394,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
       </div>
       {swapOpen && <SwapDialog r={r} ctx={ctx} onClose={() => setSwapOpen(false)} />}
       {r.swapped && <div className="muted small">Statt {r.original}.</div>}
+      {r.regressedFrom && <div className="muted small">Statt {r.regressedFrom}, bis der Skill sitzt (Setup › Können).</div>}
       {r.swapUnavailable && <div className="muted small">Dein Tausch „{r.swapUnavailable}“ geht mit „{ctx.profile.name}“ nicht, heute deshalb das Original.</div>}
       {r.missingEquipment && <div className="note warn small">Für diese Übung fehlt im Profil „{ctx.profile.name}“ Equipment. Nimm eine passende Alternative.</div>}
       {r.note && <div className="muted small">{r.note}</div>}

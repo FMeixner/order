@@ -5,17 +5,18 @@ import { WEEKDAYS } from "../types";
 import { Field } from "./common";
 import { EquipmentEditor } from "./EquipmentEditor";
 import { PlanList, WeekEditor } from "./PlanEditor";
-import { AsymEditor, NormFields } from "./Setup";
+import { AsymEditor, NormFields, SkillEditor } from "./Setup";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
-const STEPS = ["Start", "Equipment", "Woche", "Jahr", "Fertig"];
+const STEPS = ["Start", "Können", "Equipment", "Woche", "Jahr", "Fertig"];
 
 export function Onboarding({ state, update, replace, today }: { state: AppState; update: Update; replace: (s: AppState) => void; today: string }) {
   const [step, setStep] = useState(0);
   const file = useRef<HTMLInputElement>(null);
   const days = WEEKDAYS.filter((d) => state.schedule[d]).length;
   const canNext = [
+    true,
     true,
     state.equipment.length >= 1,
     days >= 3,
@@ -53,6 +54,13 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
 
       {step === 1 && (
         <div className="stack">
+          <h2>Was kannst du schon?</h2>
+          <SkillEditor user={{ ...state.user, skills: state.user.skills ?? [] }} onChange={(user) => update((s) => ({ ...s, user }))} />
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="stack">
           <h2>Womit trainierst du?</h2>
           <p className="muted">Lege mindestens ein Equipment-Profil an, zum Beispiel „Studio“ oder „Zuhause“. Trag die Hanteln ein, die du wirklich hast: Die App steigert nur auf Gewichte, die es bei dir gibt. Bereiche gehen auch, z. B. <code>2-24/2</code>.</p>
           {state.equipment.length === 0 && (
@@ -64,7 +72,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
         </div>
       )}
 
-      {step === 2 && (
+      {step === 3 && (
         <div className="stack">
           <h2>Deine Woche</h2>
           <p className="muted">An welchen Tagen trainierst du, und wo? Drei oder vier Tage sind der Standard. Einzelne Phasen können später einen eigenen Wochenplan bekommen.</p>
@@ -72,7 +80,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
         </div>
       )}
 
-      {step === 3 && (
+      {step === 4 && (
         <div className="stack">
           <h2>Dein Jahr</h2>
           <p className="muted">Teile dein Jahr in Phasen, so wie dein Alltag läuft: Semester, Projektzeiten, Urlaub, Saison. Gib für jede Phase an, wie viel los ist, und wähle einen Orden. Die App zeigt, welche Orden zur Phase passen.</p>
@@ -80,7 +88,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
         </div>
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <div className="stack">
           <h2>Bereit</h2>
           <p>Unter <strong>Heute</strong> findest du die Einheit des Tages. Trag nach jedem Satz Wiederholungen und Gewicht ein und gib nach der Übung kurz Feedback. Daraus berechnet die App das nächste Gewicht.</p>
@@ -91,7 +99,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
       <div className="sticky-actions">
         {step > 0 && <button className="btn ghost" onClick={() => setStep(step - 1)}>Zurück</button>}
         {step < STEPS.length - 1
-          ? <button className="btn primary" disabled={!canNext} onClick={() => setStep(step + 1)}>Weiter</button>
+          ? <button className="btn primary" disabled={!canNext} onClick={() => { if (step === 1 && state.user.skills == null) update((s) => ({ ...s, user: { ...s.user, skills: [] } })); setStep(step + 1); }}>Weiter</button>
           : <button className="btn primary" onClick={() => update((s) => ({ ...s, onboarded: true }))}>Los geht's</button>}
       </div>
     </div>

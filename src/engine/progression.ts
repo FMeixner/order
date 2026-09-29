@@ -73,7 +73,7 @@ export const EMPTY_STATE: SlotState = { weight: null, target: null, stage: 0, fb
 export function suggest(r: Resolved, st: SlotState | undefined, weekInBlock = 1, p?: EquipmentProfile): Suggestion {
   const s = st ?? EMPTY_STATE;
   const rp = parseReps(r.reps);
-  const stage = r.ladder ? Math.min(s.stage, r.ladder.length - 1) : 0;
+  const stage = r.ladder ? Math.min(Math.max(s.stage, r.ladderStart ?? 0), r.ladder.length - 1) : 0;
   const name = r.ladder ? r.ladder[stage] : r.name;
   let targetReps: number | null = null;
   let repsLabel = r.reps;
@@ -126,6 +126,7 @@ export function backoffLoad(p: EquipmentProfile, r: Resolved, top: number): numb
 /** Nach der Einheit: neuen Zustand berechnen */
 export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEntry, p: EquipmentProfile, today: string): SlotState {
   const s: SlotState = { ...(st ?? EMPTY_STATE), fb: [...(st?.fb ?? [])] };
+  if (r.ladder && (r.ladderStart ?? 0) > s.stage) s.stage = r.ladderStart!; // Skillcheck: Leiter startet höher
   const fb: Feedback = entry.feedback ?? "ok";
   const prevFb = s.fb[s.fb.length - 1];
   s.fb = [...s.fb, fb].slice(-5);
