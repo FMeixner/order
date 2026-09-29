@@ -33,7 +33,7 @@
       "warmup": ["gentle"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "r-l-1", "name": "Zügiger Spaziergang", "kind": "timer", "minutes": 15, "prog": "none"}},
-        {"type": "single", "slot": {"id": "r-l-2", "name": "Mobility-Block Hüfte und Schulter", "kind": "timer", "minutes": 15, "prog": "none"}}
+        {"type": "module", "module": "flow", "variant": "mobility"}
       ]
     },
     "ausdauer_ruhig": {

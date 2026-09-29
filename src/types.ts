@@ -65,7 +65,7 @@ export type Block =
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
     }
-  | { type: "module"; module: "sword"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
+  | { type: "module"; module: "sword" | "flow"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
 
 export interface Role {
@@ -154,6 +154,8 @@ export interface Drill {
   /** Steigerung pro Blockwoche (z. B. +5 s) bis max */
   weekly_step?: number;
   max?: number;
+  /** Sekunden pro Wiederholung, nur für die Zeitschätzung (Flows) */
+  rep_s?: number;
   note?: string;
   desc?: string;
 }

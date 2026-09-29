@@ -5,7 +5,7 @@
 import { FOCI, FOCUS_BY_ID } from "../data";
 import type { Focus, PlanBlock } from "../types";
 import { AXES, balanceOf, type AxisId, type Balance } from "./balance";
-import { blockWeeks, fitScore } from "./plan";
+import { blockWeeks, fitScore, isTestBlock, TEST_BLOCK } from "./plan";
 
 export type Aim = "allround" | AxisId;
 export interface SeqItem { id: string; focusId: string; locked: boolean; reasons: string[] }
@@ -34,10 +34,12 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim): Seq
   type Beam = { seq: string[]; score: number; reasons: string[][] };
   let beams: Beam[] = [{ seq: [], score: 0, reasons: [] }];
   for (const b of sorted) {
+    if (isTestBlock(b)) { beams = beams.map((bm) => ({ ...bm, seq: [...bm.seq, TEST_BLOCK], reasons: [...bm.reasons, ["eigene Testwoche"]] })); continue; }
     const locked = b.start <= today && !!FOCUS_BY_ID[b.focusId];
     const next: Beam[] = [];
     for (const bm of beams) {
-      const prev = bm.seq.length ? FOCUS_BY_ID[bm.seq[bm.seq.length - 1]] ?? null : null;
+      const lastReal = [...bm.seq].reverse().find((x) => x !== TEST_BLOCK);
+      const prev = lastReal ? FOCUS_BY_ID[lastReal] ?? null : null;
       const options = locked ? [FOCUS_BY_ID[b.focusId]] : FOCI.filter((f) => fitScore(f, b.load, b.travel).score >= 0);
       for (const f of options) {
         const st = stepScore(f, b, prev, bm.seq);
@@ -51,7 +53,7 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim): Seq
   const best = beams[0];
   const proposed = sorted.map((b, i) => ({ ...b, focusId: best?.seq[i] ?? b.focusId }));
   return {
-    items: sorted.map((b, i) => ({ id: b.id, focusId: best?.seq[i] ?? b.focusId, locked: b.start <= today && !!FOCUS_BY_ID[b.focusId], reasons: best?.reasons[i] ?? [] })),
+    items: sorted.map((b, i) => ({ id: b.id, focusId: best?.seq[i] ?? b.focusId, locked: isTestBlock(b) || (b.start <= today && !!FOCUS_BY_ID[b.focusId]), reasons: best?.reasons[i] ?? [] })),
     balance: balanceOf(proposed, from, to),
     before: balanceOf(sorted, from, to),
   };

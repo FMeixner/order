@@ -1,0 +1,94 @@
+{
+  "_info": "Geführte Flows (Yoga, Qigong/Tai Chi, Animal Flow, Mobility) als Sätze wie beim Schwert: eine Kette von Haltungen, n-mal wiederholen, dann die andere Seite. mode reps: value = Wiederholungen der ganzen Kette; rep_s = Sekunden pro Wiederholung (nur für die Zeitschätzung). mode hold: value = Sekunden. sides: true = links/rechts. asym: schwächere Seite bekommt mehr (hip, shoulder_ir …). Einbinden im Orden: {\"type\": \"module\", \"module\": \"flow\", \"variant\": \"sonnengruss\"}.",
+  "variants": {
+    "sonnengruss": {
+      "name": "Yoga-Flow: Sonnengruß und Krieger",
+      "drills": [
+        { "id": "sg-a", "name": "Sonnengruß A: Berg → Vorbeuge → halbe Vorbeuge → Planke → Chaturanga → heraufschauender Hund → herabschauender Hund → nach vorn → Berg", "mode": "reps", "value": 5, "rep_s": 60,
+          "desc": "Ein Atemzug pro Bewegung, im herabschauenden Hund fünf Atemzüge bleiben. Chaturanga mit Knien am Boden ist in Ordnung." },
+        { "id": "sg-b", "name": "Sonnengruß B: Stuhl → Vorbeuge → Planke → Chaturanga → heraufschauender Hund → Hund → Krieger I rechts → Hund → Krieger I links → Hund → Stuhl", "mode": "reps", "value": 3, "rep_s": 80,
+          "desc": "Im Krieger I drei Atemzüge, hinterer Fuß im 45°-Winkel, Becken nach vorn." },
+        { "id": "sg-k", "name": "Krieger-Kette: Hund → Krieger I → Krieger II → umgekehrter Krieger → seitlicher Winkel → Hund", "mode": "reps", "value": 3, "sides": true, "rep_s": 45, "asym": "hip",
+          "desc": "Jede Haltung drei Atemzüge. Vorderes Knie über dem Knöchel, hintere Ferse am Boden." },
+        { "id": "sg-d", "name": "Dreieck → halber Mond → Dreieck", "mode": "reps", "value": 3, "sides": true, "rep_s": 30,
+          "desc": "Im halben Mond die untere Hand auf einem Block oder den Fingerspitzen, Blick zum Boden, wenn das Gleichgewicht wackelt." },
+        { "id": "sg-t", "name": "Baum", "mode": "hold", "value": 45, "sides": true },
+        { "id": "sg-v", "name": "Sitzende Vorbeuge, Knie leicht gebeugt", "mode": "hold", "value": 60 }
+      ]
+    },
+    "yin": {
+      "name": "Yin: lange Haltungen",
+      "drills": [
+        { "id": "yi-s", "name": "Schmetterling, Rücken rund nach vorn sinken", "mode": "hold", "value": 150, "desc": "Nichts aktiv ziehen. Schwere wirken lassen, ruhig ausatmen." },
+        { "id": "yi-d", "name": "Drache: tiefer Ausfallschritt, hinteres Knie am Boden", "mode": "hold", "value": 120, "sides": true, "asym": "hip" },
+        { "id": "yi-t", "name": "Schwan (Taube), vorderes Schienbein quer", "mode": "hold", "value": 150, "sides": true, "asym": "hip", "desc": "Kissen unter die Hüfte der vorderen Seite, wenn sie nicht zum Boden kommt." },
+        { "id": "yi-p", "name": "Sphinx, auf den Unterarmen", "mode": "hold", "value": 120 },
+        { "id": "yi-r", "name": "Liegender Drehsitz", "mode": "hold", "value": 90, "sides": true },
+        { "id": "yi-k", "name": "Kindhaltung", "mode": "hold", "value": 90 },
+        { "id": "yi-e", "name": "Liegen, nichts tun (Savasana)", "mode": "hold", "value": 180 }
+      ]
+    },
+    "baduanjin": {
+      "name": "Qigong: Baduanjin (Acht Brokate)",
+      "drills": [
+        { "id": "bd-0", "name": "Stehen wie ein Baum: Knie weich, Arme gerundet vor der Brust", "mode": "hold", "value": 180 },
+        { "id": "bd-1", "name": "Beide Hände stützen den Himmel", "mode": "reps", "value": 8, "rep_s": 12, "desc": "Finger verschränken, Handflächen nach oben schieben, einatmen; ausatmen und sinken lassen." },
+        { "id": "bd-2", "name": "Bogen spannen: Reiterstand → Arm zieht die Sehne → Zeigefinger zeigt zum Ziel", "mode": "reps", "value": 6, "sides": true, "rep_s": 12 },
+        { "id": "bd-3", "name": "Himmel und Erde trennen: eine Hand nach oben, eine nach unten drücken", "mode": "reps", "value": 6, "sides": true, "rep_s": 10 },
+        { "id": "bd-4", "name": "Blick zurück: Kopf und Brustkorb langsam drehen", "mode": "reps", "value": 6, "sides": true, "rep_s": 10 },
+        { "id": "bd-5", "name": "Kopf und Schwanz schwingen: aus dem Reiterstand zur Seite neigen und kreisen", "mode": "reps", "value": 6, "sides": true, "rep_s": 12, "asym": "hip" },
+        { "id": "bd-6", "name": "Hände gleiten an den Beinen hinab zu den Füßen und wieder hoch", "mode": "reps", "value": 8, "rep_s": 12 },
+        { "id": "bd-7", "name": "Fäuste stoßen mit festem Blick, im Reiterstand", "mode": "reps", "value": 6, "sides": true, "rep_s": 8 },
+        { "id": "bd-8", "name": "Auf die Fersen federn: auf die Zehen heben, weich absetzen", "mode": "reps", "value": 8, "rep_s": 5 },
+        { "id": "bd-9", "name": "Abschluss: Hände auf dem Bauch, ruhig atmen", "mode": "hold", "value": 60 }
+      ]
+    },
+    "taichi": {
+      "name": "Tai-Chi-Grundformen",
+      "drills": [
+        { "id": "tc-0", "name": "Pferdestand, Arme im Kreis (Zhan Zhuang)", "mode": "hold", "value": 120 },
+        { "id": "tc-1", "name": "Anfangsform: Arme auf Schulterhöhe heben, Knie beugen, Arme sinken lassen", "mode": "reps", "value": 8, "rep_s": 10 },
+        { "id": "tc-2", "name": "Wolkenhände: Gewicht verlagern, Hände kreisen vor dem Körper, seitlich gehen", "mode": "reps", "value": 6, "sides": ["nach links", "nach rechts"], "rep_s": 20 },
+        { "id": "tc-3", "name": "Mähne des Wildpferds teilen: Schritt vor, Arme öffnen sich diagonal", "mode": "reps", "value": 6, "sides": true, "rep_s": 15, "asym": "hip" },
+        { "id": "tc-4", "name": "Kranich breitet die Flügel aus: Gewicht zurück, eine Hand hoch, eine tief", "mode": "reps", "value": 5, "sides": true, "rep_s": 12 },
+        { "id": "tc-5", "name": "Knie streifen und schieben: Schritt vor, untere Hand streift am Knie vorbei, obere schiebt", "mode": "reps", "value": 6, "sides": true, "rep_s": 15 },
+        { "id": "tc-6", "name": "Schlussform: Hände kreuzen, langsam sinken, stehen", "mode": "hold", "value": 60 }
+      ]
+    },
+    "slow": {
+      "name": "Yoga Slow Flow",
+      "drills": [
+        { "id": "sl-1", "name": "Katze → Kuh, mit dem Atem", "mode": "reps", "value": 8, "rep_s": 8 },
+        { "id": "sl-2", "name": "Welle: Kindhaltung → Planke auf den Knien → Kobra → Kindhaltung", "mode": "reps", "value": 6, "rep_s": 12 },
+        { "id": "sl-3", "name": "Hund → tiefer Ausfallschritt → Drehung, Arm zur Decke → Hund", "mode": "reps", "value": 3, "sides": true, "rep_s": 30, "asym": "hip" },
+        { "id": "sl-4", "name": "Krieger II → umgekehrter Krieger, im Atemrhythmus", "mode": "reps", "value": 5, "sides": true, "rep_s": 12 },
+        { "id": "sl-5", "name": "Brücke: heben, drei Atemzüge oben, abrollen", "mode": "reps", "value": 6, "rep_s": 15 },
+        { "id": "sl-6", "name": "Liegender Drehsitz", "mode": "hold", "value": 90, "sides": true },
+        { "id": "sl-7", "name": "Beine an der Wand", "mode": "hold", "value": 180 }
+      ]
+    },
+    "animal": {
+      "name": "Animal Flow: Grundformen",
+      "drills": [
+        { "id": "an-1", "name": "Beast halten: Knie zwei Finger über dem Boden", "mode": "hold", "value": 30, "sets": 2 },
+        { "id": "an-2", "name": "Beast → Crab Reach → Beast", "mode": "reps", "value": 5, "sides": true, "rep_s": 8, "desc": "Aus dem Beast auf eine Hand drehen, Hüfte hoch, freier Arm über den Kopf." },
+        { "id": "an-3", "name": "Scorpion Reach aus dem Beast", "mode": "reps", "value": 5, "sides": true, "rep_s": 6 },
+        { "id": "an-4", "name": "Underswitch: Beast → Bein unter dem Körper durch → Crab → zurück", "mode": "reps", "value": 6, "sides": true, "rep_s": 6 },
+        { "id": "an-5", "name": "Traveling: Ape seitlich → Beast vorwärts → Crab rückwärts", "mode": "reps", "value": 4, "rep_s": 30, "desc": "Eine Wiederholung ist eine Bahn hin und zurück." },
+        { "id": "an-6", "name": "Freier Flow aus den Übergängen oben", "mode": "hold", "value": 60, "sets": 3 }
+      ]
+    },
+    "mobility": {
+      "name": "Mobility: Hüfte und Schulter",
+      "drills": [
+        { "id": "mo-1", "name": "90/90 Wechsel, Knie von Seite zu Seite", "mode": "reps", "value": 6, "sides": true, "rep_s": 8, "asym": "hip" },
+        { "id": "mo-2", "name": "Weltbeste Dehnung: Ausfallschritt → Ellbogen zum Boden → Arm zur Decke", "mode": "reps", "value": 5, "sides": true, "rep_s": 15, "asym": "hip" },
+        { "id": "mo-3", "name": "Hüftbeuger kniend, Becken nach vorn", "mode": "hold", "value": 45, "sides": true, "asym": "hip" },
+        { "id": "mo-4", "name": "Thorax-Rotation im Vierfüßler, Hand hinter dem Kopf", "mode": "reps", "value": 8, "sides": true, "rep_s": 5 },
+        { "id": "mo-5", "name": "Stock-Ausschultern", "mode": "reps", "value": 10, "rep_s": 5 },
+        { "id": "mo-6", "name": "Tiefe Hocke halten", "mode": "hold", "value": 60, "sets": 2 },
+        { "id": "mo-7", "name": "Wandengel", "mode": "reps", "value": 10, "rep_s": 5 }
+      ]
+    }
+  }
+}

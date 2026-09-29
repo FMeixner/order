@@ -418,3 +418,31 @@ describe("hexed und Grundlagentempo", () => {
     expect(items.some((it) => it.block.type === "beast")).toBe(true);
   });
 });
+
+describe("Testwoche als eigener Block", () => {
+  it("einschieben verschiebt spätere Phasen, Vorblock ohne eigene Testwoche", async () => {
+    const { insertTestWeek, followedByTest, isTestBlock } = await import("./plan");
+    const { suggestSequence } = await import("./sequence");
+    const s = sample();
+    const plan = insertTestWeek(s.plan, "b1", "t1");
+    const t = plan.find((b) => b.id === "t1")!;
+    expect(isTestBlock(t)).toBe(true);
+    expect(t.start).toBe("2026-12-01");
+    expect(t.end).toBe("2026-12-07");
+    expect(plan.find((b) => b.id === "b2")!.start).toBe("2027-03-03");
+    expect(followedByTest(plan, plan.find((b) => b.id === "b1")!)).toBe(true);
+    const r = suggestSequence(plan, "2026-09-29", "allround");
+    expect(r.items.find((x) => x.id === "t1")).toMatchObject({ focusId: "test", locked: true });
+  });
+});
+
+describe("Testwoche abtrennen", () => {
+  it("letzte Woche wird Testwoche, nichts verschiebt sich", async () => {
+    const { splitTestWeek } = await import("./plan");
+    const s = sample();
+    const plan = splitTestWeek(s.plan, "b1", "t2");
+    expect(plan.find((b) => b.id === "b1")!.end).toBe("2026-11-23");
+    expect(plan.find((b) => b.id === "t2")).toMatchObject({ start: "2026-11-24", end: "2026-11-30", focusId: "test" });
+    expect(plan.find((b) => b.id === "b2")!.start).toBe(s.plan[1].start);
+  });
+});

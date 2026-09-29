@@ -16,6 +16,14 @@ const exercises = read("exercises.json");
 const beasts = read("beasts.json");
 const correctives = read("modules/correctives.json").lists;
 const dm = read("modules/sword.json").variants;
+const flows = read("modules/flows.json").variants;
+for (const [v, fl] of Object.entries(flows)) {
+  if (!fl.name) err("flows.json", `${v}: name fehlt`);
+  for (const d of fl.drills) {
+    if (!d.id || !d.name || !["reps", "hold"].includes(d.mode) || !(d.value > 0)) err("flows.json", `${v}/${d.id}: id, name, mode (reps/hold) und value nötig`);
+    if (d.mode === "reps" && !d.rep_s) err("flows.json", `${v}/${d.id}: rep_s fehlt (Sekunden pro Wiederholung)`);
+  }
+}
 const beastIds = new Set(beasts.map((b) => b.id));
 const skillsFile = read("modules/skills.json");
 const groupIds = new Set(skillsFile.groups.map((g) => g.id));
@@ -120,7 +128,7 @@ for (const [f, d] of allFoci) {
         case "contrast": checkSlot(b.heavy, ctx); checkSlot(b.explosive, ctx); break;
         case "menu": Object.values(b.options).forEach((s) => checkSlot(s, `${ctx}/${b.id}`)); break;
         case "module":
-          if (b.module !== "sword" || !dm[b.variant]) err(f, `${ctx}: Modul-Variante ${b.variant} unbekannt`);
+          if (b.module === "flow" ? !flows[b.variant] : b.module !== "sword" || !dm[b.variant]) err(f, `${ctx}: Modul-Variante ${b.variant} unbekannt`);
           if (b.fallback) checkSlot(b.fallback, ctx);
           break;
         case "beast":

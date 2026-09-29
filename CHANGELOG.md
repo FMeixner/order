@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.12.0] – 2026-09-29
+
+### Neu
+- Testwoche als eigener Block im Plan: „Letzte Woche als Testwoche“ (kürzt die Phase) oder „Danach eine Woche einschieben“ (verschiebt die späteren Phasen). Die Woche davor läuft mit −1 Satz, eine Testwoche im Orden entfällt dann.
+- Geführte Flows wie beim Schwert, als Ketten mit Wiederholungen je Seite: Yoga-Flow (Sonnengruß, Krieger), Yin, Qigong Baduanjin, Tai-Chi-Grundformen, Slow Flow, Animal Flow, Mobility. Ersetzen die groben Zeitblöcke in Monk, Alchemist, King, Acrobat und Initiate. Daten in `data/modules/flows.json`.
+
+### Behoben
+- Die Dauer oben in der Einheit berücksichtigt „−1 Satz“.
+
 ## [0.11.0] – 2026-09-29
 
 ### Neu

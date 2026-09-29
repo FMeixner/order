@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FOCI, FOCUS_BY_ID } from "../data";
-import { addDays, blockWeeks, fitScore, fmtDate, isoDate, mondayOf } from "../engine/plan";
+import { addDays, blockWeeks, fitScore, fmtDate, focusName, followedByTest, insertTestWeek, isoDate, isTestBlock, mondayOf, splitTestWeek } from "../engine/plan";
 import { uid } from "../store";
 import type { EquipmentProfile, Focus, Load, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
@@ -79,12 +79,26 @@ export function FocusPicker({ load, travel, value, onPick, profile }: { load: Lo
   );
 }
 
-export function BlockForm({ block, profiles, onSave, onCancel, onDelete }: { block: PlanBlock; profiles: EquipmentProfile[]; onSave: (b: PlanBlock) => void; onCancel: () => void; onDelete?: () => void }) {
+export function BlockForm({ block, profiles, onSave, onCancel, onDelete, onInsertTest, onSplitTest }: { block: PlanBlock; profiles: EquipmentProfile[]; onSave: (b: PlanBlock) => void; onCancel: () => void; onDelete?: () => void; onInsertTest?: () => void; onSplitTest?: () => void }) {
   const [b, setB] = useState<PlanBlock>(block);
   const [ownWeek, setOwnWeek] = useState(!!block.schedule && Object.values(block.schedule).some(Boolean));
   const f = FOCUS_BY_ID[b.focusId];
   const weeks = blockWeeks(b);
-  const valid = b.start <= b.end && !!f;
+  const valid = b.start <= b.end && (!!f || isTestBlock(b));
+  if (isTestBlock(b)) return (
+    <div className="stack">
+      <p className="muted">Eine eigene Woche nur für Tests: fünf Cups, jeder frisch. Die Woche davor läuft mit −1 Satz. Die Auswertung schlägt danach einen Schwerpunkt vor.</p>
+      <div className="row two">
+        <Field label="Beginn"><input type="date" value={b.start} onChange={(e) => setB({ ...b, start: e.target.value, end: addDays(e.target.value, 6) })} /></Field>
+        <Field label="Ende"><input type="date" value={b.end} onChange={(e) => setB({ ...b, end: e.target.value })} /></Field>
+      </div>
+      <div className="sticky-actions">
+        {onDelete && <button className="btn danger" onClick={onDelete}>Löschen</button>}
+        <button className="btn ghost" onClick={onCancel}>Abbrechen</button>
+        <button className="btn primary" disabled={!valid} onClick={() => onSave(b)}>Speichern</button>
+      </div>
+    </div>
+  );
   return (
     <div className="stack">
       <Field label="Name der Phase" hint="z. B. Vorlesungszeit, Urlaub, Projektphase">
@@ -102,6 +116,16 @@ export function BlockForm({ block, profiles, onSave, onCancel, onDelete }: { blo
       {ownWeek && <WeekEditor schedule={b.schedule ?? {}} profiles={profiles} onChange={(schedule) => setB({ ...b, schedule })} allowEmpty />}
       <div className="label teal"><span className="bar" />Orden {f ? `: ${f.name}` : "wählen"} · {weeks} Wochen{f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (empfohlen ${f.weeks.min}–${f.weeks.max})` : ""}</div>
       <FocusPicker load={b.load} travel={b.travel} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} />
+      {(onInsertTest || onSplitTest) && (
+        <div className="stack">
+          <div className="small muted">Testwoche als eigener Block</div>
+          <div className="row wrap">
+            {onSplitTest && <button className="btn ghost small" onClick={onSplitTest}>Letzte Woche als Testwoche</button>}
+            {onInsertTest && <button className="btn ghost small" onClick={onInsertTest}>Danach eine Woche einschieben</button>}
+          </div>
+          <div className="muted small">„Letzte Woche“ kürzt diese Phase, der Rest des Jahres bleibt. „Einschieben“ verschiebt alle späteren Phasen um eine Woche.</div>
+        </div>
+      )}
       <div className="sticky-actions">
         {onDelete && <button className="btn danger" onClick={onDelete}>Löschen</button>}
         <button className="btn ghost" onClick={onCancel}>Abbrechen</button>
@@ -127,13 +151,12 @@ export function PlanList({ plan, profiles, onChange, today }: { plan: PlanBlock[
   return (
     <div className="stack">
       {sorted.map((b) => {
-        const f = FOCUS_BY_ID[b.focusId];
         const now = b.start <= today && today <= b.end;
         return (
           <button key={b.id} className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""}`} onClick={() => setEdit(b)}>
             <div className="block-dates">{fmtDate(b.start)} – {fmtDate(b.end)}</div>
-            <div className="block-name">{f?.name ?? "Orden fehlt"} {now && <span className="tag teal">jetzt</span>}</div>
-            <div className="muted small">{b.label || "–"} · Last {LOAD_LABEL[b.load]}{b.travel ? " · unterwegs" : ""} · {blockWeeks(b)} Wochen</div>
+            <div className="block-name">{focusName(b.focusId)} {now && <span className="tag teal">jetzt</span>}</div>
+            <div className="muted small">{isTestBlock(b) ? "fünf Cups, Auswertung danach" : `${b.label || "–"} · Last ${LOAD_LABEL[b.load]}${b.travel ? " · unterwegs" : ""} · ${blockWeeks(b)} Wochen`}</div>
           </button>
         );
       })}
@@ -148,6 +171,8 @@ export function PlanList({ plan, profiles, onChange, today }: { plan: PlanBlock[
           <BlockForm block={edit} profiles={profiles}
             onCancel={() => setEdit(null)}
             onDelete={plan.some((x) => x.id === edit.id) ? () => { onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
+            onInsertTest={plan.some((x) => x.id === edit.id) && !isTestBlock(edit) && !followedByTest(plan, edit) ? () => { onChange(insertTestWeek(plan, edit.id, uid("b"))); setEdit(null); } : undefined}
+            onSplitTest={plan.some((x) => x.id === edit.id) && !isTestBlock(edit) && !followedByTest(plan, edit) && blockWeeks(edit) >= 3 ? () => { onChange(splitTestWeek(plan, edit.id, uid("b"))); setEdit(null); } : undefined}
             onSave={(nb) => { onChange(plan.some((x) => x.id === nb.id) ? plan.map((x) => (x.id === nb.id ? nb : x)) : [...plan, nb]); setEdit(null); }} />
         </Modal>
       )}

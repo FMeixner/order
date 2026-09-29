@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FOCI } from "../data";
+import { FLOWS, FOCI } from "../data";
 import { CLASS_LABEL } from "../engine/plan";
 import { resolveSlot } from "../engine/resolve";
 import { ladderStart } from "../engine/skills";
@@ -28,7 +28,9 @@ function BlockLines({ b, c }: { b: Block; c: Ctx }) {
     case "superset": return <li>Im Wechsel{rot}: <ul>{b.slots.map((s) => { const l = slotLine(s, c); return l ? <li key={s.id}>{l}</li> : null; })}</ul></li>;
     case "contrast": return <li>Kontrast{rot}: {slotLine(b.heavy, c)} → {b.transfer ?? 30} s → {b.explosive.name} {b.explosive.reps}, {Math.round((b.rest ?? 180) / 60)} Min Pause</li>;
     case "beast": return <li>Bestie{rot}: {b.pool ? `aus ${b.pool.length} festgelegten` : (b.classes ?? []).map((x) => CLASS_LABEL[x]).join(" oder ")}{b.pace === "easy" ? ", ruhiges Grundlagentempo" : ""}{b.benchmark_every ? `, jede ${b.benchmark_every}. Woche Wiederholung` : ""}</li>;
-    case "module": return <li>{c.profile && !c.profile.has.sword && b.fallback ? slotLine(b.fallback, c) : `Schwert: ${b.variant}`}{rot}</li>;
+    case "module":
+      if (b.module === "flow") return <li>{FLOWS[b.variant]?.name ?? b.variant}{rot}: <ul>{(FLOWS[b.variant]?.drills ?? []).map((d) => <li key={d.id}>{d.name} · {d.mode === "reps" ? `${d.value}×` : `${d.value} s`}{d.sides ? " je Seite" : ""}</li>)}</ul></li>;
+      return <li>{c.profile && !c.profile.has.sword && b.fallback ? slotLine(b.fallback, c) : `Schwert: ${b.variant}`}{rot}</li>;
     case "menu": return <li>{b.label}: nach Wahl aus {Object.keys(b.options).join(", ")}</li>;
   }
 }

@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { FOCUS_BY_ID } from "../data";
-import { fmtDate } from "../engine/plan";
+import { fmtDate, focusName, isTestBlock } from "../engine/plan";
 import { AIM_OPTIONS, suggestSequence, type Aim } from "../engine/sequence";
 import type { PlanBlock } from "../types";
 import { Modal } from "./common";
@@ -24,8 +23,8 @@ export function SequenceDialog({ plan, today, onApply, onClose }: { plan: PlanBl
         <div className="seq-list">
           {res.items.map((x) => {
             const b = byId[x.id];
-            const cur = FOCUS_BY_ID[b.focusId];
-            const next = FOCUS_BY_ID[x.focusId];
+            const cur = b.focusId ? { name: focusName(b.focusId) } : null;
+            const next = { name: focusName(x.focusId) };
             const changed = !x.locked && x.focusId !== b.focusId;
             return (
               <div key={x.id} className={`seq-row ${x.locked ? "locked" : ""} ${changed ? "changed" : ""}`}>
@@ -34,7 +33,7 @@ export function SequenceDialog({ plan, today, onApply, onClose }: { plan: PlanBl
                   {changed && cur ? <><s className="muted">{cur.name}</s> → </> : null}
                   <strong>{next?.name ?? "–"}</strong>
                   {x.reasons.length > 0 && !x.locked && <span className="muted small"> · {x.reasons.join(", ")}</span>}
-                  {x.locked && <span className="muted small"> · läuft oder vorbei</span>}
+                  {x.locked && <span className="muted small"> · {isTestBlock(b) ? "bleibt" : "läuft oder vorbei"}</span>}
                 </div>
               </div>
             );

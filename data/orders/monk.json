@@ -32,7 +32,7 @@
       "name": "Yoga-Flow", "location": "reise", "minutes": 40,
       "warmup": ["gentle"], "cooldown": [],
       "blocks": [
-        {"type": "single", "slot": {"id": "zw-f-1", "name": "Yoga-Flow: Sonnengruß, Krieger I und II, Dreieck", "kind": "timer", "minutes": 25, "prog": "none"}},
+        {"type": "module", "module": "flow", "variant": "sonnengruss"},
         {"type": "single", "slot": {"id": "zw-f-2", "name": "Atemmeditation", "kind": "timer", "minutes": 10, "max": 20, "step": 1, "prog": "minutes"}}
       ]
     },
@@ -53,7 +53,7 @@
       "name": "Yoga-Ruhe", "location": "reise", "minutes": 35,
       "warmup": [], "cooldown": [],
       "blocks": [
-        {"type": "single", "slot": {"id": "zw-r-1", "name": "Yin-Haltungen: Taube, Brücke, Kindhaltung, Drehsitz", "kind": "timer", "minutes": 20, "prog": "none"}},
+        {"type": "module", "module": "flow", "variant": "yin"},
         {"type": "single", "slot": {"id": "zw-r-2", "name": "Body Scan", "kind": "timer", "minutes": 15, "prog": "none"}}
       ]
     }

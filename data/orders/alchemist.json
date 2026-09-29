@@ -21,7 +21,7 @@
       "name": "Flow", "location": "reise", "minutes": 35,
       "warmup": ["gentle"], "cooldown": [],
       "blocks": [
-        {"type": "single", "slot": {"id": "ma-f-1", "name": "Langsamer Flow (Tai-Chi-artig)", "kind": "timer", "minutes": 20, "prog": "none", "note": "Gewicht langsam von Bein zu Bein verlagern, Arme folgen dem Atem."}},
+        {"type": "module", "module": "flow", "variant": "baduanjin"},
         {"type": "single", "slot": {"id": "ma-f-2", "name": "Meditation", "kind": "timer", "minutes": 10, "max": 20, "step": 1, "prog": "minutes"}}
       ]
     },
@@ -56,7 +56,7 @@
       "name": "Flow und Gehen", "location": "reise", "minutes": 35,
       "warmup": [], "cooldown": [],
       "blocks": [
-        {"type": "single", "slot": {"id": "ma-r-1", "name": "Langsamer Flow, freie Sequenz", "kind": "timer", "minutes": 20, "prog": "none"}},
+        {"type": "module", "module": "flow", "variant": "taichi"},
         {"type": "single", "slot": {"id": "ma-r-2", "name": "Zügiger Spaziergang", "kind": "timer", "minutes": 15, "prog": "none"}}
       ]
     }

@@ -1,5 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
-import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FOCUS_BY_ID } from "../data";
+import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, hexFor, hexWith } from "./skills";
@@ -40,6 +40,31 @@ export function fmtDate(s: string): string {
 export function blockWeeks(b: PlanBlock): number {
   return Math.max(1, Math.round((daysBetween(mondayOf(b.start), b.end) + 1) / 7));
 }
+/* ---------- Testwoche als eigener Block ---------- */
+export const TEST_BLOCK = "test";
+export const isTestBlock = (b: PlanBlock | null | undefined) => b?.focusId === TEST_BLOCK;
+export const focusName = (id: string) => (id === TEST_BLOCK ? "Testwoche" : FOCUS_BY_ID[id]?.name ?? "Orden fehlt");
+/** Folgt direkt eine eigene Testwoche? Dann entfällt die Testwoche im Orden, die letzte Woche läuft mit −1 Satz. */
+export function followedByTest(plan: PlanBlock[], b: PlanBlock): boolean {
+  return plan.some((x) => isTestBlock(x) && x.start === addDays(b.end, 1));
+}
+/** Nach einer Phase eine Testwoche einschieben; alle späteren Phasen rücken eine Woche nach hinten. */
+export function insertTestWeek(plan: PlanBlock[], afterId: string, id: string): PlanBlock[] {
+  const after = plan.find((b) => b.id === afterId);
+  if (!after) return plan;
+  const start = addDays(after.end, 1);
+  const shifted = plan.map((b) => (b.start >= start ? { ...b, start: addDays(b.start, 7), end: addDays(b.end, 7) } : b));
+  return [...shifted, { id, focusId: TEST_BLOCK, label: "Testwoche", start, end: addDays(start, 6), load: after.load, travel: false }];
+}
+
+/** Die letzte Woche einer Phase als eigene Testwoche abtrennen; nichts verschiebt sich. */
+export function splitTestWeek(plan: PlanBlock[], id: string, newId: string): PlanBlock[] {
+  const b = plan.find((x) => x.id === id);
+  if (!b || blockWeeks(b) < 3) return plan;
+  const start = addDays(b.end, -6);
+  return [...plan.map((x) => (x.id === id ? { ...x, end: addDays(start, -1) } : x)), { id: newId, focusId: TEST_BLOCK, label: "Testwoche", start, end: b.end, load: b.load, travel: false }];
+}
+
 export function blockAt(plan: PlanBlock[], date: string): PlanBlock | null {
   return plan.find((b) => b.start <= date && date <= b.end) ?? null;
 }
@@ -272,8 +297,9 @@ export function expandDrills(listNames: string[] | undefined, user: UserProfile,
   return out;
 }
 
-export function moduleDrills(variant: string, user: UserProfile, week: number): DrillView[] {
-  return (DM_VARIANTS[variant] ?? []).filter((d) => !d.rotation || d.rotation === (isAWeek(week) ? "A" : "B")).map((d) => drillView(d, user, week));
+export function moduleDrills(variant: string, user: UserProfile, week: number, module: "sword" | "flow" = "sword"): DrillView[] {
+  const list = module === "flow" ? FLOWS[variant]?.drills ?? [] : DM_VARIANTS[variant] ?? [];
+  return list.filter((d) => !d.rotation || d.rotation === (isAWeek(week) ? "A" : "B")).map((d) => drillView(d, user, week));
 }
 
 function drillView(d: Drill, user: UserProfile, week: number): DrillView {

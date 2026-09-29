@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { EXERCISES, SKILLS } from "../data";
+import { EXERCISES, FLOWS, SKILLS } from "../data";
 import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { affectDowngrade, beastById, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
@@ -26,7 +26,7 @@ export interface SessionCtx {
 export const sessionId = (blockId: string, week: number, role: string) => `${blockId}:${week}:${role}`;
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
-const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(ctx.focus.roles[ctx.roleKey], ctx.profile, ctx.state.user, ctx.week).total / 5) * 5);
+const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(ctx.focus.roles[ctx.roleKey], ctx.profile, ctx.state.user, ctx.week, ctx.reduced).total / 5) * 5);
 
 /** Skills aus dem Skillcheck; null, solange keiner gemacht wurde */
 export const skillSet = (st: AppState): Set<string> | null => (st.user.skills ? new Set(st.user.skills) : null);
@@ -48,7 +48,7 @@ function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
       const s = choice ? b.options[choice] : null;
       return s ? ([r(s)].filter(Boolean) as Resolved[]) : [];
     }
-    case "module": return !ctx.profile.has.sword && b.fallback ? ([r(b.fallback)].filter(Boolean) as Resolved[]) : [];
+    case "module": return b.module === "sword" && !ctx.profile.has.sword && b.fallback ? ([r(b.fallback)].filter(Boolean) as Resolved[]) : [];
     default: return [];
   }
 }
@@ -75,7 +75,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
       if (b.type === "beast") {
         return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
       }
-      if (b.type === "module" && ctx.profile.has.sword) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week) };
+      if (b.type === "module" && (b.module === "flow" || ctx.profile.has.sword)) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week, b.module) };
       return { block: b, resolved: slotsOf(b, ctx) };
     })
     .filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
@@ -239,8 +239,9 @@ function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sessio
   if (b.type === "module" && it.drills) {
     return (
       <section className="card">
-        <div className="block-label amber">Schwert</div>
-        <DrillList drills={it.drills} done={session?.drills ?? {}} prefix="dm" onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
+        <div className="block-label amber">{b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : "Schwert"}</div>
+        {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
+        <DrillList drills={it.drills} done={session?.drills ?? {}} prefix={b.module === "flow" ? "fl" : "dm"} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
       </section>
     );
   }
@@ -615,7 +616,15 @@ export function SessionPreview(ctx: SessionCtx) {
               </div>
             );
           }
-          if (it.drills) return <div key={i} className="preview-row"><span>Schwert: {it.drills.map((d) => d.name).join(", ")}</span></div>;
+          if (it.drills) {
+            if (it.block.type === "module" && it.block.module === "flow") return (
+              <div key={i} className="preview-group">
+                <div className="block-label amber">{FLOWS[it.block.variant]?.name}</div>
+                {it.drills.map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.value}×` : fmt(d.value)}{d.sides ? " je Seite" : ""}</span></div>)}
+              </div>
+            );
+            return <div key={i} className="preview-row"><span>Schwert: {it.drills.map((d) => d.name).join(", ")}</span></div>;
+          }
           if (it.block.type === "menu" && !it.resolved.length) return <div key={i} className="preview-row"><span>{it.block.label}</span><span className="muted">Wahl am Tag</span></div>;
           return (
             <div key={i} className={title ? "preview-group" : ""}>

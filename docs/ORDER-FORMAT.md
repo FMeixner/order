@@ -99,3 +99,11 @@ Sind die Lasten grob gestuft, reicht der Wiederholungsbereich oft nicht, um den 
 - Ein Bestien-Block mit `"pace": "easy"` läuft im ruhigen Grundlagentempo; die Zeit zählt nicht für die Bestzeit. Muster für ruhige Orden: A-Woche eine kurze Bestie (`plage`), B-Woche eine lange (`ungeheuer`) mit `pace: easy`.
 - Übungen mit `"run": true` in `exercises.json` gelten als Laufen. In einer Einheit mit Lauf kann man „Heute kein Laufen möglich“ anhaken; der Lauf wird dann zu einer Bestie ähnlicher Dauer.
 - `hex` in `skills.json` ersetzt in Bestien eine Skill-Übung durch eine leichtere. Mit „Skills trainieren“ erscheinen Bestien mit fehlenden Skills als hexed-Variante mit eigener Bestzeit.
+
+## Flows
+
+`data/modules/flows.json` enthält geführte Flows. Jede Variante hat `drills` wie beim Schwert: `name` beschreibt die Kette (Haltung → Haltung → …), `mode` `reps` (Wiederholungen der Kette) oder `hold` (Sekunden), `sides` für links/rechts, `asym` für die schwächere Seite, `rep_s` für die Zeitschätzung. Eingebunden als `{"type": "module", "module": "flow", "variant": "yin"}`.
+
+## Testwoche als eigener Block
+
+Eine Phase mit `focusId: "test"` ist eine eigene Testwoche. Folgt sie direkt auf eine Phase, läuft deren letzte Woche mit −1 Satz, und eine Testwoche im Orden entfällt.
