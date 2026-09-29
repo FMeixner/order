@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { EXERCISES } from "../data";
+import { EXERCISES, SKILLS } from "../data";
 import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { affectDowngrade, beastById, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapNearest } from "../engine/loads";
-import type { AppState, Beast, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
+import { blockSeconds, estimateRole } from "../engine/duration";
+import type { AppState, Beast, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
 import { Collapse, Desc, kg, Modal } from "./common";
 import { fmt, useTimer } from "./Timer";
 
@@ -23,6 +24,9 @@ export interface SessionCtx {
 }
 
 export const sessionId = (blockId: string, week: number, role: string) => `${blockId}:${week}:${role}`;
+
+/** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
+const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(ctx.focus.roles[ctx.roleKey], ctx.profile, ctx.state.user, ctx.week).total / 5) * 5);
 
 /** Skills aus dem Skillcheck; null, solange keiner gemacht wurde */
 export const skillSet = (st: AppState): Set<string> | null => (st.user.skills ? new Set(st.user.skills) : null);
@@ -49,11 +53,24 @@ function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   }
 }
 
+/** Läuft in diesem Block gelaufen? */
+export const isRunBlock = (b: Block) => b.type === "single" && !!EXERCISES[b.slot.name]?.run;
+
+/** Kein Laufen möglich: Laufblock wird zur Bestie ähnlicher Dauer */
+function runToBeast(b: Block, ctx: SessionCtx): Block {
+  if (b.type !== "single") return b;
+  const min = blockSeconds(b, ctx.profile) / 60;
+  const cls: BeastClass = min <= 10.5 ? "plage" : min <= 17.5 ? "bestie" : min <= 25.5 ? "ungeheuer" : "uralte";
+  return { type: "beast", id: `norun-${b.slot.id}`, classes: [cls], draw: "rotate", note: `Statt ${b.slot.name}.`, rotation: b.rotation };
+}
+
 export function collectItems(ctx: SessionCtx): Item[] {
   const role = ctx.focus.roles[ctx.roleKey];
   const ab = isAWeek(ctx.week) ? "A" : "B";
+  const noRun = !!ctx.state.noRun?.[sessionId(ctx.block.id, ctx.week, ctx.roleKey)];
   const items: Item[] = role.blocks
     .filter((b) => !b.rotation || b.rotation === ab)
+    .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : b))
     .map((b) => {
       if (b.type === "beast") {
         return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
@@ -104,8 +121,8 @@ export function SessionView(ctx: SessionCtx) {
         slots[r.key] = advance(r, slots[r.key], e, ctx.profile, ctx.date);
       }
       const beastTimes = { ...st.beastTimes };
-      if (cur.beast?.seconds) beastTimes[cur.beast.id] = [...(beastTimes[cur.beast.id] ?? []), { date: ctx.date, seconds: cur.beast.seconds }];
-      for (const pt of cur.beastParts ?? []) if (pt.seconds) beastTimes[pt.id] = [...(beastTimes[pt.id] ?? []), { date: ctx.date, seconds: pt.seconds }];
+      if (cur.beast?.seconds && !cur.beast.easy) beastTimes[cur.beast.id] = [...(beastTimes[cur.beast.id] ?? []), { date: ctx.date, seconds: cur.beast.seconds }];
+      for (const pt of cur.beastParts ?? []) if (pt.seconds && !pt.easy) beastTimes[pt.id] = [...(beastTimes[pt.id] ?? []), { date: ctx.date, seconds: pt.seconds }];
       const feelingLog = feeling != null ? [...st.feeling, { date: ctx.date, sessionId: id, value: feeling }] : st.feeling;
       return { ...st, slots, beastTimes, feeling: feelingLog, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: true, date: ctx.date } : s)) };
     });
@@ -115,8 +132,14 @@ export function SessionView(ctx: SessionCtx) {
     <div className="stack session">
       <div className="session-head">
         <h2>{role.name}</h2>
-        <div className="muted small">{ctx.profile.name} · etwa {role.minutes} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
+        <div className="muted small">{ctx.profile.name} · etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
         {role.note && <p className="note">{role.note}</p>}
+        {role.blocks.some(isRunBlock) && (
+          <label className="check small">
+            <input type="checkbox" checked={!!state.noRun?.[id]} onChange={(e) => update((st) => ({ ...st, noRun: { ...(st.noRun ?? {}), [id]: e.target.checked } }))} />
+            <span>Heute kein Laufen möglich: Bestie statt Lauf</span>
+          </label>
+        )}
         {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
       </div>
@@ -212,7 +235,7 @@ function DrillList({ drills, done, prefix, onToggle }: { drills: DrillView[]; do
 function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void }) {
   const b = it.block;
   const t = useTimer();
-  if (b.type === "beast") return <BeastCard beast={it.beast ?? null} ctx={ctx} session={session} mut={mut} note={b.note} />;
+  if (b.type === "beast") return <BeastCard beast={it.beast ?? null} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} />;
   if (b.type === "module" && it.drills) {
     return (
       <section className="card">
@@ -251,7 +274,7 @@ function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sessio
     const last = it.resolved[it.resolved.length - 1];
     return (
       <section className="card superset">
-        <div className="block-label teal">{b.label ?? "Superset"} · direkt nacheinander, dann {b.rest ?? 60} s Pause</div>
+        <div className="block-label teal">Im Wechsel · direkt nacheinander, dann {b.rest ?? 60} s Pause</div>
         {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={() => { if (r === last) t.rest("Pause, dann nächste Runde", b.rest ?? 60); }} />)}
       </section>
     );
@@ -458,6 +481,14 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
 }
 
 /* ---------- Bestie ---------- */
+/** Hinweis bei hexed-Bestien: welche Übung leichter ist */
+function hexNote(b: Beast): string | null {
+  const ids = b.hexed ?? b.parts?.flatMap((p) => beastById(p.id)?.hexed ?? []) ?? [];
+  if (!ids.length) return null;
+  const names = SKILLS.skills.filter((x) => ids.includes(x.id)).map((x) => x.name);
+  return `hexed: ${names.join(", ")} durch eine leichtere Übung ersetzt, bis der Skill sitzt.`;
+}
+
 /** Stoppuhr und Zeiteingabe für eine Bestie */
 function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number }[]; label?: string; saved: number | null; onSave: (sec: number) => void }) {
   const [startedAt, setStartedAt] = useState<number | null>(null);
@@ -489,7 +520,7 @@ function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number 
   );
 }
 
-function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string }) {
+function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | null; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean }) {
   const t = useTimer();
   if (!beast) return <section className="card"><div className="muted">Keine passende Bestie für dieses Equipment gefunden.</div></section>;
   // Dauer: bei Serien aus den Teilen, mit gemessenen Zeiten, wo vorhanden
@@ -498,13 +529,13 @@ function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ct
     : beastMinutes(beast, ctx.state.beastTimes[beast.id]).min;
   const measured = beast.parts ? beast.parts.every((pt) => (ctx.state.beastTimes[pt.id] ?? []).length) : (ctx.state.beastTimes[beast.id] ?? []).length > 0;
   const cls = beastClass(effMin);
-  const saveSingle = (sec: number) => mut((s) => ({ ...s, beast: { id: beast.id, seconds: sec } }));
+  const saveSingle = (sec: number) => mut((s) => ({ ...s, beast: { id: beast.id, seconds: sec, ...(easy ? { easy } : {}) } }));
   // Serie: jeder Teil einzeln, jede Zeit zählt für ihre Bestie (ein Doppel/Triple ist ein Teil mit eigener Bestzeit)
   const parts = beast.parts ?? [];
   const saveUnit = (u: number, sec: number) => {
     mut((s) => {
       const arr = parts.map((x, i) => (s.beastParts?.[i]?.id === x.id ? s.beastParts[i] : { id: x.id, seconds: null }));
-      arr[u] = { id: parts[u].id, seconds: sec };
+      arr[u] = { id: parts[u].id, seconds: sec, ...(easy ? { easy } : {}) };
       return { ...s, beastParts: arr };
     });
     if (u < parts.length - 1) t.rest(`Pause, dann ${parts[u + 1].name}`, COMBO_REST);
@@ -522,6 +553,8 @@ function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ct
     <section className="card beast">
       <div className="block-label amber">Bestiarium · {CLASS_LABEL[cls]} · ~{Math.round(effMin)} Min {measured ? "gemessen" : "geschätzt"}</div>
       <div className="beast-name">{beast.name}</div>
+      {easy && <div className="note small">Grundlagentempo: ruhig und gleichmäßig, Nasenatmung, du kannst dabei sprechen. Die Zeit zählt nicht für die Bestzeit.</div>}
+      {hexNote(beast) && <div className="muted small">{hexNote(beast)}</div>}
       {parts.length ? (
         <>
           <div className="muted small">Zwei Bestien hintereinander, dazwischen {COMBO_REST / 60} Min Pause. Jede Zeit zählt für die Bestzeit ihrer Bestie.</div>
@@ -562,7 +595,7 @@ export function SessionPreview(ctx: SessionCtx) {
     <div className="stack session">
       <div className="session-head">
         <h2>{role.name}</h2>
-        <div className="muted small">{ctx.profile.name} · etwa {role.minutes} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
+        <div className="muted small">{ctx.profile.name} · etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
       </div>
       <section className="card preview">
         <div className="preview-row muted"><span>Warm-up</span><span>{warm.length} Übungen</span></div>

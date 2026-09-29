@@ -49,7 +49,7 @@ const GOAL_GROUPS: { label: string; goals: string[] }[] = [
   { label: "Testen", goals: ["test"] },
 ];
 
-export function FocusPicker({ load, travel, value, onPick }: { load: Load; travel: boolean; value?: string; onPick: (id: string) => void }) {
+export function FocusPicker({ load, travel, value, onPick, profile }: { load: Load; travel: boolean; value?: string; onPick: (id: string) => void; profile?: EquipmentProfile }) {
   const [detail, setDetail] = useState<Focus | null>(null);
   const [group, setGroup] = useState(0);
   const goals = GOAL_GROUPS[group].goals;
@@ -74,7 +74,7 @@ export function FocusPicker({ load, travel, value, onPick }: { load: Load; trave
           <button className="btn ghost small" onClick={() => setDetail(f)}>Details</button>
         </div>
       ))}
-      {detail && <Modal title={detail.name} onClose={() => setDetail(null)} wide><FocusDetail f={detail} /></Modal>}
+      {detail && <Modal title={detail.name} onClose={() => setDetail(null)} wide><FocusDetail f={detail} profile={profile} /></Modal>}
     </div>
   );
 }
@@ -101,7 +101,7 @@ export function BlockForm({ block, profiles, onSave, onCancel, onDelete }: { blo
       <Check checked={ownWeek} onChange={(v) => { setOwnWeek(v); if (!v) setB({ ...b, schedule: undefined }); }} label="Eigener Wochenplan für diese Phase" />
       {ownWeek && <WeekEditor schedule={b.schedule ?? {}} profiles={profiles} onChange={(schedule) => setB({ ...b, schedule })} allowEmpty />}
       <div className="label teal"><span className="bar" />Orden {f ? `: ${f.name}` : "wählen"} · {weeks} Wochen{f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (empfohlen ${f.weeks.min}–${f.weeks.max})` : ""}</div>
-      <FocusPicker load={b.load} travel={b.travel} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} />
+      <FocusPicker load={b.load} travel={b.travel} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} />
       <div className="sticky-actions">
         {onDelete && <button className="btn danger" onClick={onDelete}>Löschen</button>}
         <button className="btn ghost" onClick={onCancel}>Abbrechen</button>

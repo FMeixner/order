@@ -62,6 +62,8 @@ export type Block =
   | {
       type: "beast"; id: string; classes?: BeastClass[]; pool?: string[];
       draw?: "rotate" | "random"; benchmark_every?: number; note?: string; rotation?: "A" | "B";
+      /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
+      pace?: "easy";
     }
   | { type: "module"; module: "sword"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
@@ -114,6 +116,8 @@ export type Equip =
 
 export interface Exercise {
   equip: Equip;
+  /** Laufen: kann für einen Tag gegen eine Bestie getauscht werden */
+  run?: boolean;
   /** Zusätzlich nötig, z. B. "bar" (Klimmzugstange), "rings", "bench", "rower", "box" */
   needs?: string[];
   desc?: string;
@@ -127,6 +131,8 @@ export interface Beast {
   minutes: number;
   equipment: string[];
   work: string;
+  /** hexed: Skills, deren Übungen durch leichtere ersetzt sind */
+  hexed?: string[];
   /** Doppel oder Triple: dieselbe Bestie k-mal am Stück, ohne Pause, mit eigener Bestzeit */
   repeat?: number;
   /** Serie: zwei Bestien hintereinander, jede Zeit zählt für ihre Bestie */
@@ -191,6 +197,8 @@ export interface UserProfile {
   sex?: "m" | "w" | null;
   /** Skillcheck: Skills aus data/modules/skills.json, die sauber sitzen. null = noch nicht angegeben (kein Filter). */
   skills?: string[] | null;
+  /** Skills trainieren: Bestien mit fehlenden Skills kommen als hexed-Variante */
+  skillTraining?: boolean;
   /** Veraltet (0.1): wird beim Laden in has.sword der Heim-Profile übernommen */
   doppelmesser?: boolean;
 }
@@ -230,9 +238,9 @@ export interface Session {
   profileId: string;
   entries: Record<string, SessionEntry>;
   drills: Record<string, boolean[]>;
-  beast?: { id: string; seconds: number | null };
+  beast?: { id: string; seconds: number | null; easy?: boolean };
   /** Serie: Zeit je Teil, jede zählt für die Bestzeit ihrer Bestie */
-  beastParts?: { id: string; seconds: number | null }[];
+  beastParts?: { id: string; seconds: number | null; easy?: boolean }[];
   menu: Record<string, string>;
   note?: string;
   done: boolean;
@@ -256,6 +264,8 @@ export interface AppState {
   feeling: { date: string; sessionId: string; value: number }[];
   /** Eigene Übungswahl: "slotId:Stufe" → Übungsname. Überlebt Updates der Orden-Dateien. */
   swaps: Record<string, string>;
+  /** Einheiten, in denen heute nicht gelaufen werden kann (Session-Id → true): Lauf wird zur Bestie */
+  noRun?: Record<string, boolean>;
 }
 
 export interface TestResult { date: string; blockId: string; value: number; raw: string; /** gewählte Variante, z. B. "squat" oder "legpress" */ variant?: string }

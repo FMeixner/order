@@ -2,6 +2,20 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.11.0] – 2026-09-29
+
+### Neu
+- Jeder Orden hat mindestens eine Bestie pro Woche. Eisen-Orden (Knight, Smith, Witcher, Gladiator, Olympian, Soldier): eine kurze pro Woche. Ruhige Orden (Alchemist, Monk, Acrobat, Initiate): A-Woche kurz, B-Woche lang im Grundlagentempo, ohne Bestzeit.
+- Laufen abwählbar: „Heute kein Laufen möglich“ macht aus dem Lauf eine Bestie ähnlicher Dauer.
+- Skills trainieren (Setup › Können): Bestien mit fehlenden Skills kommen als hexed-Variante mit leichterer Übung, in jeder zweiten Woche bevorzugt, mit eigener Bestzeit.
+- Orden-Vorschau zeigt die Übungen so, wie sie mit deinem ersten Equipment-Profil (und Skillcheck) dran wären, ohne Ersatzlisten.
+- Dauer in der Einheit wird für die jeweilige Woche geschätzt.
+
+### Geändert
+- Körpergewicht: Conqueror, Pilgrim, Pugilist und King setzen bei Drücken, Ziehen und einbeinigen Übungen auf Stufen mit Körpergewicht und weite Wiederholungsbereiche (z. B. Liegestütz 10–25 → Deficit → Archer). Quellen in den Orden und in der Anleitung.
+- Superset-Unterüberschriften („Arme“, „Zusatz“) entfernt; Anzeige einheitlich „Im Wechsel“.
+- Assassin: Muscle-Up-Technik aus dem Warm-up genommen.
+
 ## [0.10.0] – 2026-09-29
 
 ### Neu

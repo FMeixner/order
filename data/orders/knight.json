@@ -25,7 +25,7 @@
         {"type": "single", "slot": {"id": "cl-ua-2", "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-ua-3", "name": "Seated Cable Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "cl-ua-4", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "superset", "label": "Arme", "rest": 60, "slots": [
+        {"type": "superset", "rest": 60, "slots": [
           {"id": "cl-ua-5a", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"},
           {"id": "cl-ua-5b", "name": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"}
         ]},
@@ -52,7 +52,7 @@
         {"type": "single", "slot": {"id": "cl-ub-2", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-ub-3", "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-ub-4", "name": "Cable Fly (tief nach hoch)", "home": "DB Fly", "reise": {"name": "Band Fly", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "superset", "label": "Superset", "rest": 60, "slots": [
+        {"type": "superset", "rest": 60, "slots": [
           {"id": "cl-ub-5a", "name": "Reverse Pec Deck", "home": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 2, "reps": "12-15", "prog": "double"},
           {"id": "cl-ub-5b", "name": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"}
         ]},
@@ -68,7 +68,8 @@
         {"type": "single", "slot": {"id": "cl-lb-3", "name": "Leg Extension", "home": {"name": "Sissy Squat", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "cl-lb-4", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": null, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "cl-lb-5", "name": "Hanging Leg Raise", "reise": {"name": "Reverse Crunch", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "reps", "rest": 60}},
-        {"type": "single", "slot": {"id": "cl-lb-6", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
+        {"type": "single", "slot": {"id": "cl-lb-6", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "beast", "id": "cl-bst", "classes": ["plage"], "draw": "rotate", "note": "Kurz und knackig zum Schluss."}
       ]
     }
   }

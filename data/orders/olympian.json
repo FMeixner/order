@@ -36,12 +36,12 @@
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "at-o-1", "name": "Medicine Ball Chest Pass", "reise": "Clap Push-Up", "sets": 4, "reps": "3", "prog": "none", "rest": 90}},
-        {"type": "superset", "label": "Superset", "rest": 150, "slots": [
+        {"type": "superset", "rest": 150, "slots": [
           {"id": "at-o-2a", "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"},
           {"id": "at-o-2b", "name": "Weighted Pull-Up", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"}
         ]},
         {"type": "single", "slot": {"id": "at-o-3", "name": "Landmine Rotational Press", "home": "KB Half-Kneeling Press", "reise": {"name": "Band Rotational Press", "prog": "reps"}, "sets": 3, "reps": "6/Seite", "prog": "double", "rest": 90}},
-        {"type": "superset", "label": "Zusatz", "rest": 60, "slots": [
+        {"type": "superset", "rest": 60, "slots": [
           {"id": "at-o-4a", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "sets": 3, "reps": "8-10", "prog": "double"},
           {"id": "at-o-4b", "name": "Face Pull", "home": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "double"}
         ]}
@@ -58,13 +58,14 @@
       ]
     },
     "power_hinge": {
-      "name": "Power Hüfte", "location": "gym", "minutes": 50,
+      "name": "Power Hüfte", "location": "gym", "minutes": 55,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "at-h-1", "name": "Broad Jump", "sets": 5, "reps": "3", "prog": "none", "rest": 90}},
         {"type": "single", "slot": {"id": "at-h-2", "name": "Trap Bar Deadlift", "home": "KB Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 4, "reps": "4-6", "prog": "double", "rest": 180}},
         {"type": "single", "slot": {"id": "at-h-3", "name": "KB Swing", "reise": {"name": "Band Pull-Through", "prog": "reps"}, "sets": 4, "reps": "10", "prog": "weight", "rest": 90}},
-        {"type": "single", "slot": {"id": "at-h-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}}
+        {"type": "single", "slot": {"id": "at-h-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}},
+        {"type": "beast", "id": "at-bst", "classes": ["plage"], "draw": "rotate"}
       ]
     }
   }

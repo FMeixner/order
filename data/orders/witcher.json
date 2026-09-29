@@ -26,15 +26,15 @@
         {"type": "single", "slot": {"id": "w-mo-2", "name": "Bench Press", "home": "DB Floor Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "w-mo-3", "name": "Weighted Dip", "home": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "w-mo-4", "name": "Bent-Over Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "superset", "label": "Superset", "rest": 60, "slots": [
+        {"type": "superset", "rest": 60, "slots": [
           {"id": "w-mo-5a", "name": "Reverse Pec Deck", "home": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
           {"id": "w-mo-5b", "name": "Cable Woodchopper", "home": "KB Woodchop", "reise": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"}
         ]}
       ]
     },
     "arme_kurz": {
-      "name": "Arme kurz", "location": "gym", "minutes": 40,
-      "note": "Schulterdrücken plus Arme, etwa 40 Minuten.",
+      "name": "Arme kurz", "location": "gym", "minutes": 45,
+      "note": "Schulterdrücken, Arme, zum Schluss eine kurze Bestie.",
       "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"],
       "cooldown": ["cd_di"],
       "blocks": [
@@ -42,10 +42,11 @@
         {"type": "single", "slot": {"id": "w-di-1", "name": "Cable Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "w-di-2", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "w-di-3", "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 2, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "superset", "label": "Superset", "rest": 60, "slots": [
+        {"type": "superset", "rest": 60, "slots": [
           {"id": "w-fr-6a", "name": "Barbell Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "proposal": true},
           {"id": "w-fr-6b", "name": "Upright Row", "home": "DB Upright Row", "reise": {"name": "Band Upright Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "proposal": true}
-        ]}
+        ]},
+        {"type": "beast", "id": "w-bst", "classes": ["plage"], "draw": "rotate"}
       ]
     },
     "home_hypertrophie": {
@@ -58,7 +59,7 @@
         {"type": "single", "slot": {"id": "w-do-2", "name": "Deficit Push-Up", "sets": 3, "reps": "AMRAP", "prog": "reps", "rest": 90, "note": "Wenn 20+ Wdh: Weste dazu"}},
         {"type": "single", "slot": {"id": "w-do-3", "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "1-Arm DB Row"], "rest": 90}},
         {"type": "single", "slot": {"id": "w-do-4", "name": "KB Swing", "reise": {"name": "Band Pull-Through", "prog": "reps"}, "sets": 3, "reps": "15", "prog": "weight", "rest": 90}},
-        {"type": "superset", "label": "Superset", "rest": 60, "slots": [
+        {"type": "superset", "rest": 60, "slots": [
           {"id": "w-do-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
           {"id": "w-do-5b", "name": "KB Russian Twist", "reise": {"name": "Russian Twist", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"}
         ]},

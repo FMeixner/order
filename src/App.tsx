@@ -46,7 +46,7 @@ export default function App() {
               <PlanList plan={state.plan} profiles={state.equipment} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
-          {tab === "foki" && <FociBrowser />}
+          {tab === "foki" && <FociBrowser state={state} />}
           {tab === "log" && <LogView state={state} />}
           {tab === "setup" && <Setup state={state} update={update} replace={replace} today={today} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
         </main>

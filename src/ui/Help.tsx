@@ -30,6 +30,20 @@ export function Help() {
         <li>In der ersten Woche wählst du die Startgewichte selbst: so, dass am Ende noch 2–3 Wiederholungen gegangen wären.</li>
       </ul>
 
+      <h3>Körpergewicht zählt</h3>
+      <ul>
+        <li>Liegestütz, Klimmzug oder Pistol Squat sind vollwertiges Krafttraining, wenn die Sätze nah ans Muskelversagen gehen. Für Einsteiger reichen wenige Wiederholungen, für Geübte sind 20–30 fordernd. Liegestütze in Stufen brachten in Studien ähnliche Kraft- und Muskelzuwächse wie Bankdrücken (Calatayud et al., 2015; Kikuchi &amp; Nakazato, 2017; Kotarsky et al., 2018). Bei leichter Last entscheidet die Nähe zum Versagen (Refalo et al., 2023).</li>
+        <li>Orden mit Kondition oder Reise setzen deshalb auf Stufen mit Körpergewicht: ohne Aufbau, überall gleich. Orden für maximalen Muskelaufbau und Maximalkraft bleiben beim Eisen.</li>
+        <li>Stufen steigen, wenn alle Sätze zweimal am oberen Ende liegen, zum Beispiel Liegestütz → Deficit → Archer.</li>
+      </ul>
+
+      <h3>Bestien</h3>
+      <ul>
+        <li>Jeder Orden hat mindestens eine Bestie pro Woche. Bei ruhigeren Orden kommt in jeder zweiten Woche eine lange Bestie im Grundlagentempo; diese Zeit zählt nicht für die Bestzeit.</li>
+        <li>Kein Laufen möglich (Wetter, Reise, Knie)? In der Einheit „Heute kein Laufen möglich“ anhaken: Aus dem Lauf wird eine Bestie ähnlicher Dauer.</li>
+        <li>Mit „Skills trainieren“ (Setup › Können) kommen auch Bestien mit Skills, die noch fehlen, als <em>hexed</em>-Variante mit leichterer Übung. Eigene Bestzeit.</li>
+      </ul>
+
       <h3>Übung tauschen</h3>
       <ul>
         <li>Passt dir eine Übung nicht (Gerät besetzt, zwickt, keine Lust): auf <strong>⇄</strong> neben dem Namen tippen und eine Alternative mit ähnlichem Bewegungsmuster wählen.</li>

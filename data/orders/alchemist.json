@@ -34,20 +34,22 @@
         {"type": "single", "slot": {"id": "ma-h-3", "name": "Chin Tuck mit Halten", "kind": "hold", "hold": 5, "sets": 10, "prog": "none", "rest": 5}},
         {"type": "single", "slot": {"id": "ma-h-4", "name": "Jefferson Curl", "reise": {"name": "Jefferson Curl (ohne Last)", "prog": "reps"}, "sets": 2, "reps": "8", "prog": "weight", "rest": 60}},
         {"type": "single", "slot": {"id": "ma-h-5", "name": "Stock-Ausschultern", "sets": 2, "reps": "10", "prog": "none", "rest": 30, "note": "Griff enger, wenn es leicht geht."}},
-        {"type": "superset", "label": "Rumpf", "rest": 45, "slots": [
+        {"type": "superset", "rest": 45, "slots": [
           {"id": "ma-h-6a", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"},
           {"id": "ma-h-6b", "name": "Glute Bridge", "sets": 3, "reps": "12", "prog": "reps"}
         ]}
       ]
     },
     "statik": {
-      "name": "Statik", "location": "home", "minutes": 35,
+      "name": "Statik", "location": "home", "minutes": 45,
       "warmup": ["base"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "ma-s-1", "name": "Wall Sit", "kind": "hold", "hold": 45, "max": 120, "step": 10, "sets": 4, "prog": "hold", "rest": 120}},
         {"type": "single", "slot": {"id": "ma-s-2", "name": "L-Sit (Tuck)", "kind": "hold", "hold": 10, "sets": 4, "prog": "ladder", "ladder": ["L-Sit (Tuck)", "L-Sit (ein Bein)", "L-Sit"], "rest": 60}},
         {"type": "single", "slot": {"id": "ma-s-3", "name": "Dead Hang", "kind": "hold", "hold": 30, "max": 90, "step": 5, "sets": 3, "prog": "hold", "rest": 60}},
-        {"type": "single", "slot": {"id": "ma-s-4", "name": "Hollow Hold", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 3, "prog": "hold", "rest": 45}}
+        {"type": "single", "slot": {"id": "ma-s-4", "name": "Hollow Hold", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 3, "prog": "hold", "rest": 45}},
+        {"type": "beast", "rotation": "A", "id": "ma-bst-a", "classes": ["plage"], "draw": "rotate"},
+        {"type": "beast", "rotation": "B", "id": "ma-bst-b", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"}
       ]
     },
     "flow_ruhe": {

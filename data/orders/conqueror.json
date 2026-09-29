@@ -3,7 +3,7 @@
   "id": "conqueror",
   "name": "Conqueror",
   "tagline": "Unterwegs belastbar bleiben, Kraft halten.",
-  "description": "Für Reisephasen: einmal pro Woche Studio, sonst Körpergewicht und Bänder. Belastbarkeit und Ausdauer haben Vorrang. Ist in einer Woche kein Studio da, läuft der Studiotag mit den Reise-Übungen. Jede dritte Woche wiederholt die Belastbarkeitseinheit die Bestie aus Woche 1 als Zwischenwert.",
+  "description": "Für Reisephasen: einmal pro Woche Studio, sonst Körpergewicht und Bänder. Belastbarkeit und Ausdauer haben Vorrang. Ist in einer Woche kein Studio da, läuft der Studiotag mit den Reise-Übungen. Jede dritte Woche wiederholt die Belastbarkeitseinheit die Bestie aus Woche 1 als Zwischenwert. Kraft überwiegend mit Körpergewicht in Stufen (Liegestütz, Klimmzug, Pistol, Pike), nur Kniebeuge und Kreuzheben mit Langhantel: Das läuft an jedem Ort gleich.",
   "goals": {"primary": "conditioning", "secondary": ["strength", "endurance"]},
   "nutrition": "maintenance",
   "load_fit": "medium",
@@ -14,27 +14,27 @@
   "travel": true,
   "modules": ["correctives", "beast", "sword"],
   "successors": ["assassin", "knight", "troubadour"],
-  "sources": ["Helgerud et al. (2007)"],
+  "sources": ["Helgerud et al. (2007)", "Kotarsky et al. (2018)", "Kikuchi & Nakazato (2017)", "Refalo et al. (2023)"],
   "week_4": ["studio_kraft", "unterwegs_kraft", "work_capacity", "ausdauer"],
   "week_3": ["studio_kraft", "work_capacity", "ausdauer"],
   "roles": {
     "studio_kraft": {
-      "name": "Studio-Kraft", "location": "gym", "minutes": 60,
+      "name": "Studio-Kraft", "location": "gym", "minutes": 65,
       "warmup": ["base", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "superset", "label": "Tri-Set", "rest": 150, "slots": [
+        {"type": "superset", "rest": 150, "slots": [
           {"id": "c-s-1a", "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Bulgarian Split Squat", "reps": "10-12/Seite", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"},
-          {"id": "c-s-1b", "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"},
-          {"id": "c-s-1c", "name": "Weighted Pull-Up", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"}
+          {"id": "c-s-1b", "name": "Push-Up", "sets": 4, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]},
+          {"id": "c-s-1c", "name": "Band-Assisted Pull-Up", "sets": 4, "reps": "5-12", "prog": "ladder", "ladder": ["Band-Assisted Pull-Up", "Pull-Up", "Chest-to-Bar Pull-Up"], "reise": {"name": "Band Pulldown", "reps": "12-20", "prog": "reps"}}
         ]},
         {"type": "single", "slot": {"id": "c-s-2", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "reps": "10-12/Seite", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "c-s-3", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 90}},
-        {"type": "single", "slot": {"id": "c-s-4", "name": "Bulgarian Split Squat", "sets": 3, "reps": "8/Seite", "prog": "double", "rest": 90}},
-        {"type": "superset", "label": "Zusatz", "rest": 60, "slots": [
-          {"id": "c-s-5a", "name": "Seated DB Shoulder Press", "sets": 3, "reps": "8-10", "prog": "double"},
+        {"type": "single", "slot": {"id": "c-s-4", "name": "Pistol Squat (Box)", "sets": 3, "reps": "5-12/Seite", "prog": "ladder", "ladder": ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"], "rest": 90}},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "c-s-5a", "name": "Pike Push-Up", "sets": 3, "reps": "6-15", "prog": "ladder", "ladder": ["Pike Push-Up", "Pike Push-Up (Füße erhöht)", "Wall Handstand Push-Up (Teilbereich)"]},
           {"id": "c-s-5b", "name": "Hanging Leg Raise", "sets": 3, "reps": "8-12", "prog": "reps"}
         ]},
-        {"type": "single", "slot": {"id": "c-s-6", "name": "Seated Cable Row", "home": "1-Arm DB Row", "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
+        {"type": "single", "slot": {"id": "c-s-6", "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 90}}
       ]
     },
     "unterwegs_kraft": {

@@ -2,7 +2,7 @@
 import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FOCUS_BY_ID } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
-import { beastOk } from "./skills";
+import { beastOk, hexFor, hexWith } from "./skills";
 
 /* ---------- Datum ---------- */
 export function isoDate(d: Date): string {
@@ -169,7 +169,12 @@ export function composeBeast(parts: [Beast, number][]): Beast {
 /** Bestie oder Serie nach Id, auch "a×2" und "a+b" */
 export function beastById(id: string): Beast | null {
   if (BEAST_BY_ID[id]) return BEAST_BY_ID[id];
-  const parts = id.split("+").map((p) => { const m = p.match(/^(.*)×(\d)$/); return m ? [BEAST_BY_ID[m[1]], parseInt(m[2])] : [BEAST_BY_ID[p], 1]; }) as [Beast | undefined, number][];
+  const unit = (u: string): Beast | undefined => {
+    const [base, hex] = u.split("~hex:");
+    const b = BEAST_BY_ID[base];
+    return b && hex ? hexWith(b, hex.split(",")) ?? undefined : b;
+  };
+  const parts = id.split("+").map((p) => { const m = p.match(/^(.*)×(\d)$/); return m ? [unit(m[1]), parseInt(m[2])] : [unit(p), 1]; }) as [Beast | undefined, number][];
   if (!parts.length || parts.some(([b]) => !b)) return null;
   return composeBeast(parts as [Beast, number][]);
 }
@@ -217,12 +222,22 @@ export function pickBeast(
   else cands = BEASTS.filter((b) => classes.includes(classOf(b)));
   const skills = state.user.skills ? new Set(state.user.skills) : null;
   const ok = (b: Beast) => beastFits(b, profile) && beastOk(b, skills);
-  let fit = cands.filter(ok);
+  // Skills trainieren: Bestien mit fehlenden Skills als hexed-Variante dazu, in jeder zweiten Woche bevorzugt
+  const hexOf = (b: Beast) => (state.user.skillTraining && beastFits(b, profile) && !beastOk(b, skills) ? hexFor(b, skills) : null);
+  let turn = opts.week - 1;
+  if (state.user.skillTraining && skills) {
+    const hexCands = cands.map(hexOf).filter((x): x is Beast => !!x);
+    const plain = cands.filter(ok);
+    if (hexCands.length && (opts.week % 2 === 0 || !plain.length)) { cands = hexCands; turn = Math.floor((opts.week - 1) / 2); }
+  }
+  const okOrHex = (b: Beast) => ok(b) || !!b.hexed;
+  let fit = cands.filter(okOrHex);
   if (!fit.length) fit = BEASTS.filter((b) => ok(b) && (!classes.length || classes.includes(classOf(b))));
   if (!fit.length) {
     // Keine passende Bestie: aus kürzeren eine Serie bauen
     const target = classes.length ? classes : [...new Set(cands.map(classOf))];
-    const combo = comboFor(target, BEASTS.filter(ok), `${opts.blockId}:${block.id}`, opts.week);
+    const pool = BEASTS.filter(ok).concat(state.user.skillTraining ? BEASTS.map(hexOf).filter((x): x is Beast => !!x) : []);
+    const combo = comboFor(target, pool, `${opts.blockId}:${block.id}`, opts.week);
     if (combo) return combo;
   }
   if (!fit.length) fit = BEASTS.filter((b) => b.equipment.every((t) => t === "bodyweight_only") && beastOk(b, skills));
@@ -236,7 +251,7 @@ export function pickBeast(
     const list = pool.length ? pool : order;
     return list[hash(`${seed}:${opts.week}`) % list.length];
   }
-  return order[(opts.week - 1) % order.length];
+  return order[turn % order.length];
 }
 
 /* ---------- Warm-up, Cool-down, Module ---------- */

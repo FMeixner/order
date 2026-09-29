@@ -44,3 +44,26 @@ export function ladderStart(ladder: string[], skills: SkillSet): number {
   }
   return start;
 }
+
+/* ---------- hexed: Bestie mit leichterer Übung für einen fehlenden Skill ---------- */
+const HEX: Record<string, { rx: RegExp; to: string }[]> = Object.fromEntries(
+  SKILLS.skills.filter((s) => s.hex?.length).map((s) => [s.id, s.hex!.map(([rx, to]) => ({ rx: new RegExp(rx, "i"), to }))]),
+);
+
+/** hexed-Variante für bestimmte Skills bauen. null, wenn für einen der Skills kein Ersatz hinterlegt ist. */
+export function hexWith(b: Beast, skillIds: string[]): Beast | null {
+  if (!skillIds.length || skillIds.some((id) => !HEX[id])) return null;
+  const ids = [...skillIds].sort();
+  const work = b.work.split(" · ").map((line) => {
+    let out = line;
+    for (const id of ids) for (const r of HEX[id]) out = out.replace(r.rx, r.to);
+    return out;
+  }).join(" · ");
+  return { ...b, id: `${b.id}~hex:${ids.join(",")}`, name: `${b.name} hexed`, work, hexed: ids };
+}
+
+/** hexed-Variante für die Skills, die jemandem noch fehlen. null, wenn nichts fehlt oder kein Ersatz existiert. */
+export function hexFor(b: Beast, skills: SkillSet): Beast | null {
+  if (!skills) return null;
+  return hexWith(b, beastSkills(b).filter((id) => !skills.has(id)));
+}

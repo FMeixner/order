@@ -19,7 +19,7 @@
   "roles": {
     "kraft_a": {
       "name": "Kraft A", "location": "gym", "minutes": 55,
-      "warmup": ["short_base", "thoracic_roller", "dislocate", "lower_prep", "hip9090", "muscleup_tech"],
+      "warmup": ["short_base", "thoracic_roller", "dislocate", "lower_prep", "hip9090"],
       "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "single", "slot": {"id": "ka-5", "name": "Cable Chest Fly", "home": "DB Fly", "reise": {"name": "Band Fly", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},

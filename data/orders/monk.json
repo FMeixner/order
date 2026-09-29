@@ -37,14 +37,16 @@
       ]
     },
     "kraft_b": {
-      "name": "Kraft B", "location": "home", "minutes": 40,
+      "name": "Kraft B", "location": "home", "minutes": 50,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "zw-b-1", "name": "Reverse Lunge", "reise": {"name": "Reverse Lunge", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "zw-b-2", "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "zw-b-3", "name": "Chin-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "3-8", "prog": "ladder", "ladder": ["Band-Assisted Negative Chin-Up", "Negative Chin-Up", "Chin-Up"], "rest": 120}},
         {"type": "single", "slot": {"id": "zw-b-4", "name": "Glute Bridge", "sets": 3, "reps": "12", "prog": "ladder", "ladder": ["Glute Bridge", "Single-Leg Glute Bridge"], "rest": 60}},
-        {"type": "single", "slot": {"id": "zw-b-5", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 2, "prog": "hold", "rest": 45, "note": "pro Seite"}}
+        {"type": "single", "slot": {"id": "zw-b-5", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 2, "prog": "hold", "rest": 45, "note": "pro Seite"}},
+        {"type": "beast", "rotation": "A", "id": "zw-bst-a", "classes": ["plage"], "draw": "rotate"},
+        {"type": "beast", "rotation": "B", "id": "zw-bst-b", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"}
       ]
     },
     "yoga_ruhe": {

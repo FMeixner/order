@@ -15,7 +15,7 @@
   "travel": true,
   "modules": ["correctives", "beast"],
   "successors": ["troubadour", "pilgrim", "monk"],
-  "sources": ["Ekkekakis et al. (2011)", "Hardy & Rejeski (1989)"],
+  "sources": ["Ekkekakis et al. (2011)", "Hardy & Rejeski (1989)", "Kotarsky et al. (2018)"],
   "week_4": ["hart_a", "erholung", "hart_b", "hart_c"],
   "week_3": ["hart_a", "erholung", "hart_b"],
   "roles": {
@@ -40,9 +40,9 @@
       "warmup": ["run_prep", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "ki-b-1", "name": "Sprint oder Seilspringen 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 60, "rounds": 10}, "prog": "none"}},
-        {"type": "superset", "label": "Superset", "rest": 60, "slots": [
+        {"type": "superset", "rest": 60, "slots": [
           {"id": "ki-b-2a", "name": "KB Swing", "reise": {"name": "Band Pull-Through", "prog": "reps"}, "sets": 3, "reps": "15", "prog": "weight"},
-          {"id": "ki-b-2b", "name": "Push-Up", "sets": 3, "reps": "8-15", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"]}
+          {"id": "ki-b-2b", "name": "Push-Up", "sets": 3, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
         ]}
       ]
     },

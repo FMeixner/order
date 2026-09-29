@@ -48,14 +48,16 @@
       ]
     },
     "flow_frei": {
-      "name": "Freier Flow", "location": "reise", "minutes": 35,
+      "name": "Freier Flow", "location": "reise", "minutes": 45,
       "warmup": ["gentle"], "cooldown": [],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-f-1", "name": "Freie Flow-Session, Musik an", "kind": "timer", "minutes": 20, "prog": "none"}},
-        {"type": "superset", "label": "Mobility-Kraft", "rest": 45, "slots": [
+        {"type": "superset", "rest": 45, "slots": [
           {"id": "pm-f-2a", "name": "Cossack Squat", "sets": 2, "reps": "8/Seite", "prog": "reps"},
           {"id": "pm-f-2b", "name": "Jefferson Curl", "reise": {"name": "Jefferson Curl (ohne Last)", "prog": "reps"}, "sets": 2, "reps": "6", "prog": "weight"}
-        ]}
+        ]},
+        {"type": "beast", "rotation": "A", "id": "pm-bst-a", "classes": ["plage"], "draw": "rotate"},
+        {"type": "beast", "rotation": "B", "id": "pm-bst-b", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"}
       ]
     }
   }

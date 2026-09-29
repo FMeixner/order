@@ -1,33 +1,44 @@
 import { useState } from "react";
 import { FOCI } from "../data";
-import type { Block, Focus, Slot } from "../types";
+import { CLASS_LABEL } from "../engine/plan";
+import { resolveSlot } from "../engine/resolve";
+import { ladderStart } from "../engine/skills";
+import type { AppState, Block, EquipmentProfile, Focus, Slot } from "../types";
 import { Modal } from "./common";
 import { GOAL_LABEL, LOAD_FIT_LABEL, levelLabel } from "./PlanEditor";
 
 const NUTR: Record<string, string> = { deficit: "leichtes Defizit", maintenance: "Erhaltung", surplus: "leichter Überschuss", any: "frei" };
 
-function slotLine(s: Slot): string {
-  const dose = s.kind === "timer" ? `${s.minutes} Min` : s.kind === "hold" ? `${s.sets} × ${s.hold} s` : s.kind === "interval" && s.interval ? `${s.interval.rounds} × ${s.interval.work} s` : `${s.sets} × ${s.reps}`;
-  const alt = [typeof s.home === "string" ? s.home : s.home?.name, typeof s.reise === "string" ? s.reise : s.reise?.name].filter(Boolean);
-  return `${s.ladder ? s.ladder.join(" → ") : s.name} · ${dose}${alt.length ? ` · Ersatz: ${[...new Set(alt)].join(" / ")}` : ""}`;
+type Ctx = { profile?: EquipmentProfile; skills?: Set<string> | null };
+
+/** Eine Übung so, wie sie mit dem Profil tatsächlich dran wäre, ohne Ersatzliste */
+function slotLine(s: Slot, c: Ctx): string | null {
+  const r = c.profile ? resolveSlot(s, c.profile, false, undefined, c.skills) : null;
+  if (c.profile && !r) return null;
+  const name = r ? (r.ladder ? r.ladder[r.ladderStart ?? ladderStart(r.ladder, c.skills)] : r.name) : s.ladder ? s.ladder[0] : s.name;
+  const kind = r?.kind ?? s.kind;
+  const dose = kind === "timer" ? `${r?.minutes ?? s.minutes} Min` : kind === "hold" ? `${r?.sets ?? s.sets} × ${r?.hold ?? s.hold} s` : kind === "interval" && s.interval ? `${s.interval.rounds} × ${s.interval.work} s` : `${r?.sets ?? s.sets} × ${r?.reps ?? s.reps}`;
+  return `${name} · ${dose}`;
 }
 
-function BlockLines({ b }: { b: Block }) {
+function BlockLines({ b, c }: { b: Block; c: Ctx }) {
   const rot = b.rotation ? ` (${b.rotation}-Woche)` : "";
   switch (b.type) {
-    case "single": return <li>{slotLine(b.slot)}{rot}</li>;
-    case "superset": return <li>{b.label ?? "Superset"}{rot}: <ul>{b.slots.map((s) => <li key={s.id}>{slotLine(s)}</li>)}</ul></li>;
-    case "contrast": return <li>Kontrast{rot}: {b.heavy.name} {b.heavy.sets} × {b.heavy.reps} → {b.transfer ?? 30} s → {b.explosive.name} {b.explosive.reps}, {Math.round((b.rest ?? 180) / 60)} Min Pause</li>;
-    case "beast": return <li>Bestie{rot}: {b.pool ? `aus ${b.pool.length} festgelegten` : `Klasse ${(b.classes ?? []).join(" oder ")}`}{b.draw === "random" ? ", zufällig" : ""}{b.benchmark_every ? `, jede ${b.benchmark_every}. Woche Wiederholung` : ""}</li>;
-    case "module": return <li>Schwert: {b.variant}{b.fallback ? ` (ohne Schwert: ${b.fallback.name})` : ""}{rot}</li>;
+    case "single": { const l = slotLine(b.slot, c); return l ? <li>{l}{rot}</li> : null; }
+    case "superset": return <li>Im Wechsel{rot}: <ul>{b.slots.map((s) => { const l = slotLine(s, c); return l ? <li key={s.id}>{l}</li> : null; })}</ul></li>;
+    case "contrast": return <li>Kontrast{rot}: {slotLine(b.heavy, c)} → {b.transfer ?? 30} s → {b.explosive.name} {b.explosive.reps}, {Math.round((b.rest ?? 180) / 60)} Min Pause</li>;
+    case "beast": return <li>Bestie{rot}: {b.pool ? `aus ${b.pool.length} festgelegten` : (b.classes ?? []).map((x) => CLASS_LABEL[x]).join(" oder ")}{b.pace === "easy" ? ", ruhiges Grundlagentempo" : ""}{b.benchmark_every ? `, jede ${b.benchmark_every}. Woche Wiederholung` : ""}</li>;
+    case "module": return <li>{c.profile && !c.profile.has.sword && b.fallback ? slotLine(b.fallback, c) : `Schwert: ${b.variant}`}{rot}</li>;
     case "menu": return <li>{b.label}: nach Wahl aus {Object.keys(b.options).join(", ")}</li>;
   }
 }
 
-export function FocusDetail({ f }: { f: Focus }) {
+export function FocusDetail({ f, profile, skills }: { f: Focus; profile?: EquipmentProfile; skills?: Set<string> | null }) {
+  const c: Ctx = { profile, skills };
   return (
     <div className="stack focus-detail">
       <p>{f.description}</p>
+      {profile && <p className="note small">Gezeigt mit deinem Profil „{profile.name}“. Trainierst du mit einem anderen Profil, tauscht die App die Übungen passend aus.</p>}
       <div className="kv">
         <span>Ziel</span><span>{GOAL_LABEL[f.goals.primary]}{f.goals.secondary.length ? `, dazu ${f.goals.secondary.map((g) => GOAL_LABEL[g]).join(", ")}` : ""}</span>
         <span>Ernährung</span><span>{NUTR[f.nutrition]}</span>
@@ -44,19 +55,19 @@ export function FocusDetail({ f }: { f: Focus }) {
           <div key={rk} className="card">
             <div className="role-head"><strong>Tag {i + 1}: {r.name}</strong> <span className="muted small">{r.minutes} Min{f.week_3.includes(rk) ? "" : " · entfällt bei 3 Tagen"}</span></div>
             {r.note && <p className="muted small">{r.note}</p>}
-            <ul className="slot-list">{r.blocks.map((b, j) => <BlockLines key={j} b={b} />)}</ul>
+            <ul className="slot-list">{r.blocks.map((b, j) => <BlockLines key={j} b={b} c={c} />)}</ul>
           </div>
         );
       })}
       {Object.keys(f.roles).filter((r) => !f.week_4.includes(r)).map((rk) => (
         <div key={rk} className="card"><strong>Zusatz: {f.roles[rk].name}</strong> <span className="muted small">ab 5 Trainingstagen</span>
-          <ul className="slot-list">{f.roles[rk].blocks.map((b, j) => <BlockLines key={j} b={b} />)}</ul></div>
+          <ul className="slot-list">{f.roles[rk].blocks.map((b, j) => <BlockLines key={j} b={b} c={c} />)}</ul></div>
       ))}
     </div>
   );
 }
 
-export function FociBrowser() {
+export function FociBrowser({ state }: { state: AppState }) {
   const [open, setOpen] = useState<Focus | null>(null);
   return (
     <div className="stack">
@@ -68,7 +79,7 @@ export function FociBrowser() {
           <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {LOAD_FIT_LABEL[f.load_fit]} · {f.session_min} Min{f.travel ? " · unterwegs möglich" : ""}</div>
         </button>
       ))}
-      {open && <Modal title={open.name} onClose={() => setOpen(null)} wide><FocusDetail f={open} /></Modal>}
+      {open && <Modal title={open.name} onClose={() => setOpen(null)} wide><FocusDetail f={open} profile={state.equipment[0]} skills={state.user.skills ? new Set(state.user.skills) : null} /></Modal>}
     </div>
   );
 }

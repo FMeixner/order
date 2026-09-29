@@ -3,7 +3,7 @@
   "id": "pugilist",
   "name": "Pugilist",
   "tagline": "Rumpf, Nacken, Runden.",
-  "description": "Kampfsportnahes Training: Rumpf, Nacken, Rotationskraft und Kondition in Runden (Arbeit und Pause wie im Ring). Das Kampfmodul ist Schattenboxen, mit Schwert im Equipment-Profil das Schwert.",
+  "description": "Kampfsportnahes Training: Rumpf, Nacken, Rotationskraft und Kondition in Runden (Arbeit und Pause wie im Ring). Das Kampfmodul ist Schattenboxen, mit Schwert im Equipment-Profil das Schwert. Kraft überwiegend mit Körpergewicht in Stufen, dazu Rotation am Kabel oder mit Kettlebell.",
   "goals": {"primary": "conditioning", "secondary": ["skill", "strength"]},
   "nutrition": "maintenance",
   "load_fit": "medium",
@@ -13,6 +13,7 @@
   "test_week": true,
   "travel": true,
   "modules": ["correctives", "beast", "sword"],
+  "sources": ["Kotarsky et al. (2018)", "Kikuchi & Nakazato (2017)", "Refalo et al. (2023)"],
   "successors": ["huntsman", "king", "olympian"],
   "week_4": ["runden_technik", "kraft_rotation", "runden_kondition", "nacken_rumpf"],
   "week_3": ["runden_technik", "kraft_rotation", "runden_kondition"],
@@ -23,7 +24,7 @@
       "blocks": [
         {"type": "module", "module": "sword", "variant": "einzelmesser", "fallback": {"id": "fi-t-1", "name": "Schattenboxen: Technikrunden", "kind": "interval", "interval": {"work": 180, "rest": 60, "rounds": 4}, "prog": "none"}},
         {"type": "single", "slot": {"id": "fi-t-2", "name": "Beinarbeit-Drill (Linien)", "kind": "interval", "interval": {"work": 60, "rest": 30, "rounds": 3}, "prog": "none"}},
-        {"type": "superset", "label": "Nacken", "rest": 45, "slots": [
+        {"type": "superset", "rest": 45, "slots": [
           {"id": "fi-t-3a", "name": "Neck Curl", "sets": 2, "reps": "15", "prog": "reps"},
           {"id": "fi-t-3b", "name": "Neck Extension", "sets": 2, "reps": "15", "prog": "reps"}
         ]}
@@ -35,11 +36,11 @@
       "blocks": [
         {"type": "single", "slot": {"id": "fi-r-1", "name": "Medicine Ball Rotational Throw", "reise": {"name": "Band Woodchopper", "reps": "10/Seite", "prog": "reps"}, "sets": 4, "reps": "5/Seite", "prog": "none", "rest": 60}},
         {"type": "single", "slot": {"id": "fi-r-2", "name": "Cable Woodchopper", "home": "KB Woodchop", "reise": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "10/Seite", "prog": "double", "rest": 60}},
-        {"type": "superset", "label": "Superset", "rest": 60, "slots": [
-          {"id": "fi-r-3a", "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "double"},
-          {"id": "fi-r-3b", "name": "Push-Up", "sets": 3, "reps": "8-15", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"]}
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "fi-r-3a", "name": "Cossack Squat", "sets": 3, "reps": "8-15/Seite", "prog": "reps"},
+          {"id": "fi-r-3b", "name": "Push-Up", "sets": 3, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
         ]},
-        {"type": "single", "slot": {"id": "fi-r-4", "name": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "fi-r-4", "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 75}}
       ]
     },
     "runden_kondition": {
@@ -55,7 +56,7 @@
       "warmup": ["base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "fi-n-1", "name": "Nackenisometrie, 4 Richtungen", "kind": "hold", "hold": 20, "max": 40, "step": 5, "sets": 4, "prog": "hold", "rest": 20, "note": "Hand gegen den Kopf, je Richtung ein Satz."}},
-        {"type": "superset", "label": "Rumpf", "rest": 45, "slots": [
+        {"type": "superset", "rest": 45, "slots": [
           {"id": "fi-n-2a", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"},
           {"id": "fi-n-2b", "name": "Band Pallof Press", "sets": 3, "reps": "12/Seite", "prog": "reps"}
         ]},

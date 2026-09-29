@@ -93,3 +93,9 @@ Sind die Lasten grob gestuft, reicht der Wiederholungsbereich oft nicht, um den 
 ## Skillcheck
 
 `data/modules/skills.json` listet Skills mit Prüfkriterium (`test`). `exercises` sind Übungen, die den Skill voraussetzen; `regress` nennt je Übung leichtere Ersatzübungen in Reihenfolge. `start` sind Leiterstufen, die der Skill belegt: Mit dem Skill startet eine Leiter auf der höchsten davon. `beast` ist ein Suchausdruck für Übungen im Bestiarium; passende Bestien erscheinen nur mit dem Skill. Solange jemand keinen Skillcheck gemacht hat, filtert die App nichts.
+
+## Bestien: Grundlagentempo, kein Laufen, hexed
+
+- Ein Bestien-Block mit `"pace": "easy"` läuft im ruhigen Grundlagentempo; die Zeit zählt nicht für die Bestzeit. Muster für ruhige Orden: A-Woche eine kurze Bestie (`plage`), B-Woche eine lange (`ungeheuer`) mit `pace: easy`.
+- Übungen mit `"run": true` in `exercises.json` gelten als Laufen. In einer Einheit mit Lauf kann man „Heute kein Laufen möglich“ anhaken; der Lauf wird dann zu einer Bestie ähnlicher Dauer.
+- `hex` in `skills.json` ersetzt in Bestien eine Skill-Übung durch eine leichtere. Mit „Skills trainieren“ erscheinen Bestien mit fehlenden Skills als hexed-Variante mit eigener Bestzeit.

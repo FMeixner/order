@@ -377,3 +377,44 @@ describe("Blockfolge", () => {
     expect(mob.balance.share.beweglichkeit).toBeGreaterThan(r.balance.share.beweglichkeit);
   });
 });
+
+describe("hexed und Grundlagentempo", () => {
+  it("hexed ersetzt Muscle-Ups, eigene Id, wieder auflösbar", async () => {
+    const { BEASTS } = await import("../data");
+    const { beastSkills, hexFor } = await import("./skills");
+    const { beastById } = await import("./plan");
+    const mu = BEASTS.find((b) => beastSkills(b).length === 1 && beastSkills(b)[0] === "muscle_up")!;
+    const h = hexFor(mu, new Set())!;
+    expect(h.name).toBe(`${mu.name} hexed`);
+    expect(h.work).toContain("Band-Assisted Muscle-Ups");
+    expect(h.id).toBe(`${mu.id}~hex:muscle_up`);
+    expect(beastById(h.id)?.work).toBe(h.work);
+    expect(hexFor(mu, new Set(["muscle_up"]))).toBeNull();
+  });
+  it("Skills trainieren: in geraden Wochen hexed-Bestien", async () => {
+    const { pickBeast } = await import("./plan");
+    const s = sample();
+    s.user = { ...s.user, skills: [], skillTraining: true };
+    const blk = { type: "beast" as const, id: "t", classes: ["bestie" as const] };
+    const w2 = pickBeast(blk, { blockId: "b1", week: 2, profile: gym, state: s, reduced: false, downgrade: false })!;
+    expect(w2.hexed?.length).toBeGreaterThan(0);
+    const w1 = pickBeast(blk, { blockId: "b1", week: 1, profile: gym, state: s, reduced: false, downgrade: false })!;
+    expect(w1.hexed).toBeUndefined();
+  });
+  it("jeder Orden hat mindestens eine Bestie pro Woche", () => {
+    for (const f of FOCI) for (const ab of ["A", "B"]) {
+      const n = f.week_4.flatMap((rk) => f.roles[rk].blocks).filter((b) => b.type === "beast" && (!b.rotation || b.rotation === ab)).length;
+      expect(n, `${f.id} ${ab}`).toBeGreaterThanOrEqual(1);
+    }
+  });
+  it("kein Laufen: Laufblock wird Bestie", async () => {
+    const { collectItems, sessionId } = await import("../ui/SessionView");
+    const s = sample();
+    const block = { id: "bx", focusId: "conqueror", start: "2026-09-28", end: "2026-12-06", label: "", load: "medium" as const, travel: false };
+    s.plan = [block];
+    const focus = FOCUS_BY_ID.conqueror;
+    s.noRun = { [sessionId("bx", 2, "ausdauer")]: true };
+    const items = collectItems({ state: s, update: () => {}, block, focus, week: 2, roleKey: "ausdauer", profile: gym, date: "2026-10-06", reduced: false });
+    expect(items.some((it) => it.block.type === "beast")).toBe(true);
+  });
+});

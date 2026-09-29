@@ -3,7 +3,7 @@
   "id": "pilgrim",
   "name": "Pilgrim",
   "tagline": "Herz-Kreislauf zuerst, Kraft bleibt.",
-  "description": "Einmal hohe Intensität (4 × 4 Min), einmal lange Grundlage im Sprechtempo, eine lange Bestie und eine kurze Kraft-Erhaltung. Herz-Kreislauf-Fitness ist einer der stärksten Einzelmarker für Langlebigkeit.",
+  "description": "Einmal hohe Intensität (4 × 4 Min), einmal lange Grundlage im Sprechtempo, eine lange Bestie und eine kurze Kraft-Erhaltung. Herz-Kreislauf-Fitness ist einer der stärksten Einzelmarker für Langlebigkeit. Die Kraft-Erhaltung läuft mit Körpergewicht, ohne Aufbau und an jedem Ort gleich.",
   "goals": {"primary": "endurance", "secondary": ["conditioning", "strength"]},
   "nutrition": "any",
   "load_fit": "medium",
@@ -14,7 +14,7 @@
   "travel": true,
   "modules": ["correctives", "beast"],
   "successors": ["troubadour", "olympian", "knight"],
-  "sources": ["Helgerud et al. (2007)", "Mandsager et al. (2018)"],
+  "sources": ["Helgerud et al. (2007)", "Mandsager et al. (2018)", "Kotarsky et al. (2018)", "Kikuchi & Nakazato (2017)", "Refalo et al. (2023)"],
   "week_4": ["intervalle", "kraft_kurz", "bestie_lang", "grundlage"],
   "week_3": ["intervalle", "kraft_kurz", "grundlage"],
   "roles": {
@@ -23,9 +23,9 @@
       "warmup": ["run_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "rh-i-1", "name": "Intervalle 4 × 4 Min", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none", "note": "85–95 % der maximalen Herzfrequenz. Lauf, Rad oder Rudern."}},
-        {"type": "superset", "label": "Kraft kurz", "rest": 60, "slots": [
-          {"id": "rh-i-2a", "name": "Goblet Squat", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"},
-          {"id": "rh-i-2b", "name": "Push-Up", "sets": 2, "reps": "8-15", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"]}
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "rh-i-2a", "name": "Bodyweight Squat", "sets": 2, "reps": "15-30", "prog": "ladder", "ladder": ["Bodyweight Squat", "Squat Jump"]},
+          {"id": "rh-i-2b", "name": "Push-Up", "sets": 2, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
         ]}
       ]
     },
@@ -33,9 +33,9 @@
       "name": "Kraft-Erhaltung", "location": "home", "minutes": 45,
       "warmup": ["base"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "rh-k-1", "name": "KB Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "rh-k-2", "name": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "rh-k-3", "name": "Split Squat", "sets": 2, "reps": "10/Seite", "prog": "reps", "rest": 60}},
+        {"type": "single", "slot": {"id": "rh-k-1", "name": "Single-Leg RDL", "sets": 3, "reps": "10-15/Seite", "prog": "reps", "rest": 60}},
+        {"type": "single", "slot": {"id": "rh-k-2", "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 75}},
+        {"type": "single", "slot": {"id": "rh-k-3", "name": "Pistol Squat (Box)", "sets": 3, "reps": "6-15/Seite", "prog": "ladder", "ladder": ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"], "rest": 75}},
         {"type": "single", "slot": {"id": "rh-k-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
         {"type": "single", "slot": {"id": "rh-k-5", "name": "Lockeres Ausfahren", "kind": "timer", "minutes": 15, "prog": "none"}}
       ]

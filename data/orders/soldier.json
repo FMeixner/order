@@ -71,10 +71,11 @@
       ]
     },
     "outdoor_aerob": {
-      "name": "Draußen aerob", "location": "reise", "minutes": 40,
+      "name": "Draußen aerob", "location": "reise", "minutes": 45,
       "warmup": ["run_prep"], "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "single", "slot": {"id": "so-s-1", "name": "Lauf oder Rudern, locker", "kind": "timer", "minutes": 30, "max": 45, "step": 5, "prog": "minutes"}}
+        {"type": "single", "slot": {"id": "so-s-1", "name": "Lauf oder Rudern, locker", "kind": "timer", "minutes": 30, "max": 45, "step": 5, "prog": "minutes"}},
+        {"type": "beast", "id": "so-bst", "classes": ["plage"], "draw": "rotate"}
       ]
     }
   }
