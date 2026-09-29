@@ -57,6 +57,15 @@ export function Help() {
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem ersten Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
+      <h3>Der Rabe (Erzähler)</h3>
+      <ul>
+        <li>Unter Setup › Erzähler einschalten. Ein Rabe erzählt jeden Orden als Geschichte mit Widersacher, drei Akten und einer Saga am Ende. Der Wochenbericht steht auf <em>Heute</em>, die ganze Chronik im Log.</li>
+        <li>Einheiten treffen den Widersacher. Volle Wochen, Bestzeiten und mehr Gewicht treffen zusätzlich, einer davon doppelt (die Schwachstelle). Ein W20 pro Woche würzt: 20 ist ein kritischer Treffer, 1 ein harmloser Patzer. Die Würfel stehen fest, Neuladen ändert nichts.</li>
+        <li>Ruhige Wochen kosten nichts. Der Widersacher fällt nie vor dem letzten Akt; mit etwa 90 % der Einheiten ist er besiegt, sonst entkommt er gezeichnet.</li>
+        <li>Die Testwoche wird zum Turnier der Klingen. Jede Klinge muss neu verdient werden: besser, gehalten (im Messfehler) oder diesmal nicht.</li>
+        <li>Eigene Welt: eine JSON-Datei im Aufbau von <code>data/narrative/generic.json</code> unter Setup › Erzähler laden. Sie bleibt auf dem Gerät und in deiner Sicherung.</li>
+      </ul>
+
       <h3>Können</h3>
       <ul>
         <li>Unter Setup › Können hakst du ab, was sauber sitzt: Klimmzug, Pistol Squat, Muscle-Up und mehr. Fehlt ein Skill, nimmt die App eine leichtere Variante (Hinweis „leichter“) und lässt Bestien mit dieser Übung weg.</li>

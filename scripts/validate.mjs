@@ -143,6 +143,25 @@ for (const [f, d] of allFoci) {
   }
 }
 
+// Erzähler: jede Orden-Datei braucht eine Szene, jede Szene Inhalt, keine unbekannten Platzhalter
+{
+  const f = "narrative/generic.json";
+  const pack = read(f);
+  const tokens = new Set(["held", "sie", "ihn", "ihm", "ihr", "die", "in", "feind", "feind_dat", "feind_akk", "fp", "ort", "schar", "bestie", "n", "von", "stellen", "mal", "beiname", "vorsieg", "vorfeind_akk", "vorfeind_dat", "klinge"]);
+  const check = (ctx, t) => {
+    for (const m of t.matchAll(/\{([A-Za-z_]+)\}/g)) if (!tokens.has(m[1][0].toLowerCase() + m[1].slice(1))) err(f, `${ctx}: unbekannter Platzhalter {${m[1]}}`);
+  };
+  if (!pack.scenes[pack.default]) err(f, `Standard-Szene "${pack.default}" fehlt`);
+  for (const [, fo] of allFoci) if (!pack.orders[fo.id]) warn(f, `Orden ${fo.id} hat keine Szene, nimmt "${pack.default}"`);
+  for (const [o, sc] of Object.entries(pack.orders)) if (!pack.scenes[sc]) err(f, `Orden ${o}: Szene "${sc}" fehlt`);
+  for (const [id, sc] of Object.entries(pack.scenes)) {
+    for (const k of ["setting", "foes", "schar", "epithets"]) if (!sc[k]?.length) err(f, `Szene ${id}: ${k} leer`);
+    for (const fo of sc.foes ?? []) if (!fo.nom || !fo.dat || !fo.akk || !["er", "sie"].includes(fo.pro) || !pack.weak[fo.weak]) err(f, `Szene ${id}: Widersacher ${fo.nom} unvollständig`);
+    [...sc.setting, ...sc.epithets].forEach((t, i) => check(`${id}/${i}`, t));
+  }
+  for (const [k, list] of Object.entries(pack.tables)) { if (!list.length) err(f, `Tabelle ${k} leer`); list.forEach((t, i) => check(`${k}/${i}`, t)); }
+}
+
 for (const w of warns) console.log("Hinweis:", w);
 if (errors.length) {
   for (const e of errors) console.error("Fehler:", e);

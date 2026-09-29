@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.15.0] – 2026-09-29
+
+### Neu
+- Erzähler „der Rabe“ (Setup › Erzähler, standardmäßig aus): Jeder Orden wird eine Geschichte mit Szene, Widersacher und drei Akten. Wochenbericht auf *Heute*, Chronik und Saga im Log. Schaden aus erledigten Einheiten, vollen Wochen, Bestzeiten und Gewichtssteigerungen; je Widersacher eine Schwachstelle; ein W20 pro Woche mit kritischem Treffer und harmlosem Patzer. Ruhige Wochen kosten nichts, der Widersacher fällt nicht vor dem Finale.
+- Testwoche als „Turnier der Klingen“ mit Rückbezug auf den letzten Orden. Je Cup: neu verdient, gehalten (im Messfehler) oder diesmal nicht.
+- Welt als austauschbares Paket: generische Dark Steamfantasy in `data/narrative/generic.json`; eigene Welten als JSON nur auf dem Gerät laden.
+- Alles wird aus dem Log berechnet, mit festen Würfeln: Ein- und Ausschalten verliert nichts.
+
 ## [0.14.0] – 2026-09-29
 
 ### Neu

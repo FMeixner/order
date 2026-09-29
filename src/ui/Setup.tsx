@@ -5,6 +5,7 @@ import { focusFor } from "../engine/weekplan";
 import { exportState, migrate } from "../store";
 import type { AppState, UserProfile } from "../types";
 import { Collapse, Field, Seg } from "./common";
+import { NarrativeSettings } from "./Raven";
 import { EquipmentEditor } from "./EquipmentEditor";
 import { WeekEditor } from "./PlanEditor";
 
@@ -138,6 +139,7 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
         <Seg value={state.theme ?? "auto"} options={[{ value: "auto", label: "automatisch" }, { value: "light", label: "hell" }, { value: "dark", label: "dunkel" }]} onChange={(theme) => update((st) => ({ ...st, theme }))} />
         <p className="muted small">Hell ist draußen in der Sonne besser lesbar. Automatisch folgt der Einstellung des Handys.</p>
       </Collapse>
+      <NarrativeSettings state={state} update={update} />
       <Collapse title="Können" meta={state.user.skills == null ? "kein Skillcheck" : `${state.user.skills.length} von ${SKILLS.skills.length}`}>
         {state.user.skills == null
           ? <div className="stack"><p className="muted small">Noch kein Skillcheck: Alle Übungen und Bestien sind offen, auch Muscle-Ups und Pistol Squats.</p><button className="btn" onClick={() => update((st) => ({ ...st, user: { ...st.user, skills: [] } }))}>Skillcheck machen</button></div>

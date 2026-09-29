@@ -5,6 +5,7 @@ import type { AppState, Cup, PlanBlock, TestDef } from "../types";
 import { Collapse, Desc } from "./common";
 import { Evaluation } from "./Evaluation";
 import { fmt } from "./Timer";
+import { RavenCup, RavenTournament, ravenOn } from "./Raven";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -109,11 +110,12 @@ function Benchmark({ cup, state, update }: { cup: Cup; state: AppState; update: 
   );
 }
 
-export function TestWeek({ state, update, block }: { state: AppState; update: Update; block: PlanBlock }) {
+export function TestWeek({ state, update, block, today }: { state: AppState; update: Update; block: PlanBlock; today: string }) {
   const saveTest = (t: TestDef, value: number, raw: string, variant?: string) =>
     update((st) => ({ ...st, tests: { ...st.tests, [t.id]: [...(st.tests[t.id] ?? []), { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } }));
   return (
     <div className="stack">
+      {ravenOn(state) && <RavenTournament state={state} block={block} today={today} />}
       <div className="card note">
         <strong>Testwoche.</strong> Fünf Cups, verteilt auf die Woche, jeder frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.
       </div>
@@ -125,6 +127,7 @@ export function TestWeek({ state, update, block }: { state: AppState; update: Up
           {cup.who5 && <Who5 state={state} update={update} block={block} />}
           {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} />)}
           <Benchmark cup={cup} state={state} update={update} />
+          {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
         </Collapse>
       ))}
       <Evaluation state={state} blockId={block.id} />

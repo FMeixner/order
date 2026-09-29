@@ -278,6 +278,16 @@ export interface AppState {
   theme?: "auto" | "light" | "dark";
   /** Datum der letzten Sicherung (ISO) */
   lastBackup?: string | null;
+  /** Erzähler (der Rabe): an/aus, Name und Pronomen der Figur, eigene Welt (nur auf dem Gerät) */
+  narrative?: {
+    on: boolean;
+    hero?: string;
+    pronoun?: "sie" | "er";
+    /** Eigene Welt als JSON, gleicher Aufbau wie data/narrative/generic.json */
+    pack?: Record<string, unknown> | null;
+    /** Zuletzt gelesener Bericht, damit ein neuer Bericht aufgeklappt erscheint */
+    seen?: string;
+  };
 }
 
 export interface TestResult { date: string; blockId: string; value: number; raw: string; /** gewählte Variante, z. B. "squat" oder "legpress" */ variant?: string }

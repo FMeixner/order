@@ -309,3 +309,19 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .vol-track { position: relative; height: 10px; border-radius: 5px; background: var(--surface2); overflow: hidden; }
 .vol-band { position: absolute; top: 0; bottom: 0; background: var(--border-lit); opacity: 0.6; }
 .vol-fill { position: absolute; top: 3px; bottom: 3px; left: 0; background: var(--teal); border-radius: 2px; }
+
+/* Erzähler */
+.card.raven { border-left: 3px solid var(--amber); }
+.raven-lines p { margin: 0 0 8px; }
+.raven-lines p:last-child { margin-bottom: 0; }
+.raven-head { font-size: 15px; margin: 10px 0 6px; color: var(--amber); }
+.raven-head.small { font-size: 13px; color: var(--muted); }
+.raven-lines > .raven-head:first-child { margin-top: 0; }
+.raven-aside { font-style: italic; color: var(--muted); }
+.raven-roll .die { display: inline-block; font-family: var(--mono); font-size: 12px; padding: 1px 7px; border-radius: 6px; border: 1px solid var(--border-lit); background: var(--surface2); }
+.raven-roll .die.crit { border-color: var(--amber); color: var(--amber); }
+.raven-roll .die.fumble { border-style: dashed; }
+.raven-hp { margin: 6px 0 10px; }
+.bar-fill.foe { background: var(--red); }
+.raven-cup { border-top: 1px dashed var(--border-lit); padding-top: 8px; margin-top: 8px; font-style: italic; }
+.card.raven hr, .collapse-body hr { border: 0; border-top: 1px solid var(--border); margin: 12px 0; }

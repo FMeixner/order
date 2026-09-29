@@ -8,6 +8,7 @@ import { SessionPreview, SessionView, sessionId } from "./SessionView";
 import { focusFor } from "../engine/weekplan";
 import { exportState } from "../store";
 import { TestWeek } from "./TestWeek";
+import { RavenToday, ravenOn } from "./Raven";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -33,7 +34,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       <div className="card hero">
         <div className="hero-top"><div><div className="hero-focus">Testwoche</div><div className="muted small">{fmtDate(block.start)} – {fmtDate(block.end)}</div></div></div>
       </div>
-      <TestWeek state={state} update={update} block={block} />
+      <TestWeek state={state} update={update} block={block} today={today} />
     </div>
   );
   const baseFocus = FOCUS_BY_ID[block.focusId];
@@ -114,6 +115,8 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
         )}
       </div>
 
+      {ravenOn(state) && <RavenToday key={`${block.id}:${today}`} state={state} update={update} block={block} today={today} />}
+
       {test && future ? (
         <div className="card stack">
           <strong>Testwoche</strong>
@@ -123,7 +126,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       ) : null}
       {test && future && !showTraining ? null : test && !showTraining ? (
         <>
-          <TestWeek state={state} update={update} block={block} />
+          <TestWeek state={state} update={update} block={block} today={today} />
           <button className="btn ghost" onClick={() => setShowTraining(true)}>Stattdessen normal trainieren</button>
         </>
       ) : (

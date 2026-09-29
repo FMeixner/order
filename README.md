@@ -12,6 +12,7 @@ Läuft im Browser und lässt sich auf dem Handy wie eine App installieren. Alle 
 2. **Wochenplan**: an welchen Tagen du trainierst und mit welchem Profil. Drei oder vier Tage sind Standard.
 3. **Jahresplan**: Phasen mit Datum, Alltagslast und ob du viel unterwegs bist. Pro Phase ein Orden; die App zeigt, welche Orden passen.
 4. **Trainieren**: Unter *Heute* steht die Einheit. Nach jedem Satz Wiederholungen und Gewicht eintragen, nach der Übung kurz Feedback geben (Schwer, OK, Leicht, Sehr leicht). Daraus kommt der Vorschlag fürs nächste Mal.
+5. **Erzähler** (optional): Ein Rabe erzählt jeden Orden als Geschichte, mit Wochenbericht, Saga und der Testwoche als Turnier. Welt austauschbar.
 
 ## Die 19 Orden
 
@@ -44,6 +45,7 @@ Alle Inhalte liegen als lesbare JSON-Dateien in [`data/`](data):
 - `data/orders/*.json`: ein Orden pro Datei. Eine neue Datei ist nach dem nächsten Build ein neuer Orden.
 - `data/exercises.json`: Übungskatalog mit Equipment-Art und Beschreibung.
 - `data/beasts.json`: das Bestiarium (81 Circuits).
+- `data/narrative/generic.json`: die Welt des Erzählers (Szenen je Orden, Widersacher, Textstapel). Eigene Welten mit gleichem Aufbau lädt man in der App, sie müssen nicht ins Repo.
 - `data/modules/`: Warm-up- und Cool-down-Listen, Schwert-Modul, Testwoche, geführte Varianten, Tauschgruppen (`swaps.json`) und Normen für die Testwoche (`norms.json`).
 
 Das Format steht in [`docs/ORDER-FORMAT.md`](docs/ORDER-FORMAT.md). `npm run validate` prüft alle Dateien und meldet, was fehlt oder nicht passt.
