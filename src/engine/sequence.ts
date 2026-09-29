@@ -1,0 +1,67 @@
+/* Vorschlag einer Blockfolge: welcher Orden in welche Phase?
+   Beam-Suche über alle Phasen. Punkte für: passt zur Alltagslast und Reise, Länge passt zum Orden,
+   gute Nachfolge (successors), keine Wiederholung direkt hintereinander, und am Ende die Jahresbalance
+   (allround) oder der Anteil eines gewählten Schwerpunkts. Vergangene und laufende Phasen bleiben. */
+import { FOCI, FOCUS_BY_ID } from "../data";
+import type { Focus, PlanBlock } from "../types";
+import { AXES, balanceOf, type AxisId, type Balance } from "./balance";
+import { blockWeeks, fitScore } from "./plan";
+
+export type Aim = "allround" | AxisId;
+export interface SeqItem { id: string; focusId: string; locked: boolean; reasons: string[] }
+export interface SeqResult { items: SeqItem[]; balance: Balance; before: Balance }
+
+const BEAM = 40;
+
+function stepScore(f: Focus, b: PlanBlock, prev: Focus | null, used: string[]): { score: number; reasons: string[] } {
+  const fit = fitScore(f, b.load, b.travel);
+  let score = fit.score;
+  const reasons = fit.reasons.filter((r) => /Reise/.test(r));
+  const w = blockWeeks(b);
+  if (w < f.weeks.min) { score -= (f.weeks.min - w) * 0.6; reasons.push(`eigentlich ab ${f.weeks.min} Wochen`); }
+  else if (w > f.weeks.max) { score -= (w - f.weeks.max) * 0.4; reasons.push(`eigentlich bis ${f.weeks.max} Wochen`); }
+  if (prev) {
+    if (prev.id === f.id) score -= 3;
+    else if (prev.successors?.includes(f.id)) { score += 1.5; reasons.push(`folgt gut auf ${prev.name}`); }
+  }
+  if (used.includes(f.id)) score -= 0.8;
+  return { score, reasons };
+}
+
+export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim): SeqResult {
+  const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
+  const from = sorted[0]?.start ?? today, to = sorted[sorted.length - 1]?.end ?? today;
+  type Beam = { seq: string[]; score: number; reasons: string[][] };
+  let beams: Beam[] = [{ seq: [], score: 0, reasons: [] }];
+  for (const b of sorted) {
+    const locked = b.start <= today && !!FOCUS_BY_ID[b.focusId];
+    const next: Beam[] = [];
+    for (const bm of beams) {
+      const prev = bm.seq.length ? FOCUS_BY_ID[bm.seq[bm.seq.length - 1]] ?? null : null;
+      const options = locked ? [FOCUS_BY_ID[b.focusId]] : FOCI.filter((f) => fitScore(f, b.load, b.travel).score >= 0);
+      for (const f of options) {
+        const st = stepScore(f, b, prev, bm.seq);
+        next.push({ seq: [...bm.seq, f.id], score: bm.score + (locked ? 0 : st.score), reasons: [...bm.reasons, locked ? ["läuft oder ist vorbei"] : st.reasons] });
+      }
+    }
+    // Zwischenstand mit Balance-Anteil bewerten, damit die Suche das Ziel früh berücksichtigt
+    const withAim = (bm: Beam) => bm.score + aimScore(sorted.slice(0, bm.seq.length).map((x, i) => ({ ...x, focusId: bm.seq[i] })), from, to, aim);
+    beams = next.sort((a, c) => withAim(c) - withAim(a)).slice(0, BEAM);
+  }
+  const best = beams[0];
+  const proposed = sorted.map((b, i) => ({ ...b, focusId: best?.seq[i] ?? b.focusId }));
+  return {
+    items: sorted.map((b, i) => ({ id: b.id, focusId: best?.seq[i] ?? b.focusId, locked: b.start <= today && !!FOCUS_BY_ID[b.focusId], reasons: best?.reasons[i] ?? [] })),
+    balance: balanceOf(proposed, from, to),
+    before: balanceOf(sorted, from, to),
+  };
+}
+
+function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim): number {
+  const bal = balanceOf(plan, from, to);
+  if (bal.score == null) return 0;
+  if (aim === "allround") return 8 * bal.score;
+  return 30 * bal.share[aim];
+}
+
+export const AIM_OPTIONS: { value: Aim; label: string }[] = [{ value: "allround", label: "Allround" }, ...AXES.map((a) => ({ value: a.id as Aim, label: a.name }))];

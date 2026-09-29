@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.10.0] – 2026-09-29
+
+### Neu
+- Blockfolge vorschlagen (Plan): Die App wählt für alle künftigen Phasen einen Orden, passend zu Alltagslast, Reise und Länge, mit guten Übergängen, ohne Wiederholung direkt hintereinander, und ausgerichtet auf Allround oder einen gewählten Schwerpunkt. Zeigt die Jahresbalance vorher und nachher; laufende und vergangene Phasen bleiben.
+- Damit sind beide Punkte aus „Noch nicht enthalten“ (0.1.0) erledigt; die Auswertung der Testwoche kam mit 0.3.0.
+
 ## [0.9.3] – 2026-09-29
 
 ### Geändert

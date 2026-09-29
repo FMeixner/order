@@ -5,7 +5,7 @@ export function Help() {
       <h3>Der Ablauf</h3>
       <ul>
         <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche. Mit ‹ › neben der Wochenzahl blätterst du: künftige Wochen als Vorschau, vergangene zum Nachtragen.</li>
-        <li><strong>Plan</strong> ist dein Jahr in Phasen. Jede Phase hat einen Orden und eine Alltagslast.</li>
+        <li><strong>Plan</strong> ist dein Jahr in Phasen. Jede Phase hat einen Orden und eine Alltagslast. „Blockfolge vorschlagen“ wählt die Orden für kommende Phasen, auf Wunsch mit Schwerpunkt.</li>
         <li><strong>Orden</strong> listet alle Programme mit Details.</li>
         <li><strong>Log</strong> zeigt abgeschlossene Einheiten, Bestzeiten und Tests.</li>
         <li><strong>Setup</strong>: Equipment, Wochenplan, Sicherung.</li>

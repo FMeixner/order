@@ -6,6 +6,7 @@ import type { EquipmentProfile, Focus, Load, PlanBlock, Weekday } from "../types
 import { WEEKDAYS } from "../types";
 import { Check, Field, Modal, Seg } from "./common";
 import { FocusDetail } from "./FociBrowser";
+import { SequenceDialog } from "./SequenceDialog";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
 /** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
@@ -118,6 +119,7 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
 
 export function PlanList({ plan, profiles, onChange, today }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; onChange: (p: PlanBlock[]) => void; today: string }) {
   const [edit, setEdit] = useState<PlanBlock | null>(null);
+  const [seq, setSeq] = useState(false);
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const gaps: string[] = [];
   for (let i = 1; i < sorted.length; i++) if (addDays(sorted[i - 1].end, 1) < sorted[i].start) gaps.push(`${fmtDate(addDays(sorted[i - 1].end, 1))}–${fmtDate(addDays(sorted[i].start, -1))}`);
@@ -136,7 +138,11 @@ export function PlanList({ plan, profiles, onChange, today }: { plan: PlanBlock[
         );
       })}
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
-      <button className="btn ghost" onClick={() => setEdit(newBlock(plan))}>+ Phase hinzufügen</button>
+      <div className="row wrap">
+        <button className="btn ghost" onClick={() => setEdit(newBlock(plan))}>+ Phase hinzufügen</button>
+        {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
+      </div>
+      {seq && <SequenceDialog plan={plan} today={today} onApply={onChange} onClose={() => setSeq(false)} />}
       {edit && (
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>
           <BlockForm block={edit} profiles={profiles}
