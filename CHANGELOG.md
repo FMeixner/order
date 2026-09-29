@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.9.3] – 2026-09-29
+
+### Geändert
+- Doppel und Triple laufen am Stück ohne Pause, wie eine lange Bestie, mit eigener Bestzeit („Troll ×2“). Nur Paare aus zwei verschiedenen Bestien haben 2 Min Pause dazwischen, und dort zählt jede Zeit für ihre Bestie. Doppel/Triple und Paare wechseln sich ab.
+
 ## [0.9.2] – 2026-09-29
 
 ### Geändert

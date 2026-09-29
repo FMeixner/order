@@ -494,45 +494,48 @@ function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ct
   if (!beast) return <section className="card"><div className="muted">Keine passende Bestie für dieses Equipment gefunden.</div></section>;
   // Dauer: bei Serien aus den Teilen, mit gemessenen Zeiten, wo vorhanden
   const effMin = beast.parts
-    ? beast.parts.reduce((m, pt) => m + beastMinutes(beastById(pt.id)!, ctx.state.beastTimes[pt.id]).min * pt.times, 0) + ((beast.parts.reduce((n, pt) => n + pt.times, 0) - 1) * COMBO_REST) / 60
+    ? beast.parts.reduce((m, pt) => m + beastMinutes(beastById(pt.id)!, ctx.state.beastTimes[pt.id]).min, 0) + ((beast.parts.length - 1) * COMBO_REST) / 60
     : beastMinutes(beast, ctx.state.beastTimes[beast.id]).min;
   const measured = beast.parts ? beast.parts.every((pt) => (ctx.state.beastTimes[pt.id] ?? []).length) : (ctx.state.beastTimes[beast.id] ?? []).length > 0;
   const cls = beastClass(effMin);
   const saveSingle = (sec: number) => mut((s) => ({ ...s, beast: { id: beast.id, seconds: sec } }));
-  // Serie: jeder Durchgang einzeln, jede Zeit zählt für ihre Bestie
-  const units = beast.parts ? beast.parts.flatMap((pt) => Array.from({ length: pt.times }, (_, k) => ({ id: pt.id, name: pt.name, k, times: pt.times }))) : [];
+  // Serie: jeder Teil einzeln, jede Zeit zählt für ihre Bestie (ein Doppel/Triple ist ein Teil mit eigener Bestzeit)
+  const parts = beast.parts ?? [];
   const saveUnit = (u: number, sec: number) => {
     mut((s) => {
-      const arr = units.map((x, i) => (s.beastParts?.[i]?.id === x.id ? s.beastParts[i] : { id: x.id, seconds: null }));
-      arr[u] = { id: units[u].id, seconds: sec };
+      const arr = parts.map((x, i) => (s.beastParts?.[i]?.id === x.id ? s.beastParts[i] : { id: x.id, seconds: null }));
+      arr[u] = { id: parts[u].id, seconds: sec };
       return { ...s, beastParts: arr };
     });
-    if (u < units.length - 1) t.rest(`Pause, dann ${units[u + 1].name}`, COMBO_REST);
+    if (u < parts.length - 1) t.rest(`Pause, dann ${parts[u + 1].name}`, COMBO_REST);
   };
-  let unitIdx = 0;
+  const work = (b: { work: string; rounds: number; times?: number; repeat?: number }) => {
+    const k = b.times ?? b.repeat ?? 1;
+    return (
+      <>
+        <div className="muted small">{k > 1 ? `${k}-mal am Stück ohne Pause, je ${b.rounds / k} ${b.rounds / k === 1 ? "Durchgang" : "Runden"}` : `${b.rounds} ${b.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
+        <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+      </>
+    );
+  };
   return (
     <section className="card beast">
       <div className="block-label amber">Bestiarium · {CLASS_LABEL[cls]} · ~{Math.round(effMin)} Min {measured ? "gemessen" : "geschätzt"}</div>
       <div className="beast-name">{beast.name}</div>
-      {beast.parts ? (
+      {parts.length ? (
         <>
-          <div className="muted small">Serie: {beast.parts.length > 1 ? "zwei Bestien hintereinander" : `${beast.parts[0].times}-mal dieselbe Bestie`}, dazwischen {COMBO_REST / 60} Min Pause. Jede Zeit zählt für die Bestzeit ihrer Bestie.</div>
-          {beast.parts.map((pt, k) => (
-            <div key={k} className="stack">
-              <div className="small"><strong>{beast.parts!.length > 1 ? `${k + 1}. ` : ""}{pt.name}</strong> <span className="muted">· {pt.rounds} {pt.rounds === 1 ? "Durchgang" : "Runden"}</span></div>
-              <ul className="beast-work">{pt.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
-              {Array.from({ length: pt.times }).map((_, r) => {
-                const u = unitIdx++;
-                const saved = session?.beastParts?.[u]?.id === pt.id ? session.beastParts[u].seconds : null;
-                return <BeastTimer key={u} times={ctx.state.beastTimes[pt.id] ?? []} label={pt.times > 1 ? `Durchgang ${r + 1} von ${pt.times}` : undefined} saved={saved} onSave={(sec) => saveUnit(u, sec)} />;
-              })}
+          <div className="muted small">Zwei Bestien hintereinander, dazwischen {COMBO_REST / 60} Min Pause. Jede Zeit zählt für die Bestzeit ihrer Bestie.</div>
+          {parts.map((pt, u) => (
+            <div key={u} className="stack">
+              <div className="small"><strong>{u + 1}. {pt.name}</strong></div>
+              {work(pt)}
+              <BeastTimer times={ctx.state.beastTimes[pt.id] ?? []} saved={session?.beastParts?.[u]?.id === pt.id ? session.beastParts[u].seconds : null} onSave={(sec) => saveUnit(u, sec)} />
             </div>
           ))}
         </>
       ) : (
         <>
-          <div className="muted small">{beast.rounds} {beast.rounds === 1 ? "Durchgang" : "Runden"}</div>
-          <ul className="beast-work">{beast.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+          {work(beast)}
           <BeastTimer times={ctx.state.beastTimes[beast.id] ?? []} saved={session?.beast?.id === beast.id ? session.beast.seconds : null} onSave={saveSingle} />
         </>
       )}
@@ -566,13 +569,13 @@ export function SessionPreview(ctx: SessionCtx) {
         {items.map((it, i) => {
           const title = BLOCK_TITLE[it.block.type];
           if (it.beast !== undefined) {
-            const parts = it.beast?.parts ?? (it.beast ? [{ id: it.beast.id, name: it.beast.name, rounds: it.beast.rounds, work: it.beast.work, times: 1 }] : []);
+            const parts = it.beast?.parts ?? (it.beast ? [{ id: it.beast.id, name: it.beast.name, rounds: it.beast.rounds, work: it.beast.work, times: it.beast.repeat ?? 1 }] : []);
             return (
               <div key={i} className="preview-group">
                 {!parts.length && <div className="block-label amber">Bestie: passend zum Equipment</div>}
                 {parts.map((pt, k) => (
                   <div key={k}>
-                    <div className="block-label amber">{it.beast?.parts ? "Serie · " : "Bestie: "}{pt.times > 1 ? `${pt.times} × ` : ""}{pt.name} · {pt.rounds} {pt.rounds === 1 ? "Durchgang" : "Runden"}</div>
+                    <div className="block-label amber">{it.beast?.parts ? `${k + 1}. ` : "Bestie: "}{pt.name} · {pt.times > 1 ? `${pt.times}-mal am Stück, je ${pt.rounds / pt.times} Runden` : `${pt.rounds} ${pt.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
                     {pt.work.split(" · ").map((w, j) => <div key={j} className="preview-row"><span>{w}</span></div>)}
                   </div>
                 ))}

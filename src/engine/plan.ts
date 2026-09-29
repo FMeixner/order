@@ -146,17 +146,23 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
 const CLASS_RANGE: Record<BeastClass, [number, number]> = { plage: [0, 10.5], bestie: [10.5, 17.5], ungeheuer: [17.5, 25.5], uralte: [25.5, 40], verfluchte: [40, 60] };
 export const COMBO_REST = 120;
 
-/** Serie aus Teilen bauen: [[Bestie, Anzahl], …]. Id: "a×2" oder "a+b". */
+/** Doppel oder Triple: k-mal am Stück, ohne Pause. Eigene Id "a×k", eigene Bestzeit. */
+export function repeatBeast(b: Beast, k: number): Beast {
+  if (k <= 1) return b;
+  return { ...b, id: `${b.id}×${k}`, name: `${b.name} ×${k}`, rounds: b.rounds * k, minutes: b.minutes * k, repeat: k };
+}
+
+/** Serie aus Teilen bauen: [[Bestie, Anzahl], …]. Ein Teil mit Anzahl > 1 ist ein Doppel/Triple. Id "a+b". */
 export function composeBeast(parts: [Beast, number][]): Beast {
-  if (parts.length === 1 && parts[0][1] === 1) return parts[0][0];
-  const id = parts.map(([b, k]) => (k > 1 ? `${b.id}×${k}` : b.id)).join("+");
-  const name = parts.map(([b, k]) => (k > 1 ? `${b.name} ×${k}` : b.name)).join(" + ");
-  const minutes = parts.reduce((m, [b, k]) => m + b.minutes * k, 0) + ((parts.reduce((n, [, k]) => n + k, 0) - 1) * COMBO_REST) / 60;
+  const units = parts.map(([b, k]) => repeatBeast(b, k));
+  if (units.length === 1) return units[0];
   return {
-    id, name, orig: parts.map(([b]) => b.orig).join(" + "), rounds: parts.reduce((n, [b, k]) => n + b.rounds * k, 0), minutes,
-    equipment: [...new Set(parts.flatMap(([b]) => b.equipment))],
-    work: parts.map(([b]) => b.work).join(" · "),
-    parts: parts.map(([b, k]) => ({ id: b.id, name: b.name, rounds: b.rounds, work: b.work, times: k })),
+    id: units.map((b) => b.id).join("+"), name: units.map((b) => b.name).join(" + "), orig: units.map((b) => b.orig).join(" + "),
+    rounds: units.reduce((n, b) => n + b.rounds, 0),
+    minutes: units.reduce((m, b) => m + b.minutes, 0) + ((units.length - 1) * COMBO_REST) / 60,
+    equipment: [...new Set(units.flatMap((b) => b.equipment))],
+    work: units.map((b) => b.work).join(" · "),
+    parts: units.map((b) => ({ id: b.id, name: b.name, rounds: b.rounds, work: b.work, times: b.repeat ?? 1 })),
   };
 }
 
@@ -181,10 +187,13 @@ function comboFor(classes: BeastClass[], pool: Beast[], seed: string, week: numb
     if (fits(x.minutes)) cands.push(x);
   }
   if (!cands.length) return null;
-  const order = cands.sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
-  const pick = order[(week - 1) % order.length];
+  // Doppel/Triple und Paare im Wechsel, damit beide Formen vorkommen
+  const reps = cands.filter((x) => x.repeat), pairs = cands.filter((x) => x.parts);
+  const kind = reps.length && pairs.length ? (hash(`${seed}:${week}:form`) % 2 ? reps : pairs) : reps.length ? reps : pairs;
+  const order = kind.sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
+  const pick = order[Math.floor((week - 1) / 2) % order.length];
   // Bei Paaren wechselt die Reihenfolge, damit jede Bestie auch mal frisch als erste kommt
-  if (pick.parts?.length === 2 && hash(`${seed}:${week}`) % 2 === 1) return composeBeast([...pick.parts].reverse().map((pt) => [BEAST_BY_ID[pt.id], pt.times] as [Beast, number]));
+  if (pick.parts?.length === 2 && hash(`${seed}:${week}`) % 2 === 1) return composeBeast([...pick.parts].reverse().map((pt) => [beastById(pt.id)!, 1] as [Beast, number]));
   return pick;
 }
 

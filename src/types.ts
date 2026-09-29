@@ -127,7 +127,9 @@ export interface Beast {
   minutes: number;
   equipment: string[];
   work: string;
-  /** Zusammengesetzte Serie: eine kurze Bestie mehrfach oder zwei hintereinander */
+  /** Doppel oder Triple: dieselbe Bestie k-mal am Stück, ohne Pause, mit eigener Bestzeit */
+  repeat?: number;
+  /** Serie: zwei Bestien hintereinander, jede Zeit zählt für ihre Bestie */
   parts?: { id: string; name: string; rounds: number; work: string; times: number }[];
 }
 

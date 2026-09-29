@@ -333,9 +333,10 @@ describe("Bestien-Serien", () => {
     s.user = { ...s.user, skills: [] };
     const blk = { type: "beast" as const, id: "t", classes: ["uralte" as const] };
     const b = pickBeast(blk, { blockId: "b1", week: 1, profile: gym, state: s, reduced: false, downgrade: false })!;
-    expect(b.parts?.length).toBeGreaterThan(0);
+    expect(!!b.parts || !!b.repeat).toBe(true);
     expect(beastClass(b.minutes)).toBe("uralte");
-    expect(b.parts!.every((p) => beastOk(beastById(p.id)!, new Set()))).toBe(true);
+    const units = b.parts ? b.parts.map((p) => beastById(p.id)!) : [b];
+    expect(units.every((u) => beastOk(beastById(u.id.split("×")[0])!, new Set()))).toBe(true);
     expect(beastById(b.id)?.name).toBe(b.name);
     const b2 = pickBeast(blk, { blockId: "b1", week: 2, profile: gym, state: s, reduced: false, downgrade: false })!;
     expect(b2.id).not.toBe(b.id);
@@ -343,5 +344,21 @@ describe("Bestien-Serien", () => {
     const firsts = new Set<string>(), seconds = new Set<string>();
     for (let w = 1; w <= 60; w++) { const x = pickBeast(blk, { blockId: "b1", week: w, profile: gym, state: s, reduced: false, downgrade: false })!; if (x.parts?.length === 2) { firsts.add(x.parts[0].id); seconds.add(x.parts[1].id); } }
     expect([...seconds].some((id) => firsts.has(id))).toBe(true);
+  });
+});
+
+describe("Doppel und Triple", () => {
+  it("am Stück, eigene Id und Bestzeit, keine Pause eingerechnet", async () => {
+    const { beastById, repeatBeast } = await import("./plan");
+    const { BEASTS } = await import("../data");
+    const b = BEASTS[0];
+    const d = repeatBeast(b, 2);
+    expect(d.id).toBe(`${b.id}×2`);
+    expect(d.minutes).toBe(b.minutes * 2);
+    expect(d.parts).toBeUndefined();
+    expect(beastById(d.id)?.name).toBe(`${b.name} ×2`);
+    const pair = beastById(`${BEASTS[0].id}+${BEASTS[1].id}`)!;
+    expect(pair.parts?.length).toBe(2);
+    expect(pair.minutes).toBe(BEASTS[0].minutes + BEASTS[1].minutes + 2);
   });
 });
