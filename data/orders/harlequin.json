@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "id": "harlequin",
+  "name": "Harlequin",
+  "tagline": "Jede Woche ein anderer Orden.",
+  "description": "Allgemeine Fitness gegen Langeweile: Jede Woche läuft ein anderer Orden, von Witcher bis Alchemist. Ähnliche Orden sind zusammengefasst (Witcher steht auch für Knight und Gladiator). Die Reihenfolge wechselt zwischen Kraft- und Konditionswochen, sodass nie lange Strecken ohne das eine oder andere entstehen; Bestien gibt es in jeder Woche. Gewichte und Stufen laufen mit denselben Übungen weiter wie im jeweiligen Orden. Bei mehr als zwölf Wochen beginnt die Reihe von vorn.",
+  "goals": {"primary": "conditioning", "secondary": ["strength", "endurance", "skill", "mobility"]},
+  "nutrition": "maintenance",
+  "load_fit": "medium",
+  "level": "intermediate",
+  "session_min": 50,
+  "weeks": {"min": 6, "max": 12},
+  "travel": false,
+  "modules": ["correctives"],
+  "successors": ["knight", "smith", "troubadour", "pilgrim"],
+  "sources": [],
+  "medley": ["witcher", "pugilist", "smith", "pilgrim", "olympian", "king", "assassin", "huntsman", "conqueror", "acrobat", "troubadour", "alchemist"],
+  "week_4": [],
+  "week_3": [],
+  "roles": {}
+}

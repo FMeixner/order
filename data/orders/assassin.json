@@ -66,6 +66,22 @@
         {"type": "single", "slot": {"id": "kb-7", "name": "Cable Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "kb-8", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": {"name": "Single-Leg Calf Raise", "reps": "15-20/Seite", "prog": "reps"}, "sets": 3, "reps": "15", "prog": "double", "rest": 60}}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Unterarme und Nacken", "location": "home", "minutes": 35,
+      "note": "Nur bei fünf Tagen. Kleine Muskeln, dazu eine kurze Bestie.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "bx-as-fa", "name": "Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"},
+          {"id": "bx-as-fb", "name": "Reverse Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"}
+        ]},
+        {"type": "superset", "rest": 45, "slots": [
+          {"id": "bx-as-na", "name": "Neck Curl", "sets": 2, "reps": "15-25", "prog": "reps"},
+          {"id": "bx-as-nb", "name": "Neck Extension", "sets": 2, "reps": "15-25", "prog": "reps"}
+        ]},
+        {"type": "beast", "id": "bx-as-bst", "classes": ["plage"], "draw": "rotate"}
+      ]
     }
   }
 }

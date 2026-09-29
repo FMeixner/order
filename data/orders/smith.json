@@ -76,6 +76,16 @@
         ]},
         {"type": "beast", "id": "pf-bst", "classes": ["plage"], "draw": "rotate", "note": "Kurz zum Schluss, Technik vor Tempo."}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Griff und Tragen", "location": "gym", "minutes": 30,
+      "note": "Nur bei fünf Tagen. Griff und Rumpf unter Last, dazu Kondition.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-sm-f", "name": "Farmer's Carry", "sets": 4, "reps": "40 m", "prog": "weight", "rest": 90}},
+        {"type": "single", "slot": {"id": "bx-sm-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
+        {"type": "beast", "id": "bx-sm-bst", "classes": ["bestie"], "draw": "rotate"}
+      ]
     }
   }
 }

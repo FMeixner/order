@@ -107,6 +107,8 @@ export interface Focus {
   sources?: string[];
   week_4: string[];
   week_3: string[];
+  /** Harlequin: je Woche ein anderer Orden, in dieser Reihenfolge */
+  medley?: string[];
   roles: Record<string, Role>;
 }
 

@@ -56,6 +56,15 @@
         {"type": "module", "module": "flow", "variant": "yin"},
         {"type": "single", "slot": {"id": "zw-r-2", "name": "Body Scan", "kind": "timer", "minutes": 15, "prog": "none"}}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Qigong", "location": "reise", "minutes": 40,
+      "note": "Nur bei fünf Tagen. Ruhig, dazu eine lange Bestie im Grundlagentempo.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "module", "module": "flow", "variant": "baduanjin"},
+        {"type": "beast", "id": "bx-mo-bst", "classes": ["bestie"], "draw": "rotate", "pace": "easy"}
+      ]
     }
   }
 }

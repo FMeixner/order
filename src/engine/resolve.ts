@@ -153,7 +153,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
     ladder,
     ladderStart: ladder ? ladderStart(ladder, skills) : undefined,
     regressedFrom,
-    rest: slot.rest ?? 90,
+    rest: compactRest(slot.rest ?? 90),
     note: slot.note,
     proposal: slot.proposal,
     missingEquipment: !chosen,
@@ -161,6 +161,15 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
     original: c.name,
     alts: slotNames(slot),
   };
+}
+
+/** Pausen 15 s kürzer als in der Orden-Datei, mit Untergrenzen: schwere Sätze nie unter 2 Min,
+    übrige nie unter 60 s, kurze Pausen bleiben. Mehr Dichte ohne messbaren Verlust für Muskelaufbau
+    (Singer et al., 2024); für Maximalkraft bleiben lange Pausen wichtig (Grgic et al., 2018). */
+export function compactRest(rest: number): number {
+  if (rest >= 150) return Math.max(120, rest - 15);
+  if (rest >= 75) return Math.max(60, rest - 15);
+  return rest;
 }
 
 /** Tauschoptionen für eine Stelle: alle Übungen aus den passenden Tauschgruppen,

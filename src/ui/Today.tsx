@@ -5,6 +5,7 @@ import { TESTWEEK } from "../data";
 import type { AppState, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { SessionPreview, SessionView, sessionId } from "./SessionView";
+import { focusFor } from "../engine/weekplan";
 import { TestWeek } from "./TestWeek";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -34,8 +35,8 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       <TestWeek state={state} update={update} block={block} />
     </div>
   );
-  const focus = FOCUS_BY_ID[block.focusId];
-  if (!focus) return <div className="card">Der Orden dieser Phase fehlt. <button className="btn small" onClick={goPlan}>Plan öffnen</button></div>;
+  const baseFocus = FOCUS_BY_ID[block.focusId];
+  if (!baseFocus) return <div className="card">Der Orden dieser Phase fehlt. <button className="btn small" onClick={goPlan}>Plan öffnen</button></div>;
   const curWeek = weekInBlock(block, today);
   const total = blockWeeks(block);
   const week = viewWeek ?? curWeek;
@@ -43,13 +44,15 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const future = week > curWeek;
   const weekStart = addDays(mondayOf(block.start), (week - 1) * 7);
   const go = (w: number) => { setViewWeek(w === curWeek ? null : w); setPick(null); setShowTraining(false); };
+  // Orden dieser Woche: Harlequin wechselt wöchentlich, bei drei Tagen die verdichtete Form
+  const focus = focusFor(state, block, week) ?? baseFocus;
   const extTest = followedByTest(state.plan, block);
-  const test = !extTest && isTestWeek(focus, block, week);
-  const deload = isDeloadWeek(focus, week);
+  const test = !extTest && isTestWeek(baseFocus, block, week);
+  const deload = isDeloadWeek(baseFocus, week);
   const rkey = `${block.id}:${week}`;
-  const beforeTest = extTest ? week === total : isTestWeek(focus, block, week + 1);
+  const beforeTest = extTest ? week === total : isTestWeek(baseFocus, block, week + 1);
   const reduced = deload || !!state.reduced[rkey] || beforeTest;
-  const days = dayRoleMap(state, block);
+  const days = dayRoleMap(state, block, focus);
   const todayWd = weekdayOf(today);
   const doneRoles = new Set(state.sessions.filter((s) => s.blockId === block.id && s.week === week && s.done).map((s) => s.role));
   const defaultDay = isCur
@@ -65,8 +68,8 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       <div className="card hero">
         <div className="hero-top">
           <div>
-            <div className="hero-focus">{focus.name}</div>
-            <div className="muted small">{block.label || focus.tagline}</div>
+            <div className="hero-focus">{baseFocus.name}</div>
+            <div className="muted small">{baseFocus.medley ? `Diese Woche: ${focus.name}` : block.label || focus.tagline}</div>
           </div>
           <div className="week-nav">
             <button onClick={() => go(week - 1)} disabled={week <= 1} aria-label="Vorige Woche">‹</button>

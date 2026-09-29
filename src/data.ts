@@ -13,7 +13,7 @@ import flowsJson from "../data/modules/flows.json";
 
 const fociModules = import.meta.glob("../data/orders/*.json", { eager: true, import: "default" }) as Record<string, Focus>;
 
-const ORDER = ["initiate", "knight", "smith", "olympian", "pilgrim", "troubadour", "herald", "monk", "king", "alchemist", "acrobat", "huntsman", "pugilist", "assassin", "witcher", "soldier", "gladiator", "conqueror"];
+const ORDER = ["initiate", "knight", "smith", "olympian", "pilgrim", "troubadour", "herald", "monk", "king", "alchemist", "acrobat", "huntsman", "pugilist", "assassin", "witcher", "soldier", "gladiator", "conqueror", "harlequin"];
 
 export const FOCI: Focus[] = Object.values(fociModules).sort((a, b) => {
   const ia = ORDER.indexOf(a.id), ib = ORDER.indexOf(b.id);

@@ -53,6 +53,17 @@
       "blocks": [
         {"type": "single", "slot": {"id": "rh-g-1", "name": "Lockere Grundlage", "kind": "timer", "minutes": 45, "max": 75, "step": 5, "prog": "minutes", "note": "Sprechtempo. Lauf, Rad, Rudern oder Wandern."}}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Füße und Schienbein", "location": "home", "minutes": 45,
+      "note": "Nur bei fünf Tagen. Läuferfüße, dazu eine lange ruhige Bestie.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-pi-c", "name": "Single-Leg Calf Raise", "sets": 3, "reps": "12-20/Seite", "prog": "reps", "rest": 45}},
+        {"type": "single", "slot": {"id": "bx-pi-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
+        {"type": "single", "slot": {"id": "bx-pi-b", "name": "Einbeinstand, Augen zu", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}},
+        {"type": "beast", "id": "bx-pi-bst", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"}
+      ]
     }
   }
 }

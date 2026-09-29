@@ -140,8 +140,8 @@ describe("Progression", () => {
 });
 
 describe("Orden und Plan", () => {
-  it("lädt alle 18 Orden", () => {
-    expect(FOCI.length).toBe(18);
+  it("lädt alle 19 Orden", () => {
+    expect(FOCI.length).toBe(19);
   });
   it("jede Rolle ist mit jedem Standardprofil auflösbar", () => {
     for (const f of FOCI) for (const role of Object.values(f.roles)) for (const b of role.blocks) {
@@ -240,7 +240,8 @@ describe("Normen", () => {
     const { findNorm, normScore } = await import("./norms");
     const push = findNorm("t-pushups", undefined, "m", 37)!;
     expect(normScore(push, 30, null)!.label).toBe("Silber-Niveau");
-    expect(findNorm("t-pushups", undefined, "w", 37)).toBeNull();
+    expect(normScore(findNorm("t-pushups", undefined, "w", 37)!, 16, null)!.label).toBe("Gold-Niveau");
+    expect(findNorm("t-5rm-squat", "legpress", "w", 37)).toBeNull();
     expect(findNorm("t-pushups", undefined, "m", 45)).toBeNull();
     const lp = findNorm("t-5rm-squat", "legpress", "m", 37)!;
     // 5RM 125 kg bei 84 kg: 1RM ≈ 145,8 → 1,74 × KG ≈ Mittelwert → P50
@@ -402,7 +403,7 @@ describe("hexed und Grundlagentempo", () => {
     expect(w1.hexed).toBeUndefined();
   });
   it("jeder Orden hat mindestens eine Bestie pro Woche", () => {
-    for (const f of FOCI) for (const ab of ["A", "B"]) {
+    for (const f of FOCI.filter((x) => !x.medley)) for (const ab of ["A", "B"]) {
       const n = f.week_4.flatMap((rk) => f.roles[rk].blocks).filter((b) => b.type === "beast" && (!b.rotation || b.rotation === ab)).length;
       expect(n, `${f.id} ${ab}`).toBeGreaterThanOrEqual(1);
     }
@@ -444,5 +445,33 @@ describe("Testwoche abtrennen", () => {
     expect(plan.find((b) => b.id === "b1")!.end).toBe("2026-11-23");
     expect(plan.find((b) => b.id === "t2")).toMatchObject({ start: "2026-11-24", end: "2026-11-30", focusId: "test" });
     expect(plan.find((b) => b.id === "b2")!.start).toBe(s.plan[1].start);
+  });
+});
+
+describe("Wochenform", () => {
+  it("drei Tage: vierter Tag eingearbeitet, in der Zeit, Bestie bleibt", async () => {
+    const { shapeFocus } = await import("./weekplan");
+    const { estimateRole } = await import("./duration");
+    const P = { gym, home, reise };
+    for (const f of FOCI.filter((x) => !x.medley)) {
+      const s = shapeFocus(f, 3);
+      for (const k of s.week_3) expect(estimateRole(s.roles[k], P[s.roles[k].location]).total, `${f.id}.${k}`).toBeLessThanOrEqual(Math.max(f.roles[k].minutes, 60) + 8);
+      expect(s.week_3.some((k) => s.roles[k].blocks.some((b) => b.type === "beast")), f.id).toBe(true);
+    }
+    const k3 = shapeFocus(FOCUS_BY_ID.knight, 3);
+    const names = k3.week_3.flatMap((k) => k3.roles[k].blocks.flatMap((b) => (b.type === "single" ? [b.slot.name] : b.type === "superset" ? b.slots.map((x) => x.name) : [])));
+    expect(names).toContain("Bulgarian Split Squat");
+    expect(k3.week_3.some((k) => k3.roles[k].blocks.some((b) => b.type === "superset" && b.slots.length === 2))).toBe(true);
+  });
+  it("fünf Tage: Zusatztag in der Mitte", () => {
+    expect(defaultRoles(FOCUS_BY_ID.knight, 5)).toEqual(["upper_a", "lower_a", "bonus", "upper_b", "lower_b"]);
+  });
+  it("Harlequin: jede Woche ein anderer Orden", async () => {
+    const { focusFor } = await import("./weekplan");
+    const s = sample();
+    const b = { ...s.plan[0], focusId: "harlequin" };
+    expect(focusFor(s, b, 1)!.id).toBe("witcher");
+    expect(focusFor(s, b, 2)!.id).toBe("pugilist");
+    expect(focusFor(s, b, 13)!.id).toBe("witcher");
   });
 });

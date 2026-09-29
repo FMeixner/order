@@ -57,6 +57,17 @@
           "heavy": {"id": "hu-f-2", "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8", "prog": "double"},
           "explosive": {"id": "hu-f-2x", "name": "Squat Jump", "sets": 3, "reps": "5", "prog": "none"}}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Füße und Landungen", "location": "home", "minutes": 35,
+      "note": "Nur bei fünf Tagen. Sprunggelenke, Schienbein, Gleichgewicht.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-hu-p", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 60}},
+        {"type": "single", "slot": {"id": "bx-hu-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
+        {"type": "single", "slot": {"id": "bx-hu-b", "name": "Einbeinstand, Augen zu", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}},
+        {"type": "beast", "id": "bx-hu-bst", "classes": ["bestie"], "draw": "rotate"}
+      ]
     }
   }
 }

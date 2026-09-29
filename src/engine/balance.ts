@@ -52,6 +52,13 @@ const cache = new Map<string, Record<AxisId, number>>();
 export function focusVector(f: Focus): Record<AxisId, number> {
   const hit = cache.get(f.id);
   if (hit) return hit;
+  if (f.medley?.length) {
+    // Harlequin: Mittel der Orden in der Reihe
+    const parts = f.medley.map((id) => FOCUS_BY_ID[id]).filter(Boolean).map(focusVector);
+    const avg = Object.fromEntries(AXES.map((a) => [a.id, parts.reduce((s, v) => s + v[a.id], 0) / Math.max(1, parts.length)])) as Record<AxisId, number>;
+    cache.set(f.id, avg);
+    return avg;
+  }
   const goals = goalVector(f);
   const v: Record<string, number> = Object.fromEntries(AXES.map((a) => [a.id, 0]));
   let total = 0;

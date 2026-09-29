@@ -59,6 +59,17 @@
         {"type": "beast", "rotation": "A", "id": "pm-bst-a", "classes": ["plage"], "draw": "rotate"},
         {"type": "beast", "rotation": "B", "id": "pm-bst-b", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Handgelenke und Handstand", "location": "home", "minutes": 30,
+      "note": "Nur bei fünf Tagen. Handgelenke vorbereiten, frei balancieren üben.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-ac-w", "name": "Wrist Prep", "sets": 2, "reps": "10", "prog": "none", "rest": 30}},
+        {"type": "single", "slot": {"id": "bx-ac-h", "name": "Freier Handstand (Versuche)", "kind": "timer", "minutes": 10, "prog": "none"}},
+        {"type": "single", "slot": {"id": "bx-ac-o", "name": "Hollow Hold", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "rest": 45, "max": 45, "step": 5}},
+        {"type": "beast", "id": "bx-ac-bst", "classes": ["plage"], "draw": "rotate"}
+      ]
     }
   }
 }

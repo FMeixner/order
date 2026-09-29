@@ -99,11 +99,14 @@ export function defaultRoles(f: Focus, nDays: number): string[] {
   if (nDays <= 3) return f.week_3.slice(0, Math.max(1, nDays));
   const base = [...f.week_4];
   const extras = Object.keys(f.roles).filter((r) => !base.includes(r));
-  return [...base, ...extras].slice(0, nDays);
+  // Ab fünf Tagen: Zusatztage zwischen die schweren Tage, damit nicht vier harte Tage am Stück kommen
+  const out = [...base];
+  extras.slice(0, Math.max(0, nDays - 4)).forEach((x, i) => out.splice(Math.min(out.length, 2 + i * 3), 0, x));
+  return out.slice(0, nDays);
 }
 
-export function rolesFor(state: AppState, b: PlanBlock): string[] {
-  const f = FOCUS_BY_ID[b.focusId];
+export function rolesFor(state: AppState, b: PlanBlock, focus?: Focus): string[] {
+  const f = focus ?? FOCUS_BY_ID[b.focusId];
   if (!f) return [];
   const n = trainingDays(state, b).length;
   const custom = state.roleOrder[b.id];
@@ -111,10 +114,10 @@ export function rolesFor(state: AppState, b: PlanBlock): string[] {
   return defaultRoles(f, n);
 }
 
-export function dayRoleMap(state: AppState, b: PlanBlock): { day: Weekday; role: string; profileId: string }[] {
+export function dayRoleMap(state: AppState, b: PlanBlock, focus?: Focus): { day: Weekday; role: string; profileId: string }[] {
   const days = trainingDays(state, b);
   const sch = scheduleFor(state, b);
-  const roles = rolesFor(state, b);
+  const roles = rolesFor(state, b, focus);
   return days.map((day, i) => ({ day, role: roles[i], profileId: sch[day] as string })).filter((x) => !!x.role);
 }
 

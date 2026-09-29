@@ -58,6 +58,19 @@
       "blocks": [
         {"type": "beast", "id": "lo-i-1", "classes": ["bestie"], "draw": "rotate"}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Schulterpflege", "location": "home", "minutes": 35,
+      "note": "Nur bei fünf Tagen. Rotatorenmanschette und Schulterblatt, dazu Kondition.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "superset", "rest": 45, "slots": [
+          {"id": "bx-tr-a", "name": "Band External Rotation", "sets": 3, "reps": "12-15/Seite", "prog": "reps"},
+          {"id": "bx-tr-b", "name": "Scapular Wall Slide", "sets": 3, "reps": "10-12", "prog": "reps"}
+        ]},
+        {"type": "single", "slot": {"id": "bx-tr-c", "name": "Face Pull", "sets": 3, "reps": "12-15", "prog": "double", "rest": 60, "home": "Band Face Pull"}},
+        {"type": "beast", "id": "bx-tr-bst", "classes": ["bestie"], "draw": "rotate"}
+      ]
     }
   }
 }

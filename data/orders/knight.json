@@ -71,6 +71,19 @@
         {"type": "single", "slot": {"id": "cl-lb-6", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "beast", "id": "cl-bst", "classes": ["plage"], "draw": "rotate", "note": "Kurz und knackig zum Schluss."}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Unterarme und Griff", "location": "gym", "minutes": 30,
+      "note": "Nur bei fünf Tagen. Kleine Muskeln, kaum Erholungskosten, dazu eine kurze Bestie.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "bx-kn-fa", "name": "Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"},
+          {"id": "bx-kn-fb", "name": "Reverse Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"}
+        ]},
+        {"type": "single", "slot": {"id": "bx-kn-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
+        {"type": "beast", "id": "bx-kn-bst", "classes": ["plage"], "draw": "rotate"}
+      ]
     }
   }
 }

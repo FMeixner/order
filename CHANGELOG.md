@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.13.0] – 2026-09-29
+
+### Neu
+- Drei-Tage-Woche verdichtet statt gestrichen: Das Wichtigste aus dem vierten Tag wandert auf die übrigen Tage, doppelte Bewegungsmuster fallen weg, Supersets und 15 s kürzere Pausen halten die Einheiten bei etwa 60 Minuten, eine Bestie pro Woche bleibt.
+- Fünf Tage: Jeder Orden hat einen Zusatztag (`bonus`) mit Bestie und etwas, das es nur dann gibt (Unterarme, Nacken, Füße und Schienbein, Seilspringen, Handgelenke und Handstand, Schulterpflege, Qigong). Er liegt zwischen den schweren Tagen.
+- Harlequin: jede Woche ein anderer Orden, Kraft- und Konditionswochen im Wechsel.
+- Normen für Frauen: FRIEND (VO2max), DOSB Sportabzeichen (Standweitsprung, Medizinball, Liegestütz, Crunches, Klimmzug), CHMS (Sit and Reach), Cooper Institute (Bankdrücken relativ), Powerlifting (van den Hoek et al., 2024), Cooper-Lauf (Sekundärquelle).
+
+### Geändert
+- Pausen allgemein 15 s kürzer, mit Untergrenzen (schwer nie unter 2 Min, sonst nie unter 60 s). Kontrastpaare und Supersets unverändert.
+- Normen Männer: Perzentil-Stützstellen korrigiert (Sit and Reach P20/P80, Powerlifting P10/P90); Quellen präzisiert; Cooper-Center-Werte für Maschinen als Orientierung markiert, weil ihre Herkunft nicht nachprüfbar ist.
+
 ## [0.12.0] – 2026-09-29
 
 ### Neu

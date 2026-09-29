@@ -66,6 +66,22 @@
         {"type": "single", "slot": {"id": "gl-fr-6", "name": "Overhead Press", "home": "DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "gl-fr-7", "name": "Hanging Leg Raise", "sets": 3, "reps": "10-15", "prog": "reps", "rest": 60}}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Unterarme und Nacken", "location": "home", "minutes": 35,
+      "note": "Nur bei fünf Tagen. Arena-Physis: Unterarme und Nacken, dazu eine kurze Bestie.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "bx-gl-fa", "name": "Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"},
+          {"id": "bx-gl-fb", "name": "Reverse Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"}
+        ]},
+        {"type": "superset", "rest": 45, "slots": [
+          {"id": "bx-gl-na", "name": "Neck Curl", "sets": 2, "reps": "15-25", "prog": "reps"},
+          {"id": "bx-gl-nb", "name": "Neck Extension", "sets": 2, "reps": "15-25", "prog": "reps"}
+        ]},
+        {"type": "beast", "id": "bx-gl-bst", "classes": ["plage"], "draw": "rotate"}
+      ]
     }
   }
 }

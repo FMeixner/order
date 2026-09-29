@@ -107,3 +107,15 @@ Sind die Lasten grob gestuft, reicht der Wiederholungsbereich oft nicht, um den 
 ## Testwoche als eigener Block
 
 Eine Phase mit `focusId: "test"` ist eine eigene Testwoche. Folgt sie direkt auf eine Phase, läuft deren letzte Woche mit −1 Satz, und eine Testwoche im Orden entfällt.
+
+## Drei, vier, fünf Tage
+
+`week_4` ist die Basis. Für drei Tage nennt `week_3` die Rollen, die bleiben; die App arbeitet den Rest ein (doppelte Bewegungsmuster fallen weg, Supersets und 15 s kürzere Pausen, bis die Einheit in etwa 60 Minuten passt, eine Bestie pro Woche bleibt erhalten). Rollen außerhalb von `week_4`, meist `bonus`, sind Zusatztage für fünf und mehr Tage; die App setzt sie zwischen die schweren Tage.
+
+## Harlequin (medley)
+
+Ein Orden mit `"medley": ["witcher", "pugilist", …]` hat keine eigenen Rollen: In Woche n läuft der n-te Orden der Liste, danach von vorn.
+
+## Pausen
+
+Die App kürzt `rest` aus den Orden um 15 s: ab 150 s nie unter 120 s, ab 75 s nie unter 60 s, kürzere Pausen bleiben. Superset- und Kontrastpausen bleiben wie angegeben.

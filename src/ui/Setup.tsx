@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import { FOCI, FOCUS_BY_ID, SKILLS } from "../data";
-import { blockAt, rolesFor, trainingDays } from "../engine/plan";
+import { FOCI, SKILLS } from "../data";
+import { blockAt, rolesFor, trainingDays, weekInBlock } from "../engine/plan";
+import { focusFor } from "../engine/weekplan";
 import { exportState, migrate } from "../store";
 import type { AppState, UserProfile } from "../types";
 import { Collapse, Field, Seg } from "./common";
@@ -80,8 +81,8 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
   const file = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState("");
   const block = blockAt(state.plan, today);
-  const focus = block ? FOCUS_BY_ID[block.focusId] : null;
-  const roles = block ? rolesFor(state, block) : [];
+  const focus = block ? focusFor(state, block, weekInBlock(block, today)) : null;
+  const roles = block && focus ? rolesFor(state, block, focus) : [];
   const days = block ? trainingDays(state, block) : [];
   const move = (i: number, d: number) => {
     if (!block) return;

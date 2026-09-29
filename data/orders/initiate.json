@@ -54,6 +54,16 @@
         {"type": "single", "slot": {"id": "r-b-5", "name": "Side Plank (Knie)", "kind": "hold", "hold": 20, "sets": 2, "prog": "ladder", "ladder": ["Side Plank (Knie)", "Side Plank"], "rest": 45, "note": "pro Seite"}},
         {"type": "beast", "rotation": "B", "id": "r-bst-b", "classes": ["bestie"], "draw": "rotate", "pace": "easy"}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Balance und Füße", "location": "home", "minutes": 25,
+      "note": "Leichter Zusatztag, gut zwischen zwei Krafttagen.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-in-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
+        {"type": "single", "slot": {"id": "bx-in-b", "name": "Einbeinstand, Augen zu", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}},
+        {"type": "beast", "id": "bx-in-bst", "classes": ["plage"], "draw": "rotate"}
+      ]
     }
   }
 }

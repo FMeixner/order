@@ -77,6 +77,15 @@
         {"type": "single", "slot": {"id": "so-s-1", "name": "Lauf oder Rudern, locker", "kind": "timer", "minutes": 30, "max": 45, "step": 5, "prog": "minutes"}},
         {"type": "beast", "id": "so-bst", "classes": ["plage"], "draw": "rotate"}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Beweglichkeit und Bestie", "location": "home", "minutes": 35,
+      "note": "Nur bei fünf Tagen.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "module", "module": "flow", "variant": "mobility"},
+        {"type": "beast", "id": "bx-so-bst", "classes": ["bestie"], "draw": "rotate"}
+      ]
     }
   }
 }

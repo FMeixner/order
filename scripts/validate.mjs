@@ -92,7 +92,8 @@ for (const [f, d] of allFoci) {
   if (d.goals && !GOALS.has(d.goals.primary)) err(f, `unbekanntes Ziel ${d.goals.primary}`);
   for (const s of d.successors || []) if (!focusIds.has(s)) warn(f, `Nachfolger "${s}" existiert nicht`);
   for (const r of [...(d.week_4 || []), ...(d.week_3 || [])]) if (!d.roles[r]) err(f, `Rolle "${r}" fehlt in roles`);
-  if ((d.week_3 || []).length < 3) err(f, "week_3 braucht mindestens 3 Rollen");
+  if (d.medley) for (const m of d.medley) if (!focusIds.has(m) || m === d.id) err(f, `medley: Orden "${m}" gibt es nicht`);
+  if (!d.medley) if ((d.week_3 || []).length < 3) err(f, "week_3 braucht mindestens 3 Rollen");
 
   const slotIds = new Map();
   const checkSlot = (s, ctx) => {

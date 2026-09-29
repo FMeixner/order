@@ -13,7 +13,7 @@ Läuft im Browser und lässt sich auf dem Handy wie eine App installieren. Alle 
 3. **Jahresplan**: Phasen mit Datum, Alltagslast und ob du viel unterwegs bist. Pro Phase ein Orden; die App zeigt, welche Orden passen.
 4. **Trainieren**: Unter *Heute* steht die Einheit. Nach jedem Satz Wiederholungen und Gewicht eintragen, nach der Übung kurz Feedback geben (Schwer, OK, Leicht, Sehr leicht). Daraus kommt der Vorschlag fürs nächste Mal.
 
-## Die 18 Orden
+## Die 19 Orden
 
 | Orden | Schwerpunkt |
 |---|---|
@@ -35,6 +35,7 @@ Läuft im Browser und lässt sich auf dem Handy wie eine App installieren. Alle 
 | Soldier | Entlasten, testen, Schwachstellen trainieren |
 | Gladiator | Physis mit Weste und Konditionsintervallen |
 | Conqueror | Unterwegs belastbar bleiben |
+| Harlequin | Jede Woche ein anderer Orden, gegen Langeweile |
 
 ## Inhalte bearbeiten
 

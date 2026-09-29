@@ -71,6 +71,16 @@
         {"type": "single", "rotation": "A", "slot": {"id": "c-e-A", "name": "Intervalle 4 × 4 Min", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none", "note": "85–95 % der maximalen Herzfrequenz, dazwischen locker. Lauf, Rad oder Rudern."}},
         {"type": "single", "rotation": "B", "slot": {"id": "c-e-B", "name": "Lockerer Lauf", "kind": "timer", "minutes": 35, "max": 50, "step": 5, "prog": "minutes", "note": "Sprechtempo."}}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Tragen und Griff", "location": "reise", "minutes": 30,
+      "note": "Nur bei fünf Tagen. Tragen, Hängen, dazu Kondition.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-co-f", "name": "Farmer's Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60, "reise": {"name": "Suitcase Carry"}}},
+        {"type": "single", "slot": {"id": "bx-co-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
+        {"type": "beast", "id": "bx-co-bst", "classes": ["bestie"], "draw": "rotate"}
+      ]
     }
   }
 }

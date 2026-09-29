@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FLOWS, FOCI } from "../data";
+import { FLOWS, FOCI, FOCUS_BY_ID } from "../data";
 import { CLASS_LABEL } from "../engine/plan";
 import { resolveSlot } from "../engine/resolve";
 import { ladderStart } from "../engine/skills";
@@ -51,6 +51,13 @@ export function FocusDetail({ f, profile, skills }: { f: Focus; profile?: Equipm
         {f.test_week || f.test_weeks ? <><span>Testwoche</span><span>{f.test_weeks ? `Woche ${f.test_weeks.join(", ")}` : "letzte Woche"}</span></> : null}
         {f.sources?.length ? <><span>Grundlagen</span><span>{f.sources.join("; ")}</span></> : null}
       </div>
+      {f.medley && (
+        <div className="card">
+          <strong>Die Reihe</strong>
+          <ol className="slot-list">{f.medley.map((id, i) => <li key={i}><strong>{FOCUS_BY_ID[id]?.name}</strong> · {FOCUS_BY_ID[id]?.tagline}</li>)}</ol>
+          <p className="muted small">Die einzelnen Wochen findest du bei den jeweiligen Orden.</p>
+        </div>
+      )}
       {(f.week_4).map((rk, i) => {
         const r = f.roles[rk];
         return (

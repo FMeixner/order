@@ -59,6 +59,17 @@
         {"type": "module", "module": "flow", "variant": "taichi"},
         {"type": "single", "slot": {"id": "ma-r-2", "name": "Zügiger Spaziergang", "kind": "timer", "minutes": 15, "prog": "none"}}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Hände und Handgelenke", "location": "home", "minutes": 25,
+      "note": "Nur bei fünf Tagen. Hände, Unterarme, Griff.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-al-w", "name": "Wrist Prep", "sets": 2, "reps": "10", "prog": "none", "rest": 30}},
+        {"type": "single", "slot": {"id": "bx-al-p", "name": "Plate Pinch", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "rest": 45, "max": 45, "step": 5}},
+        {"type": "single", "slot": {"id": "bx-al-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
+        {"type": "beast", "id": "bx-al-bst", "classes": ["plage"], "draw": "rotate"}
+      ]
     }
   }
 }

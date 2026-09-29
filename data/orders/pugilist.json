@@ -64,6 +64,19 @@
         {"type": "single", "slot": {"id": "fi-n-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
         {"type": "single", "slot": {"id": "fi-n-5", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 2, "prog": "hold", "rest": 30, "note": "pro Seite"}}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Seil und Unterarme", "location": "home", "minutes": 35,
+      "note": "Nur bei fünf Tagen. Seilspringen wie im Boxgym, dazu Unterarme.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-pu-r", "name": "Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 20, "rounds": 8}, "prog": "none"}},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "bx-pu-fa", "name": "Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"},
+          {"id": "bx-pu-fb", "name": "Reverse Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"}
+        ]},
+        {"type": "beast", "id": "bx-pu-bst", "classes": ["plage"], "draw": "rotate"}
+      ]
     }
   }
 }

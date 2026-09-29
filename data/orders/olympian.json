@@ -67,6 +67,17 @@
         {"type": "single", "slot": {"id": "at-h-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}},
         {"type": "beast", "id": "at-bst", "classes": ["plage"], "draw": "rotate"}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Seil und Füße", "location": "home", "minutes": 35,
+      "note": "Nur bei fünf Tagen. Sprunggelenke und Schienbein als Unterbau für Sprint und Sprung.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "bx-ol-r", "name": "Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 20, "rounds": 8}, "prog": "none"}},
+        {"type": "single", "slot": {"id": "bx-ol-p", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 60}},
+        {"type": "single", "slot": {"id": "bx-ol-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
+        {"type": "beast", "id": "bx-ol-bst", "classes": ["plage"], "draw": "rotate"}
+      ]
     }
   }
 }

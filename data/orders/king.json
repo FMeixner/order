@@ -52,6 +52,15 @@
       "blocks": [
         {"type": "beast", "id": "ki-c-1", "classes": ["bestie"], "draw": "rotate"}
       ]
+    },
+    "bonus": {
+      "name": "Bonus: Grundlage", "location": "reise", "minutes": 30,
+      "note": "Nur bei fünf Tagen. Lange Bestie im Grundlagentempo, keine zusätzliche Härte.",
+      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "beast", "id": "bx-ki-bst", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"},
+        {"type": "single", "slot": {"id": "bx-ki-s", "name": "Side Plank", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}}
+      ]
     }
   }
 }
