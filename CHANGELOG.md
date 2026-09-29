@@ -2,6 +2,20 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.14.0] – 2026-09-29
+
+### Neu
+- Log › Wochenüberblick: harte Sätze pro Muskel und Woche, mitbeteiligte Muskeln halb, mit Richtwert nach Erfahrung (Einsteiger 6–10, Fortgeschrittene 10–16, Erfahrene 12–20) oder eigenem Wert. Wertneutral, ohne Ampel. Zuordnung in `data/modules/muscles.json`.
+- Log › Verlauf: Linie je Übung (bester Satz als geschätztes 1RM, Wiederholungen oder Haltezeit) und je Bestie (Zeit), mit Tabelle.
+- Trainingserfahrung im Profil und in der Einrichtung. Einsteiger überspringen den Skillcheck und sehen keine Normvergleiche, keine Jahresbalance und kein „Skills trainieren“.
+- Wiedereinstieg: Nach 10 Tagen oder mehr Pause läuft die Woche mit −1 Satz; Übungen, die 14 Tage oder länger ruhten, starten 10 % leichter.
+- Testauswertung mit Messfehler: Unterschiede unterhalb der kleinsten sinnvollen Veränderung heißen „gleich (im Messfehler)“.
+- Helles Design (automatisch oder fest), Erinnerung an die Sicherung, Hinweis auf den Skillcheck, Rückfragen vor Löschen und Einschieben.
+
+### Geändert
+- Schriften liegen in der App statt bei Google: keine Datenübertragung an Google, funktionieren offline.
+- Barrierefreiheit: Kontraste auf gewählten und erledigten Tageskarten, Hinweistexten und der Jahresbalance angehoben; Tippflächen größer (Satz-Kreise 42–44 px, Info und Tausch 32 px, Feedback 40 px); kleinste Schrift 12,5 px. axe-core meldet in Heute, Plan und Log (hell und dunkel) keine Verstöße mehr.
+
 ## [0.13.0] – 2026-09-29
 
 ### Neu

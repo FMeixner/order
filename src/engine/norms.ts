@@ -77,8 +77,8 @@ export interface TestEval {
   test: TestDef;
   result: TestResult;
   prev: TestResult | null;
-  /** besser als letztes Mal? null ohne Vergleich */
-  improved: boolean | null;
+  /** Veränderung zum letzten Test, gemessen am Messfehler. null ohne Vergleich */
+  change: "better" | "same" | "worse" | null;
   norm: NormResult | null;
   /** Warum keine Norm */
   why?: string;
@@ -100,7 +100,9 @@ function bestOf(list: TestResult[], t: TestDef): TestResult | null {
 
 export function evaluateBlock(state: AppState, blockId: string): Evaluation {
   const { sex, birthYear } = state.user;
-  const missingProfile = !sex || !birthYear;
+  // Einsteiger: nur der eigene Verlauf, kein Vergleich mit Normen
+  const beginner = state.user.level === "einsteiger";
+  const missingProfile = !beginner && (!sex || !birthYear);
   const bwList = (state.tests["t-bodyweight"] ?? []).filter((r) => r.blockId === blockId);
   const allBw = state.tests["t-bodyweight"] ?? [];
   const bodyweight = (bwList[bwList.length - 1] ?? allBw[allBw.length - 1])?.value ?? null;
@@ -116,17 +118,19 @@ export function evaluateBlock(state: AppState, blockId: string): Evaluation {
       const earlier = hist.filter((r) => r.blockId !== blockId && r.date < result.date && (r.variant ?? null) === (result.variant ?? null));
       const prevBlock = earlier.length ? earlier[earlier.length - 1].blockId : null;
       const prev = prevBlock ? bestOf(earlier.filter((r) => r.blockId === prevBlock), t) : null;
-      const improved = prev ? (t.better === "higher" ? result.value > prev.value : result.value < prev.value) : null;
-      const n = findNorm(id, result.variant, sex, ageAt(birthYear, result.date));
+      const diff = prev ? (t.better === "higher" ? result.value - prev.value : prev.value - result.value) : 0;
+      const change = prev ? (Math.abs(diff) <= (t.swc ?? 0) ? "same" : diff > 0 ? "better" : "worse") : null;
+      const n = beginner ? null : findNorm(id, result.variant, sex, ageAt(birthYear, result.date));
       let norm: NormResult | null = null;
       let why: string | undefined;
       if (n) {
         norm = normScore(n, result.value, bodyweight);
         if (!norm && n.conv === "rel1rm") why = "Körpergewicht fehlt (Excalibur-Cup)";
-      } else if (missingProfile) why = "Geburtsjahr und Geschlecht fehlen (Setup)";
+      } else if (beginner) why = undefined;
+      else if (missingProfile) why = "Geburtsjahr und Geschlecht fehlen (Setup)";
       else if (t.variants && !result.variant) why = "Variante nicht angegeben";
       else why = NORMS.some((x) => x.test === id) ? "keine Norm für Alter oder Geschlecht" : "nur Verlauf";
-      tests.push({ test: t, result, prev, improved, norm, why });
+      tests.push({ test: t, result, prev, change, norm, why });
     }
     const scored = tests.map((x) => x.norm).filter((x): x is NormResult => !!x && !x.noScore);
     const score = scored.length ? Math.round(scored.reduce((s, x) => s + x.score, 0) / scored.length) : null;

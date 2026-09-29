@@ -475,3 +475,46 @@ describe("Wochenform", () => {
     expect(focusFor(s, b, 13)!.id).toBe("witcher");
   });
 });
+
+describe("Wochenvolumen", () => {
+  it("jede Kraftübung in den Orden zählt für mindestens einen Muskel", async () => {
+    const { musclesOf } = await import("./volume");
+    const { EXERCISES } = await import("../data");
+    const missing = new Set<string>();
+    for (const f of FOCI) for (const r of Object.values(f.roles)) for (const b of r.blocks) {
+      const slots = b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy] : [];
+      for (const s of slots) {
+        if ((s.prog ?? "none") === "none" || (s.kind ?? "strength") !== "strength") continue;
+        const eq = EXERCISES[s.name]?.equip;
+        if (eq === "cardio" || eq === "skill") continue;
+        if (!Object.keys(musclesOf(s.name)).length) missing.add(s.name);
+      }
+    }
+    expect([...missing]).toEqual([]);
+  });
+  it("zählt Sätze pro Muskel, mitbeteiligte halb, Richtwert nach Erfahrung", async () => {
+    const { weeklyVolume, volumeRange } = await import("./volume");
+    const s = sample();
+    const e = (name: string, n: number): SessionEntry => ({ key: `x|${name}`, slotId: "x", name, prog: "double", sets: Array.from({ length: n }, () => ({ done: true, reps: 8, weight: 20 })) });
+    s.sessions = [{ id: "s1", date: "2026-09-29", blockId: "b1", focusId: "knight", week: 2, role: "upper_a", profileId: "g", entries: { a: e("Bench Press", 4), b: e("Lat Pulldown", 3) }, drills: {}, menu: {}, done: true }];
+    const [w] = weeklyVolume(s, "2026-10-10");
+    expect(w.sets.Brust).toBe(4);
+    expect(w.sets.Trizeps).toBe(2);
+    expect(w.sets.Rücken).toBe(3);
+    expect(volumeRange({ ...s.user, level: "einsteiger" })).toEqual([6, 10]);
+    expect(volumeRange({ ...s.user, volumeRange: [12, 16] })).toEqual([12, 16]);
+  });
+});
+
+describe("Messfehler in der Testauswertung", () => {
+  it("kleine Unterschiede gelten als gleich", async () => {
+    const { evaluateBlock } = await import("./norms");
+    const s = sample();
+    s.tests = { "t-sprint10": [{ date: "2026-06-01", blockId: "b0", value: 1.92, raw: "1.92" }, { date: "2026-11-25", blockId: "b1", value: 1.89, raw: "1.89" }],
+      "t-broad": [{ date: "2026-06-01", blockId: "b0", value: 200, raw: "200" }, { date: "2026-11-25", blockId: "b1", value: 212, raw: "212" }] };
+    const ev = evaluateBlock(s, "b1");
+    const t = Object.fromEntries(ev.domains.flatMap((d) => d.tests).map((x) => [x.test.id, x.change]));
+    expect(t["t-sprint10"]).toBe("same");
+    expect(t["t-broad"]).toBe("better");
+  });
+});

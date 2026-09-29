@@ -5,7 +5,7 @@ import { WEEKDAYS } from "../types";
 import { Field } from "./common";
 import { EquipmentEditor } from "./EquipmentEditor";
 import { PlanList, WeekEditor } from "./PlanEditor";
-import { AsymEditor, NormFields, SkillEditor } from "./Setup";
+import { AsymEditor, LevelFields, NormFields, SkillEditor } from "./Setup";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -15,6 +15,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
   const [step, setStep] = useState(0);
   const file = useRef<HTMLInputElement>(null);
   const days = WEEKDAYS.filter((d) => state.schedule[d]).length;
+  const beginner = state.user.level === "einsteiger";
   const canNext = [
     true,
     true,
@@ -33,6 +34,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
           <h1>Order</h1>
           <p>Dein Trainingsjahr in Blöcken. Du legst fest, womit du trainierst, an welchen Tagen und welchem Orden du dich in welcher Phase anschließt. Den Rest rechnet die App: welche Übung heute passt, welches Gewicht als Nächstes kommt, wann eine Pause fällig ist.</p>
           <Field label="Wie heißt du?"><input type="text" value={state.user.name} onChange={(e) => update((s) => ({ ...s, user: { ...s.user, name: e.target.value } }))} /></Field>
+          <LevelFields user={state.user} onChange={(user) => update((s) => ({ ...s, user }))} />
           <NormFields user={state.user} onChange={(user) => update((s) => ({ ...s, user }))} />
           <details className="card">
             <summary>Asymmetrien angeben (optional)</summary>
@@ -97,9 +99,13 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
       )}
 
       <div className="sticky-actions">
-        {step > 0 && <button className="btn ghost" onClick={() => setStep(step - 1)}>Zurück</button>}
+        {step > 0 && <button className="btn ghost" onClick={() => setStep(step === 2 && beginner ? 0 : step - 1)}>Zurück</button>}
         {step < STEPS.length - 1
-          ? <button className="btn primary" disabled={!canNext} onClick={() => { if (step === 1 && state.user.skills == null) update((s) => ({ ...s, user: { ...s.user, skills: [] } })); setStep(step + 1); }}>Weiter</button>
+          ? <button className="btn primary" disabled={!canNext} onClick={() => {
+              // Einsteiger überspringen den Skillcheck: alles Anspruchsvolle bekommt leichtere Varianten
+              if ((step === 1 || (step === 0 && beginner)) && state.user.skills == null) update((s) => ({ ...s, user: { ...s.user, skills: [] } }));
+              setStep(step === 0 && beginner ? 2 : step + 1);
+            }}>Weiter</button>
           : <button className="btn primary" onClick={() => update((s) => ({ ...s, onboarded: true }))}>Los geht's</button>}
       </div>
     </div>

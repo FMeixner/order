@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { EXERCISES, FLOWS, SKILLS } from "../data";
 import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { affectDowngrade, beastById, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
-import { snapNearest } from "../engine/loads";
+import { affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
+import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import type { AppState, Beast, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
 import { Collapse, Desc, kg, Modal } from "./common";
@@ -341,7 +341,12 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const [swapOpen, setSwapOpen] = useState(false);
   const canSwap = r.kind === "strength" || r.kind === "hold";
   const st = ctx.state.slots[r.key];
-  const sug: Suggestion = suggest(r, st, ctx.week, ctx.profile);
+  const raw: Suggestion = suggest(r, st, ctx.week, ctx.profile);
+  // Nach längerer Pause (14 Tage und mehr an dieser Übung): 10 % leichter wieder einsteigen
+  const pausedDays = st?.updated && /^\d{4}-/.test(st.updated) ? daysBetween(st.updated, ctx.date) : 0;
+  const sug: Suggestion = pausedDays >= 14 && raw.weight != null && r.loadable
+    ? { ...raw, weight: snapDown(ctx.profile, r.equip, raw.weight * 0.9), gap: `Nach ${pausedDays} Tagen Pause 10 % leichter. Danach geht es normal weiter.` }
+    : raw;
   const entry: SessionEntry = session?.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
   const sets: SetEntry[] = Array.from({ length: r.kind === "timer" || r.kind === "interval" ? 1 : r.sets }, (_, i) => entry.sets[i] ?? { done: false });
   const desc = EXERCISES[sug.name]?.desc ?? EXERCISES[r.name]?.desc;

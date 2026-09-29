@@ -119,3 +119,11 @@ Ein Orden mit `"medley": ["witcher", "pugilist", …]` hat keine eigenen Rollen:
 ## Pausen
 
 Die App kürzt `rest` aus den Orden um 15 s: ab 150 s nie unter 120 s, ab 75 s nie unter 60 s, kürzere Pausen bleiben. Superset- und Kontrastpausen bleiben wie angegeben.
+
+## Muskeln und Wochenvolumen
+
+`data/modules/muscles.json` ordnet Übungen Muskeln zu (1 = Hauptmuskel, 0,5 = mitbeteiligt): zuerst nach Name, dann nach Tauschgruppe, dann nach Suchmuster. Der Wochenüberblick im Log zählt abgeschlossene Sätze von Übungen mit Progression.
+
+## Messfehler
+
+`swc` an einem Test in `testweek.json` ist die kleinste Veränderung, die über dem Messfehler liegt. Kleinere Unterschiede zeigt die Auswertung als „gleich“.

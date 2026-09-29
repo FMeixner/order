@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { FOCUS_BY_ID } from "../data";
-import { addDays, blockAt, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isAWeek, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
+import { addDays, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isAWeek, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import { TESTWEEK } from "../data";
 import type { AppState, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { SessionPreview, SessionView, sessionId } from "./SessionView";
 import { focusFor } from "../engine/weekplan";
+import { exportState } from "../store";
 import { TestWeek } from "./TestWeek";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -51,7 +52,13 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const deload = isDeloadWeek(baseFocus, week);
   const rkey = `${block.id}:${week}`;
   const beforeTest = extTest ? week === total : isTestWeek(baseFocus, block, week + 1);
-  const reduced = deload || !!state.reduced[rkey] || beforeTest;
+  // Wiedereinstieg: letzte abgeschlossene Einheit liegt 10 Tage oder mehr zurück
+  // gilt für die ganze Woche: Abstand zwischen der letzten Einheit vor dieser Woche und der ersten in dieser Woche (oder heute)
+  const lastBefore = state.sessions.filter((s) => s.done && s.date < weekStart).map((s) => s.date).sort().pop();
+  const firstThis = state.sessions.filter((s) => s.done && s.date >= weekStart).map((s) => s.date).sort()[0] ?? today;
+  const pauseDays = lastBefore ? daysBetween(lastBefore, firstThis) : 0;
+  const comeback = isCur && pauseDays >= 10;
+  const reduced = deload || !!state.reduced[rkey] || beforeTest || comeback;
   const days = dayRoleMap(state, block, focus);
   const todayWd = weekdayOf(today);
   const doneRoles = new Set(state.sessions.filter((s) => s.blockId === block.id && s.week === week && s.done).map((s) => s.role));
@@ -63,8 +70,20 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const sel = days.find((d) => d.day === (pick ?? defaultDay));
   const profile = sel ? state.equipment.find((e) => e.id === sel.profileId) : undefined;
 
+  const doneCount = state.sessions.filter((s) => s.done).length;
+  const backupAge = state.lastBackup ? daysBetween(state.lastBackup, today) : null;
+  const needBackup = doneCount >= 3 && (backupAge == null || backupAge >= 14);
   return (
     <div className="stack">
+      {needBackup && (
+        <div className="note small row between wrap">
+          <span>{backupAge == null ? "Noch keine Sicherung." : `Letzte Sicherung vor ${backupAge} Tagen.`} Deine Daten liegen nur auf diesem Gerät.</span>
+          <button className="btn small" onClick={() => { exportState(state); update((st) => ({ ...st, lastBackup: today })); }}>Jetzt sichern</button>
+        </div>
+      )}
+      {state.user.skills == null && state.user.level !== "einsteiger" && (
+        <div className="note small">Tipp: Unter Setup › Können angeben, was sitzt (Klimmzug, Pistol Squat, Muscle-Up …). Dann passt die App Übungen und Bestien an.</div>
+      )}
       <div className="card hero">
         <div className="hero-top">
           <div>
@@ -85,6 +104,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           {deload && <span className="tag">Entlastung −1 Satz</span>}
           {!deload && beforeTest && <span className="tag">vor der Testwoche −1 Satz</span>}
         </div>
+        {comeback && <div className="note small">Willkommen zurück. Nach {pauseDays} Tagen Pause läuft diese Woche mit −1 Satz, und Gewichte starten etwas leichter. Ab nächster Woche geht es normal weiter.</div>}
         {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
         {!deload && !future && (
           <label className="check small">

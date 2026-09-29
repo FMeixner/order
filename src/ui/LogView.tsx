@@ -4,6 +4,7 @@ import { beastById, fmtDate } from "../engine/plan";
 import type { AppState, Session } from "../types";
 import { Collapse, kg } from "./common";
 import { Evaluation } from "./Evaluation";
+import { ProgressView, VolumeView } from "./Progress";
 import { fmt } from "./Timer";
 
 function sessionText(s: Session, state: AppState): string {
@@ -22,7 +23,7 @@ function sessionText(s: Session, state: AppState): string {
   return lines.join("\n");
 }
 
-export function LogView({ state }: { state: AppState }) {
+export function LogView({ state, today }: { state: AppState; today: string }) {
   const [copied, setCopied] = useState(false);
   const done = state.sessions.filter((s) => s.done).sort((a, b) => b.date.localeCompare(a.date));
   const allTests = TESTWEEK.cups.flatMap((c) => c.tests);
@@ -39,6 +40,8 @@ export function LogView({ state }: { state: AppState }) {
         <button className="btn ghost small" onClick={copy}>{copied ? "Kopiert" : "Als Text kopieren"}</button>
       </div>
       {done.length === 0 && <div className="card muted">Noch nichts abgeschlossen.</div>}
+      <VolumeView state={state} today={today} />
+      <ProgressView state={state} />
       {done.slice(0, 60).map((s) => {
         const f = FOCUS_BY_ID[s.focusId];
         const entries = Object.values(s.entries).filter((e) => e.sets.some((x) => x.done));

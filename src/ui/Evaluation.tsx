@@ -29,7 +29,7 @@ export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; b
               {d.tests.map((t) => (
                 <li key={t.test.id}>
                   {t.test.name}{t.result.variant && t.test.variants ? ` (${t.test.variants.find((v) => v.id === t.result.variant)?.name ?? t.result.variant})` : ""}: <strong>{show(t.result.value, t.test.unit)}</strong>
-                  {t.improved != null && <span className={t.improved ? "ok-text" : "muted"}> · {t.improved ? "besser als" : "letztes Mal"} {show(t.prev!.value, t.test.unit)}</span>}
+                  {t.change && <span className={t.change === "better" ? "ok-text" : "muted"}> · {t.change === "better" ? "besser als" : t.change === "same" ? "gleich wie" : "letztes Mal"} {show(t.prev!.value, t.test.unit)}{t.change === "same" ? " (im Messfehler)" : ""}</span>}
                   {t.norm ? <span className="muted"> · {t.norm.label}{t.norm.tier === "B" ? " (Orientierung)" : ""}</span> : t.why ? <span className="muted"> · {t.why}</span> : null}
                 </li>
               ))}
@@ -52,7 +52,7 @@ export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; b
           <details className="small muted">
             <summary>Quellen der Normen</summary>
             <ul>{sources.map(([src, tier]) => <li key={src}>{tier === "A" ? "Norm" : "Orientierung"}: {src}</li>)}</ul>
-            <p>Punkte entsprechen ungefähr einem Perzentil: 50 heißt, die Hälfte der Vergleichsgruppe ist besser. Sportabzeichen: Bronze 45, Silber 70, Gold 90. „Orientierung“ vergleicht mit trainierten Wettkampfsportlern, das ist ein harter Maßstab. Kraftwerte werden aus dem 5RM auf ein 1RM hochgerechnet und durch das Körpergewicht geteilt.</p>
+            <p>„Gleich (im Messfehler)“: Der Unterschied zum letzten Test ist kleiner als das, was Tagesform und Messung ohnehin schwanken lassen (z. B. 0,05 s beim 10-m-Sprint, 5 cm beim Standweitsprung). Punkte entsprechen ungefähr einem Perzentil: 50 heißt, die Hälfte der Vergleichsgruppe ist besser. Sportabzeichen: Bronze 45, Silber 70, Gold 90. „Orientierung“ vergleicht mit trainierten Wettkampfsportlern, das ist ein harter Maßstab. Kraftwerte werden aus dem 5RM auf ein 1RM hochgerechnet und durch das Körpergewicht geteilt.</p>
           </details>
         )}
       </div>

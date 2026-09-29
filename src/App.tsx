@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { isoDate } from "./engine/plan";
 import { useAppState } from "./store";
 import { FociBrowser } from "./ui/FociBrowser";
@@ -20,6 +20,10 @@ const TABS: { k: Tab; l: string }[] = [
 
 export default function App() {
   const [state, update, replace] = useAppState();
+  useEffect(() => {
+    const t = state.theme ?? "auto";
+    if (t === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
+  }, [state.theme]);
   const [tab, setTab] = useState<Tab>("heute");
   const [help, setHelp] = useState(false);
   const today = isoDate(new Date());
@@ -42,12 +46,12 @@ export default function App() {
           {tab === "plan" && (
             <div className="stack">
               <p className="muted">Dein Jahr in Phasen. Tippe eine Phase an, um Zeitraum, Alltagslast oder Orden zu ändern.</p>
-              <YearBalance plan={state.plan} />
+              {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
               <PlanList plan={state.plan} profiles={state.equipment} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
           {tab === "foki" && <FociBrowser state={state} />}
-          {tab === "log" && <LogView state={state} />}
+          {tab === "log" && <LogView state={state} today={today} />}
           {tab === "setup" && <Setup state={state} update={update} replace={replace} today={today} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
         </main>
         <TimerBar />

@@ -201,6 +201,10 @@ export interface UserProfile {
   sex?: "m" | "w" | null;
   /** Skillcheck: Skills aus data/modules/skills.json, die sauber sitzen. null = noch nicht angegeben (kein Filter). */
   skills?: string[] | null;
+  /** Trainingserfahrung: steuert Richtwerte (Sätze pro Muskel) und blendet für Einsteiger Fachliches aus */
+  level?: "einsteiger" | "fortgeschritten" | "erfahren" | null;
+  /** Eigener Richtwert Sätze pro Muskel und Woche, statt des Werts nach Erfahrung */
+  volumeRange?: [number, number] | null;
   /** Skills trainieren: Bestien mit fehlenden Skills kommen als hexed-Variante */
   skillTraining?: boolean;
   /** Veraltet (0.1): wird beim Laden in has.sword der Heim-Profile übernommen */
@@ -270,12 +274,18 @@ export interface AppState {
   swaps: Record<string, string>;
   /** Einheiten, in denen heute nicht gelaufen werden kann (Session-Id → true): Lauf wird zur Bestie */
   noRun?: Record<string, boolean>;
+  /** Darstellung: automatisch nach System, hell oder dunkel */
+  theme?: "auto" | "light" | "dark";
+  /** Datum der letzten Sicherung (ISO) */
+  lastBackup?: string | null;
 }
 
 export interface TestResult { date: string; blockId: string; value: number; raw: string; /** gewählte Variante, z. B. "squat" oder "legpress" */ variant?: string }
 
 export interface TestDef {
   id: string; name: string; unit: string; attempts: number; better: "higher" | "lower"; desc?: string;
+  /** Kleinste Veränderung über dem Messfehler, in der Einheit des Tests */
+  swc?: number;
   /** Varianten, zwischen denen man beim Test wählt (z. B. Kniebeuge oder Beinpresse) */
   variants?: { id: string; name: string }[];
 }

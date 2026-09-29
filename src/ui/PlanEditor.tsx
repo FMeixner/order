@@ -170,8 +170,8 @@ export function PlanList({ plan, profiles, onChange, today }: { plan: PlanBlock[
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>
           <BlockForm block={edit} profiles={profiles}
             onCancel={() => setEdit(null)}
-            onDelete={plan.some((x) => x.id === edit.id) ? () => { onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
-            onInsertTest={plan.some((x) => x.id === edit.id) && !isTestBlock(edit) && !followedByTest(plan, edit) ? () => { onChange(insertTestWeek(plan, edit.id, uid("b"))); setEdit(null); } : undefined}
+            onDelete={plan.some((x) => x.id === edit.id) ? () => { if (!confirm(`Phase ${fmtDate(edit.start)}–${fmtDate(edit.end)} löschen? Einträge im Log bleiben erhalten.`)) return; onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
+            onInsertTest={plan.some((x) => x.id === edit.id) && !isTestBlock(edit) && !followedByTest(plan, edit) ? () => { if (!confirm("Testwoche einschieben? Alle späteren Phasen rücken eine Woche nach hinten.")) return; onChange(insertTestWeek(plan, edit.id, uid("b"))); setEdit(null); } : undefined}
             onSplitTest={plan.some((x) => x.id === edit.id) && !isTestBlock(edit) && !followedByTest(plan, edit) && blockWeeks(edit) >= 3 ? () => { onChange(splitTestWeek(plan, edit.id, uid("b"))); setEdit(null); } : undefined}
             onSave={(nb) => { onChange(plan.some((x) => x.id === nb.id) ? plan.map((x) => (x.id === nb.id ? nb : x)) : [...plan, nb]); setEdit(null); }} />
         </Modal>

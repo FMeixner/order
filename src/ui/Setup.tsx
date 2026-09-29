@@ -42,10 +42,10 @@ export function SkillEditor({ user, onChange }: { user: UserProfile; onChange: (
   return (
     <div className="stack">
       <p className="muted small">Hake ab, was du heute sauber schaffst. Übungen und Bestien, die einen fehlenden Skill brauchen, ersetzt die App durch leichtere Varianten. Übungsleitern, etwa zum Pistol Squat, bleiben als Lernweg drin und starten mit abgehaktem Skill weiter oben. Jederzeit änderbar.</p>
-      <label className="check">
+      {user.level !== "einsteiger" && <label className="check">
         <input type="checkbox" checked={!!user.skillTraining} onChange={(e) => onChange({ ...user, skillTraining: e.target.checked })} />
         <span><strong>Skills trainieren</strong><span className="muted small"> · Bestien mit Skills, die noch fehlen, kommen trotzdem, als hexed-Variante mit leichterer Übung (z. B. Band-Assisted Muscle-Ups). In jeder zweiten Woche bevorzugt.</span></span>
-      </label>
+      </label>}
       {SKILLS.groups.map((g) => (
         <div key={g.id} className="stack skill-group">
           <div className="block-label teal">{g.name}</div>
@@ -57,6 +57,35 @@ export function SkillEditor({ user, onChange }: { user: UserProfile; onChange: (
           ))}
         </div>
       ))}
+    </div>
+  );
+}
+
+export const LEVELS = [
+  { value: "einsteiger", label: "Einsteiger", hint: "unter einem Jahr regelmäßig", range: [6, 10] },
+  { value: "fortgeschritten", label: "Fortgeschritten", hint: "1–3 Jahre", range: [10, 16] },
+  { value: "erfahren", label: "Erfahren", hint: "über 3 Jahre", range: [12, 20] },
+] as const;
+
+/** Trainingserfahrung und eigener Richtwert für Sätze pro Muskel */
+export function LevelFields({ user, onChange, withRange }: { user: UserProfile; onChange: (u: UserProfile) => void; withRange?: boolean }) {
+  const lv = LEVELS.find((l) => l.value === user.level);
+  return (
+    <div className="stack">
+      <Field label="Trainingserfahrung" hint={lv ? `${lv.hint}. Einsteiger sehen weniger Fachliches, etwa keine Normvergleiche.` : "Steuert Richtwerte und wie viel Fachliches die App zeigt."}>
+        <Seg value={(user.level ?? "fortgeschritten") as NonNullable<UserProfile["level"]>} options={LEVELS.map((l) => ({ value: l.value, label: l.label }))} onChange={(level) => onChange({ ...user, level })} />
+      </Field>
+      {withRange && (
+        <Field label="Richtwert Sätze pro Muskel und Woche" hint={`Leer lassen für den Wert nach Erfahrung (${(lv ?? LEVELS[1]).range.join("–")}).`}>
+          <div className="row">
+            <input type="number" inputMode="numeric" className="reps-in" placeholder={String((lv ?? LEVELS[1]).range[0])} value={user.volumeRange?.[0] ?? ""}
+              onChange={(e) => { const a = parseInt(e.target.value); onChange({ ...user, volumeRange: isNaN(a) ? null : [a, user.volumeRange?.[1] ?? Math.max(a, (lv ?? LEVELS[1]).range[1])] }); }} aria-label="Richtwert von" />
+            <span className="muted">bis</span>
+            <input type="number" inputMode="numeric" className="reps-in" placeholder={String((lv ?? LEVELS[1]).range[1])} value={user.volumeRange?.[1] ?? ""}
+              onChange={(e) => { const b = parseInt(e.target.value); onChange({ ...user, volumeRange: isNaN(b) ? null : [user.volumeRange?.[0] ?? Math.min(b, (lv ?? LEVELS[1]).range[0]), b] }); }} aria-label="Richtwert bis" />
+          </div>
+        </Field>
+      )}
     </div>
   );
 }
@@ -102,7 +131,12 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
     <div className="stack">
       <Collapse title="Profil" meta={state.user.name || "ohne Namen"} defaultOpen>
         <Field label="Name"><input type="text" value={state.user.name} onChange={(e) => update((st) => ({ ...st, user: { ...st.user, name: e.target.value } }))} /></Field>
+        <LevelFields user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} withRange />
         <NormFields user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} />
+      </Collapse>
+      <Collapse title="Darstellung" meta={{ auto: "automatisch", light: "hell", dark: "dunkel" }[state.theme ?? "auto"]}>
+        <Seg value={state.theme ?? "auto"} options={[{ value: "auto", label: "automatisch" }, { value: "light", label: "hell" }, { value: "dark", label: "dunkel" }]} onChange={(theme) => update((st) => ({ ...st, theme }))} />
+        <p className="muted small">Hell ist draußen in der Sonne besser lesbar. Automatisch folgt der Einstellung des Handys.</p>
       </Collapse>
       <Collapse title="Können" meta={state.user.skills == null ? "kein Skillcheck" : `${state.user.skills.length} von ${SKILLS.skills.length}`}>
         {state.user.skills == null
@@ -138,7 +172,7 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
       <Collapse title="Sichern und Wiederherstellen">
         <p className="muted small">Alle Daten liegen nur auf diesem Gerät, im Browser. Sichere regelmäßig, vor allem vor einem Gerätewechsel.</p>
         <div className="row wrap">
-          <button className="btn" onClick={() => exportState(state)}>Sichern (.json)</button>
+          <button className="btn" onClick={() => { exportState(state); update((st) => ({ ...st, lastBackup: new Date().toISOString().slice(0, 10) })); }}>Sichern (.json)</button>
           <button className="btn ghost" onClick={() => file.current?.click()}>Sicherung laden</button>
           <input ref={file} type="file" accept="application/json,.json" hidden onChange={async (e) => {
             const f = e.target.files?.[0];

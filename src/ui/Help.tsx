@@ -88,7 +88,9 @@ export function Help() {
       <h3>Deine Daten</h3>
       <ul>
         <li>Alles bleibt auf diesem Gerät, in diesem Browser. Öffne die App immer auf demselben Weg (am besten über das Symbol auf dem Startbildschirm).</li>
-        <li>Unter Setup regelmäßig „Sichern“ tippen. Mit „Sicherung laden“ holst du den Stand auf ein neues Gerät.</li>
+        <li>Im Log: „Wochenüberblick“ zählt harte Sätze pro Muskel, als Richtwert ohne Wertung. „Verlauf“ zeigt jede Übung und Bestie über die Zeit.</li>
+        <li>Nach 10 Tagen oder mehr ohne Training läuft die erste Woche automatisch mit −1 Satz und etwas leichteren Gewichten.</li>
+        <li>Unter Setup regelmäßig „Sichern“ tippen; die App erinnert nach 14 Tagen. Mit „Sicherung laden“ holst du den Stand auf ein neues Gerät.</li>
       </ul>
     </div>
   );
