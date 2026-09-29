@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { BEAST_BY_ID, FOCUS_BY_ID, TESTWEEK } from "../data";
-import { fmtDate } from "../engine/plan";
+import { FOCUS_BY_ID, TESTWEEK } from "../data";
+import { beastById, fmtDate } from "../engine/plan";
 import type { AppState, Session } from "../types";
 import { Collapse, kg } from "./common";
 import { Evaluation } from "./Evaluation";
@@ -15,7 +15,7 @@ function sessionText(s: Session, state: AppState): string {
     const sets = done.map((x) => (x.seconds ? `${x.seconds}s` : `${x.reps ?? "?"}${x.weight != null ? `×${String(x.weight).replace(".", ",")}kg` : ""}`)).join(", ");
     lines.push(`- ${e.name}: ${sets}${e.feedback ? ` (${e.feedback})` : ""}`);
   }
-  if (s.beast?.seconds) lines.push(`- Bestie ${BEAST_BY_ID[s.beast.id]?.name}: ${fmt(s.beast.seconds)}`);
+  if (s.beast?.seconds) lines.push(`- Bestie ${beastById(s.beast.id)?.name}: ${fmt(s.beast.seconds)}`);
   if (s.note) lines.push(`- Notiz: ${s.note}`);
   void state;
   return lines.join("\n");
@@ -50,7 +50,7 @@ export function LogView({ state }: { state: AppState }) {
                   {e.feedback && <span className="muted"> ({e.feedback})</span>}
                 </li>
               ))}
-              {s.beast?.seconds ? <li><strong>{BEAST_BY_ID[s.beast.id]?.name}</strong>: {fmt(s.beast.seconds)}</li> : null}
+              {s.beast?.seconds ? <li><strong>{beastById(s.beast.id)?.name}</strong>: {fmt(s.beast.seconds)}</li> : null}
             </ul>
             {s.note && <p className="muted small">{s.note}</p>}
           </Collapse>
@@ -59,7 +59,7 @@ export function LogView({ state }: { state: AppState }) {
       {beasts.length > 0 && (
         <Collapse title="Bestiarium: Bestzeiten" meta={`${beasts.length} Bestien`}>
           <ul className="slot-list">
-            {beasts.map(([id, t]) => <li key={id}>{BEAST_BY_ID[id]?.name ?? id}: {fmt(Math.min(...t.map((x) => x.seconds)))} ({t.length}×)</li>)}
+            {beasts.map(([id, t]) => <li key={id}>{beastById(id)?.name ?? id}: {fmt(Math.min(...t.map((x) => x.seconds)))} ({t.length}×)</li>)}
           </ul>
         </Collapse>
       )}

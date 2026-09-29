@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.9.1] – 2026-09-29
+
+### Neu
+- Bestien-Serien: Passt keine Bestie in die gewünschte Klasse (Equipment oder Skillcheck), baut die App eine Serie aus kürzeren: dieselbe Bestie zwei- oder dreimal oder zwei verschiedene hintereinander, mit 2 Min Pause dazwischen. Wechselt von Woche zu Woche, eigene Bestzeit je Serie.
+
 ## [0.9.0] – 2026-09-29
 
 ### Neu

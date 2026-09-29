@@ -141,6 +141,50 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
   });
 }
 
+/* ---------- Zusammengesetzte Serien ---------- */
+/** Minuten-Spanne je Klasse (wie beastClass) */
+const CLASS_RANGE: Record<BeastClass, [number, number]> = { plage: [0, 10.5], bestie: [10.5, 17.5], ungeheuer: [17.5, 25.5], uralte: [25.5, 40], verfluchte: [40, 60] };
+export const COMBO_REST = 120;
+
+/** Serie aus Teilen bauen: [[Bestie, Anzahl], …]. Id: "a×2" oder "a+b". */
+export function composeBeast(parts: [Beast, number][]): Beast {
+  if (parts.length === 1 && parts[0][1] === 1) return parts[0][0];
+  const id = parts.map(([b, k]) => (k > 1 ? `${b.id}×${k}` : b.id)).join("+");
+  const name = parts.map(([b, k]) => (k > 1 ? `${b.name} ×${k}` : b.name)).join(" + ");
+  const minutes = parts.reduce((m, [b, k]) => m + b.minutes * k, 0) + ((parts.reduce((n, [, k]) => n + k, 0) - 1) * COMBO_REST) / 60;
+  return {
+    id, name, orig: parts.map(([b]) => b.orig).join(" + "), rounds: parts.reduce((n, [b, k]) => n + b.rounds * k, 0), minutes,
+    equipment: [...new Set(parts.flatMap(([b]) => b.equipment))],
+    work: parts.map(([b]) => b.work).join(" · "),
+    parts: parts.map(([b, k]) => ({ id: b.id, name: b.name, rounds: b.rounds, work: b.work, times: k })),
+  };
+}
+
+/** Bestie oder Serie nach Id, auch "a×2" und "a+b" */
+export function beastById(id: string): Beast | null {
+  if (BEAST_BY_ID[id]) return BEAST_BY_ID[id];
+  const parts = id.split("+").map((p) => { const m = p.match(/^(.*)×(\d)$/); return m ? [BEAST_BY_ID[m[1]], parseInt(m[2])] : [BEAST_BY_ID[p], 1]; }) as [Beast | undefined, number][];
+  if (!parts.length || parts.some(([b]) => !b)) return null;
+  return composeBeast(parts as [Beast, number][]);
+}
+
+/** Wenn keine Bestie in die Klassen passt: kurze Bestien doppelt oder dreifach, oder zwei hintereinander. */
+function comboFor(classes: BeastClass[], pool: Beast[], seed: string, week: number): Beast | null {
+  if (!classes.length || !pool.length) return null;
+  const lo = Math.min(...classes.map((c) => CLASS_RANGE[c][0])), hi = Math.max(...classes.map((c) => CLASS_RANGE[c][1]));
+  const fits = (m: number) => m > lo && m <= hi;
+  const cands: Beast[] = [];
+  const sorted = [...pool].sort((a, c) => hash(seed + a.id) - hash(seed + c.id)).slice(0, 24);
+  for (const b of sorted) for (const k of [2, 3]) { const x = composeBeast([[b, k]]); if (fits(x.minutes)) { cands.push(x); break; } }
+  for (let i = 0; i < sorted.length; i++) for (let j = i + 1; j < sorted.length; j++) {
+    const x = composeBeast([[sorted[i], 1], [sorted[j], 1]]);
+    if (fits(x.minutes)) cands.push(x);
+  }
+  if (!cands.length) return null;
+  const order = cands.sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
+  return order[(week - 1) % order.length];
+}
+
 function hash(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
@@ -163,6 +207,12 @@ export function pickBeast(
   const ok = (b: Beast) => beastFits(b, profile) && beastOk(b, skills);
   let fit = cands.filter(ok);
   if (!fit.length) fit = BEASTS.filter((b) => ok(b) && (!classes.length || classes.includes(classOf(b))));
+  if (!fit.length) {
+    // Keine passende Bestie: aus kürzeren eine Serie bauen
+    const target = classes.length ? classes : [...new Set(cands.map(classOf))];
+    const combo = comboFor(target, BEASTS.filter(ok), `${opts.blockId}:${block.id}`, opts.week);
+    if (combo) return combo;
+  }
   if (!fit.length) fit = BEASTS.filter((b) => b.equipment.every((t) => t === "bodyweight_only") && beastOk(b, skills));
   if (!fit.length) return null;
   const seed = `${opts.blockId}:${block.id}`;

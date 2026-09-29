@@ -127,6 +127,8 @@ export interface Beast {
   minutes: number;
   equipment: string[];
   work: string;
+  /** Zusammengesetzte Serie: eine kurze Bestie mehrfach oder zwei hintereinander */
+  parts?: { id: string; name: string; rounds: number; work: string; times: number }[];
 }
 
 /** Warm-up-, Cool-down- und Modul-Übung */

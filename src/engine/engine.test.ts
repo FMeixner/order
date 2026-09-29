@@ -324,3 +324,20 @@ describe("Skillcheck", () => {
     expect(free.length).toBeGreaterThan(20);
   });
 });
+
+describe("Bestien-Serien", () => {
+  it("ohne passende Bestie: Serie aus kürzeren, in der Zielklasse", async () => {
+    const { pickBeast, beastById, beastClass } = await import("./plan");
+    const { beastOk } = await import("./skills");
+    const s = sample();
+    s.user = { ...s.user, skills: [] };
+    const blk = { type: "beast" as const, id: "t", classes: ["uralte" as const] };
+    const b = pickBeast(blk, { blockId: "b1", week: 1, profile: gym, state: s, reduced: false, downgrade: false })!;
+    expect(b.parts?.length).toBeGreaterThan(0);
+    expect(beastClass(b.minutes)).toBe("uralte");
+    expect(b.parts!.every((p) => beastOk(beastById(p.id)!, new Set()))).toBe(true);
+    expect(beastById(b.id)?.name).toBe(b.name);
+    const b2 = pickBeast(blk, { blockId: "b1", week: 2, profile: gym, state: s, reduced: false, downgrade: false })!;
+    expect(b2.id).not.toBe(b.id);
+  });
+});

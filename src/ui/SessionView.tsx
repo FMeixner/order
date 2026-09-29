@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { EXERCISES } from "../data";
 import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { affectDowngrade, beastClass, beastMinutes, CLASS_LABEL, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
+import { affectDowngrade, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapNearest } from "../engine/loads";
 import type { AppState, Beast, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
 import { Collapse, Desc, kg, Modal } from "./common";
@@ -479,8 +479,22 @@ function BeastCard({ beast, ctx, session, mut, note }: { beast: Beast | null; ct
     <section className="card beast">
       <div className="block-label amber">Bestiarium · {CLASS_LABEL[cls]} · ~{Math.round(eff.min)} Min {eff.measured ? "gemessen" : "geschätzt"}</div>
       <div className="beast-name">{beast.name}</div>
-      <div className="muted small">{beast.rounds} {beast.rounds === 1 ? "Durchgang" : "Runden"}</div>
-      <ul className="beast-work">{beast.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+      {beast.parts ? (
+        <>
+          <div className="muted small">Serie: {beast.parts.length > 1 ? "zwei Bestien hintereinander" : `${beast.parts[0].times}-mal dieselbe Bestie`}, dazwischen {COMBO_REST / 60} Min Pause. Stoppuhr läuft über alles.</div>
+          {beast.parts.map((pt, k) => (
+            <div key={k}>
+              <div className="small"><strong>{pt.times > 1 ? `${pt.times} × ` : `${k + 1}. `}{pt.name}</strong> <span className="muted">· {pt.rounds} {pt.rounds === 1 ? "Durchgang" : "Runden"}</span></div>
+              <ul className="beast-work">{pt.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+            </div>
+          ))}
+        </>
+      ) : (
+        <>
+          <div className="muted small">{beast.rounds} {beast.rounds === 1 ? "Durchgang" : "Runden"}</div>
+          <ul className="beast-work">{beast.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+        </>
+      )}
       {note && <div className="muted small">{note}</div>}
       <div className="row">
         {!running
@@ -521,12 +535,20 @@ export function SessionPreview(ctx: SessionCtx) {
         <div className="preview-row muted"><span>Warm-up</span><span>{warm.length} Übungen</span></div>
         {items.map((it, i) => {
           const title = BLOCK_TITLE[it.block.type];
-          if (it.beast !== undefined) return (
-            <div key={i} className="preview-group">
-              <div className="block-label amber">Bestie: {it.beast?.name ?? "passend zum Equipment"}{it.beast ? ` · ${it.beast.rounds} ${it.beast.rounds === 1 ? "Durchgang" : "Runden"}` : ""}</div>
-              {it.beast?.work.split(" · ").map((w, k) => <div key={k} className="preview-row"><span>{w}</span></div>)}
-            </div>
-          );
+          if (it.beast !== undefined) {
+            const parts = it.beast?.parts ?? (it.beast ? [{ id: it.beast.id, name: it.beast.name, rounds: it.beast.rounds, work: it.beast.work, times: 1 }] : []);
+            return (
+              <div key={i} className="preview-group">
+                {!parts.length && <div className="block-label amber">Bestie: passend zum Equipment</div>}
+                {parts.map((pt, k) => (
+                  <div key={k}>
+                    <div className="block-label amber">{it.beast?.parts ? "Serie · " : "Bestie: "}{pt.times > 1 ? `${pt.times} × ` : ""}{pt.name} · {pt.rounds} {pt.rounds === 1 ? "Durchgang" : "Runden"}</div>
+                    {pt.work.split(" · ").map((w, j) => <div key={j} className="preview-row"><span>{w}</span></div>)}
+                  </div>
+                ))}
+              </div>
+            );
+          }
           if (it.drills) return <div key={i} className="preview-row"><span>Schwert: {it.drills.map((d) => d.name).join(", ")}</span></div>;
           if (it.block.type === "menu" && !it.resolved.length) return <div key={i} className="preview-row"><span>{it.block.label}</span><span className="muted">Wahl am Tag</span></div>;
           return (
