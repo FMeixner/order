@@ -68,7 +68,6 @@
     },
     "bonus": {
       "name": "Bonus: Griff", "location": "home", "minutes": 25,
-      "note": "Nur bei fünf Tagen, kurz wie alles bei Herald.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-he-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 45, "max": 90, "step": 5}},

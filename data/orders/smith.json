@@ -74,12 +74,11 @@
           {"id": "pf-4-6a", "name": "Walking Lunge", "sets": 3, "reps": "8/Seite", "prog": "double"},
           {"id": "pf-4-6b", "name": "Hammer Curl", "sets": 3, "reps": "10-12", "prog": "double"}
         ]},
-        {"type": "beast", "id": "pf-bst", "classes": ["plage"], "draw": "rotate", "note": "Kurz zum Schluss, Technik vor Tempo."}
+        {"type": "beast", "id": "pf-bst", "classes": ["plage"], "draw": "rotate"}
       ]
     },
     "bonus": {
       "name": "Bonus: Griff und Tragen", "location": "gym", "minutes": 30,
-      "note": "Nur bei fünf Tagen. Griff und Rumpf unter Last, dazu Kondition.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-sm-f", "name": "Farmer's Carry", "sets": 4, "reps": "40 m", "prog": "weight", "rest": 90}},

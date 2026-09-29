@@ -55,7 +55,6 @@
     },
     "bonus": {
       "name": "Bonus: Grundlage", "location": "reise", "minutes": 30,
-      "note": "Nur bei fünf Tagen. Lange Bestie im Grundlagentempo, keine zusätzliche Härte.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "beast", "id": "bx-ki-bst", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"},

@@ -69,12 +69,11 @@
         {"type": "single", "slot": {"id": "cl-lb-4", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": null, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "cl-lb-5", "name": "Hanging Leg Raise", "reise": {"name": "Reverse Crunch", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "reps", "rest": 60}},
         {"type": "single", "slot": {"id": "cl-lb-6", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
-        {"type": "beast", "id": "cl-bst", "classes": ["plage"], "draw": "rotate", "note": "Kurz und knackig zum Schluss."}
+        {"type": "beast", "id": "cl-bst", "classes": ["plage"], "draw": "rotate"}
       ]
     },
     "bonus": {
       "name": "Bonus: Unterarme und Griff", "location": "gym", "minutes": 30,
-      "note": "Nur bei fünf Tagen. Kleine Muskeln, kaum Erholungskosten, dazu eine kurze Bestie.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [

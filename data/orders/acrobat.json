@@ -62,7 +62,6 @@
     },
     "bonus": {
       "name": "Bonus: Handgelenke und Handstand", "location": "home", "minutes": 30,
-      "note": "Nur bei fünf Tagen. Handgelenke vorbereiten, frei balancieren üben.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-ac-w", "name": "Wrist Prep", "sets": 2, "reps": "10", "prog": "none", "rest": 30}},

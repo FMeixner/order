@@ -19,7 +19,7 @@
   "roles": {
     "parkour": {
       "name": "Parkour", "location": "reise", "minutes": 45,
-      "note": "Draußen, Mauern und Geländer. Landungen immer leise und kontrolliert.",
+      "note": "Draußen. Landungen leise und kontrolliert.",
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "hu-p-1", "name": "Landungen: Drop aus 30 cm, Rolle", "kind": "timer", "minutes": 10, "prog": "ladder", "ladder": ["Landungen: Drop aus 30 cm, Rolle", "Landungen: Drop aus 60 cm, Rolle", "Landungen: Drop aus 90 cm, Rolle"]}},
@@ -60,7 +60,6 @@
     },
     "bonus": {
       "name": "Bonus: Füße und Landungen", "location": "home", "minutes": 35,
-      "note": "Nur bei fünf Tagen. Sprunggelenke, Schienbein, Gleichgewicht.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-hu-p", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 60}},

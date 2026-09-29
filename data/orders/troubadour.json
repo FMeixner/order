@@ -61,7 +61,6 @@
     },
     "bonus": {
       "name": "Bonus: Schulterpflege", "location": "home", "minutes": 35,
-      "note": "Nur bei fünf Tagen. Rotatorenmanschette und Schulterblatt, dazu Kondition.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "superset", "rest": 45, "slots": [

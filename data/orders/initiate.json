@@ -57,7 +57,6 @@
     },
     "bonus": {
       "name": "Bonus: Balance und Füße", "location": "home", "minutes": 25,
-      "note": "Leichter Zusatztag, gut zwischen zwei Krafttagen.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-in-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},

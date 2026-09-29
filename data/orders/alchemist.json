@@ -62,7 +62,6 @@
     },
     "bonus": {
       "name": "Bonus: Hände und Handgelenke", "location": "home", "minutes": 25,
-      "note": "Nur bei fünf Tagen. Hände, Unterarme, Griff.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-al-w", "name": "Wrist Prep", "sets": 2, "reps": "10", "prog": "none", "rest": 30}},

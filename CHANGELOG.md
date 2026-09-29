@@ -10,6 +10,9 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 - Welt als austauschbares Paket: generische Dark Steamfantasy in `data/narrative/generic.json`; eigene Welten als JSON nur auf dem Gerät laden.
 - Alles wird aus dem Log berechnet, mit festen Würfeln: Ein- und Ausschalten verliert nichts.
 
+### Geändert
+- Aufgeräumt: Füllhinweise über den Einheiten entfernt (Bonus-Tage „nur bei fünf Tagen“, „passt ins Büro“, Inhaltsaufzählungen, „kurz zum Schluss“ an Bestien). Geblieben sind Hinweise zu Sicherheit und Ausführung.
+
 ## [0.14.0] – 2026-09-29
 
 ### Neu

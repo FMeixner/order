@@ -59,7 +59,6 @@
     },
     "bonus": {
       "name": "Bonus: Qigong", "location": "reise", "minutes": 40,
-      "note": "Nur bei fünf Tagen. Ruhig, dazu eine lange Bestie im Grundlagentempo.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "baduanjin"},

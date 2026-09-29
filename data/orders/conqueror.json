@@ -74,7 +74,6 @@
     },
     "bonus": {
       "name": "Bonus: Tragen und Griff", "location": "reise", "minutes": 30,
-      "note": "Nur bei fünf Tagen. Tragen, Hängen, dazu Kondition.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-co-f", "name": "Farmer's Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60, "reise": {"name": "Suitcase Carry"}}},

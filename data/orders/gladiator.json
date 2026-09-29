@@ -69,7 +69,6 @@
     },
     "bonus": {
       "name": "Bonus: Unterarme und Nacken", "location": "home", "minutes": 35,
-      "note": "Nur bei fünf Tagen. Arena-Physis: Unterarme und Nacken, dazu eine kurze Bestie.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [

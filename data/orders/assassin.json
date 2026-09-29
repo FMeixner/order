@@ -34,7 +34,6 @@
     },
     "arme_schultern": {
       "name": "Arme und Schultern", "location": "gym", "minutes": 30,
-      "note": "Kurz und ohne Schwitzen, passt ins Büro.",
       "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"],
       "cooldown": ["cd_di"],
       "blocks": [
@@ -49,7 +48,7 @@
       "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "einzelmesser", "fallback": {"id": "sk-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 12, "prog": "none"}},
-        {"type": "beast", "id": "sk-beast", "pool": ["ng-agir", "ng-saga", "ng-odin", "ng-jormungandr", "ng-nanna", "ng-ran", "ng-fenja", "ng-thorsson", "ng-kvasir", "ng-hel", "ng-garm", "ng-orvar"], "draw": "rotate", "note": "Auf Zeit. Bei −1 Satz eine Bestie der Klasse Plage."}
+        {"type": "beast", "id": "sk-beast", "pool": ["ng-agir", "ng-saga", "ng-odin", "ng-jormungandr", "ng-nanna", "ng-ran", "ng-fenja", "ng-thorsson", "ng-kvasir", "ng-hel", "ng-garm", "ng-orvar"], "draw": "rotate"}
       ]
     },
     "kraft_b": {
@@ -69,7 +68,6 @@
     },
     "bonus": {
       "name": "Bonus: Unterarme und Nacken", "location": "home", "minutes": 35,
-      "note": "Nur bei fünf Tagen. Kleine Muskeln, dazu eine kurze Bestie.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [

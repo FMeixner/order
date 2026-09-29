@@ -56,7 +56,6 @@
     },
     "bonus": {
       "name": "Bonus: Füße und Schienbein", "location": "home", "minutes": 45,
-      "note": "Nur bei fünf Tagen. Läuferfüße, dazu eine lange ruhige Bestie.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-pi-c", "name": "Single-Leg Calf Raise", "sets": 3, "reps": "12-20/Seite", "prog": "reps", "rest": 45}},

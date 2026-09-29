@@ -34,7 +34,6 @@
     },
     "arme_kurz": {
       "name": "Arme kurz", "location": "gym", "minutes": 45,
-      "note": "Schulterdrücken, Arme, zum Schluss eine kurze Bestie.",
       "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"],
       "cooldown": ["cd_di"],
       "blocks": [
@@ -91,7 +90,7 @@
     },
     "wochenende_kondition": {
       "name": "Wochenend-Kondition", "location": "home", "minutes": 30, "optional": true,
-      "note": "Freiwillig. Lauf, Bestie oder Rudern, je nach Lust.",
+      "note": "Freiwillig.",
       "warmup": ["run_prep"],
       "cooldown": ["cd_lower"],
       "blocks": [

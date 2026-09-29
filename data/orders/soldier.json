@@ -80,7 +80,6 @@
     },
     "bonus": {
       "name": "Bonus: Beweglichkeit und Bestie", "location": "home", "minutes": 35,
-      "note": "Nur bei fünf Tagen.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "mobility"},

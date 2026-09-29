@@ -49,7 +49,7 @@
     },
     "sprint": {
       "name": "Sprint", "location": "reise", "minutes": 40,
-      "note": "Draußen, auf ebener Fläche. Jeder Lauf mit voller Konzentration.",
+      "note": "Draußen, ebene Fläche, volle Konzentration.",
       "warmup": ["run_prep", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "at-s-1", "name": "Beschleunigung 10 m", "sets": 6, "reps": "10 m", "prog": "none", "rest": 90}},
@@ -70,7 +70,6 @@
     },
     "bonus": {
       "name": "Bonus: Seil und Füße", "location": "home", "minutes": 35,
-      "note": "Nur bei fünf Tagen. Sprunggelenke und Schienbein als Unterbau für Sprint und Sprung.",
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-ol-r", "name": "Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 20, "rounds": 8}, "prog": "none"}},
