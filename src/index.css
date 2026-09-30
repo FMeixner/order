@@ -325,3 +325,4 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .bar-fill.foe { background: var(--red); }
 .raven-cup { border-top: 1px dashed var(--border-lit); padding-top: 8px; margin-top: 8px; font-style: italic; }
 .card.raven hr, .collapse-body hr { border: 0; border-top: 1px solid var(--border); margin: 12px 0; }
+.raven-headline { font-family: var(--display); letter-spacing: 0.04em; }

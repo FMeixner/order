@@ -1,7 +1,7 @@
-/* Der Rabe erzählt: Wochenbericht auf „Heute“, Chronik im Log, Turnier in der Testwoche, Einstellungen im Setup. */
+/* Erzähler (Der Aschekurier): Ausgabe der Woche auf „Heute“, Archiv im Log, Turnierbeilage in der Testwoche, Einstellungen im Setup. */
 import { useRef, useState } from "react";
 import { FOCUS_BY_ID } from "../data";
-import { chapterOf, checkPack, GENERIC_PACK, tournamentOf, type Line } from "../engine/saga";
+import { chapterOf, checkPack, GENERIC_PACK, narratorOf, tournamentOf, type Line } from "../engine/saga";
 import { isTestBlock, weekInBlock } from "../engine/plan";
 import type { AppState, PlanBlock } from "../types";
 import { Collapse, Field, Seg } from "./common";
@@ -10,7 +10,7 @@ type Update = (fn: (s: AppState) => AppState) => void;
 
 export const ravenOn = (s: AppState) => !!s.narrative?.on;
 
-export function RavenLines({ lines }: { lines: Line[] }) {
+export function RavenLines({ lines, aside = "In eigener Sache" }: { lines: Line[]; aside?: string }) {
   return (
     <div className="raven-lines">
       {lines.map((l, i) => {
@@ -32,9 +32,13 @@ export function RavenLines({ lines }: { lines: Line[] }) {
               </div>
             );
           }
-          case "aside": return <p key={i} className="raven-aside">Der Rabe merkt an: {l.text}</p>;
+          case "aside": return <p key={i} className="raven-aside"><strong>{aside}:</strong> {l.text}</p>;
           case "stat": return <p key={i} className="muted small">{l.text}</p>;
-          default: return <p key={i}>{l.text}</p>;
+          default: {
+            // Flugblatt: Schlagzeile in Großbuchstaben am Anfang fett
+            const m = l.text.match(/^([A-ZÄÖÜ][A-ZÄÖÜ ]{3,}[.:!])\s(.*)$/s);
+            return m ? <p key={i}><strong className="raven-headline">{m[1]}</strong> {m[2]}</p> : <p key={i}>{l.text}</p>;
+          }
         }
       })}
     </div>
@@ -53,7 +57,8 @@ export function RavenToday({ state, update, block, today }: { state: AppState; u
     setOpen((o) => !o);
     if (state.narrative?.seen !== key) update((st) => ({ ...st, narrative: { ...st.narrative!, seen: key } }));
   };
-  const title = showWeek ? (ch.ended ? "Der Rabe: Finale" : `Der Rabe: Woche ${showWeek.week}`) : "Der Rabe: Prolog";
+  const nr = narratorOf(state);
+  const title = showWeek ? (ch.ended ? `${nr.name}: ${nr.special}` : `${nr.name}: ${nr.issue} ${showWeek.week}`) : `${nr.name}: ${nr.first}`;
   return (
     <section className="card collapse raven">
       <button className="collapse-head" onClick={toggle} aria-expanded={open}>
@@ -63,9 +68,9 @@ export function RavenToday({ state, update, block, today }: { state: AppState; u
       </button>
       {open && (
         <div className="collapse-body">
-          <RavenLines lines={showWeek ? showWeek.lines : ch.prologue} />
-          {ch.ended && <><hr /><RavenLines lines={ch.saga} /></>}
-          {showWeek && <p className="muted small">Die ganze Geschichte steht im Log unter „Chronik des Raben“.</p>}
+          <RavenLines lines={showWeek ? showWeek.lines : ch.prologue} aside={nr.aside} />
+          {ch.ended && <><hr /><RavenLines lines={ch.saga} aside={nr.aside} /></>}
+          {showWeek && <p className="muted small">Alle Ausgaben stehen im Log unter „{nr.archive}“.</p>}
         </div>
       )}
     </section>
@@ -76,15 +81,16 @@ export function RavenToday({ state, update, block, today }: { state: AppState; u
 export function RavenChronicle({ state, today }: { state: AppState; today: string }) {
   const blocks = state.plan.filter((b) => !isTestBlock(b) && FOCUS_BY_ID[b.focusId] && b.start <= today).sort((a, b) => b.start.localeCompare(a.start));
   if (!blocks.length) return null;
+  const nr = narratorOf(state);
   return (
-    <Collapse title="Chronik des Raben" meta={`${blocks.length} ${blocks.length === 1 ? "Orden" : "Orden"}`}>
+    <Collapse title={nr.archive} meta={`${blocks.length} Orden`}>
       <div className="stack">
         {blocks.map((b) => {
           const ch = chapterOf(state, b, today);
           return (
             <Collapse key={b.id} title={ch.scene.name} meta={`${FOCUS_BY_ID[b.focusId].name}${ch.ended ? " · abgeschlossen" : ` · Woche ${ch.weeks.length}`}`}>
-              {ch.ended && <RavenLines lines={ch.saga} />}
-              {ch.ended ? <Collapse title="Alle Wochenberichte" meta={`${ch.weeks.length} Wochen`}><Weeks ch={ch} /></Collapse> : <><RavenLines lines={ch.prologue.slice(1)} /><Weeks ch={ch} /></>}
+              {ch.ended && <RavenLines lines={ch.saga} aside={nr.aside} />}
+              {ch.ended ? <Collapse title="Alle Ausgaben" meta={`${ch.weeks.length} Wochen`}><Weeks ch={ch} aside={nr.aside} /></Collapse> : <><RavenLines lines={ch.prologue.slice(1)} aside={nr.aside} /><Weeks ch={ch} aside={nr.aside} /></>}
             </Collapse>
           );
         })}
@@ -93,13 +99,13 @@ export function RavenChronicle({ state, today }: { state: AppState; today: strin
   );
 }
 
-function Weeks({ ch }: { ch: ReturnType<typeof chapterOf> }) {
+function Weeks({ ch, aside }: { ch: ReturnType<typeof chapterOf>; aside: string }) {
   return (
     <>
       {ch.weeks.map((w) => (
         <div key={w.week}>
           <h3 className="raven-head small">Woche {w.week}</h3>
-          <RavenLines lines={w.lines} />
+          <RavenLines lines={w.lines} aside={aside} />
         </div>
       ))}
     </>
@@ -111,7 +117,7 @@ export function RavenTournament({ state, block, today }: { state: AppState; bloc
   const t = tournamentOf(state, block, today);
   return (
     <section className="card raven">
-      <h3 className="raven-head">Das Turnier der Klingen</h3>
+      <h3 className="raven-head">{narratorOf(state).tournament}: Das Turnier der Klingen</h3>
       <div className="raven-lines"><p>{t.intro}</p></div>
     </section>
   );
@@ -133,7 +139,7 @@ export function NarrativeSettings({ state, update }: { state: AppState; update: 
   return (
     <Collapse title="Erzähler" meta={n.on ? `an · ${packName}` : "aus"}>
       <div className="stack">
-        <p className="muted small">Ein Rabe erzählt deine Trainingswochen als Geschichte: ein Widersacher je Orden, ein Bericht pro Woche, am Ende eine Saga. Die Testwoche wird zum Turnier. Am Training ändert sich nichts. Ausgeschaltet verschwindet nur der Text, beim Einschalten ist die Geschichte bis heute sofort da.</p>
+        <p className="muted small">Der Aschekurier, ein Flugblatt, berichtet über deine Trainingswochen: ein Widersacher je Orden, eine Ausgabe pro Woche, am Ende eine Sonderausgabe. Die Testwoche wird zum Turnier. Am Training ändert sich nichts. Ausgeschaltet verschwindet nur der Text, beim Einschalten ist die Geschichte bis heute sofort da.</p>
         <Seg value={n.on ? "on" : "off"} options={[{ value: "off", label: "aus" }, { value: "on", label: "an" }]} onChange={(v) => set({ on: v === "on" })} />
         {n.on && (
           <>

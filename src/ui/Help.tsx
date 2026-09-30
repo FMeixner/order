@@ -57,9 +57,9 @@ export function Help() {
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem ersten Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
-      <h3>Der Rabe (Erzähler)</h3>
+      <h3>Der Aschekurier (Erzähler)</h3>
       <ul>
-        <li>Unter Setup › Erzähler einschalten. Ein Rabe erzählt jeden Orden als Geschichte mit Widersacher, drei Akten und einer Saga am Ende. Der Wochenbericht steht auf <em>Heute</em>, die ganze Chronik im Log.</li>
+        <li>Unter Setup › Erzähler einschalten. Ein Flugblatt berichtet über jeden Orden: ein Widersacher als Endgegner, die Bestien sind sein Gefolge. Die Ausgabe der Woche steht auf <em>Heute</em>, alle Ausgaben im Log, am Ende eine Sonderausgabe.</li>
         <li>Einheiten treffen den Widersacher. Volle Wochen, Bestzeiten und mehr Gewicht treffen zusätzlich, einer davon doppelt (die Schwachstelle). Ein W20 pro Woche würzt: 20 ist ein kritischer Treffer, 1 ein harmloser Patzer. Die Würfel stehen fest, Neuladen ändert nichts.</li>
         <li>Ruhige Wochen kosten nichts. Der Widersacher fällt nie vor dem letzten Akt; mit etwa 90 % der Einheiten ist er besiegt, sonst entkommt er gezeichnet.</li>
         <li>Die Testwoche wird zum Turnier der Klingen. Jede Klinge muss neu verdient werden: besser, gehalten (im Messfehler) oder diesmal nicht.</li>

@@ -1,8 +1,28 @@
 {
-  "_info": "Welt-Paket für den Erzähler (der Rabe). Generische Dark Steamfantasy ohne feste Orte und Götter. Eigene Welten als JSON mit demselben Aufbau unter Setup › Erzähler laden: Nur Felder, die du angibst, ersetzen die hier. Platzhalter: {held}/{Held} (Name oder die Heldin/der Held), {sie}/{Sie} (sie/er), {ihn} (sie/ihn), {ihm} (ihr/ihm), {ihr}/{Ihr} (ihr/sein, Endung selbst anhängen: {ihr}e), {die}/{Die} (die/der), {in} (in oder leer, für Berufsnamen), {feind}/{Feind}, {feind_dat}, {feind_akk}, {fp} (er/sie des Widersachers), {ort}, {schar}, {bestie}, {n}, {von}, {stellen} (einer Stelle / 3 Stellen), {mal} (einmal / 3-mal), {beiname}, {vorsieg}, {vorfeind_akk}, {vorfeind_dat}, {klinge}. Beinamen stehen immer in Anführungszeichen im Nominativ.",
+  "_info": "Welt-Paket für den Erzähler (Der Aschekurier, ein Flugblatt). Generische Dark Steamfantasy ohne feste Orte und Götter. Eigene Welten als JSON mit demselben Aufbau unter Setup › Erzähler laden: Nur Felder, die du angibst, ersetzen die hier. Platzhalter: {held}/{Held} (Name oder die Heldin/der Held), {sie}/{Sie} (sie/er), {ihn} (sie/ihn), {ihm} (ihr/ihm), {ihr}/{Ihr} (ihr/sein, Endung selbst anhängen: {ihr}e), {die}/{Die} (die/der), {in} (in oder leer, für Berufsnamen), {feind}/{Feind}, {feind_dat}, {feind_akk}, {feind_gen} (des Laternenmanns), {fp} (er/sie des Widersachers), {ort}, {schar}, {bestie}, {n}, {von}, {stellen} (einer Stelle / 3 Stellen), {mal} (einmal / 3-mal), {beiname}, {vorsieg}, {vorfeind_akk}, {vorfeind_dat}, {klinge}, {desc} und {weak} (nur in foe_intro und weak_intro). Beinamen stehen immer in Anführungszeichen im Nominativ.",
   "id": "rauch",
   "name": "Rauch und Zahnrad",
   "desc": "Dark Steamfantasy: Gaslicht, Kohlenrauch, Uhrwerk und alte Wälder. Ohne feste Orte und Götter.",
+  "narrator": {
+    "name": "Der Aschekurier",
+    "archive": "Archiv des Aschekuriers",
+    "issue": "Ausgabe",
+    "first": "Erstausgabe",
+    "special": "Sonderausgabe",
+    "finale": "Letzte Ausgabe",
+    "aside": "In eigener Sache",
+    "tournament": "Turnierbeilage",
+    "acts": [
+      "",
+      "Die Lage spitzt sich zu",
+      "Entscheidung naht"
+    ],
+    "parts": [
+      "Erste Wochen",
+      "Mittlere Wochen",
+      "Letzte Wochen"
+    ]
+  },
   "weak": {
     "bestie": "Bestzeiten treffen doppelt.",
     "stahl": "Jede Gewichtssteigerung trifft doppelt.",
@@ -10,313 +30,712 @@
   },
   "default": "stadt",
   "orders": {
-    "assassin": "stadt", "witcher": "wildnis", "huntsman": "wildnis", "gladiator": "arena", "pugilist": "arena",
-    "smith": "schmiede", "knight": "schmiede", "troubadour": "schmiede", "herald": "schmiede",
-    "soldier": "front", "conqueror": "front", "monk": "kloster", "initiate": "kloster", "alchemist": "turm",
-    "king": "hof", "acrobat": "hoehen", "olympian": "hoehen", "pilgrim": "strasse", "harlequin": "jahrmarkt"
+    "assassin": "stadt",
+    "witcher": "wildnis",
+    "huntsman": "wildnis",
+    "gladiator": "arena",
+    "pugilist": "arena",
+    "smith": "schmiede",
+    "knight": "schmiede",
+    "troubadour": "schmiede",
+    "herald": "schmiede",
+    "soldier": "front",
+    "conqueror": "front",
+    "monk": "kloster",
+    "initiate": "kloster",
+    "alchemist": "turm",
+    "king": "hof",
+    "acrobat": "hoehen",
+    "olympian": "hoehen",
+    "pilgrim": "strasse",
+    "harlequin": "jahrmarkt"
   },
   "scenes": {
     "stadt": {
-      "name": "Die Stadt unter dem Ruß", "ort": "in der Stadt",
+      "name": "Die Stadt unter dem Ruß",
+      "ort": "in der Stadt",
       "setting": [
         "Die Stadt atmet Kohlenrauch. Gaslaternen zischen über den Kanälen, und auf den Dächern gehen Leute, die unten niemand kennen will.",
         "Nebel liegt in den Kanälen, Zahnräder knirschen in den Glockentürmen. Wer hier nachts unterwegs ist, hat einen Grund oder ein Messer. Meist beides."
       ],
       "foes": [
-        { "nom": "der Laternenmann", "dat": "dem Laternenmann", "akk": "den Laternenmann", "pro": "er", "weak": "bestie", "desc": "Er löscht die Lichter eines Viertels nach dem anderen, und wo es dunkel wird, verschwinden Leute." },
-        { "nom": "die Rußwitwe", "dat": "der Rußwitwe", "akk": "die Rußwitwe", "pro": "sie", "weak": "treue", "desc": "Sie führt die Diebesgilde aus einem Uhrturm, aus dem noch niemand zurückgekommen ist, der nicht eingeladen war." },
-        { "nom": "der Kanzler aus Messing", "dat": "dem Kanzler aus Messing", "akk": "den Kanzler aus Messing", "pro": "er", "weak": "stahl", "desc": "Halb Mensch, halb Uhrwerk und ganz sicher, dass die Stadt ihm gehört." }
+        {
+          "nom": "der Laternenmann",
+          "dat": "dem Laternenmann",
+          "akk": "den Laternenmann",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Er löscht die Lichter eines Viertels nach dem anderen, und wo es dunkel wird, verschwinden Leute.",
+          "gen": "des Laternenmanns"
+        },
+        {
+          "nom": "die Rußwitwe",
+          "dat": "der Rußwitwe",
+          "akk": "die Rußwitwe",
+          "pro": "sie",
+          "weak": "treue",
+          "desc": "Sie führt die Diebesgilde aus einem Uhrturm, aus dem noch niemand zurückgekommen ist, der nicht eingeladen war.",
+          "gen": "der Rußwitwe"
+        },
+        {
+          "nom": "der Kanzler aus Messing",
+          "dat": "dem Kanzler aus Messing",
+          "akk": "den Kanzler aus Messing",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Halb Mensch, halb Uhrwerk und ganz sicher, dass die Stadt ihm gehört.",
+          "gen": "des Kanzlers aus Messing"
+        }
       ],
-      "schar": ["Uhrwerkwachen", "Kanalratten", "Spitzel der Stadtwache", "Dachschleicher"],
-      "epithets": ["{Die} Dachläufer{in}", "Schatten der Kanäle", "{Die} Unsichtbare", "Messer im Nebel"]
+      "schar": [
+        "Uhrwerkwachen",
+        "Kanalratten",
+        "Spitzel der Stadtwache",
+        "Dachschleicher"
+      ],
+      "epithets": [
+        "{Die} Dachläufer{in}",
+        "Schatten der Kanäle",
+        "{Die} Unsichtbare",
+        "Messer im Nebel"
+      ]
     },
     "wildnis": {
-      "name": "Die Grenzwälder", "ort": "in den Grenzwäldern",
+      "name": "Die Grenzwälder",
+      "ort": "in den Grenzwäldern",
       "setting": [
         "Hinter der letzten Bahnstation hört die Ordnung auf. Die Wälder sind alt, die Moore tief, und an den Anschlagbrettern hängen Verträge, die keiner zu Ende liest.",
         "Rostige Signalmasten ragen aus dem Moor. Irgendwer hat Silbernägel in die Türstürze der Dörfer geschlagen. Das hilft nicht, aber es beruhigt."
       ],
       "foes": [
-        { "nom": "die Moormutter", "dat": "der Moormutter", "akk": "die Moormutter", "pro": "sie", "weak": "treue", "desc": "Sie singt nachts im Schilf. Morgens fehlen Schafe, Wanderer, einmal ein ganzer Postwagen." },
-        { "nom": "der Eisenhirsch", "dat": "dem Eisenhirsch", "akk": "den Eisenhirsch", "pro": "er", "weak": "bestie", "desc": "Ein Hirsch mit einem Geweih aus Schienenstahl. Er ist schneller als der Nachtzug, und er weiß es." },
-        { "nom": "der Aschewolf", "dat": "dem Aschewolf", "akk": "den Aschewolf", "pro": "er", "weak": "stahl", "desc": "Wo er durchs Unterholz streift, bleibt graue Asche zurück und eine Stille, in der kein Vogel singt. Nicht mal ich." }
+        {
+          "nom": "die Moormutter",
+          "dat": "der Moormutter",
+          "akk": "die Moormutter",
+          "pro": "sie",
+          "weak": "treue",
+          "desc": "Sie singt nachts im Schilf. Morgens fehlen Schafe, Wanderer, einmal ein ganzer Postwagen.",
+          "gen": "der Moormutter"
+        },
+        {
+          "nom": "der Eisenhirsch",
+          "dat": "dem Eisenhirsch",
+          "akk": "den Eisenhirsch",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Ein Hirsch mit einem Geweih aus Schienenstahl. Er ist schneller als der Nachtzug, und er weiß es.",
+          "gen": "des Eisenhirschs"
+        },
+        {
+          "nom": "der Aschewolf",
+          "dat": "dem Aschewolf",
+          "akk": "den Aschewolf",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Wo er durchs Unterholz streift, bleibt graue Asche zurück und eine Stille, in der kein Vogel singt. Nicht einmal die Krähen.",
+          "gen": "des Aschewolfs"
+        }
       ],
-      "schar": ["Irrlichter", "Moorghule", "Wegelagerer", "verwilderte Uhrwerkhunde"],
-      "epithets": ["{Die} vom Moor", "Silbernagel", "{Die} Grenzgänger{in}", "{Die} mit dem Silber"]
+      "schar": [
+        "Irrlichter",
+        "Moorghule",
+        "Wegelagerer",
+        "verwilderte Uhrwerkhunde"
+      ],
+      "epithets": [
+        "{Die} vom Moor",
+        "Silbernagel",
+        "{Die} Grenzgänger{in}",
+        "{Die} mit dem Silber"
+      ]
     },
     "arena": {
-      "name": "Die Grube", "ort": "in der Grube",
+      "name": "Die Grube",
+      "ort": "in der Grube",
       "setting": [
         "Unter der alten Gießerei liegt eine Grube aus Ziegel und Sand. Oben zischen die Kessel, unten brüllen die Wettbuden. Man kämpft hier nicht für Ruhm. Man kämpft für die Quote.",
         "Dampf von oben, Sand von unten, Geld in allen Richtungen. Die Grube hat nur eine Regel: Wer steht, wenn die Glocke schlägt, hat recht."
       ],
       "foes": [
-        { "nom": "der Champion mit der Dampffaust", "dat": "dem Champion mit der Dampffaust", "akk": "den Champion mit der Dampffaust", "pro": "er", "weak": "stahl", "desc": "Sein rechter Arm ist ein Kolben. Sein linker auch, seit dem letzten Jahr." },
-        { "nom": "die Buchmacherin", "dat": "der Buchmacherin", "akk": "die Buchmacherin", "pro": "sie", "weak": "treue", "desc": "Sie kämpft nie selbst. Sie lässt kämpfen, und sie gewinnt immer. Fast immer." },
-        { "nom": "der Unbesiegte", "dat": "dem Unbesiegten", "akk": "den Unbesiegten", "pro": "er", "weak": "bestie", "desc": "Zweiundachtzig Kämpfe, zweiundachtzig Siege. Er zählt mit, laut, bei jedem Frühstück." }
+        {
+          "nom": "der Champion mit der Dampffaust",
+          "dat": "dem Champion mit der Dampffaust",
+          "akk": "den Champion mit der Dampffaust",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Sein rechter Arm ist ein Kolben. Sein linker auch, seit dem letzten Jahr.",
+          "gen": "des Champions mit der Dampffaust"
+        },
+        {
+          "nom": "die Buchmacherin",
+          "dat": "der Buchmacherin",
+          "akk": "die Buchmacherin",
+          "pro": "sie",
+          "weak": "treue",
+          "desc": "Sie kämpft nie selbst. Sie lässt kämpfen, und sie gewinnt immer. Fast immer.",
+          "gen": "der Buchmacherin"
+        },
+        {
+          "nom": "der Unbesiegte",
+          "dat": "dem Unbesiegten",
+          "akk": "den Unbesiegten",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Zweiundachtzig Kämpfe, zweiundachtzig Siege. Er zählt mit, laut, bei jedem Frühstück.",
+          "gen": "des Unbesiegten"
+        }
       ],
-      "schar": ["Grubenkämpfer", "Schläger der Buchmacher", "Neulinge mit großen Sprüchen", "Wettbetrüger"],
-      "epithets": ["{Die} Unverwüstliche", "Liebling der Ränge", "Glockenschlag", "{Die} aus der Grube"]
+      "schar": [
+        "Grubenkämpfer",
+        "Schläger der Buchmacher",
+        "Neulinge mit großen Sprüchen",
+        "Wettbetrüger"
+      ],
+      "epithets": [
+        "{Die} Unverwüstliche",
+        "Liebling der Ränge",
+        "Glockenschlag",
+        "{Die} aus der Grube"
+      ]
     },
     "schmiede": {
-      "name": "Das Gießereiviertel", "ort": "im Gießereiviertel",
+      "name": "Das Gießereiviertel",
+      "ort": "im Gießereiviertel",
       "setting": [
         "Dampfhämmer schlagen den Takt, die Luft schmeckt nach Eisen. Im Gießereiviertel zählt nur, was man heben kann, und was man gehoben hat, steht im Zunftbuch.",
         "Die Zunft prüft jedes Frühjahr, wer Meister heißen darf. Die Prüfung ist schwer, der Stahl ist schwerer, und der Zunftmeister ist am schwersten zu beeindrucken."
       ],
       "foes": [
-        { "nom": "der Zunftmeister", "dat": "dem Zunftmeister", "akk": "den Zunftmeister", "pro": "er", "weak": "stahl", "desc": "Er hat noch nie gelächelt. Man sagt, er hat es einmal versucht, und ein Kessel ist explodiert." },
-        { "nom": "der Kessel, der nicht erkaltet", "dat": "dem Kessel, der nicht erkaltet", "akk": "den Kessel, der nicht erkaltet", "pro": "er", "weak": "treue", "desc": "Tief unter der Gießerei glüht ein Kessel, den seit hundert Jahren niemand löschen kann. Er wächst." },
-        { "nom": "die Schwarze Esse", "dat": "der Schwarzen Esse", "akk": "die Schwarze Esse", "pro": "sie", "weak": "bestie", "desc": "Eine Schmiede, die nachts von selbst arbeitet. Was sie schmiedet, läuft morgens davon." }
+        {
+          "nom": "der Zunftmeister",
+          "dat": "dem Zunftmeister",
+          "akk": "den Zunftmeister",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Er hat noch nie gelächelt. Man sagt, er hat es einmal versucht, und ein Kessel ist explodiert.",
+          "gen": "des Zunftmeisters"
+        },
+        {
+          "nom": "der Kessel, der nicht erkaltet",
+          "dat": "dem Kessel, der nicht erkaltet",
+          "akk": "den Kessel, der nicht erkaltet",
+          "pro": "er",
+          "weak": "treue",
+          "desc": "Tief unter der Gießerei glüht ein Kessel, den seit hundert Jahren niemand löschen kann. Er wächst.",
+          "gen": "des Kessels, der nicht erkaltet"
+        },
+        {
+          "nom": "die Schwarze Esse",
+          "dat": "der Schwarzen Esse",
+          "akk": "die Schwarze Esse",
+          "pro": "sie",
+          "weak": "bestie",
+          "desc": "Eine Schmiede, die nachts von selbst arbeitet. Was sie schmiedet, läuft morgens davon.",
+          "gen": "der Schwarzen Esse"
+        }
       ],
-      "schar": ["Zunftprüfer", "Gesellen mit dicken Armen", "rostige Hebekräne", "Schlackenkobolde"],
-      "epithets": ["{Die} Eiserne", "Meister{in} am Amboss", "{Die} Unbeugsame", "Hammerschlag"]
+      "schar": [
+        "Zunftprüfer",
+        "Gesellen mit dicken Armen",
+        "rostige Hebekräne",
+        "Schlackenkobolde"
+      ],
+      "epithets": [
+        "{Die} Eiserne",
+        "Meister{in} am Amboss",
+        "{Die} Unbeugsame",
+        "Hammerschlag"
+      ]
     },
     "front": {
-      "name": "Die Front", "ort": "an der Front",
+      "name": "Die Front",
+      "ort": "an der Front",
       "setting": [
         "Ein Schienenstrang, eine Garnison, ein Horizont aus Stacheldraht und Rauch. Niemand weiß mehr genau, gegen wen der Krieg geht. Man marschiert trotzdem.",
         "Panzerzüge rollen nachts, damit man sie nicht zählen kann. In der Garnison zählt man sowieso nur Stiefel, Rationen und Tage."
       ],
       "foes": [
-        { "nom": "der Belagerer", "dat": "dem Belagerer", "akk": "den Belagerer", "pro": "er", "weak": "treue", "desc": "Er hat Zeit. Das ist seine ganze Strategie, und sie funktioniert erschreckend gut." },
-        { "nom": "die Eiserne Kolonne", "dat": "der Eisernen Kolonne", "akk": "die Eiserne Kolonne", "pro": "sie", "weak": "stahl", "desc": "Eine Marschkolonne aus Menschen und Maschinen, die nie rastet. Man hört sie Tage vorher." },
-        { "nom": "der Oberst ohne Gesicht", "dat": "dem Oberst ohne Gesicht", "akk": "den Oberst ohne Gesicht", "pro": "er", "weak": "bestie", "desc": "Seine Befehle kommen per Rohrpost. Gesehen hat ihn niemand, gehorcht haben ihm alle." }
+        {
+          "nom": "der Belagerer",
+          "dat": "dem Belagerer",
+          "akk": "den Belagerer",
+          "pro": "er",
+          "weak": "treue",
+          "desc": "Er hat Zeit. Das ist seine ganze Strategie, und sie funktioniert erschreckend gut.",
+          "gen": "des Belagerers"
+        },
+        {
+          "nom": "die Eiserne Kolonne",
+          "dat": "der Eisernen Kolonne",
+          "akk": "die Eiserne Kolonne",
+          "pro": "sie",
+          "weak": "stahl",
+          "desc": "Eine Marschkolonne aus Menschen und Maschinen, die nie rastet. Man hört sie Tage vorher.",
+          "gen": "der Eisernen Kolonne"
+        },
+        {
+          "nom": "der Oberst ohne Gesicht",
+          "dat": "dem Oberst ohne Gesicht",
+          "akk": "den Oberst ohne Gesicht",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Seine Befehle kommen per Rohrpost. Gesehen hat ihn niemand, gehorcht haben ihm alle.",
+          "gen": "des Obersts ohne Gesicht"
+        }
       ],
-      "schar": ["Späher", "Sappeure", "Deserteure", "Gasmasken-Patrouillen"],
-      "epithets": ["{Die} Standhafte", "Eiserne Ration", "{Die} vom letzten Posten", "Marschtakt"]
+      "schar": [
+        "Späher",
+        "Sappeure",
+        "Deserteure",
+        "Gasmasken-Patrouillen"
+      ],
+      "epithets": [
+        "{Die} Standhafte",
+        "Eiserne Ration",
+        "{Die} vom letzten Posten",
+        "Marschtakt"
+      ]
     },
     "kloster": {
-      "name": "Das Kloster im Nebel", "ort": "im Kloster",
+      "name": "Das Kloster im Nebel",
+      "ort": "im Kloster",
       "setting": [
         "Hoch über den Rauchschwaden liegt ein Kloster, in dem die Uhren absichtlich falsch gehen. Die Mönche sagen, so lerne man, auf den eigenen Atem zu hören.",
         "Im Kloster wird wenig gesprochen und viel gegangen. Treppen, Treppen, Treppen. Wer oben ankommt, bekommt Tee. Wer fragt, warum, bekommt noch mehr Treppen."
       ],
       "foes": [
-        { "nom": "die Unrast", "dat": "der Unrast", "akk": "die Unrast", "pro": "sie", "weak": "treue", "desc": "Kein Wesen aus Fleisch. Ein Flüstern, das sagt: morgen. Morgen fängst du an. Morgen ist genug Zeit." },
-        { "nom": "der Graue Abt", "dat": "dem Grauen Abt", "akk": "den Grauen Abt", "pro": "er", "weak": "bestie", "desc": "Er hat das Kloster vor zweihundert Jahren gegründet und ist nie gegangen. Auch nicht, als er hätte gehen sollen." },
-        { "nom": "der Schatten auf der Treppe", "dat": "dem Schatten auf der Treppe", "akk": "den Schatten auf der Treppe", "pro": "er", "weak": "stahl", "desc": "Er sitzt auf der dritthöchsten Stufe und macht jede weitere schwerer." }
+        {
+          "nom": "die Unrast",
+          "dat": "der Unrast",
+          "akk": "die Unrast",
+          "pro": "sie",
+          "weak": "treue",
+          "desc": "Kein Wesen aus Fleisch. Ein Flüstern, das sagt: morgen. Morgen fängst du an. Morgen ist genug Zeit.",
+          "gen": "der Unrast"
+        },
+        {
+          "nom": "der Graue Abt",
+          "dat": "dem Grauen Abt",
+          "akk": "den Grauen Abt",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Er hat das Kloster vor zweihundert Jahren gegründet und ist nie gegangen. Auch nicht, als er hätte gehen sollen.",
+          "gen": "des Grauen Abts"
+        },
+        {
+          "nom": "der Schatten auf der Treppe",
+          "dat": "dem Schatten auf der Treppe",
+          "akk": "den Schatten auf der Treppe",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Er sitzt auf der dritthöchsten Stufe und macht jede weitere schwerer.",
+          "gen": "des Schattens auf der Treppe"
+        }
       ],
-      "schar": ["Zweifel", "Ausreden", "ungeduldige Novizen", "knarrende Stufen"],
-      "epithets": ["{Die} Stille", "{Die} mit dem ruhigen Atem", "Treppensteiger{in}", "Hüter{in} der falschen Uhren"]
+      "schar": [
+        "Zweifel",
+        "Ausreden",
+        "ungeduldige Novizen",
+        "knarrende Stufen"
+      ],
+      "epithets": [
+        "{Die} Stille",
+        "{Die} mit dem ruhigen Atem",
+        "Treppensteiger{in}",
+        "Hüter{in} der falschen Uhren"
+      ]
     },
     "turm": {
-      "name": "Das Laboratorium", "ort": "im Laboratorium",
+      "name": "Das Laboratorium",
+      "ort": "im Laboratorium",
       "setting": [
         "Ein Turm voller Kolben, Röhren und Messinginstrumente. Hier wird alles gemessen, langsam und geduldig, bis es sich fügt.",
         "Im Laboratorium brodelt es leise. Die Alchemie lehrt, dass nichts sich erzwingen lässt. Man kann es nur lange genug halten."
       ],
       "foes": [
-        { "nom": "die Versteinerung", "dat": "der Versteinerung", "akk": "die Versteinerung", "pro": "sie", "weak": "treue", "desc": "Ein Fluch, der langsam kommt: erst die Hüften, dann die Schultern, dann der Wille." },
-        { "nom": "der Homunkulus", "dat": "dem Homunkulus", "akk": "den Homunkulus", "pro": "er", "weak": "bestie", "desc": "Aus einem missglückten Experiment entstanden. Klein, flink und sehr beleidigt." },
-        { "nom": "der Meister der Waage", "dat": "dem Meister der Waage", "akk": "den Meister der Waage", "pro": "er", "weak": "stahl", "desc": "Er wiegt alles, auch Seelen. Bisher hat er an jeder etwas auszusetzen gehabt." }
+        {
+          "nom": "die Versteinerung",
+          "dat": "der Versteinerung",
+          "akk": "die Versteinerung",
+          "pro": "sie",
+          "weak": "treue",
+          "desc": "Ein Fluch, der langsam kommt: erst die Hüften, dann die Schultern, dann der Wille.",
+          "gen": "der Versteinerung"
+        },
+        {
+          "nom": "der Homunkulus",
+          "dat": "dem Homunkulus",
+          "akk": "den Homunkulus",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Aus einem missglückten Experiment entstanden. Klein, flink und sehr beleidigt.",
+          "gen": "des Homunkulus"
+        },
+        {
+          "nom": "der Meister der Waage",
+          "dat": "dem Meister der Waage",
+          "akk": "den Meister der Waage",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Er wiegt alles, auch Seelen. Bisher hat er an jeder etwas auszusetzen gehabt.",
+          "gen": "des Meisters der Waage"
+        }
       ],
-      "schar": ["entlaufene Destillate", "Rostmotten", "starre Gelenke", "ungeduldige Lehrlinge"],
-      "epithets": ["{Die} Geschmeidige", "Hüter{in} der Waage", "Quecksilber", "{Die} Geduldige"]
+      "schar": [
+        "entlaufene Destillate",
+        "Rostmotten",
+        "starre Gelenke",
+        "ungeduldige Lehrlinge"
+      ],
+      "epithets": [
+        "{Die} Geschmeidige",
+        "Hüter{in} der Waage",
+        "Quecksilber",
+        "{Die} Geduldige"
+      ]
     },
     "hof": {
-      "name": "Der Hof", "ort": "bei Hofe",
+      "name": "Der Hof",
+      "ort": "bei Hofe",
       "setting": [
         "Kristalllüster, Dampforgeln, Intrigen zwischen den Gängen des Banketts. Bei Hofe kämpft man mit einem Lächeln, und die Pausen sind so wichtig wie die Hiebe.",
         "Der Thron ist aus Messing und Eichenholz, und er knarrt, wenn jemand darauf lügt. Er knarrt fast immer."
       ],
       "foes": [
-        { "nom": "die Graue Eminenz", "dat": "der Grauen Eminenz", "akk": "die Graue Eminenz", "pro": "sie", "weak": "treue", "desc": "Sie sitzt nie auf dem Thron. Sie steht nur immer dicht daneben." },
-        { "nom": "der Thronräuber", "dat": "dem Thronräuber", "akk": "den Thronräuber", "pro": "er", "weak": "bestie", "desc": "Schnell mit dem Dolch, schneller mit Ausreden." },
-        { "nom": "der Hofmagier", "dat": "dem Hofmagier", "akk": "den Hofmagier", "pro": "er", "weak": "stahl", "desc": "Seine Zauber sind zur Hälfte Chemie und zur Hälfte Theater. Die Hälfte mit dem Theater ist gefährlicher." }
+        {
+          "nom": "die Graue Eminenz",
+          "dat": "der Grauen Eminenz",
+          "akk": "die Graue Eminenz",
+          "pro": "sie",
+          "weak": "treue",
+          "desc": "Sie sitzt nie auf dem Thron. Sie steht nur immer dicht daneben.",
+          "gen": "der Grauen Eminenz"
+        },
+        {
+          "nom": "der Thronräuber",
+          "dat": "dem Thronräuber",
+          "akk": "den Thronräuber",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Schnell mit dem Dolch, schneller mit Ausreden.",
+          "gen": "des Thronräubers"
+        },
+        {
+          "nom": "der Hofmagier",
+          "dat": "dem Hofmagier",
+          "akk": "den Hofmagier",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Seine Zauber sind zur Hälfte Chemie und zur Hälfte Theater. Die Hälfte mit dem Theater ist gefährlicher.",
+          "gen": "des Hofmagiers"
+        }
       ],
-      "schar": ["Höflinge", "Giftmischer", "Lakaien", "Spione hinter Gobelins"],
-      "epithets": ["{Die} Königsmacher{in}", "Klinge der Krone", "{Die} Unbestechliche", "Faust im Samthandschuh"]
+      "schar": [
+        "Höflinge",
+        "Giftmischer",
+        "Lakaien",
+        "Spione hinter Gobelins"
+      ],
+      "epithets": [
+        "{Die} Königsmacher{in}",
+        "Klinge der Krone",
+        "{Die} Unbestechliche",
+        "Faust im Samthandschuh"
+      ]
     },
     "hoehen": {
-      "name": "Die Höhen", "ort": "über den Dächern",
+      "name": "Die Höhen",
+      "ort": "über den Dächern",
       "setting": [
         "Luftschiffe hängen an Ankermasten, zwischen den Glockentürmen spannen sich Seile. Hier oben zählt, wer springt und wer landet.",
         "Der Wind riecht nach Kohle und Regen. Unten ist die Stadt, oben sind die Mutigen, dazwischen ist nur Luft."
       ],
       "foes": [
-        { "nom": "die Schwerkraft", "dat": "der Schwerkraft", "akk": "die Schwerkraft", "pro": "sie", "weak": "stahl", "desc": "Sie ist überall, sie ist geduldig, und sie hat noch nie verloren. Bis jetzt." },
-        { "nom": "der Sturmreiter", "dat": "dem Sturmreiter", "akk": "den Sturmreiter", "pro": "er", "weak": "bestie", "desc": "Er springt von Luftschiff zu Luftschiff, und er hat noch nie ein Seil gebraucht." },
-        { "nom": "der Luftpirat", "dat": "dem Luftpiraten", "akk": "den Luftpiraten", "pro": "er", "weak": "treue", "desc": "Er kapert Ankermasten und verlangt Wegzoll für den Himmel." }
+        {
+          "nom": "die Schwerkraft",
+          "dat": "der Schwerkraft",
+          "akk": "die Schwerkraft",
+          "pro": "sie",
+          "weak": "stahl",
+          "desc": "Sie ist überall, sie ist geduldig, und sie hat noch nie verloren. Bis jetzt.",
+          "gen": "der Schwerkraft"
+        },
+        {
+          "nom": "der Sturmreiter",
+          "dat": "dem Sturmreiter",
+          "akk": "den Sturmreiter",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Er springt von Luftschiff zu Luftschiff, und er hat noch nie ein Seil gebraucht.",
+          "gen": "des Sturmreiters"
+        },
+        {
+          "nom": "der Luftpirat",
+          "dat": "dem Luftpiraten",
+          "akk": "den Luftpiraten",
+          "pro": "er",
+          "weak": "treue",
+          "desc": "Er kapert Ankermasten und verlangt Wegzoll für den Himmel.",
+          "gen": "des Luftpiraten"
+        }
       ],
-      "schar": ["Luftpiraten", "Möwen", "rostige Ankerseile", "Böen"],
-      "epithets": ["{Die} Fliegende", "Leichtfuß", "{Die} über den Dächern", "Sturmspringer{in}"]
+      "schar": [
+        "Luftpiraten",
+        "Möwen",
+        "rostige Ankerseile",
+        "Böen"
+      ],
+      "epithets": [
+        "{Die} Fliegende",
+        "Leichtfuß",
+        "{Die} über den Dächern",
+        "Sturmspringer{in}"
+      ]
     },
     "strasse": {
-      "name": "Der lange Weg", "ort": "unterwegs",
+      "name": "Der lange Weg",
+      "ort": "unterwegs",
       "setting": [
         "Die Straße folgt den Schienen durch Ascheebenen und stille Dörfer. Pilger gehen sie seit Jahrhunderten, und keiner weiß mehr genau, wohin sie führt. Das, sagen die Pilger, ist der Punkt.",
         "Meilensteine aus Gusseisen, alle paar Stunden ein Bahnwärterhaus mit dünnem Tee. Der Weg ist lang, aber er ist ehrlich: Jeder Schritt zählt, auch der langsame."
       ],
       "foes": [
-        { "nom": "der Aschesturm", "dat": "dem Aschesturm", "akk": "den Aschesturm", "pro": "er", "weak": "treue", "desc": "Er kommt aus den Ebenen, und er wartet darauf, dass man stehen bleibt." },
-        { "nom": "der Wegelagerer mit der Taschenuhr", "dat": "dem Wegelagerer mit der Taschenuhr", "akk": "den Wegelagerer mit der Taschenuhr", "pro": "er", "weak": "bestie", "desc": "Er raubt niemandem Geld. Er raubt Zeit, und er stoppt sie mit." },
-        { "nom": "die Müdigkeit", "dat": "der Müdigkeit", "akk": "die Müdigkeit", "pro": "sie", "weak": "stahl", "desc": "Sie läuft neben einem her und erzählt, wie schön es wäre, sich hinzusetzen." }
+        {
+          "nom": "der Aschesturm",
+          "dat": "dem Aschesturm",
+          "akk": "den Aschesturm",
+          "pro": "er",
+          "weak": "treue",
+          "desc": "Er kommt aus den Ebenen, und er wartet darauf, dass man stehen bleibt.",
+          "gen": "des Aschesturms"
+        },
+        {
+          "nom": "der Wegelagerer mit der Taschenuhr",
+          "dat": "dem Wegelagerer mit der Taschenuhr",
+          "akk": "den Wegelagerer mit der Taschenuhr",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Er raubt niemandem Geld. Er raubt Zeit, und er stoppt sie mit.",
+          "gen": "des Wegelagerers mit der Taschenuhr"
+        },
+        {
+          "nom": "die Müdigkeit",
+          "dat": "der Müdigkeit",
+          "akk": "die Müdigkeit",
+          "pro": "sie",
+          "weak": "stahl",
+          "desc": "Sie läuft neben einem her und erzählt, wie schön es wäre, sich hinzusetzen.",
+          "gen": "der Müdigkeit"
+        }
       ],
-      "schar": ["Staubteufel", "Meilensteine", "Blasen an den Fersen", "Gegenwinde"],
-      "epithets": ["{Die} Unermüdliche", "Staub der Straße", "{Die} Weitgereiste", "Meilenfresser{in}"]
+      "schar": [
+        "Staubteufel",
+        "Meilensteine",
+        "Blasen an den Fersen",
+        "Gegenwinde"
+      ],
+      "epithets": [
+        "{Die} Unermüdliche",
+        "Staub der Straße",
+        "{Die} Weitgereiste",
+        "Meilenfresser{in}"
+      ]
     },
     "jahrmarkt": {
-      "name": "Der Jahrmarkt der Masken", "ort": "auf dem Jahrmarkt",
+      "name": "Der Jahrmarkt der Masken",
+      "ort": "auf dem Jahrmarkt",
       "setting": [
         "Ein Jahrmarkt, der jede Woche an einem anderen Ort steht. Dampfkarussells, Spiegelkabinette, und hinter jeder Bude ein anderes Spiel.",
         "Die Orgel spielt schief, die Karussells drehen sich rückwärts, und niemand trägt sein eigenes Gesicht. Willkommen."
       ],
       "foes": [
-        { "nom": "der Direktor mit den hundert Masken", "dat": "dem Direktor mit den hundert Masken", "akk": "den Direktor mit den hundert Masken", "pro": "er", "weak": "treue", "desc": "Jede Woche eine andere Maske. Darunter vermutlich noch eine." },
-        { "nom": "die Spiegelkönigin", "dat": "der Spiegelkönigin", "akk": "die Spiegelkönigin", "pro": "sie", "weak": "bestie", "desc": "Sie zeigt einem, wie man sein könnte, und verlangt dafür, dass man stehen bleibt und schaut." },
-        { "nom": "der Maschinenclown", "dat": "dem Maschinenclown", "akk": "den Maschinenclown", "pro": "er", "weak": "stahl", "desc": "Er lacht mit einer Dampfpfeife. Niemand hat je herausgefunden, worüber." }
+        {
+          "nom": "der Direktor mit den hundert Masken",
+          "dat": "dem Direktor mit den hundert Masken",
+          "akk": "den Direktor mit den hundert Masken",
+          "pro": "er",
+          "weak": "treue",
+          "desc": "Jede Woche eine andere Maske. Darunter vermutlich noch eine.",
+          "gen": "des Direktors mit den hundert Masken"
+        },
+        {
+          "nom": "die Spiegelkönigin",
+          "dat": "der Spiegelkönigin",
+          "akk": "die Spiegelkönigin",
+          "pro": "sie",
+          "weak": "bestie",
+          "desc": "Sie zeigt einem, wie man sein könnte, und verlangt dafür, dass man stehen bleibt und schaut.",
+          "gen": "der Spiegelkönigin"
+        },
+        {
+          "nom": "der Maschinenclown",
+          "dat": "dem Maschinenclown",
+          "akk": "den Maschinenclown",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Er lacht mit einer Dampfpfeife. Niemand hat je herausgefunden, worüber.",
+          "gen": "des Maschinenclowns"
+        }
       ],
-      "schar": ["Gaukler", "Taschendiebe", "Spiegelbilder", "Losverkäufer"],
-      "epithets": ["{Die} mit den tausend Gesichtern", "Liebling des Jahrmarkts", "{Die} Wandelbare", "Maskenbrecher{in}"]
+      "schar": [
+        "Gaukler",
+        "Taschendiebe",
+        "Spiegelbilder",
+        "Losverkäufer"
+      ],
+      "epithets": [
+        "{Die} mit den tausend Gesichtern",
+        "Liebling des Jahrmarkts",
+        "{Die} Wandelbare",
+        "Maskenbrecher{in}"
+      ]
     }
   },
   "tables": {
     "prolog": [
-      "Jede Geschichte fängt irgendwo an. Diese fängt {ort} an, mit {held}, einem Paar Stiefel und dem festen Vorsatz, es diesmal durchzuziehen. Ich war dabei. Ich bin ein Rabe, ich bin immer dabei.",
-      "Man hat mich gebeten, das hier aufzuschreiben. Na gut. {Held} kam {ort} an, ohne Ruf, ohne Beinamen, mit ziemlich viel Entschlossenheit. Das Übliche also. Mal sehen, was daraus wird.",
-      "Ich erzähle das so, wie es war. Ungefähr. Raben schmücken aus, das ist bekannt. {Held} jedenfalls stand {ort}, und irgendwo in der Dunkelheit wartete jemand darauf, unterschätzt zu werden."
+      "ANKUNFT. {Held} ist {ort} eingetroffen, ohne Ruf und ohne Beinamen. Die Stadtwache sieht keinen Anlass zur Sorge. Die Stadtwache irrt sich häufig.",
+      "BEKANNTMACHUNG. {Held} hat {ort} Quartier bezogen. Ziel unbekannt, Absichten vermutlich sportlich. Hinweise nimmt die Redaktion entgegen.",
+      "NEUE GESTALT GESICHTET. Augenzeugen {ort} berichten von festem Schritt und auffallend guter Laune. Die Redaktion bleibt dran."
     ],
     "prolog_next": [
-      "Nach {vorsieg} {vorfeind_akk} hätte {held} sich ausruhen können. Hat {sie} auch, ungefähr zwei Tage. Dann ging es weiter, {ort}. Man nannte {ihn} jetzt „{beiname}“, und solche Namen wollen verteidigt werden.",
-      "Die Geschichte von {vorfeind_dat} erzählt man sich noch. Ich erzähle sie am liebsten selbst, mit Ausschmückungen. Aber {held} hatte keine Zeit für alte Geschichten: {ort} wartete die nächste.",
-      "„{Beiname}“, so nannten sie {ihn} seit {vorsieg} {vorfeind_akk}. {Held} fand den Namen ein bisschen übertrieben. Ich fand ihn genau richtig. Jetzt also {ort}. Neuer Ort, neue Schatten, dieselben Stiefel."
+      "ZURÜCK. Nach {vorsieg} {vorfeind_akk} ist {held} weitergezogen, {ort}. Man kennt {ihn} jetzt als „{beiname}“. Die Redaktion hat bereits eine Sondermappe angelegt.",
+      "NEUES KAPITEL. „{Beiname}“ ist {ort} aufgetaucht. Wer die Sache mit {vorfeind_dat} verpasst hat, findet sie im Archiv. Wer sie selbst erlebt hat, schweigt bescheiden.",
+      "EILMELDUNG. {Held}, bekannt als „{beiname}“, hat {ort} Quartier bezogen. Nach {vorsieg} {vorfeind_akk} rechnet die Redaktion mit Ärger. Für die anderen."
+    ],
+    "foe_intro": [
+      "GESUCHT: {Feind}. {desc}"
+    ],
+    "weak_intro": [
+      "Aus gut unterrichteten Kreisen: {weak}"
     ],
     "act2": [
-      "Zweiter Akt. Der Punkt, an dem Geschichten entweder spannend werden oder aufhören. Diese wurde spannend. Ich hab's ja gesagt.",
-      "Zweiter Akt. {Feind} hatte inzwischen gemerkt, dass da jemand kommt. Unterschätzt zu werden ist bequem, bemerkt zu werden ist ehrlicher.",
-      "Zweiter Akt. Die Mitte ist der schwerste Teil jeder Reise. Der Anfang hat Schwung, das Ende hat ein Ziel, die Mitte hat nur Treppen."
+      "{Feind} hat reagiert: Die Patrouillen sind verdoppelt. Unsere Quellen werten das als Kompliment.",
+      "HALBZEIT. Leserbriefe erreichen die Redaktion im Stundentakt, alle mit derselben Frage: Hält {held} durch? Wir sagen: abwarten.",
+      "Die Mitte ist die schwerste Etappe, weiß jede Kutscherin. {Held} ist mittendrin."
     ],
     "act3": [
-      "Dritter Akt. Man riecht das Ende schon. Es riecht nach Rauch und ein bisschen nach Schweiß.",
-      "Dritter Akt. {Feind} zog sich zurück, dorthin, wo solche Gestalten immer hingehen: ins Finale.",
-      "Dritter Akt. Jetzt zählt, was die Wochen davor gebaut haben. Nicht die eine große Geste, sondern die vielen kleinen."
+      "{Feind} hat sich zurückgezogen. Man munkelt, für einen letzten Auftritt.",
+      "Die Wettbüros setzen die Quoten neu. Der Favorit hat gewechselt.",
+      "Die letzten Wochen beginnen. Die Redaktion hat Sonderpapier bestellt."
     ],
     "week_rest": [
-      "Diese Woche ruhte {held}. Das Leben hatte andere Pläne, und das Leben gewinnt manchmal. {Feind} nutzte die Zeit, um sich die Nägel zu feilen. Mehr nicht.",
-      "Eine stille Woche. Keine Kämpfe, keine Heldentaten, nur ein Rabe auf dem Fensterbrett, der wartet. Raben sind geduldig. Das steht in keinem Buch, aber es stimmt.",
-      "Rast. Die Geschichte macht eine Pause, sie läuft nicht weg. Ich halte ihr den Platz frei."
+      "KEINE MELDUNGEN. Auch Legenden haben Alltag. Die Geschichte läuft nicht weg, die Druckerpresse auch nicht.",
+      "RUHIGE WOCHE. Keine Sichtungen. {Feind} nutzte die Zeit, um sich die Nägel zu feilen. Die Redaktion wünscht erholsame Tage.",
+      "FUNKSTILLE. {Held} wurde diese Woche nicht gesichtet. Unsere Reporterin vermutet: Schlaf, Arbeit, Leben. Wir halten die Titelseite frei."
     ],
     "week_some": [
-      "Eine kurze Woche: {n} von {von} Streifzügen. {Held} zog trotzdem los, und die {schar} gingen ein bisschen schneller aus dem Weg.",
-      "{n} von {von}. Nicht viel, sagt die Arithmetik. Genug, sagt der Rabe. Der Rabe hat recht, die Arithmetik hatte noch nie einen Alltag.",
-      "Die Woche war voll, nur nicht mit Training. {n} von {von} Streifzügen, und jeder davon zählt. {Feind} hat es gespürt.",
-      "{n} von {von} Streifzügen {ort}. Wenig ist nicht nichts. Das habe ich mir von einer Ameise sagen lassen."
+      "KURZER AUFTRITT. {n} von {von} Streifzügen {ort}. Die {schar} reagierten nervös.",
+      "Nur {n} von {von} Streifzügen, aber die {schar} haben es bemerkt. Wenig ist nicht nichts, schreibt eine Leserin aus der Hafengasse.",
+      "Kurze Woche, klare Botschaft: {n} von {von}. {Feind} hat davon gehört.",
+      "{n} von {von}. Nicht viel, sagt die Buchhaltung. Genug, sagt die Redaktion. Die Buchhaltung hatte noch nie einen Alltag."
     ],
     "week_good": [
-      "{n} von {von}. Solide. Das Wort klingt langweilig, aber aus soliden Wochen werden Legenden gebaut.",
-      "{n} von {von} Streifzügen. Nicht alles, aber genug, dass {feind} nervös auf und ab geht.",
-      "{n} von {von} Streifzügen {ort}. Die {schar} lernten, {held} nicht mehr zu unterschätzen.",
-      "Eine gute Woche: {n} von {von}. {Held} trieb die {schar} zurück und ließ sich dabei nicht hetzen. Technik vor Tempo, das sieht man.",
-      "{n} von {von}. Die Stiefel wurden dreckiger, die Legende wurde länger.",
-      "{n} von {von} Streifzügen. Die {schar} tuscheln schon. Ich tuschle mit, ich bin ja nicht aus Stein."
+      "GUTE WOCHE. {n} von {von} Streifzügen. Die {schar} sind beunruhigt, die Redaktion ist es nicht.",
+      "{n} von {von}. Augenzeugen loben saubere Technik und ruhiges Tempo. Die Wettquoten bewegen sich.",
+      "SICHTUNGEN. {n} von {von} Streifzügen {ort}. {Feind} lässt ausrichten, man sei nicht beeindruckt. Man wirkte beeindruckt.",
+      "{n} von {von}. Die Stiefel werden dreckiger, die Akte wird dicker."
     ],
     "week_full": [
-      "Volle Woche. {Feind} hat angefangen, nachts das Licht anzulassen.",
-      "Alle {von}. Ich wollte etwas Witziges dazu sagen, aber ich war zu beeindruckt.",
-      "{von} von {von}. Die {schar} haben eine Versammlung einberufen. Thema: {held}.",
-      "Alle {von} Streifzüge. Jeder einzelne. Die {schar} erzählen sich jetzt Geschichten über {ihn}, und zwar keine lustigen.",
-      "Volle Woche: {von} von {von}. Ich habe mitgezählt, zweimal, weil ich es selbst kaum geglaubt habe.",
-      "{von} von {von}. {Feind} hat eine Nachricht bekommen. Sie war kurz: „Es kommt jemand.“",
-      "{von} von {von} Streifzügen {ort}. Wenn das so weitergeht, muss ich mir mehr Tinte besorgen."
+      "VOLLE WOCHE. Alle {von} Streifzüge. Die {schar} haben eine Krisensitzung einberufen.",
+      "{von} von {von}. Die Redaktion hat zweimal nachgezählt und druckt die Zahl extra groß.",
+      "LÜCKENLOS. {Held} wurde an jedem geplanten Tag gesichtet. {Feind} lässt nachts das Licht an.",
+      "SONDERSEITE. Alle {von} Streifzüge. Leser fragen, ob {held} überhaupt schläft. Antwort: ja, und zwar gut."
     ],
     "crit": [
-      "Und dann, mitten in der Woche, eine natürliche Zwanzig. {Held} traf {feind_akk} genau dort, wo es wehtut. Ich habe applaudiert. Mit den Flügeln, das klingt nicht nach viel.",
-      "Kritischer Treffer. Die Würfel mögen {ihn} diese Woche. Würfel sind launisch, also nehmen wir das mit.",
-      "Zwanzig. Eine glatte Zwanzig. {Feind} wird noch lange nicht verstehen, was da passiert ist. Ich auch nicht, aber ich erzähle es trotzdem."
+      "SENSATION: Natürliche Zwanzig! {Held} traf {feind_akk} an einer Stelle, von der Fachleute bislang nur Gerüchte kannten.",
+      "VOLLTREFFER. Die Würfel meinten es gut. Ein Augenzeuge: „So etwas habe ich noch nicht gesehen, und ich habe viel gesehen.“",
+      "GLÜCKSWURF DER WOCHE. Eine glatte Zwanzig. {Feind} lehnte jeden Kommentar ab."
     ],
     "fumble": [
-      "Eine Eins. {Held} stolperte über die eigene Ausrüstung, und zwar vor Publikum. Schaden: keiner. Würde: angekratzt. Ich habe nicht gelacht. Viel.",
-      "Eine Eins. {Held} verwechselte die Tür und stand plötzlich in einer Wäscherei. Die Wäscherinnen waren beeindruckt, {feind} nicht. Kein Schaden, nur eine Anekdote.",
-      "Patzer. Eine Eins auf dem Würfel, ein Loch im Mantel, ein Rabe, der alles sieht. Das Training zählt trotzdem voll. Nur die Geschichte wird etwas peinlicher.",
-      "Eine Eins. Der Plan war elegant, die Ausführung war… auch eine Ausführung. Keine Sorge: Die Würfel strafen nicht, sie würzen nur."
+      "KURIOSES. {Held} verwechselte eine Tür und stand plötzlich in einer Wäscherei. Keine Verletzten. Die Wäscherei bittet um Rückgabe eines Bettlakens.",
+      "MISSGESCHICK. Sturz über die eigene Ausrüstung, vor Publikum. Schaden: keiner. Würde: angekratzt. Das Training zählt trotzdem voll.",
+      "Eine Eins. Unsere Karikaturistin hat bereits gezeichnet. Die Redaktion betont: Würfel strafen nicht, sie würzen.",
+      "PANNE AM RANDE. Der Plan war elegant, die Ausführung war auch eine Ausführung. Kein Schaden."
     ],
     "high": [
-      "Ein ordentlicher Wurf. Die Würfel nicken anerkennend, sofern Würfel nicken können.",
-      "Glück gehabt? Vielleicht. Aber Glück trifft meistens die, die auftauchen.",
-      "Die Würfel rollten gut. Nicht spektakulär, aber gut. Ein sauberer Treffer mehr.",
-      "Ein guter Wurf. {Feind} spürte ihn bis in die Stiefel.",
-      "Die Würfel waren auf {ihr}er Seite. Kleiner Bonus, großes Grinsen."
+      "Glück im Spiel: ein guter Wurf, ein sauberer Treffer mehr.",
+      "Die Würfel standen günstig. {Feind} spürte es bis in die Stiefel.",
+      "Günstige Sterne, laut Horoskopseite. Diesmal hatte sie recht."
     ],
     "pr": [
-      "{Bestie} fiel schneller als je zuvor. Neue Bestzeit. Ich habe es in mein Buch geschrieben, mit Tinte, nicht mit Bleistift.",
-      "Bestzeit gegen {bestie}. Die Bestie hat sich beschwert. Beschwerden werden nicht angenommen.",
-      "{Bestie}, schneller als beim letzten Mal. Nicht hektischer, schneller. Das ist ein Unterschied, und {held} kennt ihn."
+      "REKORD. {Bestie}, aus dem Gefolge {feind_gen}, schneller bezwungen als je zuvor. Die Zeit liegt der Redaktion vor und ist beglaubigt.",
+      "{Bestie} erlegt, neue Bestzeit. {Bestie} gehörte zum Gefolge {feind_gen}. Gehörte.",
+      "BESTZEIT. {Bestie}, eine Kreatur {feind_gen}, fiel schneller als je zuvor. Nicht hektischer, schneller. Die Sportredaktion erklärt den Unterschied auf Seite 4."
     ],
     "weak": [
-      "Und genau das war die Schwachstelle. {Feind} hat es gemerkt. Sehr deutlich.",
-      "Treffer an der Schwachstelle. {Feind} zog sich hinkend zurück, um darüber nachzudenken.",
-      "Die Gerüchte über die Schwachstelle stimmten. Gerüchte stimmen selten. Diesmal schon."
+      "Aus gut unterrichteten Kreisen: Genau das war die Schwachstelle. {Feind} hat es gemerkt. Sehr deutlich.",
+      "TREFFER AN DER SCHWACHSTELLE. {Feind} zog sich hinkend zurück.",
+      "Die Gerüchte über die Schwachstelle stimmten. Die Redaktion hatte es geahnt."
     ],
     "steel": [
-      "An {stellen} legte {held} Gewicht nach. Stahl lügt nicht, und diese Woche sagte er: mehr.",
-      "{Mal} schwerer als zuvor. Eine Klinge wird nicht schärfer, wenn man sie nur ansieht.",
-      "Gewicht nach oben, an {stellen}. Die {schar} haben aufgehört mitzuzählen. Ich nicht."
+      "SCHWERER ALS ZUVOR. An {stellen} wurde Gewicht nachgelegt. Die Hafenkräne sind neidisch.",
+      "Wirtschaftsteil: Die Nachfrage nach Eisen steigt, an {stellen} allein diese Woche.",
+      "{Mal} mehr Last. Stahl lügt nicht, schreibt unser Kolumnist."
     ],
     "reduced": [
-      "Diese Woche lief mit einem Satz weniger. Wer klug kämpft, weiß, wann man die Klinge ölt, statt sie zu schwingen.",
-      "Ein Satz weniger, mit Absicht. Ein Rückzug ist keiner, wenn man ihn plant. Das nennt man Taktik."
+      "BEKANNTMACHUNG. Diese Woche ein Satz weniger, mit Absicht. Kluge Leute ölen die Klinge, statt sie zu schwingen.",
+      "Taktischer Rückzug, geplant und angekündigt: ein Satz weniger. Die Redaktion nennt das Strategie."
     ],
     "stand": [
-      "{Feind} wankt. Aber solche Gestalten fallen nie vor dem letzten Akt. Das ist eine Regel. Ich habe sie nicht gemacht.",
-      "Eigentlich hätte das gereicht. Aber {feind} hat einen Vertrag mit dem Finale, und den hält {fp} ein."
+      "{Feind} wankt, fällt aber nicht. Kenner wissen: So jemand fällt erst im Finale.",
+      "Eigentlich wäre das genug gewesen. Doch {feind} hat einen Termin mit dem Finale, und den hält {fp} ein."
     ],
     "finale_triumph": [
-      "Das Finale war kurz. {Feind} hatte zu lange gewartet, {held} hatte zu gut trainiert. Als der Staub sich legte, stand nur noch eine Gestalt, und die hatte nicht einmal Muskelkater. Behauptet {sie}.",
-      "Triumph. Es gibt kein anderes Wort. Ich habe nach einem gesucht, weil ich ein bescheidener Rabe bin. Es gibt keins."
+      "TRIUMPH! {Feind} ist besiegt. Augenzeugen berichten von einem kurzen Kampf. {Die} Sieger{in} war nicht einmal außer Atem.",
+      "SONDERAUSGABE. Es ist vorbei: {feind} ist geschlagen, gründlich und endgültig. Die Druckerei arbeitet die Nacht durch."
     ],
     "finale_win": [
-      "Es war kein leichter Kampf, aber ein ehrlicher. {Feind} fiel, und {held} blieb stehen. Etwas außer Atem. Das darf man.",
-      "Sieg. Nicht elegant, nicht mühelos, aber vollständig. So sehen die meisten echten Siege aus."
+      "SIEG. {Feind} ist gefallen. Nicht elegant, nicht mühelos, aber vollständig. So sehen die meisten echten Siege aus.",
+      "{Feind} besiegt. {Held} blieb stehen, etwas außer Atem. Die Redaktion findet: Das darf man."
     ],
     "finale_close": [
-      "{Feind} entkam. Aber nicht unversehrt: {fp} hinkt jetzt, und {fp} weiß, wer das war. Die Geschichte ist nicht zu Ende, sie macht nur Pause. Das Leben hatte viel zu tun, und das Leben geht vor.",
-      "Kein glatter Sieg. {Feind} zog sich zurück, gezeichnet und nachdenklich. {Held} hat die Wochen gegeben, die möglich waren, und das ist mehr, als die meisten Geschichten erzählen können."
+      "{Feind} entkommen, aber gezeichnet: {fp} hinkt jetzt, und {fp} weiß, wer das war. Die Geschichte macht nur Pause. Das Leben ging vor, und das Leben geht immer vor.",
+      "KEIN KLARER SIEG. {Feind} hat sich angeschlagen zurückgezogen. {Held} gab die Wochen, die möglich waren. Mehr kann niemand verlangen, auch nicht diese Zeitung."
     ],
     "saga_open": [
-      "So erzähle ich die Geschichte {ort}. Wer sie anders erzählt, war nicht dabei.",
-      "Hier ist sie, die ganze Geschichte. Gekürzt um die langweiligen Teile, ergänzt um die, die ich erfunden habe. Nur ein bisschen."
+      "Die ganze Geschichte {ort}, von der ersten Sichtung bis zum Finale.",
+      "Gesammelte Berichte, gekürzt um das Langweilige. Ergänzungen der Redaktion sind nicht gekennzeichnet."
     ],
     "epithet": [
-      "Seither haben sie {ort} einen Namen für {ihn}: „{Beiname}“.",
-      "{Held} hat jetzt einen Beinamen, ob {sie} will oder nicht: „{Beiname}“."
+      "Die Leute {ort} haben jetzt einen Namen für {ihn}: „{Beiname}“.",
+      "{Held} hat jetzt einen Beinamen, ob {sie} will oder nicht: „{Beiname}“. Geprägt von dieser Redaktion, versteht sich."
     ],
     "aside": [
-      "Ich habe übrigens eine Liste mit allen Ausreden, die ich je gehört habe. Du stehst nicht drauf.",
-      "Muskelkater ist kein Orden. Aber er erzählt eine Geschichte.",
-      "Wenn die Form fehlt, zählt die Gewohnheit. Und die Gewohnheit ist ein zäher Vogel. Fast so zäh wie ich.",
-      "Pausen sind kein Versagen. Selbst Legenden sitzen manchmal einfach nur da.",
-      "Ich bekomme übrigens kein Gehalt. Nur Nüsse. Gute Nüsse.",
-      "Wer langsam und sauber geht, kommt weiter. Das hat mir eine Schnecke erzählt. Ich habe sie danach nicht gefressen.",
-      "Technik vor Tempo. Die Bestien laufen nicht weg. Einige schon, aber die fangen wir später.",
-      "Trinken nicht vergessen. Wasser. Nicht das, was in den Hafenkneipen ausgeschenkt wird.",
-      "Heldentum besteht zu neunzig Prozent aus Auftauchen. Die restlichen zehn sind Umziehen.",
-      "Ich habe noch nie jemanden gesehen, der jede Woche perfekt war. Und ich bin sehr alt.",
-      "Schlaf ist eine Waffe. Eine unterschätzte. Ich schlafe viel, und schau, wie gut ich aussehe.",
-      "Ich erzähle gern. Aber das Heben machst du."
+      "Wetter: Rauch mit Aufheiterungen. Pausen sind erlaubt.",
+      "Kleinanzeige: Suche Trainingspartner. Pünktlich, geduldig, Rabe bevorzugt.",
+      "Leserbrief: „Technik vor Tempo, oder?“ Antwort der Redaktion: Ja.",
+      "Gesundheitsseite: Wasser trinken. Nicht das aus den Hafenkneipen.",
+      "Die Redaktion erinnert: Heldentum besteht zu neunzig Prozent aus Auftauchen.",
+      "Horoskop: Sie werden müde sein. Schlafen Sie. Es hilft.",
+      "Kleinanzeige: Gebrauchte Ausreden abzugeben. Kaum benutzt.",
+      "Leserfrage: Muss man jede Woche alles schaffen? Antwort: Nein. Man muss wiederkommen.",
+      "Anzeige: Muskelkater? Vergeht. Stolz bleibt.",
+      "Wetter: Morgens Nebel, mittags Eisen, abends Schlaf.",
+      "Aus dem Archiv: Noch nie hat eine Pause eine Legende beendet.",
+      "Korrektur: In der letzten Ausgabe stand, niemand sei jede Woche perfekt. Das stimmt. Wir bleiben dabei."
     ],
     "cup_intro": [
-      "Nach {vorsieg} {vorfeind_akk} rief das Turnier der Klingen. Fünf Cups, fünf legendäre Klingen, und keine davon bleibt bei jemandem, der sich auf Lorbeeren ausruht. Denn wertige Klingen müssen stets aufs Neue verdient werden.",
-      "Das Turnier der Klingen. {Held} kam als „{beiname}“, doch den Klingen sind Beinamen egal. Sie fragen nur: Bist du es noch wert? Wertige Klingen müssen stets aufs Neue verdient werden."
+      "Nach {vorsieg} {vorfeind_akk} ruft das Turnier der Klingen. Fünf Cups, fünf legendäre Klingen, und keine bleibt bei jemandem, der sich ausruht. Denn wertige Klingen müssen stets aufs Neue verdient werden.",
+      "„{Beiname}“ ist gemeldet. Den Klingen sind Beinamen gleich, sie fragen nur: Noch würdig? Denn wertige Klingen müssen stets aufs Neue verdient werden."
     ],
     "cup_intro_first": [
-      "Das Turnier der Klingen. Fünf Cups, fünf legendäre Klingen. {Held} tritt zum ersten Mal an, ohne Ruf und ohne Beinamen. Die Klingen merken sich jeden Namen, der sie einmal gehalten hat."
+      "Fünf Cups, fünf legendäre Klingen. {Held} tritt zum ersten Mal an, ohne Ruf und ohne Beinamen. Die Klingen merken sich jeden Namen, der sie einmal gehalten hat."
     ],
     "cup_first": [
-      "{Klinge} kennt jetzt {ihr}en Namen. Das erste Mal ist das leichteste. Ab jetzt wird verteidigt.",
-      "{Klinge} zum ersten Mal verdient. Merk dir das Gefühl, du wirst es beim nächsten Mal wieder wollen."
+      "Neu im Klingenregister: {Klinge} gehört jetzt {ihm}. Ab jetzt wird verteidigt.",
+      "{Klinge}: erstmals verdient. Die Redaktion notiert den Namen."
     ],
     "cup_better": [
-      "{Klinge} neu verdient, und schärfer als zuvor. Die Klinge hat das bemerkt. Klingen bemerken so etwas.",
-      "{Klinge} bleibt bei {ihm}, und die Werte sind besser als beim letzten Mal. Neu geschmiedet, sozusagen."
+      "{Klinge}: neu verdient, schärfer als zuvor. Die Sportredaktion ist begeistert.",
+      "{Klinge} verteidigt, mit besseren Werten als beim letzten Mal. Neu geschmiedet, sozusagen."
     ],
     "cup_same": [
-      "{Klinge} gehalten. Gleich wie beim letzten Mal, innerhalb des Messfehlers. Eine Klinge zu halten ist auch ein Sieg. Ein unterschätzter.",
-      "{Klinge} bleibt, wo sie war. Nicht besser, nicht schlechter: gehalten. Wer glaubt, das sei nichts, hat noch nie etwas gehalten."
+      "{Klinge}: gehalten, im Rahmen des Messfehlers. Eine Klinge zu halten ist auch ein Sieg, ein unterschätzter.",
+      "{Klinge} bleibt, wo sie war. Wer glaubt, das sei nichts, hat noch nie etwas gehalten."
     ],
     "cup_worse": [
-      "{Klinge} prüft, sie urteilt nicht. Diesmal war die Prüfung schwerer als die Form. Die Klinge wartet. Sie hat Zeit, und {held} auch.",
-      "Diesmal blieb {klinge} zurück. Kein Drama. Klingen sind wie Katzen: Sie kommen wieder, wenn man es ernst meint."
+      "{Klinge}: diesmal nicht. Die Klinge prüft, sie urteilt nicht. Sie wartet, und {held} hat Zeit.",
+      "{Klinge} bleibt vorerst im Schrank. Kein Drama, schreibt die Sportredaktion. Klingen kommen wieder, wenn man es ernst meint."
     ]
   }
 }

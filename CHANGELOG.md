@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.17.0] – 2026-09-30
+
+### Geändert
+- Erzähler ist jetzt „Der Aschekurier“, ein Flugblatt statt des Raben: Erstausgabe, eine Ausgabe pro Woche, Steckbrief des Widersachers, Kleinanzeigen und Leserbriefe „In eigener Sache“, Turnierbeilage, Sonderausgabe am Ende. Schlagzeilen fett.
+- Die Bestien gehören zum Gefolge des Widersachers („Undine, aus dem Gefolge des Laternenmanns, …“).
+- Welt-Pakete können Erzähler und Rubriken umbenennen (`narrator`).
+
 ## [0.16.0] – 2026-09-30
 
 ### Geändert

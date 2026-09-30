@@ -1,4 +1,4 @@
-/* Erzähler: der Rabe. Macht aus dem Log eine Geschichte, einen Orden lang.
+/* Erzähler: Der Aschekurier, ein Flugblatt. Macht aus dem Log eine Geschichte, einen Orden lang.
    Alles wird aus den Trainingsdaten berechnet, auch die Würfel (fester Startwert je Woche).
    Ein- und Ausschalten verliert also nichts, und die Geschichte ändert sich nicht beim Neuladen.
    Texte und Welt stehen in data/narrative/generic.json. Eigene Welten ersetzen Teile davon. */
@@ -11,12 +11,18 @@ import { focusFor } from "./weekplan";
 
 /* ---------- Welt-Paket ---------- */
 export type Weak = "bestie" | "stahl" | "treue";
-export interface Foe { nom: string; dat: string; akk: string; pro: "er" | "sie"; weak: Weak; desc: string }
+export interface Foe { nom: string; dat: string; akk: string; gen?: string; pro: "er" | "sie"; weak: Weak; desc: string }
 export interface Scene { name: string; ort: string; setting: string[]; foes: Foe[]; schar: string[]; epithets: string[] }
+/** Wer erzählt, und wie die Rubriken heißen */
+export interface Narrator {
+  name: string; archive: string; issue: string; first: string; special: string; finale: string;
+  aside: string; tournament: string; acts: string[]; parts: string[];
+}
 export interface WorldPack {
   id: string;
   name: string;
   desc?: string;
+  narrator: Narrator;
   weak: Record<Weak, string>;
   default: string;
   orders: Record<string, string>;
@@ -32,10 +38,15 @@ export function mergePack(custom: Partial<WorldPack> | null | undefined): WorldP
   return {
     ...g, ...custom,
     weak: { ...g.weak, ...(custom.weak ?? {}) },
+    narrator: { ...g.narrator, ...(custom.narrator ?? {}) },
     orders: { ...g.orders, ...(custom.orders ?? {}) },
     scenes: { ...g.scenes, ...(custom.scenes ?? {}) },
     tables: { ...g.tables, ...(custom.tables ?? {}) },
   };
+}
+
+export function narratorOf(state: AppState): Narrator {
+  return mergePack(state.narrative?.pack as Partial<WorldPack> | null).narrator;
 }
 
 /** Prüft eine hochgeladene Welt. Gibt Fehlermeldungen zurück, leer heißt: passt. */
@@ -192,7 +203,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
   const curWeek = today > b.end ? total + 1 : weekInBlock(b, today);
   const epithet = deck(scene.epithets, `${seed}:epi`, 0);
   const vars: Vars = {
-    ...heroVars(hero), feind: foe.nom, feind_dat: foe.dat, feind_akk: foe.akk, fp: foe.pro, ort: scene.ort,
+    ...heroVars(hero), feind: foe.nom, feind_dat: foe.dat, feind_akk: foe.akk, feind_gen: foe.gen ?? `von ${foe.dat}`, fp: foe.pro, ort: scene.ort,
     beiname: fill(epithet, heroVars(hero)),
   };
   const T = (name: string, i: number, extra: Vars = {}) => fill(deck(pack.tables[name] ?? [""], `${seed}:${name}`, i), { ...vars, ...extra });
@@ -210,8 +221,8 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
     prologue.push({ kind: "text", text: T("prolog_next", 0, prevVars(prev)) });
   } else prologue.push({ kind: "text", text: T("prolog", 0) });
   prologue.push({ kind: "text", text: deck(scene.setting, `${seed}:set`, 0) });
-  prologue.push({ kind: "text", text: `${cap(foe.nom)}. ${foe.desc}` });
-  prologue.push({ kind: "stat", text: `Schwachstelle, laut Gerüchten: ${pack.weak[foe.weak]}` });
+  prologue.push({ kind: "text", text: T("foe_intro", 0, { desc: foe.desc }) });
+  prologue.push({ kind: "stat", text: T("weak_intro", 0, { weak: pack.weak[foe.weak] }) });
 
   const weeks: WeekRecap[] = [];
   let dealt = 0;
@@ -226,7 +237,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
     const lines: Line[] = [];
     const act = (x: number) => (x <= Math.ceil(total / 3) ? 1 : x <= Math.ceil((2 * total) / 3) ? 2 : 3);
     if (w > 1 && act(w) !== act(w - 1)) {
-      lines.push({ kind: "head", text: act(w) === 2 ? "Zweiter Akt" : "Dritter Akt" });
+      lines.push({ kind: "head", text: pack.narrator.acts[act(w) - 1] || (act(w) === 2 ? "Zweiter Akt" : "Dritter Akt") });
       lines.push({ kind: "text", text: T(act(w) === 2 ? "act2" : "act3", 0).replace(/^(Zweiter|Dritter) Akt\.\s*/, "") });
     }
     const f = FOCUS_BY_ID[b.focusId];
@@ -272,13 +283,12 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
   const saga: Line[] = [];
   if (ended && outcome) {
     const finale = { kind: "text" as const, text: T(`finale_${outcome}`, 0) };
-    weeks[weeks.length - 1].lines.splice(-1, 0, { kind: "head", text: "Finale" }, finale);
-    const title = hero.name ? `Die Saga von ${hero.name}` : "Die Saga";
-    saga.push({ kind: "head", text: `${title}: ${scene.name}` });
+    weeks[weeks.length - 1].lines.splice(-1, 0, { kind: "head", text: pack.narrator.finale }, finale);
+    saga.push({ kind: "head", text: `${pack.narrator.special}: ${scene.name}` });
     saga.push({ kind: "text", text: T("saga_open", 0) });
     for (const l of prologue.slice(1, 3)) saga.push(l);
     const acts = [1, 2, 3].map((a) => weeks.filter((x) => (x.week <= Math.ceil(total / 3) ? 1 : x.week <= Math.ceil((2 * total) / 3) ? 2 : 3) === a));
-    const actName = ["Erster Akt", "Zweiter Akt", "Dritter Akt"];
+    const actName = pack.narrator.parts;
     acts.forEach((ws, i) => {
       if (!ws.length) return;
       const d = ws.reduce((s, x) => s + x.done, 0), p = ws.reduce((s, x) => s + x.planned, 0);

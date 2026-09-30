@@ -32,7 +32,7 @@ describe("Erzähler", () => {
     ];
     for (const pro of ["sie", "er"] as const) for (const name of ["", "Mara"]) {
       const f = pro === "sie";
-      const v = { held: name || (f ? "die Heldin" : "der Held"), sie: f ? "sie" : "er", ihn: f ? "sie" : "ihn", ihm: f ? "ihr" : "ihm", ihr: f ? "ihr" : "sein", die: f ? "die" : "der", in: f ? "in" : "", feind: "der Feind", feind_dat: "dem Feind", feind_akk: "den Feind", fp: "er", ort: "hier", schar: "Ratten", bestie: "Undine", n: 2, stellen: "zwei Stellen", mal: "2-mal", von: 3, beiname: "Die Eiserne", vorsieg: "dem Sieg über", vorfeind_akk: "den Alten", vorfeind_dat: "dem Alten", klinge: "Balmung" };
+      const v = { held: name || (f ? "die Heldin" : "der Held"), sie: f ? "sie" : "er", ihn: f ? "sie" : "ihn", ihm: f ? "ihr" : "ihm", ihr: f ? "ihr" : "sein", die: f ? "die" : "der", in: f ? "in" : "", feind: "der Feind", feind_dat: "dem Feind", feind_akk: "den Feind", feind_gen: "des Feindes", desc: "Böse.", weak: "Bestzeiten.", fp: "er", ort: "hier", schar: "Ratten", bestie: "Undine", n: 2, stellen: "zwei Stellen", mal: "2-mal", von: 3, beiname: "Die Eiserne", vorsieg: "dem Sieg über", vorfeind_akk: "den Alten", vorfeind_dat: "dem Alten", klinge: "Balmung" };
       for (const t of allTexts) expect(fill(t, v), t).not.toMatch(/[{}]/);
     }
   });
@@ -62,7 +62,7 @@ describe("Erzähler", () => {
     const s = train(base(), A, 0.34);
     const c = chapterOf(s, A, "2026-11-10");
     expect(c.outcome).toBe("close");
-    expect(c.saga.some((l) => /entkam|Kein glatter Sieg/.test(l.text))).toBe(true);
+    expect(c.saga.some((l) => /entkommen|KEIN KLARER SIEG/.test(l.text))).toBe(true);
   });
   it("laufender Orden: nur abgeschlossene Wochen, Prolog mit Rückbezug auf den Orden davor", () => {
     let s = train(base(), A, 1);
