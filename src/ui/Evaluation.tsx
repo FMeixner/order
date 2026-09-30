@@ -1,4 +1,7 @@
 import { evaluateBlock } from "../engine/norms";
+import { isTestBlock } from "../engine/plan";
+import { deficitsOf, domainName, slotFor } from "../engine/sharpen";
+import { FOCUS_BY_ID, SHARPEN } from "../data";
 import type { AppState } from "../types";
 import { Collapse } from "./common";
 
@@ -13,6 +16,11 @@ export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; b
   const ev = evaluateBlock(state, blockId);
   const withData = ev.domains.filter((d) => d.tests.length);
   if (!withData.length && ev.who5 == null) return null;
+  // Allrounder: Defizite und Schwerpunkt-Slot der nächsten Phase
+  const defs = state.user.focusMode === "special" ? [] : deficitsOf(state, blockId);
+  const lastDate = Object.values(state.tests).flat().filter((r) => r.blockId === blockId).map((r) => r.date).sort().pop() ?? "";
+  const nextB = [...state.plan].filter((b) => !isTestBlock(b) && b.start > lastDate && FOCUS_BY_ID[b.focusId]).sort((a, b) => a.start.localeCompare(b.start))[0];
+  const slot = nextB && defs.length ? slotFor(state, nextB) : null;
   const sources = [...new Map(withData.flatMap((d) => d.tests).filter((t) => t.norm).map((t) => [t.norm!.src, t.norm!.tier])).entries()];
   return (
     <Collapse title="Auswertung" meta={ev.weakest ? `Baustelle: ${ev.weakest.name}` : `${withData.length} Bereiche`} tone="teal" defaultOpen={defaultOpen}>
@@ -42,10 +50,25 @@ export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; b
             {ev.who5 < 52 && <div className="muted small">Unter 52: Wohlbefinden eingeschränkt. Der Vorschlag unten setzt deshalb auf Erholung. Wenn das länger so bleibt, lohnt sich ein Gespräch mit der Hausärztin oder dem Hausarzt.</div>}
           </div>
         )}
-        {ev.suggestions.length > 0 && (
+        {defs.length === 0 && ev.suggestions.length > 0 && (
           <div className="card note">
             <strong>Vorschlag für die nächste Phase:</strong> {ev.suggestions.map((f) => f.name).join(", ")}.
             <div className="small muted">{ev.who5 != null && ev.who5 < 52 ? "Grund: niedriges Wohlbefinden." : `Grund: ${ev.weakest!.name} ist dein schwächster Bereich im Vergleich zur Norm.`} Das ist ein Hinweis, keine Pflicht. Ändern kannst du den Plan unter „Plan“.</div>
+          </div>
+        )}
+        {defs.length > 0 && (
+          <div className="card note">
+            <strong>Defizite:</strong> {defs.map((d) => `${d.name}${d.kind === "norm" ? ` (${d.score})` : " (Rückgang)"}`).join(", ")}.
+            <ul className="slot-list small">
+              {slot && nextB && (
+                <li>Nächste Phase, {FOCUS_BY_ID[nextB.focusId].name}: {slot.domain
+                  ? <>Schwerpunkt-Slot <strong>{domainName(slot.domain)}</strong>, {SHARPEN[slot.domain].days === "all" ? "jeden Trainingstag" : SHARPEN[slot.domain].days === 2 ? "zweimal pro Woche" : "einmal pro Woche"}. {slot.reason}</>
+                  : slot.reason}</li>
+              )}
+              {slot && slot.deferred.length > 0 && <li>{slot.deferred.map((d) => d.name).join(" und ")} {slot.deferred.length > 1 ? "passen" : "passt"} nicht in {FOCUS_BY_ID[nextB!.focusId].name}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>}
+              {ev.suggestions.length > 0 && <li>{ev.who5 != null && ev.who5 < 52 ? "Wohlbefinden ist eingeschränkt, Orden für Erholung" : `Orden, die ${ev.weakest?.name ?? defs[0].name} direkt trainieren`}: {ev.suggestions.map((f) => f.name).join(", ")}.</li>}
+            </ul>
+            <div className="small muted">Nur Vorschläge. Slot und Blockfolge änderst du im Plan.</div>
           </div>
         )}
         {sources.length > 0 && (

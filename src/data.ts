@@ -10,6 +10,7 @@ import swapsJson from "../data/modules/swaps.json";
 import normsJson from "../data/modules/norms.json";
 import skillsJson from "../data/modules/skills.json";
 import flowsJson from "../data/modules/flows.json";
+import sharpenJson from "../data/modules/sharpen.json";
 
 const fociModules = import.meta.glob("../data/orders/*.json", { eager: true, import: "default" }) as Record<string, Focus>;
 
@@ -36,4 +37,7 @@ export const DOMAINS = (normsJson as unknown as { domains: { id: string; name: s
 export interface SkillDef { id: string; group: string; name: string; test: string; start?: string[]; exercises: string[]; regress: Record<string, string[]>; beast: string; hex?: [string, string][] }
 export const SKILLS = skillsJson as unknown as { groups: { id: string; name: string }[]; skills: SkillDef[] };
 /** Geführte Flows (Yoga, Qigong, Tai Chi, Animal Flow, Mobility) */
+/** Schwerpunkt-Slot: Erhaltungsdosis je Bereich */
+export interface SharpenDef { name: string; place: "start" | "end"; days: "all" | 1 | 2; why: string; drills: Drill[] }
+export const SHARPEN = (sharpenJson as unknown as { domains: Record<string, SharpenDef> }).domains;
 export const FLOWS = (flowsJson as unknown as { variants: Record<string, { name: string; drills: Drill[] }> }).variants;

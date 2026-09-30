@@ -5,7 +5,8 @@ import { FociBrowser } from "./ui/FociBrowser";
 import { LogView } from "./ui/LogView";
 import { Onboarding } from "./ui/Onboarding";
 import { PlanList } from "./ui/PlanEditor";
-import { trainingDays } from "./engine/plan";
+import { addDays, trainingDays } from "./engine/plan";
+import { deficitsBefore, deficitWeights, slotFor } from "./engine/sharpen";
 import { YearBalance } from "./ui/YearBalance";
 import { Setup } from "./ui/Setup";
 import { TimerBar, TimerProvider } from "./ui/Timer";
@@ -28,6 +29,10 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("heute");
   const [help, setHelp] = useState(false);
   const today = isoDate(new Date());
+  // Allrounder: Defizite der letzten Testwoche für Blockfolge und Schwerpunkt-Slot
+  const src = state.user.focusMode === "special" ? null : deficitsBefore(state, addDays(today, 1));
+  const deficits = src ? deficitWeights(src.list) : [];
+  const deficitNames = src?.list.map((d) => d.name) ?? [];
 
   if (!state.onboarded) {
     return <div className="app" onPointerDown={unlockAudio}><Onboarding state={state} update={update} replace={replace} today={today} /></div>;
@@ -48,7 +53,9 @@ export default function App() {
             <div className="stack">
               <p className="muted">Dein Jahr in Phasen. Tippe eine Phase an, um Zeitraum, Alltagslast oder Orden zu ändern.</p>
               {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
-              <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
+              <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} today={today}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotFor(state, b)}
+                onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
           {tab === "foki" && <FociBrowser state={state} />}

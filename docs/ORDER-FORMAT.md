@@ -127,3 +127,9 @@ Die App kürzt `rest` aus den Orden um 15 s: ab 150 s nie unter 120 s, ab 75 s n
 ## Messfehler
 
 `swc` an einem Test in `testweek.json` ist die kleinste Veränderung, die über dem Messfehler liegt. Kleinere Unterschiede zeigt die Auswertung als „gleich“.
+
+## Schwerpunkt-Slot
+
+`data/modules/sharpen.json` enthält je Bereich (`speed`, `power`, `mobility`, `ke`, `anaerob`, `aerob`) eine kleine Erhaltungsdosis: `place` (`start` nach dem Warm-up oder `end` vor dem Cool-down), `days` (`all`, `1` am kürzesten Tag, `2` am ersten und mittleren Tag), `why` als Begründung und `drills` wie bei den Flows. Die App baut den Slot selbst ein, in Orden-Dateien steht nichts davon. Einen Slot bekommen Orden ab 45 Minuten ohne `medley` und ohne eigene Schwerpunkt-Menüs. Welcher Bereich es wird, entscheidet die letzte Testwoche (siehe `src/engine/sharpen.ts`). Eine Phase kann ihn mit `"sharpen": "mobility"` festlegen oder mit `"sharpen": "off"` abschalten.
+
+Menüs mit dem Label „Schwerpunkt 1“, „Schwerpunkt 2“ … (Soldier) werden nach den Defiziten vorbelegt. Die Optionen heißen dafür `Speed`, `Power`, `Strength`, `Kraftausdauer`, `Anaerob`, `Aerob`, `Mobility`.

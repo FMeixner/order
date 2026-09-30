@@ -1,5 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
-import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID } from "../data";
+import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, hexFor, hexWith } from "./skills";
@@ -300,8 +300,8 @@ export function expandDrills(listNames: string[] | undefined, _user: UserProfile
   return out;
 }
 
-export function moduleDrills(variant: string, _user: UserProfile, week: number, module: "sword" | "flow" = "sword"): DrillView[] {
-  const list = module === "flow" ? FLOWS[variant]?.drills ?? [] : DM_VARIANTS[variant] ?? [];
+export function moduleDrills(variant: string, _user: UserProfile, week: number, module: "sword" | "flow" | "sharpen" = "sword"): DrillView[] {
+  const list = module === "flow" ? FLOWS[variant]?.drills ?? [] : module === "sharpen" ? SHARPEN[variant]?.drills ?? [] : DM_VARIANTS[variant] ?? [];
   return list.filter((d) => !d.rotation || d.rotation === (isAWeek(week) ? "A" : "B")).map((d) => drillView(d, week));
 }
 

@@ -17,6 +17,11 @@ const beasts = read("beasts.json");
 const correctives = read("modules/correctives.json").lists;
 const dm = read("modules/sword.json").variants;
 const flows = read("modules/flows.json").variants;
+const sharpen = read("modules/sharpen.json").domains;
+for (const [k, d] of Object.entries(sharpen)) {
+  if (!d.name || !["start", "end"].includes(d.place) || !["all", 1, 2].includes(d.days) || !d.drills?.length) err("sharpen.json", `${k}: name, place (start/end), days (all/1/2) und drills nötig`);
+  for (const x of d.drills ?? []) if (!x.id || !x.name || !["reps", "hold"].includes(x.mode) || !(x.value > 0) || (x.mode === "reps" && !x.rep_s)) err("sharpen.json", `${k}/${x.id}: id, name, mode, value und bei reps rep_s nötig`);
+}
 for (const [v, fl] of Object.entries(flows)) {
   if (!fl.name) err("flows.json", `${v}: name fehlt`);
   for (const d of fl.drills) {
@@ -129,7 +134,7 @@ for (const [f, d] of allFoci) {
         case "contrast": checkSlot(b.heavy, ctx); checkSlot(b.explosive, ctx); break;
         case "menu": Object.values(b.options).forEach((s) => checkSlot(s, `${ctx}/${b.id}`)); break;
         case "module":
-          if (b.module === "flow" ? !flows[b.variant] : b.module !== "sword" || !dm[b.variant]) err(f, `${ctx}: Modul-Variante ${b.variant} unbekannt`);
+          if (b.module === "flow" ? !flows[b.variant] : b.module === "sharpen" ? !sharpen[b.variant] : b.module !== "sword" || !dm[b.variant]) err(f, `${ctx}: Modul-Variante ${b.variant} unbekannt`);
           if (b.fallback) checkSlot(b.fallback, ctx);
           break;
         case "beast":

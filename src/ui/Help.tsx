@@ -57,6 +57,15 @@ export function Help() {
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem ersten Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
+      <h3>Allrounder oder Spezialist</h3>
+      <ul>
+        <li>Allrounder (Standard): Nach einer Testwoche bekommt die nächste Phase einen kleinen Schwerpunkt-Slot für deinen schwächsten Bereich. Das hält, was der Orden sonst liegen lässt. Aufbauen kann ein Slot nicht, dafür ist er zu klein (etwa 10–15 Min. pro Woche).</li>
+        <li>Beweglichkeit kommt jeden Trainingstag kurz ins Cool-down, Schnelligkeit und Sprungkraft zweimal pro Woche frisch an den Anfang, Kraftausdauer und Anaerob einmal pro Woche an den kürzesten Tag.</li>
+        <li>Trainiert der Orden deinen schwächsten Bereich selbst, nimmt der Slot den zweitschwächsten. Würde der Bereich das Ziel des Ordens stören (Ausdauer neben Muskelaufbau) oder passt er nicht in einen Slot (Maximalkraft, Skill), schlägt die App ihn für die Blockfolge vor: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>
+        <li>Als Defizit zählt nur, was deutlich unter der Norm liegt (bei mehreren Tests höchstens 40 Punkte, bei einem höchstens 30) oder jenseits des Messfehlers schlechter wurde. So läuft die App nicht jedem Zufall hinterher.</li>
+        <li>Spezialist (Setup): kein Slot, die Blockfolge bleibt, wie du sie planst. Je Phase kannst du den Slot im Plan auch fest wählen oder ausschalten.</li>
+      </ul>
+
       <h3>Der Aschekurier (Erzähler)</h3>
       <ul>
         <li>Unter Setup › Erzähler einschalten. Ein Flugblatt berichtet über jeden Orden: ein Widersacher als Endgegner, die Bestien sind sein Gefolge. Die Ausgabe der Woche steht auf <em>Heute</em>, alle Ausgaben im Log, am Ende eine Sonderausgabe.</li>

@@ -1,0 +1,53 @@
+{
+  "_info": "Schwerpunkt-Slot: kleine Erhaltungsdosis für einen Bereich, der im laufenden Orden zu kurz kommt. Einer pro Phase, höchstens etwa 15 % der Wochenzeit. place: start (nach dem Warm-up, frisch), end (vor dem Cool-down). days: all (jeder Trainingstag), 1 (am kürzesten Tag) oder 2 (erster und mittlerer Tag). drills wie bei den Flows: mode reps (value Wiederholungen, rep_s Sekunden je Wiederholung für die Zeitschätzung) oder hold (Sekunden). Nicht als Slot: Maximalkraft und Skill (brauchen eigene Blöcke), aerob und anaerob in Orden mit Kraft-, Muskel- oder Schnellkraftziel (Interferenz). Die kommen stattdessen in den Vorschlag für die Blockfolge.",
+  "domains": {
+    "speed": {
+      "name": "Schnelligkeit", "place": "start", "days": 2,
+      "why": "Schnelligkeit baut ohne Reiz am schnellsten ab. Kurz, frisch, volle Geschwindigkeit.",
+      "drills": [
+        { "id": "sh-sp-1", "name": "Skippings, so schnell wie möglich", "mode": "hold", "value": 10, "sets": 3 },
+        { "id": "sh-sp-2", "name": "Fliegende 20 m, volle Geschwindigkeit (drinnen: Rad-Sprint 6 s)", "mode": "reps", "value": 4, "rep_s": 110, "desc": "20 m Anlauf, dann 20 m voll. Zwei Minuten gehen zwischen den Läufen. Jeder Lauf frisch, sonst aufhören." }
+      ]
+    },
+    "power": {
+      "name": "Sprungkraft", "place": "start", "days": 2,
+      "why": "Wenige maximale Sprünge halten die Explosivkraft. Qualität vor Menge.",
+      "drills": [
+        { "id": "sh-pw-1", "name": "Standweitsprung, maximal", "mode": "reps", "value": 3, "sets": 2, "rep_s": 25, "desc": "Stabil landen, zurückgehen, volle Pause. Weite nicht messen, nur maximal springen." },
+        { "id": "sh-pw-2", "name": "Strecksprung aus dem Stand, maximal hoch", "mode": "reps", "value": 3, "sets": 2, "rep_s": 20 }
+      ]
+    },
+    "mobility": {
+      "name": "Beweglichkeit", "place": "end", "days": "all",
+      "why": "Für Beweglichkeit zählen Häufigkeit und Wochensumme. Kurz, aber jeden Trainingstag.",
+      "drills": [
+        { "id": "sh-mo-1", "name": "Sitzende Vorbeuge, Knie gestreckt", "mode": "hold", "value": 45, "sets": 2 },
+        { "id": "sh-mo-2", "name": "Ausschultern mit Stock oder Band", "mode": "reps", "value": 10, "rep_s": 5 },
+        { "id": "sh-mo-3", "name": "90/90 Wechsel, Knie von Seite zu Seite", "mode": "reps", "value": 6, "sides": true, "rep_s": 8 }
+      ]
+    },
+    "ke": {
+      "name": "Kraftausdauer", "place": "end", "days": 1,
+      "why": "Einmal pro Woche reicht, um die Wiederholungszahlen zu halten.",
+      "drills": [
+        { "id": "sh-ke-1", "name": "Liegestütz-Leiter 1-2-3-4-5-4-3-2-1", "mode": "reps", "value": 25, "rep_s": 3, "desc": "Zwischen den Stufen kurz stehen. Saubere Wiederholungen, Rumpf fest." },
+        { "id": "sh-ke-2", "name": "Hängen an der Stange", "mode": "hold", "value": 30, "sets": 2 },
+        { "id": "sh-ke-3", "name": "Crunch, langsam", "mode": "reps", "value": 20, "sets": 2, "rep_s": 3 }
+      ]
+    },
+    "anaerob": {
+      "name": "Anaerob", "place": "end", "days": 1,
+      "why": "Ein kurzer harter Reiz pro Woche hält die Säuretoleranz. Rad oder Rudern schont die Beine.",
+      "drills": [
+        { "id": "sh-an-1", "name": "Rad oder Rudern: 20 s hart, 100 s locker", "mode": "reps", "value": 5, "rep_s": 120, "desc": "Hart heißt: am Ende der 20 s kaum noch sprechen können. Locker heißt wirklich locker." }
+      ]
+    },
+    "aerob": {
+      "name": "Ausdauer", "place": "end", "days": 1,
+      "why": "Locker und regelmäßig. Hält die Grundlage, ohne Erholung zu kosten.",
+      "drills": [
+        { "id": "sh-ae-1", "name": "Rad oder Rudern im Sprechtempo", "mode": "hold", "value": 900, "desc": "Du kannst in ganzen Sätzen reden. Wer mag, geht stattdessen zügig spazieren." }
+      ]
+    }
+  }
+}

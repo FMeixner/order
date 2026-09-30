@@ -7,7 +7,9 @@ import type { Focus, PlanBlock } from "../types";
 import { AXES, balanceOf, type AxisId, type Balance } from "./balance";
 import { blockWeeks, fitScore, isTestBlock, TEST_BLOCK } from "./plan";
 
-export type Aim = "allround" | AxisId;
+export type Aim = "allround" | "deficits" | AxisId;
+/** Defizite aus der letzten Testwoche als Gewichte je Achse (für „Defizite zuerst“) */
+export type DeficitWeights = { axis: AxisId; w: number }[];
 export interface SeqItem { id: string; focusId: string; locked: boolean; reasons: string[] }
 export interface SeqResult { items: SeqItem[]; balance: Balance; before: Balance }
 
@@ -28,7 +30,7 @@ function stepScore(f: Focus, b: PlanBlock, prev: Focus | null, used: string[]): 
   return { score, reasons };
 }
 
-export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim): SeqResult {
+export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, deficits: DeficitWeights = []): SeqResult {
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const from = sorted[0]?.start ?? today, to = sorted[sorted.length - 1]?.end ?? today;
   type Beam = { seq: string[]; score: number; reasons: string[][] };
@@ -47,7 +49,7 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim): Seq
       }
     }
     // Zwischenstand mit Balance-Anteil bewerten, damit die Suche das Ziel früh berücksichtigt
-    const withAim = (bm: Beam) => bm.score + aimScore(sorted.slice(0, bm.seq.length).map((x, i) => ({ ...x, focusId: bm.seq[i] })), from, to, aim);
+    const withAim = (bm: Beam) => bm.score + aimScore(sorted.slice(0, bm.seq.length).map((x, i) => ({ ...x, focusId: bm.seq[i] })), from, to, aim, deficits);
     beams = next.sort((a, c) => withAim(c) - withAim(a)).slice(0, BEAM);
   }
   const best = beams[0];
@@ -59,11 +61,20 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim): Seq
   };
 }
 
-function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim): number {
-  const bal = balanceOf(plan, from, to);
-  if (bal.score == null) return 0;
-  if (aim === "allround") return 8 * bal.score;
-  return 30 * bal.share[aim];
+function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim, deficits: DeficitWeights): number {
+  if (aim === "allround" || (aim === "deficits" && !deficits.length)) {
+    const bal = balanceOf(plan, from, to);
+    return bal.score == null ? 0 : 8 * bal.score;
+  }
+  // Schwerpunkte zählen nur den Hauptteil, sonst gewinnt, wer kaum Warm-up und Cool-down hat
+  const main = balanceOf(plan, from, to, true);
+  if (main.score == null) return 0;
+  if (aim === "deficits") {
+    // Allrounder: schwache Bereiche zuerst, aber die Breite bleibt im Blick
+    const bal = balanceOf(plan, from, to);
+    return 20 * deficits.reduce((s, d) => s + d.w * main.share[d.axis], 0) + 4 * (bal.score ?? 0);
+  }
+  return 30 * main.share[aim];
 }
 
-export const AIM_OPTIONS: { value: Aim; label: string }[] = [{ value: "allround", label: "Allround" }, ...AXES.map((a) => ({ value: a.id as Aim, label: a.name }))];
+export const AIM_OPTIONS: { value: Aim; label: string }[] = [{ value: "deficits", label: "Defizite zuerst" }, { value: "allround", label: "Allround" }, ...AXES.map((a) => ({ value: a.id as Aim, label: a.name }))];

@@ -117,6 +117,12 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
         <Seg value={state.theme ?? "auto"} options={[{ value: "auto", label: "automatisch" }, { value: "light", label: "hell" }, { value: "dark", label: "dunkel" }]} onChange={(theme) => update((st) => ({ ...st, theme }))} />
         <p className="muted small">Hell ist draußen in der Sonne besser lesbar. Automatisch folgt der Einstellung des Handys.</p>
       </Collapse>
+      <Collapse title="Allrounder oder Spezialist" meta={state.user.focusMode === "special" ? "Spezialist" : "Allrounder"}>
+        <Seg value={state.user.focusMode ?? "allround"} options={[{ value: "allround", label: "Allrounder" }, { value: "special", label: "Spezialist" }]} onChange={(focusMode) => update((st) => ({ ...st, user: { ...st.user, focusMode } }))} />
+        <p className="muted small">{state.user.focusMode === "special"
+          ? "Spezialist: Die Orden bekommen ihre volle Zeit, kein Schwerpunkt-Slot. Die Blockfolge bleibt, wie du sie planst."
+          : "Allrounder: Nach jeder Testwoche bekommt die nächste Phase einen kleinen Schwerpunkt-Slot für deinen schwächsten Bereich (etwa 10–15 Min. pro Woche, zum Erhalten). Die Blockfolge schlägt schwache Bereiche zuerst vor. Du kannst beides je Phase im Plan ändern."}</p>
+      </Collapse>
       <NarrativeSettings state={state} update={update} />
       <Collapse title="Können" meta={state.user.skills == null ? "kein Skillcheck" : `${state.user.skills.length} von ${SKILLS.skills.length}`}>
         {state.user.skills == null

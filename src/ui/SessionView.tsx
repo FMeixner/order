@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { EXERCISES, FLOWS, SKILLS } from "../data";
+import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
+import { menuDefault } from "../engine/sharpen";
 import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
@@ -44,7 +45,7 @@ function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
     case "superset": return b.slots.map(r).filter(Boolean) as Resolved[];
     case "contrast": return [r(b.heavy), r(b.explosive)].filter(Boolean) as Resolved[];
     case "menu": {
-      const choice = ctx.state.menuChoice[`${ctx.block.id}:${b.id}`];
+      const choice = ctx.state.menuChoice[`${ctx.block.id}:${b.id}`] ?? menuDefault(ctx.state, ctx.block, b);
       const s = choice ? b.options[choice] : null;
       return s ? ([r(s)].filter(Boolean) as Resolved[]) : [];
     }
@@ -75,7 +76,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
       if (b.type === "beast") {
         return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
       }
-      if (b.type === "module" && (b.module === "flow" || ctx.profile.has.sword)) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week, b.module) };
+      if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week, b.module) };
       return { block: b, resolved: slotsOf(b, ctx) };
     })
     .filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
@@ -239,18 +240,20 @@ function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sessio
   if (b.type === "module" && it.drills) {
     return (
       <section className="card">
-        <div className="block-label amber">{b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : "Schwert"}</div>
+        <div className="block-label amber">{b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : "Schwert"}</div>
         {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
-        <DrillList drills={it.drills} done={session?.drills ?? {}} prefix={b.module === "flow" ? "fl" : "dm"} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
+        {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
+        <DrillList drills={it.drills} done={session?.drills ?? {}} prefix={b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : "dm"} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
       </section>
     );
   }
   if (b.type === "menu") {
     const key = `${ctx.block.id}:${b.id}`;
-    const choice = ctx.state.menuChoice[key] ?? "";
+    const auto = menuDefault(ctx.state, ctx.block, b);
+    const choice = ctx.state.menuChoice[key] ?? auto ?? "";
     return (
       <section className="card">
-        <div className="block-label teal">{b.label}</div>
+        <div className="block-label teal">{b.label}{!ctx.state.menuChoice[key] && auto ? <span className="muted small"> · nach deiner Testwoche vorbelegt</span> : null}</div>
         <select value={choice} onChange={(e) => ctx.update((st) => ({ ...st, menuChoice: { ...st.menuChoice, [key]: e.target.value } }))}>
           <option value="">Schwerpunkt wählen …</option>
           {Object.keys(b.options).map((o) => <option key={o} value={o}>{o}</option>)}
@@ -622,9 +625,9 @@ export function SessionPreview(ctx: SessionCtx) {
             );
           }
           if (it.drills) {
-            if (it.block.type === "module" && it.block.module === "flow") return (
+            if (it.block.type === "module" && it.block.module !== "sword") return (
               <div key={i} className="preview-group">
-                <div className="block-label amber">{FLOWS[it.block.variant]?.name}</div>
+                <div className="block-label amber">{it.block.module === "flow" ? FLOWS[it.block.variant]?.name : `Schwerpunkt: ${SHARPEN[it.block.variant]?.name} · Erhaltung`}</div>
                 {it.drills.map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.value}×` : fmt(d.value)}{d.sides ? " je Seite" : ""}</span></div>)}
               </div>
             );

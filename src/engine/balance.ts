@@ -89,7 +89,9 @@ export interface Balance {
 
 const days = (a: string, b: string) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000) + 1;
 
-export function balanceOf(plan: PlanBlock[], from: string, to: string): Balance {
+/** mainOnly: nur der Hauptteil nach den Zielen des Ordens, ohne Warm-up und Cool-down.
+    Für Schwerpunkt-Ziele, sonst gewinnen Orden mit kurzem Warm-up nur wegen der fehlenden Beweglichkeitsminuten. */
+export function balanceOf(plan: PlanBlock[], from: string, to: string, mainOnly = false): Balance {
   const sum: Record<string, number> = {};
   let total = 0;
   for (const b of plan) {
@@ -100,7 +102,7 @@ export function balanceOf(plan: PlanBlock[], from: string, to: string): Balance 
     if (s > e) continue;
     const d = days(s, e);
     total += d;
-    const v = focusVector(f);
+    const v = mainOnly && !f.medley?.length ? goalVector(f) : focusVector(f);
     for (const a of AXES) sum[a.id] = (sum[a.id] ?? 0) + v[a.id] * d;
   }
   const share = Object.fromEntries(AXES.map((a) => [a.id, total ? (sum[a.id] ?? 0) / total : 0])) as Record<AxisId, number>;

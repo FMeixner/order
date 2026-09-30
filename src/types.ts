@@ -65,7 +65,7 @@ export type Block =
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
     }
-  | { type: "module"; module: "sword" | "flow"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
+  | { type: "module"; module: "sword" | "flow" | "sharpen"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
 
 export interface Role {
@@ -186,6 +186,8 @@ export interface PlanBlock {
   travel: boolean;
   /** Abweichender Wochenplan für diesen Block (z. B. Semesterferien). Fehlt: globaler Wochenplan. */
   schedule?: Partial<Record<Weekday, string | null>>;
+  /** Schwerpunkt-Slot: Bereich (speed, power, mobility, ke, anaerob, aerob) oder "off". Fehlt: automatisch nach der letzten Testwoche. */
+  sharpen?: string;
 }
 
 export type Weekday = "Mo" | "Di" | "Mi" | "Do" | "Fr" | "Sa" | "So";
@@ -206,6 +208,8 @@ export interface UserProfile {
   volumeRange?: [number, number] | null;
   /** Skills trainieren: Bestien mit fehlenden Skills kommen als hexed-Variante */
   skillTraining?: boolean;
+  /** Allrounder: Schwerpunkt-Slot und Blockfolge folgen den Defiziten. Spezialist: kein Slot, Blockfolge wie geplant. */
+  focusMode?: "allround" | "special";
   /** Veraltet (0.1): wird beim Laden in has.sword der Heim-Profile übernommen */
   doppelmesser?: boolean;
 }

@@ -76,7 +76,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false): number
       return (cls.reduce((a, c) => a + CLASS_MIN[c], 0) / cls.length) * 60 + SETUP;
     }
     case "module": {
-      if (b.module === "flow") return moduleDrills(b.variant, NEUTRAL_USER, 1, "flow").reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
+      if (b.module === "flow" || b.module === "sharpen") return moduleDrills(b.variant, NEUTRAL_USER, 1, b.module).reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
       if (p.has.sword) return (DM_VARIANTS[b.variant] ?? []).reduce((sum, d) => sum + d.value * (d.sets ?? 1) * (d.sides ? 2 : 1), 0) + SETUP;
       return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p, red) : 0;
     }

@@ -2,6 +2,21 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.18.0] – 2026-09-30
+
+### Neu
+- Allrounder oder Spezialist (Setup). Allrounder ist Standard.
+- Schwerpunkt-Slot: Nach einer Testwoche bekommt die nächste Phase eine kleine Erhaltungsdosis für den schwächsten Bereich (Schnelligkeit, Sprungkraft, Beweglichkeit, Kraftausdauer, Anaerob, Ausdauer). Beweglichkeit täglich kurz im Cool-down, Schnelligkeit und Sprungkraft zweimal pro Woche am Anfang, der Rest einmal am kürzesten Tag. Höchstens etwa 15 % der Wochenzeit. Nur in Orden ab 45 Minuten, nicht in Herald, Harlequin, Soldier und den kurzen Orden. Je Phase im Plan fest wählbar oder abschaltbar.
+- Trainiert der Orden das Hauptdefizit selbst, nimmt der Slot das zweite. Bereiche, die das Ziel stören (Ausdauer neben Kraft oder Muskelaufbau) oder nicht in einen Slot passen (Maximalkraft, Skill), gehen in den Vorschlag für die Blockfolge.
+- Defizit nur, wenn deutlich unter der Norm (mehrere Tests ≤ 40, ein Test ≤ 30 Punkte) oder ohne Norm jenseits des Messfehlers schlechter.
+- Blockfolge „Defizite zuerst“ (Standard, sobald eine Testwoche Defizite zeigt). Auswertung der Testwoche nennt Defizite und den Slot der nächsten Phase.
+- Soldier: Die drei Schwerpunkt-Plätze sind nach den Defiziten vorbelegt.
+
+### Geändert
+- Soldier ist ein Block für allgemeine Vorbereitung ohne eigene Test- und Entlastungswoche (Testwoche als eigener Block davor). Er zählt in der Jahresbalance nicht mehr gleichmäßig für alle Bereiche. Gemischte Jahre mit Soldier stehen deshalb eher bei „mit Schwerpunkt“ als bei „allround“.
+- Blockfolge mit Schwerpunkt-Ziel (Kraft, Beweglichkeit …) wertet nur den Hauptteil der Orden. Vorher gewannen Orden mit kurzem Warm-up und ohne Cool-down (Herald) nur wegen fehlender Beweglichkeitsminuten. Kraft über 12 Wochen bei mittlerer Alltagslast ergibt jetzt Smith.
+- Filter „Testen“ in der Orden-Auswahl entfällt.
+
 ## [0.17.1] – 2026-09-30
 
 ### Geändert

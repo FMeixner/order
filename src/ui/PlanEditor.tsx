@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { FOCI, FOCUS_BY_ID } from "../data";
+import { FOCI, FOCUS_BY_ID, SHARPEN } from "../data";
+import { domainName, interferes, slotEligible, type DomainId, type SlotPlan } from "../engine/sharpen";
+import type { DeficitWeights } from "../engine/sequence";
 import { addDays, blockWeeks, fitScore, fmtDate, focusName, followedByTest, insertTestWeek, isoDate, isTestBlock, mondayOf, splitTestWeek } from "../engine/plan";
 import { uid } from "../store";
 import type { EquipmentProfile, Focus, Load, PlanBlock, Weekday } from "../types";
@@ -46,7 +48,6 @@ const GOAL_GROUPS: { label: string; goals: string[] }[] = [
   { label: "Ausdauer & Kondition", goals: ["endurance", "conditioning", "fatloss"] },
   { label: "Ruhe & Beweglichkeit", goals: ["wellbeing", "mobility"] },
   { label: "Skill", goals: ["skill"] },
-  { label: "Testen", goals: ["test"] },
 ];
 
 export function FocusPicker({ load, travel, value, onPick, profile, days }: { load: Load; travel: boolean; value?: string; onPick: (id: string) => void; profile?: EquipmentProfile; days?: number }) {
@@ -79,7 +80,7 @@ export function FocusPicker({ load, travel, value, onPick, profile, days }: { lo
   );
 }
 
-export function BlockForm({ block, profiles, days, onSave, onCancel, onDelete, onInsertTest, onSplitTest }: { block: PlanBlock; profiles: EquipmentProfile[]; days?: number; onSave: (b: PlanBlock) => void; onCancel: () => void; onDelete?: () => void; onInsertTest?: () => void; onSplitTest?: () => void }) {
+export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete, onInsertTest, onSplitTest }: { block: PlanBlock; profiles: EquipmentProfile[]; days?: number; slotInfo?: (b: PlanBlock) => SlotPlan; onSave: (b: PlanBlock) => void; onCancel: () => void; onDelete?: () => void; onInsertTest?: () => void; onSplitTest?: () => void }) {
   const [b, setB] = useState<PlanBlock>(block);
   const [ownWeek, setOwnWeek] = useState(!!block.schedule && Object.values(block.schedule).some(Boolean));
   const f = FOCUS_BY_ID[b.focusId];
@@ -116,6 +117,7 @@ export function BlockForm({ block, profiles, days, onSave, onCancel, onDelete, o
       {ownWeek && <WeekEditor schedule={b.schedule ?? {}} profiles={profiles} onChange={(schedule) => setB({ ...b, schedule })} allowEmpty />}
       <div className="label teal"><span className="bar" />Orden {f ? `: ${f.name}` : "wählen"} · {weeks} Wochen{f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (empfohlen ${f.weeks.min}–${f.weeks.max})` : ""}</div>
       <FocusPicker load={b.load} travel={b.travel} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} />
+      {f && slotEligible(f) && <SlotField f={f} b={b} auto={slotInfo?.({ ...b, sharpen: undefined })} onChange={(sharpen) => setB({ ...b, sharpen })} />}
       {(onInsertTest || onSplitTest) && (
         <div className="stack">
           <div className="small muted">Testwoche als eigener Block</div>
@@ -135,13 +137,26 @@ export function BlockForm({ block, profiles, days, onSave, onCancel, onDelete, o
   );
 }
 
+/** Schwerpunkt-Slot einer Phase: automatisch nach der letzten Testwoche, fester Bereich oder aus */
+function SlotField({ f, b, auto, onChange }: { f: Focus; b: PlanBlock; auto?: SlotPlan; onChange: (v: string | undefined) => void }) {
+  return (
+    <Field label="Schwerpunkt-Slot" hint={b.sharpen ? (b.sharpen === "off" ? "Kein Slot, der Orden bekommt die volle Zeit." : SHARPEN[b.sharpen]?.why) : auto?.reason || "Kleine Erhaltungsdosis für den schwächsten Bereich aus der letzten Testwoche."}>
+      <select value={b.sharpen ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
+        <option value="">Automatisch{auto?.domain ? `: ${domainName(auto.domain)}` : " (derzeit keiner)"}</option>
+        {Object.entries(SHARPEN).map(([id, d]) => <option key={id} value={id} disabled={interferes(f, id as DomainId)}>{d.name}{interferes(f, id as DomainId) ? " (stört das Ziel dieses Ordens)" : ""}</option>)}
+        <option value="off">Aus</option>
+      </select>
+    </Field>
+  );
+}
+
 export function newBlock(plan: PlanBlock[]): PlanBlock {
   const last = [...plan].sort((a, c) => a.end.localeCompare(c.end)).pop();
   const start = last ? addDays(last.end, 1) : mondayOf(isoDate(new Date()));
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, onChange, today }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; onChange: (p: PlanBlock[]) => void; today: string }) {
+export function PlanList({ plan, profiles, days, deficits, deficitNames, slotInfo, onChange, today }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotPlan; onChange: (p: PlanBlock[]) => void; today: string }) {
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   const [seq, setSeq] = useState(false);
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
@@ -165,10 +180,10 @@ export function PlanList({ plan, profiles, days, onChange, today }: { plan: Plan
         <button className="btn ghost" onClick={() => setEdit(newBlock(plan))}>+ Phase hinzufügen</button>
         {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
       </div>
-      {seq && <SequenceDialog plan={plan} today={today} onApply={onChange} onClose={() => setSeq(false)} />}
+      {seq && <SequenceDialog plan={plan} today={today} deficits={deficits} deficitNames={deficitNames} onApply={onChange} onClose={() => setSeq(false)} />}
       {edit && (
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>
-          <BlockForm block={edit} profiles={profiles} days={days}
+          <BlockForm block={edit} profiles={profiles} days={days} slotInfo={slotInfo}
             onCancel={() => setEdit(null)}
             onDelete={plan.some((x) => x.id === edit.id) ? () => { if (!confirm(`Phase ${fmtDate(edit.start)}–${fmtDate(edit.end)} löschen? Einträge im Log bleiben erhalten.`)) return; onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
             onInsertTest={plan.some((x) => x.id === edit.id) && !isTestBlock(edit) && !followedByTest(plan, edit) ? () => { if (!confirm("Testwoche einschieben? Alle späteren Phasen rücken eine Woche nach hinten.")) return; onChange(insertTestWeek(plan, edit.id, uid("b"))); setEdit(null); } : undefined}
