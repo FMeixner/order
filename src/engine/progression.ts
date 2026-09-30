@@ -12,7 +12,11 @@
    - double: Ist die nächste vorhandene Last größer, als der Wiederholungsbereich abfängt, wird die Obergrenze angehoben
              (höchstens auf 20), bis man nach dem Sprung wieder etwa unten im Bereich landet. Nach dem Sprung schätzt die App
              die Zielwiederholungen aus der Leistung vorher (Epley), statt stur auf das untere Ende zu setzen.
-   - weight/topset: Sprung über 7,5 % → bei »leicht« erst +1 bis +2 Wiederholungen, dann die nächste Last. */
+   - weight/topset: Sprung über 7,5 % → bei »leicht« erst +1 bis +2 Wiederholungen, dann die nächste Last.
+   Dreimal »OK« mit gleichem Gewicht und ohne mehr Wiederholungen → einmal mehr fordern: nächste Laststufe
+   (bei großem Sprung +2 Wiederholungen). Wer sich damit überrascht, bleibt oben; sonst regelt »schwer« zurück.
+   Anderes Profil (Studio → Zuhause): Gibt es das Gewicht dort nicht, rechnet die App über die Leistung (Epley)
+   auf die Stufen des Profils um. Stand zuletzt »leicht« an, darf es dabei die nächsthöhere Stufe sein. */
 import type { EquipmentProfile, Feedback, SessionEntry, SlotState } from "../types";
 import { snapDown, snapNearest, stepLoad } from "./loads";
 import { parseReps, type Resolved } from "./resolve";
@@ -84,8 +88,34 @@ export function sharedState(slots: Record<string, SlotState>, r: Resolved): Slot
   return best && best !== own ? { ...best, stage: own?.stage ?? 0 } : best;
 }
 
-export function suggest(r: Resolved, st: SlotState | undefined, weekInBlock = 1, p?: EquipmentProfile): Suggestion {
-  const s = st ?? EMPTY_STATE;
+/** Stand auf ein Profil übertragen, in dem es das gespeicherte Gewicht nicht gibt.
+    Leistung = Gewicht × (1 + Wdh/30). Gewählt wird die schwerste Stufe, bei der die nötigen Wiederholungen
+    noch im Bereich liegen. War die letzte Rückmeldung »leicht« oder das Ziel am oberen Ende, darf man wie bei
+    einem normalen Sprung bis zu 3 Wiederholungen unter dem Bereich landen. */
+export function transferState(r: Resolved, st: SlotState, p: EquipmentProfile): SlotState {
+  const w = st.weight;
+  if (w == null || !r.loadable || (r.prog !== "double" && r.prog !== "weight" && r.prog !== "topset")) return st;
+  if (Math.abs(snapDown(p, r.equip, w) - w) < 1e-9) return st; // Gewicht gibt es hier
+  const rp = parseReps(r.reps);
+  if (rp.lo == null || rp.amrap) return { ...st, weight: snapDown(p, r.equip, w) };
+  const lo = rp.lo;
+  const t = st.target ?? lo;
+  const cap = w * (1 + t / 30);
+  const lastFb = st.fb[st.fb.length - 1];
+  const ready = st.nudge || lastFb === "leicht" || lastFb === "sehrleicht" || t >= (rp.hi ?? lo);
+  const floor = r.prog === "double" && ready ? Math.max(1, lo - 3) : lo;
+  const down = snapDown(p, r.equip, w);
+  const cands = [stepLoad(p, r.equip, w, 2), stepLoad(p, r.equip, w, 1), down].filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => b - a);
+  for (const c of cands) {
+    if (c > w && !ready) continue;
+    const need = Math.ceil(30 * (cap / c) - 30 - 1e-9);
+    if (need >= floor) return { ...st, weight: c, target: r.prog === "double" ? need : lo };
+  }
+  return { ...st, weight: down };
+}
+
+export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1, p?: EquipmentProfile): Suggestion {
+  const s = st0 && p ? transferState(r, st0, p) : st0 ?? EMPTY_STATE;
   const rp = parseReps(r.reps);
   const stage = r.ladder ? Math.min(Math.max(s.stage, r.ladderStart ?? 0), r.ladder.length - 1) : 0;
   const name = r.ladder ? r.ladder[stage] : r.name;
@@ -121,8 +151,8 @@ export function suggest(r: Resolved, st: SlotState | undefined, weekInBlock = 1,
   }
 
   if (targetReps === null && rp.lo !== null && !rp.amrap) targetReps = rp.lo;
-  // Gewicht auf die Stufen des heutigen Profils legen (z. B. 12 kg aus dem Studio → 11,5 kg zuhause)
-  const weight = r.loadable ? (s.weight != null && p ? snapDown(p, r.equip, s.weight) : s.weight) : null;
+  const weight = r.loadable ? s.weight : null;
+  if (s.nudge && weight != null) gap = "Dreimal OK mit gleichem Gewicht: Heute etwas mehr. Geht es nicht, ist das auch eine Antwort, dann „schwer“ geben.";
   const backoff: number | null = null; // Back-off-Last rechnet backoffLoad() mit dem Profil
   if (weight == null && r.loadable) hint = "Startgewicht wählen";
 
@@ -146,6 +176,7 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
   const prevFb = s.fb[s.fb.length - 1];
   s.fb = [...s.fb, fb].slice(-5);
   s.updated = today;
+  s.nudge = false;
   const done = entry.sets.filter((x) => x.done);
   if (!done.length) return s;
   const rp = parseReps(r.reps);
@@ -243,6 +274,23 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
       if (fb !== "schwer") s.target = Math.min(r.max ?? 999, cur + (r.step || 5));
       else s.target = cur;
       break;
+    }
+  }
+  // Dreimal OK mit gleichem Gewicht und ohne mehr Wiederholungen: einmal mehr fordern
+  if (r.loadable && (r.prog === "double" || r.prog === "weight" || r.prog === "topset") && usedW != null) {
+    const hist = [...(st?.hist ?? []), { w: usedW, r: minReps }].slice(-3);
+    s.hist = hist;
+    const stuck = hist.length === 3 && s.fb.slice(-3).every((x) => x === "ok") && hist.every((h) => h.w === usedW) && hist[2].r <= hist[0].r;
+    // Nur wenn die normale Regel nicht ohnehin schon steigert
+    const rising = (s.weight ?? 0) > usedW || (r.prog !== "double" && (s.target ?? 0) > minReps);
+    if (stuck && !rising && !twiceHard) {
+      const lo = rp.lo ?? 0;
+      const n = nextLoad(p, r.equip, usedW);
+      const big = n ? n.jump > (r.prog === "double" ? 0.1 : FIXED_GAP) : true;
+      if (!big && n) { s.weight = n.next; s.target = r.prog === "double" ? landingReps(usedW, minReps, "ok", n.next, lo) : lo; }
+      else s.target = minReps + 2;
+      s.nudge = true;
+      s.hist = [];
     }
   }
   return s;

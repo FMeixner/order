@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.18.3] – 2026-09-30
+
+### Geändert
+- Anderer Ort: Gibt es das Gewicht im heutigen Profil nicht, rechnet die App über die Leistung (Epley) auf dessen Stufen um. Nach „leicht“ oder am oberen Ende darf es die nächsthöhere Stufe sein (12 kg leicht im Studio → 13 kg zuhause, im Studio stattdessen mehr Wiederholungen), sonst die nächstniedrigere mit mehr Wiederholungen.
+
+### Neu
+- Dreimal „OK“ mit gleichem Gewicht und ohne mehr Wiederholungen: Die App schlägt einmal die nächste Stufe vor, bei großem Sprung zwei Wiederholungen mehr, mit Hinweis bei der Übung.
+
 ## [0.18.2] – 2026-09-30
 
 ### Geändert

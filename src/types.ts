@@ -224,6 +224,10 @@ export interface SlotState {
   fb: Feedback[];
   topHits: number;
   updated: string;
+  /** Letzte Einheiten: Gewicht und schwächster Satz, für die „dreimal OK“-Regel */
+  hist?: { w: number | null; r: number }[];
+  /** Nächstes Mal mehr, weil dreimal OK mit gleichem Gewicht */
+  nudge?: boolean;
 }
 
 export interface SetEntry { done: boolean; reps?: number; weight?: number | null; seconds?: number }

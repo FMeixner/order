@@ -536,3 +536,43 @@ describe("Gleiche Übung, gleiche Gewichtsdaten", () => {
     expect(suggest(r, st, 1, homeP).weight).toBe(11.5);
   });
 });
+
+describe("Ortswechsel und dreimal OK", () => {
+  const studio: EquipmentProfile = { ...gym, dumbbells: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20] };
+  const homeP: EquipmentProfile = { ...home, dumbbells: [4, 5.5, 7, 8.5, 10, 11.5, 13, 14.5] };
+  const slot = { id: "lr", name: "DB Lateral Raise", sets: 3, reps: "12-15", prog: "double" as const };
+  const entry = (r: ReturnType<typeof resolveSlot>, w: number, reps: number[], fb: "ok" | "leicht"): SessionEntry =>
+    ({ key: r!.key, slotId: "lr", name: r!.name, prog: "double", feedback: fb, sets: reps.map((x) => ({ done: true, reps: x, weight: w })) });
+  it("12 kg im Studio leicht: zuhause 13 kg, im Studio mehr Wiederholungen", () => {
+    const rs = resolveSlot(slot, studio)!;
+    const st = advance(rs, undefined, entry(rs, 12, [12, 12, 12], "leicht"), studio, "2026-10-01");
+    const gymS = suggest(rs, st, 1, studio);
+    expect(gymS.weight).toBe(12);
+    expect(gymS.targetReps).toBeGreaterThan(12);
+    const rh = resolveSlot(slot, homeP)!;
+    const homeS = suggest(rh, st, 1, homeP);
+    expect(homeS.weight).toBe(13);
+    expect(homeS.targetReps).toBeGreaterThanOrEqual(9);
+  });
+  it("12 kg im Studio OK: zuhause 11,5 kg mit mehr Wiederholungen", () => {
+    const rs = resolveSlot(slot, studio)!;
+    const st = advance(rs, undefined, entry(rs, 12, [12, 12, 12], "ok"), studio, "2026-10-01");
+    const homeS = suggest(resolveSlot(slot, homeP)!, st, 1, homeP);
+    expect(homeS.weight).toBe(11.5);
+    expect(homeS.targetReps).toBeGreaterThanOrEqual(14);
+  });
+  it("dreimal OK mit gleichem Gewicht und gleichen Wiederholungen: nächste Stufe", () => {
+    const r = resolveSlot({ id: "bp", name: "Bench Press", sets: 3, reps: "5", prog: "weight" }, gym)!;
+    const e = (w: number): SessionEntry => ({ key: r.key, slotId: "bp", name: r.name, prog: "weight", feedback: "ok", sets: [5, 5, 5].map((x) => ({ done: true, reps: x, weight: w })) });
+    let st = advance(r, undefined, e(80), gym, "d1");
+    st = advance(r, st, e(80), gym, "d2");
+    expect(st.weight).toBe(80);
+    st = advance(r, st, e(80), gym, "d3");
+    expect(st.nudge).toBe(true);
+    expect(st.weight! > 80 || st.target! > 5).toBe(true);
+    expect(suggest(r, st, 1, gym).gap).toMatch(/Dreimal OK/);
+    // danach wieder normal
+    st = advance(r, st, e(st.weight!), gym, "d4");
+    expect(st.nudge).toBe(false);
+  });
+});
