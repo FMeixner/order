@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.17.1] – 2026-09-30
+
+### Geändert
+- Smith läuft 9 bis 12 Wochen statt fest 9, mit Entlastung in Woche 5 und 10. Die Blockfolge-Suche zieht bei 12 Wochen keine Punkte mehr ab.
+
 ## [0.17.0] – 2026-09-30
 
 ### Geändert
