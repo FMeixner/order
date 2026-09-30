@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FLOWS, FOCI, FOCUS_BY_ID } from "../data";
-import { CLASS_LABEL } from "../engine/plan";
+import { CLASS_LABEL, defaultRoles, trainingDays } from "../engine/plan";
+import { shapeFocus } from "../engine/weekplan";
 import { resolveSlot } from "../engine/resolve";
 import { ladderStart } from "../engine/skills";
 import type { AppState, Block, EquipmentProfile, Focus, Slot } from "../types";
@@ -35,12 +36,16 @@ function BlockLines({ b, c }: { b: Block; c: Ctx }) {
   }
 }
 
-export function FocusDetail({ f, profile, skills }: { f: Focus; profile?: EquipmentProfile; skills?: Set<string> | null }) {
+export function FocusDetail({ f, profile, skills, days }: { f: Focus; profile?: EquipmentProfile; skills?: Set<string> | null; days?: number }) {
   const c: Ctx = { profile, skills };
+  // Vorschau so, wie der Orden bei deiner Zahl an Trainingstagen aussieht (ohne Angabe: vier Tage)
+  const n = days && days >= 1 ? days : 4;
+  const sf = shapeFocus(f, n);
+  const roles = defaultRoles(sf, n);
   return (
     <div className="stack focus-detail">
       <p>{f.description}</p>
-      {profile && <p className="note small">Gezeigt mit deinem Profil „{profile.name}“. Trainierst du mit einem anderen Profil, tauscht die App die Übungen passend aus.</p>}
+      <p className="note small">Gezeigt für {n} Trainingstage{profile ? <> mit deinem Profil „{profile.name}“</> : null}. Mit einem anderen Profil tauscht die App die Übungen passend aus.</p>
       <div className="kv">
         <span>Ziel</span><span>{GOAL_LABEL[f.goals.primary]}{f.goals.secondary.length ? `, dazu ${f.goals.secondary.map((g) => GOAL_LABEL[g]).join(", ")}` : ""}</span>
         <span>Ernährung</span><span>{NUTR[f.nutrition]}</span>
@@ -58,20 +63,15 @@ export function FocusDetail({ f, profile, skills }: { f: Focus; profile?: Equipm
           <p className="muted small">Die einzelnen Wochen findest du bei den jeweiligen Orden.</p>
         </div>
       )}
-      {(f.week_4).map((rk, i) => {
-        const r = f.roles[rk];
+      {roles.map((rk, i) => {
+        const r = sf.roles[rk];
         return (
-          <div key={rk} className="card">
-            <div className="role-head"><strong>Tag {i + 1}: {r.name}</strong> <span className="muted small">{r.minutes} Min{f.week_3.includes(rk) ? "" : " · entfällt bei 3 Tagen"}</span></div>
-            {r.note && <p className="muted small">{r.note}</p>}
+          <div key={`${rk}-${i}`} className="card">
+            <div className="role-head"><strong>Tag {i + 1}: {r.name}</strong> <span className="muted small">{r.minutes} Min</span></div>
             <ul className="slot-list">{r.blocks.map((b, j) => <BlockLines key={j} b={b} c={c} />)}</ul>
           </div>
         );
       })}
-      {Object.keys(f.roles).filter((r) => !f.week_4.includes(r)).map((rk) => (
-        <div key={rk} className="card"><strong>Zusatz: {f.roles[rk].name}</strong> <span className="muted small">ab 5 Trainingstagen</span>
-          <ul className="slot-list">{f.roles[rk].blocks.map((b, j) => <BlockLines key={j} b={b} c={c} />)}</ul></div>
-      ))}
     </div>
   );
 }
@@ -88,7 +88,7 @@ export function FociBrowser({ state }: { state: AppState }) {
           <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {LOAD_FIT_LABEL[f.load_fit]} · {f.session_min} Min{f.travel ? " · unterwegs möglich" : ""}</div>
         </button>
       ))}
-      {open && <Modal title={open.name} onClose={() => setOpen(null)} wide><FocusDetail f={open} profile={state.equipment[0]} skills={state.user.skills ? new Set(state.user.skills) : null} /></Modal>}
+      {open && <Modal title={open.name} onClose={() => setOpen(null)} wide><FocusDetail f={open} profile={state.equipment[0]} days={trainingDays(state).length} skills={state.user.skills ? new Set(state.user.skills) : null} /></Modal>}
     </div>
   );
 }

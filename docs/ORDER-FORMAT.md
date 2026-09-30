@@ -102,7 +102,7 @@ Sind die Lasten grob gestuft, reicht der Wiederholungsbereich oft nicht, um den 
 
 ## Flows
 
-`data/modules/flows.json` enthält geführte Flows. Jede Variante hat `drills` wie beim Schwert: `name` beschreibt die Kette (Haltung → Haltung → …), `mode` `reps` (Wiederholungen der Kette) oder `hold` (Sekunden), `sides` für links/rechts, `asym` für die schwächere Seite, `rep_s` für die Zeitschätzung. Eingebunden als `{"type": "module", "module": "flow", "variant": "yin"}`.
+`data/modules/flows.json` enthält geführte Flows. Jede Variante hat `drills` wie beim Schwert: `name` beschreibt die Kette (Haltung → Haltung → …), `mode` `reps` (Wiederholungen der Kette) oder `hold` (Sekunden), `sides` für links/rechts, `rep_s` für die Zeitschätzung. Eingebunden als `{"type": "module", "module": "flow", "variant": "yin"}`.
 
 ## Testwoche als eigener Block
 

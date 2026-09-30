@@ -19,7 +19,6 @@
   "roles": {
     "parkour": {
       "name": "Parkour", "location": "reise", "minutes": 45,
-      "note": "Draußen. Landungen leise und kontrolliert.",
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "hu-p-1", "name": "Landungen: Drop aus 30 cm, Rolle", "kind": "timer", "minutes": 10, "prog": "ladder", "ladder": ["Landungen: Drop aus 30 cm, Rolle", "Landungen: Drop aus 60 cm, Rolle", "Landungen: Drop aus 90 cm, Rolle"]}},

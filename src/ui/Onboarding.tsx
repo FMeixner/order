@@ -5,7 +5,8 @@ import { WEEKDAYS } from "../types";
 import { Field } from "./common";
 import { EquipmentEditor } from "./EquipmentEditor";
 import { PlanList, WeekEditor } from "./PlanEditor";
-import { AsymEditor, LevelFields, NormFields, SkillEditor } from "./Setup";
+import { trainingDays } from "../engine/plan";
+import { LevelFields, NormFields, SkillEditor } from "./Setup";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -36,10 +37,6 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
           <Field label="Wie heißt du?"><input type="text" value={state.user.name} onChange={(e) => update((s) => ({ ...s, user: { ...s.user, name: e.target.value } }))} /></Field>
           <LevelFields user={state.user} onChange={(user) => update((s) => ({ ...s, user }))} />
           <NormFields user={state.user} onChange={(user) => update((s) => ({ ...s, user }))} />
-          <details className="card">
-            <summary>Asymmetrien angeben (optional)</summary>
-            <AsymEditor user={state.user} onChange={(user) => update((s) => ({ ...s, user }))} />
-          </details>
           <div className="card stack">
             <div className="small muted">Schon mal eingerichtet?</div>
             <div className="row wrap">
@@ -86,7 +83,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
         <div className="stack">
           <h2>Dein Jahr</h2>
           <p className="muted">Teile dein Jahr in Phasen, so wie dein Alltag läuft: Semester, Projektzeiten, Urlaub, Saison. Gib für jede Phase an, wie viel los ist, und wähle einen Orden. Die App zeigt, welche Orden zur Phase passen.</p>
-          <PlanList plan={state.plan} profiles={state.equipment} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
+          <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
         </div>
       )}
 

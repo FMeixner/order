@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { FOCI, FOCUS_BY_ID } from "../data";
-import { EQUIPMENT_PRESETS, emptyState } from "../store";
+import { EQUIPMENT_PRESETS, emptyState, migrate } from "../store";
 import type { AppState } from "../types";
 import type { EquipmentProfile, SessionEntry, Slot } from "../types";
 import { parseWeightList, snapDown, stepLoad } from "./loads";
@@ -18,7 +18,7 @@ function sample(): AppState {
   const g = { ...gym, id: "g" }, h = { ...home, id: "h" }, r = { ...reise, id: "r" };
   return {
     ...s,
-    user: { ...s.user, asym: { hip: "L", neck: null, shoulder_ir: null, shoulder_er: null } },
+    user: { ...s.user, asym: { hip: "L" } },
     equipment: [g, h, r],
     schedule: { Mo: "g", Di: "g", Do: "h", Fr: "g" },
     plan: [
@@ -165,10 +165,11 @@ describe("Orden und Plan", () => {
     const soldier = s.plan.find((x) => x.focusId === "soldier")!;
     expect(dayRoleMap(s, soldier).map((x) => x.day)).toEqual(["Mo", "Mi", "Fr", "Sa"]);
   });
-  it("Asymmetrie verlängert die schwache Seite", () => {
-    const s = sample();
+  it("beide Seiten gleich, alte Asymmetrie-Angaben werden beim Laden entfernt", () => {
+    const s = migrate(sample());
+    expect(s.user.asym).toBeUndefined();
     const d = expandDrills(["base"], s.user, 1).find((x) => x.id === "wu-9090")!;
-    expect(d.groups[0]).toMatchObject({ label: "Links", value: 40 });
+    expect(d.groups[0]).toMatchObject({ label: "Links", value: 25 });
     expect(d.groups[1]).toMatchObject({ label: "Rechts", value: 25 });
   });
   it("Bestie passt zum Equipment", () => {

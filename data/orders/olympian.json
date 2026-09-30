@@ -49,7 +49,6 @@
     },
     "sprint": {
       "name": "Sprint", "location": "reise", "minutes": 40,
-      "note": "Draußen, ebene Fläche, volle Konzentration.",
       "warmup": ["run_prep", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "at-s-1", "name": "Beschleunigung 10 m", "sets": 6, "reps": "10 m", "prog": "none", "rest": 90}},

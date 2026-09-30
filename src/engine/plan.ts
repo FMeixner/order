@@ -287,41 +287,29 @@ export interface DrillView extends Drill {
   groups: { label: string; value: number; sets: number }[];
 }
 
-export function expandDrills(listNames: string[] | undefined, user: UserProfile, week: number): DrillView[] {
+export function expandDrills(listNames: string[] | undefined, _user: UserProfile, week: number): DrillView[] {
   const seen = new Set<string>();
   const out: DrillView[] = [];
   for (const ln of listNames ?? []) {
     for (const d of DRILL_LISTS[ln] ?? []) {
       if (seen.has(d.id)) continue;
       seen.add(d.id);
-      out.push(drillView(d, user, week));
+      out.push(drillView(d, week));
     }
   }
   return out;
 }
 
-export function moduleDrills(variant: string, user: UserProfile, week: number, module: "sword" | "flow" = "sword"): DrillView[] {
+export function moduleDrills(variant: string, _user: UserProfile, week: number, module: "sword" | "flow" = "sword"): DrillView[] {
   const list = module === "flow" ? FLOWS[variant]?.drills ?? [] : DM_VARIANTS[variant] ?? [];
-  return list.filter((d) => !d.rotation || d.rotation === (isAWeek(week) ? "A" : "B")).map((d) => drillView(d, user, week));
+  return list.filter((d) => !d.rotation || d.rotation === (isAWeek(week) ? "A" : "B")).map((d) => drillView(d, week));
 }
 
-function drillView(d: Drill, user: UserProfile, week: number): DrillView {
+function drillView(d: Drill, week: number): DrillView {
   let value = d.value;
   if (d.weekly_step) value = Math.min(d.max ?? 9999, value + d.weekly_step * (week - 1));
   const sets = d.sets ?? 1;
-  const r5 = (v: number) => (d.mode === "reps" ? Math.round(v) : Math.round(v / 5) * 5);
-  if (d.sides === true) {
-    const weak = d.asym ? user.asym[d.asym] : null;
-    const L = weak === "L" ? r5(value * 1.6) : value;
-    const R = weak === "R" ? r5(value * 1.6) : value;
-    const setsL = d.mode === "reps" && weak === "L" && d.asym?.startsWith("shoulder") ? sets + 1 : sets;
-    const setsR = d.mode === "reps" && weak === "R" && d.asym?.startsWith("shoulder") ? sets + 1 : sets;
-    const extra = d.mode === "reps" && d.asym?.startsWith("shoulder");
-    return { ...d, value, groups: [
-      { label: "Links", value: extra ? value : L, sets: setsL },
-      { label: "Rechts", value: extra ? value : R, sets: setsR },
-    ] };
-  }
+  if (d.sides === true) return { ...d, value, groups: [{ label: "Links", value, sets }, { label: "Rechts", value, sets }] };
   if (Array.isArray(d.sides)) return { ...d, value, groups: d.sides.map((label) => ({ label, value, sets })) };
   return { ...d, value, groups: [{ label: "", value, sets }] };
 }

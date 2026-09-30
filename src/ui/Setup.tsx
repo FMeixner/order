@@ -11,28 +11,6 @@ import { WeekEditor } from "./PlanEditor";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
-const ASYM: { k: keyof UserProfile["asym"]; l: string }[] = [
-  { k: "hip", l: "Hüfte weniger beweglich" },
-  { k: "neck", l: "Nacken seitlich verkürzt" },
-  { k: "shoulder_ir", l: "Schulter-Innenrotation eingeschränkt" },
-  { k: "shoulder_er", l: "Schulter-Außenrotation schwächer" },
-];
-
-export function AsymEditor({ user, onChange }: { user: UserProfile; onChange: (u: UserProfile) => void }) {
-  return (
-    <div className="stack">
-      <p className="muted small">Die schwächere Seite bekommt im Warm-up und Cool-down mehr Zeit oder einen Satz mehr. Wenn du nichts weißt: alles auf „keine“ lassen.</p>
-      {ASYM.map(({ k, l }) => (
-        <Field key={k} label={l}>
-          <Seg value={(user.asym[k] ?? "-") as "L" | "R" | "-"} options={[{ value: "-", label: "keine" }, { value: "L", label: "links" }, { value: "R", label: "rechts" }]}
-            onChange={(v) => onChange({ ...user, asym: { ...user.asym, [k]: v === "-" ? null : v } })} />
-        </Field>
-      ))}
-    </div>
-  );
-}
-
-/** Skillcheck: Was sitzt sauber? Filtert Übungen und Bestien. */
 export function SkillEditor({ user, onChange }: { user: UserProfile; onChange: (u: UserProfile) => void }) {
   const have = new Set(user.skills ?? []);
   const toggle = (id: string, on: boolean) => {
@@ -168,9 +146,6 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
           <button className="btn ghost small" onClick={() => update((st) => { const ro = { ...st.roleOrder }; delete ro[block.id]; return { ...st, roleOrder: ro }; })}>Standard wiederherstellen</button>
         </Collapse>
       )}
-      <Collapse title="Asymmetrien" meta="optional">
-        <AsymEditor user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} />
-      </Collapse>
       <Collapse title="Sichern und Wiederherstellen">
         <p className="muted small">Alle Daten liegen nur auf diesem Gerät, im Browser. Sichere regelmäßig, vor allem vor einem Gerätewechsel.</p>
         <div className="row wrap">

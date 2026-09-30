@@ -10,7 +10,7 @@ const SEC_PER_REP = 3.5;
 const SETUP = 45; // Umbau, Gewicht holen, einstellen
 const RAMP_HEAVY = 240; // Steigerungssätze vor einer schweren Grundübung (≤ 6 Wdh, Langhantel)
 const CLASS_MIN: Record<BeastClass, number> = { plage: 8, bestie: 14, ungeheuer: 21, uralte: 32, verfluchte: 45 };
-const NEUTRAL_USER: UserProfile = { name: "", asym: { hip: null, neck: null, shoulder_ir: null, shoulder_er: null } };
+const NEUTRAL_USER: UserProfile = { name: "" };
 
 function repsOf(reps: string | undefined): number {
   const rp = parseReps(reps ?? "");

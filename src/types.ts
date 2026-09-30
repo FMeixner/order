@@ -150,8 +150,6 @@ export interface Drill {
   sets?: number;
   /** Beidseitig: Links/Rechts. Oder eigene Beschriftungen, z. B. ["vorwärts","rückwärts"] */
   sides?: boolean | string[];
-  /** Seite mit Defizit bekommt mehr: hip, neck, shoulder_ir, shoulder_er */
-  asym?: "hip" | "neck" | "shoulder_ir" | "shoulder_er";
   rotation?: "A" | "B";
   /** Steigerung pro Blockwoche (z. B. +5 s) bis max */
   weekly_step?: number;
@@ -195,7 +193,8 @@ export const WEEKDAYS: Weekday[] = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 
 export interface UserProfile {
   name: string;
-  asym: { hip: "L" | "R" | null; neck: "L" | "R" | null; shoulder_ir: "L" | "R" | null; shoulder_er: "L" | "R" | null };
+  /** Veraltet (bis 0.15): Seitengewichtung für Asymmetrien, wird beim Laden entfernt */
+  asym?: unknown;
   /** Für die Einordnung der Testwoche. Optional, bleibt auf dem Gerät. */
   birthYear?: number | null;
   sex?: "m" | "w" | null;

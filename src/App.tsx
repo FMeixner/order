@@ -5,6 +5,7 @@ import { FociBrowser } from "./ui/FociBrowser";
 import { LogView } from "./ui/LogView";
 import { Onboarding } from "./ui/Onboarding";
 import { PlanList } from "./ui/PlanEditor";
+import { trainingDays } from "./engine/plan";
 import { YearBalance } from "./ui/YearBalance";
 import { Setup } from "./ui/Setup";
 import { TimerBar, TimerProvider } from "./ui/Timer";
@@ -47,7 +48,7 @@ export default function App() {
             <div className="stack">
               <p className="muted">Dein Jahr in Phasen. Tippe eine Phase an, um Zeitraum, Alltagslast oder Orden zu ändern.</p>
               {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
-              <PlanList plan={state.plan} profiles={state.equipment} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
+              <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
           {tab === "foki" && <FociBrowser state={state} />}

@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.16.0] – 2026-09-30
+
+### Geändert
+- Orden-Vorschau zeigt den Orden so, wie er bei deiner Zahl an Trainingstagen läuft: drei Tage in der verdichteten Form, fünf mit Zusatztag. Hinweise wie „entfällt bei 3 Tagen“ und „ab 5 Trainingstagen“ sind weg, Rollen-Hinweise ebenso.
+
+### Entfernt
+- Asymmetrie-Korrektur (Seitengewichtung in Warm-up, Cool-down und Flows): Die Evidenz dafür ist dünn. Beide Seiten bekommen jetzt dasselbe. Alte Angaben werden beim Laden gelöscht.
+- Hinweise zu leisen Landungen bei Huntsman und Olympian.
+
 ## [0.15.0] – 2026-09-29
 
 ### Neu

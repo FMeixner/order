@@ -47,7 +47,7 @@ function range(a: number, b: number, s: number): number[] {
 export function emptyState(): AppState {
   return {
     version: 1, onboarded: false,
-    user: { name: "", birthYear: null, sex: null, skills: null, asym: { hip: null, neck: null, shoulder_ir: null, shoulder_er: null } },
+    user: { name: "", birthYear: null, sex: null, skills: null },
     equipment: [], schedule: {}, roleOrder: {}, plan: [], slots: {}, sessions: [], beastTimes: {},
     reduced: {}, menuChoice: {}, tests: {}, who5: [], feeling: [], swaps: {},
   };
@@ -58,7 +58,9 @@ export function migrate(raw: unknown): AppState {
   const base = emptyState();
   if (!raw || typeof raw !== "object") return base;
   const s = { ...base, ...(raw as Partial<AppState>) } as AppState;
-  s.user = { ...base.user, ...(s.user ?? {}), asym: { ...base.user.asym, ...(s.user?.asym ?? {}) } };
+  s.user = { ...base.user, ...(s.user ?? {}) };
+  // 0.16: Asymmetrie-Korrektur entfernt
+  delete s.user.asym;
   s.equipment = (s.equipment ?? []).map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   // 0.1 → 0.2: Schalter „Doppelmesser“ wird zum Equipment „Schwert“ an den Heim-Profilen
   if (s.user.doppelmesser && !s.equipment.some((e) => e.has.sword)) {
