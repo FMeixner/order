@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { FOCUS_BY_ID } from "../data";
-import { addDays, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isAWeek, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
+import { addDays, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import { TESTWEEK } from "../data";
 import type { AppState, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
-import { SessionPreview, SessionView, sessionId } from "./SessionView";
+import { isRunBlock, SessionPreview, SessionView, sessionId } from "./SessionView";
 import { focusFor } from "../engine/weekplan";
 import { exportState } from "../store";
 import { TestWeek } from "./TestWeek";
@@ -18,6 +18,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const [pick, setPick] = useState<Weekday | null>(null);
   const [showTraining, setShowTraining] = useState(false);
   const [viewWeek, setViewWeek] = useState<number | null>(null);
+  const [adjust, setAdjust] = useState(false);
   if (!block) {
     const nb = nextBlock(state.plan, today);
     return (
@@ -107,21 +108,14 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           </div>
         </div>
         <div className="progress"><div style={{ width: `${Math.min(100, (100 * week) / total)}%` }} /></div>
-        <div className="tags">
+        {(!isCur || test || deload || beforeTest) && <div className="tags">
           {!isCur && <span className="tag amber">{future ? "Vorschau" : "vergangen"} · ab {fmtDate(weekStart)}</span>}
-          <span className="tag">{isAWeek(week) ? "A-Woche" : "B-Woche"}</span>
           {test && <span className="tag teal">Testwoche</span>}
           {deload && <span className="tag">Entlastung −1 Satz</span>}
           {!deload && beforeTest && <span className="tag">vor der Testwoche −1 Satz</span>}
-        </div>
+        </div>}
         {comeback && <div className="note small">Willkommen zurück. Nach {pauseDays} Tagen Pause läuft diese Woche mit −1 Satz, und Gewichte starten etwas leichter. Ab nächster Woche geht es normal weiter.</div>}
         {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
-        {!deload && !future && (
-          <label className="check small">
-            <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => ({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }))} />
-            <span>Diese Woche −1 Satz (müde, krank, viel los)</span>
-          </label>
-        )}
       </div>
 
       {ravenOn(state) && <RavenToday key={`${block.id}:${today}`} state={state} update={update} block={block} today={today} />}
@@ -154,12 +148,42 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
               );
             })}
           </div>
-          {sel && state.equipment.length > 1 && (
-            <div className="place-row" role="group" aria-label="Trainingsort für diesen Tag">
-              <span className="muted small">Ort</span>
-              <Seg value={profile?.id ?? sel.profileId} options={state.equipment.map((e) => ({ value: e.id, label: e.name }))} onChange={setPlace} />
-            </div>
-          )}
+          {sel && (() => {
+            // Anpassungen für heute, gebündelt hinter dem Zahnrad
+            const sid = sessionId(block.id, week, sel.role);
+            const hasRun = !!focus.roles[sel.role]?.blocks.some(isRunBlock);
+            const canReduce = !deload && !future;
+            const active = [profile && profile.id !== sel.profileId, canReduce && !!state.reduced[rkey], hasRun && !!state.noRun?.[sid]].filter(Boolean).length;
+            return (
+              <div className="adjust">
+                <button className={`btn ghost small adjust-btn ${active ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
+                  <span aria-hidden>⚙</span> Anpassen{active ? ` · ${active}` : ""}
+                </button>
+                {adjust && (
+                  <div className="card stack adjust-panel">
+                    {state.equipment.length > 1 && (
+                      <div className="stack">
+                        <span className="field-label">Ort für diese Einheit</span>
+                        <Seg value={profile?.id ?? sel.profileId} options={state.equipment.map((e) => ({ value: e.id, label: e.name }))} onChange={setPlace} />
+                      </div>
+                    )}
+                    {canReduce && (
+                      <label className="check small">
+                        <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => ({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }))} />
+                        <span>Diese Woche −1 Satz (müde, krank, viel los)</span>
+                      </label>
+                    )}
+                    {hasRun && (
+                      <label className="check small">
+                        <input type="checkbox" checked={!!state.noRun?.[sid]} onChange={(e) => update((st) => ({ ...st, noRun: { ...(st.noRun ?? {}), [sid]: e.target.checked } }))} />
+                        <span>Heute kein Laufen möglich: Bestie statt Lauf</span>
+                      </label>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
           {sel && profile && future ? (
             <SessionPreview state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} />
           ) : sel && profile ? (

@@ -135,12 +135,6 @@ export function SessionView(ctx: SessionCtx) {
         <h2>{role.name}</h2>
         <div className="muted small">{ctx.profile.name} · etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
         {role.note && <p className="note">{role.note}</p>}
-        {role.blocks.some(isRunBlock) && (
-          <label className="check small">
-            <input type="checkbox" checked={!!state.noRun?.[id]} onChange={(e) => update((st) => ({ ...st, noRun: { ...(st.noRun ?? {}), [id]: e.target.checked } }))} />
-            <span>Heute kein Laufen möglich: Bestie statt Lauf</span>
-          </label>
-        )}
         {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
       </div>

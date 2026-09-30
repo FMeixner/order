@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.18.4] – 2026-09-30
+
+### Geändert
+- Anpassungen für den Tag gebündelt hinter „⚙ Anpassen“ unter den Tagen: Ort, −1 Satz, kein Laufen. Die Zahl am Zahnrad zeigt aktive Anpassungen.
+- Kennzeichnung A-/B-Woche entfernt. Übungen im Wechsel laufen weiter wie bisher.
+
 ## [0.18.3] – 2026-09-30
 
 ### Geändert

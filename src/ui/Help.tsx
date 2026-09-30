@@ -42,13 +42,13 @@ export function Help() {
       <h3>Bestien</h3>
       <ul>
         <li>Jeder Orden hat mindestens eine Bestie pro Woche. Bei ruhigeren Orden kommt in jeder zweiten Woche eine lange Bestie im Grundlagentempo; diese Zeit zählt nicht für die Bestzeit.</li>
-        <li>Kein Laufen möglich (Wetter, Reise, Knie)? In der Einheit „Heute kein Laufen möglich“ anhaken: Aus dem Lauf wird eine Bestie ähnlicher Dauer.</li>
+        <li>Kein Laufen möglich (Wetter, Reise, Knie)? Unter ⚙ Anpassen „Heute kein Laufen möglich“ anhaken: Aus dem Lauf wird eine Bestie ähnlicher Dauer.</li>
         <li>Mit „Skills trainieren“ (Setup › Können) kommen auch Bestien mit Skills, die noch fehlen, als <em>hexed</em>-Variante mit leichterer Übung. Eigene Bestzeit.</li>
       </ul>
 
       <h3>Anderer Ort heute</h3>
       <ul>
-        <li>Unter den Tagen auf <em>Heute</em> wählst du den Ort für diese Einheit, zum Beispiel Zuhause statt Studio. Die App nimmt dann die Übungen und Gewichtsstufen dieses Profils. Der Wochenplan bleibt unverändert.</li>
+        <li>Unter ⚙ Anpassen (rechts unter den Tagen auf <em>Heute</em>) wählst du den Ort für diese Einheit, zum Beispiel Zuhause statt Studio. Die App nimmt dann die Übungen und Gewichtsstufen dieses Profils. Der Wochenplan bleibt unverändert.</li>
       </ul>
 
       <h3>Übung tauschen</h3>
@@ -103,7 +103,7 @@ export function Help() {
       <h3>Alltagslast</h3>
       <ul>
         <li>Ist in einer Phase viel los, läuft etwa die Hälfte der freien Übungen an Maschine oder Kabel, wenn das Studio sie hat. Der erste große Lift des Tages bleibt frei.</li>
-        <li>Eine akut schwere Woche (krank, Prüfungen, schlecht geschlafen): oben „−1 Satz“ anhaken.</li>
+        <li>Eine akut schwere Woche (krank, Prüfungen, schlecht geschlafen): unter ⚙ Anpassen „−1 Satz“ anhaken. Die Zahl am Zahnrad zeigt, wie viele Anpassungen gerade aktiv sind.</li>
       </ul>
 
       <h3>Timer</h3>
