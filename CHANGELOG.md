@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.18.2] – 2026-09-30
+
+### Geändert
+- Gleiche Übung, gleiche Gewichtsdaten: DB Lateral Raise als reguläre Übung und als Ersatz an anderer Stelle teilen sich Gewicht und Wiederholungsziel. Es zählt der jüngste Stand. Leitern und Übungen ohne Gewicht bleiben an ihrer Stelle.
+- Der Gewichtsvorschlag liegt immer auf einer Stufe des heutigen Profils (abgerundet), etwa 12 kg aus dem Studio → 11,5 kg zuhause.
+
 ## [0.18.1] – 2026-09-30
 
 ### Neu

@@ -520,3 +520,19 @@ describe("Messfehler in der Testauswertung", () => {
     expect(t["t-broad"]).toBe("better");
   });
 });
+
+describe("Gleiche Übung, gleiche Gewichtsdaten", () => {
+  it("Ersatz an anderer Stelle nimmt das jüngste Gewicht dieser Übung, auf die Stufen des Profils gelegt", async () => {
+    const { sharedState } = await import("./progression");
+    const homeP: EquipmentProfile = { ...home, dumbbells: [4, 5.5, 7, 8.5, 10, 11.5, 13] };
+    const r = resolveSlot({ id: "x", name: "DB Lateral Raise", sets: 3, reps: "12-15", prog: "double" }, homeP)!;
+    const slots = {
+      "a|DB Lateral Raise": { weight: 10, target: 13, stage: 0, fb: [], topHits: 0, updated: "2026-10-01" },
+      "b|DB Lateral Raise": { weight: 12, target: 12, stage: 0, fb: [], topHits: 0, updated: "2026-10-05" },
+      "c|Cable Lateral Raise": { weight: 30, target: 12, stage: 0, fb: [], topHits: 0, updated: "2026-10-09" },
+    };
+    const st = sharedState(slots, r)!;
+    expect(st.weight).toBe(12);
+    expect(suggest(r, st, 1, homeP).weight).toBe(11.5);
+  });
+});

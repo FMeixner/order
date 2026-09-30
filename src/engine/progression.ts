@@ -70,6 +70,20 @@ const fmtKg = (n: number) => String(n).replace(".", ",");
 
 export const EMPTY_STATE: SlotState = { weight: null, target: null, stage: 0, fb: [], topHits: 0, updated: "" };
 
+/** Gewichtsdaten einer Übung: gleiche Übung, gleiche Daten, egal ob regulär oder als Ersatz an anderer Stelle.
+    Es zählt der jüngste Stand dieser Übung. Leitern und Übungen ohne Gewicht bleiben an ihrer Stelle. */
+export function sharedState(slots: Record<string, SlotState>, r: Resolved): SlotState | undefined {
+  const own = slots[r.key];
+  if (!r.loadable || r.ladder) return own;
+  let best = own;
+  for (const [k, st] of Object.entries(slots)) {
+    if (k === r.key || k.slice(k.indexOf("|") + 1) !== r.name || st.weight == null) continue;
+    if (!best || (st.updated ?? "") > (best.updated ?? "")) best = st;
+  }
+  // Stufe (Leiter) gehört zur Stelle, Gewicht und Wiederholungsziel zur Übung
+  return best && best !== own ? { ...best, stage: own?.stage ?? 0 } : best;
+}
+
 export function suggest(r: Resolved, st: SlotState | undefined, weekInBlock = 1, p?: EquipmentProfile): Suggestion {
   const s = st ?? EMPTY_STATE;
   const rp = parseReps(r.reps);
@@ -107,7 +121,8 @@ export function suggest(r: Resolved, st: SlotState | undefined, weekInBlock = 1,
   }
 
   if (targetReps === null && rp.lo !== null && !rp.amrap) targetReps = rp.lo;
-  const weight = r.loadable ? s.weight : null;
+  // Gewicht auf die Stufen des heutigen Profils legen (z. B. 12 kg aus dem Studio → 11,5 kg zuhause)
+  const weight = r.loadable ? (s.weight != null && p ? snapDown(p, r.equip, s.weight) : s.weight) : null;
   const backoff: number | null = null; // Back-off-Last rechnet backoffLoad() mit dem Profil
   if (weight == null && r.loadable) hint = "Startgewicht wählen";
 

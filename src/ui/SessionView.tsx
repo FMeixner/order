@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
-import { backoffLoad, advance, suggest, type Suggestion } from "../engine/progression";
+import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
@@ -119,7 +119,7 @@ export function SessionView(ctx: SessionCtx) {
       for (const it of items) for (const r of it.resolved) {
         const e = cur.entries[r.key];
         if (!e || !e.sets.some((x) => x.done)) continue;
-        slots[r.key] = advance(r, slots[r.key], e, ctx.profile, ctx.date);
+        slots[r.key] = advance(r, sharedState(slots, r), e, ctx.profile, ctx.date);
       }
       const beastTimes = { ...st.beastTimes };
       if (cur.beast?.seconds && !cur.beast.easy) beastTimes[cur.beast.id] = [...(beastTimes[cur.beast.id] ?? []), { date: ctx.date, seconds: cur.beast.seconds }];
@@ -343,7 +343,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const t = useTimer();
   const [swapOpen, setSwapOpen] = useState(false);
   const canSwap = r.kind === "strength" || r.kind === "hold";
-  const st = ctx.state.slots[r.key];
+  const st = sharedState(ctx.state.slots, r);
   const raw: Suggestion = suggest(r, st, ctx.week, ctx.profile);
   // Nach längerer Pause (14 Tage und mehr an dieser Übung): 10 % leichter wieder einsteigen
   const pausedDays = st?.updated && /^\d{4}-/.test(st.updated) ? daysBetween(st.updated, ctx.date) : 0;
