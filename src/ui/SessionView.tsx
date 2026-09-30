@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
@@ -22,6 +22,9 @@ export interface SessionCtx {
   profile: EquipmentProfile;
   date: string;
   reduced: boolean;
+  /** Knopf neben der Überschrift (⚙ Anpassen) und die aufgeklappte Karte darunter */
+  headAction?: ReactNode;
+  headPanel?: ReactNode;
 }
 
 export const sessionId = (blockId: string, week: number, role: string) => `${blockId}:${week}:${role}`;
@@ -132,8 +135,9 @@ export function SessionView(ctx: SessionCtx) {
   return (
     <div className="stack session">
       <div className="session-head">
-        <h2>{role.name}</h2>
+        <div className="session-title"><h2>{role.name}</h2>{ctx.headAction}</div>
         <div className="muted small">{ctx.profile.name} · etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
+        {ctx.headPanel}
         {role.note && <p className="note">{role.note}</p>}
         {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
@@ -598,8 +602,9 @@ export function SessionPreview(ctx: SessionCtx) {
   return (
     <div className="stack session">
       <div className="session-head">
-        <h2>{role.name}</h2>
+        <div className="session-title"><h2>{role.name}</h2>{ctx.headAction}</div>
         <div className="muted small">{ctx.profile.name} · etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
+        {ctx.headPanel}
       </div>
       <section className="card preview">
         <div className="preview-row muted"><span>Warm-up</span><span>{warm.length} Übungen</span></div>

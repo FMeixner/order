@@ -48,7 +48,7 @@ export function Help() {
 
       <h3>Anderer Ort heute</h3>
       <ul>
-        <li>Unter ⚙ Anpassen (rechts unter den Tagen auf <em>Heute</em>) wählst du den Ort für diese Einheit, zum Beispiel Zuhause statt Studio. Die App nimmt dann die Übungen und Gewichtsstufen dieses Profils. Der Wochenplan bleibt unverändert.</li>
+        <li>Unter ⚙ Anpassen (neben dem Namen der Einheit auf <em>Heute</em>) wählst du den Ort für diese Einheit, zum Beispiel Zuhause statt Studio. Die App nimmt dann die Übungen und Gewichtsstufen dieses Profils. Der Wochenplan bleibt unverändert.</li>
       </ul>
 
       <h3>Übung tauschen</h3>

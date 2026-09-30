@@ -81,6 +81,39 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
     return { ...st, profileFor: pf };
   });
 
+  // Anpassungen für heute, gebündelt hinter dem Zahnrad neben der Überschrift der Einheit
+  const sid = sel ? sessionId(block.id, week, sel.role) : "";
+  const hasRun = !!(sel && focus.roles[sel.role]?.blocks.some(isRunBlock));
+  const canReduce = !deload && !future;
+  const activeAdj = sel ? [profile && profile.id !== sel.profileId, canReduce && !!state.reduced[rkey], hasRun && !!state.noRun?.[sid]].filter(Boolean).length : 0;
+  const adjustButton = (
+    <button className={`btn ghost small adjust-btn ${activeAdj ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
+      <span aria-hidden>⚙</span> Anpassen{activeAdj ? ` · ${activeAdj}` : ""}
+    </button>
+  );
+  const adjustPanel = adjust && sel ? (
+    <div className="card stack adjust-panel">
+      {state.equipment.length > 1 && (
+        <div className="stack">
+          <span className="field-label">Ort für diese Einheit</span>
+          <Seg value={profile?.id ?? sel.profileId} options={state.equipment.map((e) => ({ value: e.id, label: e.name }))} onChange={setPlace} />
+        </div>
+      )}
+      {canReduce && (
+        <label className="check small">
+          <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => ({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }))} />
+          <span>Diese Woche −1 Satz (müde, krank, viel los)</span>
+        </label>
+      )}
+      {hasRun && (
+        <label className="check small">
+          <input type="checkbox" checked={!!state.noRun?.[sid]} onChange={(e) => update((st) => ({ ...st, noRun: { ...(st.noRun ?? {}), [sid]: e.target.checked } }))} />
+          <span>Heute kein Laufen möglich: Bestie statt Lauf</span>
+        </label>
+      )}
+    </div>
+  ) : null;
+
   const doneCount = state.sessions.filter((s) => s.done).length;
   const backupAge = state.lastBackup ? daysBetween(state.lastBackup, today) : null;
   const needBackup = doneCount >= 3 && (backupAge == null || backupAge >= 14);
@@ -148,46 +181,10 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
               );
             })}
           </div>
-          {sel && (() => {
-            // Anpassungen für heute, gebündelt hinter dem Zahnrad
-            const sid = sessionId(block.id, week, sel.role);
-            const hasRun = !!focus.roles[sel.role]?.blocks.some(isRunBlock);
-            const canReduce = !deload && !future;
-            const active = [profile && profile.id !== sel.profileId, canReduce && !!state.reduced[rkey], hasRun && !!state.noRun?.[sid]].filter(Boolean).length;
-            return (
-              <div className="adjust">
-                <button className={`btn ghost small adjust-btn ${active ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
-                  <span aria-hidden>⚙</span> Anpassen{active ? ` · ${active}` : ""}
-                </button>
-                {adjust && (
-                  <div className="card stack adjust-panel">
-                    {state.equipment.length > 1 && (
-                      <div className="stack">
-                        <span className="field-label">Ort für diese Einheit</span>
-                        <Seg value={profile?.id ?? sel.profileId} options={state.equipment.map((e) => ({ value: e.id, label: e.name }))} onChange={setPlace} />
-                      </div>
-                    )}
-                    {canReduce && (
-                      <label className="check small">
-                        <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => ({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }))} />
-                        <span>Diese Woche −1 Satz (müde, krank, viel los)</span>
-                      </label>
-                    )}
-                    {hasRun && (
-                      <label className="check small">
-                        <input type="checkbox" checked={!!state.noRun?.[sid]} onChange={(e) => update((st) => ({ ...st, noRun: { ...(st.noRun ?? {}), [sid]: e.target.checked } }))} />
-                        <span>Heute kein Laufen möglich: Bestie statt Lauf</span>
-                      </label>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
           {sel && profile && future ? (
-            <SessionPreview state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} />
+            <SessionPreview state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} headAction={adjustButton} headPanel={adjustPanel} />
           ) : sel && profile ? (
-            <SessionView key={sessionId(block.id, week, sel.role) + profile.id} state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} />
+            <SessionView key={sessionId(block.id, week, sel.role) + profile.id} state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} headAction={adjustButton} headPanel={adjustPanel} />
           ) : (
             <div className="card muted">Kein Trainingstag eingerichtet oder Equipment-Profil fehlt. Unter Setup den Wochenplan prüfen.</div>
           )}

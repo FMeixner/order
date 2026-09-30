@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.18.5] – 2026-09-30
+
+### Geändert
+- „⚙ Anpassen“ sitzt in der Zeile mit dem Namen der Einheit, die Karte klappt darunter auf.
+
 ## [0.18.4] – 2026-09-30
 
 ### Geändert

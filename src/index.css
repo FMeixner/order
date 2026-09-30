@@ -326,6 +326,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .raven-cup { border-top: 1px dashed var(--border-lit); padding-top: 8px; margin-top: 8px; font-style: italic; }
 .card.raven hr, .collapse-body hr { border: 0; border-top: 1px solid var(--border); margin: 12px 0; }
 .raven-headline { font-family: var(--display); letter-spacing: 0.04em; }
-.adjust { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-.adjust-panel { align-self: stretch; }
+.session-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.adjust-panel { margin-top: 8px; }
 .adjust-btn.on { border-color: var(--teal); color: var(--text); }
