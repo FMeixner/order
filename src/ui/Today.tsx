@@ -8,6 +8,7 @@ import { SessionPreview, SessionView, sessionId } from "./SessionView";
 import { focusFor } from "../engine/weekplan";
 import { exportState } from "../store";
 import { TestWeek } from "./TestWeek";
+import { Seg } from "./common";
 import { RavenToday, ravenOn } from "./Raven";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -69,7 +70,15 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   /** Datum für Einträge: heute in der laufenden Woche, sonst der Wochentag der gewählten Woche */
   const dateFor = (d: Weekday) => (isCur ? today : addDays(weekStart, WEEKDAYS.indexOf(d)));
   const sel = days.find((d) => d.day === (pick ?? defaultDay));
-  const profile = sel ? state.equipment.find((e) => e.id === sel.profileId) : undefined;
+  // Trainingsort für diesen Tag: Standard aus dem Wochenplan, heute umschaltbar
+  const pidOf = (d: { role: string; profileId: string }) => state.profileFor?.[sessionId(block.id, week, d.role)] ?? d.profileId;
+  const profile = sel ? state.equipment.find((e) => e.id === pidOf(sel)) : undefined;
+  const setPlace = (pid: string) => sel && update((st) => {
+    const pf = { ...(st.profileFor ?? {}) };
+    const k = sessionId(block.id, week, sel.role);
+    if (pid === sel.profileId) delete pf[k]; else pf[k] = pid;
+    return { ...st, profileFor: pf };
+  });
 
   const doneCount = state.sessions.filter((s) => s.done).length;
   const backupAge = state.lastBackup ? daysBetween(state.lastBackup, today) : null;
@@ -134,7 +143,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           <div className="days">
             {days.map((d) => {
               const r = focus.roles[d.role];
-              const p = state.equipment.find((e) => e.id === d.profileId);
+              const p = state.equipment.find((e) => e.id === pidOf(d));
               const done = doneRoles.has(d.role);
               return (
                 <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${isCur && d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
@@ -145,6 +154,12 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
               );
             })}
           </div>
+          {sel && state.equipment.length > 1 && (
+            <div className="place-row" role="group" aria-label="Trainingsort für diesen Tag">
+              <span className="muted small">Ort</span>
+              <Seg value={profile?.id ?? sel.profileId} options={state.equipment.map((e) => ({ value: e.id, label: e.name }))} onChange={setPlace} />
+            </div>
+          )}
           {sel && profile && future ? (
             <SessionPreview state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} />
           ) : sel && profile ? (

@@ -277,6 +277,8 @@ export interface AppState {
   swaps: Record<string, string>;
   /** Einheiten, in denen heute nicht gelaufen werden kann (Session-Id → true): Lauf wird zur Bestie */
   noRun?: Record<string, boolean>;
+  /** Anderer Trainingsort für eine Einheit (Session-Id → Equipment-Profil-ID): Übungen und Gewichtsstufen folgen dem Profil */
+  profileFor?: Record<string, string>;
   /** Darstellung: automatisch nach System, hell oder dunkel */
   theme?: "auto" | "light" | "dark";
   /** Datum der letzten Sicherung (ISO) */

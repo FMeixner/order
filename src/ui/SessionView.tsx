@@ -107,7 +107,7 @@ export function SessionView(ctx: SessionCtx) {
         id, date: ctx.date, blockId: block.id, focusId: focus.id, week, role: roleKey, profileId: ctx.profile.id,
         entries: {}, drills: {}, menu: {}, done: false,
       };
-      const next = fn({ ...cur, date: cur.done ? cur.date : ctx.date });
+      const next = fn({ ...cur, date: cur.done ? cur.date : ctx.date, profileId: cur.done ? cur.profileId : ctx.profile.id });
       return { ...st, sessions: [...st.sessions.filter((s) => s.id !== id), next] };
     });
 
@@ -258,7 +258,7 @@ function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sessio
           <option value="">Schwerpunkt wählen …</option>
           {Object.keys(b.options).map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
-        {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={() => t.rest(`Pause nach ${r.name}`, r.rest)} />)}
+        {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}
       </section>
     );
   }
@@ -270,7 +270,7 @@ function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sessio
         <div className="block-label amber">Kontrastpaar · {transfer} s Übergang · {Math.round(rest / 60)} Min Pause</div>
         {heavy && <SlotCard r={heavy} ctx={ctx} session={session} mut={mut} onSetDone={() => expl && t.rest(`Gleich: ${expl.name}`, transfer)} />}
         <div className="arrow muted small">↓ {transfer} s, dann explosiv</div>
-        {expl && <SlotCard r={expl} ctx={ctx} session={session} mut={mut} onSetDone={() => t.rest("Pause bis zum nächsten Paar", rest)} />}
+        {expl && <SlotCard r={expl} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest("Pause bis zum nächsten Paar", rest); }} />}
       </section>
     );
   }
@@ -279,14 +279,14 @@ function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sessio
     return (
       <section className="card superset">
         <div className="block-label teal">Im Wechsel · direkt nacheinander, dann {b.rest ?? 60} s Pause</div>
-        {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={() => { if (r === last) t.rest("Pause, dann nächste Runde", b.rest ?? 60); }} />)}
+        {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(lastSet) => { if (r === last && !lastSet) t.rest("Pause, dann nächste Runde", b.rest ?? 60); }} />)}
       </section>
     );
   }
   if (b.type === "module") {
     return <section className="card">{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={() => {}} />)}</section>;
   }
-  return <section className="card">{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={() => t.rest(`Pause nach ${r.name}`, r.rest)} />)}</section>;
+  return <section className="card">{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}</section>;
 }
 
 const FB: { k: Feedback; l: string }[] = [{ k: "schwer", l: "Schwer" }, { k: "ok", l: "OK" }, { k: "leicht", l: "Leicht" }, { k: "sehrleicht", l: "Sehr leicht" }];
@@ -339,7 +339,7 @@ const EQUIP_LABEL: Record<string, string> = {
   vest: "Weste", band: "Band", bodyweight: "Körpergewicht", sandbag: "Sandsack",
 };
 
-function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; onSetDone: () => void }) {
+function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; onSetDone: (lastSet: boolean) => void }) {
   const t = useTimer();
   const [swapOpen, setSwapOpen] = useState(false);
   const canSwap = r.kind === "strength" || r.kind === "hold";
@@ -387,7 +387,8 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
       reps: cur.reps ?? sug.targetReps ?? undefined,
       weight: r.loadable ? cur.weight ?? defaultWeight(i) : null,
     });
-    onSetDone();
+    // Nach dem letzten Satz einer Übung keine Pause
+    onSetDone(sets.every((x, k) => k === i || x.done));
   };
 
   const setFb = (fb: Feedback) => mut((s) => {

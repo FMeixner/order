@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.18.1] – 2026-09-30
+
+### Neu
+- Trainingsort pro Tag umschaltbar (Heute, unter den Tagen): Übungen, Ersatz und Gewichtsstufen folgen dem gewählten Equipment-Profil. Gilt nur für diese Einheit, der Wochenplan bleibt.
+
+### Geändert
+- Nach dem letzten Satz einer Übung startet kein Pausentimer mehr. Beim Kontrastpaar läuft der Übergang zur explosiven Übung weiter.
+
 ## [0.18.0] – 2026-09-30
 
 ### Neu

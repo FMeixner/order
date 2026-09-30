@@ -44,6 +44,11 @@ export function Help() {
         <li>Mit „Skills trainieren“ (Setup › Können) kommen auch Bestien mit Skills, die noch fehlen, als <em>hexed</em>-Variante mit leichterer Übung. Eigene Bestzeit.</li>
       </ul>
 
+      <h3>Anderer Ort heute</h3>
+      <ul>
+        <li>Unter den Tagen auf <em>Heute</em> wählst du den Ort für diese Einheit, zum Beispiel Zuhause statt Studio. Die App nimmt dann die Übungen und Gewichtsstufen dieses Profils. Der Wochenplan bleibt unverändert.</li>
+      </ul>
+
       <h3>Übung tauschen</h3>
       <ul>
         <li>Passt dir eine Übung nicht (Gerät besetzt, zwickt, keine Lust): auf <strong>⇄</strong> neben dem Namen tippen und eine Alternative mit ähnlichem Bewegungsmuster wählen.</li>
@@ -84,6 +89,7 @@ export function Help() {
       <h3>Pausen</h3>
       <ul>
         <li>Die App kürzt die Pausen aus den Orden um 15 s: schwere Grundübungen nie unter 2 Minuten, alles andere nie unter 60 s. Für Muskelaufbau macht das kaum einen Unterschied, solange die Pause über etwa 60–90 s liegt (Singer et al., 2024); für Maximalkraft sind längere Pausen besser, deshalb die Untergrenze (Grgic et al., 2018). Kontrastpaare behalten ihre 3 Minuten.</li>
+              <li>Nach dem letzten Satz einer Übung läuft kein Timer, du gehst direkt zur nächsten.</li>
       </ul>
 
       <h3>Drei oder fünf Tage</h3>
