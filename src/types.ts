@@ -289,6 +289,8 @@ export interface AppState {
   theme?: "auto" | "light" | "dark";
   /** Datum der letzten Sicherung (ISO) */
   lastBackup?: string | null;
+  /** Automatische Sicherung nach abgeschlossenen Einheiten: aus, nach jeder Einheit, wöchentlich (Standard) */
+  autoBackup?: "off" | "session" | "week";
   /** Erzähler (der Rabe): an/aus, Name und Pronomen der Figur, eigene Welt (nur auf dem Gerät) */
   narrative?: {
     on: boolean;

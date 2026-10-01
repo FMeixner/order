@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { autoBackup } from "./backup";
 import { isoDate } from "./engine/plan";
 import { useAppState } from "./store";
 import { FociBrowser } from "./ui/FociBrowser";
@@ -28,6 +29,16 @@ export default function App() {
   }, [state.theme]);
   // Browser bitten, die Daten nicht von sich aus zu löschen (schützt nicht vor manuellem Löschen)
   useEffect(() => { navigator.storage?.persist?.().catch(() => undefined); }, []);
+  // Automatische Sicherung, sobald eine Einheit abgeschlossen wurde
+  const doneCount = state.sessions.filter((s) => s.done).length;
+  const lastDone = useRef(doneCount);
+  useEffect(() => {
+    if (doneCount > lastDone.current) {
+      autoBackup(state, isoDate(new Date())).then((r) => { if (r) update((s) => ({ ...s, lastBackup: isoDate(new Date()) })); });
+    }
+    lastDone.current = doneCount;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doneCount]);
   const [tab, setTab] = useState<Tab>("heute");
   const [help, setHelp] = useState(false);
   const today = isoDate(new Date());

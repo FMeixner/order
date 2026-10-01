@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.19.0] – 2026-10-01
+
+### Neu
+- Automatische Sicherung nach abgeschlossenen Einheiten (Setup › Sichern und Wiederherstellen): aus, wöchentlich (Standard) oder nach jeder Einheit. Am Handy als order-sicherung.json im Download-Ordner. Wo der Browser es kann (Chrome/Edge am Rechner), in eine selbst gewählte Datei, die jedes Mal überschrieben wird. Beides überlebt das Löschen der Browserdaten.
+- Die Erinnerung „Jetzt sichern“ erscheint nur noch, wenn die automatische Sicherung aus ist.
+
 ## [0.18.6] – 2026-10-01
 
 ### Neu

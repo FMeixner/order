@@ -116,7 +116,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
 
   const doneCount = state.sessions.filter((s) => s.done).length;
   const backupAge = state.lastBackup ? daysBetween(state.lastBackup, today) : null;
-  const needBackup = doneCount >= 3 && (backupAge == null || backupAge >= 14);
+  const needBackup = doneCount >= 3 && (backupAge == null || backupAge >= 14) && (state.autoBackup ?? "week") === "off";
   return (
     <div className="stack">
       {needBackup && (

@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { FOCI, SKILLS } from "../data";
 import { blockAt, rolesFor, trainingDays, weekInBlock } from "../engine/plan";
 import { focusFor } from "../engine/weekplan";
 import { exportState, migrate } from "../store";
+import { AUTO_FILE, backupFile, canPickFile, chooseBackupFile, forgetBackupFile } from "../backup";
 import type { AppState, UserProfile } from "../types";
 import { Collapse, Field, Seg } from "./common";
 import { NarrativeSettings } from "./Raven";
@@ -164,12 +165,42 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
           }} />
         </div>
         {msg && <div className="note">{msg}</div>}
+        <AutoBackupFields state={state} update={update} />
       </Collapse>
       <Collapse title="Neu einrichten">
         <p className="muted small">Startet die Einrichtung erneut. Deine Daten bleiben erhalten, bis du sie überschreibst.</p>
         <button className="btn ghost" onClick={restartOnboarding}>Einrichtung öffnen</button>
       </Collapse>
       <p className="muted small center">Order {__APP_VERSION__}{__REPO_URL__ && <> · <a href={__REPO_URL__} target="_blank" rel="noreferrer">Quellcode</a></>}</p>
+    </div>
+  );
+}
+
+/** Automatische Sicherung: wie oft, und wenn der Browser es kann, in eine feste Datei */
+function AutoBackupFields({ state, update }: { state: AppState; update: Update }) {
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+  useEffect(() => { backupFile().then((h) => setFileName(h?.name ?? null)); }, []);
+  const mode = state.autoBackup ?? "week";
+  return (
+    <div className="stack">
+      <span className="field-label">Automatisch sichern</span>
+      <Seg value={mode} options={[{ value: "off", label: "aus" }, { value: "week", label: "wöchentlich" }, { value: "session", label: "nach jeder Einheit" }]} onChange={(autoBackup) => update((st) => ({ ...st, autoBackup }))} />
+      {canPickFile() ? (
+        <div className="stack">
+          {fileName
+            ? <p className="muted small">Sicherungsdatei: <strong>{fileName}</strong>. Wird nach jeder abgeschlossenen Einheit überschrieben.</p>
+            : <p className="muted small">Wähle einmal eine Datei, etwa in einem Cloud-Ordner. Die App überschreibt sie dann nach jeder abgeschlossenen Einheit, ganz ohne Downloads.</p>}
+          <div className="row wrap">
+            <button className="btn ghost small" onClick={async () => { const n = await chooseBackupFile(state); if (n) { setFileName(n); setInfo("Gesichert."); update((st) => ({ ...st, lastBackup: new Date().toISOString().slice(0, 10) })); } }}>{fileName ? "Andere Datei wählen" : "Datei wählen"}</button>
+            {fileName && <button className="btn ghost small" onClick={async () => { await forgetBackupFile(); setFileName(null); }}>Datei vergessen</button>}
+          </div>
+        </div>
+      ) : (
+        <p className="muted small">Die Sicherung landet als <strong>{AUTO_FILE}</strong> im Download-Ordner. Überschreiben kann der Browser dort nicht, er hängt eine Nummer an. Zum Wiederherstellen die neueste Datei nehmen.</p>
+      )}
+      {info && <div className="note small">{info}</div>}
+      <p className="muted small">Wiederherstellen nach dem Löschen der Browserdaten: Einrichtung › „Schon mal eingerichtet?“ › Sicherung laden, dann diese Datei wählen.</p>
     </div>
   );
 }
