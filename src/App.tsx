@@ -26,6 +26,8 @@ export default function App() {
     const t = state.theme ?? "auto";
     if (t === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
   }, [state.theme]);
+  // Browser bitten, die Daten nicht von sich aus zu löschen (schützt nicht vor manuellem Löschen)
+  useEffect(() => { navigator.storage?.persist?.().catch(() => undefined); }, []);
   const [tab, setTab] = useState<Tab>("heute");
   const [help, setHelp] = useState(false);
   const today = isoDate(new Date());

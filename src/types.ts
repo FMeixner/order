@@ -64,6 +64,8 @@ export type Block =
       draw?: "rotate" | "random"; benchmark_every?: number; note?: string; rotation?: "A" | "B";
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
+      /** Bestie der ersten Woche (Id). Fehlen Skills, kommt sie als hexed-Variante. */
+      first?: string;
     }
   | { type: "module"; module: "sword" | "flow" | "sharpen"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };

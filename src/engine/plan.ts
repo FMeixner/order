@@ -258,6 +258,15 @@ export function pickBeast(
     const plain = cands.filter(ok);
     if (hexCands.length && (opts.week % 2 === 0 || !plain.length)) { cands = hexCands; turn = Math.floor((opts.week - 1) / 2); }
   }
+  // Feste Start-Bestie in Woche 1, notfalls hexed
+  if (block.first && opts.week === 1 && !opts.reduced) {
+    const b0 = BEAST_BY_ID[block.first];
+    if (b0 && beastFits(b0, profile)) {
+      if (beastOk(b0, skills)) return b0;
+      const hx = hexFor(b0, skills);
+      if (hx) return hx;
+    }
+  }
   const okOrHex = (b: Beast) => ok(b) || !!b.hexed;
   let fit = cands.filter(okOrHex);
   if (!fit.length) fit = BEASTS.filter((b) => ok(b) && (!classes.length || classes.includes(classOf(b))));

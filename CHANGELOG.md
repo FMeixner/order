@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.18.6] – 2026-10-01
+
+### Neu
+- Start-Bestie je Bestien-Block (`first`): Assassin beginnt in Woche 1 mit Undine, ohne Muscle-Up als Undine hexed. Danach rotiert der Pool wie bisher.
+- Die App bittet den Browser um dauerhaften Speicher, damit er die Daten nicht von sich aus aufräumt. Gegen manuelles Löschen hilft das nicht.
+
 ## [0.18.5] – 2026-09-30
 
 ### Geändert

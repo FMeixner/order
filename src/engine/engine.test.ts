@@ -576,3 +576,16 @@ describe("Ortswechsel und dreimal OK", () => {
     expect(st.nudge).toBe(false);
   });
 });
+
+describe("Start-Bestie", () => {
+  it("Assassin beginnt mit Undine, ohne Muscle-Up als Undine hexed", () => {
+    const s = sample();
+    const blk = FOCUS_BY_ID.assassin.roles;
+    const b = Object.values(blk).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
+    const opts = { blockId: "b1", week: 1, profile: { ...gym, id: "g" }, state: s, reduced: false, downgrade: false };
+    expect(pickBeast(b, opts)?.name).toBe("Undine");
+    const hex = pickBeast(b, { ...opts, state: { ...s, user: { ...s.user, skills: [] } } });
+    expect(hex?.name).toMatch(/Undine hexed/);
+    expect(pickBeast(b, { ...opts, week: 2 })?.id).toBeDefined();
+  });
+});

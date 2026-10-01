@@ -141,6 +141,7 @@ for (const [f, d] of allFoci) {
           for (const id of b.pool || []) if (!beastIds.has(id)) err(f, `${ctx}: Bestie ${id} unbekannt`);
           for (const c of b.classes || []) if (!CLASSES.has(c)) err(f, `${ctx}: Klasse ${c} unbekannt`);
           if (!b.pool && !b.classes) err(f, `${ctx}: Bestie braucht pool oder classes`);
+          if (b.first && !beastIds.has(b.first)) err(f, `${ctx}: Start-Bestie ${b.first} unbekannt`);
           break;
         default: err(f, `${ctx}: unbekannter Blocktyp ${b.type}`);
       }

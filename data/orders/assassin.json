@@ -48,7 +48,7 @@
       "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "einzelmesser", "fallback": {"id": "sk-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 12, "prog": "none"}},
-        {"type": "beast", "id": "sk-beast", "pool": ["ng-agir", "ng-saga", "ng-odin", "ng-jormungandr", "ng-nanna", "ng-ran", "ng-fenja", "ng-thorsson", "ng-kvasir", "ng-hel", "ng-garm", "ng-orvar"], "draw": "rotate"}
+        {"type": "beast", "id": "sk-beast", "pool": ["ng-agir", "ng-saga", "ng-odin", "ng-jormungandr", "ng-nanna", "ng-ran", "ng-fenja", "ng-thorsson", "ng-kvasir", "ng-hel", "ng-garm", "ng-orvar"], "draw": "rotate", "first": "ng-nanna"}
       ]
     },
     "kraft_b": {
