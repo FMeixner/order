@@ -622,3 +622,20 @@ describe("Bandstärken", () => {
     expect(bandFor("8 Face Pulls", { ...p, bands: [] })).toBeNull();
   });
 });
+
+describe("Gewichte in Bestien", () => {
+  it("Vorgabe, Ortsanpassung bis 10 %, sonst andere Bestie", async () => {
+    const { beastLoad, beastFits } = await import("./plan");
+    const studio: EquipmentProfile = { ...gym, dumbbells: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24], kettlebells: [] };
+    const homeP: EquipmentProfile = { ...home, dumbbells: [4, 5.5, 7, 8.5, 10, 11.5, 13, 14.5, 16, 17.5, 19, 20.5, 22, 23.5], kettlebells: [] };
+    expect(beastLoad("8 Thrusters", studio)).toMatchObject({ n: 2, kg: 12 });
+    expect(beastLoad("8 Thrusters", homeP)).toMatchObject({ n: 2, kg: 11.5 });
+    expect(beastLoad("40 Swings (2x5kg)", homeP)).toMatchObject({ n: 2, kg: 5.5 });
+    expect(beastLoad("21/15/9/MAX Biceps Curls 50% (17.5 kg)", studio)).toMatchObject({ n: 2, kg: 9 });
+    expect(beastLoad("10 Pull-Ups", studio)).toBeNull();
+    // nur leichte Hanteln: Krampus (Swings 20 kg) fällt weg
+    const light: EquipmentProfile = { ...home, dumbbells: [2, 4, 6], kettlebells: [] };
+    expect(beastLoad("25 Swings", light)).toBe("missing");
+    expect(beastFits(BEASTS.find((b) => b.name === "Krampus")!, light)).toBe(false);
+  });
+});

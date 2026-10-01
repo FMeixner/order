@@ -12,6 +12,7 @@ import skillsJson from "../data/modules/skills.json";
 import flowsJson from "../data/modules/flows.json";
 import sharpenJson from "../data/modules/sharpen.json";
 import bandsJson from "../data/modules/bands.json";
+import beastLoadsJson from "../data/modules/beast_loads.json";
 
 const fociModules = import.meta.glob("../data/orders/*.json", { eager: true, import: "default" }) as Record<string, Focus>;
 
@@ -40,6 +41,8 @@ export const SKILLS = skillsJson as unknown as { groups: { id: string; name: str
 /** Geführte Flows (Yoga, Qigong, Tai Chi, Animal Flow, Mobility) */
 /** Bandstärken für Bestien-Übungen (relative Stufen) */
 export const BANDS = bandsJson as unknown as { levels: string[]; exercises: Record<string, string> };
+/** Gewichte für Bestien-Übungen ohne eigene Angabe */
+export const BEAST_LOADS = beastLoadsJson as unknown as { tolerance: number; exercises: Record<string, { n: number; kg: number }> };
 /** Schwerpunkt-Slot: Erhaltungsdosis je Bereich */
 export interface SharpenDef { name: string; place: "start" | "end"; days: "all" | 1 | 2; why: string; drills: Drill[] }
 export const SHARPEN = (sharpenJson as unknown as { domains: Record<string, SharpenDef> }).domains;

@@ -3,7 +3,7 @@ import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { bandFor, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
+import { bandFor, beastLoad, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import type { AppState, Beast, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
@@ -30,6 +30,15 @@ export interface SessionCtx {
 export const sessionId = (blockId: string, week: number, role: string) => `${blockId}:${week}:${role}`;
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
+/** Zusatz an einer Bestien-Übung: Band-Stufe oder Gewicht am heutigen Ort */
+function beastExtra(part: string, p: EquipmentProfile, hexed: boolean): string | null {
+  const band = bandFor(part, p, hexed);
+  if (band) return `Band ${band}`;
+  const l = beastLoad(part, p);
+  if (!l || l === "missing") return null;
+  return `${l.n > 1 ? `${l.n} × ` : ""}${kg(l.kg)}`;
+}
+
 const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(ctx.focus.roles[ctx.roleKey], ctx.profile, ctx.state.user, ctx.week, ctx.reduced).total / 5) * 5);
 
 /** Skills aus dem Skillcheck; null, solange keiner gemacht wurde */
@@ -553,7 +562,7 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     return (
       <>
         <div className="muted small">{k > 1 ? `${k}-mal am Stück ohne Pause, je ${b.rounds / k} ${b.rounds / k === 1 ? "Durchgang" : "Runden"}` : `${b.rounds} ${b.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-        <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const band = bandFor(w, ctx.profile, /hexed/.test(b.name ?? "")); return <li key={i}>{w}{band && <span className="muted"> · Band {band}</span>}</li>; })}</ul>
+        <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const extra = beastExtra(w, ctx.profile, /hexed/.test(b.name ?? "")); return <li key={i}>{w}{extra && <span className="muted"> · {extra}</span>}</li>; })}</ul>
       </>
     );
   };
@@ -618,7 +627,7 @@ export function SessionPreview(ctx: SessionCtx) {
                 {parts.map((pt, k) => (
                   <div key={k}>
                     <div className="block-label amber">{it.beast?.parts ? `${k + 1}. ` : "Bestie: "}{pt.name} · {pt.times > 1 ? `${pt.times}-mal am Stück, je ${pt.rounds / pt.times} Runden` : `${pt.rounds} ${pt.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-                    {pt.work.split(" · ").map((w, j) => { const band = bandFor(w, ctx.profile, /hexed/.test(pt.name)); return <div key={j} className="preview-row"><span>{w}</span>{band && <span className="muted small">Band {band}</span>}</div>; })}
+                    {pt.work.split(" · ").map((w, j) => { const extra = beastExtra(w, ctx.profile, /hexed/.test(pt.name)); return <div key={j} className="preview-row"><span>{w}</span>{extra && <span className="muted small">{extra}</span>}</div>; })}
                   </div>
                 ))}
               </div>

@@ -1,0 +1,24 @@
+{
+  "_info": "Gewichte für Bestien-Übungen ohne eigene Angabe. n = Anzahl Hanteln (1 = eine Kurzhantel oder Kettlebell, 2 = je Hand). Orientierung: Studio-Kurzhanteln in 2-kg-Schritten bis 40 kg, für Trainierte. Steht das Gewicht am Ort nicht genau zur Verfügung, nimmt die App die nächstliegende Hantel bis 10 % daneben; gibt es keine, schlägt sie eine andere Bestie vor. Angaben im Bestien-Text wie „(2x5kg)“ oder „(17.5 kg)“ gelten vorrangig.",
+  "tolerance": 0.1,
+  "exercises": {
+    "Swings": { "n": 1, "kg": 20 },
+    "Goblet Squat": { "n": 1, "kg": 20 },
+    "Halo": { "n": 1, "kg": 8 },
+    "KB Halo": { "n": 1, "kg": 8 },
+    "Club Halos": { "n": 1, "kg": 8 },
+    "Sumo Pull": { "n": 1, "kg": 16 },
+    "Side Bends": { "n": 1, "kg": 16 },
+    "Thrusters": { "n": 2, "kg": 12 },
+    "Kettlebell Snatches": { "n": 1, "kg": 16 },
+    "DB Snatch": { "n": 1, "kg": 16 },
+    "Chest Flies": { "n": 2, "kg": 10 },
+    "Reverse Flies": { "n": 2, "kg": 5 },
+    "Triceps Extension": { "n": 1, "kg": 14 },
+    "Triceps Extensions": { "n": 1, "kg": 14 },
+    "Biceps Curls": { "n": 2, "kg": 12 },
+    "Bar Curls": { "n": 2, "kg": 12 },
+    "Shrugs": { "n": 2, "kg": 24 },
+    "Plate Lunges": { "n": 1, "kg": 10 }
+  }
+}

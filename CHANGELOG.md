@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.19.3] – 2026-10-01
+
+### Neu
+- Gewichte für Bestien-Übungen ohne eigene Angabe (`data/modules/beast_loads.json`), orientiert an Studio-Kurzhanteln: etwa Swings und Goblet Squat 20 kg, Thrusters 2 × 12 kg, Snatches 16 kg, Curls 2 × 12 kg, Shrugs 2 × 24 kg, Halos 8 kg. Die Karte zeigt das Gewicht am heutigen Ort („· 2 × 11,5 kg“ zuhause).
+- Gibt es am Ort keine Hantel bis 10 % neben dem Soll, kommt eine andere Bestie. Angaben im Text wie „(2x5kg)“ gelten vorrangig; „(17.5 kg)“ bei Zweihand-Übungen gilt als Gesamtlast.
+
 ## [0.19.2] – 2026-10-01
 
 ### Neu

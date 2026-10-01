@@ -1,5 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
-import { BANDS, BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
+import { BANDS, BEAST_LOADS, BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, hexFor, hexWith } from "./skills";
@@ -202,6 +202,25 @@ export function bandFor(part: string, p: EquipmentProfile, hexed = false): strin
   return p.bands[Math.min(p.bands.length - 1, i)];
 }
 
+/** Gewicht für eine Bestien-Übung am Ort: Vorgabe aus dem Text („(2x5kg)“) oder aus beast_loads.json,
+    gelegt auf die nächstliegende Hantel bis 10 % daneben. null = keine Gewichtsübung, "missing" = am Ort nicht machbar. */
+export function beastLoad(part: string, p: EquipmentProfile): { n: number; kg: number; want: number } | null | "missing" {
+  const explicit = part.match(/\((?:(\d)\s*x\s*)?([\d.,]+)\s*kg\)/i);
+  const name = beastPartName(part).replace(/\s*\(.*\)\s*$/, "").replace(/\s+\d+%$/, "");
+  const def = BEAST_LOADS.exercises[name];
+  if (!explicit && !def) return null;
+  // Langhantel-Prozente (Bankdrücken 75 %) gehören zur Langhantel, nicht zu den Kurzhanteln
+  if (/bench press|deadlift|squats/i.test(name)) return null;
+  // „(17.5 kg)“ bei einer Zweihand-Übung ist die Gesamtlast (Langhantel), also je Hand die Hälfte
+  const total = explicit ? parseFloat(explicit[2].replace(",", ".")) : def.kg;
+  const n = explicit ? (explicit[1] ? parseInt(explicit[1]) : def?.n ?? 1) : def.n;
+  const want = explicit && !explicit[1] && n > 1 ? total / n : total;
+  const pool = [...p.dumbbells, ...(n === 1 ? p.kettlebells : [])];
+  if (!pool.length) return "missing";
+  const best = pool.reduce((a, c) => (Math.abs(c - want) < Math.abs(a - want) ? c : a), pool[0]);
+  return Math.abs(best - want) <= want * BEAST_LOADS.tolerance + 1e-9 ? { n, kg: best, want } : "missing";
+}
+
 export function beastFits(b: Beast, p: EquipmentProfile): boolean {
   const tagsOk = b.equipment.every((t) => {
     switch (t) {
@@ -217,6 +236,7 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
     }
   });
   if (!tagsOk) return false;
+  if (b.work.split(" · ").some((part) => beastLoad(part, p) === "missing")) return false;
   for (const n of beastNeeds(b)) {
     const ok = n === "rings" ? p.has.rings
       : n === "bar" ? p.has.bar || p.has.rings
