@@ -1,5 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
-import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
+import { BANDS, BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, hexFor, hexWith } from "./skills";
@@ -187,6 +187,19 @@ export function beastNeeds(b: Beast): Set<BeastNeed> {
   }
   needCache.set(key, out);
   return out;
+}
+
+/** Welches Band für eine Bestien-Übung: Stufe aus bands.json, hexed eine leichter, auf die Bänder im Profil gelegt.
+    Am Kabel (ohne Bänder) gibt es keinen Hinweis. */
+export function bandFor(part: string, p: EquipmentProfile, hexed = false): string | null {
+  const lvl = BANDS.exercises[beastPartName(part)];
+  if (!lvl || !p.bands.length) return null;
+  const L = BANDS.levels;
+  const i = Math.max(0, L.indexOf(lvl) - (hexed ? 1 : 0));
+  const exact = p.bands.find((x) => x.toLowerCase() === L[i]);
+  if (exact) return exact;
+  // Eigene Namen: das leichteste Band gilt als „leicht“, dann aufsteigend; fehlt die Stufe, das stärkste vorhandene
+  return p.bands[Math.min(p.bands.length - 1, i)];
 }
 
 export function beastFits(b: Beast, p: EquipmentProfile): boolean {

@@ -1,0 +1,14 @@
+{
+  "_info": "Bandstärken für Bestien-Übungen. Bänder sind nicht herstellerübergreifend genormt: Farben und Kilo-Angaben schwanken, und der Widerstand hängt davon ab, wie weit man dehnt. Deshalb relative Stufen. Die App legt sie auf die Bänder im Profil (Reihenfolge leicht → schwer); fehlt eine Stufe, nimmt sie die nächstliegende. Hexed-Varianten nehmen eine Stufe leichter. Orientierung für Loop-Bänder (104 cm, Herstellerangaben, grob): leicht ≈ 13 mm Breite, mittel ≈ 21 mm, schwer ≈ 32 mm, extra schwer ≈ 44 mm.",
+  "levels": ["leicht", "mittel", "schwer", "extra schwer"],
+  "exercises": {
+    "Band Thrusters": "mittel",
+    "Band Skis": "leicht",
+    "Band Deadlift": "schwer",
+    "Band Curl-and-Press": "leicht",
+    "Band Upright Rows": "leicht",
+    "Face Pulls": "leicht",
+    "Ext Rotation": "leicht",
+    "External Rotation": "leicht"
+  }
+}

@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.19.2] – 2026-10-01
+
+### Neu
+- Bandstärken für Bestien-Übungen (`data/modules/bands.json`): Band Thrusters mittel, Band Deadlift schwer, Skis, Curl-and-Press, Upright Rows, Face Pulls und Außenrotation leicht. Hexed eine Stufe leichter. Die Karte zeigt das passende Band aus deinem Profil („· Band mittel“). Bänder sind nicht herstellerübergreifend genormt, deshalb relative Stufen statt Kilo.
+
 ## [0.19.1] – 2026-10-01
 
 ### Behoben

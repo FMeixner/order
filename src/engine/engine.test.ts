@@ -609,3 +609,16 @@ describe("Bestien: Ausrüstung und Wochenvolumen", () => {
     expect(v.Brust ?? 0).toBe(0); // Rudern zählt nicht
   });
 });
+
+describe("Bandstärken", () => {
+  it("Stufe je Übung, hexed eine leichter, auf eigene Bänder gelegt", async () => {
+    const { bandFor } = await import("./plan");
+    const p: EquipmentProfile = { ...home, bands: ["leicht", "mittel", "schwer", "extra schwer"] };
+    expect(bandFor("20/15/10 Band Thrusters", p)).toBe("mittel");
+    expect(bandFor("20/15/10 Band Thrusters", p, true)).toBe("leicht");
+    expect(bandFor("6 Band Deadlift", p)).toBe("schwer");
+    expect(bandFor("6 Band Deadlift", { ...p, bands: ["gelb", "rot", "grün"] })).toBe("grün");
+    expect(bandFor("10 Pull-Ups", p)).toBeNull();
+    expect(bandFor("8 Face Pulls", { ...p, bands: [] })).toBeNull();
+  });
+});

@@ -3,7 +3,7 @@ import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
+import { bandFor, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import type { AppState, Beast, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
@@ -548,12 +548,12 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     });
     if (u < parts.length - 1) t.rest(`Pause, dann ${parts[u + 1].name}`, COMBO_REST);
   };
-  const work = (b: { work: string; rounds: number; times?: number; repeat?: number }) => {
+  const work = (b: { work: string; rounds: number; times?: number; repeat?: number; name?: string }) => {
     const k = b.times ?? b.repeat ?? 1;
     return (
       <>
         <div className="muted small">{k > 1 ? `${k}-mal am Stück ohne Pause, je ${b.rounds / k} ${b.rounds / k === 1 ? "Durchgang" : "Runden"}` : `${b.rounds} ${b.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-        <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+        <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const band = bandFor(w, ctx.profile, /hexed/.test(b.name ?? "")); return <li key={i}>{w}{band && <span className="muted"> · Band {band}</span>}</li>; })}</ul>
       </>
     );
   };
@@ -618,7 +618,7 @@ export function SessionPreview(ctx: SessionCtx) {
                 {parts.map((pt, k) => (
                   <div key={k}>
                     <div className="block-label amber">{it.beast?.parts ? `${k + 1}. ` : "Bestie: "}{pt.name} · {pt.times > 1 ? `${pt.times}-mal am Stück, je ${pt.rounds / pt.times} Runden` : `${pt.rounds} ${pt.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-                    {pt.work.split(" · ").map((w, j) => <div key={j} className="preview-row"><span>{w}</span></div>)}
+                    {pt.work.split(" · ").map((w, j) => { const band = bandFor(w, ctx.profile, /hexed/.test(pt.name)); return <div key={j} className="preview-row"><span>{w}</span>{band && <span className="muted small">Band {band}</span>}</div>; })}
                   </div>
                 ))}
               </div>
