@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.19.4] – 2026-10-01
+
+### Behoben
+- Start-Bestie (Assassin: Undine) kam in Woche 2 noch einmal. Sie steht jetzt vorn in der Rotation und kommt erst nach einem vollen Durchlauf wieder, nie zweimal hintereinander.
+
 ## [0.19.3] – 2026-10-01
 
 ### Neu

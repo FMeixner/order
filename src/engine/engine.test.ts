@@ -639,3 +639,16 @@ describe("Gewichte in Bestien", () => {
     expect(beastFits(BEASTS.find((b) => b.name === "Krampus")!, light)).toBe(false);
   });
 });
+
+describe("Start-Bestie nicht doppelt", () => {
+  it("Assassin: Woche 1 Undine, Woche 2 eine andere, auch mit Skill-Training", () => {
+    const s = sample();
+    const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
+    for (const user of [s.user, { ...s.user, skills: [], skillTraining: true }]) {
+      const st = { ...s, user };
+      const o = (week: number) => pickBeast(b, { blockId: "b-assassin", week, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false });
+      expect(o(1)?.name).toMatch(/^Undine/);
+      expect(o(2)?.name).not.toMatch(/^Undine/);
+    }
+  });
+});

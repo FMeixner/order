@@ -363,6 +363,13 @@ export function pickBeast(
   if (!fit.length) return null;
   const seed = `${opts.blockId}:${block.id}`;
   const order = [...fit].sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
+  // Start-Bestie steht in der Rotation vorn, kommt also erst nach einem vollen Durchlauf wieder
+  const isFirst = (b: Beast) => !!block.first && (b.id === block.first || b.id.startsWith(`${block.first}~`));
+  if (block.first) {
+    const i = order.findIndex(isFirst);
+    if (i > 0) order.unshift(order.splice(i, 1)[0]);
+    else if (i < 0 && order.length > 1) turn += 1; // Woche 1 kam außerhalb der Rotation: dort weiterzählen
+  }
   if (block.benchmark_every && opts.week > 1 && (opts.week - 1) % block.benchmark_every === 0) return order[0];
   if (block.draw === "random") {
     const recent = state.sessions.filter((s) => s.beast).slice(-3).map((s) => s.beast!.id);
@@ -370,7 +377,10 @@ export function pickBeast(
     const list = pool.length ? pool : order;
     return list[hash(`${seed}:${opts.week}`) % list.length];
   }
-  return order[turn % order.length];
+  const pick = order[turn % order.length];
+  // nie zweimal hintereinander die Start-Bestie
+  if (opts.week === 2 && isFirst(pick) && order.length > 1) return order[(turn + 1) % order.length];
+  return pick;
 }
 
 /* ---------- Warm-up, Cool-down, Module ---------- */
