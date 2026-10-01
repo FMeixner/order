@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.19.1] – 2026-10-01
+
+### Behoben
+- Bestien prüfen ihre Ausrüstung jetzt anhand der Übungen, nicht nur grober Kategorien. Ring Push-ups und Ring Dips brauchen Ringe (eine Klimmzugstange reicht nicht mehr), Face Pulls und Außenrotation ein Band oder Kabel, Kreuzheben und Bankdrücken eine Langhantel, „21c Row“ ein Rudergerät. Kikimora kommt damit nicht mehr ohne Ringe.
+
+### Neu
+- Wochenüberblick: Bestien zählen halb mit, jede Übung je Runde ein halber Satz. Laufen, Rudern und Pausen zählen nicht. Mehr Muster für Bestien-Übungen in `muscles.json`.
+
 ## [0.19.0] – 2026-10-01
 
 ### Neu

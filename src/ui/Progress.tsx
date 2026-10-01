@@ -130,7 +130,7 @@ export function VolumeView({ state, today }: { state: AppState; today: string })
             );
           })}
         </div>
-        <p className="muted small">Harte Sätze pro Muskel, mitbeteiligte Muskeln zählen halb. Das helle Feld ist ein Richtwert ({lo}–{hi}), kein Soll: Wie viele Tage in eine Woche passen, entscheidet der Alltag, und jede Woche, die stattfindet, bringt dich weiter. Den Richtwert kannst du unter Setup › Profil anpassen.</p>
+        <p className="muted small">Harte Sätze pro Muskel, mitbeteiligte Muskeln zählen halb. Bestien zählen ebenfalls halb: jede Übung je Runde ein halber Satz, Laufen und Rudern nicht. Das helle Feld ist ein Richtwert ({lo}–{hi}), kein Soll: Wie viele Tage in eine Woche passen, entscheidet der Alltag, und jede Woche, die stattfindet, bringt dich weiter. Den Richtwert kannst du unter Setup › Profil anpassen.</p>
       </div>
     </Collapse>
   );

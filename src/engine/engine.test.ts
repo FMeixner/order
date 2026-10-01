@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { FOCI, FOCUS_BY_ID } from "../data";
+import { BEASTS, FOCI, FOCUS_BY_ID } from "../data";
 import { EQUIPMENT_PRESETS, emptyState, migrate } from "../store";
 import type { AppState } from "../types";
 import type { EquipmentProfile, SessionEntry, Slot } from "../types";
@@ -587,5 +587,25 @@ describe("Start-Bestie", () => {
     const hex = pickBeast(b, { ...opts, state: { ...s, user: { ...s.user, skills: [] } } });
     expect(hex?.name).toMatch(/Undine hexed/);
     expect(pickBeast(b, { ...opts, week: 2 })?.id).toBeDefined();
+  });
+});
+
+describe("Bestien: Ausrüstung und Wochenvolumen", () => {
+  it("Kikimora braucht Ringe, Band oder Kabel und Kurzhanteln", async () => {
+    const { beastFits, beastNeeds } = await import("./plan");
+    const k = BEASTS.find((b) => b.name === "Kikimora")!;
+    expect([...beastNeeds(k)].sort()).toEqual(["band_or_cable", "kb_db", "rings"]);
+    const withRings: EquipmentProfile = { ...home, has: { ...home.has, rings: true }, bands: ["mittel"] };
+    expect(beastFits(k, withRings)).toBe(true);
+    expect(beastFits(k, { ...withRings, has: { ...withRings.has, rings: false } })).toBe(false);
+    const undine = BEASTS.find((b) => b.name === "Undine")!;
+    expect(beastFits(undine, { ...withRings, has: { ...withRings.has, rower: false } })).toBe(false);
+  });
+  it("Bestien zählen halb: Undine (1 Runde, 20 Muscle-Ups, 100 Squats) gibt je Übung einen halben Satz", async () => {
+    const { beastSets } = await import("./volume");
+    const v = beastSets("ng-nanna");
+    expect(v.Rücken).toBeCloseTo(1); // zweimal Muscle-Ups × 0,5
+    expect(v.Quadrizeps).toBeCloseTo(0.5);
+    expect(v.Brust ?? 0).toBe(0); // Rudern zählt nicht
   });
 });

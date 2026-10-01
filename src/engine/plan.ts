@@ -153,8 +153,44 @@ export function beastClass(min: number): BeastClass {
   if (min <= 40) return "uralte";
   return "verfluchte";
 }
+/* ---------- Was eine Bestie wirklich braucht ----------
+   Die Tags in beasts.json sind grob (bar_or_rings). Zusätzlich liest die App die Übungen aus dem Text:
+   Ring Push-ups brauchen Ringe, Face Pulls ein Band oder Kabel, Kreuzheben eine Langhantel, „21c Row“ ein Rudergerät. */
+export type BeastNeed = "rings" | "bar" | "band" | "band_or_cable" | "barbell" | "kb_db" | "rower" | "bike";
+const NEED_RULES: [RegExp, BeastNeed | null][] = [
+  [/^plank/i, null],
+  [/ring push|rto ring|ring dip|ring row/i, "rings"],
+  [/muscle-?up|pull-?up|chin-?up|c2b|toes-to-bar|\bttb\b|knees-to-elbow|hanging|passive hang|commando|archer row|incline row/i, "bar"],
+  [/face pull|ext(ernal)? rotation/i, "band_or_cable"],
+  [/^band /i, "band"],
+  [/bench press|deadlift|squats \(50%\)|good morning/i, "barbell"],
+  [/\bkb\b|kettlebell|swing|db snatch|goblet|halo|biceps curl|bar curl|triceps ext|shrug|thruster|chest fl|reverse fl|plate lunge/i, "kb_db"],
+  [/\bbike\b/i, "bike"],
+];
+/** Zahlen am Anfang einer Teilaufgabe weg: „21/15/9c Row“ → „Row“, „Buy-in: 100 Box Back Extension“ → „Box Back Extension“ */
+export function beastPartName(part: string): string {
+  const toks = part.trim().replace(/^(buy-(in|out):\s*)/i, "").replace(/^amrap[^:]*:\s*/i, "").split(/\s+/);
+  while (toks.length && /^([\d/x×.,\-–]*\d[\d/x×.,\-–]*(\/?max)?[a-z]{0,3}|max|in)$/i.test(toks[0])) toks.shift();
+  return toks.join(" ");
+}
+const needCache = new Map<string, Set<BeastNeed>>();
+export function beastNeeds(b: Beast): Set<BeastNeed> {
+  const key = `${b.id}|${b.work}`;
+  const hit = needCache.get(key);
+  if (hit) return hit;
+  const out = new Set<BeastNeed>();
+  for (const part of b.work.split(" · ")) {
+    const name = beastPartName(part);
+    if (/^row$/i.test(name) || /\d\s*c\s+row/i.test(part)) out.add("rower");
+    const rule = NEED_RULES.find(([rx]) => rx.test(name));
+    if (rule?.[1]) out.add(rule[1]);
+  }
+  needCache.set(key, out);
+  return out;
+}
+
 export function beastFits(b: Beast, p: EquipmentProfile): boolean {
-  return b.equipment.every((t) => {
+  const tagsOk = b.equipment.every((t) => {
     switch (t) {
       case "bodyweight_only": case "wall_or_open": return true;
       case "bar_or_rings": return p.has.bar || p.has.rings;
@@ -167,6 +203,19 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
       default: return true;
     }
   });
+  if (!tagsOk) return false;
+  for (const n of beastNeeds(b)) {
+    const ok = n === "rings" ? p.has.rings
+      : n === "bar" ? p.has.bar || p.has.rings
+      : n === "band" ? p.bands.length > 0
+      : n === "band_or_cable" ? p.bands.length > 0 || p.has.cable
+      : n === "barbell" ? !!p.barbell
+      : n === "kb_db" ? p.dumbbells.length > 0 || p.kettlebells.length > 0
+      : n === "rower" ? p.has.rower
+      : n === "bike" ? p.has.bike : true;
+    if (!ok) return false;
+  }
+  return true;
 }
 
 /* ---------- Zusammengesetzte Serien ---------- */

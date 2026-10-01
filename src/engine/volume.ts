@@ -2,7 +2,7 @@
 import { SWAP_GROUPS } from "../data";
 import musclesJson from "../../data/modules/muscles.json";
 import type { AppState, UserProfile } from "../types";
-import { addDays, mondayOf } from "./plan";
+import { addDays, beastById, beastPartName, mondayOf } from "./plan";
 
 type Share = Record<string, number>;
 const M = musclesJson as unknown as { muscles: string[]; groups: Record<string, Share>; exercises: Record<string, Share>; patterns: [string, Share][] };
@@ -13,6 +13,24 @@ export function musclesOf(name: string): Share {
   if (M.exercises[name]) return M.exercises[name];
   for (const [g, members] of Object.entries(SWAP_GROUPS)) if (members.includes(name) && M.groups[g]) return M.groups[g];
   return PATTERNS.find((p) => p.rx.test(name))?.s ?? {};
+}
+
+/** Bestien zählen halb: jede Übung je Runde ein halber Satz. Laufen, Rudern, Pausen zählen nicht. */
+export const BEAST_FACTOR = 0.5;
+const CARDIO = /^(row|run|sprints?|bike|rest\b|obstacle run|jumping jacks|single unders|handstand practice)/i;
+export function beastSets(id: string): Share {
+  const b = beastById(id);
+  if (!b) return {};
+  const units = b.parts ?? [{ rounds: b.rounds, work: b.work }];
+  const out: Share = {};
+  for (const u of units) {
+    for (const part of u.work.split(" · ")) {
+      const name = beastPartName(part);
+      if (!name || CARDIO.test(name)) continue;
+      for (const [m, f] of Object.entries(musclesOf(name))) out[m] = (out[m] ?? 0) + u.rounds * BEAST_FACTOR * f;
+    }
+  }
+  return out;
 }
 
 /** Richtwert nach Erfahrung, oder der eigene */
@@ -36,6 +54,9 @@ export function weeklyVolume(state: AppState, today: string): WeekVolume[] {
       if (!n) continue;
       for (const [m, f] of Object.entries(musclesOf(e.name))) w.sets[m] = (w.sets[m] ?? 0) + n * f;
     }
+    // Bestien: halb gezählt
+    const runs = [s.beast, ...(s.beastParts ?? [])].filter((x): x is { id: string; seconds: number | null } => !!x && !!x.seconds);
+    for (const r of runs) for (const [m, v] of Object.entries(beastSets(r.id))) w.sets[m] = (w.sets[m] ?? 0) + v;
     byWeek.set(mon, w);
   }
   return [...byWeek.values()].sort((a, b) => b.monday.localeCompare(a.monday));

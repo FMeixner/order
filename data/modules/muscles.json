@@ -46,6 +46,15 @@
   },
   "patterns": [
     ["neck|nacken", {"Nacken": 1}],
+    ["nordic", {"Beinbeuger": 1}],
+    ["toes-to-bar|\\bttb\\b|knees-to-elbow|knee wiper|windshield|dragon flag|leg lever|jackknife|sit-?ups?|v-up|toe-touch|cocoon|climber|side bend", {"Rumpf": 1}],
+    ["thruster", {"Quadrizeps": 1, "Schultern": 0.5}],
+    ["swing|snatch", {"Gesäß": 1, "Beinbeuger": 0.5}],
+    ["back extension|supermen|good morning", {"Gesäß": 1, "Rücken": 0.5}],
+    ["reverse fl|face pull|rotation|side raise|lateral raise|upright row", {"Schultern": 1}],
+    ["chest fl|bench press", {"Brust": 1, "Trizeps": 0.5}],
+    ["shrug", {"Nacken": 1}],
+    ["burpee", {"Brust": 0.5, "Quadrizeps": 0.5}],
     ["pistol|sissy|squat|lunge|split", {"Quadrizeps": 1, "Gesäß": 0.5}],
     ["front lever", {"Rücken": 1, "Rumpf": 0.5}],
     ["pull-?up|chin-?up|pulldown|muscle-up", {"Rücken": 1, "Bizeps": 0.5}],
@@ -54,11 +63,12 @@
     ["push-?up", {"Brust": 1, "Trizeps": 0.5, "Schultern": 0.5}],
     ["dip", {"Brust": 1, "Trizeps": 1}],
     ["calf", {"Waden": 1}],
-    ["glute|hip thrust|bridge", {"Gesäß": 1}],
+    ["glute|hip thrust|bridge|hip raise", {"Gesäß": 1}],
     ["rdl|deadlift", {"Beinbeuger": 1, "Gesäß": 0.5}],
     ["plank|hollow|l-sit|crunch|sit-up|leg raise|dead bug|pallof|rollout|woodchop|twist", {"Rumpf": 1}],
     ["carry|hang|pinch", {"Unterarme": 1}],
     ["curl", {"Bizeps": 1}],
-    ["triceps|pushdown|kickback", {"Trizeps": 1}]
+    ["triceps|pushdown|kickback", {"Trizeps": 1}],
+    ["jump|skater|frogger|sprawl", {"Quadrizeps": 1, "Gesäß": 0.5}]
   ]
 }
