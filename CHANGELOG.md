@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.21.2] – 2026-10-02
+
+### Behoben
+- Zeiteingabe bei Bestien und in der Testwoche: Statt nur „12:34“ gehen jetzt auch „12.34“, „12,34“ und „1234“, also auch über den Ziffernblock. „12“ heißt 12 Minuten. Was nicht passt, wird nicht mehr stillschweigend verworfen, sondern mit Hinweis angezeigt. Enter speichert.
+- Zeit nachgetragen, Einheit schon abgeschlossen: Die Zeit zählt jetzt auch für die Bestzeit.
+
 ## [0.21.1] – 2026-10-02
 
 ### Behoben

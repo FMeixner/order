@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { focusFor } from "../engine/weekplan";
+import { parseClock } from "../engine/clock";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { bandFor, beastRegion, REGION_LABEL, beastLoad, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
@@ -538,6 +539,13 @@ function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number 
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [, tick] = useState(0);
   const [manual, setManual] = useState("");
+  const [bad, setBad] = useState(false);
+  const commit = () => {
+    if (!manual.trim()) { setBad(false); return; }
+    const sec = parseClock(manual);
+    if (sec == null) { setBad(true); return; }
+    onSave(Math.round(sec)); setManual(""); setBad(false);
+  };
   useEffect(() => {
     if (startedAt == null) return;
     const iv = setInterval(() => tick((x) => x + 1), 500);
@@ -553,9 +561,10 @@ function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number 
         {!running
           ? <button className="btn primary" onClick={() => setStartedAt(Date.now())}>▶ Stoppuhr</button>
           : <button className="btn primary" onClick={() => { onSave(Math.round(elapsed)); setStartedAt(null); }}>■ Stopp {fmt(elapsed)}</button>}
-        <input type="text" inputMode="numeric" placeholder="oder mm:ss" value={manual} onChange={(e) => setManual(e.target.value)}
-          onBlur={() => { const m = manual.match(/^(\d+):(\d{1,2})$/); if (m) { onSave(parseInt(m[1]) * 60 + parseInt(m[2])); setManual(""); } }} className="time-in" />
+        <input type="text" inputMode="decimal" placeholder="oder mm.ss" value={manual} onChange={(e) => setManual(e.target.value)}
+          onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") commit(); }} className="time-in" aria-invalid={bad} />
       </div>
+      {bad && <div className="small warn">„{manual}“ verstehe ich nicht. Bitte so: 12.34 oder 12:34.</div>}
       <div className="small">
         {saved ? <>Heute: <strong>{fmt(saved)}</strong>{pr && saved < pr ? " · neue Bestzeit" : ""}</> : null}
         {pr ? <span className="muted">{saved ? " · " : ""}Bestzeit {fmt(pr)}</span> : !saved ? <span className="muted">Noch keine Zeit</span> : null}
@@ -573,10 +582,22 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     : beastMinutes(beast, ctx.state.beastTimes[beast.id]).min;
   const measured = beast.parts ? beast.parts.every((pt) => (ctx.state.beastTimes[pt.id] ?? []).length) : (ctx.state.beastTimes[beast.id] ?? []).length > 0;
   const cls = beastClass(effMin);
-  const saveSingle = (sec: number) => mut((s) => ({ ...s, beast: { id: beast.id, seconds: sec, ...(easy ? { easy } : {}) } }));
+  // Zeit nachgetragen, Einheit schon abgeschlossen: gleich in die Bestzeiten, alte Zeit dieses Tages ersetzen
+  const lateTime = (id: string, sec: number, old: number | null | undefined) => {
+    if (!session?.done || easy) return;
+    ctx.update((st) => {
+      const list = (st.beastTimes[id] ?? []).filter((x) => !(x.date === session.date && x.seconds === old));
+      return { ...st, beastTimes: { ...st.beastTimes, [id]: [...list, { date: session.date, seconds: sec }] } };
+    });
+  };
+  const saveSingle = (sec: number) => {
+    lateTime(beast.id, sec, session?.beast?.id === beast.id ? session.beast.seconds : null);
+    mut((s) => ({ ...s, beast: { id: beast.id, seconds: sec, ...(easy ? { easy } : {}) } }));
+  };
   // Serie: jeder Teil einzeln, jede Zeit zählt für ihre Bestie (ein Doppel/Triple ist ein Teil mit eigener Bestzeit)
   const parts = beast.parts ?? [];
   const saveUnit = (u: number, sec: number) => {
+    lateTime(parts[u].id, sec, session?.beastParts?.[u]?.id === parts[u].id ? session.beastParts[u].seconds : null);
     mut((s) => {
       const arr = parts.map((x, i) => (s.beastParts?.[i]?.id === x.id ? s.beastParts[i] : { id: x.id, seconds: null }));
       arr[u] = { id: parts[u].id, seconds: sec, ...(easy ? { easy } : {}) };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BEAST_BY_ID, TESTWEEK } from "../data";
 import { expandDrills, fmtDate } from "../engine/plan";
+import { parseClock } from "../engine/clock";
 import type { AppState, Cup, PlanBlock, TestDef } from "../types";
 import { Collapse, Desc } from "./common";
 import { Evaluation } from "./Evaluation";
@@ -12,10 +13,7 @@ type Update = (fn: (s: AppState) => AppState) => void;
 function parseValue(raw: string, unit: string): number | null {
   const s = raw.trim().replace(",", ".");
   if (!s) return null;
-  if (unit === "mmss") {
-    const m = s.match(/^(\d+):(\d+(?:\.\d+)?)$/);
-    return m ? parseInt(m[1]) * 60 + parseFloat(m[2]) : null;
-  }
+  if (unit === "mmss") return parseClock(raw);
   const v = parseFloat(s);
   return isNaN(v) ? null : v;
 }
@@ -46,7 +44,7 @@ function TestRow({ t, state, block, onSave }: { t: TestDef; state: AppState; blo
       )}
       <div className="row wrap">
         {vals.map((v, i) => (
-          <input key={i} type="text" inputMode="decimal" className="test-in" placeholder={t.attempts > 1 ? `Versuch ${i + 1}` : t.unit === "mmss" ? "m:ss.z" : "Wert"}
+          <input key={i} type="text" inputMode="decimal" className="test-in" placeholder={t.attempts > 1 ? `Versuch ${i + 1}` : t.unit === "mmss" ? "m.ss.z" : "Wert"}
             value={v} onChange={(e) => setVals(vals.map((x, k) => (k === i ? e.target.value : x)))} />
         ))}
         <button className="btn small" disabled={bestNow == null} onClick={() => { onSave(bestNow!, vals.filter(Boolean).join(" / "), t.variants ? variant : undefined); setVals(Array(t.attempts).fill("")); }}>Speichern</button>
@@ -96,11 +94,11 @@ function Benchmark({ cup, state, update }: { cup: Cup; state: AppState; update: 
       <div className="slot-name">{cup.benchmark.label}: {b.name}</div>
       <div className="muted small">{b.rounds} Runden · {b.work}</div>
       <div className="row">
-        <input type="text" className="time-in" placeholder="mm:ss" value={manual} onChange={(e) => setManual(e.target.value)} />
+        <input type="text" inputMode="decimal" className="time-in" placeholder="mm.ss" value={manual} onChange={(e) => setManual(e.target.value)} />
         <button className="btn small" onClick={() => {
-          const m = manual.match(/^(\d+):(\d{1,2})$/);
-          if (!m) return;
-          const sec = parseInt(m[1]) * 60 + parseInt(m[2]);
+          const p = parseClock(manual);
+          if (p == null) { alert(`„${manual}“ verstehe ich nicht. Bitte so: 12.34 oder 12:34.`); return; }
+          const sec = Math.round(p);
           update((st) => ({ ...st, beastTimes: { ...st.beastTimes, [id]: [...(st.beastTimes[id] ?? []), { date: new Date().toISOString().slice(0, 10), seconds: sec }] } }));
           setManual("");
         }}>Speichern</button>
