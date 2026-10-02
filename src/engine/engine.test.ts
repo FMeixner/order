@@ -96,6 +96,12 @@ describe("Progression", () => {
     expect(st.weight).toBe(10);
     expect(st.target).toBe(11);
     expect(suggest(lr, st, 1, studio).gap).toContain("12 kg");
+    expect(suggest(lr, st, 1, studio).gap).toBe("→ bis 3 × 16, dann 12 kg");
+    // Wiederholungsphase: OK und Leicht +1, Sehr leicht +2, Schwer gleiches Ziel
+    expect(advance(lr, st, e([12, 12, 12]), studio, "x").target).toBe(13);
+    expect(advance(lr, st, e([12, 12, 12], "leicht"), studio, "x").target).toBe(13);
+    expect(advance(lr, st, e([12, 12, 12], "sehrleicht"), studio, "x").target).toBe(14);
+    expect(advance(lr, st, e([12, 12, 12], "schwer"), studio, "x").target).toBe(12);
     st = advance(lr, st, e([16, 16, 16]), studio, "d2");
     expect(st.weight).toBe(12);
     expect(st.target).toBe(8);

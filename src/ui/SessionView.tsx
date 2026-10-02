@@ -4,7 +4,7 @@ import { menuDefault } from "../engine/sharpen";
 import { focusFor } from "../engine/weekplan";
 import { parseClock } from "../engine/clock";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
-import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
+import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { bandFor, beastRegion, REGION_LABEL, beastLoad, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
@@ -172,8 +172,8 @@ export function SessionView(ctx: SessionCtx) {
   return (
     <div className="stack session">
       <div className="session-head">
-        <div className="session-title"><h2>{role.name}</h2>{ctx.headAction}</div>
-        <div className="muted small">{ctx.profile.name} · etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
+        {/* Name und Ort stehen schon im Tagesknopf darüber */}
+        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
         {role.note && <p className="note">{role.note}</p>}
         {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
@@ -432,11 +432,21 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   });
 
   const last = [...ctx.state.sessions].filter((x) => x.done && x.id !== session?.id && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
-  const lastLine = last && r.kind === "strength" ? last.sets.filter((y) => y.done).map((y) => y.reps ?? "?").join(" · ") + (last.sets.find((y) => y.done)?.weight != null ? ` mit ${kg(last.sets.find((y) => y.done)!.weight)}` : "") : null;
+  // Zuletzt: „3 × 12“ bei gleichen Sätzen, sonst „12/11/10“; Gewicht nur, wenn es vom heutigen abweicht
+  const lastDone = last?.sets.filter((y) => y.done) ?? [];
+  const lastW = lastDone.find((y) => y.weight != null)?.weight;
+  const lastReps = lastDone.map((y) => y.reps ?? "?");
+  const lastLine = last && r.kind === "strength" && lastDone.length
+    ? (lastReps.every((x) => x === lastReps[0]) ? `${lastReps.length} × ${lastReps[0]}` : lastReps.join("/")) + (lastW != null && lastW !== sug.weight ? ` mit ${kg(lastW)}` : "")
+    : null;
+  // Nach der ersten Einheit eine konkrete Vorgabe statt des Bereichs: „3 × 13 @ 10 kg“
+  const rp = parseReps(r.reps ?? "");
+  const concrete = !!last && r.kind === "strength" && r.prog !== "none" && !rp.amrap && sug.targetReps != null;
   const doseLabel =
     r.kind === "timer" ? `${sug.minutes} Min`
     : r.kind === "interval" && r.interval ? `${r.interval.rounds} × ${fmt(r.interval.work)} Arbeit, ${fmt(r.interval.rest)} Pause`
     : r.kind === "hold" ? `${r.sets} × ${sug.seconds} s`
+    : concrete ? `${r.sets} × ${sug.targetReps}${rp.suffix}${r.loadable && sug.weight != null ? ` @ ${kg(sug.weight)}` : ""}`
     : `${r.sets} × ${sug.repsLabel}`;
   const showFb = r.prog !== "none" && (sets.some((x) => x.done) || !!entry.feedback || !!session?.done);
 
@@ -457,7 +467,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
         </div>
       </div>
       <div className="slot-dose">
-        {doseLabel}
+        {concrete ? <strong>{doseLabel}</strong> : doseLabel}
         {lastLine && <span className="muted"> · zuletzt {lastLine}</span>}
 
       </div>
@@ -659,8 +669,8 @@ export function SessionPreview(ctx: SessionCtx) {
   return (
     <div className="stack session">
       <div className="session-head">
-        <div className="session-title"><h2>{role.name}</h2>{ctx.headAction}</div>
-        <div className="muted small">{ctx.profile.name} · etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</div>
+        {/* Name und Ort stehen schon im Tagesknopf darüber */}
+        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
       </div>
       <section className="card preview">

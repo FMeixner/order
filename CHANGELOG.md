@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.22.0] – 2026-10-02
+
+### Geändert
+- Kopf der Einheit: Name und Ort stehen schon im Tagesknopf, darunter nur noch „etwa 55 Min“ und das Zahnrad.
+- Übungszeile nach der ersten Einheit: konkrete Vorgabe statt Bereich, etwa **3 × 13 @ 10 kg** · zuletzt 3 × 12 (ungleiche Sätze als 12/11/10, Gewicht nur, wenn es abweicht). Darunter kurz: „→ bis 3 × 15, dann 12 kg“.
+- Wiederholungsphase: „OK“ und „Leicht“ +1 Wiederholung, „Sehr leicht“ +2, „Schwer“ hält das Ziel.
+- Hinweis nach dreimal OK kürzer, mit konkreter Vorgabe.
+
 ## [0.21.3] – 2026-10-02
 
 ### Behoben

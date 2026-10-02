@@ -133,14 +133,14 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
       const from = Math.min(rp.lo, targetReps);
       repsLabel = `${from}${ceil > from ? `–${ceil}` : ""}${rp.suffix}`;
       const n = ceil > hi && p && w0 != null ? nextLoad(p, r.equip, w0) : null;
-      if (n) gap = `Nächste Stufe ${fmtKg(n.next)} kg ist +${Math.round(n.jump * 100)} %. Erst ${ceil} Wdh in allen Sätzen, dann ${fmtKg(n.next)} kg.`;
+      if (n) gap = `→ bis ${r.sets} × ${ceil}, dann ${fmtKg(n.next)} kg`;
     }
   } else if ((r.prog === "weight" || r.prog === "topset") && rp.lo !== null && !rp.amrap) {
     const ceil = p && w0 != null ? fixedCeiling(p, r.equip, w0, rp.lo) : rp.lo;
     targetReps = Math.min(ceil, Math.max(rp.lo, s.target ?? rp.lo));
     repsLabel = `${rp.lo}${ceil > rp.lo ? `–${ceil}` : ""}${rp.suffix}`;
     const n = ceil > rp.lo && p && w0 != null ? nextLoad(p, r.equip, w0) : null;
-    if (n) gap = `Nächste Stufe ${fmtKg(n.next)} kg ist +${Math.round(n.jump * 100)} %. Bei „Leicht“ erst mehr Wiederholungen (bis ${ceil}), dann ${fmtKg(n.next)} kg.`;
+    if (n) gap = `→ bei „Leicht“ +1 Wdh bis ${r.sets} × ${ceil}, dann ${fmtKg(n.next)} kg`;
   } else if (r.prog === "reps") {
     if (rp.amrap) {
       repsLabel = s.target ? `AMRAP (zuletzt ${s.target})` : rp.minus ? `AMRAP, ${rp.minus} in Reserve` : "AMRAP";
@@ -152,7 +152,7 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
 
   if (targetReps === null && rp.lo !== null && !rp.amrap) targetReps = rp.lo;
   const weight = r.loadable ? s.weight : null;
-  if (s.nudge && weight != null) gap = "Dreimal OK mit gleichem Gewicht: Heute etwas mehr. Geht es nicht, ist das auch eine Antwort, dann „schwer“ geben.";
+  if (s.nudge && weight != null) gap = `Dreimal OK: heute ${targetReps != null ? `${r.sets} × ${targetReps} @ ${fmtKg(weight)} kg` : "etwas mehr"}. Geht nicht? Dann „Schwer“.`;
   const backoff: number | null = null; // Back-off-Last rechnet backoffLoad() mit dem Profil
   if (weight == null && r.loadable) hint = "Startgewicht wählen";
 
@@ -207,8 +207,9 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
         else if (allTop && fb !== "schwer") jump(fb === "sehrleicht" && !extended ? 2 : 1);
         else if (!extended && fb === "sehrleicht") jump(2);
         else if (!extended && fb === "leicht") jump(1);
-        else if (extended && (fb === "leicht" || fb === "sehrleicht")) s.target = Math.min(ceil, Math.max(lo, minReps + (fb === "sehrleicht" ? 3 : 2)));
-        else if (rp.lo !== null) s.target = Math.min(ceil, Math.max(Math.max(1, lo - 3), minReps + 1));
+        // Wiederholungsphase: „OK“ und „Leicht“ +1, „Sehr leicht“ +2, „Schwer“ gleiches Ziel
+        else if (extended && (fb === "leicht" || fb === "sehrleicht")) s.target = Math.min(ceil, Math.max(lo, minReps + (fb === "sehrleicht" ? 2 : 1)));
+        else if (rp.lo !== null) s.target = Math.min(ceil, Math.max(Math.max(1, lo - 3), minReps + (fb === "schwer" ? 0 : 1)));
       }
       break;
     }
