@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
-import { beastById, fmtDate } from "../engine/plan";
+import { beastById, beastRegion, fmtDate } from "../engine/plan";
 import type { AppState, Session } from "../types";
 import { Collapse, kg } from "./common";
 import { Evaluation } from "./Evaluation";
@@ -66,7 +66,7 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
       {beasts.length > 0 && (
         <Collapse title="Bestiarium: Bestzeiten" meta={`${beasts.length} Bestien`}>
           <ul className="slot-list">
-            {beasts.map(([id, t]) => <li key={id}>{beastById(id)?.name ?? id}: {fmt(Math.min(...t.map((x) => x.seconds)))} ({t.length}×)</li>)}
+            {beasts.map(([id, t]) => <li key={id}>{beastById(id)?.name ?? id}{beastById(id) ? <span className="muted"> ({beastRegion(beastById(id)!) === "sued" ? "Süd" : "Nord"})</span> : null}: {fmt(Math.min(...t.map((x) => x.seconds)))} ({t.length}×)</li>)}
           </ul>
         </Collapse>
       )}

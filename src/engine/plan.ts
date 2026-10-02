@@ -221,6 +221,17 @@ export function beastLoad(part: string, p: EquipmentProfile): { n: number; kg: n
   return Math.abs(best - want) <= want * BEAST_LOADS.tolerance + 1e-9 ? { n, kg: best, want } : "missing";
 }
 
+/** Bestien-Familien: Süd = Bewegung gegen externen Widerstand (Hanteln, Kettlebell, Langhantel, Band),
+    Nord = nur Körpergewicht (Stange, Ringe, Rudergerät sind Ausrüstung, aber keine Last). */
+export type BeastRegion = "nord" | "sued";
+export function beastRegion(b: Beast): BeastRegion {
+  const n = beastNeeds(b);
+  const loaded = n.has("kb_db") || n.has("barbell") || n.has("band") || n.has("band_or_cable")
+    || b.work.split(" · ").some((part) => /\([\d.,x\s]+kg\)/i.test(part) || !!BEAST_LOADS.exercises[beastPartName(part).replace(/\s*\(.*\)\s*$/, "")]);
+  return loaded ? "sued" : "nord";
+}
+export const REGION_LABEL: Record<BeastRegion, string> = { nord: "Nordbestie", sued: "Südbestie" };
+
 export function beastFits(b: Beast, p: EquipmentProfile): boolean {
   const tagsOk = b.equipment.every((t) => {
     switch (t) {

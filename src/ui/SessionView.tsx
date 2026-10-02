@@ -3,7 +3,7 @@ import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { bandFor, beastLoad, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
+import { bandFor, beastRegion, REGION_LABEL, beastLoad, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import type { AppState, Beast, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
@@ -568,7 +568,7 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
   };
   return (
     <section className="card beast">
-      <div className="block-label amber">Bestiarium · {CLASS_LABEL[cls]} · ~{Math.round(effMin)} Min {measured ? "gemessen" : "geschätzt"}</div>
+      <div className="block-label amber">{REGION_LABEL[beastRegion(beast)]} · {CLASS_LABEL[cls]} · ~{Math.round(effMin)} Min {measured ? "gemessen" : "geschätzt"}</div>
       <div className="beast-name">{beast.name}</div>
       {easy && <div className="note small">Grundlagentempo: ruhig und gleichmäßig, Nasenatmung, du kannst dabei sprechen. Die Zeit zählt nicht für die Bestzeit.</div>}
       {hexNote(beast) && <div className="muted small">{hexNote(beast)}</div>}

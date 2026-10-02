@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.20.0] – 2026-10-02
+
+### Geändert
+- Zwei Bestien-Familien: **Süd** = Bewegung gegen externen Widerstand (Hanteln, Kettlebell, Langhantel, Band), Namen aus den Mittelmeer-Mythen. **Nord** = nur Körpergewicht (Stange, Ringe, Rudergerät erlaubt), Namen aus nord- und mitteleuropäischen Volkssagen. 27 Süd, 54 Nord. 38 Bestien haben dafür neue Namen; Bestzeiten bleiben, weil sie an der internen Kennung hängen. Neue Südnamen: Atlas, Talos, Antaios, Typhon, Echidna, Geryon, Triton, Satyr, Empusa. Undine bleibt Nord.
+- Bestien-Karte und Bestiarium zeigen die Familie.
+
 ## [0.19.4] – 2026-10-01
 
 ### Behoben
