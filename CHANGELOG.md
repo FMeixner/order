@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.21.1] – 2026-10-02
+
+### Behoben
+- Bestie der Vorwoche konnte über einen anderen Trainingstag wiederkommen, etwa über „kein Laufen: Bestie statt Lauf“. Jetzt zählen die geplanten Bestien aller Tage der Vorwoche, mit dem Ort des jeweiligen Tages.
+- Eine erledigte Einheit merkt sich ihre Bestie auch ohne eingetragene Zeit. Bisher zählte sie dann für die Rotation nicht als gemacht.
+
 ## [0.21.0] – 2026-10-02
 
 ### Geändert

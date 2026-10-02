@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
+import { focusFor } from "../engine/weekplan";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { bandFor, beastRegion, REGION_LABEL, beastLoad, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, type DrillView } from "../engine/plan";
+import { bandFor, beastRegion, REGION_LABEL, beastLoad, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import type { AppState, Beast, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
@@ -68,6 +69,25 @@ function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
 
 /** Läuft in diesem Block gelaufen? */
 export const isRunBlock = (b: Block) => b.type === "single" && !!EXERCISES[b.slot.name]?.run;
+
+/** Alle Bestien einer Woche mit Ort, so wie die Einheiten sie zeigen (A/B-Wechsel, „kein Laufen“) */
+setWeekBeastBlocks((state, pb, week) => {
+  const f = focusFor(state, pb, week);
+  if (!f) return [];
+  const ab = isAWeek(week) ? "A" : "B";
+  return dayRoleMap(state, pb, f).flatMap((d) => {
+    const pid = state.profileFor?.[sessionId(pb.id, week, d.role)] ?? d.profileId;
+    const profile = state.equipment.find((e) => e.id === pid);
+    if (!profile) return [];
+    const noRun = !!state.noRun?.[sessionId(pb.id, week, d.role)];
+    const ctx = { profile } as SessionCtx;
+    return (f.roles[d.role]?.blocks ?? [])
+      .filter((b) => !b.rotation || b.rotation === ab)
+      .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : b))
+      .filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast")
+      .map((b) => [b, profile] as BeastTarget);
+  });
+});
 
 /** Kein Laufen möglich: Laufblock wird zur Bestie ähnlicher Dauer */
 function runToBeast(b: Block, ctx: SessionCtx): Block {
@@ -141,7 +161,10 @@ export function SessionView(ctx: SessionCtx) {
       if (cur.beast?.seconds && !cur.beast.easy) beastTimes[cur.beast.id] = [...(beastTimes[cur.beast.id] ?? []), { date: ctx.date, seconds: cur.beast.seconds }];
       for (const pt of cur.beastParts ?? []) if (pt.seconds && !pt.easy) beastTimes[pt.id] = [...(beastTimes[pt.id] ?? []), { date: ctx.date, seconds: pt.seconds }];
       const feelingLog = feeling != null ? [...st.feeling, { date: ctx.date, sessionId: id, value: feeling }] : st.feeling;
-      return { ...st, slots, beastTimes, feeling: feelingLog, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: true, date: ctx.date } : s)) };
+      // Bestie merken, auch ohne Zeit: zählt für die Rotation der Folgewoche
+      const shown = items.find((it) => it.beast)?.beast;
+      const beast = cur.beast ?? (shown ? { id: shown.id, seconds: null } : undefined);
+      return { ...st, slots, beastTimes, feeling: feelingLog, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: true, date: ctx.date, ...(beast ? { beast } : {}) } : s)) };
     });
   };
 

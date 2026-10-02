@@ -350,14 +350,33 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
     }
   }
   if (opts.week > 1) {
-    // Vorwoche normal oder entlastet: beide meiden, solange nichts geloggt ist
-    for (const reduced of [false, true]) {
-      const p = pickBeast(block, { ...opts, week: opts.week - 1, reduced });
+    // Geplante Bestien der Vorwoche an allen Trainingstagen, normal oder entlastet, solange nichts geloggt ist
+    const targets = pb ? weekBeastBlocks(opts.state, pb, opts.week - 1) : [];
+    if (!targets.some(([b]) => b.id === block.id)) targets.push([block, opts.profile]);
+    for (const [b, prof] of targets) for (const reduced of [false, true]) {
+      const p = pickBeast(b, { ...opts, week: opts.week - 1, profile: prof, reduced });
       if (p) add(p.id);
     }
   }
   return out;
 }
+
+/** Orden einer Woche (Harlequin, Drei-Tage-Form, Slot). weekplan.ts trägt focusFor ein; so entsteht kein Import-Kreis. */
+let weekFocus: (state: AppState, b: PlanBlock, week: number) => Focus | null = (_s, b) => FOCUS_BY_ID[b.focusId] ?? null;
+export const setWeekFocus = (fn: typeof weekFocus) => { weekFocus = fn; };
+
+export type BeastTarget = [Extract<Block, { type: "beast" }>, EquipmentProfile];
+/** Alle Bestien-Blöcke einer Woche mit dem Ort ihres Tages. Die Einheiten-Ansicht trägt die volle Fassung ein (mit „kein Laufen“). */
+let weekBeastBlocks: (state: AppState, pb: PlanBlock, week: number) => BeastTarget[] = (state, pb, week) => {
+  const f = weekFocus(state, pb, week);
+  if (!f) return [];
+  return dayRoleMap(state, pb, f).flatMap((d) => {
+    const pid = state.profileFor?.[`${pb.id}:${week}:${d.role}`] ?? d.profileId;
+    const prof = state.equipment.find((e) => e.id === pid);
+    return prof ? (f.roles[d.role]?.blocks ?? []).filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast").map((b) => [b, prof] as BeastTarget) : [];
+  });
+};
+export const setWeekBeastBlocks = (fn: typeof weekBeastBlocks) => { weekBeastBlocks = fn; };
 
 const beastMemo = new WeakMap<AppState, Map<string, Beast | null>>();
 

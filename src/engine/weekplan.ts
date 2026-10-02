@@ -9,7 +9,7 @@ import { EQUIPMENT_PRESETS } from "../store";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot } from "../types";
 import { estimateRole } from "./duration";
 import { parseReps } from "./resolve";
-import { trainingDays } from "./plan";
+import { setWeekFocus, trainingDays } from "./plan";
 import { applySlot } from "./sharpen";
 
 let presets: Record<Role["location"], ReturnType<(typeof EQUIPMENT_PRESETS)[0]["make"]>> | null = null;
@@ -127,3 +127,5 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   const f = base.medley?.length ? FOCUS_BY_ID[base.medley[(week - 1) % base.medley.length]] ?? base : base;
   return applySlot(shapeFocus(f, trainingDays(state, b).length), state, b);
 }
+
+setWeekFocus(focusFor);
