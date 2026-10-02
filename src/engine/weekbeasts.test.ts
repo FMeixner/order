@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { FOCUS_BY_ID } from "../data";
+import { FOCUS_BY_ID, SKILLS } from "../data";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState } from "../types";
 import { collectItems, isRunBlock, sessionId } from "../ui/SessionView";
@@ -20,13 +20,16 @@ function weekBeasts(state: AppState, week: number): string[] {
 }
 
 describe("Bestien über alle Trainingstage", () => {
-  const user = (s: AppState) => [s.user, { ...s.user, skills: [], skillTraining: true }, { ...s.user, skills: [] }];
+  // Auch „alles außer einem Skill“: dann gibt es oft genau eine verhexte Kandidatin (z. B. ohne Muscle-Up nur Undine verhext)
+  const all = SKILLS.skills.map((x) => x.id);
+  const user = (s: AppState) => [s.user, { ...s.user, skills: [], skillTraining: true }, { ...s.user, skills: [] },
+    ...all.map((drop) => ({ ...s.user, skills: all.filter((x) => x !== drop), skillTraining: true }))];
   for (const fid of Object.keys(FOCUS_BY_ID)) it(`${fid}: keine Bestie der Vorwoche, auch ohne Laufen`, () => {
     const s = emptyState();
-    for (const u of user(s)) for (const noRunAll of [false, true]) {
+    for (const u of user(s)) for (const noRunAll of [false, true]) for (const sched of [{ Mo: "g", Di: "r", Do: "h", Fr: "g" }, { Mo: "g", Di: "g", Do: "g", Fr: "g" }] as const) {
       let st: AppState = {
         ...s, user: u, equipment: [{ ...gym, id: "g" }, { ...home, id: "h" }, { ...reise, id: "r" }],
-        schedule: { Mo: "g", Di: "r", Do: "h", Fr: "g" },
+        schedule: { ...sched },
         plan: [{ id: "b1", focusId: fid, label: "", start: "2026-09-28", end: "2026-12-20", load: "medium", travel: false }],
       };
       if (noRunAll) {
@@ -37,8 +40,8 @@ describe("Bestien über alle Trainingstage", () => {
       for (let w = 2; w <= 12; w++) {
         const prev = new Set(weekBeasts(st, w - 1).flatMap(beastFamily));
         const cur = weekBeasts(st, w).flatMap(beastFamily);
-        expect(cur.filter((x) => prev.has(x)), `${fid} W${w} noRun=${noRunAll} skills=${JSON.stringify(u.skills)}`).toEqual([]);
+        expect(cur.filter((x) => prev.has(x)), `${fid} W${w} noRun=${noRunAll} ${JSON.stringify(sched)} skills=${JSON.stringify(u.skills)}`).toEqual([]);
       }
     }
-  });
+  }, 60000);
 });

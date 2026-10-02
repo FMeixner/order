@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.21.3] – 2026-10-02
+
+### Behoben
+- Undine verhext kam in Woche 2 trotz Sperre wieder. Ursache: Mit Skill-Training ist jede zweite Woche eine Skill-Woche mit verhexten Bestien. Fehlt nur ein Skill (etwa der Muscle-Up), gibt es dort genau eine Kandidatin, und die war in der Vorwoche dran. Die Sperre fand keinen Ersatz und fiel auf sie zurück. Jetzt gilt die Skill-Woche nur, wenn eine verhexte Bestie frei ist, sonst kommt eine normale. Und wenn gar nichts aus dem Pool frei ist, kommt erst eine andere Bestie derselben Länge, dann eine Serie, erst ganz zuletzt eine Wiederholung.
+- Test erweitert: alle Orden, alle Trainingstage, auch „alles außer einem Skill“ und alle Tage am selben Ort.
+
 ## [0.21.2] – 2026-10-02
 
 ### Behoben
