@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.24.0] – 2026-10-02
+
+### Neu
+- Reiter „Bestien“: das Bestiarium mit allen 81 Bestien. Je Bestie Familie, Klasse, Länge (gemessen oder geschätzt), Runden, Ausrüstung und Übungen, dazu die Bestzeiten getrennt nach Basis, verhext, ×2 und ×3 (Bestzeit, Datum, letzte Zeit, Anzahl Läufe). Fehlt ein Skill, steht dabei, welcher. Filter: Nord oder Morgenland, bezwungen oder offen, Suche nach Name oder Übung. Bezwungene stehen oben.
+
+### Geändert
+- Die Bestzeiten-Liste im Log ist in den neuen Reiter umgezogen.
+
 ## [0.23.1] – 2026-10-02
 
 ### Geändert

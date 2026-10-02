@@ -329,3 +329,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .session-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .adjust-panel { margin-top: 8px; }
 .adjust-btn.on { border-color: var(--teal); color: var(--text); }
+
+/* Bestiarium */
+.pr-table { width: 100%; border-collapse: collapse; }
+.pr-table th { text-align: left; font-weight: 500; color: var(--muted); padding: 4px 6px 4px 0; border-bottom: 1px solid var(--border); }
+.pr-table td { padding: 4px 6px 4px 0; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }

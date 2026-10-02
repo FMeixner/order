@@ -45,6 +45,7 @@ export function Help() {
         <li>Jeder Orden hat mindestens eine Bestie pro Woche. Bei ruhigeren Orden kommt in jeder zweiten Woche eine lange Bestie im Grundlagentempo; diese Zeit zählt nicht für die Bestzeit.</li>
         <li>Kein Laufen möglich (Wetter, Reise, Knie)? Unter ⚙ Anpassen „Heute kein Laufen möglich“ anhaken: Aus dem Lauf wird eine Bestie ähnlicher Dauer.</li>
         <li>Skills (Setup › Können) legen nur fest, welche Bestien dran kommen: Bestien mit fehlendem Skill fallen heraus. Ausnahme ist eine feste Start-Bestie, die kommt notfalls als <em>hexed</em>-Variante. Dieselbe Bestie kommt nie zwei Wochen hintereinander.</li>
+        <li>Reiter „Bestien“: alle 81 Bestien mit Übungen, Länge, Ausrüstung und Bestzeiten, getrennt nach Basis, verhext und Doppel. Filter nach Nord und Morgenland, bezwungen und offen, dazu eine Suche.</li>
         <li>Assassin: leichte Bestien zum Kennenlernen, im Wechsel eine allein und zwei oder drei kurze hintereinander.</li>
       </ul>
 

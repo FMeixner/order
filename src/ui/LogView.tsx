@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
-import { beastById, beastRegion, fmtDate } from "../engine/plan";
+import { beastById, fmtDate } from "../engine/plan";
 import type { AppState, Session } from "../types";
 import { Collapse, kg } from "./common";
 import { Evaluation } from "./Evaluation";
@@ -32,7 +32,6 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
     const text = `# Order-Log\n\n${done.map((s) => sessionText(s, state)).join("\n\n")}\n`;
     try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* ignorieren */ }
   };
-  const beasts = Object.entries(state.beastTimes).filter(([, t]) => t.length);
   const lastTest = Object.values(state.tests).flat().sort((a, b) => b.date.localeCompare(a.date))[0];
   return (
     <div className="stack">
@@ -63,13 +62,6 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
           </Collapse>
         );
       })}
-      {beasts.length > 0 && (
-        <Collapse title="Bestiarium: Bestzeiten" meta={`${beasts.length} Bestien`}>
-          <ul className="slot-list">
-            {beasts.map(([id, t]) => <li key={id}>{beastById(id)?.name ?? id}{beastById(id) ? <span className="muted"> ({beastRegion(beastById(id)!) === "sued" ? "Morgenland" : "Nord"})</span> : null}: {fmt(Math.min(...t.map((x) => x.seconds)))} ({t.length}×)</li>)}
-          </ul>
-        </Collapse>
-      )}
       {lastTest && <Evaluation state={state} blockId={lastTest.blockId} />}
       {Object.keys(state.tests).length > 0 && (
         <Collapse title="Testergebnisse" meta={`${Object.keys(state.tests).length} Tests`}>
