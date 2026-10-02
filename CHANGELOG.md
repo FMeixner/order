@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.20.1] – 2026-10-02
+
+### Geändert
+- Die Last-Familie heißt jetzt **Morgenland**: Namen aus Mesopotamien, Persien und Arabien statt aus den griechisch-römischen Mythen (die nutzt schon Freeletics). Nord bleibt, wie es ist. 26 Bestien haben neue Namen, Mantikor bleibt (persischer Ursprung). Bestzeiten bleiben, weil sie an der internen Kennung hängen.
+
 ## [0.20.0] – 2026-10-02
 
 ### Geändert

@@ -66,7 +66,7 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
       {beasts.length > 0 && (
         <Collapse title="Bestiarium: Bestzeiten" meta={`${beasts.length} Bestien`}>
           <ul className="slot-list">
-            {beasts.map(([id, t]) => <li key={id}>{beastById(id)?.name ?? id}{beastById(id) ? <span className="muted"> ({beastRegion(beastById(id)!) === "sued" ? "Süd" : "Nord"})</span> : null}: {fmt(Math.min(...t.map((x) => x.seconds)))} ({t.length}×)</li>)}
+            {beasts.map(([id, t]) => <li key={id}>{beastById(id)?.name ?? id}{beastById(id) ? <span className="muted"> ({beastRegion(beastById(id)!) === "sued" ? "Morgenland" : "Nord"})</span> : null}: {fmt(Math.min(...t.map((x) => x.seconds)))} ({t.length}×)</li>)}
           </ul>
         </Collapse>
       )}

@@ -221,8 +221,9 @@ export function beastLoad(part: string, p: EquipmentProfile): { n: number; kg: n
   return Math.abs(best - want) <= want * BEAST_LOADS.tolerance + 1e-9 ? { n, kg: best, want } : "missing";
 }
 
-/** Bestien-Familien: Süd = Bewegung gegen externen Widerstand (Hanteln, Kettlebell, Langhantel, Band),
-    Nord = nur Körpergewicht (Stange, Ringe, Rudergerät sind Ausrüstung, aber keine Last). */
+/** Bestien-Familien: Morgenland (intern "sued") = Bewegung gegen externen Widerstand (Hanteln, Kettlebell, Langhantel, Band),
+    Namen aus Mesopotamien, Persien, Arabien. Nord = nur Körpergewicht (Stange, Ringe, Rudergerät sind Ausrüstung,
+    aber keine Last), Namen aus nordeuropäischen Volkssagen. Keine griechischen oder römischen Namen. */
 export type BeastRegion = "nord" | "sued";
 export function beastRegion(b: Beast): BeastRegion {
   const n = beastNeeds(b);
@@ -230,7 +231,7 @@ export function beastRegion(b: Beast): BeastRegion {
     || b.work.split(" · ").some((part) => /\([\d.,x\s]+kg\)/i.test(part) || !!BEAST_LOADS.exercises[beastPartName(part).replace(/\s*\(.*\)\s*$/, "")]);
   return loaded ? "sued" : "nord";
 }
-export const REGION_LABEL: Record<BeastRegion, string> = { nord: "Nordbestie", sued: "Südbestie" };
+export const REGION_LABEL: Record<BeastRegion, string> = { nord: "Nordbestie", sued: "Morgenlandbestie" };
 
 export function beastFits(b: Beast, p: EquipmentProfile): boolean {
   const tagsOk = b.equipment.every((t) => {

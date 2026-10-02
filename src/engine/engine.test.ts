@@ -591,9 +591,9 @@ describe("Start-Bestie", () => {
 });
 
 describe("Bestien: Ausrüstung und Wochenvolumen", () => {
-  it("Sirene braucht Ringe, Band oder Kabel und Kurzhanteln", async () => {
+  it("Zahhak braucht Ringe, Band oder Kabel und Kurzhanteln", async () => {
     const { beastFits, beastNeeds } = await import("./plan");
-    const k = BEASTS.find((b) => b.name === "Sirene")!;
+    const k = BEASTS.find((b) => b.name === "Zahhak")!;
     expect([...beastNeeds(k)].sort()).toEqual(["band_or_cable", "kb_db", "rings"]);
     const withRings: EquipmentProfile = { ...home, has: { ...home.has, rings: true }, bands: ["mittel"] };
     expect(beastFits(k, withRings)).toBe(true);
@@ -633,10 +633,10 @@ describe("Gewichte in Bestien", () => {
     expect(beastLoad("40 Swings (2x5kg)", homeP)).toMatchObject({ n: 2, kg: 5.5 });
     expect(beastLoad("21/15/9/MAX Biceps Curls 50% (17.5 kg)", studio)).toMatchObject({ n: 2, kg: 9 });
     expect(beastLoad("10 Pull-Ups", studio)).toBeNull();
-    // nur leichte Hanteln: Cerberus (Swings 20 kg) fällt weg
+    // nur leichte Hanteln: Gugalanna (Swings 20 kg) fällt weg
     const light: EquipmentProfile = { ...home, dumbbells: [2, 4, 6], kettlebells: [] };
     expect(beastLoad("25 Swings", light)).toBe("missing");
-    expect(beastFits(BEASTS.find((b) => b.name === "Cerberus")!, light)).toBe(false);
+    expect(beastFits(BEASTS.find((b) => b.name === "Gugalanna")!, light)).toBe(false);
   });
 });
 
@@ -654,10 +654,10 @@ describe("Start-Bestie nicht doppelt", () => {
 });
 
 describe("Nord und Süd", () => {
-  it("Südbestien haben externen Widerstand, Nordbestien nicht, und die Namen passen", async () => {
+  it("Morgenlandbestien haben externen Widerstand, Nordbestien nicht, und die Namen passen", async () => {
     const { beastRegion } = await import("./plan");
     const sued = BEASTS.filter((b) => beastRegion(b) === "sued").map((b) => b.name).sort();
-    expect(sued).toEqual(["Amazone", "Antaios", "Argus", "Atlas", "Basilisk", "Cerberus", "Chimäre", "Echidna", "Empusa", "Faun", "Furie", "Geryon", "Gorgone", "Greif", "Harpyie", "Hydra", "Lamia", "Leviathan", "Mantikor", "Minotaurus", "Satyr", "Scylla", "Sirene", "Talos", "Triton", "Typhon", "Zyklop"]);
+    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Mantikor", "Marid", "Pazuzu", "Peri", "Qarin", "Roch", "Schahmaran", "Schedu", "Simurgh", "Sirrusch", "Tiamat", "Ugallu", "Zahhak"]);
     expect(BEASTS.filter((b) => beastRegion(b) === "nord").length).toBe(54);
     expect(beastRegion(BEASTS.find((b) => b.name === "Undine")!)).toBe("nord");
   });

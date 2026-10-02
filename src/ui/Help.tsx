@@ -41,7 +41,7 @@ export function Help() {
 
       <h3>Bestien</h3>
       <ul>
-        <li>Zwei Familien: <strong>Südbestien</strong> (Namen aus den Mittelmeer-Mythen: Atlas, Talos, Hydra …) arbeiten gegen externen Widerstand, also Hanteln, Kettlebell, Langhantel oder Band. <strong>Nordbestien</strong> (Volkssagen aus Wald, Moor und Gebirge: Kobold, Undine, Kelpie …) nur mit dem eigenen Körper; Stange, Ringe oder Rudergerät können dazugehören. Die Karte zeigt die Familie.</li>
+        <li>Zwei Familien: <strong>Morgenlandbestien</strong> (Namen aus Mesopotamien, Persien und Arabien: Humbaba, Lamassu, Simurgh, Ifrit …) arbeiten gegen externen Widerstand, also Hanteln, Kettlebell, Langhantel oder Band. <strong>Nordbestien</strong> (Volkssagen aus Wald, Moor und Gebirge: Kobold, Undine, Kelpie …) nur mit dem eigenen Körper; Stange, Ringe oder Rudergerät können dazugehören. Die Karte zeigt die Familie.</li>
         <li>Jeder Orden hat mindestens eine Bestie pro Woche. Bei ruhigeren Orden kommt in jeder zweiten Woche eine lange Bestie im Grundlagentempo; diese Zeit zählt nicht für die Bestzeit.</li>
         <li>Kein Laufen möglich (Wetter, Reise, Knie)? Unter ⚙ Anpassen „Heute kein Laufen möglich“ anhaken: Aus dem Lauf wird eine Bestie ähnlicher Dauer.</li>
         <li>Mit „Skills trainieren“ (Setup › Können) kommen auch Bestien mit Skills, die noch fehlen, als <em>hexed</em>-Variante mit leichterer Übung. Eigene Bestzeit.</li>
