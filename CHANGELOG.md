@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.21.0] – 2026-10-02
+
+### Geändert
+- Woche geschafft: Sind alle Trainingstage der laufenden Woche erledigt, zeigt „Heute“ sofort die Folgewoche, voll bearbeitbar, auch über eine Phasengrenze. Die vorige Woche bleibt über ‹ erreichbar.
+- Vorwahl beim Öffnen: die heutige Einheit, sonst die nächste offene, sonst die erste offene der Woche.
+- Keine Bestie in zwei aufeinanderfolgenden Wochen, auch nicht als verhexte Variante oder als Teil einer Serie. Geprüft wird gegen die geplante Vorwoche (normal und entlastet) und gegen das, was in den sieben Tagen davor tatsächlich gemacht wurde, auch aus der vorigen Phase. Passt sonst nichts, kommt eine Serie aus kürzeren Bestien.
+- Die Woche vor einem Zwischenwert (Conqueror) nimmt dessen Bestie nicht mehr.
+- Erledigte Einheiten zeigen die Bestie, die tatsächlich gemacht wurde.
+
 ## [0.20.1] – 2026-10-02
 
 ### Geändert

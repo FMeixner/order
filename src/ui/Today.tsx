@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FOCUS_BY_ID } from "../data";
 import { addDays, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import { TESTWEEK } from "../data";
-import type { AppState, Weekday } from "../types";
+import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { isRunBlock, SessionPreview, SessionView, sessionId } from "./SessionView";
 import { focusFor } from "../engine/weekplan";
@@ -13,8 +13,23 @@ import { RavenToday, ravenOn } from "./Raven";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
+/** Alle Trainingstage dieser Woche erledigt? */
+function weekDone(state: AppState, b: PlanBlock, week: number): boolean {
+  if (isTestBlock(b)) return false;
+  const f = focusFor(state, b, week);
+  if (!f) return false;
+  const days = dayRoleMap(state, b, f);
+  const done = new Set(state.sessions.filter((s) => s.blockId === b.id && s.week === week && s.done).map((s) => s.role));
+  return days.length > 0 && days.every((d) => done.has(d.role));
+}
+
 export function Today({ state, update, today, goPlan }: { state: AppState; update: Update; today: string; goPlan: () => void }) {
-  const block = blockAt(state.plan, today);
+  // Woche geschafft: die Folgewoche ist ab sofort die laufende, voll bearbeitbar (auch über eine Phasengrenze)
+  const todayBlock = blockAt(state.plan, today);
+  const nextMon = addDays(mondayOf(today), 7);
+  const ahead = !!todayBlock && weekDone(state, todayBlock, weekInBlock(todayBlock, today)) && !!blockAt(state.plan, nextMon);
+  const anchor = ahead ? nextMon : today;
+  const block = blockAt(state.plan, anchor);
   const [pick, setPick] = useState<Weekday | null>(null);
   const [showTraining, setShowTraining] = useState(false);
   const [viewWeek, setViewWeek] = useState<number | null>(null);
@@ -41,7 +56,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   );
   const baseFocus = FOCUS_BY_ID[block.focusId];
   if (!baseFocus) return <div className="card">Der Orden dieser Phase fehlt. <button className="btn small" onClick={goPlan}>Plan öffnen</button></div>;
-  const curWeek = weekInBlock(block, today);
+  const curWeek = weekInBlock(block, anchor);
   const total = blockWeeks(block);
   const week = viewWeek ?? curWeek;
   const isCur = week === curWeek;
@@ -65,8 +80,12 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const days = dayRoleMap(state, block, focus);
   const todayWd = weekdayOf(today);
   const doneRoles = new Set(state.sessions.filter((s) => s.blockId === block.id && s.week === week && s.done).map((s) => s.role));
+  // Vorwahl: heute, sonst die nächste offene Einheit, sonst die erste offene
+  const open = days.filter((d) => !doneRoles.has(d.role));
+  const inWeek = today >= weekStart;
+  const ti = WEEKDAYS.indexOf(todayWd);
   const defaultDay = isCur
-    ? days.find((d) => d.day === todayWd && !doneRoles.has(d.role))?.day ?? days.find((d) => !doneRoles.has(d.role))?.day ?? days[0]?.day
+    ? (inWeek ? open.find((d) => d.day === todayWd) ?? open.find((d) => WEEKDAYS.indexOf(d.day) > ti) ?? open[0] : open[0])?.day ?? days[0]?.day
     : days[0]?.day;
   /** Datum für Einträge: heute in der laufenden Woche, sonst der Wochentag der gewählten Woche */
   const dateFor = (d: Weekday) => (isCur ? today : addDays(weekStart, WEEKDAYS.indexOf(d)));
@@ -141,7 +160,8 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           </div>
         </div>
         <div className="progress"><div style={{ width: `${Math.min(100, (100 * week) / total)}%` }} /></div>
-        {(!isCur || test || deload || beforeTest) && <div className="tags">
+        {(!isCur || ahead || test || deload || beforeTest) && <div className="tags">
+          {isCur && ahead && <span className="tag teal">Vorwoche geschafft · weiter ab {fmtDate(weekStart)}</span>}
           {!isCur && <span className="tag amber">{future ? "Vorschau" : "vergangen"} · ab {fmtDate(weekStart)}</span>}
           {test && <span className="tag teal">Testwoche</span>}
           {deload && <span className="tag">Entlastung −1 Satz</span>}
@@ -173,7 +193,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
               const p = state.equipment.find((e) => e.id === pidOf(d));
               const done = doneRoles.has(d.role);
               return (
-                <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${isCur && d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
+                <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${isCur && inWeek && d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
                   <span className="day">{d.day}</span>
                   <span className="day-role">{r?.name ?? d.role}</span>
                   <span className="muted small">{p?.name ?? "?"}{done ? " · ✓" : ""}</span>

@@ -86,6 +86,10 @@ export function collectItems(ctx: SessionCtx): Item[] {
     .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : b))
     .map((b) => {
       if (b.type === "beast") {
+        // Schon erledigt: die Bestie, die tatsächlich gemacht wurde, nicht neu würfeln
+        const logged = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey) && s.done && s.beast)?.beast?.id;
+        const lb = logged ? beastById(logged) : null;
+        if (lb && role.blocks.filter((x) => x.type === "beast").length === 1) return { block: b, resolved: [], beast: lb };
         return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
       }
       if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week, b.module) };

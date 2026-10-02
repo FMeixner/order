@@ -653,6 +653,39 @@ describe("Start-Bestie nicht doppelt", () => {
   });
 });
 
+describe("Keine Bestie zweimal hintereinander", () => {
+  it("alle Orden, 12 Wochen, mit und ohne Skill-Training, auch nach Entlastungswochen: Vorwoche und Folgewoche teilen keine Bestie", async () => {
+    const { beastFamily } = await import("./plan");
+    const s = sample();
+    const users = [s.user, { ...s.user, skills: [], skillTraining: true }, { ...s.user, skills: ["pullup", "dip"], skillTraining: true }];
+    const bad: string[] = [];
+    for (const f of Object.values(FOCUS_BY_ID)) {
+      const blocks = Object.values(f.roles).flatMap((r) => r.blocks).filter((x) => x.type === "beast") as Extract<import("../types").Block, { type: "beast" }>[];
+      for (const b of blocks) for (const user of users) for (const prof of [{ ...gym, id: "g" }, { ...reise, id: "r" }]) {
+        const st = { ...s, user };
+        for (let w = 2; w <= 12; w++) for (const prevRed of [false, true]) {
+          const o = (week: number, reduced: boolean) => pickBeast(b, { blockId: `b-${f.id}`, week, profile: prof, state: st, reduced, downgrade: false });
+          const a = o(w - 1, prevRed), c = o(w, false);
+          if (!a || !c) continue;
+          const fa = new Set(beastFamily(a.id));
+          if (beastFamily(c.id).some((x) => fa.has(x))) bad.push(`${f.id}/${b.id} W${w - 1}${prevRed ? "(entl.)" : ""}→W${w}: ${a.name} → ${c.name}`);
+        }
+      }
+    }
+    if (bad.length) console.log(bad.join("\n"));
+    expect(bad).toEqual([]);
+  });
+  it("geloggte Bestie der Vorwoche zählt, auch aus der vorigen Phase", () => {
+    const s = sample();
+    const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
+    const plan = [{ id: "b-assassin", focusId: "assassin", label: "", start: "2026-10-05", end: "2026-11-29", load: "medium" as const, travel: false }];
+    const prev = { id: "x:9:a", date: "2026-10-02", blockId: "x", focusId: "witcher", week: 9, role: "a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true, beast: { id: "ng-nanna~hex:muscleup", seconds: 900 } };
+    const st = { ...s, plan, sessions: [prev] };
+    const w1 = pickBeast(b, { blockId: "b-assassin", week: 1, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false });
+    expect(w1?.name).not.toMatch(/^Undine/);
+  });
+});
+
 describe("Nord und Süd", () => {
   it("Morgenlandbestien haben externen Widerstand, Nordbestien nicht, und die Namen passen", async () => {
     const { beastRegion } = await import("./plan");

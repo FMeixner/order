@@ -330,11 +330,51 @@ function hash(s: string): number {
   return h;
 }
 
-export function pickBeast(
-  block: Extract<Block, { type: "beast" }>,
-  opts: { blockId: string; week: number; profile: EquipmentProfile; state: AppState; reduced: boolean; downgrade: boolean },
-): Beast | null {
+type BeastOpts = { blockId: string; week: number; profile: EquipmentProfile; state: AppState; reduced: boolean; downgrade: boolean };
+
+/** Grund-Bestien einer Id: "a~hex:x" → a, "a×2+b" → a, b */
+export const beastFamily = (id: string): string[] => id.split("+").map((u) => u.replace(/×\d+$/, "").split("~")[0]);
+
+/** Bestien der Vorwoche: was dort geloggt wurde (nach Datum, auch aus der vorigen Phase) und was dieser Block dort geplant hatte */
+function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpts): Set<string> {
+  const out = new Set<string>();
+  const add = (id: string) => beastFamily(id).forEach((x) => out.add(x));
+  const pb = opts.state.plan.find((p) => p.id === opts.blockId);
+  if (pb) {
+    const ws = addDays(mondayOf(pb.start), (opts.week - 1) * 7), prev = addDays(ws, -7);
+    for (const s of opts.state.sessions) {
+      const inPrev = (s.date >= prev && s.date < ws) || (s.blockId === opts.blockId && s.week === opts.week - 1);
+      if (!inPrev) continue;
+      if (s.beast) add(s.beast.id);
+      s.beastParts?.forEach((pt) => add(pt.id));
+    }
+  }
+  if (opts.week > 1) {
+    // Vorwoche normal oder entlastet: beide meiden, solange nichts geloggt ist
+    for (const reduced of [false, true]) {
+      const p = pickBeast(block, { ...opts, week: opts.week - 1, reduced });
+      if (p) add(p.id);
+    }
+  }
+  return out;
+}
+
+const beastMemo = new WeakMap<AppState, Map<string, Beast | null>>();
+
+/** Bestie für einen Block. Nie dieselbe Bestie (auch nicht verhext oder als Teil einer Serie) in zwei aufeinanderfolgenden Wochen. */
+export function pickBeast(block: Extract<Block, { type: "beast" }>, opts: BeastOpts): Beast | null {
+  let m = beastMemo.get(opts.state);
+  if (!m) beastMemo.set(opts.state, (m = new Map()));
+  const key = JSON.stringify([opts.blockId, block, opts.week, opts.profile, opts.reduced, opts.downgrade]);
+  if (m.has(key)) return m.get(key)!;
+  const r = pickWith(block, opts, lastWeekBeasts(block, opts));
+  m.set(key, r);
+  return r;
+}
+
+function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {
   const { profile, state } = opts;
+  const fresh = (b: Beast) => !beastFamily(b.id).some((x) => avoid.has(x));
   let classes = block.classes ?? [];
   if (opts.downgrade && classes.length) classes = classes.map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]);
   if (opts.reduced) classes = ["plage"];
@@ -355,7 +395,7 @@ export function pickBeast(
   // Feste Start-Bestie in Woche 1, notfalls hexed
   if (block.first && opts.week === 1 && !opts.reduced) {
     const b0 = BEAST_BY_ID[block.first];
-    if (b0 && beastFits(b0, profile)) {
+    if (b0 && beastFits(b0, profile) && fresh(b0)) {
       if (beastOk(b0, skills)) return b0;
       const hx = hexFor(b0, skills);
       if (hx) return hx;
@@ -368,8 +408,13 @@ export function pickBeast(
     // Keine passende Bestie: aus kürzeren eine Serie bauen
     const target = classes.length ? classes : [...new Set(cands.map(classOf))];
     const pool = BEASTS.filter(ok).concat(state.user.skillTraining ? BEASTS.map(hexOf).filter((x): x is Beast => !!x) : []);
-    const combo = comboFor(target, pool, `${opts.blockId}:${block.id}`, opts.week);
-    if (combo) return combo;
+    let first: Beast | null = null;
+    for (let k = 0; k < 6; k++) {
+      const combo = comboFor(target, pool, `${opts.blockId}:${block.id}`, opts.week + k * 2);
+      first ??= combo;
+      if (combo && fresh(combo)) return combo;
+    }
+    if (first) return first;
   }
   if (!fit.length) fit = BEASTS.filter((b) => b.equipment.every((t) => t === "bodyweight_only") && beastOk(b, skills));
   if (!fit.length) return null;
@@ -383,16 +428,27 @@ export function pickBeast(
     else if (i < 0 && order.length > 1) turn += 1; // Woche 1 kam außerhalb der Rotation: dort weiterzählen
   }
   if (block.benchmark_every && opts.week > 1 && (opts.week - 1) % block.benchmark_every === 0) return order[0];
+  // Woche vor dem Zwischenwert: dessen Bestie hier nicht nehmen
+  if (block.benchmark_every && opts.week % block.benchmark_every === 0 && order.length > 1) beastFamily(order[0].id).forEach((x) => avoid.add(x));
   if (block.draw === "random") {
     const recent = state.sessions.filter((s) => s.beast).slice(-3).map((s) => s.beast!.id);
-    const pool = order.filter((b) => !recent.includes(b.id));
-    const list = pool.length ? pool : order;
+    const pool = order.filter((b) => !recent.includes(b.id) && fresh(b));
+    const list = pool.length ? pool : order.filter(fresh).length ? order.filter(fresh) : order;
     return list[hash(`${seed}:${opts.week}`) % list.length];
   }
-  const pick = order[turn % order.length];
-  // nie zweimal hintereinander die Start-Bestie
-  if (opts.week === 2 && isFirst(pick) && order.length > 1) return order[(turn + 1) % order.length];
-  return pick;
+  // Rotation, aber nie eine Bestie der Vorwoche: dann die nächste in der Reihe
+  for (let k = 0; k < order.length; k++) {
+    const pick = order[(turn + k) % order.length];
+    if (fresh(pick) && !(opts.week === 2 && isFirst(pick) && order.length > 1)) return pick;
+  }
+  // Nur Bestien der Vorwoche passen: lieber eine Serie aus kürzeren als dieselbe Bestie noch einmal
+  const target = classes.length ? classes : [...new Set(fit.map(classOf))];
+  const pool = BEASTS.filter(ok).concat(state.user.skillTraining ? BEASTS.map(hexOf).filter((x): x is Beast => !!x) : []);
+  for (let k = 0; k < 6; k++) {
+    const combo = comboFor(target, pool.filter(fresh), `${opts.blockId}:${block.id}`, opts.week + k * 2);
+    if (combo && fresh(combo)) return combo;
+  }
+  return order[turn % order.length];
 }
 
 /* ---------- Warm-up, Cool-down, Module ---------- */
