@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.23.0] – 2026-10-02
+
+### Entfernt
+- „Skills trainieren“: Verhexte Bestien kommen nicht mehr als Übung in die Rotation. Skills legen nur noch fest, welche Bestien dran kommen; Bestien mit fehlendem Skill fallen heraus. Eine feste Start-Bestie (Assassin: Undine) kommt notfalls weiter verhext.
+
+### Geändert
+- Assassin, „Schwert und Bestie“: neuer Pool mit 20 leichten Nordbestien statt Brechern wie Wilde Jagd, Krampus, Perchta oder Werwolf. Im Wechsel kommt eine Bestie allein (10–17 Min) und eine Serie aus zwei oder drei kurzen hintereinander (bis 22 Min, 2 Min Pause dazwischen). Lastbestien sind aus dem Pool raus.
+
 ## [0.22.0] – 2026-10-02
 
 ### Geändert

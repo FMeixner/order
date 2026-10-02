@@ -61,6 +61,8 @@ export function migrate(raw: unknown): AppState {
   s.user = { ...base.user, ...(s.user ?? {}) };
   // 0.16: Asymmetrie-Korrektur entfernt
   delete s.user.asym;
+  // 0.23: Skill-Training (verhexte Bestien als Übung) entfernt, Skills legen nur die Auswahl fest
+  delete s.user.skillTraining;
   s.equipment = (s.equipment ?? []).map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   // 0.1 → 0.2: Schalter „Doppelmesser“ wird zum Equipment „Schwert“ an den Heim-Profilen
   if (s.user.doppelmesser && !s.equipment.some((e) => e.has.sword)) {

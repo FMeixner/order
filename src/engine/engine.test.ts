@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BEASTS, FOCI, FOCUS_BY_ID } from "../data";
+import { BEASTS, FOCI, FOCUS_BY_ID, SKILLS } from "../data";
 import { EQUIPMENT_PRESETS, emptyState, migrate } from "../store";
 import type { AppState } from "../types";
 import type { EquipmentProfile, SessionEntry, Slot } from "../types";
@@ -400,15 +400,29 @@ describe("hexed und Grundlagentempo", () => {
     expect(beastById(h.id)?.work).toBe(h.work);
     expect(hexFor(mu, new Set(["muscle_up"]))).toBeNull();
   });
-  it("Skills trainieren: in geraden Wochen hexed-Bestien", async () => {
+  it("Skills legen nur die Auswahl fest: keine verhexten Bestien in der Rotation, auch mit altem skillTraining", async () => {
     const { pickBeast } = await import("./plan");
     const s = sample();
     s.user = { ...s.user, skills: [], skillTraining: true };
     const blk = { type: "beast" as const, id: "t", classes: ["bestie" as const] };
-    const w2 = pickBeast(blk, { blockId: "b1", week: 2, profile: gym, state: s, reduced: false, downgrade: false })!;
-    expect(w2.hexed?.length).toBeGreaterThan(0);
-    const w1 = pickBeast(blk, { blockId: "b1", week: 1, profile: gym, state: s, reduced: false, downgrade: false })!;
-    expect(w1.hexed).toBeUndefined();
+    for (let w = 1; w <= 8; w++) expect(pickBeast(blk, { blockId: "b1", week: w, profile: gym, state: s, reduced: false, downgrade: false })!.id).not.toMatch(/~hex/);
+  });
+  it("Assassin: leichte Bestien im Wechsel allein und als Serie, kein Brecher, Undine nur zum Start", async () => {
+    const { pickBeast } = await import("./plan");
+    const s = sample();
+    const all = SKILLS.skills.map((x) => x.id);
+    for (const skills of [all, all.filter((x) => x !== "muscle_up")]) {
+      const st = { ...s, user: { ...s.user, skills } };
+      const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
+      const ws = Array.from({ length: 10 }, (_, i) => pickBeast(b, { blockId: "b1", week: i + 1, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false })!);
+      expect(ws[0].name).toMatch(/^Undine/);
+      expect(ws.filter((x) => x.parts && x.parts.length >= 2).length).toBeGreaterThanOrEqual(3);
+      for (const x of ws) {
+        expect(x.name).not.toMatch(/Wilde Jagd|Krampus|Perchta|Werwolf/);
+        if (x.parts) expect(x.minutes).toBeLessThanOrEqual(22);
+      }
+      expect(ws.slice(1).filter((x) => /Undine hexed/.test(x.name)).length).toBe(0);
+    }
   });
   it("jeder Orden hat mindestens eine Bestie pro Woche", () => {
     for (const f of FOCI.filter((x) => !x.medley)) for (const ab of ["A", "B"]) {

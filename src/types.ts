@@ -62,6 +62,8 @@ export type Block =
   | {
       type: "beast"; id: string; classes?: BeastClass[]; pool?: string[];
       draw?: "rotate" | "random"; benchmark_every?: number; note?: string; rotation?: "A" | "B";
+      /** Wochenweise im Wechsel: eine Bestie aus dem Pool, dann zwei oder drei kurze aus dem Pool hintereinander. maxMin: Obergrenze der Serie */
+      mix?: { maxMin: number };
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
       /** Bestie der ersten Woche (Id). Fehlen Skills, kommt sie als hexed-Variante. */
@@ -209,6 +211,7 @@ export interface UserProfile {
   /** Eigener Richtwert Sätze pro Muskel und Woche, statt des Werts nach Erfahrung */
   volumeRange?: [number, number] | null;
   /** Skills trainieren: Bestien mit fehlenden Skills kommen als hexed-Variante */
+  /** @deprecated entfernt in 0.23, nur noch für alte Sicherungen */
   skillTraining?: boolean;
   /** Allrounder: Schwerpunkt-Slot und Blockfolge folgen den Defiziten. Spezialist: kein Slot, Blockfolge wie geplant. */
   focusMode?: "allround" | "special";

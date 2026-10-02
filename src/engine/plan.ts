@@ -391,6 +391,28 @@ export function pickBeast(block: Extract<Block, { type: "beast" }>, opts: BeastO
   return r;
 }
 
+/** Mix: ungerade Wochen eine Bestie aus dem Pool (in den Klassen des Blocks), gerade Wochen zwei oder drei kurze hintereinander. */
+function mixPick(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, ok: (b: Beast) => boolean, classOf: (b: Beast) => BeastClass, fresh: (b: Beast) => boolean): Beast | null {
+  const seed = `${opts.blockId}:${block.id}`;
+  const max = block.mix!.maxMin;
+  const min = (b: Beast) => beastMinutes(b, opts.state.beastTimes[b.id]).min;
+  const pool = block.pool!.map((id) => BEAST_BY_ID[id]).filter((b): b is Beast => !!b && ok(b)).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
+  const singles = pool.filter((b) => !block.classes?.length || block.classes.includes(classOf(b)));
+  const combos: Beast[] = [];
+  const shortest = Math.min(...pool.map(min));
+  const short = pool.filter((b) => min(b) + shortest + COMBO_REST / 60 <= max);
+  const total = (xs: Beast[]) => xs.reduce((t, b) => t + min(b), 0) + ((xs.length - 1) * COMBO_REST) / 60;
+  for (let i = 0; i < short.length; i++) for (let j = i + 1; j < short.length; j++) {
+    if (total([short[i], short[j]]) <= max) combos.push(composeBeast([[short[i], 1], [short[j], 1]]));
+    for (let k = j + 1; k < short.length; k++) if (total([short[i], short[j], short[k]]) <= max) combos.push(composeBeast([[short[i], 1], [short[j], 1], [short[k], 1]]));
+  }
+  combos.sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
+  const from = (list: Beast[], t: number) => { for (let k = 0; k < list.length; k++) { const b = list[(t + k) % list.length]; if (fresh(b)) return b; } return null; };
+  const t = Math.floor((opts.week - 1) / 2);
+  const [a, b] = opts.week % 2 === 0 ? [combos, singles] : [singles, combos];
+  return (a.length ? from(a, t) : null) ?? (b.length ? from(b, t) : null);
+}
+
 function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {
   const { profile, state } = opts;
   const fresh = (b: Beast) => !beastFamily(b.id).some((x) => avoid.has(x));
@@ -403,16 +425,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   else cands = BEASTS.filter((b) => classes.includes(classOf(b)));
   const skills = state.user.skills ? new Set(state.user.skills) : null;
   const ok = (b: Beast) => beastFits(b, profile) && beastOk(b, skills);
-  // Skills trainieren: Bestien mit fehlenden Skills als hexed-Variante dazu, in jeder zweiten Woche bevorzugt
-  const hexOf = (b: Beast) => (state.user.skillTraining && beastFits(b, profile) && !beastOk(b, skills) ? hexFor(b, skills) : null);
   let turn = opts.week - 1;
-  if (state.user.skillTraining && skills) {
-    const hexCands = cands.map(hexOf).filter((x): x is Beast => !!x);
-    const plain = cands.filter(ok);
-    // Skill-Woche nur, wenn eine verhexte Bestie frei ist, die nicht schon in der Vorwoche dran war
-    const hexFresh = hexCands.filter(fresh);
-    if (hexFresh.length && (opts.week % 2 === 0 || !plain.length)) { cands = hexFresh; turn = Math.floor((opts.week - 1) / 2); }
-  }
   // Feste Start-Bestie in Woche 1, notfalls hexed
   if (block.first && opts.week === 1 && !opts.reduced) {
     const b0 = BEAST_BY_ID[block.first];
@@ -422,13 +435,18 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
       if (hx) return hx;
     }
   }
-  const okOrHex = (b: Beast) => ok(b) || !!b.hexed;
-  let fit = cands.filter(okOrHex);
+  // Wechsel aus Einzelbestie und Serie kurzer Bestien aus dem Pool
+  if (block.mix && block.pool && !opts.reduced) {
+    const m = mixPick(block, opts, ok, classOf, fresh);
+    if (m) return m;
+  }
+  // Skills legen nur die Auswahl fest: Bestien mit fehlendem Skill kommen nicht dran
+  let fit = cands.filter(ok);
   if (!fit.length) fit = BEASTS.filter((b) => ok(b) && (!classes.length || classes.includes(classOf(b))));
   if (!fit.length) {
     // Keine passende Bestie: aus kürzeren eine Serie bauen
     const target = classes.length ? classes : [...new Set(cands.map(classOf))];
-    const pool = BEASTS.filter(ok).concat(state.user.skillTraining ? BEASTS.map(hexOf).filter((x): x is Beast => !!x) : []);
+    const pool = BEASTS.filter(ok);
     let first: Beast | null = null;
     for (let k = 0; k < 6; k++) {
       const combo = comboFor(target, pool, `${opts.blockId}:${block.id}`, opts.week + k * 2);
@@ -467,7 +485,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   const target = classes.length ? classes : [...new Set(fit.map(classOf))];
   const alt = BEASTS.filter((b) => ok(b) && fresh(b) && target.includes(classOf(b))).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
   if (alt.length) return alt[turn % alt.length];
-  const pool = BEASTS.filter(ok).concat(state.user.skillTraining ? BEASTS.map(hexOf).filter((x): x is Beast => !!x) : []);
+  const pool = BEASTS.filter(ok);
   for (let k = 0; k < 6; k++) {
     const combo = comboFor(target, pool.filter(fresh), `${opts.blockId}:${block.id}`, opts.week + k * 2);
     if (combo && fresh(combo)) return combo;

@@ -48,7 +48,7 @@
       "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "einzelmesser", "fallback": {"id": "sk-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 12, "prog": "none"}},
-        {"type": "beast", "id": "sk-beast", "pool": ["ng-agir", "ng-saga", "ng-odin", "ng-jormungandr", "ng-nanna", "ng-ran", "ng-fenja", "ng-thorsson", "ng-kvasir", "ng-hel", "ng-garm", "ng-orvar"], "draw": "rotate", "first": "ng-nanna"}
+        {"type": "beast", "id": "sk-beast", "classes": ["bestie"], "pool": ["ng-nanna", "ng-sol", "ng-balder", "ng-ubba", "ng-hoenir", "ng-modi", "ng-mimir", "ng-njord", "ng-borr", "ng-kvasir", "ng-garm", "ng-orvar", "ng-freya", "ng-skadi", "ng-nerthus", "ng-fenrir", "ng-hel", "ng-rig", "ng-yggdrasil", "ng-vali"], "draw": "rotate", "first": "ng-nanna", "mix": {"maxMin": 22}, "note": "Leichte Bestien zum Kennenlernen: im Wechsel eine allein oder zwei kurze hintereinander."}
       ]
     },
     "kraft_b": {

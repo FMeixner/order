@@ -21,11 +21,7 @@ export function SkillEditor({ user, onChange }: { user: UserProfile; onChange: (
   };
   return (
     <div className="stack">
-      <p className="muted small">Hake ab, was du heute sauber schaffst. Übungen und Bestien, die einen fehlenden Skill brauchen, ersetzt die App durch leichtere Varianten. Übungsleitern, etwa zum Pistol Squat, bleiben als Lernweg drin und starten mit abgehaktem Skill weiter oben. Jederzeit änderbar.</p>
-      {user.level !== "einsteiger" && <label className="check">
-        <input type="checkbox" checked={!!user.skillTraining} onChange={(e) => onChange({ ...user, skillTraining: e.target.checked })} />
-        <span><strong>Skills trainieren</strong><span className="muted small"> · Bestien mit Skills, die noch fehlen, kommen trotzdem, als hexed-Variante mit leichterer Übung (z. B. Band-Assisted Muscle-Ups). In jeder zweiten Woche bevorzugt.</span></span>
-      </label>}
+      <p className="muted small">Hake ab, was du heute sauber schaffst. Übungen mit fehlendem Skill ersetzt die App durch leichtere Varianten, Bestien mit fehlendem Skill kommen nicht dran. Übungsleitern, etwa zum Pistol Squat, bleiben als Lernweg drin und starten mit abgehaktem Skill weiter oben. Jederzeit änderbar.</p>
       {SKILLS.groups.map((g) => (
         <div key={g.id} className="stack skill-group">
           <div className="block-label teal">{g.name}</div>
