@@ -398,19 +398,36 @@ function mixPick(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, ok: 
   const min = (b: Beast) => beastMinutes(b, opts.state.beastTimes[b.id]).min;
   const pool = block.pool!.map((id) => BEAST_BY_ID[id]).filter((b): b is Beast => !!b && ok(b)).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
   const singles = pool.filter((b) => !block.classes?.length || block.classes.includes(classOf(b)));
+  const total = (xs: Beast[]) => xs.reduce((t, b) => t + min(b), 0) + ((xs.length - 1) * COMBO_REST) / 60;
   const combos: Beast[] = [];
+  // Doppel und Triple: dieselbe Bestie am Stück
+  for (const b of pool) for (const k of [2, 3]) if (min(b) * k <= max) combos.push(composeBeast([[b, k]]));
+  // Paare und Dreier aus verschiedenen Bestien
   const shortest = Math.min(...pool.map(min));
   const short = pool.filter((b) => min(b) + shortest + COMBO_REST / 60 <= max);
-  const total = (xs: Beast[]) => xs.reduce((t, b) => t + min(b), 0) + ((xs.length - 1) * COMBO_REST) / 60;
   for (let i = 0; i < short.length; i++) for (let j = i + 1; j < short.length; j++) {
     if (total([short[i], short[j]]) <= max) combos.push(composeBeast([[short[i], 1], [short[j], 1]]));
     for (let k = j + 1; k < short.length; k++) if (total([short[i], short[j], short[k]]) <= max) combos.push(composeBeast([[short[i], 1], [short[j], 1], [short[k], 1]]));
   }
   combos.sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
-  const from = (list: Beast[], t: number) => { for (let k = 0; k < list.length; k++) { const b = list[(t + k) % list.length]; if (fresh(b)) return b; } return null; };
+  // Schon in diesem Orden dran (geplant oder geloggt): erst wieder, wenn der Pool durch ist
+  const used = new Set<string>();
+  for (let k = 1; k < opts.week; k++) {
+    const x = pickBeast(block, { ...opts, week: k, reduced: false });
+    if (x) beastFamily(x.id).forEach((f) => used.add(f));
+  }
+  for (const se of opts.state.sessions) if (se.blockId === opts.blockId && se.week < opts.week) {
+    if (se.beast) beastFamily(se.beast.id).forEach((f) => used.add(f));
+    se.beastParts?.forEach((pt) => beastFamily(pt.id).forEach((f) => used.add(f)));
+  }
+  const unused = (b: Beast) => !beastFamily(b.id).some((f) => used.has(f));
+  const from = (list: Beast[], t: number, test: (b: Beast) => boolean) => {
+    for (let k = 0; k < list.length; k++) { const b = list[(t + k) % list.length]; if (fresh(b) && test(b)) return b; }
+    return null;
+  };
   const t = Math.floor((opts.week - 1) / 2);
   const [a, b] = opts.week % 2 === 0 ? [combos, singles] : [singles, combos];
-  return (a.length ? from(a, t) : null) ?? (b.length ? from(b, t) : null);
+  return from(a, t, unused) ?? from(b, t, unused) ?? from(a, t, () => true) ?? from(b, t, () => true);
 }
 
 function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {

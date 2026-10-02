@@ -424,6 +424,15 @@ describe("hexed und Grundlagentempo", () => {
       expect(ws.slice(1).filter((x) => /Undine hexed/.test(x.name)).length).toBe(0);
     }
   });
+  it("Assassin: zehn Wochen ohne Wiederholung, Doppel kommen vor", async () => {
+    const { pickBeast, beastFamily } = await import("./plan");
+    const s = sample();
+    const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
+    const ws = Array.from({ length: 10 }, (_, i) => pickBeast(b, { blockId: "b1", week: i + 1, profile: { ...gym, id: "g" }, state: s, reduced: false, downgrade: false })!);
+    const fams = ws.flatMap((x) => [...new Set(beastFamily(x.id))]);
+    expect(new Set(fams).size).toBe(fams.length);
+    expect(ws.some((x) => /×2/.test(x.name))).toBe(true);
+  });
   it("jeder Orden hat mindestens eine Bestie pro Woche", () => {
     for (const f of FOCI.filter((x) => !x.medley)) for (const ab of ["A", "B"]) {
       const n = f.week_4.flatMap((rk) => f.roles[rk].blocks).filter((b) => b.type === "beast" && (!b.rotation || b.rotation === ab)).length;

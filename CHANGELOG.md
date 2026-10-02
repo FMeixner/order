@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.23.1] – 2026-10-02
+
+### Geändert
+- Assassin: Jede Bestie kommt in der Phase erst wieder, wenn der Pool durch ist (geplant und geloggt). Zehn Wochen ohne Wiederholung, statt dreimal Troll.
+- Serien können jetzt auch Doppel sein: dieselbe Bestie zweimal am Stück, zum Beispiel Kobold ×2.
+
 ## [0.23.0] – 2026-10-02
 
 ### Entfernt
