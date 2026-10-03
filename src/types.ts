@@ -62,8 +62,6 @@ export type Block =
   | {
       type: "beast"; id: string; classes?: BeastClass[]; pool?: string[];
       draw?: "rotate" | "random"; benchmark_every?: number; note?: string; rotation?: "A" | "B";
-      /** Wochenweise im Wechsel: eine Bestie aus dem Pool, dann zwei oder drei kurze aus dem Pool hintereinander. maxMin: Obergrenze der Serie */
-      mix?: { maxMin: number };
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
       /** Bestie der ersten Woche (Id). Fehlen Skills, kommt sie als hexed-Variante. */

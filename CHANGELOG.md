@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.27.0] – 2026-10-03
+
+### Geändert
+- Bestienwahl für alle Orden gleich: ein Pool aus allen Bestien, Doppeln (×2) und Serien aus zwei Bestien, alle gleichrangig. Die Dauer muss ins Zeitfenster des Tages passen, das Ziel des Ordens gewichtet (Kraft, Kondition, Ausdauer, Beweglichkeit). Vorrang hat Abwechslung in der Phase: Was schon dran war, kommt erst wieder, wenn alles Passende durch ist; nie dieselbe Bestie in zwei Wochen hintereinander. Zwischenwert (Conqueror) und Start-Bestie (Assassin: Undine) bleiben.
+- Assassin: keine Pool-Grenze mehr, Zeitfenster 10–25 Min.
+- Bestien-Karte schlanker: nur noch „Bestie · ~16 Min“, Name, Runden, Übungen, Stoppuhr. Erklärtexte zu Serie, Familie, Klasse und verhext entfernt.
+- Reiter „Orden“ und „Bestiarium“ zusammengelegt zum Reiter „Almanach“.
+
 ## [0.26.1] – 2026-10-03
 
 ### Geändert

@@ -1,6 +1,6 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
 import { BANDS, BEAST_LOADS, BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
-import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
+import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, beastSkills, hexFor, hexWith } from "./skills";
 
@@ -309,29 +309,6 @@ export function beastById(id: string): Beast | null {
   return composeBeast(parts as [Beast, number][]);
 }
 
-/** Wenn keine Bestie in die Klassen passt: kurze Bestien doppelt oder dreifach, oder zwei hintereinander. */
-function comboFor(classes: BeastClass[], pool: Beast[], seed: string, week: number): Beast | null {
-  if (!classes.length || !pool.length) return null;
-  const lo = Math.min(...classes.map((c) => CLASS_RANGE[c][0])), hi = Math.max(...classes.map((c) => CLASS_RANGE[c][1]));
-  const fits = (m: number) => m > lo && m <= hi;
-  const cands: Beast[] = [];
-  const sorted = [...pool].sort((a, c) => hash(seed + a.id) - hash(seed + c.id)).slice(0, 24);
-  for (const b of sorted) for (const k of [2, 3]) { const x = composeBeast([[b, k]]); if (fits(x.minutes)) { cands.push(x); break; } }
-  for (let i = 0; i < sorted.length; i++) for (let j = i + 1; j < sorted.length; j++) {
-    const x = composeBeast([[sorted[i], 1], [sorted[j], 1]]);
-    if (fits(x.minutes)) cands.push(x);
-  }
-  if (!cands.length) return null;
-  // Doppel/Triple und Paare im Wechsel, damit beide Formen vorkommen
-  const reps = cands.filter((x) => x.repeat), pairs = cands.filter((x) => x.parts);
-  const kind = reps.length && pairs.length ? (hash(`${seed}:${week}:form`) % 2 ? reps : pairs) : reps.length ? reps : pairs;
-  const order = kind.sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
-  const pick = order[Math.floor((week - 1) / 2) % order.length];
-  // Bei Paaren wechselt die Reihenfolge, damit jede Bestie auch mal frisch als erste kommt
-  if (pick.parts?.length === 2 && hash(`${seed}:${week}`) % 2 === 1) return composeBeast([...pick.parts].reverse().map((pt) => [beastById(pt.id)!, 1] as [Beast, number]));
-  return pick;
-}
-
 function hash(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
@@ -399,121 +376,129 @@ export function pickBeast(block: Extract<Block, { type: "beast" }>, opts: BeastO
   return r;
 }
 
-/** Mix: ungerade Wochen eine Bestie aus dem Pool (in den Klassen des Blocks), gerade Wochen zwei oder drei kurze hintereinander. */
-function mixPick(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, served: (list: Beast[]) => Beast[], classOf: (b: Beast) => BeastClass, fresh: (b: Beast) => boolean): Beast | null {
-  const seed = `${opts.blockId}:${block.id}`;
-  const max = block.mix!.maxMin;
-  const min = (b: Beast) => beastMinutes(b, opts.state.beastTimes[b.id]).min;
-  const pool = served(block.pool!.map((id) => BEAST_BY_ID[id]).filter((b): b is Beast => !!b)).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
-  const singles = pool.filter((b) => !block.classes?.length || block.classes.includes(classOf(b)));
-  const total = (xs: Beast[]) => xs.reduce((t, b) => t + min(b), 0) + ((xs.length - 1) * COMBO_REST) / 60;
-  const combos: Beast[] = [];
-  // Doppel und Triple: dieselbe Bestie am Stück
-  for (const b of pool) for (const k of [2, 3]) if (min(b) * k <= max) combos.push(composeBeast([[b, k]]));
-  // Paare und Dreier aus verschiedenen Bestien
-  const shortest = Math.min(...pool.map(min));
-  const short = pool.filter((b) => min(b) + shortest + COMBO_REST / 60 <= max);
-  for (let i = 0; i < short.length; i++) for (let j = i + 1; j < short.length; j++) {
-    if (total([short[i], short[j]]) <= max) combos.push(composeBeast([[short[i], 1], [short[j], 1]]));
-    for (let k = j + 1; k < short.length; k++) if (total([short[i], short[j], short[k]]) <= max) combos.push(composeBeast([[short[i], 1], [short[j], 1], [short[k], 1]]));
-  }
-  combos.sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
-  // Schon in diesem Orden dran (geplant oder geloggt): erst wieder, wenn der Pool durch ist
-  const used = new Set<string>();
-  for (let k = 1; k < opts.week; k++) {
-    const x = pickBeast(block, { ...opts, week: k, reduced: false });
-    if (x) beastFamily(x.id).forEach((f) => used.add(f));
-  }
-  for (const se of opts.state.sessions) if (se.blockId === opts.blockId && se.week < opts.week) {
-    if (se.beast) beastFamily(se.beast.id).forEach((f) => used.add(f));
-    se.beastParts?.forEach((pt) => beastFamily(pt.id).forEach((f) => used.add(f)));
-  }
-  const unused = (b: Beast) => !beastFamily(b.id).some((f) => used.has(f));
-  const from = (list: Beast[], t: number, test: (b: Beast) => boolean) => {
-    for (let k = 0; k < list.length; k++) { const b = list[(t + k) % list.length]; if (fresh(b) && test(b)) return b; }
-    return null;
-  };
-  const t = Math.floor((opts.week - 1) / 2);
-  const [a, b] = opts.week % 2 === 0 ? [combos, singles] : [singles, combos];
-  return from(a, t, unused) ?? from(b, t, unused) ?? from(a, t, () => true) ?? from(b, t, () => true);
+
+/* ---------- Bestienwahl: ein Pool für alle Orden ----------
+   Kandidaten: jede Bestie einzeln, jede als Doppel (×2), jedes Paar als Serie (2 Min Pause dazwischen).
+   Alle Formen sind gleichrangig. Passen muss die Dauer zum Zeitfenster des Blocks (Klassen).
+   Vorrang hat Varianz im Orden: Was in dieser Phase schon dran war, kommt erst wieder, wenn alles andere durch ist.
+   Innerhalb davon gewichtet das Ziel des Ordens (Kraft, Kondition, Ausdauer, Beweglichkeit). */
+type BeastKind = "single" | "double" | "pair";
+const CARDIO_RX = /^(row|run|bike|sprints?|single unders|jumping jacks|mountain climbers|burpee|speed skaters|froggers|sprawls|tuck jumps|high jumps|jumps|lateral jumps|broad jumps|bear crawl|lizard crawl|lunge walk|obstacle run|box jumps|squat jumps|standup jumps)/i;
+const CORE_RX = /sit-?ups|crunch|v-ups|tuck-ups|leg raises|toes-to-bar|knees-to-elbow|plank|hollow|l-sit|dragon|wipers|supermen|hang|leg lever/i;
+const mixMemo = new Map<string, ReturnType<typeof beastMix>>();
+const mixOf = (b: Beast) => { if (!mixMemo.has(b.id)) mixMemo.set(b.id, beastMix(b)); return mixMemo.get(b.id)!; };
+/** Anteile Kondition / Rumpf / Kraft einer Bestie aus ihren Übungen */
+function beastMix(b: Beast): { cardio: number; core: number; strength: number } {
+  const parts = b.work.split(" · ").map(beastPartName).filter((p) => p && !/^rest\b/i.test(p));
+  const n = parts.length || 1;
+  const cardio = parts.filter((p) => CARDIO_RX.test(p)).length / n;
+  const core = parts.filter((p) => !CARDIO_RX.test(p) && CORE_RX.test(p)).length / n;
+  return { cardio, core, strength: Math.max(0, 1 - cardio - core) };
 }
+const GOAL_W: Partial<Record<Goal, { cardio: number; core: number; strength: number }>> = {
+  strength: { strength: 1, core: 0.6, cardio: 0.3 }, hypertrophy: { strength: 1, core: 0.6, cardio: 0.3 },
+  power: { strength: 0.9, core: 0.5, cardio: 0.5 }, speed: { strength: 0.6, core: 0.5, cardio: 0.9 },
+  conditioning: { cardio: 1, strength: 0.7, core: 0.5 }, fatloss: { cardio: 1, strength: 0.7, core: 0.5 },
+  endurance: { cardio: 1, strength: 0.3, core: 0.4 },
+  mobility: { core: 0.9, strength: 0.6, cardio: 0.5 }, wellbeing: { core: 0.8, strength: 0.6, cardio: 0.7 }, skill: { core: 0.9, strength: 0.7, cardio: 0.5 },
+};
 
 function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {
   const { profile, state } = opts;
+  const pb = state.plan.find((p) => p.id === opts.blockId);
+  const seed = `${opts.blockId}:${block.id}`;
   const fresh = (b: Beast) => !beastFamily(b.id).some((x) => avoid.has(x));
-  let classes = block.classes ?? [];
-  if (opts.downgrade && classes.length) classes = classes.map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]);
+  let classes = block.classes?.length ? block.classes : (["bestie", "ungeheuer"] as BeastClass[]);
+  if (opts.downgrade) classes = classes.map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]);
   if (opts.reduced) classes = ["plage"];
-  const classOf = (b: Beast) => beastClass(beastMinutes(b, state.beastTimes[b.id]).min);
-  let cands: Beast[];
-  if (block.pool && !opts.reduced) cands = block.pool.map((id) => BEAST_BY_ID[id]).filter(Boolean);
-  else cands = BEASTS.filter((b) => classes.includes(classOf(b)));
+  const lo = Math.min(...classes.map((c) => CLASS_RANGE[c][0])), hi = Math.max(...classes.map((c) => CLASS_RANGE[c][1]));
+  const inSlot = (m: number) => m > lo && m <= hi;
   const skills = state.user.skills ? new Set(state.user.skills) : null;
-  // Fehlt ein Skill, kommt die Bestie hexed: die betroffenen Übungen durch ihren Ersatz getauscht
+  // Fehlt ein Skill, kommt die Bestie verhext: die betroffenen Übungen durch ihren Ersatz getauscht
   const serve = (b: Beast): Beast | null => (beastOk(b, skills) ? b : hexFor(b, skills));
   const ok = (b: Beast) => beastActive(b) && beastFits(b, profile) && serve(b) != null;
-  const served = (list: Beast[]) => list.filter(ok).map((b) => serve(b)!);
-  let turn = opts.week - 1;
-  // Feste Start-Bestie in Woche 1, notfalls hexed
+  const min = (b: Beast) => beastMinutes(b, state.beastTimes[b.id]).min;
+
+  // Feste Start-Bestie in Woche 1, notfalls verhext
   if (block.first && opts.week === 1 && !opts.reduced) {
     const b0 = BEAST_BY_ID[block.first];
     if (b0 && ok(b0) && fresh(b0)) return serve(b0);
   }
-  // Wechsel aus Einzelbestie und Serie kurzer Bestien aus dem Pool
-  if (block.mix && block.pool && !opts.reduced) {
-    const m = mixPick(block, opts, served, classOf, fresh);
-    if (m) return m;
+  // Zwischenwert (Conqueror): dieselbe Bestie wie in Woche 1
+  if (block.benchmark_every && opts.week > 1 && (opts.week - 1) % block.benchmark_every === 0 && !opts.reduced) {
+    const w1 = pickBeast(block, { ...opts, week: 1, reduced: false });
+    if (w1) return w1;
   }
-  let fit = served(cands);
-  if (!fit.length) fit = served(BEASTS).filter((b) => !classes.length || classes.includes(classOf(b)));
-  if (!fit.length) {
-    // Keine passende Bestie: aus kürzeren eine Serie bauen
-    const target = classes.length ? classes : [...new Set(cands.map(classOf))];
-    const pool = served(BEASTS);
-    let first: Beast | null = null;
-    for (let k = 0; k < 6; k++) {
-      const combo = comboFor(target, pool, `${opts.blockId}:${block.id}`, opts.week + k * 2);
-      first ??= combo;
-      if (combo && fresh(combo)) return combo;
-    }
-    if (first) return first;
-  }
-  if (!fit.length) fit = served(BEASTS.filter((b) => b.equipment.every((t) => t === "bodyweight_only")));
-  if (!fit.length) return null;
-  const seed = `${opts.blockId}:${block.id}`;
-  const order = [...fit].sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
-  // Start-Bestie steht in der Rotation vorn, kommt also erst nach einem vollen Durchlauf wieder
-  const isFirst = (b: Beast) => !!block.first && (b.id === block.first || b.id.startsWith(`${block.first}~`));
-  if (block.first) {
-    const i = order.findIndex(isFirst);
-    if (i > 0) order.unshift(order.splice(i, 1)[0]);
-    else if (i < 0 && order.length > 1) turn += 1; // Woche 1 kam außerhalb der Rotation: dort weiterzählen
-  }
-  if (block.benchmark_every && opts.week > 1 && (opts.week - 1) % block.benchmark_every === 0) return order[0];
+
   // Woche vor dem Zwischenwert: dessen Bestie hier nicht nehmen
-  if (block.benchmark_every && opts.week % block.benchmark_every === 0 && order.length > 1) beastFamily(order[0].id).forEach((x) => avoid.add(x));
-  if (block.draw === "random") {
-    const recent = state.sessions.filter((s) => s.beast).slice(-3).map((s) => s.beast!.id);
-    const pool = order.filter((b) => !recent.includes(b.id) && fresh(b));
-    const list = pool.length ? pool : order.filter(fresh).length ? order.filter(fresh) : order;
-    return list[hash(`${seed}:${opts.week}`) % list.length];
+  if (block.benchmark_every && opts.week % block.benchmark_every === 0 && opts.week > 1) {
+    const w1 = pickBeast(block, { ...opts, week: 1, reduced: false });
+    if (w1) beastFamily(w1.id).forEach((x) => avoid.add(x));
   }
-  // Rotation, aber nie eine Bestie der Vorwoche: dann die nächste in der Reihe
-  for (let k = 0; k < order.length; k++) {
-    const pick = order[(turn + k) % order.length];
-    if (fresh(pick) && !(opts.week === 2 && isFirst(pick) && order.length > 1)) return pick;
+  // Kandidaten (Serien erst zusammensetzen, wenn sie gewählt sind)
+  type Cand = { kind: BeastKind; units: Beast[]; fam: string[] };
+  const singles = BEASTS.filter(ok).map((b) => serve(b)!);
+  const mins = new Map(singles.map((b) => [b.id, min(b)]));
+  const fam1 = new Map(singles.map((b) => [b.id, beastFamily(b.id)[0]]));
+  const cands: Cand[] = [];
+  for (const b of singles) {
+    const m = mins.get(b.id)!, f = [fam1.get(b.id)!];
+    if (inSlot(m)) cands.push({ kind: "single", units: [b], fam: f });
+    if (inSlot(m * 2)) cands.push({ kind: "double", units: [b], fam: f });
   }
-  // Nur Bestien der Vorwoche passen: erst eine andere Bestie derselben Länge, dann eine Serie aus kürzeren,
-  // erst ganz zuletzt dieselbe Bestie noch einmal
-  const target = classes.length ? classes : [...new Set(fit.map(classOf))];
-  const alt = served(BEASTS).filter((b) => fresh(b) && target.includes(classOf(b))).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
-  if (alt.length) return alt[turn % alt.length];
-  const pool = served(BEASTS);
-  for (let k = 0; k < 6; k++) {
-    const combo = comboFor(target, pool.filter(fresh), `${opts.blockId}:${block.id}`, opts.week + k * 2);
-    if (combo && fresh(combo)) return combo;
+  const shortest = Math.min(...mins.values());
+  const short = singles.filter((b) => mins.get(b.id)! + shortest + COMBO_REST / 60 <= hi);
+  for (let i = 0; i < short.length; i++) for (let j = i + 1; j < short.length; j++) {
+    if (!inSlot(mins.get(short[i].id)! + mins.get(short[j].id)! + COMBO_REST / 60)) continue;
+    // Reihenfolge fest per Hash, damit jede Bestie mal zuerst kommt
+    const pair = hash(seed + short[i].id + short[j].id) % 2 ? [short[i], short[j]] : [short[j], short[i]];
+    cands.push({ kind: "pair", units: pair, fam: pair.map((x) => fam1.get(x.id)!) });
   }
-  return order[turn % order.length];
+  const build = (c: Cand): Beast => (c.kind === "single" ? c.units[0] : c.kind === "double" ? composeBeast([[c.units[0], 2]]) : composeBeast(c.units.map((x) => [x, 1] as [Beast, number])));
+  const freshC = (c: Cand) => !c.fam.some((x) => avoid.has(x));
+  if (!cands.length) {
+    // Nichts passt ins Fenster: die Einzelbestie mit der nächstliegenden Dauer
+    const mid = (lo + Math.min(hi, 60)) / 2;
+    return singles.filter(fresh).sort((a, c) => Math.abs(min(a) - mid) - Math.abs(min(c) - mid))[0] ?? singles[0] ?? null;
+  }
+
+  // Varianz im Orden: wann war welche Bestie zuletzt dran (alle Tage dieser Phase, geplant und geloggt)
+  const lastUsed = new Map<string, number>();
+  const mark = (id: string, w: number) => beastFamily(id).forEach((f) => lastUsed.set(f, Math.max(lastUsed.get(f) ?? 0, w)));
+  if (pb) {
+    for (let k = 1; k <= opts.week; k++) {
+      const targets = weekBeastBlocks(state, pb, k);
+      const upto = k < opts.week ? targets.length : targets.findIndex(([b]) => b.id === block.id);
+      for (let i = 0; i < Math.max(0, upto); i++) {
+        const [b, prof] = targets[i];
+        const x = pickBeast(b, { ...opts, week: k, profile: prof, reduced: false });
+        if (x) mark(x.id, k);
+      }
+    }
+    for (const se of state.sessions) if (se.blockId === opts.blockId && se.week <= opts.week) {
+      if (se.beast) mark(se.beast.id, se.week);
+      se.beastParts?.forEach((pt) => mark(pt.id, se.week));
+    }
+  }
+  const age = (c: Cand) => Math.max(0, ...c.fam.map((f) => lastUsed.get(f) ?? 0)); // 0 = noch nie
+  let pool = cands.filter(freshC);
+  if (!pool.length) pool = cands;
+  const oldest = Math.min(...pool.map(age));
+  pool = pool.filter((c) => age(c) === oldest);
+
+  // Form gleichrangig: erst Einzel, Doppel oder Serie (je gleich wahrscheinlich), dann die Bestie nach Ziel gewichtet
+  const r = (salt: string) => hash(`${seed}:${opts.week}:${salt}`) / 4294967296;
+  const kinds = [...new Set(pool.map((c) => c.kind))].sort();
+  const kind = kinds[Math.floor(r("kind") * kinds.length)];
+  const key = (c: Cand) => c.units.map((x) => x.id).join("+");
+  const list = pool.filter((c) => c.kind === kind).sort((a, c) => hash(seed + key(a)) - hash(seed + key(c)));
+  const goal = pb ? weekFocus(state, pb, opts.week)?.goals.primary : undefined;
+  const gw = (goal && GOAL_W[goal]) || { cardio: 0.7, core: 0.7, strength: 0.7 };
+  const weight = (c: Cand) => c.units.reduce((sum, u) => { const m = mixOf(u); return sum + 0.2 + m.cardio * gw.cardio + m.core * gw.core + m.strength * gw.strength; }, 0) / c.units.length;
+  const ws = list.map((c) => weight(c) ** 2);
+  let u = r("pick") * ws.reduce((x, y) => x + y, 0);
+  for (let i = 0; i < list.length; i++) { u -= ws[i]; if (u <= 0) return build(list[i]); }
+  return build(list[list.length - 1]);
 }
 
 /* ---------- Warm-up, Cool-down, Module ---------- */

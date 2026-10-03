@@ -45,9 +45,9 @@ export function Help() {
         <li>Jeder Orden hat mindestens eine Bestie pro Woche. Bei ruhigeren Orden kommt in jeder zweiten Woche eine lange Bestie im Grundlagentempo; diese Zeit zählt nicht für die Bestzeit.</li>
         <li>Kein Laufen möglich (Wetter, Reise, Knie)? Unter ⚙ Anpassen „Heute kein Laufen möglich“ anhaken: Aus dem Lauf wird eine Bestie ähnlicher Dauer.</li>
         <li>Jede Bestie hat ein Basis-Workout. Ist ein Skill (Setup › Können) nicht angekreuzt, kommt sie <em>verhext</em>: Nur die Übungen dieses Skills werden durch ihren Ersatz getauscht, etwa Pistols → doppelt so viele Squats, Dragon Flags → dreimal so viele Leg Raises. Alle verhexten Fassungen einer Bestie teilen sich eine Bestzeit. Dieselbe Bestie kommt nie zwei Wochen hintereinander.</li>
-        <li>Reiter „Bestien“: alle 81 Bestien mit Übungen, Länge, Ausrüstung und Bestzeiten, getrennt nach Basis, verhext und Doppel. Filter nach Nord und Morgenland, bezwungen und offen, dazu eine Suche.</li>
+        <li>Reiter „Almanach“: die Orden und das Bestiarium. Im Bestiarium alle Nordbestien mit Übungen, Länge, Ausrüstung und Bestzeiten (Basis, verhext, Doppel), Filter bezwungen oder offen und eine Suche.</li>
         <li>Pullups in Bestien sind immer strikt. Verhext werden daraus Assisted Pullups, mit Band oder Kipping; bei Muscle-Ups genauso.</li>
-        <li>Assassin: leichte Bestien zum Kennenlernen, im Wechsel eine allein und zwei oder drei kurze hintereinander.</li>
+        <li>Bestienwahl in allen Orden: Einzelbestie, Doppel (×2) und Serie aus zwei Bestien sind gleichrangig. Die Dauer passt zum Zeitfenster des Tages, das Ziel des Ordens gewichtet (Kraft, Kondition, Ausdauer, Beweglichkeit). Vorrang hat Abwechslung: Was in der Phase schon dran war, kommt erst wieder, wenn alles Passende durch ist.</li>
       </ul>
 
       <h3>Anderer Ort heute</h3>

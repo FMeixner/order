@@ -411,31 +411,21 @@ describe("hexed und Grundlagentempo", () => {
     expect(ws.some((x) => x.id.endsWith("~hex"))).toBe(true);
     for (let i = 1; i < ws.length; i++) expect(beastFamily(ws[i].id).some((f) => beastFamily(ws[i - 1].id).includes(f))).toBe(false);
   });
-  it("Assassin: leichte Bestien im Wechsel allein und als Serie, kein Brecher, Undine nur zum Start", async () => {
-    const { pickBeast } = await import("./plan");
-    const s = sample();
+  it("Assassin: Undine zum Start, danach Einzel, Doppel und Serien gemischt, ohne Wiederholung", async () => {
+    const { pickBeast, beastFamily } = await import("./plan");
+    const s = { ...sample(), schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as AppState["schedule"] };
     const all = SKILLS.skills.map((x) => x.id);
     for (const skills of [all, all.filter((x) => x !== "muscle_up")]) {
       const st = { ...s, user: { ...s.user, skills } };
       const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
-      const ws = Array.from({ length: 10 }, (_, i) => pickBeast(b, { blockId: "b1", week: i + 1, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false })!);
+      const prof = st.equipment.find((e) => e.id === "g")!;
+      const ws = Array.from({ length: 10 }, (_, i) => pickBeast(b, { blockId: "b1", week: i + 1, profile: prof, state: st, reduced: false, downgrade: false })!);
       expect(ws[0].name).toMatch(/^Undine/);
-      expect(ws.filter((x) => x.parts && x.parts.length >= 2).length).toBeGreaterThanOrEqual(3);
-      for (const x of ws) {
-        expect(x.name).not.toMatch(/Wilde Jagd|Krampus|Perchta|Werwolf/);
-        if (x.parts) expect(x.minutes).toBeLessThanOrEqual(22);
-      }
-      expect(ws.slice(1).filter((x) => /Undine verhext/.test(x.name)).length).toBe(0);
+      const fams = ws.flatMap((x) => [...new Set(beastFamily(x.id))]);
+      expect(new Set(fams).size).toBe(fams.length);
+      const kinds = new Set(ws.slice(1).map((x) => (x.parts ? "pair" : x.repeat ? "double" : "single")));
+      expect(kinds.size).toBeGreaterThanOrEqual(2);
     }
-  });
-  it("Assassin: zehn Wochen ohne Wiederholung, Doppel kommen vor", async () => {
-    const { pickBeast, beastFamily } = await import("./plan");
-    const s = sample();
-    const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
-    const ws = Array.from({ length: 10 }, (_, i) => pickBeast(b, { blockId: "b1", week: i + 1, profile: { ...gym, id: "g" }, state: s, reduced: false, downgrade: false })!);
-    const fams = ws.flatMap((x) => [...new Set(beastFamily(x.id))]);
-    expect(new Set(fams).size).toBe(fams.length);
-    expect(ws.some((x) => /×2/.test(x.name))).toBe(true);
   });
   it("hexed mit Faktor: Pistols ×2 Squats, Dragon Flags ×3 Leg Raises, eine Id, Dragon Flags in der Basis", async () => {
     const { beastById } = await import("./plan");

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { EXERCISES, FLOWS, SKILLS, SHARPEN } from "../data";
+import { EXERCISES, FLOWS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { focusFor } from "../engine/weekplan";
 import { parseClock } from "../engine/clock";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { bandFor, beastRegion, REGION_LABEL, beastLoad, affectDowngrade, beastById, daysBetween, beastClass, beastMinutes, CLASS_LABEL, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
+import { bandFor, beastLoad, affectDowngrade, beastById, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import type { AppState, Beast, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
@@ -536,14 +536,6 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
 }
 
 /* ---------- Bestie ---------- */
-/** Hinweis bei hexed-Bestien: welche Übung leichter ist */
-function hexNote(b: Beast): string | null {
-  const ids = b.hexed ?? b.parts?.flatMap((p) => beastById(p.id)?.hexed ?? []) ?? [];
-  if (!ids.length) return null;
-  const names = SKILLS.skills.filter((x) => ids.includes(x.id)).map((x) => x.name);
-  return `Verhext: ${names.join(", ")} durch eine leichtere Übung ersetzt, bis der Skill sitzt.`;
-}
-
 /** Stoppuhr und Zeiteingabe für eine Bestie */
 function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number }[]; label?: string; saved: number | null; onSave: (sec: number) => void }) {
   const [startedAt, setStartedAt] = useState<number | null>(null);
@@ -591,7 +583,6 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     ? beast.parts.reduce((m, pt) => m + beastMinutes(beastById(pt.id)!, ctx.state.beastTimes[pt.id]).min, 0) + ((beast.parts.length - 1) * COMBO_REST) / 60
     : beastMinutes(beast, ctx.state.beastTimes[beast.id]).min;
   const measured = beast.parts ? beast.parts.every((pt) => (ctx.state.beastTimes[pt.id] ?? []).length) : (ctx.state.beastTimes[beast.id] ?? []).length > 0;
-  const cls = beastClass(effMin);
   // Zeit nachgetragen, Einheit schon abgeschlossen: gleich in die Bestzeiten, alte Zeit dieses Tages ersetzen
   const lateTime = (id: string, sec: number, old: number | null | undefined) => {
     if (!session?.done || easy) return;
@@ -619,20 +610,18 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     const k = b.times ?? b.repeat ?? 1;
     return (
       <>
-        <div className="muted small">{k > 1 ? `${k}-mal am Stück ohne Pause, je ${b.rounds / k} ${b.rounds / k === 1 ? "Durchgang" : "Runden"}` : `${b.rounds} ${b.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
+        <div className="muted small">{k > 1 ? `${k} × ${b.rounds / k} Runden am Stück` : `${b.rounds} ${b.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
         <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const extra = beastExtra(w, ctx.profile, !!b.id?.includes("~hex")); return <li key={i}>{w}{extra && <span className="muted"> · {extra}</span>}</li>; })}</ul>
       </>
     );
   };
   return (
     <section className="card beast">
-      <div className="block-label amber">{REGION_LABEL[beastRegion(beast)]} · {CLASS_LABEL[cls]} · ~{Math.round(effMin)} Min {measured ? "gemessen" : "geschätzt"}</div>
+      <div className="block-label amber">Bestie · {measured ? "" : "~"}{Math.round(effMin)} Min</div>
       <div className="beast-name">{beast.name}</div>
-      {easy && <div className="note small">Grundlagentempo: ruhig und gleichmäßig, Nasenatmung, du kannst dabei sprechen. Die Zeit zählt nicht für die Bestzeit.</div>}
-      {hexNote(beast) && <div className="muted small">{hexNote(beast)}</div>}
+      {easy && <div className="muted small">Grundlagentempo, zählt nicht für die Bestzeit.</div>}
       {parts.length ? (
         <>
-          <div className="muted small">Zwei Bestien hintereinander, dazwischen {COMBO_REST / 60} Min Pause. Jede Zeit zählt für die Bestzeit ihrer Bestie.</div>
           {parts.map((pt, u) => (
             <div key={u} className="stack">
               <div className="small"><strong>{u + 1}. {pt.name}</strong></div>
