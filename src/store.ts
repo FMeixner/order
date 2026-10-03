@@ -63,6 +63,18 @@ export function migrate(raw: unknown): AppState {
   delete s.user.asym;
   // 0.23: Skill-Training (verhexte Bestien als Übung) entfernt, Skills legen nur die Auswahl fest
   delete s.user.skillTraining;
+  // 0.26: eine hexed-Id je Bestie („a~hex“), alle hexed-Varianten teilen sich die Bestzeit
+  const hx = (id: string) => id.replace(/~hex:[^×+]*/g, "~hex");
+  if (s.beastTimes) {
+    const bt: AppState["beastTimes"] = {};
+    for (const [id, t] of Object.entries(s.beastTimes)) bt[hx(id)] = [...(bt[hx(id)] ?? []), ...t];
+    s.beastTimes = bt;
+  }
+  s.sessions = (s.sessions ?? []).map((se) => ({
+    ...se,
+    ...(se.beast ? { beast: { ...se.beast, id: hx(se.beast.id) } } : {}),
+    ...(se.beastParts ? { beastParts: se.beastParts.map((pt) => ({ ...pt, id: hx(pt.id) })) } : {}),
+  }));
   s.equipment = (s.equipment ?? []).map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   // 0.1 → 0.2: Schalter „Doppelmesser“ wird zum Equipment „Schwert“ an den Heim-Profilen
   if (s.user.doppelmesser && !s.equipment.some((e) => e.has.sword)) {

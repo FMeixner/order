@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import { BEASTS, SKILLS } from "../data";
 import { beastActive, beastClass, beastFamily, beastMinutes, beastNeeds, beastRegion, CLASS_LABEL, fmtDate, type BeastNeed } from "../engine/plan";
-import { beastOk, beastSkills } from "../engine/skills";
+import { beastOk, beastSkills, hexFor } from "../engine/skills";
 import type { AppState, Beast } from "../types";
 import { Collapse, Seg } from "./common";
 import { fmt } from "./Timer";
@@ -18,7 +18,7 @@ function timesOf(b: Beast, all: AppState["beastTimes"]) {
   return Object.entries(all)
     .filter(([id, t]) => t.length && beastFamily(id).length === 1 && beastFamily(id)[0] === b.id)
     .map(([id, t]) => {
-      const label = id.includes("~hex") ? "verhext" : id.match(/×(\d)$/) ? `×${id.match(/×(\d)$/)![1]}` : "Basis";
+      const label = id.includes("~hex") ? "hexed" : id.match(/×(\d)$/) ? `×${id.match(/×(\d)$/)![1]}` : "Basis";
       const best = t.reduce((m, x) => (x.seconds < m.seconds ? x : m), t[0]);
       return { id, label, best, n: t.length, last: [...t].sort((a, c) => c.date.localeCompare(a.date))[0] };
     })
@@ -55,6 +55,7 @@ export function Bestiary({ state }: { state: AppState }) {
         const { min, measured } = beastMinutes(b, state.beastTimes[b.id]);
         const needs = [...beastNeeds(b)].map((n) => NEED_LABEL[n]);
         const missing = beastSkills(b).filter((id) => skills && !skills.has(id));
+        const hx = missing.length ? hexFor(b, skills) : null;
         const meta = base ? `${fmt(base.best.seconds)} · ${base.n}×` : times.length ? `${times[0].label} ${fmt(times[0].best.seconds)}` : "offen";
         return (
           <Collapse key={b.id} title={b.name} meta={meta} tone={times.length ? "teal" : undefined}>
@@ -64,13 +65,12 @@ export function Bestiary({ state }: { state: AppState }) {
                 {needs.length ? ` · ${needs.join(", ")}` : " · nur Körpergewicht"}
               </div>
               <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
-              {b.hex && (
+              {!beastOk(b, skills) && (hx ? (
                 <div className="stack">
-                  <span className="muted small">Hexed (leichter, etwa gleich lang):</span>
-                  <ul className="beast-work muted">{b.hex.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+                  <div className="note small">Kommt hexed, weil {missing.map(skillName).join(", ")} noch nicht angekreuzt ist:</div>
+                  <ul className="beast-work">{hx.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
                 </div>
-              )}
-              {!beastOk(b, skills) && <div className="note warn small">Kommt noch nicht dran, es fehlt: {missing.map(skillName).join(", ")}.</div>}
+              ) : <div className="note warn small">Kommt noch nicht dran, es fehlt: {missing.map(skillName).join(", ")}.</div>)}
               {times.length > 0 && (
                 <table className="pr-table small">
                   <thead><tr><th>Form</th><th>Bestzeit</th><th>am</th><th>zuletzt</th><th>Läufe</th></tr></thead>

@@ -2,7 +2,7 @@
 import { BANDS, BEAST_LOADS, BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
-import { beastOk, hexFor, hexWith } from "./skills";
+import { beastOk, beastSkills, hexFor, hexWith } from "./skills";
 
 /* ---------- Datum ---------- */
 export function isoDate(d: Date): string {
@@ -299,9 +299,10 @@ export function composeBeast(parts: [Beast, number][]): Beast {
 export function beastById(id: string): Beast | null {
   if (BEAST_BY_ID[id]) return BEAST_BY_ID[id];
   const unit = (u: string): Beast | undefined => {
-    const [base, hex] = u.split("~hex:");
+    const [base, hex] = u.split("~hex");
     const b = BEAST_BY_ID[base];
-    return b && hex ? hexWith(b, hex.split(",")) ?? undefined : b;
+    // „a~hex“ (alle fehlenden Skills getauscht) oder alt „a~hex:skill,skill“
+    return b && hex !== undefined ? hexWith(b, hex.startsWith(":") ? hex.slice(1).split(",") : beastSkills(b)) ?? undefined : b;
   };
   const parts = id.split("+").map((p) => { const m = p.match(/^(.*)×(\d)$/); return m ? [unit(m[1]), parseInt(m[2])] : [unit(p), 1]; }) as [Beast | undefined, number][];
   if (!parts.length || parts.some(([b]) => !b)) return null;
@@ -399,11 +400,11 @@ export function pickBeast(block: Extract<Block, { type: "beast" }>, opts: BeastO
 }
 
 /** Mix: ungerade Wochen eine Bestie aus dem Pool (in den Klassen des Blocks), gerade Wochen zwei oder drei kurze hintereinander. */
-function mixPick(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, ok: (b: Beast) => boolean, classOf: (b: Beast) => BeastClass, fresh: (b: Beast) => boolean): Beast | null {
+function mixPick(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, served: (list: Beast[]) => Beast[], classOf: (b: Beast) => BeastClass, fresh: (b: Beast) => boolean): Beast | null {
   const seed = `${opts.blockId}:${block.id}`;
   const max = block.mix!.maxMin;
   const min = (b: Beast) => beastMinutes(b, opts.state.beastTimes[b.id]).min;
-  const pool = block.pool!.map((id) => BEAST_BY_ID[id]).filter((b): b is Beast => !!b && ok(b)).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
+  const pool = served(block.pool!.map((id) => BEAST_BY_ID[id]).filter((b): b is Beast => !!b)).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
   const singles = pool.filter((b) => !block.classes?.length || block.classes.includes(classOf(b)));
   const total = (xs: Beast[]) => xs.reduce((t, b) => t + min(b), 0) + ((xs.length - 1) * COMBO_REST) / 60;
   const combos: Beast[] = [];
@@ -448,29 +449,27 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   if (block.pool && !opts.reduced) cands = block.pool.map((id) => BEAST_BY_ID[id]).filter(Boolean);
   else cands = BEASTS.filter((b) => classes.includes(classOf(b)));
   const skills = state.user.skills ? new Set(state.user.skills) : null;
-  const ok = (b: Beast) => beastActive(b) && beastFits(b, profile) && beastOk(b, skills);
+  // Fehlt ein Skill, kommt die Bestie hexed: die betroffenen Übungen durch ihren Ersatz getauscht
+  const serve = (b: Beast): Beast | null => (beastOk(b, skills) ? b : hexFor(b, skills));
+  const ok = (b: Beast) => beastActive(b) && beastFits(b, profile) && serve(b) != null;
+  const served = (list: Beast[]) => list.filter(ok).map((b) => serve(b)!);
   let turn = opts.week - 1;
   // Feste Start-Bestie in Woche 1, notfalls hexed
   if (block.first && opts.week === 1 && !opts.reduced) {
     const b0 = BEAST_BY_ID[block.first];
-    if (b0 && beastActive(b0) && beastFits(b0, profile) && fresh(b0)) {
-      if (beastOk(b0, skills)) return b0;
-      const hx = hexFor(b0, skills);
-      if (hx) return hx;
-    }
+    if (b0 && ok(b0) && fresh(b0)) return serve(b0);
   }
   // Wechsel aus Einzelbestie und Serie kurzer Bestien aus dem Pool
   if (block.mix && block.pool && !opts.reduced) {
-    const m = mixPick(block, opts, ok, classOf, fresh);
+    const m = mixPick(block, opts, served, classOf, fresh);
     if (m) return m;
   }
-  // Skills legen nur die Auswahl fest: Bestien mit fehlendem Skill kommen nicht dran
-  let fit = cands.filter(ok);
-  if (!fit.length) fit = BEASTS.filter((b) => ok(b) && (!classes.length || classes.includes(classOf(b))));
+  let fit = served(cands);
+  if (!fit.length) fit = served(BEASTS).filter((b) => !classes.length || classes.includes(classOf(b)));
   if (!fit.length) {
     // Keine passende Bestie: aus kürzeren eine Serie bauen
     const target = classes.length ? classes : [...new Set(cands.map(classOf))];
-    const pool = BEASTS.filter(ok);
+    const pool = served(BEASTS);
     let first: Beast | null = null;
     for (let k = 0; k < 6; k++) {
       const combo = comboFor(target, pool, `${opts.blockId}:${block.id}`, opts.week + k * 2);
@@ -479,7 +478,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
     }
     if (first) return first;
   }
-  if (!fit.length) fit = BEASTS.filter((b) => beastActive(b) && b.equipment.every((t) => t === "bodyweight_only") && beastOk(b, skills));
+  if (!fit.length) fit = served(BEASTS.filter((b) => b.equipment.every((t) => t === "bodyweight_only")));
   if (!fit.length) return null;
   const seed = `${opts.blockId}:${block.id}`;
   const order = [...fit].sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
@@ -507,9 +506,9 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   // Nur Bestien der Vorwoche passen: erst eine andere Bestie derselben Länge, dann eine Serie aus kürzeren,
   // erst ganz zuletzt dieselbe Bestie noch einmal
   const target = classes.length ? classes : [...new Set(fit.map(classOf))];
-  const alt = BEASTS.filter((b) => ok(b) && fresh(b) && target.includes(classOf(b))).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
+  const alt = served(BEASTS).filter((b) => fresh(b) && target.includes(classOf(b))).sort((a, c) => hash(seed + a.id) - hash(seed + c.id));
   if (alt.length) return alt[turn % alt.length];
-  const pool = BEASTS.filter(ok);
+  const pool = served(BEASTS);
   for (let k = 0; k < 6; k++) {
     const combo = comboFor(target, pool.filter(fresh), `${opts.blockId}:${block.id}`, opts.week + k * 2);
     if (combo && fresh(combo)) return combo;

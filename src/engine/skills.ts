@@ -46,24 +46,27 @@ export function ladderStart(ladder: string[], skills: SkillSet): number {
 }
 
 /* ---------- hexed: Bestie mit leichterer Übung für einen fehlenden Skill ---------- */
-const HEX: Record<string, { rx: RegExp; to: string }[]> = Object.fromEntries(
-  SKILLS.skills.filter((s) => s.hex?.length).map((s) => [s.id, s.hex!.map(([rx, to]) => ({ rx: new RegExp(rx, "i"), to }))]),
+const HEX: Record<string, { rx: RegExp; to: string; factor: number }[]> = Object.fromEntries(
+  SKILLS.skills.filter((s) => s.hex?.length).map((s) => [s.id, s.hex!.map(([rx, to, factor]) => ({ rx: new RegExp(rx, "i"), to, factor: factor ?? 1 }))]),
 );
 
-export const CURATED = "kuratiert";
+/** Wiederholungen am Anfang einer Teilaufgabe skalieren: „6/5/4 Clapping Pullups“ ×2 → „12/10/8 …“ */
+function scaleLead(line: string, f: number): string {
+  if (f === 1) return line;
+  return line.replace(/^((?:Buy-(?:in|out):\s*|AMRAP[^:]*:\s*)?)([\d/]+)(?=[a-z]?\s)/i, (_m, pre: string, nums: string) => pre + nums.split("/").map((n) => String(Math.round(parseInt(n) * f))).join("/"));
+}
 
-/** hexed-Variante für bestimmte Skills bauen. null, wenn für einen der Skills kein Ersatz hinterlegt ist. */
+/** hexed-Variante: jede Übung, deren Skill fehlt, durch ihren Ersatz getauscht (Wiederholungen nach Faktor, damit die Dauer etwa bleibt).
+    Eine Id je Bestie („a~hex“), alle hexed-Varianten teilen sich eine Bestzeit. null, wenn für einen der Skills kein Ersatz hinterlegt ist. */
 export function hexWith(b: Beast, skillIds: string[]): Beast | null {
-  // Kuratierte Fassung hat Vorrang
-  if (skillIds[0] === CURATED || (skillIds.length && b.hex)) return b.hex ? { ...b, id: `${b.id}~hex:${CURATED}`, name: `${b.name} hexed`, work: b.hex, hexed: [CURATED] } : null;
   if (!skillIds.length || skillIds.some((id) => !HEX[id])) return null;
   const ids = [...skillIds].sort();
   const work = b.work.split(" · ").map((line) => {
     let out = line;
-    for (const id of ids) for (const r of HEX[id]) out = out.replace(r.rx, r.to);
+    for (const id of ids) for (const r of HEX[id]) if (r.rx.test(out)) out = scaleLead(out.replace(r.rx, r.to), r.factor);
     return out;
   }).join(" · ");
-  return { ...b, id: `${b.id}~hex:${ids.join(",")}`, name: `${b.name} hexed`, work, hexed: ids };
+  return { ...b, id: `${b.id}~hex`, name: `${b.name} hexed`, work, hexed: ids };
 }
 
 /** hexed-Variante für die Skills, die jemandem noch fehlen. null, wenn nichts fehlt oder kein Ersatz existiert. */

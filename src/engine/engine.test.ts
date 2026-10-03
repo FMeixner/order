@@ -340,14 +340,16 @@ describe("Bestien-Serien", () => {
     const { beastOk } = await import("./skills");
     const s = sample();
     s.user = { ...s.user, skills: [] };
-    const blk = { type: "beast" as const, id: "t", classes: ["uralte" as const] };
-    const b = pickBeast(blk, { blockId: "b1", week: 1, profile: gym, state: s, reduced: false, downgrade: false })!;
+    // kaum eine einzelne Bestie dauert 40–60 Minuten: Serien kommen vor
+    const blk = { type: "beast" as const, id: "t", classes: ["verfluchte" as const] };
+    const b = pickBeast(blk, { blockId: "b1", week: 2, profile: gym, state: s, reduced: false, downgrade: false })!;
     expect(!!b.parts || !!b.repeat).toBe(true);
-    expect(beastClass(b.minutes)).toBe("uralte");
+    expect(beastClass(b.minutes)).toBe("verfluchte");
+    // ohne Skills: jeder Teil ist Basis ohne Skill oder hexed
     const units = b.parts ? b.parts.map((p) => beastById(p.id)!) : [b];
-    expect(units.every((u) => beastOk(beastById(u.id.split("×")[0])!, new Set()))).toBe(true);
+    expect(units.every((u) => u.id.includes("~hex") || beastOk(beastById(u.id.split("×")[0])!, new Set()))).toBe(true);
     expect(beastById(b.id)?.name).toBe(b.name);
-    const b2 = pickBeast(blk, { blockId: "b1", week: 2, profile: gym, state: s, reduced: false, downgrade: false })!;
+    const b2 = pickBeast(blk, { blockId: "b1", week: 3, profile: gym, state: s, reduced: false, downgrade: false })!;
     expect(b2.id).not.toBe(b.id);
     // Reihenfolge der Paare wechselt: über viele Wochen kommt jede Bestie auch mal zuerst
     const firsts = new Set<string>(), seconds = new Set<string>();
@@ -396,16 +398,18 @@ describe("hexed und Grundlagentempo", () => {
     const h = hexFor(mu, new Set())!;
     expect(h.name).toBe(`${mu.name} hexed`);
     expect(h.work).toContain("Assisted Muscle-Ups (Band oder Kipping)");
-    expect(h.id).toBe(`${mu.id}~hex:muscle_up`);
+    expect(h.id).toBe(`${mu.id}~hex`);
     expect(beastById(h.id)?.work).toBe(h.work);
     expect(hexFor(mu, new Set(["muscle_up"]))).toBeNull();
   });
-  it("Skills legen nur die Auswahl fest: keine verhexten Bestien in der Rotation, auch mit altem skillTraining", async () => {
-    const { pickBeast } = await import("./plan");
+  it("fehlt ein Skill, kommt die Bestie hexed in die Rotation statt herauszufallen", async () => {
+    const { pickBeast, beastFamily } = await import("./plan");
     const s = sample();
-    s.user = { ...s.user, skills: [], skillTraining: true };
+    s.user = { ...s.user, skills: [] };
     const blk = { type: "beast" as const, id: "t", classes: ["bestie" as const] };
-    for (let w = 1; w <= 8; w++) expect(pickBeast(blk, { blockId: "b1", week: w, profile: gym, state: s, reduced: false, downgrade: false })!.id).not.toMatch(/~hex/);
+    const ws = Array.from({ length: 8 }, (_, i) => pickBeast(blk, { blockId: "b1", week: i + 1, profile: gym, state: s, reduced: false, downgrade: false })!);
+    expect(ws.some((x) => x.id.endsWith("~hex"))).toBe(true);
+    for (let i = 1; i < ws.length; i++) expect(beastFamily(ws[i].id).some((f) => beastFamily(ws[i - 1].id).includes(f))).toBe(false);
   });
   it("Assassin: leichte Bestien im Wechsel allein und als Serie, kein Brecher, Undine nur zum Start", async () => {
     const { pickBeast } = await import("./plan");
@@ -433,15 +437,17 @@ describe("hexed und Grundlagentempo", () => {
     expect(new Set(fams).size).toBe(fams.length);
     expect(ws.some((x) => /×2/.test(x.name))).toBe(true);
   });
-  it("kuratierte hexed-Fassung: hat Vorrang, eigene Id, wieder auflösbar", async () => {
+  it("hexed mit Faktor: Pistols ×2 Squats, Dragon Flags ×3 Leg Raises, eine Id, Dragon Flags in der Basis", async () => {
     const { beastById } = await import("./plan");
     const { hexFor } = await import("./skills");
     const lw = BEASTS.find((b) => b.name === "Lindwurm")!;
     const hx = hexFor(lw, new Set(["pullup"]))!;
-    expect(hx.id).toBe("ng-thor~hex:kuratiert");
+    expect(hx.id).toBe("ng-thor~hex");
     expect(hx.work).toContain("100/80/60 Squats");
-    expect(beastById(hx.id)?.work).toBe(hx.work);
-    expect(BEASTS.find((b) => b.name === "Wilde Jagd")!.work).toContain("4 Dragon Flags");
+    expect(beastById(hx.id)?.name).toBe("Lindwurm hexed");
+    const wj = BEASTS.find((b) => b.name === "Wilde Jagd")!;
+    expect(wj.work).toContain("4 Dragon Flags");
+    expect(hexFor(wj, new Set(["pullup", "hspu"]))!.work).toContain("12 Leg Raises");
   });
   it("jeder Orden hat mindestens eine Bestie pro Woche", () => {
     for (const f of FOCI.filter((x) => !x.medley)) for (const ab of ["A", "B"]) {

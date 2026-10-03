@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.26.0] – 2026-10-03
+
+### Geändert
+- Eine hexed-Logik: Jede Bestie hat ein Basis-Workout. Übungen, deren Skill nicht angekreuzt ist, werden durch ihren Ersatz getauscht, Wiederholungen nach Faktor: Pistols → Squats ×2, Dragon Flags → Leg Raises ×3, Clapping Pullups → Pullups ×2, Alt OA Hanging → Passive Hang ×2, OA Chinups → Chinups ×2, Muscle-Ups → Assisted Muscle-Ups, Pullups → Assisted Pullups, Nordic Curls → Nordic Negatives. Die kuratierten Einzelfassungen aus 0.25.1 sind wieder raus.
+- Bestien mit fehlendem Skill fallen nicht mehr aus der Auswahl, sie kommen hexed. Ohne Ersatzregel fallen sie weiter heraus.
+- Eine Bestzeit für alle hexed-Varianten einer Bestie (Id „…~hex“). Alte hexed-Zeiten werden beim Laden zusammengeführt.
+- Bestiarium zeigt bei fehlendem Skill die hexed-Fassung, so wie sie dran käme.
+
 ## [0.25.1] – 2026-10-03
 
 ### Geändert

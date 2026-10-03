@@ -36,7 +36,7 @@ export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; who5: string[]
 export const SWAP_GROUPS = (swapsJson as unknown as { groups: Record<string, string[]> }).groups;
 export const NORMS = (normsJson as unknown as { norms: Norm[] }).norms;
 export const DOMAINS = (normsJson as unknown as { domains: { id: string; name: string; goal: Goal; tests: string[] }[] }).domains;
-export interface SkillDef { id: string; group: string; name: string; test: string; start?: string[]; exercises: string[]; regress: Record<string, string[]>; beast: string; hex?: [string, string][] }
+export interface SkillDef { id: string; group: string; name: string; test: string; start?: string[]; exercises: string[]; regress: Record<string, string[]>; beast: string; hex?: [string, string, number?][] }
 export const SKILLS = skillsJson as unknown as { groups: { id: string; name: string }[]; skills: SkillDef[] };
 /** Geführte Flows (Yoga, Qigong, Tai Chi, Animal Flow, Mobility) */
 /** Bandstärken für Bestien-Übungen (relative Stufen) */
