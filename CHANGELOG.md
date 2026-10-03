@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.25.0] – 2026-10-03
+
+### Geändert
+- Bestien entrümpelt: seltene Übungen durch gängige ersetzt, in allen Bestien. RTO Ring Pushups → Ring Pushups, Jackie Chan und Chest Tap Pushups → Clapping Pushups, X Pushups → Pushups, C2B Chinups → Chinups, OA Chinup → Chinups ×2, Around-the-World → Toes-to-Bar ×2, Dragon Flags → Leg Raises ×3, Pulse Ups → Reverse Crunches, Side Vaults → Lateral Jumps, Contraction Plank → Plank, Sprawl Springs → Sprawls, Depth High Jumps → Tuck Jumps, Back Extensions → Supermen. Bleiben: Muscle-Ups, Burpee Muscle-Ups, Clapping Pullups, Alt OA Hanging, Archer Pushups, Hanging Knee Wipers, Combat Rolls, Burpee Squat Jumps, Lizard Crawl, Plank Knees-to-Elbow, Obstacle Run.
+- Einheitliche Namen: Pullups (immer strikt), Strict Toes-to-Bar, Commando Pullups, Sprints, Mountain Climbers, Tuck Jumps (statt „Jumps“; High Jumps bleiben eigene Übung), Leg Raises, V-Ups, Tuck-Ups.
+- Verhexte Pullups und Muscle-Ups heißen jetzt „Assisted … (Band oder Kipping)“.
+- Bestzeiten bleiben, auch wenn sich bei 35 Bestien Übungen geändert haben.
+
 ## [0.24.1] – 2026-10-03
 
 ### Geändert

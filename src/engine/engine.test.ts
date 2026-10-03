@@ -395,7 +395,7 @@ describe("hexed und Grundlagentempo", () => {
     const mu = BEASTS.find((b) => beastSkills(b).length === 1 && beastSkills(b)[0] === "muscle_up")!;
     const h = hexFor(mu, new Set())!;
     expect(h.name).toBe(`${mu.name} hexed`);
-    expect(h.work).toContain("Band-Assisted Muscle-Ups");
+    expect(h.work).toContain("Assisted Muscle-Ups (Band oder Kipping)");
     expect(h.id).toBe(`${mu.id}~hex:muscle_up`);
     expect(beastById(h.id)?.work).toBe(h.work);
     expect(hexFor(mu, new Set(["muscle_up"]))).toBeNull();

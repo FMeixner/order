@@ -47,7 +47,7 @@
   "patterns": [
     ["neck|nacken", {"Nacken": 1}],
     ["nordic", {"Beinbeuger": 1}],
-    ["toes-to-bar|\\bttb\\b|knees-to-elbow|knee wiper|windshield|dragon flag|leg lever|jackknife|sit-?ups?|v-up|toe-touch|cocoon|climber|side bend", {"Rumpf": 1}],
+    ["toes-to-bar|\\bttb\\b|knees-to-elbow|knee wiper|windshield|dragon flag|leg lever|jackknife|sit-?ups?|v-up|toe-touch|cocoon|tuck-?up|climber|side bend", {"Rumpf": 1}],
     ["thruster", {"Quadrizeps": 1, "Schultern": 0.5}],
     ["swing|snatch", {"Gesäß": 1, "Beinbeuger": 0.5}],
     ["back extension|supermen|good morning", {"Gesäß": 1, "Rücken": 0.5}],

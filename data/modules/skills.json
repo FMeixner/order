@@ -19,7 +19,7 @@
         "Pull-Up + Weste": ["Band-Assisted Pull-Up", "Negative Chin-Up", "Ring Row"],
         "Chin-Up + Weste": ["Band-Assisted Chin-Up", "Negative Chin-Up", "Ring Row"]
       },
-      "hex": [["(strict |commando |c2b |chest-to-bar )?(pull-?ups?|chin-?ups?|chinups)", "Band-Assisted Pull-Ups"]],
+      "hex": [["(strict |commando |c2b |chest-to-bar )?(pull-?ups?|chin-?ups?|chinups)", "Assisted Pullups (Band oder Kipping)"]],
       "beast": "pull-?ups?|chin-?ups?|chinups|commando pull|c2b|chest-to-bar" },
     { "id": "dip", "group": "basis", "name": "Dip am Barren", "test": "5 saubere Dips, Schultern unter die Ellbogen",
       "exercises": ["Weighted Dip"],
@@ -63,7 +63,7 @@
     { "id": "muscle_up", "group": "meister", "name": "Muscle-Up", "test": "1 sauberer Muscle-Up an Stange oder Ringen",
       "start": ["Muscle-Up-Übergang (Band)"],
       "exercises": [], "regress": {},
-      "hex": [["clapping pullups", "Explosive Pull-Ups"], ["(burpee )?muscle-?ups?", "Band-Assisted Muscle-Ups"]],
+      "hex": [["clapping pullups", "Explosive Pull-Ups"], ["(burpee )?muscle-?ups?", "$1Assisted Muscle-Ups (Band oder Kipping)"]],
       "beast": "muscle-?ups?|clapping pull" },
     { "id": "hspu", "group": "meister", "name": "Handstand-Liegestütz", "test": "3 an der Wand, Kopf berührt den Boden",
       "start": ["Wall Handstand Push-Up (Teilbereich)"],
