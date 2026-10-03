@@ -141,7 +141,7 @@ export interface Chapter {
   outcome: Outcome | null;
   epithet: string;
   saga: Line[];
-  stats: { done: number; planned: number; prs: number; steel: number; crits: number; fumbles: number };
+  stats: { done: number; planned: number; prs: number; steel: number; crits: number; fumbles: number; beasts: number };
   vars: Vars;
 }
 
@@ -228,7 +228,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
 
   const weeks: WeekRecap[] = [];
   let dealt = 0;
-  const stats = { done: 0, planned: plannedTotal, prs: 0, steel: 0, crits: 0, fumbles: 0 };
+  const stats = { done: 0, planned: plannedTotal, prs: 0, steel: 0, crits: 0, fumbles: 0, beasts: 0 };
   let asideI = 0;
   for (let w = 1; w <= Math.min(total, curWeek); w++) {
     const list = sessionsOfWeek(state, b, w);
@@ -257,6 +257,14 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
       else if (roll === 1) { stats.fumbles++; lines.push({ kind: "roll", value: 1, text: T("fumble", stats.fumbles - 1) }); }
       else if (roll >= 15) { dmg += DMG.high; lines.push({ kind: "roll", value: roll, text: T("high", w) }); }
       else lines.push({ kind: "roll", value: roll, text: "" });
+      // Besiegte Bestien der Woche: entfesselt oder mutiert, Serien als Doppelschlag
+      const runs = list.flatMap((x) => (x.beastParts?.length ? [{ parts: x.beastParts.map((p) => p.id) }] : x.beast ? [{ parts: [x.beast.id] }] : []));
+      const nameOf = (id: string) => beastById(id.split("~")[0].replace(/×\d+$/, ""))?.name ?? id;
+      runs.slice(0, 2).forEach((r, i) => {
+        if (r.parts.length > 1) lines.push({ kind: "text", text: T("bestie_serie", stats.beasts + i, { bestie: nameOf(r.parts[0]), bestie_zwei: nameOf(r.parts[1]) }) });
+        else lines.push({ kind: "text", text: T(r.parts[0].includes("~hex") ? "bestie_mutiert" : "bestie_entfesselt", stats.beasts + i, { bestie: nameOf(r.parts[0]) }) });
+      });
+      stats.beasts += runs.length;
       const prs = prsOf(state, list);
       prs.slice(0, 2).forEach((name, i) => lines.push({ kind: "text", text: T("pr", stats.prs + i, { bestie: name }) }));
       stats.prs += prs.length;
@@ -270,6 +278,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
       if (weakHit) lines.push({ kind: "text", text: T("weak", w) });
     }
     if (reduced) lines.push({ kind: "text", text: T("reduced", w) });
+    if (done > 0) lines.push({ kind: "text", text: T("lage", w, { schar }) });
     stats.done += done;
     dealt += Math.round(dmg);
     const last = w === total;

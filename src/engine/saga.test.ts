@@ -32,7 +32,7 @@ describe("Erzähler", () => {
     ];
     for (const pro of ["sie", "er"] as const) for (const name of ["", "Mara"]) {
       const f = pro === "sie";
-      const v = { held: name || (f ? "die Heldin" : "der Held"), sie: f ? "sie" : "er", ihn: f ? "sie" : "ihn", ihm: f ? "ihr" : "ihm", ihr: f ? "ihr" : "sein", die: f ? "die" : "der", in: f ? "in" : "", feind: "der Feind", feind_dat: "dem Feind", feind_akk: "den Feind", feind_gen: "des Feindes", desc: "Böse.", weak: "Bestzeiten.", fp: "er", ort: "hier", schar: "Ratten", bestie: "Undine", n: 2, stellen: "zwei Stellen", mal: "2-mal", von: 3, beiname: "Die Eiserne", vorsieg: "dem Sieg über", vorfeind_akk: "den Alten", vorfeind_dat: "dem Alten", klinge: "Balmung" };
+      const v = { held: name || (f ? "die Heldin" : "der Held"), sie: f ? "sie" : "er", ihn: f ? "sie" : "ihn", ihm: f ? "ihr" : "ihm", ihr: f ? "ihr" : "sein", die: f ? "die" : "der", in: f ? "in" : "", feind: "der Feind", feind_dat: "dem Feind", feind_akk: "den Feind", feind_gen: "des Feindes", desc: "Böse.", weak: "Bestzeiten.", fp: "er", ort: "hier", schar: "Ratten", bestie: "Undine", bestie_zwei: "Kobold", n: 2, stellen: "zwei Stellen", mal: "2-mal", von: 3, beiname: "Die Eiserne", vorsieg: "dem Sieg über", vorfeind_akk: "den Alten", vorfeind_dat: "dem Alten", klinge: "Balmung" };
       for (const t of allTexts) expect(fill(t, v), t).not.toMatch(/[{}]/);
     }
   });
@@ -104,5 +104,24 @@ describe("Lebenspunkte pro Einheit", () => {
     expect(c1.liveHp).toBeLessThan(c0.hp);
     const c2 = chapterOf({ ...s, sessions: [done("kraft_a", "2026-09-28"), done("arme_schultern", "2026-09-29")] }, b, "2026-09-30");
     expect(c2.liveHp).toBeLessThan(c1.liveHp);
+  });
+});
+
+describe("Bestien im Blatt", () => {
+  it("besiegte Undine erscheint in der Wochenausgabe, mutiert oder entfesselt, plus Lagebericht", async () => {
+    const { chapterOf } = await import("./saga");
+    const g = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
+    const s0 = emptyState();
+    const b = { id: "b1", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium" as const, travel: false };
+    const base = { ...s0, onboarded: true, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as typeof s0.schedule, plan: [b], narrative: { on: true } };
+    const roles = ["kraft_a", "arme_schultern", "skill_kondition", "kraft_b"];
+    for (const [id, word] of [["ng-nanna~hex", /mutiert/i], ["ng-nanna", /entfesselt/i]] as const) {
+      const sessions = roles.map((role, i) => ({ id: `b1:1:${role}`, date: `2026-09-${28 + i}`, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, menu: {}, done: true, ...(role === "skill_kondition" ? { beast: { id, seconds: 900 } } : {}) }));
+      const ch = chapterOf({ ...base, sessions }, b, "2026-10-05");
+      const text = ch.weeks[0].lines.map((l) => l.text).join(" ");
+      expect(text).toMatch(/Undine/);
+      expect(text).toMatch(word);
+      expect(ch.weeks[0].lines.length).toBeGreaterThanOrEqual(6);
+    }
   });
 });

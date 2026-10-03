@@ -249,8 +249,8 @@ export interface SessionEntry {
 }
 
 /** Ergebnis einer Bestie in einer Einheit. Lastbestien: Gewicht (kg, je Hantel) oder Band, dazu die Zeit im Timecap. */
-export interface BeastResult { id: string; seconds: number | null; easy?: boolean; kg?: number; band?: string }
-export interface BeastTime { date: string; seconds: number; kg?: number; band?: string }
+export interface BeastResult { id: string; seconds: number | null; easy?: boolean; kg?: number; band?: string; tech?: "gut" | "schlecht" }
+export interface BeastTime { date: string; seconds: number; kg?: number; band?: string; tech?: "gut" | "schlecht" }
 
 export interface Session {
   id: string;

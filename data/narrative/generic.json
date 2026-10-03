@@ -736,6 +736,36 @@
     "cup_worse": [
       "{Klinge}: diesmal nicht. Die Klinge prüft, sie urteilt nicht. Sie wartet, und {held} hat Zeit.",
       "{Klinge} bleibt vorerst im Schrank. Kein Drama, schreibt die Sportredaktion. Klingen kommen wieder, wenn man es ernst meint."
+    ],
+    "bestie_entfesselt": [
+      "AUGENZEUGEN BERICHTEN. {Bestie} trat {held} in voller Gestalt entgegen, entfesselt, ohne Gnade und ohne Abkürzung. {Held} hielt stand. Was von {bestie} übrig blieb, wurde in Säcken abtransportiert.",
+      "{Bestie}, entfesselt, aus dem Gefolge {feind_gen}. Die Redaktion hatte vorsorglich einen Nachruf auf {held} vorbereitet. Er wandert ungedruckt in den Ofen.",
+      "SENSATION. {Bestie} entfesselt, in voller Stärke, und doch: bezwungen. Händler schließen früher, um darüber zu reden.",
+      "Man flüstert in den Gassen: {Bestie} sei entfesselt erschienen, mit allem, was dazugehört. {Held} habe nicht gezögert. Die Redaktion bestätigt beides.",
+      "Lagebericht: {Bestie} gilt als eine der zähen Kreaturen {feind_gen}. Entfesselt, in ihrer ganzen Gestalt. Gefallen ist sie trotzdem.",
+      "{Bestie} entfesselt, Ergebnis eindeutig. Die {schar} haben die Nachricht mit gesenktem Blick weitergetragen."
+    ],
+    "bestie_mutiert": [
+      "VERWANDLUNG. {Bestie} erschien mutiert, eine verzerrte Abart ihrer selbst. {Held} ließ sich nicht täuschen und bezwang sie Stück für Stück.",
+      "{Bestie}, in mutierter Gestalt, ein Wechselbalg aus dem Gefolge {feind_gen}. Die Gelehrten streiten noch über die Form. Über den Ausgang streitet niemand.",
+      "Mutierte Erscheinung {ort}: {bestie}. Nicht die volle Gestalt, aber gefährlich genug. Erledigt. Die Redaktion notiert: Die entfesselte Form wartet noch.",
+      "Aus der Wissenschaftsbeilage: {Bestie} trat mutiert auf. Die Forschung vermutet, sie sammelt Kräfte. {Held} auch.",
+      "{Bestie}, mutiert. Ein Vorgeschmack. Wer {bestie} so bezwingt, wird ihr eines Tages entfesselt gegenüberstehen."
+    ],
+    "bestie_serie": [
+      "DOPPELSCHLAG. {Bestie} und gleich darauf {bestie_zwei}, kaum Zeit zum Atmen dazwischen. Die {schar} hatten auf eine Pause gehofft.",
+      "Zwei auf einen Streich: erst {bestie}, dann {bestie_zwei}. Die Setzer mussten nachts eine zweite Spalte einschieben.",
+      "Serie {ort}: {Bestie}, dann {bestie_zwei}. Wer zählt, kommt nicht hinterher."
+    ],
+    "lage": [
+      "{Ort}: Die {schar} meiden die Hauptstraßen. Wer nachts unterwegs ist, hört Schritte, die nicht mehr zögern.",
+      "Stimmung in der Stadt: vorsichtig hoffnungsvoll. In den Schänken wird {held} mittlerweile beim Namen genannt, leise, aber immerhin.",
+      "{Feind} soll sich in den letzten Tagen zurückgezogen haben. Ob aus Vorsicht oder List, weiß niemand. Die Redaktion tippt auf Vorsicht.",
+      "Marktbericht: Kreide und Verbandszeug ausverkauft. Ein Zusammenhang mit {held} wird nicht ausgeschlossen.",
+      "Leserbrief: ‚Ich habe {held} gesehen, morgens, im Nebel, irgendwo {ort}. Kein Wort, nur Schritte.‘ Name der Redaktion bekannt.",
+      "Die {schar} haben ihre Wachen verdoppelt. Gegen wen genau, sagen sie nicht. Die Redaktion hat eine Vermutung.",
+      "Gerüchteküche: In den Kellern {ort} werden neue Kreaturen gezüchtet. Die Redaktion empfiehlt Ausdauer.",
+      "Wochenchronik: Wieder ein paar Tage, an denen {held} nicht aufgegeben hat. Das ist im Moment die wichtigste Nachricht dieser Stadt."
     ]
   }
 }

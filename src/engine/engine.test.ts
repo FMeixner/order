@@ -666,6 +666,18 @@ describe("Lastbestien", () => {
     const rec = loadRecord(lam, [{ date: "a", seconds: 900, kg: 50 }, { date: "b", seconds: 1200, kg: 60 }, { date: "c", seconds: 1000, kg: 55 }]);
     expect(rec?.kg).toBe(55); // 60 kg lag über dem Timecap von 17 Min
   });
+  it("Vorschlag liegt auf vorhandenen Hanteln: Technik gut → eine höher, unsauber oder Timecap gerissen → eine tiefer", async () => {
+    const { suggestLoad } = await import("./loadbeast");
+    const anzu = BEASTS.find((b) => b.name === "Anzu")!; // Kurzhantel, Timecap 14 Min
+    const p: EquipmentProfile = { ...home, dumbbells: [8, 10, 12.5, 15, 17.5], kettlebells: [] };
+    const s = sample();
+    const at = (t: Partial<import("../types").BeastTime>) => ({ ...s, beastTimes: { [anzu.id]: [{ date: "a", seconds: 600, kg: 12.5, ...t }] } });
+    expect(suggestLoad(s, anzu, p)?.kg).toBe(12.5); // Startwert 12 → nächste vorhandene
+    expect(suggestLoad(at({ tech: "gut" }), anzu, p)?.kg).toBe(15);
+    expect(suggestLoad(at({ tech: "schlecht" }), anzu, p)?.kg).toBe(10);
+    expect(suggestLoad(at({ tech: "gut", seconds: 900 }), anzu, p)?.kg).toBe(10);
+    expect(suggestLoad(at({}), anzu, p)?.kg).toBe(12.5);
+  });
 });
 
 describe("Keine Bestie zweimal hintereinander", () => {

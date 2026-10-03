@@ -152,7 +152,7 @@ for (const [f, d] of allFoci) {
 {
   const f = "narrative/generic.json";
   const pack = read(f);
-  const tokens = new Set(["held", "sie", "ihn", "ihm", "ihr", "die", "in", "feind", "feind_dat", "feind_akk", "feind_gen", "desc", "weak", "fp", "ort", "schar", "bestie", "n", "von", "stellen", "mal", "beiname", "vorsieg", "vorfeind_akk", "vorfeind_dat", "klinge"]);
+  const tokens = new Set(["held", "sie", "ihn", "ihm", "ihr", "die", "in", "feind", "feind_dat", "feind_akk", "feind_gen", "desc", "weak", "fp", "ort", "schar", "bestie", "bestie_zwei", "n", "von", "stellen", "mal", "beiname", "vorsieg", "vorfeind_akk", "vorfeind_dat", "klinge"]);
   const check = (ctx, t) => {
     for (const m of t.matchAll(/\{([A-Za-z_]+)\}/g)) if (!tokens.has(m[1][0].toLowerCase() + m[1].slice(1))) err(f, `${ctx}: unbekannter Platzhalter {${m[1]}}`);
   };

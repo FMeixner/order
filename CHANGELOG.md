@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.30.0] – 2026-10-03
+
+### Neu
+- Lastbestien: Der Gewichtsvorschlag liegt immer auf einer Hantel, die es am Ort gibt. Nach dem Lauf fragt die Karte nach der Technik: sauber und im Timecap → nächstes Mal eine Stufe höher; unsauber oder Timecap gerissen → eine Stufe leichter. Ohne eigene Eingabe zählt der Vorschlag als gemachtes Gewicht.
+- Erzähler: Jede Ausgabe berichtet über die besiegten Bestien der Woche (entfesselt, mutiert oder als Serie) und bringt einen Lagebericht aus der Stadt.
+
+### Geändert
+- Keine AMRAPs mehr in Bestien: Wila hat jetzt 9 Runden (etwa 9 Min), Lamaschtu 21/15/9 ohne Max-Runde.
+
 ## [0.29.1] – 2026-10-03
 
 ### Geändert
