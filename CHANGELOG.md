@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.29.0] – 2026-10-03
+
+### Neu
+- Lastbestien: fester Timecap; ein Gewicht (bzw. Band) für alle Lastübungen; Rekord = schwerstes Gewicht im Timecap. Prozentangaben beziehen sich auf das 1RM, ohne 1RM legt man das Gewicht selbst fest.
+- Almanach mit vier Bereichen: Orden, Bestien, Übungen (neu: Arbeitsgewicht, 1RM eintragen oder aus dem Log geschätzt, Verlauf) und Log. Der Reiter „Log“ entfällt.
+- Erzähler: Die Lebenspunkte des Gegners starten bei 100 % und sinken mit jeder erledigten Einheit, nicht erst am Wochenende.
+- Tag 5 mit zweiter Bestie bei Assassin, Conqueror, Pugilist und Soldier.
+
+### Geändert
+- Vokabel: „entfesselt“ (volle Fassung) und „mutiert“ (Übungen mit fehlendem Skill ersetzt) statt Basis und verhext.
+- Morgenland-Bestien wieder aktiv und auf ein Item bereinigt: Zahhak (Band Pull-Aparts), Qarin (Band Shrugs), Mantikor (Band Triceps Pushdowns), Sirrusch (Biceps Curls), Karkadann (DB Lunges), Tiamat (DB Halos), Humbaba (Barbell Curls), Lamaschtu (Barbell Curls, Skull Crushers), Huma (Kettlebell), Lamassu (Burpees statt Rudern). Schedu bleibt Bench Press + Muscle-Ups.
+- Bestien fallen nicht mehr heraus, weil eine Hantel am Ort nicht genau passt: Das Gewicht legt man selbst fest.
+
 ## [0.28.0] – 2026-10-03
 
 ### Neu
