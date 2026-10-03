@@ -67,7 +67,7 @@
       ]
     },
     "bonus": {
-      "name": "Bonus: Unterarme und Nacken", "location": "home", "minutes": 35,
+      "name": "Bonus: Unterarme und Nacken", "location": "home", "minutes": 45,
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
@@ -78,7 +78,7 @@
           {"id": "bx-as-na", "name": "Neck Curl", "sets": 2, "reps": "15-25", "prog": "reps"},
           {"id": "bx-as-nb", "name": "Neck Extension", "sets": 2, "reps": "15-25", "prog": "reps"}
         ]},
-        {"type": "beast", "id": "bx-as-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-as-bst", "classes": ["plage"], "draw": "rotate"}, {"type": "beast", "id": "bx-as-bst2", "classes": ["plage"], "draw": "rotate"}
       ]
     }
   }

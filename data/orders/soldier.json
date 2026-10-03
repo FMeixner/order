@@ -77,11 +77,11 @@
       ]
     },
     "bonus": {
-      "name": "Bonus: Beweglichkeit und Bestie", "location": "home", "minutes": 35,
+      "name": "Bonus: Beweglichkeit und Bestie", "location": "home", "minutes": 45,
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "mobility"},
-        {"type": "beast", "id": "bx-so-bst", "classes": ["bestie"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-so-bst", "classes": ["bestie"], "draw": "rotate"}, {"type": "beast", "id": "bx-so-bst2", "classes": ["plage"], "draw": "rotate"}
       ]
     }
   }
