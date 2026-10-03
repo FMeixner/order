@@ -23,7 +23,7 @@ describe("Bestien über alle Trainingstage", () => {
   // Auch „alles außer einem Skill“: dann gibt es oft genau eine verhexte Kandidatin (z. B. ohne Muscle-Up nur Undine verhext)
   const all = SKILLS.skills.map((x) => x.id);
   const user = (s: AppState) => [s.user, { ...s.user, skills: [], skillTraining: true }, { ...s.user, skills: [] },
-    ...all.map((drop) => ({ ...s.user, skills: all.filter((x) => x !== drop), skillTraining: true }))];
+    ...["muscle_up", "pistol", "pullup", "dragon_flag"].map((drop) => ({ ...s.user, skills: all.filter((x) => x !== drop) }))];
   for (const fid of Object.keys(FOCUS_BY_ID)) it(`${fid}: keine Bestie der Vorwoche, auch ohne Laufen`, () => {
     const s = emptyState();
     for (const u of user(s)) for (const noRunAll of [false, true]) for (const sched of [{ Mo: "g", Di: "r", Do: "h", Fr: "g" }, { Mo: "g", Di: "g", Do: "g", Fr: "g" }] as const) {

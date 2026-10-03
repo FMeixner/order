@@ -623,9 +623,6 @@ describe("Ortswechsel und dreimal OK", () => {
   });
 });
 
-describe("Start-Bestie", () => {
-});
-
 describe("Bestien: Ausrüstung und Wochenvolumen", () => {
   it("Zahhak braucht Ringe und Band", async () => {
     const { beastFits, beastNeeds } = await import("./plan");
@@ -644,12 +641,6 @@ describe("Bestien: Ausrüstung und Wochenvolumen", () => {
     expect(v.Quadrizeps).toBeCloseTo(0.5);
     expect(v.Brust ?? 0).toBe(0); // Rudern zählt nicht
   });
-});
-
-describe("Bandstärken", () => {
-});
-
-describe("Gewichte in Bestien", () => {
 });
 
 describe("Lastbestien", () => {
@@ -675,9 +666,6 @@ describe("Lastbestien", () => {
     const rec = loadRecord(lam, [{ date: "a", seconds: 900, kg: 50 }, { date: "b", seconds: 1200, kg: 60 }, { date: "c", seconds: 1000, kg: 55 }]);
     expect(rec?.kg).toBe(55); // 60 kg lag über dem Timecap von 17 Min
   });
-});
-
-describe("Start-Bestie nicht doppelt", () => {
 });
 
 describe("Keine Bestie zweimal hintereinander", () => {
