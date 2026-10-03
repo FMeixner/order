@@ -3,7 +3,8 @@ import { FOCUS_BY_ID, SKILLS } from "../data";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState } from "../types";
 import { collectItems, isRunBlock, sessionId } from "../ui/SessionView";
-import { beastFamily, dayRoleMap } from "./plan";
+import { beastFamily, beastRegion, dayRoleMap } from "./plan";
+import { BEAST_BY_ID } from "../data";
 import { focusFor } from "./weekplan";
 
 const [gym, home, reise] = EQUIPMENT_PRESETS.map((p) => p.make());
@@ -40,6 +41,8 @@ describe("Bestien über alle Trainingstage", () => {
       for (let w = 2; w <= 12; w++) {
         const prev = new Set(weekBeasts(st, w - 1).flatMap(beastFamily));
         const cur = weekBeasts(st, w).flatMap(beastFamily);
+        // Morgenland ausgeblendet
+        expect(cur.filter((x) => BEAST_BY_ID[x] && beastRegion(BEAST_BY_ID[x]) === "sued"), `${fid} W${w} Morgenland`).toEqual([]);
         expect(cur.filter((x) => prev.has(x)), `${fid} W${w} noRun=${noRunAll} ${JSON.stringify(sched)} skills=${JSON.stringify(u.skills)}`).toEqual([]);
       }
     }

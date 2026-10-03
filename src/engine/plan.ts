@@ -231,6 +231,13 @@ export function beastRegion(b: Beast): BeastRegion {
     || b.work.split(" · ").some((part) => /\([\d.,x\s]+kg\)/i.test(part) || !!BEAST_LOADS.exercises[beastPartName(part).replace(/\s*\(.*\)\s*$/, "")]);
   return loaded ? "sued" : "nord";
 }
+/** Morgenland-Bestien (mit Last) sind vorerst ausgeblendet: sie brauchen eine eigene Logik für die Last. */
+export const HIDDEN_REGIONS: BeastRegion[] = ["sued"];
+const activeMemo = new Map<string, boolean>();
+export const beastActive = (b: Beast): boolean => {
+  if (!activeMemo.has(b.id)) activeMemo.set(b.id, !HIDDEN_REGIONS.includes(beastRegion(b)));
+  return activeMemo.get(b.id)!;
+};
 export const REGION_LABEL: Record<BeastRegion, string> = { nord: "Nordbestie", sued: "Morgenlandbestie" };
 
 export function beastFits(b: Beast, p: EquipmentProfile): boolean {
@@ -441,12 +448,12 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   if (block.pool && !opts.reduced) cands = block.pool.map((id) => BEAST_BY_ID[id]).filter(Boolean);
   else cands = BEASTS.filter((b) => classes.includes(classOf(b)));
   const skills = state.user.skills ? new Set(state.user.skills) : null;
-  const ok = (b: Beast) => beastFits(b, profile) && beastOk(b, skills);
+  const ok = (b: Beast) => beastActive(b) && beastFits(b, profile) && beastOk(b, skills);
   let turn = opts.week - 1;
   // Feste Start-Bestie in Woche 1, notfalls hexed
   if (block.first && opts.week === 1 && !opts.reduced) {
     const b0 = BEAST_BY_ID[block.first];
-    if (b0 && beastFits(b0, profile) && fresh(b0)) {
+    if (b0 && beastActive(b0) && beastFits(b0, profile) && fresh(b0)) {
       if (beastOk(b0, skills)) return b0;
       const hx = hexFor(b0, skills);
       if (hx) return hx;
@@ -472,7 +479,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
     }
     if (first) return first;
   }
-  if (!fit.length) fit = BEASTS.filter((b) => b.equipment.every((t) => t === "bodyweight_only") && beastOk(b, skills));
+  if (!fit.length) fit = BEASTS.filter((b) => beastActive(b) && b.equipment.every((t) => t === "bodyweight_only") && beastOk(b, skills));
   if (!fit.length) return null;
   const seed = `${opts.blockId}:${block.id}`;
   const order = [...fit].sort((a, c) => hash(seed + a.id) - hash(seed + c.id));

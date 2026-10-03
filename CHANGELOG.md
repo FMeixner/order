@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.24.1] – 2026-10-03
+
+### Geändert
+- Morgenland-Bestien (mit Last) sind vorerst ausgeblendet: Sie kommen in keiner Einheit dran und stehen nicht im Bestiarium. Die Daten und Bestzeiten bleiben erhalten.
+
 ## [0.24.0] – 2026-10-02
 
 ### Neu

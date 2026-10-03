@@ -1,7 +1,7 @@
 /* Bestiarium: alle Bestien mit Bestzeiten, filterbar nach Familie und Stand. */
 import { useMemo, useState } from "react";
 import { BEASTS, SKILLS } from "../data";
-import { beastClass, beastFamily, beastMinutes, beastNeeds, beastRegion, CLASS_LABEL, fmtDate, type BeastNeed } from "../engine/plan";
+import { beastActive, beastClass, beastFamily, beastMinutes, beastNeeds, beastRegion, CLASS_LABEL, fmtDate, type BeastNeed } from "../engine/plan";
 import { beastOk, beastSkills } from "../engine/skills";
 import type { AppState, Beast } from "../types";
 import { Collapse, Seg } from "./common";
@@ -11,7 +11,6 @@ const NEED_LABEL: Record<BeastNeed, string> = {
   rings: "Ringe", bar: "Stange", band: "Band", band_or_cable: "Band oder Kabel", barbell: "Langhantel", kb_db: "Hantel", rower: "Rudergerät", bike: "Rad",
 };
 
-type Region = "alle" | "nord" | "sued";
 type Stand = "alle" | "bezwungen" | "offen";
 
 /** Zeiten einer Bestie, getrennt nach Form: Basis, verhext, ×2, ×3 */
@@ -27,16 +26,14 @@ function timesOf(b: Beast, all: AppState["beastTimes"]) {
 }
 
 export function Bestiary({ state }: { state: AppState }) {
-  const [region, setRegion] = useState<Region>("alle");
   const [stand, setStand] = useState<Stand>("alle");
   const [q, setQ] = useState("");
   const skills = state.user.skills ? new Set(state.user.skills) : null;
   const skillName = (id: string) => SKILLS.skills.find((x) => x.id === id)?.name ?? id;
 
-  const rows = useMemo(() => BEASTS.map((b) => ({ b, times: timesOf(b, state.beastTimes), region: beastRegion(b) })), [state.beastTimes]);
+  const rows = useMemo(() => BEASTS.filter(beastActive).map((b) => ({ b, times: timesOf(b, state.beastTimes), region: beastRegion(b) })), [state.beastTimes]);
   const beaten = rows.filter((r) => r.times.length).length;
   const shown = rows
-    .filter((r) => region === "alle" || r.region === region)
     .filter((r) => stand === "alle" || (stand === "bezwungen") === r.times.length > 0)
     .filter((r) => !q.trim() || `${r.b.name} ${r.b.orig} ${r.b.work}`.toLowerCase().includes(q.trim().toLowerCase()))
     .sort((a, c) => (c.times.length > 0 ? 1 : 0) - (a.times.length > 0 ? 1 : 0) || a.b.name.localeCompare(c.b.name, "de"));
@@ -46,9 +43,9 @@ export function Bestiary({ state }: { state: AppState }) {
       <div className="card stack">
         <div className="row between">
           <h2>Bestiarium</h2>
-          <span className="muted small">{beaten} von {BEASTS.length} bezwungen</span>
+          <span className="muted small">{beaten} von {rows.length} bezwungen</span>
         </div>
-        <Seg value={region} options={[{ value: "alle", label: "Alle" }, { value: "nord", label: "Nord" }, { value: "sued", label: "Morgenland" }]} onChange={setRegion} />
+        <span className="muted small">Nordbestien. Die Morgenland-Bestien mit Last sind vorerst ausgeblendet.</span>
         <Seg value={stand} options={[{ value: "alle", label: "Alle" }, { value: "bezwungen", label: "Bezwungen" }, { value: "offen", label: "Offen" }]} onChange={setStand} />
         <input type="search" placeholder="Suchen: Name oder Übung" value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
