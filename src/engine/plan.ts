@@ -255,7 +255,7 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
     }
   });
   if (!tagsOk) return false;
-  if (b.work.split(" · ").some((part) => beastLoad(part, p) === "missing")) return false;
+  // Gewichte legt man bei Lastbestien selbst fest; es zählt nur, dass das Item da ist
   for (const n of beastNeeds(b)) {
     const ok = n === "rings" ? p.has.rings
       : n === "bar" ? p.has.bar || p.has.rings

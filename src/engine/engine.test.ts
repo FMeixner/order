@@ -680,10 +680,35 @@ describe("Gewichte in Bestien", () => {
     expect(beastLoad("40 Swings (2x5kg)", homeP)).toMatchObject({ n: 2, kg: 5.5 });
     expect(beastLoad("21/15/9/MAX Biceps Curls 50% (17.5 kg)", studio)).toMatchObject({ n: 2, kg: 9 });
     expect(beastLoad("10 Pull-Ups", studio)).toBeNull();
-    // nur leichte Hanteln: Gugalanna (Swings 20 kg) fällt weg
+    // nur leichte Hanteln: Richtwert geht nicht, die Bestie bleibt aber (Gewicht legt man selbst fest)
     const light: EquipmentProfile = { ...home, dumbbells: [2, 4, 6], kettlebells: [] };
     expect(beastLoad("25 Swings", light)).toBe("missing");
-    expect(beastFits(BEASTS.find((b) => b.name === "Gugalanna")!, light)).toBe(false);
+    expect(beastFits(BEASTS.find((b) => b.name === "Gugalanna")!, light)).toBe(true);
+  });
+});
+
+describe("Lastbestien", () => {
+  it("Item, Timecap, 1RM-Prozent, Rekord nur im Timecap", async () => {
+    const { capOf, loadKind, pctLift, oneRM, suggestLoad, loadRecord } = await import("./loadbeast");
+    const by = (n: string) => BEASTS.find((b) => b.name === n)!;
+    expect(loadKind(by("Kusarikku"))).toBe("kettlebell");
+    expect(loadKind(by("Anzu"))).toBe("dumbbell");
+    expect(loadKind(by("Ugallu"))).toBe("barbell");
+    expect(loadKind(by("Peri"))).toBe("band");
+    expect(loadKind(by("Undine"))).toBeNull();
+    expect(capOf(by("Lamassu"))).toBe(17);
+    expect(capOf(by("Undine"))).toBeNull();
+    const lam = by("Lamassu");
+    expect(pctLift(lam)).toEqual({ exercise: "Bench Press", pct: 0.5 });
+    const s = sample();
+    expect(suggestLoad(s, lam, gym)).toBeNull(); // 1RM unbekannt: selbst festlegen
+    const withRM = { ...s, oneRM: { "Bench Press": { kg: 100, date: "2026-10-01" } } };
+    expect(suggestLoad(withRM, lam, gym)?.kg).toBe(50);
+    const logged = { ...s, sessions: [{ id: "x", date: "2026-10-01", blockId: "b1", focusId: "knight", week: 1, role: "a", profileId: "g", drills: {}, menu: {}, done: true,
+      entries: { k: { key: "k", slotId: "k", name: "Bench Press", prog: "double" as const, sets: [{ done: true, reps: 5, weight: 90 }] } } }] };
+    expect(oneRM(logged, "Bench Press")?.kg).toBe(105);
+    const rec = loadRecord(lam, [{ date: "a", seconds: 900, kg: 50 }, { date: "b", seconds: 1200, kg: 60 }, { date: "c", seconds: 1000, kg: 55 }]);
+    expect(rec?.kg).toBe(55); // 60 kg lag über dem Timecap von 17 Min
   });
 });
 

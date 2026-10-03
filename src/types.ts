@@ -135,7 +135,9 @@ export interface Beast {
   minutes: number;
   equipment: string[];
   work: string;
-  /** hexed: Skills, deren Übungen durch leichtere ersetzt sind */
+  /** Lastbestie: fester Timecap in Minuten */
+  cap?: number;
+  /** mutiert: Skills, deren Übungen durch leichtere ersetzt sind */
   hexed?: string[];
   /** Doppel oder Triple: dieselbe Bestie k-mal am Stück, ohne Pause, mit eigener Bestzeit */
   repeat?: number;
@@ -246,6 +248,10 @@ export interface SessionEntry {
   stage?: number;
 }
 
+/** Ergebnis einer Bestie in einer Einheit. Lastbestien: Gewicht (kg, je Hantel) oder Band, dazu die Zeit im Timecap. */
+export interface BeastResult { id: string; seconds: number | null; easy?: boolean; kg?: number; band?: string }
+export interface BeastTime { date: string; seconds: number; kg?: number; band?: string }
+
 export interface Session {
   id: string;
   date: string;
@@ -256,9 +262,9 @@ export interface Session {
   profileId: string;
   entries: Record<string, SessionEntry>;
   drills: Record<string, boolean[]>;
-  beast?: { id: string; seconds: number | null; easy?: boolean };
+  beast?: BeastResult;
   /** Serie: Zeit je Teil, jede zählt für die Bestzeit ihrer Bestie */
-  beastParts?: { id: string; seconds: number | null; easy?: boolean }[];
+  beastParts?: BeastResult[];
   menu: Record<string, string>;
   note?: string;
   done: boolean;
@@ -274,7 +280,9 @@ export interface AppState {
   plan: PlanBlock[];
   slots: Record<string, SlotState>;
   sessions: Session[];
-  beastTimes: Record<string, { date: string; seconds: number }[]>;
+  beastTimes: Record<string, BeastTime[]>;
+  /** 1RM je Übung, selbst eingetragen (sonst geschätzt aus dem Log) */
+  oneRM?: Record<string, { kg: number; date: string }>;
   reduced: Record<string, boolean>; // "blockId:week" → −1 Satz
   menuChoice: Record<string, string>; // blockId:menuId → Option
   tests: Record<string, TestResult[]>;

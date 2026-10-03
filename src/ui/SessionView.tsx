@@ -3,13 +3,14 @@ import { EXERCISES, FLOWS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { focusFor } from "../engine/weekplan";
 import { parseClock } from "../engine/clock";
+import { capOf, isLoadBeast, loadKind, loadRecord, pctLift, suggestLoad } from "../engine/loadbeast";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { bandFor, beastLoad, affectDowngrade, beastById, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
-import type { AppState, Beast, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
-import { Collapse, Desc, kg, Modal } from "./common";
+import type { AppState, Beast, BeastResult, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
+import { Collapse, Desc, kg, Modal, Seg } from "./common";
 import { fmt, useTimer } from "./Timer";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -159,8 +160,9 @@ export function SessionView(ctx: SessionCtx) {
         slots[r.key] = advance(r, sharedState(slots, r), e, ctx.profile, ctx.date);
       }
       const beastTimes = { ...st.beastTimes };
-      if (cur.beast?.seconds && !cur.beast.easy) beastTimes[cur.beast.id] = [...(beastTimes[cur.beast.id] ?? []), { date: ctx.date, seconds: cur.beast.seconds }];
-      for (const pt of cur.beastParts ?? []) if (pt.seconds && !pt.easy) beastTimes[pt.id] = [...(beastTimes[pt.id] ?? []), { date: ctx.date, seconds: pt.seconds }];
+      const load = (r: BeastResult) => ({ ...(r.kg != null ? { kg: r.kg } : {}), ...(r.band ? { band: r.band } : {}) });
+      if (cur.beast?.seconds && !cur.beast.easy) beastTimes[cur.beast.id] = [...(beastTimes[cur.beast.id] ?? []), { date: ctx.date, seconds: cur.beast.seconds, ...load(cur.beast) }];
+      for (const pt of cur.beastParts ?? []) if (pt.seconds && !pt.easy) beastTimes[pt.id] = [...(beastTimes[pt.id] ?? []), { date: ctx.date, seconds: pt.seconds, ...load(pt) }];
       const feelingLog = feeling != null ? [...st.feeling, { date: ctx.date, sessionId: id, value: feeling }] : st.feeling;
       // Bestie merken, auch ohne Zeit: zählt für die Rotation der Folgewoche
       const shown = items.find((it) => it.beast)?.beast;
@@ -575,6 +577,34 @@ function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number 
   );
 }
 
+/** Lastbestie: ein Gewicht (je Hantel) oder ein Band für alle Lastübungen, dazu Rekord und Timecap */
+function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: SessionCtx; cur?: BeastResult; onChange: (l: { kg?: number; band?: string }) => void }) {
+  const kind = loadKind(beast);
+  if (!kind) return null;
+  const sug = suggestLoad(ctx.state, beast, ctx.profile);
+  const rec = loadRecord(beast, ctx.state.beastTimes[beast.id]);
+  const cap = capOf(beast)!;
+  const over = cur?.seconds != null && cur.seconds > cap * 60;
+  const pl = pctLift(beast);
+  return (
+    <div className="stack small">
+      {kind === "band" ? (
+        <Seg value={cur?.band ?? sug?.band ?? ""} options={ctx.profile.bands.map((b) => ({ value: b, label: b }))} onChange={(band) => onChange({ band })} />
+      ) : (
+        <div className="row">
+          <input type="number" inputMode="decimal" className="kg-in" placeholder={sug?.kg != null ? String(sug.kg) : "kg"} value={cur?.kg ?? ""}
+            onChange={(e) => onChange({ kg: e.target.value === "" ? undefined : parseFloat(e.target.value.replace(",", ".")) })} />
+          <span className="muted">kg {kind === "barbell" ? "Langhantel" : kind === "kettlebell" ? "Kettlebell" : "je Kurzhantel"}, für alle Lastübungen</span>
+        </div>
+      )}
+      {pl && !sug && <div className="muted">1RM {pl.exercise} noch unbekannt: Gewicht selbst festlegen.</div>}
+      {sug && cur?.kg == null && !cur?.band && <div className="muted">Vorschlag: {sug.kg != null ? kg(sug.kg) : sug.band} ({sug.why})</div>}
+      {rec && <div className="muted">Rekord: {rec.kg != null ? kg(rec.kg) : rec.band}</div>}
+      {over && <div className="warn">Über dem Timecap: zählt nicht als Rekord.</div>}
+    </div>
+  );
+}
+
 function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | null; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean }) {
   const t = useTimer();
   if (!beast) return <section className="card"><div className="muted">Keine passende Bestie für dieses Equipment gefunden.</div></section>;
@@ -584,26 +614,32 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     : beastMinutes(beast, ctx.state.beastTimes[beast.id]).min;
   const measured = beast.parts ? beast.parts.every((pt) => (ctx.state.beastTimes[pt.id] ?? []).length) : (ctx.state.beastTimes[beast.id] ?? []).length > 0;
   // Zeit nachgetragen, Einheit schon abgeschlossen: gleich in die Bestzeiten, alte Zeit dieses Tages ersetzen
-  const lateTime = (id: string, sec: number, old: number | null | undefined) => {
+  const lateTime = (id: string, sec: number, old: number | null | undefined, load?: { kg?: number; band?: string }) => {
     if (!session?.done || easy) return;
     ctx.update((st) => {
       const list = (st.beastTimes[id] ?? []).filter((x) => !(x.date === session.date && x.seconds === old));
-      return { ...st, beastTimes: { ...st.beastTimes, [id]: [...list, { date: session.date, seconds: sec }] } };
+      return { ...st, beastTimes: { ...st.beastTimes, [id]: [...list, { date: session.date, seconds: sec, ...load }] } };
     });
   };
+  const cur = session?.beast?.id === beast.id ? session.beast : undefined;
   const saveSingle = (sec: number) => {
-    lateTime(beast.id, sec, session?.beast?.id === beast.id ? session.beast.seconds : null);
-    mut((s) => ({ ...s, beast: { id: beast.id, seconds: sec, ...(easy ? { easy } : {}) } }));
+    lateTime(beast.id, sec, cur?.seconds, { kg: cur?.kg, band: cur?.band });
+    mut((s) => ({ ...s, beast: { ...(s.beast?.id === beast.id ? s.beast : {}), id: beast.id, seconds: sec, ...(easy ? { easy } : {}) } }));
   };
+  const setLoadSingle = (load: { kg?: number; band?: string }) =>
+    mut((s) => ({ ...s, beast: { ...(s.beast?.id === beast.id ? s.beast : { seconds: null }), id: beast.id, ...load } }));
   // Serie: jeder Teil einzeln, jede Zeit zählt für ihre Bestie (ein Doppel/Triple ist ein Teil mit eigener Bestzeit)
   const parts = beast.parts ?? [];
+  const curPart = (u: number) => (session?.beastParts?.[u]?.id === parts[u].id ? session.beastParts[u] : undefined);
+  const patchUnit = (u: number, patch: Partial<BeastResult>) => mut((s) => {
+    const arr = parts.map((x, i) => (s.beastParts?.[i]?.id === x.id ? s.beastParts[i] : { id: x.id, seconds: null }));
+    arr[u] = { ...arr[u], ...patch, id: parts[u].id };
+    return { ...s, beastParts: arr };
+  });
   const saveUnit = (u: number, sec: number) => {
-    lateTime(parts[u].id, sec, session?.beastParts?.[u]?.id === parts[u].id ? session.beastParts[u].seconds : null);
-    mut((s) => {
-      const arr = parts.map((x, i) => (s.beastParts?.[i]?.id === x.id ? s.beastParts[i] : { id: x.id, seconds: null }));
-      arr[u] = { id: parts[u].id, seconds: sec, ...(easy ? { easy } : {}) };
-      return { ...s, beastParts: arr };
-    });
+    const c = curPart(u);
+    lateTime(parts[u].id, sec, c?.seconds, { kg: c?.kg, band: c?.band });
+    patchUnit(u, { seconds: sec, ...(easy ? { easy } : {}) });
     if (u < parts.length - 1) t.rest(`Pause, dann ${parts[u + 1].name}`, COMBO_REST);
   };
   const work = (b: { id?: string; work: string; rounds: number; times?: number; repeat?: number; name?: string }) => {
@@ -611,13 +647,13 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     return (
       <>
         <div className="muted small">{k > 1 ? `${k} × ${b.rounds / k} Runden am Stück` : `${b.rounds} ${b.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-        <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const extra = beastExtra(w, ctx.profile, !!b.id?.includes("~hex")); return <li key={i}>{w}{extra && <span className="muted"> · {extra}</span>}</li>; })}</ul>
+        <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const extra = b.id && beastById(b.id) && isLoadBeast(beastById(b.id)!) ? null : beastExtra(w, ctx.profile, !!b.id?.includes("~hex")); return <li key={i}>{w}{extra && <span className="muted"> · {extra}</span>}</li>; })}</ul>
       </>
     );
   };
   return (
     <section className="card beast">
-      <div className="block-label amber">Bestie · {measured ? "" : "~"}{Math.round(effMin)} Min</div>
+      <div className="block-label amber">{capOf(beast) != null ? `Lastbestie · Timecap ${capOf(beast)} Min` : `Bestie · ${measured ? "" : "~"}${Math.round(effMin)} Min`}</div>
       <div className="beast-name">{beast.name}</div>
       {easy && <div className="muted small">Grundlagentempo, zählt nicht für die Bestzeit.</div>}
       {parts.length ? (
@@ -626,14 +662,16 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
             <div key={u} className="stack">
               <div className="small"><strong>{u + 1}. {pt.name}</strong></div>
               {work(pt)}
-              <BeastTimer times={ctx.state.beastTimes[pt.id] ?? []} saved={session?.beastParts?.[u]?.id === pt.id ? session.beastParts[u].seconds : null} onSave={(sec) => saveUnit(u, sec)} />
+              {isLoadBeast(beastById(pt.id)!) && <LoadField beast={beastById(pt.id)!} ctx={ctx} cur={curPart(u)} onChange={(l) => patchUnit(u, l)} />}
+              <BeastTimer times={isLoadBeast(beastById(pt.id)!) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={curPart(u)?.seconds ?? null} onSave={(sec) => saveUnit(u, sec)} />
             </div>
           ))}
         </>
       ) : (
         <>
           {work(beast)}
-          <BeastTimer times={ctx.state.beastTimes[beast.id] ?? []} saved={session?.beast?.id === beast.id ? session.beast.seconds : null} onSave={saveSingle} />
+          {isLoadBeast(beast) && <LoadField beast={beast} ctx={ctx} cur={cur} onChange={setLoadSingle} />}
+          <BeastTimer times={isLoadBeast(beast) ? [] : ctx.state.beastTimes[beast.id] ?? []} saved={cur?.seconds ?? null} onSave={saveSingle} />
         </>
       )}
       {note && <div className="muted small">{note}</div>}

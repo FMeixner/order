@@ -1,10 +1,11 @@
 /* Bestiarium: alle Bestien mit Bestzeiten, filterbar nach Familie und Stand. */
 import { useMemo, useState } from "react";
 import { BEASTS, SKILLS } from "../data";
-import { beastActive, beastClass, beastFamily, beastMinutes, beastNeeds, beastRegion, CLASS_LABEL, fmtDate, type BeastNeed } from "../engine/plan";
+import { beastById, beastActive, beastClass, beastFamily, beastMinutes, beastNeeds, beastRegion, CLASS_LABEL, fmtDate, type BeastNeed } from "../engine/plan";
 import { beastOk, beastSkills, hexFor } from "../engine/skills";
+import { capOf, isLoadBeast, LOAD_LABEL, loadKind, loadRecord } from "../engine/loadbeast";
 import type { AppState, Beast } from "../types";
-import { Collapse, Seg } from "./common";
+import { Collapse, kg, Seg } from "./common";
 import { fmt } from "./Timer";
 
 const NEED_LABEL: Record<BeastNeed, string> = {
@@ -59,12 +60,17 @@ export function Bestiary({ state }: { state: AppState }) {
         const needs = [...beastNeeds(b)].map((n) => NEED_LABEL[n]);
         const missing = beastSkills(b).filter((id) => skills && !skills.has(id));
         const hx = missing.length ? hexFor(b, skills) : null;
-        const meta = base ? `${fmt(base.best.seconds)} · ${base.n}×` : times.length ? `${times[0].label} ${fmt(times[0].best.seconds)}` : "offen";
+        const load = isLoadBeast(b);
+        const rec = load ? loadRecord(b, state.beastTimes[b.id]) : null;
+        const recText = (t: { kg?: number; band?: string } | null) => (t ? (t.kg != null ? kg(t.kg) : t.band ?? "–") : "–");
+        const meta = load ? (rec ? `Rekord ${recText(rec)}` : "offen") : base ? `${fmt(base.best.seconds)} · ${base.n}×` : times.length ? `${times[0].label} ${fmt(times[0].best.seconds)}` : "offen";
         return (
           <Collapse key={b.id} title={b.name} meta={meta} tone={times.length ? "teal" : undefined}>
             <div className="stack">
               <div className="muted small">
-                {r === "sued" ? "Morgenland" : "Nord"} · {CLASS_LABEL[beastClass(min)]} · {measured ? "" : "etwa "}{Math.round(min)} Min · {b.rounds} {b.rounds === 1 ? "Runde" : "Runden"}
+                {load
+                  ? `Morgenland · ${LOAD_LABEL[loadKind(b)!] ?? "Last"} · Timecap ${capOf(b)} Min · ${b.rounds} ${b.rounds === 1 ? "Runde" : "Runden"}`
+                  : `${r === "sued" ? "Morgenland" : "Nord"} · ${CLASS_LABEL[beastClass(min)]} · ${measured ? "" : "etwa "}${Math.round(min)} Min · ${b.rounds} ${b.rounds === 1 ? "Runde" : "Runden"}`}
                 {needs.length ? ` · ${needs.join(", ")}` : " · nur Körpergewicht"}
               </div>
               <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
@@ -74,7 +80,26 @@ export function Bestiary({ state }: { state: AppState }) {
                   <ul className="beast-work">{hx.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
                 </div>
               ) : <div className="note warn small">Kommt noch nicht dran, es fehlt: {missing.map(skillName).join(", ")}.</div>)}
-              {times.length > 0 && (
+              {load && times.length > 0 && (
+                <table className="pr-table small">
+                  <thead><tr><th>Form</th><th>Rekord im Timecap</th><th>zuletzt</th><th>Läufe</th></tr></thead>
+                  <tbody>
+                    {times.map((t) => {
+                      const all = state.beastTimes[t.id] ?? [];
+                      const last = [...all].sort((a, c) => c.date.localeCompare(a.date))[0];
+                      return (
+                        <tr key={t.id}>
+                          <td>{t.label}</td>
+                          <td><strong>{recText(loadRecord(beastById(t.id) ?? b, all))}</strong></td>
+                          <td>{recText(last)} · {fmt(last.seconds)}</td>
+                          <td>{t.n}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+              {!load && times.length > 0 && (
                 <table className="pr-table small">
                   <thead><tr><th>Form</th><th>Bestzeit</th><th>am</th><th>zuletzt</th><th>Läufe</th></tr></thead>
                   <tbody>
