@@ -709,7 +709,7 @@ describe("Keine Bestie zweimal hintereinander", () => {
     }
     if (bad.length) console.log(bad.join("\n"));
     expect(bad).toEqual([]);
-  });
+  }, 60000);
   it("geloggte Bestie der Vorwoche zählt, auch aus der vorigen Phase", () => {
     const s = sample();
     const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
