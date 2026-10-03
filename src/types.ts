@@ -61,11 +61,9 @@ export type Block =
   | { type: "contrast"; heavy: Slot; explosive: Slot; transfer?: number; rest?: number; rotation?: "A" | "B" }
   | {
       type: "beast"; id: string; classes?: BeastClass[]; pool?: string[];
-      draw?: "rotate" | "random"; benchmark_every?: number; note?: string; rotation?: "A" | "B";
+      benchmark_every?: number; note?: string; rotation?: "A" | "B";
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
-      /** Bestie der ersten Woche (Id). Fehlen Skills, kommt sie als hexed-Variante. */
-      first?: string;
     }
   | { type: "module"; module: "sword" | "flow" | "sharpen"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
@@ -137,6 +135,8 @@ export interface Beast {
   work: string;
   /** Lastbestie: fester Timecap in Minuten */
   cap?: number;
+  /** Lastbestie: Startwert, bis es eigene Werte gibt (Gewicht je Hantel bzw. Band) */
+  start?: { kg?: number; band?: string };
   /** mutiert: Skills, deren Übungen durch leichtere ersetzt sind */
   hexed?: string[];
   /** Doppel oder Triple: dieselbe Bestie k-mal am Stück, ohne Pause, mit eigener Bestzeit */

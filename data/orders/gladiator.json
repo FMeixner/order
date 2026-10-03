@@ -51,7 +51,7 @@
         {"type": "single", "slot": {"id": "gl-do-3", "name": "Chin-Up + Weste", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "6-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "gl-do-4", "name": "Bulgarian Split Squat + Weste", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
         {"type": "module", "module": "sword", "variant": "intervalle", "fallback": {"id": "gl-do-fb2", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 40, "rounds": 8}, "prog": "none"}},
-        {"type": "beast", "id": "gl-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "gl-bst", "classes": ["plage"]}
       ]
     },
     "unterkoerper": {
@@ -79,7 +79,7 @@
           {"id": "bx-gl-na", "name": "Neck Curl", "sets": 2, "reps": "15-25", "prog": "reps"},
           {"id": "bx-gl-nb", "name": "Neck Extension", "sets": 2, "reps": "15-25", "prog": "reps"}
         ]},
-        {"type": "beast", "id": "bx-gl-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-gl-bst", "classes": ["plage"]}
       ]
     }
   }

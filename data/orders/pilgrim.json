@@ -44,7 +44,7 @@
       "name": "Lange Bestie", "location": "home", "minutes": 40,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "beast", "id": "rh-b-1", "classes": ["uralte"], "draw": "rotate"}
+        {"type": "beast", "id": "rh-b-1", "classes": ["uralte"]}
       ]
     },
     "grundlage": {
@@ -61,7 +61,7 @@
         {"type": "single", "slot": {"id": "bx-pi-c", "name": "Single-Leg Calf Raise", "sets": 3, "reps": "12-20/Seite", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "bx-pi-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "bx-pi-b", "name": "Einbeinstand, Augen zu", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}},
-        {"type": "beast", "id": "bx-pi-bst", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"}
+        {"type": "beast", "id": "bx-pi-bst", "classes": ["ungeheuer"], "pace": "easy"}
       ]
     }
   }

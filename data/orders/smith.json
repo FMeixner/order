@@ -74,7 +74,7 @@
           {"id": "pf-4-6a", "name": "Walking Lunge", "sets": 3, "reps": "8/Seite", "prog": "double"},
           {"id": "pf-4-6b", "name": "Hammer Curl", "sets": 3, "reps": "10-12", "prog": "double"}
         ]},
-        {"type": "beast", "id": "pf-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "pf-bst", "classes": ["plage"]}
       ]
     },
     "bonus": {
@@ -83,7 +83,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "bx-sm-f", "name": "Farmer's Carry", "sets": 4, "reps": "40 m", "prog": "weight", "rest": 90}},
         {"type": "single", "slot": {"id": "bx-sm-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
-        {"type": "beast", "id": "bx-sm-bst", "classes": ["bestie"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-sm-bst", "classes": ["bestie"]}
       ]
     }
   }

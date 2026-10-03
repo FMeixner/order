@@ -25,7 +25,7 @@
         {"type": "single", "slot": {"id": "r-a-3", "name": "Table Row", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 90}},
         {"type": "single", "slot": {"id": "r-a-4", "name": "Glute Bridge", "sets": 2, "reps": "12-15", "prog": "ladder", "ladder": ["Glute Bridge", "Single-Leg Glute Bridge"], "rest": 60}},
         {"type": "single", "slot": {"id": "r-a-5", "name": "Dead Bug", "sets": 2, "reps": "8/Seite", "prog": "reps", "rest": 45}},
-        {"type": "beast", "rotation": "A", "id": "r-bst-a", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "rotation": "A", "id": "r-bst-a", "classes": ["plage"]}
       ]
     },
     "bewegung_leicht": {
@@ -52,7 +52,7 @@
         {"type": "single", "slot": {"id": "r-b-3", "name": "Split Squat", "sets": 2, "reps": "8-10/Seite", "prog": "ladder", "ladder": ["Split Squat", "Reverse Lunge"], "rest": 90}},
         {"type": "single", "slot": {"id": "r-b-4", "name": "Knee Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Knee Push-Up", "Push-Up"], "rest": 90}},
         {"type": "single", "slot": {"id": "r-b-5", "name": "Side Plank (Knie)", "kind": "hold", "hold": 20, "sets": 2, "prog": "ladder", "ladder": ["Side Plank (Knie)", "Side Plank"], "rest": 45, "note": "pro Seite"}},
-        {"type": "beast", "rotation": "B", "id": "r-bst-b", "classes": ["bestie"], "draw": "rotate", "pace": "easy"}
+        {"type": "beast", "rotation": "B", "id": "r-bst-b", "classes": ["bestie"], "pace": "easy"}
       ]
     },
     "bonus": {
@@ -61,7 +61,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "bx-in-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "bx-in-b", "name": "Einbeinstand, Augen zu", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}},
-        {"type": "beast", "id": "bx-in-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-in-bst", "classes": ["plage"]}
       ]
     }
   }

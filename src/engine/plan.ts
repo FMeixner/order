@@ -1,5 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
-import { BANDS, BEAST_LOADS, BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
+import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, beastSkills, hexFor, hexWith } from "./skills";
@@ -189,38 +189,6 @@ export function beastNeeds(b: Beast): Set<BeastNeed> {
   return out;
 }
 
-/** Welches Band für eine Bestien-Übung: Stufe aus bands.json, hexed eine leichter, auf die Bänder im Profil gelegt.
-    Am Kabel (ohne Bänder) gibt es keinen Hinweis. */
-export function bandFor(part: string, p: EquipmentProfile, hexed = false): string | null {
-  const lvl = BANDS.exercises[beastPartName(part)];
-  if (!lvl || !p.bands.length) return null;
-  const L = BANDS.levels;
-  const i = Math.max(0, L.indexOf(lvl) - (hexed ? 1 : 0));
-  const exact = p.bands.find((x) => x.toLowerCase() === L[i]);
-  if (exact) return exact;
-  // Eigene Namen: das leichteste Band gilt als „leicht“, dann aufsteigend; fehlt die Stufe, das stärkste vorhandene
-  return p.bands[Math.min(p.bands.length - 1, i)];
-}
-
-/** Gewicht für eine Bestien-Übung am Ort: Vorgabe aus dem Text („(2x5kg)“) oder aus beast_loads.json,
-    gelegt auf die nächstliegende Hantel bis 10 % daneben. null = keine Gewichtsübung, "missing" = am Ort nicht machbar. */
-export function beastLoad(part: string, p: EquipmentProfile): { n: number; kg: number; want: number } | null | "missing" {
-  const explicit = part.match(/\((?:(\d)\s*x\s*)?([\d.,]+)\s*kg\)/i);
-  const name = beastPartName(part).replace(/\s*\(.*\)\s*$/, "").replace(/\s+\d+%$/, "");
-  const def = BEAST_LOADS.exercises[name];
-  if (!explicit && !def) return null;
-  // Langhantel-Prozente (Bankdrücken 75 %) gehören zur Langhantel, nicht zu den Kurzhanteln
-  if (/bench press|deadlift|squats/i.test(name)) return null;
-  // „(17.5 kg)“ bei einer Zweihand-Übung ist die Gesamtlast (Langhantel), also je Hand die Hälfte
-  const total = explicit ? parseFloat(explicit[2].replace(",", ".")) : def.kg;
-  const n = explicit ? (explicit[1] ? parseInt(explicit[1]) : def?.n ?? 1) : def.n;
-  const want = explicit && !explicit[1] && n > 1 ? total / n : total;
-  const pool = [...p.dumbbells, ...(n === 1 ? p.kettlebells : [])];
-  if (!pool.length) return "missing";
-  const best = pool.reduce((a, c) => (Math.abs(c - want) < Math.abs(a - want) ? c : a), pool[0]);
-  return Math.abs(best - want) <= want * BEAST_LOADS.tolerance + 1e-9 ? { n, kg: best, want } : "missing";
-}
-
 /** Bestien-Familien: Morgenland (intern "sued") = Bewegung gegen externen Widerstand (Hanteln, Kettlebell, Langhantel, Band),
     Namen aus Mesopotamien, Persien, Arabien. Nord = nur Körpergewicht (Stange, Ringe, Rudergerät sind Ausrüstung,
     aber keine Last), Namen aus nordeuropäischen Volkssagen. Keine griechischen oder römischen Namen. */
@@ -228,17 +196,9 @@ export type BeastRegion = "nord" | "sued";
 export function beastRegion(b: Beast): BeastRegion {
   const n = beastNeeds(b);
   const loaded = n.has("kb_db") || n.has("barbell") || n.has("band") || n.has("band_or_cable")
-    || b.work.split(" · ").some((part) => /\([\d.,x\s]+kg\)/i.test(part) || !!BEAST_LOADS.exercises[beastPartName(part).replace(/\s*\(.*\)\s*$/, "")]);
+    || /\d+\s?%/.test(b.work);
   return loaded ? "sued" : "nord";
 }
-/** Morgenland-Bestien (mit Last) sind vorerst ausgeblendet: sie brauchen eine eigene Logik für die Last. */
-export const HIDDEN_REGIONS: BeastRegion[] = [];
-const activeMemo = new Map<string, boolean>();
-export const beastActive = (b: Beast): boolean => {
-  if (!activeMemo.has(b.id)) activeMemo.set(b.id, !HIDDEN_REGIONS.includes(beastRegion(b)));
-  return activeMemo.get(b.id)!;
-};
-export const REGION_LABEL: Record<BeastRegion, string> = { nord: "Nordbestie", sued: "Morgenlandbestie" };
 
 export function beastFits(b: Beast, p: EquipmentProfile): boolean {
   const tagsOk = b.equipment.every((t) => {
@@ -429,14 +389,9 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   const skills = state.user.skills ? new Set(state.user.skills) : null;
   // Fehlt ein Skill, kommt die Bestie mutiert: die betroffenen Übungen durch ihren Ersatz getauscht
   const serve = (b: Beast): Beast | null => (beastOk(b, skills) ? b : hexFor(b, skills));
-  const ok = (b: Beast) => beastActive(b) && beastFits(b, profile) && serve(b) != null;
+  const ok = (b: Beast) => beastFits(b, profile) && serve(b) != null;
   const min = (b: Beast) => beastMinutes(b, state.beastTimes[b.id]).min;
 
-  // Feste Start-Bestie in Woche 1, notfalls mutiert
-  if (block.first && opts.week === 1 && !opts.reduced) {
-    const b0 = BEAST_BY_ID[block.first];
-    if (b0 && ok(b0) && fresh(b0)) return serve(b0);
-  }
   // Zwischenwert (Conqueror): dieselbe Bestie wie in Woche 1
   if (block.benchmark_every && opts.week > 1 && (opts.week - 1) % block.benchmark_every === 0 && !opts.reduced) {
     const w1 = pickBeast(block, { ...opts, week: 1, reduced: false });

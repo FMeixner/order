@@ -1,7 +1,7 @@
 /* Bestiarium: alle Bestien mit Bestzeiten, filterbar nach Familie und Stand. */
 import { useMemo, useState } from "react";
 import { BEASTS, SKILLS } from "../data";
-import { beastById, beastActive, beastClass, beastFamily, beastMinutes, beastNeeds, beastRegion, CLASS_LABEL, fmtDate, type BeastNeed } from "../engine/plan";
+import { beastById, beastClass, beastFamily, beastMinutes, beastNeeds, beastRegion, CLASS_LABEL, fmtDate, type BeastNeed } from "../engine/plan";
 import { beastOk, beastSkills, hexFor } from "../engine/skills";
 import { capOf, isLoadBeast, LOAD_LABEL, loadKind, loadRecord } from "../engine/loadbeast";
 import type { AppState, Beast } from "../types";
@@ -34,7 +34,7 @@ export function Bestiary({ state }: { state: AppState }) {
   const skills = state.user.skills ? new Set(state.user.skills) : null;
   const skillName = (id: string) => SKILLS.skills.find((x) => x.id === id)?.name ?? id;
 
-  const rows = useMemo(() => BEASTS.filter(beastActive).map((b) => ({ b, times: timesOf(b, state.beastTimes), region: beastRegion(b) })), [state.beastTimes]);
+  const rows = useMemo(() => BEASTS.map((b) => ({ b, times: timesOf(b, state.beastTimes), region: beastRegion(b) })), [state.beastTimes]);
   const beaten = rows.filter((r) => r.times.length).length;
   const shown = rows
     .filter((r) => region === "alle" || r.region === region)

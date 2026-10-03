@@ -73,7 +73,7 @@
       "warmup": ["run_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "so-s-1", "name": "Lauf oder Rudern, locker", "kind": "timer", "minutes": 30, "max": 45, "step": 5, "prog": "minutes"}},
-        {"type": "beast", "id": "so-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "so-bst", "classes": ["plage"]}
       ]
     },
     "bonus": {
@@ -81,7 +81,7 @@
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "mobility"},
-        {"type": "beast", "id": "bx-so-bst", "classes": ["bestie"], "draw": "rotate"}, {"type": "beast", "id": "bx-so-bst2", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-so-bst", "classes": ["bestie"]}, {"type": "beast", "id": "bx-so-bst2", "classes": ["plage"]}
       ]
     }
   }

@@ -63,7 +63,7 @@
       "name": "Kurze Bestie", "location": "home", "minutes": 12, "optional": true,
       "warmup": ["short_base"], "cooldown": [],
       "blocks": [
-        {"type": "beast", "id": "fl-s-1", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "fl-s-1", "classes": ["plage"]}
       ]
     },
     "bonus": {
@@ -72,7 +72,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "bx-he-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 45, "max": 90, "step": 5}},
         {"type": "single", "slot": {"id": "bx-he-f", "name": "Farmer's Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
-        {"type": "beast", "id": "bx-he-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-he-bst", "classes": ["plage"]}
       ]
     }
   }

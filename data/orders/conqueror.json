@@ -61,7 +61,7 @@
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "bookend"},
-        {"type": "beast", "id": "c-w-1", "classes": ["ungeheuer"], "draw": "rotate", "benchmark_every": 3, "note": "Jede dritte Woche: Bestie aus Woche 1 als Zwischenwert."}
+        {"type": "beast", "id": "c-w-1", "classes": ["ungeheuer"], "benchmark_every": 3, "note": "Jede dritte Woche: Bestie aus Woche 1 als Zwischenwert."}
       ]
     },
     "ausdauer": {
@@ -78,7 +78,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "bx-co-f", "name": "Farmer's Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60, "reise": {"name": "Suitcase Carry"}}},
         {"type": "single", "slot": {"id": "bx-co-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
-        {"type": "beast", "id": "bx-co-bst", "classes": ["bestie"], "draw": "rotate"}, {"type": "beast", "id": "bx-co-bst2", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-co-bst", "classes": ["bestie"]}, {"type": "beast", "id": "bx-co-bst2", "classes": ["plage"]}
       ]
     }
   }

@@ -48,8 +48,8 @@
         {"type": "single", "slot": {"id": "ma-s-2", "name": "L-Sit (Tuck)", "kind": "hold", "hold": 10, "sets": 4, "prog": "ladder", "ladder": ["L-Sit (Tuck)", "L-Sit (ein Bein)", "L-Sit"], "rest": 60}},
         {"type": "single", "slot": {"id": "ma-s-3", "name": "Dead Hang", "kind": "hold", "hold": 30, "max": 90, "step": 5, "sets": 3, "prog": "hold", "rest": 60}},
         {"type": "single", "slot": {"id": "ma-s-4", "name": "Hollow Hold", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 3, "prog": "hold", "rest": 45}},
-        {"type": "beast", "rotation": "A", "id": "ma-bst-a", "classes": ["plage"], "draw": "rotate"},
-        {"type": "beast", "rotation": "B", "id": "ma-bst-b", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"}
+        {"type": "beast", "rotation": "A", "id": "ma-bst-a", "classes": ["plage"]},
+        {"type": "beast", "rotation": "B", "id": "ma-bst-b", "classes": ["ungeheuer"], "pace": "easy"}
       ]
     },
     "flow_ruhe": {
@@ -67,7 +67,7 @@
         {"type": "single", "slot": {"id": "bx-al-w", "name": "Wrist Prep", "sets": 2, "reps": "10", "prog": "none", "rest": 30}},
         {"type": "single", "slot": {"id": "bx-al-p", "name": "Plate Pinch", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "rest": 45, "max": 45, "step": 5}},
         {"type": "single", "slot": {"id": "bx-al-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
-        {"type": "beast", "id": "bx-al-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-al-bst", "classes": ["plage"]}
       ]
     }
   }

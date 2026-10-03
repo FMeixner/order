@@ -48,7 +48,7 @@
       "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "einzelmesser", "fallback": {"id": "sk-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 12, "prog": "none"}},
-        {"type": "beast", "id": "sk-beast", "classes": ["bestie", "ungeheuer"], "draw": "rotate", "first": "ng-nanna"}
+        {"type": "beast", "id": "sk-beast", "classes": ["bestie", "ungeheuer"]}
       ]
     },
     "kraft_b": {
@@ -78,7 +78,7 @@
           {"id": "bx-as-na", "name": "Neck Curl", "sets": 2, "reps": "15-25", "prog": "reps"},
           {"id": "bx-as-nb", "name": "Neck Extension", "sets": 2, "reps": "15-25", "prog": "reps"}
         ]},
-        {"type": "beast", "id": "bx-as-bst", "classes": ["plage"], "draw": "rotate"}, {"type": "beast", "id": "bx-as-bst2", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-as-bst", "classes": ["plage"]}, {"type": "beast", "id": "bx-as-bst2", "classes": ["plage"]}
       ]
     }
   }

@@ -45,7 +45,7 @@
           {"id": "w-fr-6a", "name": "Barbell Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "proposal": true},
           {"id": "w-fr-6b", "name": "Upright Row", "home": "DB Upright Row", "reise": {"name": "Band Upright Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "proposal": true}
         ]},
-        {"type": "beast", "id": "w-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "w-bst", "classes": ["plage"]}
       ]
     },
     "home_hypertrophie": {
@@ -94,7 +94,7 @@
       "warmup": ["run_prep"],
       "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "beast", "id": "w-sa-beast", "classes": ["bestie", "ungeheuer"], "draw": "rotate"}
+        {"type": "beast", "id": "w-sa-beast", "classes": ["bestie", "ungeheuer"]}
       ]
     }
   }

@@ -69,7 +69,7 @@
         {"type": "single", "slot": {"id": "cl-lb-4", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": null, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "cl-lb-5", "name": "Hanging Leg Raise", "reise": {"name": "Reverse Crunch", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "reps", "rest": 60}},
         {"type": "single", "slot": {"id": "cl-lb-6", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
-        {"type": "beast", "id": "cl-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "cl-bst", "classes": ["plage"]}
       ]
     },
     "bonus": {
@@ -81,7 +81,7 @@
           {"id": "bx-kn-fb", "name": "Reverse Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"}
         ]},
         {"type": "single", "slot": {"id": "bx-kn-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
-        {"type": "beast", "id": "bx-kn-bst", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-kn-bst", "classes": ["plage"]}
       ]
     }
   }

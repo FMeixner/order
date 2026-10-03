@@ -6,7 +6,7 @@ import { parseClock } from "../engine/clock";
 import { capOf, isLoadBeast, loadKind, loadRecord, pctLift, suggestLoad } from "../engine/loadbeast";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { bandFor, beastLoad, affectDowngrade, beastById, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
+import { affectDowngrade, beastById, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import type { AppState, Beast, BeastResult, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
@@ -34,13 +34,6 @@ export const sessionId = (blockId: string, week: number, role: string) => `${blo
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
 /** Zusatz an einer Bestien-Übung: Band-Stufe oder Gewicht am heutigen Ort */
-function beastExtra(part: string, p: EquipmentProfile, hexed: boolean): string | null {
-  const band = bandFor(part, p, hexed);
-  if (band) return `Band ${band}`;
-  const l = beastLoad(part, p);
-  if (!l || l === "missing") return null;
-  return `${l.n > 1 ? `${l.n} × ` : ""}${kg(l.kg)}`;
-}
 
 const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(ctx.focus.roles[ctx.roleKey], ctx.profile, ctx.state.user, ctx.week, ctx.reduced).total / 5) * 5);
 
@@ -96,7 +89,7 @@ function runToBeast(b: Block, ctx: SessionCtx): Block {
   if (b.type !== "single") return b;
   const min = blockSeconds(b, ctx.profile) / 60;
   const cls: BeastClass = min <= 10.5 ? "plage" : min <= 17.5 ? "bestie" : min <= 25.5 ? "ungeheuer" : "uralte";
-  return { type: "beast", id: `norun-${b.slot.id}`, classes: [cls], draw: "rotate", note: `Statt ${b.slot.name}.`, rotation: b.rotation };
+  return { type: "beast", id: `norun-${b.slot.id}`, classes: [cls], note: `Statt ${b.slot.name}.`, rotation: b.rotation };
 }
 
 export function collectItems(ctx: SessionCtx): Item[] {
@@ -647,7 +640,7 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     return (
       <>
         <div className="muted small">{k > 1 ? `${k} × ${b.rounds / k} Runden am Stück` : `${b.rounds} ${b.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-        <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const extra = b.id && beastById(b.id) && isLoadBeast(beastById(b.id)!) ? null : beastExtra(w, ctx.profile, !!b.id?.includes("~hex")); return <li key={i}>{w}{extra && <span className="muted"> · {extra}</span>}</li>; })}</ul>
+        <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
       </>
     );
   };
@@ -712,7 +705,7 @@ export function SessionPreview(ctx: SessionCtx) {
                 {parts.map((pt, k) => (
                   <div key={k}>
                     <div className="block-label amber">{it.beast?.parts ? `${k + 1}. ` : "Bestie: "}{pt.name} · {pt.times > 1 ? `${pt.times}-mal am Stück, je ${pt.rounds / pt.times} Runden` : `${pt.rounds} ${pt.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-                    {pt.work.split(" · ").map((w, j) => { const extra = beastExtra(w, ctx.profile, pt.id.includes("~hex")); return <div key={j} className="preview-row"><span>{w}</span>{extra && <span className="muted small">{extra}</span>}</div>; })}
+                    {pt.work.split(" · ").map((w, j) => <div key={j} className="preview-row"><span>{w}</span></div>)}
                   </div>
                 ))}
               </div>

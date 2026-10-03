@@ -180,7 +180,7 @@ describe("Orden und Plan", () => {
   });
   it("Bestie passt zum Equipment", () => {
     const st = emptyState();
-    const b = pickBeast({ type: "beast", id: "t", classes: ["bestie"], draw: "rotate" }, { blockId: "x", week: 1, profile: reise, state: st, reduced: false, downgrade: false });
+    const b = pickBeast({ type: "beast", id: "t", classes: ["bestie"], }, { blockId: "x", week: 1, profile: reise, state: st, reduced: false, downgrade: false });
     expect(b).not.toBeNull();
     expect(b!.equipment.every((t) => ["bodyweight_only", "wall_or_open", "band"].includes(t))).toBe(true);
   });
@@ -411,19 +411,18 @@ describe("hexed und Grundlagentempo", () => {
     expect(ws.some((x) => x.id.endsWith("~hex"))).toBe(true);
     for (let i = 1; i < ws.length; i++) expect(beastFamily(ws[i].id).some((f) => beastFamily(ws[i - 1].id).includes(f))).toBe(false);
   });
-  it("Assassin: Undine zum Start, danach Einzel, Doppel und Serien gemischt, ohne Wiederholung", async () => {
+  it("Assassin: Einzel, Doppel und Serien gemischt, ohne Wiederholung", async () => {
     const { pickBeast, beastFamily } = await import("./plan");
     const s = { ...sample(), schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as AppState["schedule"] };
     const all = SKILLS.skills.map((x) => x.id);
     for (const skills of [all, all.filter((x) => x !== "muscle_up")]) {
       const st = { ...s, user: { ...s.user, skills } };
-      const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
+      const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.id === "sk-beast") as Extract<import("../types").Block, { type: "beast" }>;
       const prof = st.equipment.find((e) => e.id === "g")!;
       const ws = Array.from({ length: 10 }, (_, i) => pickBeast(b, { blockId: "b1", week: i + 1, profile: prof, state: st, reduced: false, downgrade: false })!);
-      expect(ws[0].name).toMatch(/^Undine/);
       const fams = ws.flatMap((x) => [...new Set(beastFamily(x.id))]);
       expect(new Set(fams).size).toBe(fams.length);
-      const kinds = new Set(ws.slice(1).map((x) => (x.parts ? "pair" : x.repeat ? "double" : "single")));
+      const kinds = new Set(ws.map((x) => (x.parts ? "pair" : x.repeat ? "double" : "single")));
       expect(kinds.size).toBeGreaterThanOrEqual(2);
     }
   });
@@ -625,16 +624,6 @@ describe("Ortswechsel und dreimal OK", () => {
 });
 
 describe("Start-Bestie", () => {
-  it("Assassin beginnt mit Undine, ohne Muscle-Up als Undine mutiert", () => {
-    const s = sample();
-    const blk = FOCUS_BY_ID.assassin.roles;
-    const b = Object.values(blk).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
-    const opts = { blockId: "b1", week: 1, profile: { ...gym, id: "g" }, state: s, reduced: false, downgrade: false };
-    expect(pickBeast(b, opts)?.name).toBe("Undine");
-    const hex = pickBeast(b, { ...opts, state: { ...s, user: { ...s.user, skills: [] } } });
-    expect(hex?.name).toMatch(/Undine mutiert/);
-    expect(pickBeast(b, { ...opts, week: 2 })?.id).toBeDefined();
-  });
 });
 
 describe("Bestien: Ausrüstung und Wochenvolumen", () => {
@@ -658,33 +647,9 @@ describe("Bestien: Ausrüstung und Wochenvolumen", () => {
 });
 
 describe("Bandstärken", () => {
-  it("Stufe je Übung, hexed eine leichter, auf eigene Bänder gelegt", async () => {
-    const { bandFor } = await import("./plan");
-    const p: EquipmentProfile = { ...home, bands: ["leicht", "mittel", "schwer", "extra schwer"] };
-    expect(bandFor("20/15/10 Band Thrusters", p)).toBe("mittel");
-    expect(bandFor("20/15/10 Band Thrusters", p, true)).toBe("leicht");
-    expect(bandFor("6 Band Deadlift", p)).toBe("schwer");
-    expect(bandFor("6 Band Deadlift", { ...p, bands: ["gelb", "rot", "grün"] })).toBe("grün");
-    expect(bandFor("10 Pull-Ups", p)).toBeNull();
-    expect(bandFor("8 Face Pulls", { ...p, bands: [] })).toBeNull();
-  });
 });
 
 describe("Gewichte in Bestien", () => {
-  it("Vorgabe, Ortsanpassung bis 10 %, sonst andere Bestie", async () => {
-    const { beastLoad, beastFits } = await import("./plan");
-    const studio: EquipmentProfile = { ...gym, dumbbells: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24], kettlebells: [] };
-    const homeP: EquipmentProfile = { ...home, dumbbells: [4, 5.5, 7, 8.5, 10, 11.5, 13, 14.5, 16, 17.5, 19, 20.5, 22, 23.5], kettlebells: [] };
-    expect(beastLoad("8 Thrusters", studio)).toMatchObject({ n: 2, kg: 12 });
-    expect(beastLoad("8 Thrusters", homeP)).toMatchObject({ n: 2, kg: 11.5 });
-    expect(beastLoad("40 Swings (2x5kg)", homeP)).toMatchObject({ n: 2, kg: 5.5 });
-    expect(beastLoad("21/15/9/MAX Biceps Curls 50% (17.5 kg)", studio)).toMatchObject({ n: 2, kg: 9 });
-    expect(beastLoad("10 Pull-Ups", studio)).toBeNull();
-    // nur leichte Hanteln: Richtwert geht nicht, die Bestie bleibt aber (Gewicht legt man selbst fest)
-    const light: EquipmentProfile = { ...home, dumbbells: [2, 4, 6], kettlebells: [] };
-    expect(beastLoad("25 Swings", light)).toBe("missing");
-    expect(beastFits(BEASTS.find((b) => b.name === "Gugalanna")!, light)).toBe(true);
-  });
 });
 
 describe("Lastbestien", () => {
@@ -713,16 +678,6 @@ describe("Lastbestien", () => {
 });
 
 describe("Start-Bestie nicht doppelt", () => {
-  it("Assassin: Woche 1 Undine, Woche 2 eine andere, auch mit Skill-Training", () => {
-    const s = sample();
-    const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
-    for (const user of [s.user, { ...s.user, skills: [], skillTraining: true }]) {
-      const st = { ...s, user };
-      const o = (week: number) => pickBeast(b, { blockId: "b-assassin", week, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false });
-      expect(o(1)?.name).toMatch(/^Undine/);
-      expect(o(2)?.name).not.toMatch(/^Undine/);
-    }
-  });
 });
 
 describe("Keine Bestie zweimal hintereinander", () => {
@@ -749,12 +704,14 @@ describe("Keine Bestie zweimal hintereinander", () => {
   }, 60000);
   it("geloggte Bestie der Vorwoche zählt, auch aus der vorigen Phase", () => {
     const s = sample();
-    const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
+    const b = Object.values(FOCUS_BY_ID.assassin.roles).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.id === "sk-beast") as Extract<import("../types").Block, { type: "beast" }>;
     const plan = [{ id: "b-assassin", focusId: "assassin", label: "", start: "2026-10-05", end: "2026-11-29", load: "medium" as const, travel: false }];
-    const prev = { id: "x:9:a", date: "2026-10-02", blockId: "x", focusId: "witcher", week: 9, role: "a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true, beast: { id: "ng-nanna~hex:muscleup", seconds: 900 } };
-    const st = { ...s, plan, sessions: [prev] };
-    const w1 = pickBeast(b, { blockId: "b-assassin", week: 1, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false });
-    expect(w1?.name).not.toMatch(/^Undine/);
+    const st = { ...s, plan };
+    const opts = { blockId: "b-assassin", week: 1, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false };
+    const w1 = pickBeast(b, opts)!;
+    const prev = { id: "x:9:a", date: "2026-10-02", blockId: "x", focusId: "witcher", week: 9, role: "a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true, beast: { id: w1.id, seconds: 900 } };
+    const w1b = pickBeast(b, { ...opts, state: { ...st, sessions: [prev] } })!;
+    expect(w1b.id).not.toBe(w1.id);
   });
 });
 

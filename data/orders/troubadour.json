@@ -56,7 +56,7 @@
       "name": "Ausdauer intensiv", "location": "home", "minutes": 30,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "beast", "id": "lo-i-1", "classes": ["bestie"], "draw": "rotate"}
+        {"type": "beast", "id": "lo-i-1", "classes": ["bestie"]}
       ]
     },
     "bonus": {
@@ -68,7 +68,7 @@
           {"id": "bx-tr-b", "name": "Scapular Wall Slide", "sets": 3, "reps": "10-12", "prog": "reps"}
         ]},
         {"type": "single", "slot": {"id": "bx-tr-c", "name": "Face Pull", "sets": 3, "reps": "12-15", "prog": "double", "rest": 60, "home": "Band Face Pull"}},
-        {"type": "beast", "id": "bx-tr-bst", "classes": ["bestie"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-tr-bst", "classes": ["bestie"]}
       ]
     }
   }

@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.29.1] – 2026-10-03
+
+### Geändert
+- Lastbestien: ein Startwert je Bestie (Gewicht oder Band) statt Richtwerten je Übung. Prozent-Bestien rechnen weiter vom 1RM.
+- Assassin: keine feste Start-Bestie mehr.
+
+### Entfernt
+- Richtwerte je Übung samt 10-%-Regel und Bandstufen je Übung (beast_loads.json, Übungsliste in bands.json).
+- Ungenutzte Reste: das Feld „draw“ in den Orden, Ausblenden ganzer Bestien-Familien, Start-Bestie, ein ungenutztes UI-Element.
+
 ## [0.29.0] – 2026-10-03
 
 ### Neu

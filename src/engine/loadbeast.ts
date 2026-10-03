@@ -1,9 +1,9 @@
 /* Lastbestien (Morgenland): ein Item, fester Timecap, Leistungsindex = Gewicht (oder Band), mit dem man die Bestie im Timecap bezwingt.
    Alle Lastübungen einer Bestie laufen mit demselben Gewicht (je Hantel) bzw. demselben Band.
    Prozentangaben (Bench Press 50 %) beziehen sich auf das 1RM der Übung: selbst eingetragen oder aus dem Log geschätzt. */
-import { BANDS, BEAST_BY_ID, BEAST_LOADS } from "../data";
+import { BANDS, BEAST_BY_ID } from "../data";
 import type { AppState, Beast, BeastTime, EquipmentProfile } from "../types";
-import { bandFor, beastFamily, beastNeeds, beastPartName, beastRegion } from "./plan";
+import { beastFamily, beastNeeds, beastRegion } from "./plan";
 
 export type LoadKind = "barbell" | "kettlebell" | "dumbbell" | "band";
 export const LOAD_LABEL: Record<LoadKind, string> = { barbell: "Langhantel", kettlebell: "Kettlebell", dumbbell: "Kurzhantel", band: "Band" };
@@ -65,16 +65,19 @@ export function loadRecord(b: Beast, times: BeastTime[] | undefined): BeastTime 
   return ok.reduce((a, c) => ((c.kg ?? -1) > (a.kg ?? -1) || (c.band && a.band && bandRank(c.band) > bandRank(a.band)) ? c : a), ok[0]);
 }
 
-/** Vorschlag fürs Gewicht: zuletzt benutzt → Prozent vom 1RM → Richtwert der ersten Lastübung. null = selbst festlegen. */
+/** Vorschlag fürs Gewicht: zuletzt benutzt → Prozent vom 1RM → Startwert der Bestie. null = selbst festlegen. */
 export function suggestLoad(state: AppState, b: Beast, p: EquipmentProfile): { kg?: number; band?: string; why: string } | null {
   const kind = loadKind(b);
   if (!kind) return null;
   const last = [...(state.beastTimes[b.id] ?? [])].reverse().find((t) => t.kg != null || t.band);
+  const start = base(b).start;
   if (kind === "band") {
     if (last?.band) return { band: last.band, why: "wie zuletzt" };
-    const part = b.work.split(" · ").find((x) => bandFor(x, p));
-    const band = part ? bandFor(part, p) : p.bands[0];
-    return band ? { band, why: "Richtwert" } : null;
+    if (!p.bands.length) return null;
+    // Startstufe auf die Bänder im Profil legen (eigene Namen: Reihenfolge leicht → schwer)
+    const want = BANDS.levels.indexOf(start?.band ?? "mittel");
+    const band = p.bands.find((x) => x.toLowerCase() === start?.band) ?? p.bands[Math.min(p.bands.length - 1, Math.max(0, want))];
+    return { band, why: "Startwert" };
   }
   if (last?.kg != null) return { kg: last.kg, why: "wie zuletzt" };
   const pl = pctLift(b);
@@ -82,9 +85,5 @@ export function suggestLoad(state: AppState, b: Beast, p: EquipmentProfile): { k
     const rm = oneRM(state, pl.exercise);
     return rm ? { kg: Math.round((rm.kg * pl.pct) / 2.5) * 2.5, why: `${Math.round(pl.pct * 100)} % von ${rm.kg} kg (1RM ${pl.exercise})` } : null;
   }
-  for (const part of b.work.split(" · ")) {
-    const def = BEAST_LOADS.exercises[beastPartName(part).replace(/\s*\(.*\)\s*$/, "")];
-    if (def) return { kg: def.kg, why: "Richtwert" };
-  }
-  return null;
+  return start?.kg != null ? { kg: start.kg, why: "Startwert" } : null;
 }

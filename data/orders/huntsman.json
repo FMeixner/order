@@ -31,7 +31,7 @@
       "name": "Zufallsbestie", "location": "home", "minutes": 35,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "beast", "id": "hu-b-1", "classes": ["bestie", "ungeheuer"], "draw": "random"},
+        {"type": "beast", "id": "hu-b-1", "classes": ["bestie", "ungeheuer"]},
         {"type": "single", "slot": {"id": "hu-b-2", "name": "Shuttle Runs 6 × 20 m", "sets": 1, "reps": "6 × 20 m", "prog": "none"}}
       ]
     },
@@ -64,7 +64,7 @@
         {"type": "single", "slot": {"id": "bx-hu-p", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 60}},
         {"type": "single", "slot": {"id": "bx-hu-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "bx-hu-b", "name": "Einbeinstand, Augen zu", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}},
-        {"type": "beast", "id": "bx-hu-bst", "classes": ["bestie"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-hu-bst", "classes": ["bestie"]}
       ]
     }
   }

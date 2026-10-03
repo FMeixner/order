@@ -14,9 +14,6 @@ export function Collapse({ title, meta, children, defaultOpen = false, tone }: {
   );
 }
 
-export function Label({ children, tone = "teal" }: { children: ReactNode; tone?: "teal" | "amber" }) {
-  return <div className={`label ${tone}`}><span className="bar" />{children}</div>;
-}
 
 export function Modal({ title, onClose, children, wide }: { title: ReactNode; onClose: () => void; children: ReactNode; wide?: boolean }) {
   return (

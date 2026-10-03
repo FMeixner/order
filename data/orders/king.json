@@ -23,7 +23,7 @@
       "name": "Hart A", "location": "home", "minutes": 40,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "beast", "id": "ki-a-1", "classes": ["ungeheuer"], "draw": "rotate"},
+        {"type": "beast", "id": "ki-a-1", "classes": ["ungeheuer"]},
         {"type": "single", "slot": {"id": "ki-a-2", "name": "Lockeres Auslaufen", "kind": "timer", "minutes": 10, "prog": "none"}}
       ]
     },
@@ -50,14 +50,14 @@
       "name": "Hart C", "location": "home", "minutes": 30, "optional": true,
       "warmup": ["base"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "beast", "id": "ki-c-1", "classes": ["bestie"], "draw": "rotate"}
+        {"type": "beast", "id": "ki-c-1", "classes": ["bestie"]}
       ]
     },
     "bonus": {
       "name": "Bonus: Grundlage", "location": "reise", "minutes": 30,
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "beast", "id": "bx-ki-bst", "classes": ["ungeheuer"], "draw": "rotate", "pace": "easy"},
+        {"type": "beast", "id": "bx-ki-bst", "classes": ["ungeheuer"], "pace": "easy"},
         {"type": "single", "slot": {"id": "bx-ki-s", "name": "Side Plank", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}}
       ]
     }

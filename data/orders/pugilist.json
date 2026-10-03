@@ -48,7 +48,7 @@
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "fi-k-1", "name": "Intensivrunden: Serien, hohes Tempo", "kind": "interval", "interval": {"work": 120, "rest": 60, "rounds": 5}, "prog": "none", "note": "Schattenboxen oder Schwert, je nach Equipment."}},
-        {"type": "beast", "id": "fi-k-2", "classes": ["plage", "bestie"], "draw": "rotate"}
+        {"type": "beast", "id": "fi-k-2", "classes": ["plage", "bestie"]}
       ]
     },
     "nacken_rumpf": {
@@ -74,7 +74,7 @@
           {"id": "bx-pu-fa", "name": "Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"},
           {"id": "bx-pu-fb", "name": "Reverse Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"}
         ]},
-        {"type": "beast", "id": "bx-pu-bst", "classes": ["plage"], "draw": "rotate"}, {"type": "beast", "id": "bx-pu-bst2", "classes": ["plage"], "draw": "rotate"}
+        {"type": "beast", "id": "bx-pu-bst", "classes": ["plage"]}, {"type": "beast", "id": "bx-pu-bst2", "classes": ["plage"]}
       ]
     }
   }
