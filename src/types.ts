@@ -139,6 +139,8 @@ export interface Beast {
   work: string;
   /** hexed: Skills, deren Übungen durch leichtere ersetzt sind */
   hexed?: string[];
+  /** Kuratierte verhexte Fassung: die kritischen Übungen leichter, Dauer etwa gleich */
+  hex?: string;
   /** Doppel oder Triple: dieselbe Bestie k-mal am Stück, ohne Pause, mit eigener Bestzeit */
   repeat?: number;
   /** Serie: zwei Bestien hintereinander, jede Zeit zählt für ihre Bestie */

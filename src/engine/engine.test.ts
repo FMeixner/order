@@ -433,6 +433,16 @@ describe("hexed und Grundlagentempo", () => {
     expect(new Set(fams).size).toBe(fams.length);
     expect(ws.some((x) => /×2/.test(x.name))).toBe(true);
   });
+  it("kuratierte hexed-Fassung: hat Vorrang, eigene Id, wieder auflösbar", async () => {
+    const { beastById } = await import("./plan");
+    const { hexFor } = await import("./skills");
+    const lw = BEASTS.find((b) => b.name === "Lindwurm")!;
+    const hx = hexFor(lw, new Set(["pullup"]))!;
+    expect(hx.id).toBe("ng-thor~hex:kuratiert");
+    expect(hx.work).toContain("100/80/60 Squats");
+    expect(beastById(hx.id)?.work).toBe(hx.work);
+    expect(BEASTS.find((b) => b.name === "Wilde Jagd")!.work).toContain("4 Dragon Flags");
+  });
   it("jeder Orden hat mindestens eine Bestie pro Woche", () => {
     for (const f of FOCI.filter((x) => !x.medley)) for (const ab of ["A", "B"]) {
       const n = f.week_4.flatMap((rk) => f.roles[rk].blocks).filter((b) => b.type === "beast" && (!b.rotation || b.rotation === ab)).length;

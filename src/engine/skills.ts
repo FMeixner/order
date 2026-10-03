@@ -50,8 +50,12 @@ const HEX: Record<string, { rx: RegExp; to: string }[]> = Object.fromEntries(
   SKILLS.skills.filter((s) => s.hex?.length).map((s) => [s.id, s.hex!.map(([rx, to]) => ({ rx: new RegExp(rx, "i"), to }))]),
 );
 
+export const CURATED = "kuratiert";
+
 /** hexed-Variante für bestimmte Skills bauen. null, wenn für einen der Skills kein Ersatz hinterlegt ist. */
 export function hexWith(b: Beast, skillIds: string[]): Beast | null {
+  // Kuratierte Fassung hat Vorrang
+  if (skillIds[0] === CURATED || (skillIds.length && b.hex)) return b.hex ? { ...b, id: `${b.id}~hex:${CURATED}`, name: `${b.name} hexed`, work: b.hex, hexed: [CURATED] } : null;
   if (!skillIds.length || skillIds.some((id) => !HEX[id])) return null;
   const ids = [...skillIds].sort();
   const work = b.work.split(" · ").map((line) => {

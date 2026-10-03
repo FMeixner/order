@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.25.1] – 2026-10-03
+
+### Geändert
+- Dragon Flags bleiben in den Bestien (Wilde Jagd, Tatzelwurm, Nix).
+- Entfesselte Fassungen gibt es vorerst nicht. Die gelieferte Fassung (bereinigt) ist die Basis.
+- Kuratierte hexed-Fassungen für 13 Bestien mit schweren Übungen (Pistols, Clapping, Dragon Flags, Nordic Curls, einarmiges Hängen, Archer, Clapping Pullups): Lindwurm, Wilde Jagd, Nachtkrapp, Striga, Wilder Mann, Puck, Tatzelwurm, Nix, Aufhocker, Zwerg, Kikimora, Lutin, Dullahan. Sie haben Vorrang vor der automatischen hexed-Variante und stehen im Bestiarium bei der Bestie.
+
 ## [0.25.0] – 2026-10-03
 
 ### Geändert

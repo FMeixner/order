@@ -540,6 +540,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
 function hexNote(b: Beast): string | null {
   const ids = b.hexed ?? b.parts?.flatMap((p) => beastById(p.id)?.hexed ?? []) ?? [];
   if (!ids.length) return null;
+  if (ids.includes("kuratiert")) return "hexed: die schweren Übungen leichter, bei etwa gleicher Dauer.";
   const names = SKILLS.skills.filter((x) => ids.includes(x.id)).map((x) => x.name);
   return `hexed: ${names.join(", ")} durch eine leichtere Übung ersetzt, bis der Skill sitzt.`;
 }

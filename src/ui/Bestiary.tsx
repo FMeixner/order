@@ -64,6 +64,12 @@ export function Bestiary({ state }: { state: AppState }) {
                 {needs.length ? ` · ${needs.join(", ")}` : " · nur Körpergewicht"}
               </div>
               <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+              {b.hex && (
+                <div className="stack">
+                  <span className="muted small">Hexed (leichter, etwa gleich lang):</span>
+                  <ul className="beast-work muted">{b.hex.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+                </div>
+              )}
               {!beastOk(b, skills) && <div className="note warn small">Kommt noch nicht dran, es fehlt: {missing.map(skillName).join(", ")}.</div>}
               {times.length > 0 && (
                 <table className="pr-table small">
