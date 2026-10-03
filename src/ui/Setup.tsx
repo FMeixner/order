@@ -21,7 +21,7 @@ export function SkillEditor({ user, onChange }: { user: UserProfile; onChange: (
   };
   return (
     <div className="stack">
-      <p className="muted small">Hake ab, was du heute sauber schaffst. Übungen mit fehlendem Skill ersetzt die App durch leichtere Varianten. Bestien kommen dann verhext: nur die betroffene Übung wird getauscht. Übungsleitern, etwa zum Pistol Squat, bleiben als Lernweg drin und starten mit abgehaktem Skill weiter oben. Jederzeit änderbar.</p>
+      <p className="muted small">Hake ab, was du heute sauber schaffst. Übungen mit fehlendem Skill ersetzt die App durch leichtere Varianten. Bestien kommen dann mutiert: nur die betroffene Übung wird getauscht. Übungsleitern, etwa zum Pistol Squat, bleiben als Lernweg drin und starten mit abgehaktem Skill weiter oben. Jederzeit änderbar.</p>
       {SKILLS.groups.map((g) => (
         <div key={g.id} className="stack skill-group">
           <div className="block-label teal">{g.name}</div>

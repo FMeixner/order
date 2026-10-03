@@ -13,21 +13,22 @@ const NEED_LABEL: Record<BeastNeed, string> = {
 
 type Stand = "alle" | "bezwungen" | "offen";
 
-/** Zeiten einer Bestie, getrennt nach Form: Basis, verhext, ×2, ×3 */
+/** Zeiten einer Bestie, getrennt nach Form: entfesselt, mutiert, ×2, ×3 */
 function timesOf(b: Beast, all: AppState["beastTimes"]) {
   return Object.entries(all)
     .filter(([id, t]) => t.length && beastFamily(id).length === 1 && beastFamily(id)[0] === b.id)
     .map(([id, t]) => {
       const r = id.match(/~r(\d+)/)?.[1], x = id.match(/×(\d)$/)?.[1];
-      const label = [id.includes("~hex") ? "verhext" : "", x ? `×${x}` : "", r ? `${r} Runden` : ""].filter(Boolean).join(", ") || "Basis";
+      const label = [id.includes("~hex") ? "mutiert" : "", x ? `×${x}` : "", r ? `${r} Runden` : ""].filter(Boolean).join(", ") || "entfesselt";
       const best = t.reduce((m, x) => (x.seconds < m.seconds ? x : m), t[0]);
       return { id, label, best, n: t.length, last: [...t].sort((a, c) => c.date.localeCompare(a.date))[0] };
     })
-    .sort((a, c) => (a.label === "Basis" ? -1 : c.label === "Basis" ? 1 : a.label.localeCompare(c.label)));
+    .sort((a, c) => (a.label === "entfesselt" ? -1 : c.label === "entfesselt" ? 1 : a.label.localeCompare(c.label)));
 }
 
 export function Bestiary({ state }: { state: AppState }) {
   const [stand, setStand] = useState<Stand>("alle");
+  const [region, setRegion] = useState<"alle" | "nord" | "sued">("alle");
   const [q, setQ] = useState("");
   const skills = state.user.skills ? new Set(state.user.skills) : null;
   const skillName = (id: string) => SKILLS.skills.find((x) => x.id === id)?.name ?? id;
@@ -35,6 +36,7 @@ export function Bestiary({ state }: { state: AppState }) {
   const rows = useMemo(() => BEASTS.filter(beastActive).map((b) => ({ b, times: timesOf(b, state.beastTimes), region: beastRegion(b) })), [state.beastTimes]);
   const beaten = rows.filter((r) => r.times.length).length;
   const shown = rows
+    .filter((r) => region === "alle" || r.region === region)
     .filter((r) => stand === "alle" || (stand === "bezwungen") === r.times.length > 0)
     .filter((r) => !q.trim() || `${r.b.name} ${r.b.orig} ${r.b.work}`.toLowerCase().includes(q.trim().toLowerCase()))
     .sort((a, c) => (c.times.length > 0 ? 1 : 0) - (a.times.length > 0 ? 1 : 0) || a.b.name.localeCompare(c.b.name, "de"));
@@ -46,13 +48,13 @@ export function Bestiary({ state }: { state: AppState }) {
           <h2>Bestiarium</h2>
           <span className="muted small">{beaten} von {rows.length} bezwungen</span>
         </div>
-        <span className="muted small">Nordbestien. Die Morgenland-Bestien mit Last sind vorerst ausgeblendet.</span>
+        <Seg value={region} options={[{ value: "alle", label: "Alle" }, { value: "nord", label: "Nord" }, { value: "sued", label: "Morgenland" }]} onChange={setRegion} />
         <Seg value={stand} options={[{ value: "alle", label: "Alle" }, { value: "bezwungen", label: "Bezwungen" }, { value: "offen", label: "Offen" }]} onChange={setStand} />
         <input type="search" placeholder="Suchen: Name oder Übung" value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
       {shown.length === 0 && <div className="card muted">Keine Bestie passt zum Filter.</div>}
       {shown.map(({ b, times, region: r }) => {
-        const base = times.find((t) => t.label === "Basis");
+        const base = times.find((t) => t.label === "entfesselt");
         const { min, measured } = beastMinutes(b, state.beastTimes[b.id]);
         const needs = [...beastNeeds(b)].map((n) => NEED_LABEL[n]);
         const missing = beastSkills(b).filter((id) => skills && !skills.has(id));
@@ -68,7 +70,7 @@ export function Bestiary({ state }: { state: AppState }) {
               <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
               {!beastOk(b, skills) && (hx ? (
                 <div className="stack">
-                  <div className="note small">Kommt verhext, weil {missing.map(skillName).join(", ")} noch nicht angekreuzt ist:</div>
+                  <div className="note small">Kommt mutiert, weil {missing.map(skillName).join(", ")} noch nicht angekreuzt ist:</div>
                   <ul className="beast-work">{hx.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
                 </div>
               ) : <div className="note warn small">Kommt noch nicht dran, es fehlt: {missing.map(skillName).join(", ")}.</div>)}

@@ -163,8 +163,8 @@ const NEED_RULES: [RegExp, BeastNeed | null][] = [
   [/muscle-?up|pull-?up|chin-?up|c2b|toes-to-bar|\bttb\b|knees-to-elbow|hanging|passive hang|commando|archer row|incline row/i, "bar"],
   [/face pull|ext(ernal)? rotation/i, "band_or_cable"],
   [/^band /i, "band"],
-  [/bench press|deadlift|squats \(50%\)|good morning/i, "barbell"],
-  [/\bkb\b|kettlebell|swing|db snatch|goblet|halo|biceps curl|bar curl|triceps ext|shrug|thruster|chest fl|reverse fl|plate lunge/i, "kb_db"],
+  [/bench press|deadlift|squats \(50%\)|good morning|pull press|barbell curl|skull crusher|power clean|bent-over row/i, "barbell"],
+  [/\bkb\b|kettlebell|swing|db snatch|goblet|halo|biceps curl|bar curl|triceps ext|shrug|thruster|chest fl|reverse fl|db lunge/i, "kb_db"],
   [/\bbike\b/i, "bike"],
 ];
 /** Zahlen am Anfang einer Teilaufgabe weg: „21/15/9c Row“ → „Row“, „Buy-in: 100 Box Back Extension“ → „Box Back Extension“ */
@@ -232,7 +232,7 @@ export function beastRegion(b: Beast): BeastRegion {
   return loaded ? "sued" : "nord";
 }
 /** Morgenland-Bestien (mit Last) sind vorerst ausgeblendet: sie brauchen eine eigene Logik für die Last. */
-export const HIDDEN_REGIONS: BeastRegion[] = ["sued"];
+export const HIDDEN_REGIONS: BeastRegion[] = [];
 const activeMemo = new Map<string, boolean>();
 export const beastActive = (b: Beast): boolean => {
   if (!activeMemo.has(b.id)) activeMemo.set(b.id, !HIDDEN_REGIONS.includes(beastRegion(b)));
@@ -378,7 +378,7 @@ export const setWeekBeastBlocks = (fn: typeof weekBeastBlocks) => { weekBeastBlo
 
 const beastMemo = new WeakMap<AppState, Map<string, Beast | null>>();
 
-/** Bestie für einen Block. Nie dieselbe Bestie (auch nicht verhext oder als Teil einer Serie) in zwei aufeinanderfolgenden Wochen. */
+/** Bestie für einen Block. Nie dieselbe Bestie (auch nicht mutiert oder als Teil einer Serie) in zwei aufeinanderfolgenden Wochen. */
 export function pickBeast(block: Extract<Block, { type: "beast" }>, opts: BeastOpts): Beast | null {
   let m = beastMemo.get(opts.state);
   if (!m) beastMemo.set(opts.state, (m = new Map()));
@@ -427,12 +427,12 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   const lo = Math.min(...classes.map((c) => CLASS_RANGE[c][0])), hi = Math.max(...classes.map((c) => CLASS_RANGE[c][1]));
   const inSlot = (m: number) => m > lo && m <= hi;
   const skills = state.user.skills ? new Set(state.user.skills) : null;
-  // Fehlt ein Skill, kommt die Bestie verhext: die betroffenen Übungen durch ihren Ersatz getauscht
+  // Fehlt ein Skill, kommt die Bestie mutiert: die betroffenen Übungen durch ihren Ersatz getauscht
   const serve = (b: Beast): Beast | null => (beastOk(b, skills) ? b : hexFor(b, skills));
   const ok = (b: Beast) => beastActive(b) && beastFits(b, profile) && serve(b) != null;
   const min = (b: Beast) => beastMinutes(b, state.beastTimes[b.id]).min;
 
-  // Feste Start-Bestie in Woche 1, notfalls verhext
+  // Feste Start-Bestie in Woche 1, notfalls mutiert
   if (block.first && opts.week === 1 && !opts.reduced) {
     const b0 = BEAST_BY_ID[block.first];
     if (b0 && ok(b0) && fresh(b0)) return serve(b0);
@@ -492,6 +492,11 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
       for (let i = 0; i < Math.max(0, upto); i++) {
         const [b, prof] = targets[i];
         const x = pickBeast(b, { ...opts, week: k, profile: prof, reduced: false });
+        if (x) mark(x.id, k);
+      }
+      // Block, der nicht im Wochenplan steht (z. B. Test oder Sonderfall): eigene Vorwochen zählen trotzdem
+      if (k < opts.week && !targets.some(([b]) => b.id === block.id)) {
+        const x = pickBeast(block, { ...opts, week: k, reduced: false });
         if (x) mark(x.id, k);
       }
     }

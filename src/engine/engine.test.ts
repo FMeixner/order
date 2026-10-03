@@ -396,7 +396,7 @@ describe("hexed und Grundlagentempo", () => {
     const { beastById } = await import("./plan");
     const mu = BEASTS.find((b) => beastSkills(b).length === 1 && beastSkills(b)[0] === "muscle_up")!;
     const h = hexFor(mu, new Set())!;
-    expect(h.name).toBe(`${mu.name} verhext`);
+    expect(h.name).toBe(`${mu.name} mutiert`);
     expect(h.work).toContain("Assisted Muscle-Ups (Band oder Kipping)");
     expect(h.id).toBe(`${mu.id}~hex`);
     expect(beastById(h.id)?.work).toBe(h.work);
@@ -434,7 +434,7 @@ describe("hexed und Grundlagentempo", () => {
     const hx = hexFor(lw, new Set(["pullup"]))!;
     expect(hx.id).toBe("ng-thor~hex");
     expect(hx.work).toContain("100/80/60 Squats");
-    expect(beastById(hx.id)?.name).toBe("Lindwurm verhext");
+    expect(beastById(hx.id)?.name).toBe("Lindwurm mutiert");
     const wj = BEASTS.find((b) => b.name === "Wilde Jagd")!;
     expect(wj.work).toContain("4 Dragon Flags");
     expect(hexFor(wj, new Set(["pullup", "hspu"]))!.work).toContain("12 Leg Raises");
@@ -625,23 +625,23 @@ describe("Ortswechsel und dreimal OK", () => {
 });
 
 describe("Start-Bestie", () => {
-  it("Assassin beginnt mit Undine, ohne Muscle-Up als Undine verhext", () => {
+  it("Assassin beginnt mit Undine, ohne Muscle-Up als Undine mutiert", () => {
     const s = sample();
     const blk = FOCUS_BY_ID.assassin.roles;
     const b = Object.values(blk).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
     const opts = { blockId: "b1", week: 1, profile: { ...gym, id: "g" }, state: s, reduced: false, downgrade: false };
     expect(pickBeast(b, opts)?.name).toBe("Undine");
     const hex = pickBeast(b, { ...opts, state: { ...s, user: { ...s.user, skills: [] } } });
-    expect(hex?.name).toMatch(/Undine verhext/);
+    expect(hex?.name).toMatch(/Undine mutiert/);
     expect(pickBeast(b, { ...opts, week: 2 })?.id).toBeDefined();
   });
 });
 
 describe("Bestien: Ausrüstung und Wochenvolumen", () => {
-  it("Zahhak braucht Ringe, Band oder Kabel und Kurzhanteln", async () => {
+  it("Zahhak braucht Ringe und Band", async () => {
     const { beastFits, beastNeeds } = await import("./plan");
     const k = BEASTS.find((b) => b.name === "Zahhak")!;
-    expect([...beastNeeds(k)].sort()).toEqual(["band_or_cable", "kb_db", "rings"]);
+    expect([...beastNeeds(k)].sort()).toEqual(["band", "band_or_cable", "rings"]);
     const withRings: EquipmentProfile = { ...home, has: { ...home.has, rings: true }, bands: ["mittel"] };
     expect(beastFits(k, withRings)).toBe(true);
     expect(beastFits(k, { ...withRings, has: { ...withRings.has, rings: false } })).toBe(false);
