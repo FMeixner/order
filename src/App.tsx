@@ -3,7 +3,6 @@ import { autoBackup } from "./backup";
 import { isoDate } from "./engine/plan";
 import { useAppState } from "./store";
 import { Almanac } from "./ui/Almanac";
-import { LogView } from "./ui/LogView";
 import { Onboarding } from "./ui/Onboarding";
 import { PlanList } from "./ui/PlanEditor";
 import { addDays, trainingDays } from "./engine/plan";
@@ -16,9 +15,9 @@ import { unlockAudio } from "./audio";
 import { Help } from "./ui/Help";
 import { Modal } from "./ui/common";
 
-type Tab = "heute" | "plan" | "almanach" | "log" | "setup";
+type Tab = "heute" | "plan" | "almanach" | "setup";
 const TABS: { k: Tab; l: string }[] = [
-  { k: "heute", l: "Heute" }, { k: "plan", l: "Plan" }, { k: "almanach", l: "Almanach" }, { k: "log", l: "Log" }, { k: "setup", l: "Setup" },
+  { k: "heute", l: "Heute" }, { k: "plan", l: "Plan" }, { k: "almanach", l: "Almanach" }, { k: "setup", l: "Setup" },
 ];
 
 export default function App() {
@@ -71,8 +70,7 @@ export default function App() {
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
-          {tab === "almanach" && <Almanac state={state} />}
-          {tab === "log" && <LogView state={state} today={today} />}
+          {tab === "almanach" && <Almanac state={state} update={update} today={today} />}
           {tab === "setup" && <Setup state={state} update={update} replace={replace} today={today} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
         </main>
         <TimerBar />
