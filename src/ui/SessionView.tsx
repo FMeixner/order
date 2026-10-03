@@ -541,7 +541,7 @@ function hexNote(b: Beast): string | null {
   const ids = b.hexed ?? b.parts?.flatMap((p) => beastById(p.id)?.hexed ?? []) ?? [];
   if (!ids.length) return null;
   const names = SKILLS.skills.filter((x) => ids.includes(x.id)).map((x) => x.name);
-  return `hexed: ${names.join(", ")} durch eine leichtere Übung ersetzt, bis der Skill sitzt.`;
+  return `Verhext: ${names.join(", ")} durch eine leichtere Übung ersetzt, bis der Skill sitzt.`;
 }
 
 /** Stoppuhr und Zeiteingabe für eine Bestie */
@@ -615,12 +615,12 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     });
     if (u < parts.length - 1) t.rest(`Pause, dann ${parts[u + 1].name}`, COMBO_REST);
   };
-  const work = (b: { work: string; rounds: number; times?: number; repeat?: number; name?: string }) => {
+  const work = (b: { id?: string; work: string; rounds: number; times?: number; repeat?: number; name?: string }) => {
     const k = b.times ?? b.repeat ?? 1;
     return (
       <>
         <div className="muted small">{k > 1 ? `${k}-mal am Stück ohne Pause, je ${b.rounds / k} ${b.rounds / k === 1 ? "Durchgang" : "Runden"}` : `${b.rounds} ${b.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-        <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const extra = beastExtra(w, ctx.profile, /hexed/.test(b.name ?? "")); return <li key={i}>{w}{extra && <span className="muted"> · {extra}</span>}</li>; })}</ul>
+        <ul className="beast-work">{b.work.split(" · ").map((w, i) => { const extra = beastExtra(w, ctx.profile, !!b.id?.includes("~hex")); return <li key={i}>{w}{extra && <span className="muted"> · {extra}</span>}</li>; })}</ul>
       </>
     );
   };
@@ -685,7 +685,7 @@ export function SessionPreview(ctx: SessionCtx) {
                 {parts.map((pt, k) => (
                   <div key={k}>
                     <div className="block-label amber">{it.beast?.parts ? `${k + 1}. ` : "Bestie: "}{pt.name} · {pt.times > 1 ? `${pt.times}-mal am Stück, je ${pt.rounds / pt.times} Runden` : `${pt.rounds} ${pt.rounds === 1 ? "Durchgang" : "Runden"}`}</div>
-                    {pt.work.split(" · ").map((w, j) => { const extra = beastExtra(w, ctx.profile, /hexed/.test(pt.name)); return <div key={j} className="preview-row"><span>{w}</span>{extra && <span className="muted small">{extra}</span>}</div>; })}
+                    {pt.work.split(" · ").map((w, j) => { const extra = beastExtra(w, ctx.profile, pt.id.includes("~hex")); return <div key={j} className="preview-row"><span>{w}</span>{extra && <span className="muted small">{extra}</span>}</div>; })}
                   </div>
                 ))}
               </div>

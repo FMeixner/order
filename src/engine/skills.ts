@@ -66,7 +66,7 @@ export function hexWith(b: Beast, skillIds: string[]): Beast | null {
     for (const id of ids) for (const r of HEX[id]) if (r.rx.test(out)) out = scaleLead(out.replace(r.rx, r.to), r.factor);
     return out;
   }).join(" · ");
-  return { ...b, id: `${b.id}~hex`, name: `${b.name} hexed`, work, hexed: ids };
+  return { ...b, id: `${b.id}~hex`, name: `${b.name} verhext`, work, hexed: ids };
 }
 
 /** hexed-Variante für die Skills, die jemandem noch fehlen. null, wenn nichts fehlt oder kein Ersatz existiert. */

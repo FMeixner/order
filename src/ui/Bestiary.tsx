@@ -18,7 +18,7 @@ function timesOf(b: Beast, all: AppState["beastTimes"]) {
   return Object.entries(all)
     .filter(([id, t]) => t.length && beastFamily(id).length === 1 && beastFamily(id)[0] === b.id)
     .map(([id, t]) => {
-      const label = id.includes("~hex") ? "hexed" : id.match(/×(\d)$/) ? `×${id.match(/×(\d)$/)![1]}` : "Basis";
+      const label = id.includes("~hex") ? "verhext" : id.match(/×(\d)$/) ? `×${id.match(/×(\d)$/)![1]}` : "Basis";
       const best = t.reduce((m, x) => (x.seconds < m.seconds ? x : m), t[0]);
       return { id, label, best, n: t.length, last: [...t].sort((a, c) => c.date.localeCompare(a.date))[0] };
     })
@@ -67,7 +67,7 @@ export function Bestiary({ state }: { state: AppState }) {
               <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
               {!beastOk(b, skills) && (hx ? (
                 <div className="stack">
-                  <div className="note small">Kommt hexed, weil {missing.map(skillName).join(", ")} noch nicht angekreuzt ist:</div>
+                  <div className="note small">Kommt verhext, weil {missing.map(skillName).join(", ")} noch nicht angekreuzt ist:</div>
                   <ul className="beast-work">{hx.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
                 </div>
               ) : <div className="note warn small">Kommt noch nicht dran, es fehlt: {missing.map(skillName).join(", ")}.</div>)}

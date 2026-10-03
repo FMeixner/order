@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.26.1] – 2026-10-03
+
+### Geändert
+- Einheitliche Vokabel „verhext“ statt „hexed“: Namen wie „Undine verhext“, Bestiarium, Hinweise, Hilfe und Setup.
+- Clapping und Archer Pushups bleiben ohne eigenen Skill in der Basis. Nordic Curls ohne Fußhalt: verhext kommen Nordic Negatives, kein eigenes Ausrüstungsfeld.
+
 ## [0.26.0] – 2026-10-03
 
 ### Geändert

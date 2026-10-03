@@ -396,7 +396,7 @@ describe("hexed und Grundlagentempo", () => {
     const { beastById } = await import("./plan");
     const mu = BEASTS.find((b) => beastSkills(b).length === 1 && beastSkills(b)[0] === "muscle_up")!;
     const h = hexFor(mu, new Set())!;
-    expect(h.name).toBe(`${mu.name} hexed`);
+    expect(h.name).toBe(`${mu.name} verhext`);
     expect(h.work).toContain("Assisted Muscle-Ups (Band oder Kipping)");
     expect(h.id).toBe(`${mu.id}~hex`);
     expect(beastById(h.id)?.work).toBe(h.work);
@@ -425,7 +425,7 @@ describe("hexed und Grundlagentempo", () => {
         expect(x.name).not.toMatch(/Wilde Jagd|Krampus|Perchta|Werwolf/);
         if (x.parts) expect(x.minutes).toBeLessThanOrEqual(22);
       }
-      expect(ws.slice(1).filter((x) => /Undine hexed/.test(x.name)).length).toBe(0);
+      expect(ws.slice(1).filter((x) => /Undine verhext/.test(x.name)).length).toBe(0);
     }
   });
   it("Assassin: zehn Wochen ohne Wiederholung, Doppel kommen vor", async () => {
@@ -444,7 +444,7 @@ describe("hexed und Grundlagentempo", () => {
     const hx = hexFor(lw, new Set(["pullup"]))!;
     expect(hx.id).toBe("ng-thor~hex");
     expect(hx.work).toContain("100/80/60 Squats");
-    expect(beastById(hx.id)?.name).toBe("Lindwurm hexed");
+    expect(beastById(hx.id)?.name).toBe("Lindwurm verhext");
     const wj = BEASTS.find((b) => b.name === "Wilde Jagd")!;
     expect(wj.work).toContain("4 Dragon Flags");
     expect(hexFor(wj, new Set(["pullup", "hspu"]))!.work).toContain("12 Leg Raises");
@@ -623,14 +623,14 @@ describe("Ortswechsel und dreimal OK", () => {
 });
 
 describe("Start-Bestie", () => {
-  it("Assassin beginnt mit Undine, ohne Muscle-Up als Undine hexed", () => {
+  it("Assassin beginnt mit Undine, ohne Muscle-Up als Undine verhext", () => {
     const s = sample();
     const blk = FOCUS_BY_ID.assassin.roles;
     const b = Object.values(blk).flatMap((r) => r.blocks).find((x) => x.type === "beast" && x.first) as Extract<import("../types").Block, { type: "beast" }>;
     const opts = { blockId: "b1", week: 1, profile: { ...gym, id: "g" }, state: s, reduced: false, downgrade: false };
     expect(pickBeast(b, opts)?.name).toBe("Undine");
     const hex = pickBeast(b, { ...opts, state: { ...s, user: { ...s.user, skills: [] } } });
-    expect(hex?.name).toMatch(/Undine hexed/);
+    expect(hex?.name).toMatch(/Undine verhext/);
     expect(pickBeast(b, { ...opts, week: 2 })?.id).toBeDefined();
   });
 });
