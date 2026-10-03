@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.28.0] – 2026-10-03
+
+### Neu
+- Kurzformen: Passt eine Bestie mit gleichen Runden nicht ins Zeitfenster, kommt sie mit so vielen Runden, wie hineinpassen (etwa „Banshee (2 Runden)“). Leitern wie 21/15/9, AMRAP und Buy-in/Buy-out werden nicht gekürzt. Eigene Bestzeit je Rundenzahl, im Bestiarium als „3 Runden“. Kurze Slots (bis 10,5 Min) haben damit statt 7 jetzt 12 verschiedene Bestien in 12 Wochen.
+
 ## [0.27.0] – 2026-10-03
 
 ### Geändert

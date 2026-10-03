@@ -298,11 +298,15 @@ export function composeBeast(parts: [Beast, number][]): Beast {
 /** Bestie oder Serie nach Id, auch "a×2" und "a+b" */
 export function beastById(id: string): Beast | null {
   if (BEAST_BY_ID[id]) return BEAST_BY_ID[id];
-  const unit = (u: string): Beast | undefined => {
+  const unit = (u0: string): Beast | undefined => {
+    // Kurzform „…~r3“: weniger Runden
+    const rm = u0.match(/^(.*)~r(\d+)$/);
+    const u = rm ? rm[1] : u0;
     const [base, hex] = u.split("~hex");
     const b = BEAST_BY_ID[base];
     // „a~hex“ (alle fehlenden Skills getauscht) oder alt „a~hex:skill,skill“
-    return b && hex !== undefined ? hexWith(b, hex.startsWith(":") ? hex.slice(1).split(",") : beastSkills(b)) ?? undefined : b;
+    const full = b && hex !== undefined ? hexWith(b, hex.startsWith(":") ? hex.slice(1).split(",") : beastSkills(b)) ?? undefined : b;
+    return full && rm ? shortBeast(full, parseInt(rm[2])) ?? undefined : full;
   };
   const parts = id.split("+").map((p) => { const m = p.match(/^(.*)×(\d)$/); return m ? [unit(m[1]), parseInt(m[2])] : [unit(p), 1]; }) as [Beast | undefined, number][];
   if (!parts.length || parts.some(([b]) => !b)) return null;
@@ -316,6 +320,15 @@ function hash(s: string): number {
 }
 
 type BeastOpts = { blockId: string; week: number; profile: EquipmentProfile; state: AppState; reduced: boolean; downgrade: boolean };
+
+/** Kurzform: gleiche Bestie mit weniger Runden. Nur bei gleichen Runden (keine Leitern wie 21/15/9, kein AMRAP, kein Buy-in). */
+export function canShorten(b: Beast): boolean {
+  return b.rounds >= 3 && !b.parts && !b.repeat && !/\d\/\d|amrap|buy-(in|out)/i.test(b.work);
+}
+export function shortBeast(b: Beast, k: number): Beast | null {
+  if (!canShorten(b) || k < 2 || k >= b.rounds) return null;
+  return { ...b, id: `${b.id}~r${k}`, name: `${b.name} (${k} Runden)`, rounds: k, minutes: (b.minutes * k) / b.rounds };
+}
 
 /** Grund-Bestien einer Id: "a~hex:x" → a, "a×2+b" → a, b */
 export const beastFamily = (id: string): string[] => id.split("+").map((u) => u.replace(/×\d+$/, "").split("~")[0]);
@@ -445,6 +458,13 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
     const m = mins.get(b.id)!, f = [fam1.get(b.id)!];
     if (inSlot(m)) cands.push({ kind: "single", units: [b], fam: f });
     if (inSlot(m * 2)) cands.push({ kind: "double", units: [b], fam: f });
+    // Zu lang fürs Fenster: Kurzform mit so vielen Runden, wie hineinpassen (zählt als Einzelbestie)
+    if (m > hi && canShorten(b)) {
+      const per = m / b.rounds;
+      const k = Math.min(b.rounds - 1, Math.floor(hi / per));
+      const sb = shortBeast(b, k);
+      if (sb && inSlot(per * k)) { mins.set(sb.id, per * k); cands.push({ kind: "single", units: [sb], fam: f }); }
+    }
   }
   const shortest = Math.min(...mins.values());
   const short = singles.filter((b) => mins.get(b.id)! + shortest + COMBO_REST / 60 <= hi);

@@ -47,7 +47,7 @@ export function Help() {
         <li>Jede Bestie hat ein Basis-Workout. Ist ein Skill (Setup › Können) nicht angekreuzt, kommt sie <em>verhext</em>: Nur die Übungen dieses Skills werden durch ihren Ersatz getauscht, etwa Pistols → doppelt so viele Squats, Dragon Flags → dreimal so viele Leg Raises. Alle verhexten Fassungen einer Bestie teilen sich eine Bestzeit. Dieselbe Bestie kommt nie zwei Wochen hintereinander.</li>
         <li>Reiter „Almanach“: die Orden und das Bestiarium. Im Bestiarium alle Nordbestien mit Übungen, Länge, Ausrüstung und Bestzeiten (Basis, verhext, Doppel), Filter bezwungen oder offen und eine Suche.</li>
         <li>Pullups in Bestien sind immer strikt. Verhext werden daraus Assisted Pullups, mit Band oder Kipping; bei Muscle-Ups genauso.</li>
-        <li>Bestienwahl in allen Orden: Einzelbestie, Doppel (×2) und Serie aus zwei Bestien sind gleichrangig. Die Dauer passt zum Zeitfenster des Tages, das Ziel des Ordens gewichtet (Kraft, Kondition, Ausdauer, Beweglichkeit). Vorrang hat Abwechslung: Was in der Phase schon dran war, kommt erst wieder, wenn alles Passende durch ist.</li>
+        <li>Bestienwahl in allen Orden: Einzelbestie, Doppel (×2) und Serie aus zwei Bestien sind gleichrangig. Die Dauer passt zum Zeitfenster des Tages, das Ziel des Ordens gewichtet (Kraft, Kondition, Ausdauer, Beweglichkeit). Vorrang hat Abwechslung: Was in der Phase schon dran war, kommt erst wieder, wenn alles Passende durch ist. Ist eine Bestie für den Slot zu lang, kommt sie als Kurzform mit weniger Runden (eigene Bestzeit).</li>
       </ul>
 
       <h3>Anderer Ort heute</h3>

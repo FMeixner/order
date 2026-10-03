@@ -439,6 +439,18 @@ describe("hexed und Grundlagentempo", () => {
     expect(wj.work).toContain("4 Dragon Flags");
     expect(hexFor(wj, new Set(["pullup", "hspu"]))!.work).toContain("12 Leg Raises");
   });
+  it("Kurzformen: weniger Runden, wenn die volle Bestie nicht ins Fenster passt; eigene Id, Familie bleibt", async () => {
+    const { pickBeast, beastFamily, beastById, shortBeast, canShorten } = await import("./plan");
+    const s = sample();
+    const blk = { type: "beast" as const, id: "t", classes: ["plage" as const] };
+    const ws = Array.from({ length: 12 }, (_, i) => pickBeast(blk, { blockId: "b1", week: i + 1, profile: { ...gym, id: "g" }, state: s, reduced: false, downgrade: false })!);
+    expect(ws.some((x) => x.id.includes("~r"))).toBe(true);
+    expect(new Set(ws.map((x) => beastFamily(x.id)[0])).size).toBeGreaterThanOrEqual(10);
+    const sb = ws.find((x) => x.id.includes("~r"))!;
+    expect(beastById(sb.id)?.name).toBe(sb.name);
+    expect(canShorten(BEASTS.find((b) => b.name === "Nachzehrer")!)).toBe(false); // 21/15/9
+    expect(shortBeast(BEASTS.find((b) => b.name === "Banshee")!, 2)?.rounds).toBe(2);
+  });
   it("jeder Orden hat mindestens eine Bestie pro Woche", () => {
     for (const f of FOCI.filter((x) => !x.medley)) for (const ab of ["A", "B"]) {
       const n = f.week_4.flatMap((rk) => f.roles[rk].blocks).filter((b) => b.type === "beast" && (!b.rotation || b.rotation === ab)).length;

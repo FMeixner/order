@@ -18,7 +18,8 @@ function timesOf(b: Beast, all: AppState["beastTimes"]) {
   return Object.entries(all)
     .filter(([id, t]) => t.length && beastFamily(id).length === 1 && beastFamily(id)[0] === b.id)
     .map(([id, t]) => {
-      const label = id.includes("~hex") ? "verhext" : id.match(/×(\d)$/) ? `×${id.match(/×(\d)$/)![1]}` : "Basis";
+      const r = id.match(/~r(\d+)/)?.[1], x = id.match(/×(\d)$/)?.[1];
+      const label = [id.includes("~hex") ? "verhext" : "", x ? `×${x}` : "", r ? `${r} Runden` : ""].filter(Boolean).join(", ") || "Basis";
       const best = t.reduce((m, x) => (x.seconds < m.seconds ? x : m), t[0]);
       return { id, label, best, n: t.length, last: [...t].sort((a, c) => c.date.localeCompare(a.date))[0] };
     })
