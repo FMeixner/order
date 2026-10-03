@@ -88,3 +88,21 @@ describe("Erzähler", () => {
     expect(checkPack("kaputt").length).toBe(1);
   });
 });
+
+describe("Lebenspunkte pro Einheit", () => {
+  it("startet bei 100 % und sinkt mit jeder erledigten Einheit, nicht erst am Wochenende", async () => {
+    const { chapterOf } = await import("./saga");
+    const { emptyState, EQUIPMENT_PRESETS } = await import("../store");
+    const s0 = emptyState();
+    const g = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
+    const b = { id: "b1", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium" as const, travel: false };
+    const s = { ...s0, onboarded: true, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as typeof s0.schedule, plan: [b], narrative: { on: true } };
+    const c0 = chapterOf(s, b, "2026-09-29");
+    expect(c0.liveHp).toBe(c0.hp);
+    const done = (role: string, date: string) => ({ id: `b1:1:${role}`, date, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, menu: {}, done: true });
+    const c1 = chapterOf({ ...s, sessions: [done("kraft_a", "2026-09-28")] }, b, "2026-09-29");
+    expect(c1.liveHp).toBeLessThan(c0.hp);
+    const c2 = chapterOf({ ...s, sessions: [done("kraft_a", "2026-09-28"), done("arme_schultern", "2026-09-29")] }, b, "2026-09-30");
+    expect(c2.liveHp).toBeLessThan(c1.liveHp);
+  });
+});

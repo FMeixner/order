@@ -131,6 +131,8 @@ export interface Chapter {
   scene: Scene;
   foe: Foe;
   hp: number;
+  /** Lebenspunkte jetzt, nach jeder erledigten Einheit (Start: hp) */
+  liveHp: number;
   dealt: number;
   weeks: WeekRecap[];
   prologue: Line[];
@@ -279,6 +281,13 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
   }
 
   const ended = weeks.length === total;
+  // Laufende Woche: jede erledigte Einheit trifft sofort, Wochenboni kommen am Wochenende dazu. Start bei 100 %.
+  let live = dealt;
+  if (!ended) {
+    const w = weeks.length + 1;
+    if (w <= total) live += new Set(sessionsOfWeek(state, b, w).map((x) => x.role)).size * DMG.session;
+  }
+  const liveHp = ended ? hp - Math.min(dealt, hp) : hp - Math.min(live, hp - 1);
   const outcome: Outcome | null = ended ? (dealt >= hp * 1.2 ? "triumph" : dealt >= hp ? "win" : "close") : null;
   const saga: Line[] = [];
   if (ended && outcome) {
@@ -303,7 +312,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
     if (stats.fumbles) parts.push(`${stats.fumbles} ${stats.fumbles === 1 ? "Patzer" : "Patzer"}`);
     saga.push({ kind: "stat", text: parts.join(" · ") });
   }
-  return { block: b, sceneId, scene, foe, hp, dealt, weeks, prologue, ended, outcome, epithet: String(vars.beiname), saga, stats, vars };
+  return { block: b, sceneId, scene, foe, hp, dealt, liveHp, weeks, prologue, ended, outcome, epithet: String(vars.beiname), saga, stats, vars };
 }
 
 function prevVars(prev: Chapter): Vars {

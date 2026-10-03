@@ -8,6 +8,7 @@ import { Collapse, Field, Seg } from "./common";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
+const cap1 = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
 export const ravenOn = (s: AppState) => !!s.narrative?.on;
 
 export function RavenLines({ lines, aside = "In eigener Sache" }: { lines: Line[]; aside?: string }) {
@@ -63,12 +64,13 @@ export function RavenToday({ state, update, block, today }: { state: AppState; u
     <section className="card collapse raven">
       <button className="collapse-head" onClick={toggle} aria-expanded={open}>
         <span className="collapse-title">{title}</span>
-        <span className="collapse-meta">{state.narrative?.seen !== key ? "neu" : ch.scene.name}</span>
+        <span className="collapse-meta">{state.narrative?.seen !== key ? "neu" : `${cap1(ch.foe.nom)} ${Math.max(ch.liveHp > 0 ? 1 : 0, Math.round((100 * ch.liveHp) / ch.hp))} %`}</span>
         <span className={`chev ${open ? "open" : ""}`} aria-hidden>›</span>
       </button>
       {open && (
         <div className="collapse-body">
-          <RavenLines lines={showWeek ? showWeek.lines : ch.prologue} aside={nr.aside} />
+          <RavenLines lines={(showWeek ? showWeek.lines : ch.prologue).filter((l) => ch.ended || l.kind !== "hp")} aside={nr.aside} />
+          {!ch.ended && <RavenLines lines={[{ kind: "hp", text: cap1(ch.foe.nom), value: ch.liveHp, max: ch.hp }]} />}
           {ch.ended && <><hr /><RavenLines lines={ch.saga} aside={nr.aside} /></>}
           {showWeek && <p className="muted small">Alle Ausgaben stehen im Log unter „{nr.archive}“.</p>}
         </div>
