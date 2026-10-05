@@ -2,6 +2,7 @@
    Alles wird aus den Trainingsdaten berechnet, auch die Würfel (fester Startwert je Woche).
    Ein- und Ausschalten verliert also nichts, und die Geschichte ändert sich nicht beim Neuladen.
    Texte und Welt stehen in data/narrative/generic.json. Eigene Welten ersetzen Teile davon. */
+import { allRuns, runGroups } from "./runs";
 import genericJson from "../../data/narrative/generic.json";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Session } from "../types";
@@ -158,7 +159,7 @@ function plannedOf(state: AppState, b: PlanBlock, week: number): number {
 function prsOf(state: AppState, list: Session[]): string[] {
   const out: string[] = [];
   for (const s of list) {
-    const runs = [s.beast, ...(s.beastParts ?? [])].filter((x): x is { id: string; seconds: number | null; easy?: boolean } => !!x && !!x.seconds && !x.easy);
+    const runs = allRuns(s).filter((x) => !!x.seconds && !x.easy);
     for (const r of runs) {
       const before = (state.beastTimes[r.id] ?? []).filter((t) => t.date < s.date).map((t) => t.seconds);
       if (before.length && r.seconds! < Math.min(...before)) out.push(beastById(r.id)?.name ?? r.id);
@@ -258,7 +259,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
       else if (roll >= 15) { dmg += DMG.high; lines.push({ kind: "roll", value: roll, text: T("high", w) }); }
       else lines.push({ kind: "roll", value: roll, text: "" });
       // Besiegte Bestien der Woche: entfesselt oder mutiert, Serien als Doppelschlag
-      const runs = list.flatMap((x) => (x.beastParts?.length ? [{ parts: x.beastParts.map((p) => p.id) }] : x.beast ? [{ parts: [x.beast.id] }] : []));
+      const runs = list.flatMap((x) => runGroups(x).map((g) => ({ parts: g.parts?.length ? g.parts.map((p) => p.id) : g.beast ? [g.beast.id] : [] }))).filter((r) => r.parts.length);
       const nameOf = (id: string) => beastById(id.split("~")[0].replace(/×\d+$/, ""))?.name ?? id;
       runs.slice(0, 2).forEach((r, i) => {
         if (r.parts.length > 1) lines.push({ kind: "text", text: T("bestie_serie", stats.beasts + i, { bestie: nameOf(r.parts[0]), bestie_zwei: nameOf(r.parts[1]) }) });

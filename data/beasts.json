@@ -27,7 +27,7 @@
   {"id":"ng-jormungandr","name":"Krampus","orig":"Jormungandr","rounds":10,"minutes":23,"equipment":["bar_or_rings"],"work":"20 Squat Jumps · 15 Diamond Pushups · 10 Toes-to-Bar · 5 Tuck Jumps"},
   {"id":"ng-hugin","name":"Nachtkrapp","orig":"Hugin","rounds":5,"minutes":11,"equipment":["bodyweight_only"],"work":"6/5/4/3/2 Clapping Pushups · 12/10/8/6/4 Pistol Squats"},
   {"id":"ng-aslaug","name":"Marid","orig":"Aslaug","rounds":3,"minutes":9,"equipment":["band","rower"],"work":"15/20/25 Band Thrusters · 15/20/25c Row","cap":12,"start":{"band":"mittel"}},
-  {"id":"ng-fjalar","name":"Pazuzu","orig":"Fjalar","rounds":3,"minutes":5,"equipment":["bar_or_rings"],"work":"8 Archer Rows · 12 Triceps Extensions · 16 Hanging Side Raises","cap":8,"start":{"kg":14}},
+  {"id":"ng-fjalar","name":"Huldra","orig":"Fjalar","rounds":3,"minutes":5,"equipment":["bar_or_rings"],"work":"8 Archer Rows · 12 Ring Triceps Extensions · 16 Hanging Side Raises"},
   {"id":"ng-bergelmir","name":"Golem","orig":"Bergelmir","rounds":3,"minutes":11,"equipment":["bar_or_rings","wall_or_open"],"work":"4 Muscle-Ups · 8 Handstand Pushups · 24 Toes-to-Bar"},
   {"id":"ng-garm","name":"Black Shuck","orig":"Garm","rounds":4,"minutes":11,"equipment":["bar_or_rings"],"work":"16/12/8/4 Toes-to-Bar · 16/12/8/4 Dips"},
   {"id":"ng-nidhoggr","name":"Striga","orig":"Nidhöggr","rounds":3,"minutes":11,"equipment":["bar_or_rings"],"work":"10/20/30 Alt OA Hanging · 10/20/30 Archer Pushup · 10/20/30 L-Sit"},

@@ -450,6 +450,21 @@ describe("hexed und Grundlagentempo", () => {
     expect(canShorten(BEASTS.find((b) => b.name === "Nachzehrer")!)).toBe(false); // 21/15/9
     expect(shortBeast(BEASTS.find((b) => b.name === "Banshee")!, 2)?.rounds).toBe(2);
   });
+  it("spontaner fünfter Tag am Sonntag kommt nach den erledigten Einheiten, nicht in die Wochenmitte", () => {
+    const s = sample();
+    const b = { id: "bz", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium" as const, travel: false };
+    const four = { ...s, plan: [b] };
+    const f = FOCUS_BY_ID.assassin;
+    const planned4 = dayRoleMap(four, b, f, 1);
+    const dates: Record<string, string> = { Mo: "2026-09-28", Di: "2026-09-29", Do: "2026-10-01", Fr: "2026-10-02" };
+    const sessions = planned4.map((d) => ({ id: `bz:1:${d.role}`, date: dates[d.day], blockId: "bz", focusId: "assassin", week: 1, role: d.role, profileId: d.profileId, entries: {}, drills: {}, menu: {}, done: true }));
+    const five = { ...four, schedule: { ...four.schedule, So: "h" } as AppState["schedule"], sessions };
+    const m = dayRoleMap(five, b, f, 1);
+    expect(m.find((d) => d.day === "So")?.role).toBe("bonus");
+    for (const d of planned4) expect(m.find((x) => x.day === d.day)?.role).toBe(d.role);
+    // ohne erledigte Einheiten bleibt die geplante Reihenfolge (Bonus in der Wochenmitte)
+    expect(dayRoleMap({ ...five, sessions: [] }, b, f, 1).find((d) => d.day === "So")?.role).not.toBe("bonus");
+  });
   it("jeder Orden hat mindestens eine Bestie pro Woche", () => {
     for (const f of FOCI.filter((x) => !x.medley)) for (const ab of ["A", "B"]) {
       const n = f.week_4.flatMap((rk) => f.roles[rk].blocks).filter((b) => b.type === "beast" && (!b.rotation || b.rotation === ab)).length;
@@ -719,8 +734,8 @@ describe("Nord und Süd", () => {
   it("Morgenlandbestien haben externen Widerstand, Nordbestien nicht, und die Namen passen", async () => {
     const { beastRegion } = await import("./plan");
     const sued = BEASTS.filter((b) => beastRegion(b) === "sued").map((b) => b.name).sort();
-    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Mantikor", "Marid", "Pazuzu", "Peri", "Qarin", "Roch", "Schahmaran", "Schedu", "Simurgh", "Sirrusch", "Tiamat", "Ugallu", "Zahhak"]);
-    expect(BEASTS.filter((b) => beastRegion(b) === "nord").length).toBe(54);
+    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Mantikor", "Marid", "Peri", "Qarin", "Roch", "Schahmaran", "Schedu", "Simurgh", "Sirrusch", "Tiamat", "Ugallu", "Zahhak"]);
+    expect(BEASTS.filter((b) => beastRegion(b) === "nord").length).toBe(55);
     expect(beastRegion(BEASTS.find((b) => b.name === "Undine")!)).toBe("nord");
   });
 });

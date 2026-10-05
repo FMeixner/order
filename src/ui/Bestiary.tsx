@@ -20,7 +20,7 @@ function timesOf(b: Beast, all: AppState["beastTimes"]) {
     .filter(([id, t]) => t.length && beastFamily(id).length === 1 && beastFamily(id)[0] === b.id)
     .map(([id, t]) => {
       const r = id.match(/~r(\d+)/)?.[1], x = id.match(/×(\d)$/)?.[1];
-      const label = [id.includes("~hex") ? "mutiert" : "", x ? `×${x}` : "", r ? `${r} Runden` : ""].filter(Boolean).join(", ") || "entfesselt";
+      const label = [id.includes("~hex") ? "mutiert" : "", x ? `×${x}` : "", r ? `${r}/${b.rounds} Runden` : ""].filter(Boolean).join(", ") || "entfesselt";
       const best = t.reduce((m, x) => (x.seconds < m.seconds ? x : m), t[0]);
       return { id, label, best, n: t.length, last: [...t].sort((a, c) => c.date.localeCompare(a.date))[0] };
     })

@@ -1,3 +1,4 @@
+import { allRuns } from "../engine/runs";
 import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import { beastById, fmtDate } from "../engine/plan";
@@ -17,8 +18,7 @@ function sessionText(s: Session, state: AppState): string {
     const sets = done.map((x) => (x.seconds ? `${x.seconds}s` : `${x.reps ?? "?"}${x.weight != null ? `×${String(x.weight).replace(".", ",")}kg` : ""}`)).join(", ");
     lines.push(`- ${e.name}: ${sets}${e.feedback ? ` (${e.feedback})` : ""}`);
   }
-  if (s.beast?.seconds) lines.push(`- Bestie ${beastById(s.beast.id)?.name}: ${fmt(s.beast.seconds)}`);
-  for (const pt of s.beastParts ?? []) if (pt.seconds) lines.push(`- Bestie ${beastById(pt.id)?.name}: ${fmt(pt.seconds)}`);
+  for (const r of allRuns(s)) if (r.seconds) lines.push(`- Bestie ${beastById(r.id)?.name}: ${fmt(r.seconds)}${r.kg != null ? ` (${String(r.kg).replace(".", ",")} kg)` : r.band ? ` (Band ${r.band})` : ""}`);
   if (s.note) lines.push(`- Notiz: ${s.note}`);
   void state;
   return lines.join("\n");
@@ -55,8 +55,8 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
                   {e.feedback && <span className="muted"> ({e.feedback})</span>}
                 </li>
               ))}
-              {s.beast?.seconds ? <li><strong>{beastById(s.beast.id)?.name}</strong>: {fmt(s.beast.seconds)}</li> : null}
-              {(s.beastParts ?? []).filter((pt) => pt.seconds).map((pt, i) => <li key={`bp${i}`}><strong>{beastById(pt.id)?.name}</strong>: {fmt(pt.seconds!)}</li>)}
+
+              {allRuns(s).filter((r) => r.seconds).map((r, i) => <li key={`bp${i}`}><strong>{beastById(r.id)?.name}</strong>: {fmt(r.seconds!)}{r.kg != null ? ` · ${kg(r.kg)}` : r.band ? ` · Band ${r.band}` : ""}</li>)}
             </ul>
             {s.note && <p className="muted small">{s.note}</p>}
           </Collapse>

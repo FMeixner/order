@@ -18,7 +18,7 @@ function weekDone(state: AppState, b: PlanBlock, week: number): boolean {
   if (isTestBlock(b)) return false;
   const f = focusFor(state, b, week);
   if (!f) return false;
-  const days = dayRoleMap(state, b, f);
+  const days = dayRoleMap(state, b, f, week);
   const done = new Set(state.sessions.filter((s) => s.blockId === b.id && s.week === week && s.done).map((s) => s.role));
   return days.length > 0 && days.every((d) => done.has(d.role));
 }
@@ -77,7 +77,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const pauseDays = lastBefore ? daysBetween(lastBefore, firstThis) : 0;
   const comeback = isCur && pauseDays >= 10;
   const reduced = deload || !!state.reduced[rkey] || beforeTest || comeback;
-  const days = dayRoleMap(state, block, focus);
+  const days = dayRoleMap(state, block, focus, week);
   const todayWd = weekdayOf(today);
   const doneRoles = new Set(state.sessions.filter((s) => s.blockId === block.id && s.week === week && s.done).map((s) => s.role));
   // Vorwahl: heute, sonst die nächste offene Einheit, sonst die erste offene

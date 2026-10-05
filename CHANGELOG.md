@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.30.1] – 2026-10-05
+
+### Behoben
+- Zwei Bestien an einem Tag: Nach „Stopp“ bei der ersten verschwand sie und eine andere erschien, und das Ergebnis der zweiten überschrieb das der ersten. Jetzt hat jeder Bestien-Block sein eigenes Ergebnis, und die Bestienwahl der laufenden Woche ändert sich nicht mehr, wenn man eine Zeit speichert. Bestzeiten von Doppeln bleiben erhalten.
+
+### Geändert
+- Nach der ersten von zwei Bestien startet automatisch die 2-Minuten-Pause.
+- Kurzformen zeigen, wie viel der Bestie es ist: „Banshee (2/4 Runden)“.
+- Spontaner Zusatztag in einer angebrochenen Woche: Erledigte Einheiten bleiben an ihrem Tag, der Rest folgt in geplanter Reihenfolge. Ein fünfter Tag am Sonntag kommt also nach den vier erledigten.
+- Pazuzu ist jetzt eine Nordbestie und heißt Huldra (Archer Rows, Ring Triceps Extensions, Hanging Side Raises, nur Körpergewicht).
+
 ## [0.30.0] – 2026-10-03
 
 ### Neu

@@ -45,3 +45,27 @@ describe("Bestien über alle Trainingstage", () => {
     }
   }, 60000);
 });
+
+describe("Zwei Bestien an einem Tag", () => {
+  it("Zeit speichern ändert die angezeigten Bestien nicht, und beide Ergebnisse bleiben getrennt", () => {
+    const s0 = emptyState();
+    const st: AppState = {
+      ...s0, equipment: [{ ...gym, id: "g" }, { ...home, id: "h" }],
+      schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g", Sa: "h" },
+      plan: [{ id: "b1", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium", travel: false }],
+    };
+    const block = st.plan[0];
+    const focus = focusFor(st, block, 1)!;
+    const bonus = dayRoleMap(st, block, focus).find((d) => d.role === "bonus")!;
+    const profile = st.equipment.find((e) => e.id === bonus.profileId)!;
+    const items = (s: AppState) => collectItems({ state: s, block, focus, week: 1, roleKey: "bonus", profile, date: "2026-10-03", reduced: false } as never).filter((i) => i.beast);
+    const before = items(st);
+    expect(before.length).toBe(2);
+    const sid = sessionId("b1", 1, "bonus");
+    const [a, b] = before as (typeof before[number] & { block: { id: string } })[];
+    const sess = { id: sid, date: "2026-10-03", blockId: "b1", focusId: "assassin", week: 1, role: "bonus", profileId: profile.id, entries: {}, drills: {}, menu: {}, done: false,
+      beastRuns: { [a.block.id]: { beast: { id: a.beast!.id, seconds: 300 } }, [b.block.id]: { beast: { id: b.beast!.id, seconds: 400 } } } };
+    const after = items({ ...st, sessions: [sess] });
+    expect(after.map((i) => i.beast!.id)).toEqual(before.map((i) => i.beast!.id));
+  });
+});

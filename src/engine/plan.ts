@@ -1,4 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
+import { allRuns } from "./runs";
 import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
@@ -114,11 +115,26 @@ export function rolesFor(state: AppState, b: PlanBlock, focus?: Focus): string[]
   return defaultRoles(f, n);
 }
 
-export function dayRoleMap(state: AppState, b: PlanBlock, focus?: Focus): { day: Weekday; role: string; profileId: string }[] {
+export function dayRoleMap(state: AppState, b: PlanBlock, focus?: Focus, week?: number): { day: Weekday; role: string; profileId: string }[] {
   const days = trainingDays(state, b);
   const sch = scheduleFor(state, b);
   const roles = rolesFor(state, b, focus);
-  return days.map((day, i) => ({ day, role: roles[i], profileId: sch[day] as string })).filter((x) => !!x.role);
+  const base = days.map((day, i) => ({ day, role: roles[i], profileId: sch[day] as string })).filter((x) => !!x.role);
+  if (week == null) return base;
+  // Angebrochene Woche: Erledigtes bleibt an seinem Tag, der Rest folgt in geplanter Reihenfolge auf die freien Tage.
+  // So landet ein spontaner fünfter Tag am Sonntag nach den vier erledigten, nicht in der Wochenmitte.
+  const done = state.sessions.filter((x) => x.blockId === b.id && x.week === week && x.done && base.some((d) => d.role === x.role));
+  if (!done.length) return base;
+  const out = new Map<Weekday, string>();
+  for (const x of [...done].sort((p, q) => p.date.localeCompare(q.date))) {
+    const wd = weekdayOf(x.date);
+    const day = base.some((d) => d.day === wd) && !out.has(wd) ? wd : base.find((d) => !out.has(d.day))?.day;
+    if (day) out.set(day, x.role);
+  }
+  const used = new Set(out.values());
+  const rest = base.map((d) => d.role).filter((r) => !used.has(r));
+  for (const d of base) if (!out.has(d.day)) out.set(d.day, rest.shift()!);
+  return base.map((d) => ({ ...d, role: out.get(d.day)! })).filter((x) => !!x.role);
 }
 
 /* ---------- Orden-Vorschlag für einen Block ---------- */
@@ -159,7 +175,7 @@ export function beastClass(min: number): BeastClass {
 export type BeastNeed = "rings" | "bar" | "band" | "band_or_cable" | "barbell" | "kb_db" | "rower" | "bike";
 const NEED_RULES: [RegExp, BeastNeed | null][] = [
   [/^plank/i, null],
-  [/ring push|rto ring|ring dip|ring row/i, "rings"],
+  [/ring push|rto ring|ring dip|ring row|ring triceps/i, "rings"],
   [/muscle-?up|pull-?up|chin-?up|c2b|toes-to-bar|\bttb\b|knees-to-elbow|hanging|passive hang|commando|archer row|incline row/i, "bar"],
   [/face pull|ext(ernal)? rotation/i, "band_or_cable"],
   [/^band /i, "band"],
@@ -287,7 +303,7 @@ export function canShorten(b: Beast): boolean {
 }
 export function shortBeast(b: Beast, k: number): Beast | null {
   if (!canShorten(b) || k < 2 || k >= b.rounds) return null;
-  return { ...b, id: `${b.id}~r${k}`, name: `${b.name} (${k} Runden)`, rounds: k, minutes: (b.minutes * k) / b.rounds };
+  return { ...b, id: `${b.id}~r${k}`, name: `${b.name} (${k}/${b.rounds} Runden)`, rounds: k, minutes: (b.minutes * k) / b.rounds };
 }
 
 /** Grund-Bestien einer Id: "a~hex:x" → a, "a×2+b" → a, b */
@@ -303,8 +319,7 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
     for (const s of opts.state.sessions) {
       const inPrev = (s.date >= prev && s.date < ws) || (s.blockId === opts.blockId && s.week === opts.week - 1);
       if (!inPrev) continue;
-      if (s.beast) add(s.beast.id);
-      s.beastParts?.forEach((pt) => add(pt.id));
+      allRuns(s).forEach((r) => add(r.id));
     }
   }
   if (opts.week > 1) {
@@ -328,7 +343,7 @@ export type BeastTarget = [Extract<Block, { type: "beast" }>, EquipmentProfile];
 let weekBeastBlocks: (state: AppState, pb: PlanBlock, week: number) => BeastTarget[] = (state, pb, week) => {
   const f = weekFocus(state, pb, week);
   if (!f) return [];
-  return dayRoleMap(state, pb, f).flatMap((d) => {
+  return dayRoleMap(state, pb, f, week).flatMap((d) => {
     const pid = state.profileFor?.[`${pb.id}:${week}:${d.role}`] ?? d.profileId;
     const prof = state.equipment.find((e) => e.id === pid);
     return prof ? (f.roles[d.role]?.blocks ?? []).filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast").map((b) => [b, prof] as BeastTarget) : [];
@@ -455,10 +470,8 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
         if (x) mark(x.id, k);
       }
     }
-    for (const se of state.sessions) if (se.blockId === opts.blockId && se.week <= opts.week) {
-      if (se.beast) mark(se.beast.id, se.week);
-      se.beastParts?.forEach((pt) => mark(pt.id, se.week));
-    }
+    // Geloggt: nur Vorwochen. Die laufende Woche zählt über die Planung, sonst wechselt die Bestie, sobald man eine Zeit speichert.
+    for (const se of state.sessions) if (se.blockId === opts.blockId && se.week < opts.week) allRuns(se).forEach((r) => mark(r.id, se.week));
   }
   const age = (c: Cand) => Math.max(0, ...c.fam.map((f) => lastUsed.get(f) ?? 0)); // 0 = noch nie
   let pool = cands.filter(freshC);

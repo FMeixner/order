@@ -74,6 +74,7 @@ export function migrate(raw: unknown): AppState {
     ...se,
     ...(se.beast ? { beast: { ...se.beast, id: hx(se.beast.id) } } : {}),
     ...(se.beastParts ? { beastParts: se.beastParts.map((pt) => ({ ...pt, id: hx(pt.id) })) } : {}),
+    ...(se.beastRuns ? { beastRuns: Object.fromEntries(Object.entries(se.beastRuns).map(([k, r]) => [k, { ...(r.beast ? { beast: { ...r.beast, id: hx(r.beast.id) } } : {}), ...(r.parts ? { parts: r.parts.map((pt) => ({ ...pt, id: hx(pt.id) })) } : {}) }])) } : {}),
   }));
   s.equipment = (s.equipment ?? []).map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   // 0.1 → 0.2: Schalter „Doppelmesser“ wird zum Equipment „Schwert“ an den Heim-Profilen

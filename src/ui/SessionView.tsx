@@ -3,13 +3,14 @@ import { EXERCISES, FLOWS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { focusFor } from "../engine/weekplan";
 import { parseClock } from "../engine/clock";
+import { allRuns } from "../engine/runs";
 import { capOf, isLoadBeast, loadKind, loadRecord, pctLift, suggestLoad } from "../engine/loadbeast";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { affectDowngrade, beastById, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
-import type { AppState, Beast, BeastResult, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
+import type { AppState, Beast, BeastResult, BeastRun, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
 import { Collapse, Desc, kg, Modal, Seg } from "./common";
 import { fmt, useTimer } from "./Timer";
 
@@ -70,7 +71,7 @@ setWeekBeastBlocks((state, pb, week) => {
   const f = focusFor(state, pb, week);
   if (!f) return [];
   const ab = isAWeek(week) ? "A" : "B";
-  return dayRoleMap(state, pb, f).flatMap((d) => {
+  return dayRoleMap(state, pb, f, week).flatMap((d) => {
     const pid = state.profileFor?.[sessionId(pb.id, week, d.role)] ?? d.profileId;
     const profile = state.equipment.find((e) => e.id === pid);
     if (!profile) return [];
@@ -102,9 +103,11 @@ export function collectItems(ctx: SessionCtx): Item[] {
     .map((b) => {
       if (b.type === "beast") {
         // Schon erledigt: die Bestie, die tatsächlich gemacht wurde, nicht neu würfeln
-        const logged = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey) && s.done && s.beast)?.beast?.id;
+        const done = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey) && s.done);
+        const r = done?.beastRuns?.[b.id] ?? (done && !done.beastRuns && role.blocks.filter((x) => x.type === "beast").length === 1 ? { beast: done.beast, parts: done.beastParts } : undefined);
+        const logged = r?.parts?.length ? r.parts.map((p) => p.id).join("+") : r?.beast?.id;
         const lb = logged ? beastById(logged) : null;
-        if (lb && role.blocks.filter((x) => x.type === "beast").length === 1) return { block: b, resolved: [], beast: lb };
+        if (lb) return { block: b, resolved: [], beast: lb };
         return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
       }
       if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week, b.module) };
@@ -154,13 +157,15 @@ export function SessionView(ctx: SessionCtx) {
       }
       const beastTimes = { ...st.beastTimes };
       const load = (r: BeastResult) => ({ ...(r.kg != null ? { kg: r.kg } : {}), ...(r.band ? { band: r.band } : {}), ...(r.tech ? { tech: r.tech } : {}) });
-      if (cur.beast?.seconds && !cur.beast.easy) beastTimes[cur.beast.id] = [...(beastTimes[cur.beast.id] ?? []), { date: ctx.date, seconds: cur.beast.seconds, ...load(cur.beast) }];
-      for (const pt of cur.beastParts ?? []) if (pt.seconds && !pt.easy) beastTimes[pt.id] = [...(beastTimes[pt.id] ?? []), { date: ctx.date, seconds: pt.seconds, ...load(pt) }];
+      for (const r of allRuns(cur)) if (r.seconds && !r.easy) beastTimes[r.id] = [...(beastTimes[r.id] ?? []), { date: ctx.date, seconds: r.seconds, ...load(r) }];
       const feelingLog = feeling != null ? [...st.feeling, { date: ctx.date, sessionId: id, value: feeling }] : st.feeling;
-      // Bestie merken, auch ohne Zeit: zählt für die Rotation der Folgewoche
-      const shown = items.find((it) => it.beast)?.beast;
-      const beast = cur.beast ?? (shown ? { id: shown.id, seconds: null } : undefined);
-      return { ...st, slots, beastTimes, feeling: feelingLog, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: true, date: ctx.date, ...(beast ? { beast } : {}) } : s)) };
+      // Jede gezeigte Bestie merken, auch ohne Zeit: zählt für die Rotation
+      const runs = { ...(cur.beastRuns ?? {}) };
+      for (const it of items) if (it.beast && it.block.type === "beast" && !runs[it.block.id]) {
+        const legacy = !cur.beastRuns && (cur.beast?.id === it.beast.id || cur.beastParts?.length) ? { beast: cur.beast, parts: cur.beastParts } : null;
+        runs[it.block.id] = legacy ?? (it.beast.parts ? { parts: it.beast.parts.map((p) => ({ id: p.id, seconds: null })) } : { beast: { id: it.beast.id, seconds: null } });
+      }
+      return { ...st, slots, beastTimes, feeling: feelingLog, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: true, date: ctx.date, beastRuns: runs, beast: undefined, beastParts: undefined } : s)) };
     });
   };
 
@@ -182,7 +187,7 @@ export function SessionView(ctx: SessionCtx) {
       )}
 
       {items.map((it, i) => (
-        <ItemCard key={i} it={it} ctx={ctx} session={session} mut={mut} />
+        <ItemCard key={i} it={it} ctx={ctx} session={session} mut={mut} nextBeast={items.slice(i + 1).find((x) => x.beast)?.beast?.name} />
       ))}
 
       {cool.length > 0 && (
@@ -263,10 +268,10 @@ function DrillList({ drills, done, prefix, onToggle }: { drills: DrillView[]; do
 }
 
 /* ---------- Blöcke ---------- */
-function ItemCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void }) {
+function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
-  if (b.type === "beast") return <BeastCard beast={it.beast ?? null} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} />;
+  if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} nextBeast={nextBeast} />;
   if (b.type === "module" && it.drills) {
     return (
       <section className="card">
@@ -605,7 +610,7 @@ function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: SessionCt
   );
 }
 
-function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | null; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean }) {
+function BeastCard({ blockId, beast, ctx, session, mut, note, easy, nextBeast }: { blockId: string; beast: Beast | null; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean; nextBeast?: string }) {
   const t = useTimer();
   if (!beast) return <section className="card"><div className="muted">Keine passende Bestie für dieses Equipment gefunden.</div></section>;
   // Dauer: bei Serien aus den Teilen, mit gemessenen Zeiten, wo vorhanden
@@ -622,7 +627,11 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
       return { ...st, beastTimes: { ...st.beastTimes, [id]: [...list, { date: session.date, seconds: sec, ...(k != null ? { kg: k } : {}), ...(band ? { band } : {}), ...(tech ? { tech } : {}) }] } };
     });
   };
-  const cur = session?.beast?.id === beast.id ? session.beast : undefined;
+  // Ergebnis dieses Bestien-Blocks (alte Einheiten: beast/beastParts)
+  const runOf = (s?: Session): BeastRun => s?.beastRuns?.[blockId] ?? (!s?.beastRuns && (s?.beast?.id === beast.id || s?.beastParts?.length) ? { beast: s?.beast, parts: s?.beastParts } : {});
+  const run = runOf(session);
+  const mutRun = (fn: (r: BeastRun) => BeastRun) => mut((s) => ({ ...s, beastRuns: { ...(s.beastRuns ?? {}), [blockId]: fn(runOf(s)) } }));
+  const cur = run.beast?.id === beast.id ? run.beast : undefined;
   // Lastbestie: ohne eigene Eingabe gilt der Vorschlag
   const loadOf = (b: Beast, r?: BeastResult) => {
     if (!isLoadBeast(b)) return {};
@@ -639,19 +648,21 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
   const saveSingle = (sec: number) => {
     const l = loadOf(beast, cur);
     lateTime(beast.id, sec, cur?.seconds, l);
-    mut((s) => ({ ...s, beast: { ...(s.beast?.id === beast.id ? s.beast : {}), ...l, id: beast.id, seconds: sec, ...(easy ? { easy } : {}) } }));
+    mutRun((r) => ({ ...r, beast: { ...(r.beast?.id === beast.id ? r.beast : {}), ...l, id: beast.id, seconds: sec, ...(easy ? { easy } : {}) } }));
+    // Zwei Bestien in der Einheit: Pause bis zur nächsten
+    if (nextBeast) t.rest(`Pause, dann ${nextBeast}`, COMBO_REST);
   };
   const setLoadSingle = (load: Partial<BeastResult>) => {
     syncTime(beast.id, cur?.seconds, load);
-    mut((s) => ({ ...s, beast: { ...(s.beast?.id === beast.id ? s.beast : { seconds: null }), id: beast.id, ...load } }));
+    mutRun((r) => ({ ...r, beast: { ...(r.beast?.id === beast.id ? r.beast : { seconds: null }), id: beast.id, ...load } }));
   };
   // Serie: jeder Teil einzeln, jede Zeit zählt für ihre Bestie (ein Doppel/Triple ist ein Teil mit eigener Bestzeit)
   const parts = beast.parts ?? [];
-  const curPart = (u: number) => (session?.beastParts?.[u]?.id === parts[u].id ? session.beastParts[u] : undefined);
-  const patchUnit = (u: number, patch: Partial<BeastResult>) => mut((s) => {
-    const arr = parts.map((x, i) => (s.beastParts?.[i]?.id === x.id ? s.beastParts[i] : { id: x.id, seconds: null }));
+  const curPart = (u: number) => (run.parts?.[u]?.id === parts[u].id ? run.parts[u] : undefined);
+  const patchUnit = (u: number, patch: Partial<BeastResult>) => mutRun((r) => {
+    const arr = parts.map((x, i) => (r.parts?.[i]?.id === x.id ? r.parts[i] : { id: x.id, seconds: null }));
     arr[u] = { ...arr[u], ...patch, id: parts[u].id };
-    return { ...s, beastParts: arr };
+    return { ...r, parts: arr };
   });
   const saveUnit = (u: number, sec: number) => {
     const c = curPart(u);
@@ -659,6 +670,7 @@ function BeastCard({ beast, ctx, session, mut, note, easy }: { beast: Beast | nu
     lateTime(parts[u].id, sec, c?.seconds, l);
     patchUnit(u, { ...l, seconds: sec, ...(easy ? { easy } : {}) });
     if (u < parts.length - 1) t.rest(`Pause, dann ${parts[u + 1].name}`, COMBO_REST);
+    else if (nextBeast) t.rest(`Pause, dann ${nextBeast}`, COMBO_REST);
   };
   const work = (b: { id?: string; work: string; rounds: number; times?: number; repeat?: number; name?: string }) => {
     const k = b.times ?? b.repeat ?? 1;

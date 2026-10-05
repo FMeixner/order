@@ -1,4 +1,5 @@
 /* Sätze pro Muskel und Woche, aus den abgeschlossenen Einheiten. Wertneutral: ein Richtwert, kein Soll. */
+import { allRuns } from "./runs";
 import { SWAP_GROUPS } from "../data";
 import musclesJson from "../../data/modules/muscles.json";
 import type { AppState, UserProfile } from "../types";
@@ -55,7 +56,7 @@ export function weeklyVolume(state: AppState, today: string): WeekVolume[] {
       for (const [m, f] of Object.entries(musclesOf(e.name))) w.sets[m] = (w.sets[m] ?? 0) + n * f;
     }
     // Bestien: halb gezählt
-    const runs = [s.beast, ...(s.beastParts ?? [])].filter((x): x is { id: string; seconds: number | null } => !!x && !!x.seconds);
+    const runs = allRuns(s).filter((x) => !!x.seconds);
     for (const r of runs) for (const [m, v] of Object.entries(beastSets(r.id))) w.sets[m] = (w.sets[m] ?? 0) + v;
     byWeek.set(mon, w);
   }

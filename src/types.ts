@@ -250,6 +250,7 @@ export interface SessionEntry {
 
 /** Ergebnis einer Bestie in einer Einheit. Lastbestien: Gewicht (kg, je Hantel) oder Band, dazu die Zeit im Timecap. */
 export interface BeastResult { id: string; seconds: number | null; easy?: boolean; kg?: number; band?: string; tech?: "gut" | "schlecht" }
+export interface BeastRun { beast?: BeastResult; parts?: BeastResult[] }
 export interface BeastTime { date: string; seconds: number; kg?: number; band?: string; tech?: "gut" | "schlecht" }
 
 export interface Session {
@@ -262,9 +263,12 @@ export interface Session {
   profileId: string;
   entries: Record<string, SessionEntry>;
   drills: Record<string, boolean[]>;
+  /** alt: eine Bestie je Einheit. Neu: beastRuns je Bestien-Block */
   beast?: BeastResult;
   /** Serie: Zeit je Teil, jede zählt für die Bestzeit ihrer Bestie */
   beastParts?: BeastResult[];
+  /** Ergebnisse je Bestien-Block (Block-Id): Einzelbestie oder Teile einer Serie */
+  beastRuns?: Record<string, BeastRun>;
   menu: Record<string, string>;
   note?: string;
   done: boolean;
