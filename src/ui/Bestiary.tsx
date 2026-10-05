@@ -27,7 +27,7 @@ function timesOf(b: Beast, all: AppState["beastTimes"]) {
     .sort((a, c) => (a.label === "entfesselt" ? -1 : c.label === "entfesselt" ? 1 : a.label.localeCompare(c.label)));
 }
 
-export function Bestiary({ state }: { state: AppState }) {
+export function Bestiary({ state, onHunt }: { state: AppState; onHunt: (beastId: string) => void }) {
   const [stand, setStand] = useState<Stand>("alle");
   const [region, setRegion] = useState<"alle" | "nord" | "sued">("alle");
   const [q, setQ] = useState("");
@@ -74,6 +74,10 @@ export function Bestiary({ state }: { state: AppState }) {
                 {needs.length ? ` · ${needs.join(", ")}` : " · nur Körpergewicht"}
               </div>
               <ul className="beast-work">{b.work.split(" · ").map((w, i) => <li key={i}>{w}</li>)}</ul>
+              <div className="row wrap">
+                <button className="btn primary small" onClick={() => onHunt(b.id)}>Jagen{beastSkills(b).length ? ": entfesselt" : ""}</button>
+                {beastSkills(b).length > 0 && beastById(`${b.id}~hex`) && <button className="btn ghost small" onClick={() => onHunt(`${b.id}~hex`)}>Jagen: mutiert</button>}
+              </div>
               {!beastOk(b, skills) && (hx ? (
                 <div className="stack">
                   <div className="note small">Kommt mutiert, weil {missing.map(skillName).join(", ")} noch nicht angekreuzt ist:</div>

@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.31.0] – 2026-10-05
+
+### Neu
+- Freie Jagd: Jede Bestie lässt sich im Almanach (Bestien) direkt jagen, entfesselt oder mutiert, außerhalb des Plans. Die Zeit zählt für Bestzeit, Log und Flugblatt, aber nicht als Trainingseinheit.
+- Rundentracker an jeder Bestie: Runden abhaken, bei nur einem Durchgang Übung für Übung. Das letzte Häkchen stoppt die Uhr und speichert die Zeit.
+- „Wieder aufnehmen“: Zu früh abgehakt oder gestoppt? Die Uhr läuft ab dem ersten Start weiter, gespeichert wird nur die neue Zeit.
+- Die Stoppuhr einer Bestie überlebt Reiterwechsel.
+
+### Behoben
+- Im Flugblatt zählen nur Bestien mit Zeit als besiegt.
+
 ## [0.30.1] – 2026-10-05
 
 ### Behoben

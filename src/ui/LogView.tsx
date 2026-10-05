@@ -1,4 +1,4 @@
-import { allRuns } from "../engine/runs";
+import { allRuns, isHunt } from "../engine/runs";
 import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import { beastById, fmtDate } from "../engine/plan";
@@ -11,7 +11,7 @@ import { RavenChronicle, ravenOn } from "./Raven";
 
 function sessionText(s: Session, state: AppState): string {
   const f = FOCUS_BY_ID[s.focusId];
-  const lines = [`## ${fmtDate(s.date)} · ${f?.name ?? s.focusId} · ${f?.roles[s.role]?.name ?? s.role} (Woche ${s.week})`];
+  const lines = [isHunt(s) ? `## ${fmtDate(s.date)} · Freie Jagd` : `## ${fmtDate(s.date)} · ${f?.name ?? s.focusId} · ${f?.roles[s.role]?.name ?? s.role} (Woche ${s.week})`];
   for (const e of Object.values(s.entries)) {
     const done = e.sets.filter((x) => x.done);
     if (!done.length) continue;
@@ -47,7 +47,7 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
         const f = FOCUS_BY_ID[s.focusId];
         const entries = Object.values(s.entries).filter((e) => e.sets.some((x) => x.done));
         return (
-          <Collapse key={s.id} title={`${fmtDate(s.date)} · ${f?.roles[s.role]?.name ?? s.role}`} meta={`${f?.name ?? ""} · W${s.week}`}>
+          <Collapse key={s.id} title={`${fmtDate(s.date)} · ${isHunt(s) ? "Freie Jagd" : f?.roles[s.role]?.name ?? s.role}`} meta={isHunt(s) ? "außerhalb des Plans" : `${f?.name ?? ""} · W${s.week}`}>
             <ul className="slot-list">
               {entries.map((e) => (
                 <li key={e.key}>

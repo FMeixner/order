@@ -1,5 +1,5 @@
 /* Sätze pro Muskel und Woche, aus den abgeschlossenen Einheiten. Wertneutral: ein Richtwert, kein Soll. */
-import { allRuns } from "./runs";
+import { allRuns, isHunt } from "./runs";
 import { SWAP_GROUPS } from "../data";
 import musclesJson from "../../data/modules/muscles.json";
 import type { AppState, UserProfile } from "../types";
@@ -48,7 +48,7 @@ export function weeklyVolume(state: AppState, today: string): WeekVolume[] {
   for (const s of state.sessions.filter((x) => x.done)) {
     const mon = mondayOf(s.date);
     const w = byWeek.get(mon) ?? { monday: mon, sessions: 0, sets: {}, running: addDays(mon, 6) >= today };
-    w.sessions += 1;
+    if (!isHunt(s)) w.sessions += 1;
     for (const e of Object.values(s.entries)) {
       if (e.prog === "none") continue;
       const n = e.sets.filter((x) => x.done).length;

@@ -124,4 +124,19 @@ describe("Bestien im Blatt", () => {
       expect(ch.weeks[0].lines.length).toBeGreaterThanOrEqual(6);
     }
   });
+  it("freie Jagd steht im Blatt, zählt aber nicht als Einheit", async () => {
+    const { chapterOf } = await import("./saga");
+    const g = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
+    const s0 = emptyState();
+    const b = { id: "b1", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium" as const, travel: false };
+    const base = { ...s0, onboarded: true, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as typeof s0.schedule, plan: [b], narrative: { on: true } };
+    const roles = ["kraft_a", "arme_schultern", "kraft_b"];
+    const sessions = roles.map((role, i) => ({ id: `b1:1:${role}`, date: `2026-09-${28 + i}`, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, menu: {}, done: true }));
+    const hunt = { id: "jagd:1", date: "2026-10-02", blockId: "jagd", focusId: "", week: 0, role: "jagd", profileId: "g", entries: {}, drills: {}, menu: {}, done: true, beastRuns: { jagd: { beast: { id: "ng-nanna", seconds: 900 } } } };
+    const without = chapterOf({ ...base, sessions }, b, "2026-10-05");
+    const withHunt = chapterOf({ ...base, sessions: [...sessions, hunt] }, b, "2026-10-05");
+    expect(without.weeks[0].lines.map((l) => l.text).join(" ")).not.toMatch(/Undine/);
+    expect(withHunt.weeks[0].lines.map((l) => l.text).join(" ")).toMatch(/Undine/);
+    expect(withHunt.stats.done).toBe(without.stats.done);
+  });
 });

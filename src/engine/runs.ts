@@ -12,3 +12,7 @@ export function runGroups(s: Session): BeastRun[] {
 export function allRuns(s: Session): BeastResult[] {
   return runGroups(s).flatMap((g) => (g.parts?.length ? g.parts : g.beast ? [g.beast] : []));
 }
+
+/** Freie Jagd: eine Bestie aus dem Almanach, außerhalb des Plans. Zählt für Bestzeiten, Log und Flugblatt, nicht als Trainingseinheit. */
+export const HUNT = "jagd";
+export const isHunt = (s: Session) => s.blockId === HUNT;

@@ -31,6 +31,9 @@ export interface SessionCtx {
   headPanel?: ReactNode;
 }
 
+/** Was eine Bestienkarte braucht: auch außerhalb einer Einheit (freie Jagd im Almanach) */
+export type BeastCtx = Pick<SessionCtx, "state" | "update" | "profile">;
+
 export const sessionId = (blockId: string, week: number, role: string) => `${blockId}:${week}:${role}`;
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
@@ -271,7 +274,7 @@ function DrillList({ drills, done, prefix, onToggle }: { drills: DrillView[]; do
 function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
-  if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} nextBeast={nextBeast} />;
+  if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
   if (b.type === "module" && it.drills) {
     return (
       <section className="card">
@@ -536,9 +539,25 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
 }
 
 /* ---------- Bestie ---------- */
-/** Stoppuhr und Zeiteingabe für eine Bestie */
-function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number }[]; label?: string; saved: number | null; onSave: (sec: number) => void }) {
-  const [startedAt, setStartedAt] = useState<number | null>(null);
+/** Stoppuhr, Rundentracker und Zeiteingabe für eine Bestie.
+    Das letzte Rundenhäkchen stoppt und speichert die Zeit. „Wieder aufnehmen“ lässt die Uhr ab dem ersten Start weiterlaufen,
+    gespeichert wird dann nur die neue Zeit. Der Stand überlebt Reiterwechsel (lokal je Bestie und Einheit). */
+/** Abhakbare Schritte: Runden, bei nur einem Durchgang die einzelnen Übungen */
+const stepsOf = (b: { rounds: number; work: string }): string[] =>
+  b.rounds > 1 ? Array.from({ length: b.rounds }, (_, i) => String(i + 1)) : b.work.split(" · ");
+interface Watch { startedAt: number | null; done: number; last: number | null }
+const WATCH_KEY = (k: string) => `order:watch:${k}`;
+function readWatch(k?: string): Watch {
+  try { const v = k ? localStorage.getItem(WATCH_KEY(k)) : null; if (v) return JSON.parse(v) as Watch; } catch { /* egal */ }
+  return { startedAt: null, done: 0, last: null };
+}
+function BeastTimer({ times, label, saved, steps, watchKey, onSave }: { times: { seconds: number }[]; label?: string; saved: number | null; steps?: string[]; watchKey?: string; onSave: (sec: number) => void }) {
+  const t = useTimer();
+  const [w, setW] = useState<Watch>(() => readWatch(watchKey));
+  const put = (nw: Watch) => {
+    setW(nw);
+    try { if (watchKey) { if (nw.startedAt == null && nw.last == null) localStorage.removeItem(WATCH_KEY(watchKey)); else localStorage.setItem(WATCH_KEY(watchKey), JSON.stringify(nw)); } } catch { /* egal */ }
+  };
   const [, tick] = useState(0);
   const [manual, setManual] = useState("");
   const [bad, setBad] = useState(false);
@@ -547,25 +566,58 @@ function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number 
     const sec = parseClock(manual);
     if (sec == null) { setBad(true); return; }
     onSave(Math.round(sec)); setManual(""); setBad(false);
+    put({ startedAt: null, done: 0, last: null });
   };
   useEffect(() => {
-    if (startedAt == null) return;
+    if (w.startedAt == null) return;
     const iv = setInterval(() => tick((x) => x + 1), 500);
     return () => clearInterval(iv);
-  }, [startedAt]);
+  }, [w.startedAt]);
   const pr = times.length ? Math.min(...times.map((x) => x.seconds)) : null;
-  const running = startedAt != null;
-  const elapsed = running ? (Date.now() - startedAt!) / 1000 : 0;
+  const running = w.startedAt != null;
+  const elapsed = running ? (Date.now() - w.startedAt!) / 1000 : 0;
+  const n = steps?.length ?? 0;
+  const byLine = n > 0 && !/^\d+$/.test(steps![0]);
+  const stop = (done: number) => { onSave(Math.round(elapsed)); put({ startedAt: null, done, last: w.startedAt }); };
+  const tapRound = (i: number) => {
+    if (!running) return;
+    const done = i < w.done ? i : i + 1;
+    if (done >= n) stop(n);
+    else put({ ...w, done });
+  };
+  const resume = () => {
+    if (t.running) t.stop(); // Pause nach der Bestie hinfällig
+    put({ startedAt: w.last, done: Math.min(w.done, Math.max(0, n - 1)), last: null });
+  };
   return (
     <div className="stack beast-timer">
       {label && <div className="small muted">{label}</div>}
-      <div className="row">
+      <div className="row wrap">
         {!running
-          ? <button className="btn primary" onClick={() => setStartedAt(Date.now())}>▶ Stoppuhr</button>
-          : <button className="btn primary" onClick={() => { onSave(Math.round(elapsed)); setStartedAt(null); }}>■ Stopp {fmt(elapsed)}</button>}
-        <input type="text" inputMode="decimal" placeholder="oder mm.ss" value={manual} onChange={(e) => setManual(e.target.value)}
-          onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") commit(); }} className="time-in" aria-invalid={bad} />
+          ? <button className="btn primary" onClick={() => put({ startedAt: Date.now(), done: 0, last: null })}>▶ Stoppuhr</button>
+          : <button className="btn primary" onClick={() => stop(w.done)}>■ Stopp {fmt(elapsed)}</button>}
+        {!running && w.last != null && Date.now() - w.last < 3 * 3600e3 && <button className="btn ghost" onClick={resume}>↺ Wieder aufnehmen</button>}
+        {!running && <input type="text" inputMode="decimal" placeholder="oder mm.ss" value={manual} onChange={(e) => setManual(e.target.value)}
+          onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") commit(); }} className="time-in" aria-invalid={bad} />}
       </div>
+      {running && n > 0 && (
+        <div className="stack">
+          <div className="small muted">{byLine ? "Übung für Übung abhaken" : `Runde ${Math.min(w.done + 1, n)} von ${n}: nach jeder Runde abhaken`}, das letzte Häkchen stoppt die Uhr.</div>
+          {byLine ? (
+            <div className="stack rounds">
+              {steps!.map((x, i) => (
+                <button key={i} className={`step-btn ${i < w.done ? "done" : ""}`} onClick={() => tapRound(i)} aria-label={x}><span className="set-btn">{i < w.done ? "✓" : "○"}</span><span>{x}</span></button>
+              ))}
+            </div>
+          ) : (
+            <div className="drill-group rounds">
+              {steps!.map((x, i) => (
+                <button key={i} className={`set-btn ${i < w.done ? "done" : ""}`} onClick={() => tapRound(i)} aria-label={`Runde ${x}`}>{i < w.done ? "✓" : x}</button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       {bad && <div className="small warn">„{manual}“ verstehe ich nicht. Bitte so: 12.34 oder 12:34.</div>}
       <div className="small">
         {saved ? <>Heute: <strong>{fmt(saved)}</strong>{pr && saved < pr ? " · neue Bestzeit" : ""}</> : null}
@@ -576,7 +628,7 @@ function BeastTimer({ times, label, saved, onSave }: { times: { seconds: number 
 }
 
 /** Lastbestie: ein Gewicht (je Hantel) oder ein Band für alle Lastübungen, dazu Rekord und Timecap */
-function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: SessionCtx; cur?: BeastResult; onChange: (l: Partial<BeastResult>) => void }) {
+function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: BeastCtx; cur?: BeastResult; onChange: (l: Partial<BeastResult>) => void }) {
   const kind = loadKind(beast);
   if (!kind) return null;
   const sug = suggestLoad(ctx.state, beast, ctx.profile);
@@ -610,7 +662,7 @@ function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: SessionCt
   );
 }
 
-function BeastCard({ blockId, beast, ctx, session, mut, note, easy, nextBeast }: { blockId: string; beast: Beast | null; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean; nextBeast?: string }) {
+export function BeastCard({ blockId, beast, ctx, session, mut, note, easy, nextBeast, watchBase }: { blockId: string; beast: Beast | null; ctx: BeastCtx; watchBase: string; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean; nextBeast?: string }) {
   const t = useTimer();
   if (!beast) return <section className="card"><div className="muted">Keine passende Bestie für dieses Equipment gefunden.</div></section>;
   // Dauer: bei Serien aus den Teilen, mit gemessenen Zeiten, wo vorhanden
@@ -693,7 +745,7 @@ function BeastCard({ blockId, beast, ctx, session, mut, note, easy, nextBeast }:
               <div className="small"><strong>{u + 1}. {pt.name}</strong></div>
               {work(pt)}
               {isLoadBeast(beastById(pt.id)!) && <LoadField beast={beastById(pt.id)!} ctx={ctx} cur={curPart(u)} onChange={(l) => { syncTime(pt.id, curPart(u)?.seconds, l); patchUnit(u, l); }} />}
-              <BeastTimer times={isLoadBeast(beastById(pt.id)!) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={curPart(u)?.seconds ?? null} onSave={(sec) => saveUnit(u, sec)} />
+              <BeastTimer times={isLoadBeast(beastById(pt.id)!) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={curPart(u)?.seconds ?? null} steps={stepsOf(pt)} watchKey={`${watchBase}:${blockId}:${u}:${pt.id}`} onSave={(sec) => saveUnit(u, sec)} />
             </div>
           ))}
         </>
@@ -701,7 +753,7 @@ function BeastCard({ blockId, beast, ctx, session, mut, note, easy, nextBeast }:
         <>
           {work(beast)}
           {isLoadBeast(beast) && <LoadField beast={beast} ctx={ctx} cur={cur} onChange={setLoadSingle} />}
-          <BeastTimer times={isLoadBeast(beast) ? [] : ctx.state.beastTimes[beast.id] ?? []} saved={cur?.seconds ?? null} onSave={saveSingle} />
+          <BeastTimer times={isLoadBeast(beast) ? [] : ctx.state.beastTimes[beast.id] ?? []} saved={cur?.seconds ?? null} steps={stepsOf(beast)} watchKey={`${watchBase}:${blockId}:${beast.id}`} onSave={saveSingle} />
         </>
       )}
       {note && <div className="muted small">{note}</div>}

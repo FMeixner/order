@@ -2,12 +2,12 @@
    Alles wird aus den Trainingsdaten berechnet, auch die Würfel (fester Startwert je Woche).
    Ein- und Ausschalten verliert also nichts, und die Geschichte ändert sich nicht beim Neuladen.
    Texte und Welt stehen in data/narrative/generic.json. Eigene Welten ersetzen Teile davon. */
-import { allRuns, runGroups } from "./runs";
+import { allRuns, isHunt, runGroups } from "./runs";
 import genericJson from "../../data/narrative/generic.json";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Session } from "../types";
 import { evaluateBlock } from "./norms";
-import { beastById, blockWeeks, dayRoleMap, isDeloadWeek, isTestBlock, weekInBlock } from "./plan";
+import { addDays, beastById, blockWeeks, mondayOf, dayRoleMap, isDeloadWeek, isTestBlock, weekInBlock } from "./plan";
 import { focusFor } from "./weekplan";
 
 /* ---------- Welt-Paket ---------- */
@@ -151,6 +151,11 @@ const DMG = { session: 10, fullWeek: 5, pr: 5, steel: 2, crit: 10, high: 3 };
 function sessionsOfWeek(state: AppState, b: PlanBlock, week: number): Session[] {
   return state.sessions.filter((s) => s.done && s.blockId === b.id && s.week === week);
 }
+/** Freie Jagden in der Kalenderwoche dieser Ordenswoche: zählen fürs Flugblatt (Bestien, Bestzeiten), nicht als Einheit */
+function huntsOfWeek(state: AppState, b: PlanBlock, week: number): Session[] {
+  const ws = addDays(mondayOf(b.start), (week - 1) * 7), we = addDays(ws, 7);
+  return state.sessions.filter((s) => s.done && isHunt(s) && s.date >= ws && s.date < we);
+}
 function plannedOf(state: AppState, b: PlanBlock, week: number): number {
   const f = focusFor(state, b, week) ?? FOCUS_BY_ID[b.focusId];
   return f ? dayRoleMap(state, b, f).length : 0;
@@ -259,14 +264,15 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
       else if (roll >= 15) { dmg += DMG.high; lines.push({ kind: "roll", value: roll, text: T("high", w) }); }
       else lines.push({ kind: "roll", value: roll, text: "" });
       // Besiegte Bestien der Woche: entfesselt oder mutiert, Serien als Doppelschlag
-      const runs = list.flatMap((x) => runGroups(x).map((g) => ({ parts: g.parts?.length ? g.parts.map((p) => p.id) : g.beast ? [g.beast.id] : [] }))).filter((r) => r.parts.length);
+      const deeds = [...list, ...huntsOfWeek(state, b, w)];
+      const runs = deeds.flatMap((x) => runGroups(x).map((g) => ({ parts: (g.parts?.length ? g.parts : g.beast ? [g.beast] : []).filter((p) => !!p.seconds).map((p) => p.id) }))).filter((r) => r.parts.length);
       const nameOf = (id: string) => beastById(id.split("~")[0].replace(/×\d+$/, ""))?.name ?? id;
       runs.slice(0, 2).forEach((r, i) => {
         if (r.parts.length > 1) lines.push({ kind: "text", text: T("bestie_serie", stats.beasts + i, { bestie: nameOf(r.parts[0]), bestie_zwei: nameOf(r.parts[1]) }) });
         else lines.push({ kind: "text", text: T(r.parts[0].includes("~hex") ? "bestie_mutiert" : "bestie_entfesselt", stats.beasts + i, { bestie: nameOf(r.parts[0]) }) });
       });
       stats.beasts += runs.length;
-      const prs = prsOf(state, list);
+      const prs = prsOf(state, deeds);
       prs.slice(0, 2).forEach((name, i) => lines.push({ kind: "text", text: T("pr", stats.prs + i, { bestie: name }) }));
       stats.prs += prs.length;
       dmg += prs.length * (foe.weak === "bestie" ? DMG.pr * 3 : DMG.pr);
