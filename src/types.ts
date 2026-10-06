@@ -78,6 +78,8 @@ export interface Role {
   name: string;
   location: Tier;
   minutes: number;
+  /** Obergrenze des Tages in Minuten (Zeitbudget der Bestie), sonst Dauer bzw. Richtwert des Ordens */
+  cap?: number;
   /** Listen aus data/modules/correctives.json */
   warmup?: string[];
   cooldown?: string[];

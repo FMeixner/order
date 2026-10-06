@@ -443,13 +443,13 @@ function balanceScore(b: Beast, deficit: Share): number {
 
 /** Kürzeste Bestie, die das Budget noch zulässt (Minuten) */
 const MIN_BEAST = 6;
-/** Tageslimit: Dauer der Rolle, mindestens der Richtwert des Ordens. Minus alles außer dieser Bestie. */
+/** Tageslimit: eigene Obergrenze der Rolle, sonst ihre Dauer, mindestens der Richtwert des Ordens. Minus alles außer dieser Bestie. */
 export function beastBudget(block: Extract<Block, { type: "beast" }>, opts: BeastOpts): number {
   const pb = opts.state.plan.find((p) => p.id === opts.blockId);
   const f = pb ? weekFocus(opts.state, pb, opts.week) : undefined;
   const role = f ? Object.values(f.roles).find((r) => r.blocks.some((b) => b.type === "beast" && b.id === block.id)) : undefined;
   if (!f || !role) return Infinity;
-  const cap = Math.max(role.minutes, f.session_min);
+  const cap = role.cap ?? Math.max(role.minutes, f.session_min);
   const e = estimateRole(role, opts.profile, opts.state.user, opts.week, opts.reduced);
   return cap - (e.total - blockSeconds(block, opts.profile, opts.reduced) / 60);
 }

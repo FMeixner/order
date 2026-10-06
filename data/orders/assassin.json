@@ -18,7 +18,7 @@
   "week_3": ["kraft_a", "skill_kondition", "kraft_b"],
   "roles": {
     "kraft_a": {
-      "name": "Kraft A", "location": "gym", "minutes": 55,
+      "name": "Kraft A", "location": "gym", "minutes": 55, "cap": 60,
       "warmup": ["short_base", "thoracic_roller", "dislocate", "lower_prep", "hip9090"],
       "cooldown": ["cd_mdf"],
       "blocks": [
@@ -43,7 +43,7 @@
       ]
     },
     "skill_kondition": {
-      "name": "Schwert und Bestie", "location": "home", "minutes": 45,
+      "name": "Schwert und Bestie", "location": "home", "minutes": 45, "cap": 60,
       "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep", "neck_complex", "sword_prep"],
       "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
@@ -52,7 +52,7 @@
       ]
     },
     "kraft_b": {
-      "name": "Kraft B", "location": "gym", "minutes": 55,
+      "name": "Kraft B", "location": "gym", "minutes": 55, "cap": 60,
       "warmup": ["short_base", "lat_box", "dislocate", "core_prep", "hip9090"],
       "cooldown": ["cd_mdf"],
       "blocks": [

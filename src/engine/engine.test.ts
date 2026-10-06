@@ -757,7 +757,7 @@ describe("Zeitbudget der Bestie", () => {
         const budget = beastBudget(b, opts);
         const rest = estimateRole(role, prof, st.user, week).total - blockSeconds(b, prof) / 60;
         if (budget < 6) continue; // Tag ohne Platz: kürzeste Bestie
-        expect(rest + beastMinutes(x, undefined).min, `${f.id}.${rk} ${prof.id} W${week} ${x.name}`).toBeLessThanOrEqual(Math.max(role.minutes, f.session_min) + 0.5);
+        expect(rest + beastMinutes(x, undefined).min, `${f.id}.${rk} ${prof.id} W${week} ${x.name}`).toBeLessThanOrEqual((role.cap ?? Math.max(role.minutes, f.session_min)) + 0.5);
       }
     }
   }, 120000);

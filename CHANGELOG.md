@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.33.1] – 2026-10-06
+
+### Geändert
+- Tage können eine eigene Obergrenze haben (`cap`). Assassin: Montag, Donnerstag und Freitag bis 60 Min, am Bestientag passen damit wieder Bestien bis zur Klasse Ungeheuer.
+
 ## [0.33.0] – 2026-10-06
 
 ### Neu
