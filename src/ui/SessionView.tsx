@@ -7,7 +7,7 @@ import { allRuns } from "../engine/runs";
 import { capOf, isLoadBeast, loadKind, loadRecord, pctLift, suggestLoad } from "../engine/loadbeast";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { affectDowngrade, beastById, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
+import { affectDowngrade, beastById, finisherBlock, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import { WARM_REST, warmupKeys, warmupSets } from "../engine/warmup";
@@ -83,7 +83,7 @@ setWeekBeastBlocks((state, pb, week) => {
     const ctx = { profile } as SessionCtx;
     return (f.roles[d.role]?.blocks ?? [])
       .filter((b) => !b.rotation || b.rotation === ab)
-      .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : b))
+      .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : finisherBlock(b, week) ?? b))
       .filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast")
       .map((b) => [b, profile] as BeastTarget);
   });
@@ -101,23 +101,32 @@ export function collectItems(ctx: SessionCtx): Item[] {
   const role = ctx.focus.roles[ctx.roleKey];
   const ab = isAWeek(ctx.week) ? "A" : "B";
   const noRun = !!ctx.state.noRun?.[sessionId(ctx.block.id, ctx.week, ctx.roleKey)];
-  const items: Item[] = role.blocks
+  const done = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey) && s.done);
+  const beastItem = (b: Extract<Block, { type: "beast" }>): Item => {
+    // Schon erledigt: die Bestie, die tatsächlich gemacht wurde, nicht neu würfeln
+    const r = done?.beastRuns?.[b.id] ?? (done && !done.beastRuns && role.blocks.filter((x) => x.type === "beast").length === 1 ? { beast: done.beast, parts: done.beastParts } : undefined);
+    const logged = r?.parts?.length ? r.parts.map((p) => p.id).join("+") : r?.beast?.id;
+    const lb = logged ? beastById(logged) : null;
+    if (lb) return { block: b, resolved: [], beast: lb };
+    return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
+  };
+  const otherItem = (b: Block): Item => {
+    if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week, b.module) };
+    return { block: b, resolved: slotsOf(b, ctx) };
+  };
+  const all: Item[] = role.blocks
     .filter((b) => !b.rotation || b.rotation === ab)
     .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : b))
     .map((b) => {
-      if (b.type === "beast") {
-        // Schon erledigt: die Bestie, die tatsächlich gemacht wurde, nicht neu würfeln
-        const done = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey) && s.done);
-        const r = done?.beastRuns?.[b.id] ?? (done && !done.beastRuns && role.blocks.filter((x) => x.type === "beast").length === 1 ? { beast: done.beast, parts: done.beastParts } : undefined);
-        const logged = r?.parts?.length ? r.parts.map((p) => p.id).join("+") : r?.beast?.id;
-        const lb = logged ? beastById(logged) : null;
-        if (lb) return { block: b, resolved: [], beast: lb };
-        return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
+      // Finisher: passt eine Bestie aus dem Pool, kommt sie statt des Supersets (erledigte Einheit: so, wie sie war)
+      const fb = finisherBlock(b, ctx.week);
+      if (fb && (!done || done.beastRuns?.[fb.id])) {
+        const it = beastItem(fb);
+        if (it.beast) return it;
       }
-      if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week, b.module) };
-      return { block: b, resolved: slotsOf(b, ctx) };
-    })
-    .filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
+      return b.type === "beast" ? beastItem(b) : otherItem(b);
+    });
+  const items: Item[] = all.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
   // Phase mit hoher Alltagslast: etwa die Hälfte der freien Übungen geführt, sofern das Profil Maschinen oder Kabel hat
   if (ctx.block.load === "high") {
     const all = items.flatMap((it) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0 })));

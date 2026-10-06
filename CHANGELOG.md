@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.33.0] – 2026-10-06
+
+### Neu
+- Finisher statt Superset: Passt eine Bestie aus einem kleinen Pool zum Ort, kommt sie statt des Supersets, und die Bestien wechseln sich ab. Passt keine, oder käme dieselbe wie letzte Woche, bleibt das Superset.
+  - Witcher, Arm-Tag: Arm-Finisher (Lamaschtu, Huldra, Wechselbalg, Peri, Black Shuck, Sirrusch).
+  - Gladiator, Oberkörper: A-Woche Superset, B-Woche Arm-Finisher.
+  - Conqueror, Studio: Finisher mit Körpergewicht (Wechselbalg, Black Shuck, Huldra, Wassermann, Sirrusch), jetzt am Ende der Einheit.
+  - Conqueror, unterwegs: Band-Finisher (Peri, Qarin, Zahhak, Huldra).
+
 ## [0.32.0] – 2026-10-06
 
 ### Neu

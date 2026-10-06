@@ -340,6 +340,12 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
 let weekFocus: (state: AppState, b: PlanBlock, week: number) => Focus | null = (_s, b) => FOCUS_BY_ID[b.focusId] ?? null;
 export const setWeekFocus = (fn: typeof weekFocus) => { weekFocus = fn; };
 
+/** Finisher: Superset, das in passenden Wochen als Bestie aus einem Pool kommt. null, wenn diese Woche das Superset gilt. */
+export function finisherBlock(b: Block, week: number): Extract<Block, { type: "beast" }> | null {
+  if (b.type !== "superset" || !b.finisher) return null;
+  if (b.finisher.only && b.finisher.only !== (isAWeek(week) ? "A" : "B")) return null;
+  return { type: "beast", id: `fin-${b.slots[0].id}`, classes: b.finisher.classes ?? ["plage", "bestie"], pool: b.finisher.pool, strict: true, note: b.finisher.note ?? `Statt Superset ${b.slots.map((s) => s.name).join(" + ")}.` };
+}
 export type BeastTarget = [Extract<Block, { type: "beast" }>, EquipmentProfile];
 /** Alle Bestien-Blöcke einer Woche mit dem Ort ihres Tages. Die Einheiten-Ansicht trägt die volle Fassung ein (mit „kein Laufen“). */
 let weekBeastBlocks: (state: AppState, pb: PlanBlock, week: number) => BeastTarget[] = (state, pb, week) => {
@@ -348,7 +354,7 @@ let weekBeastBlocks: (state: AppState, pb: PlanBlock, week: number) => BeastTarg
   return dayRoleMap(state, pb, f, week).flatMap((d) => {
     const pid = state.profileFor?.[`${pb.id}:${week}:${d.role}`] ?? d.profileId;
     const prof = state.equipment.find((e) => e.id === pid);
-    return prof ? (f.roles[d.role]?.blocks ?? []).filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast").map((b) => [b, prof] as BeastTarget) : [];
+    return prof ? (f.roles[d.role]?.blocks ?? []).map((b) => finisherBlock(b, week) ?? b).filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast").map((b) => [b, prof] as BeastTarget) : [];
   });
 };
 export const setWeekBeastBlocks = (fn: typeof weekBeastBlocks) => { weekBeastBlocks = fn; };
@@ -480,7 +486,10 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   }
   // Kandidaten (Serien erst zusammensetzen, wenn sie gewählt sind)
   type Cand = { kind: BeastKind; units: Beast[]; fam: string[] };
-  const singles = BEASTS.filter(ok).map((b) => serve(b)!);
+  // Eigener Pool (z. B. Arm-Finisher): nur diese Bestien, sie wechseln sich ab. Passt keine zum Ort, der allgemeine Pool.
+  const own = block.pool?.length ? BEASTS.filter((b) => block.pool!.includes(b.id) && ok(b)) : [];
+  if (block.strict && !own.length) return null;
+  const singles = (own.length ? own : BEASTS.filter(ok)).map((b) => serve(b)!);
   const mins = new Map(singles.map((b) => [b.id, min(b)]));
   const fam1 = new Map(singles.map((b) => [b.id, beastFamily(b.id)[0]]));
   const cands: Cand[] = [];
@@ -536,6 +545,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   }
   const age = (c: Cand) => Math.max(0, ...c.fam.map((f) => lastUsed.get(f) ?? 0)); // 0 = noch nie
   let pool = cands.filter(freshC);
+  if (!pool.length && block.strict) return null; // Finisher: lieber das Superset als dieselbe Bestie wie letzte Woche
   if (!pool.length) pool = cands;
   const oldest = Math.min(...pool.map(age));
   pool = pool.filter((c) => age(c) === oldest);

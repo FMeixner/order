@@ -27,7 +27,7 @@
         {"type": "single", "slot": {"id": "gl-mo-3", "name": "Weighted Dip", "home": "Ring Dip + Weste", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "gl-mo-4", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "gl-mo-5", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "superset", "rest": 60, "slots": [
+        {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-magnisson", "ng-fjalar", "ng-ubba", "ng-nott", "ng-garm", "ng-mani"], "only": "B", "note": "B-Woche: Arm-Finisher statt Curl + Pushdown."}, "slots": [
           {"id": "gl-mo-6a", "name": "Cable Curl", "home": "DB Biceps Curl", "sets": 3, "reps": "10-12", "prog": "double"},
           {"id": "gl-mo-6b", "name": "Rope Pushdown", "home": "DB Overhead Triceps Extension", "sets": 3, "reps": "10-12", "prog": "double"}
         ]}

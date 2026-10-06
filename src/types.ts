@@ -57,10 +57,16 @@ export interface Slot {
 
 export type Block =
   | { type: "single"; slot: Slot; rotation?: "A" | "B" }
-  | { type: "superset"; label?: string; slots: Slot[]; rest?: number; rotation?: "A" | "B" }
+  | {
+      type: "superset"; label?: string; slots: Slot[]; rest?: number; rotation?: "A" | "B";
+      /** Statt des Supersets eine Bestie aus diesem Pool, wenn eine zum Ort passt (sonst bleibt das Superset). only: nur in A- oder B-Wochen */
+      finisher?: { pool: string[]; classes?: BeastClass[]; only?: "A" | "B"; note?: string };
+    }
   | { type: "contrast"; heavy: Slot; explosive: Slot; transfer?: number; rest?: number; rotation?: "A" | "B" }
   | {
       type: "beast"; id: string; classes?: BeastClass[]; pool?: string[];
+      /** Nur aus dem Pool, ohne Ausweichen auf den allgemeinen Pool (Finisher statt Superset) */
+      strict?: boolean;
       benchmark_every?: number; note?: string; rotation?: "A" | "B";
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
