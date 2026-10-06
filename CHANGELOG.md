@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.32.0] – 2026-10-06
+
+### Neu
+- Aufwärmsatz vor der ersten schweren Mehrgelenksübung jeder Körperhälfte (z. B. Beinpresse am Montag, Schulterpresse am Dienstag, erste Brustpresse am Freitag), abhakbar wie ein Satz, mit Gewicht aus dem Arbeitsgewicht (50 % × 8), danach 30 s Pause. Schwere Langhantel (≤ 6 Wdh, Top-Satz): zwei Steigerungssätze, 50 % × 5 und 75 % × 3.
+- Seitenwechsel im Warm-up und Cool-down: Nach Ablauf der linken Seite startet die rechte von selbst, mit 4 s Vorlauf.
+- Zeitbudget der Bestie: Sie passt in das, was vom Tag übrig ist (Dauer des Tages, mindestens der Richtwert des Ordens), sonst kommt eine kürzere.
+- Muskelbalance über den Orden: Die Bestienwahl bevorzugt Bestien für Muskeln, die die festen Übungen bisher wenig treffen (im Assassin z. B. Gesäß). Nur ein Gewicht, Abwechslung bleibt vorrangig.
+
+### Geändert
+- Dauerschätzung: Statt pauschal 4 Min Steigerung vor schwerer Langhantel zählen die Aufwärmsätze einzeln. Soldier Studio B: 50 statt 55 Min.
+- Muskelzuordnung ergänzt (Skull Crushers, Pull Press, Band Pull-Aparts, Sumo Pull, Halos, Lizard Crawl, Standups, Combat Rolls).
+
 ## [0.31.0] – 2026-10-05
 
 ### Neu

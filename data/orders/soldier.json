@@ -50,7 +50,7 @@
       ]
     },
     "studio_b": {
-      "name": "Studio B", "location": "gym", "minutes": 55,
+      "name": "Studio B", "location": "gym", "minutes": 50,
       "warmup": ["base", "lat_box"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "so-b-1", "name": "Deadlift", "home": "KB Deadlift", "sets": 3, "reps": "3-5", "prog": "double", "rest": 180}},

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { EXERCISES, FLOWS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { focusFor } from "../engine/weekplan";
@@ -10,6 +10,7 @@ import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, typ
 import { affectDowngrade, beastById, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
+import { WARM_REST, warmupKeys, warmupSets } from "../engine/warmup";
 import type { AppState, Beast, BeastResult, BeastRun, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
 import { Collapse, Desc, kg, Modal, Seg } from "./common";
 import { fmt, useTimer } from "./Timer";
@@ -126,6 +127,9 @@ export function collectItems(ctx: SessionCtx): Item[] {
   return items;
 }
 
+/** Übungen mit Aufwärmsätzen in dieser Einheit (Schlüssel → Anzahl) */
+const WarmCtx = createContext<Map<string, number>>(new Map());
+
 /* ---------- Hauptansicht ---------- */
 export function SessionView(ctx: SessionCtx) {
   const { state, update, focus, roleKey, week, block } = ctx;
@@ -133,6 +137,8 @@ export function SessionView(ctx: SessionCtx) {
   const id = sessionId(block.id, week, roleKey);
   const session = state.sessions.find((s) => s.id === id);
   const items = useMemo(() => collectItems(ctx), [ctx]);
+  // Erste schwere Mehrgelenksübung je Körperhälfte: Aufwärmsatz
+  const warmMap = useMemo(() => warmupKeys(items.flatMap((it) => it.resolved)), [items]);
   const warm = expandDrills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || ctx.profile.has.sword), state.user, week);
   const cool = expandDrills(role.cooldown ?? ["cd_general"], state.user, week);
   const [feeling, setFeeling] = useState<number | null>(null);
@@ -189,9 +195,11 @@ export function SessionView(ctx: SessionCtx) {
         </Collapse>
       )}
 
-      {items.map((it, i) => (
-        <ItemCard key={i} it={it} ctx={ctx} session={session} mut={mut} nextBeast={items.slice(i + 1).find((x) => x.beast)?.beast?.name} />
-      ))}
+      <WarmCtx.Provider value={warmMap}>
+        {items.map((it, i) => (
+          <ItemCard key={i} it={it} ctx={ctx} session={session} mut={mut} nextBeast={items.slice(i + 1).find((x) => x.beast)?.beast?.name} />
+        ))}
+      </WarmCtx.Provider>
 
       {cool.length > 0 && (
         <Collapse title="Cool-down" meta={`${cool.length} Übungen`} tone="amber">
@@ -234,6 +242,16 @@ function DrillList({ drills, done, prefix, onToggle }: { drills: DrillView[]; do
         const key = `${prefix}:${d.id}`;
         const arr = done[key] ?? [];
         let idx = 0;
+        // Startindex je Gruppe: nach Ablauf links startet rechts von selbst (mit Vorlauf)
+        const offs = d.groups.reduce<number[]>((o, _g, gi) => [...o, gi ? o[gi - 1] + d.groups[gi - 1].sets : 0], []);
+        const run = (gi: number, j: number) => {
+          const g = d.groups[gi], i = offs[gi] + j;
+          t.countdown(`${d.name}${g.label ? ` · ${g.label}` : ""}`, g.value, () => {
+            onToggle(key, i);
+            const ng = d.groups[gi + 1];
+            if (ng && j < ng.sets && !arr[offs[gi + 1] + j]) run(gi + 1, j);
+          });
+        };
         return (
           <div key={d.id} className="drill">
             <div className="drill-head">
@@ -254,7 +272,7 @@ function DrillList({ drills, done, prefix, onToggle }: { drills: DrillView[]; do
                       <button key={i} className={`set-btn ${isDone ? "done" : ""}`}
                         onClick={() => {
                           if (isDone || !timed) return onToggle(key, i);
-                          t.countdown(`${d.name}${g.label ? ` · ${g.label}` : ""}`, g.value, () => onToggle(key, i));
+                          run(gi, i - offs[gi]);
                         }}>
                         {isDone ? "✓" : label}
                       </button>
@@ -429,6 +447,21 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
     onSetDone(sets.every((x, k) => k === i || x.done));
   };
 
+  // Aufwärmsätze: abhaken wie ein Satz, danach 30 s bis zum ersten Arbeitssatz
+  const warmN = useContext(WarmCtx).get(r.key) ?? 0;
+  const warmSets = warmN ? warmupSets(r, baseW ?? null, ctx.profile).slice(0, warmN) : [];
+  const warmDone = entry.warm ?? [];
+  const markWarm = (i: number) => {
+    const was = !!warmDone[i];
+    mut((s) => {
+      const e: SessionEntry = s.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
+      const w = Array.from({ length: warmSets.length }, (_, k) => !!e.warm?.[k]);
+      w[i] = !was;
+      return { ...s, entries: { ...s.entries, [r.key]: { ...e, name: sug.name, warm: w } } };
+    });
+    if (!was) t.rest(i < warmSets.length - 1 ? "Pause, dann nächster Aufwärmsatz" : `Gleich: ${sug.name}, Satz 1`, WARM_REST);
+  };
+
   const setFb = (fb: Feedback) => mut((s) => {
     const e: SessionEntry = s.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
     return { ...s, entries: { ...s.entries, [r.key]: { ...e, feedback: e.feedback === fb ? undefined : fb } } };
@@ -490,6 +523,17 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
                 onBlur={(e) => { const v = parseFloat(e.target.value.replace(",", ".")); if (!isNaN(v)) setWeight(snapNearest(ctx.profile, r.equip, v)); }}
                 aria-label="Gewicht" />
               <span className="muted small">kg{r.prog === "topset" && topBack != null ? ` Top-Satz, danach ${kg(topBack)}` : ""}</span>
+            </div>
+          )}
+          {warmSets.length > 0 && (
+            <div className="warm-line">
+              <span className="muted small">Aufwärmen</span>
+              {warmSets.map((w, i) => (
+                <button key={i} className={`set-btn warm ${warmDone[i] ? "done" : ""}`} onClick={() => markWarm(i)} aria-label={`Aufwärmsatz ${i + 1}`}>
+                  {warmDone[i] ? "✓" : `${w.reps} × ${w.kg != null ? kg(w.kg) : "leicht"}`}
+                </button>
+              ))}
+              {warmSets.every((w) => w.kg == null) && <span className="muted small">etwa die Hälfte des Arbeitsgewichts</span>}
             </div>
           )}
           <div className="set-pills">

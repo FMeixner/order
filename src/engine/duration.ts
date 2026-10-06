@@ -4,11 +4,11 @@
 import { BEAST_BY_ID, DM_VARIANTS } from "../data";
 import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile } from "../types";
 import { expandDrills, moduleDrills } from "./plan";
-import { parseReps, resolveSlot } from "./resolve";
+import { parseReps, resolveSlot, type Resolved } from "./resolve";
+import { WARM_SEC, warmupKeys } from "./warmup";
 
 const SEC_PER_REP = 3.5;
 const SETUP = 45; // Umbau, Gewicht holen, einstellen
-const RAMP_HEAVY = 240; // Steigerungssätze vor einer schweren Grundübung (≤ 6 Wdh, Langhantel)
 const CLASS_MIN: Record<BeastClass, number> = { plage: 8, bestie: 14, ungeheuer: 21, uralte: 32, verfluchte: 45 };
 const NEUTRAL_USER: UserProfile = { name: "" };
 
@@ -36,11 +36,20 @@ function setsOf(s: Slot, p: EquipmentProfile, red = false): number {
   if (!r) return 0;
   return r.kind === "timer" || r.kind === "interval" ? 1 : r.sets;
 }
-function heavy(s: Slot, p: EquipmentProfile): boolean {
-  const r = resolveSlot(s, p);
-  if (!r || r.equip !== "barbell") return false;
-  const rp = parseReps(r.reps);
-  return (rp.hi ?? 99) <= 6 || r.prog === "topset";
+/** Kraft-Slots eines Blocks in der Reihenfolge der Einheit */
+function blockSlots(b: Block): Slot[] {
+  switch (b.type) {
+    case "single": return [b.slot];
+    case "superset": return b.slots;
+    case "contrast": return [b.heavy, b.explosive];
+    case "menu": { const f = Object.values(b.options)[0]; return f ? [f] : []; }
+    case "module": return b.fallback ? [b.fallback] : [];
+    default: return [];
+  }
+}
+/** Übungen einer Einheit in Reihenfolge (aufgelöst für dieses Profil) */
+export function roleSlots(blocks: Block[], p: EquipmentProfile): Resolved[] {
+  return blocks.flatMap((b) => (b.type === "module" && p.has.sword && b.module === "sword" ? [] : blockSlots(b))).map((s) => resolveSlot(s, p)).filter((r): r is Resolved => !!r);
 }
 
 export function drillSeconds(d: Drill, groups: { value: number; sets: number }[]): number {
@@ -55,7 +64,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false): number
       if (!n) return 0;
       const r = resolveSlot(s, p)!;
       const rest = r.kind === "timer" || r.kind === "interval" ? 0 : (n - 1) * r.rest;
-      return SETUP + n * workOf(s, p, red) + rest + (heavy(s, p) ? RAMP_HEAVY : 0);
+      return SETUP + n * workOf(s, p, red) + rest;
     }
     case "superset": {
       const rounds = Math.max(...b.slots.map((s) => setsOf(s, p, red)));
@@ -64,7 +73,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false): number
     }
     case "contrast": {
       const rounds = setsOf(b.heavy, p, red);
-      return SETUP * 2 + rounds * (workOf(b.heavy, p) + (b.transfer ?? 30) + workOf(b.explosive, p)) + (rounds - 1) * (b.rest ?? 180) + (heavy(b.heavy, p) ? RAMP_HEAVY : 0);
+      return SETUP * 2 + rounds * (workOf(b.heavy, p) + (b.transfer ?? 30) + workOf(b.explosive, p)) + (rounds - 1) * (b.rest ?? 180);
     }
     case "beast": {
       if (red) return CLASS_MIN.plage * 60 + SETUP; // −1 Satz: Bestie der Klasse Plage
@@ -96,6 +105,8 @@ export function estimateRole(role: Role, p: EquipmentProfile, user: UserProfile 
   const drills = (lists: string[]) => expandDrills(lists, user, week).reduce((s, d) => s + drillSeconds(d, d.groups), 0);
   const warmup = drills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || p.has.sword)) / 60;
   const cooldown = drills(role.cooldown ?? ["cd_general"]) / 60;
-  const main = blocks.reduce((s, b) => s + blockSeconds(b, p, reduced), 0) / 60;
+  // Aufwärmsätze vor der ersten schweren Mehrgelenksübung je Körperhälfte
+  const warmSets = [...warmupKeys(roleSlots(blocks, p)).values()].reduce((a, c) => a + c, 0);
+  const main = (blocks.reduce((s, b) => s + blockSeconds(b, p, reduced), 0) + warmSets * WARM_SEC) / 60;
   return { warmup, main, cooldown, total: warmup + main + cooldown };
 }

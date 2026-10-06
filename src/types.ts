@@ -246,6 +246,8 @@ export interface SessionEntry {
   feedback?: Feedback;
   /** Tatsächlich gezeigte Stufe (Leiter) oder Sekunden/Minuten-Ziel */
   stage?: number;
+  /** Aufwärmsätze abgehakt (zählen nicht für Volumen und Progression) */
+  warm?: boolean[];
 }
 
 /** Ergebnis einer Bestie in einer Einheit. Lastbestien: Gewicht (kg, je Hantel) oder Band, dazu die Zeit im Timecap. */

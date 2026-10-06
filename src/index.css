@@ -338,3 +338,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .pr-table { width: 100%; border-collapse: collapse; }
 .pr-table th { text-align: left; font-weight: 500; color: var(--muted); padding: 4px 6px 4px 0; border-bottom: 1px solid var(--border); }
 .pr-table td { padding: 4px 6px 4px 0; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+.warm-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.set-btn.warm { border-style: dashed; padding: 0 12px; }
+.set-btn.warm.done { border-style: solid; }

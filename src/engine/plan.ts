@@ -1,5 +1,7 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
 import { allRuns } from "./runs";
+import { blockSeconds, estimateRole, roleSlots } from "./duration";
+import { beastSets, musclesOf } from "./volume";
 import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
@@ -391,6 +393,61 @@ const GOAL_W: Partial<Record<Goal, { cardio: number; core: number; strength: num
   mobility: { core: 0.9, strength: 0.6, cardio: 0.5 }, wellbeing: { core: 0.8, strength: 0.6, cardio: 0.7 }, skill: { core: 0.9, strength: 0.7, cardio: 0.5 },
 };
 
+/* ---------- Muskelbalance über den Orden ----------
+   Was die festen Übungen einer Woche wenig treffen (z. B. Brust und Gesäß im Assassin), soll die Bestie eher abdecken.
+   Gerechnet über den ganzen Orden bis zur aktuellen Woche: feste Sätze plus die Bestien, die schon dran waren.
+   Nur ein Gewicht bei der Wahl, kein Zwang: Abwechslung bleibt vorrangig. */
+const BAL_TARGET: Record<string, number> = { Brust: 1, Rücken: 1, Schultern: 0.8, Quadrizeps: 1, Gesäß: 1, Beinbeuger: 0.7, Bizeps: 0.5, Trizeps: 0.5 };
+const BAL_K = 2;
+type Share = Record<string, number>;
+const addTo = (a: Share, b: Share, f = 1) => { for (const [m, v] of Object.entries(b)) a[m] = (a[m] ?? 0) + v * f; };
+const weekSetsMemo = new WeakMap<AppState, Map<string, Share>>();
+/** Feste Sätze einer Ordenswoche je Muskel (Kraft-Übungen aller Trainingstage) */
+function plannedWeekSets(state: AppState, pb: PlanBlock, week: number): Share {
+  let m = weekSetsMemo.get(state);
+  if (!m) weekSetsMemo.set(state, (m = new Map()));
+  const key = `${pb.id}:${week}`;
+  if (m.has(key)) return m.get(key)!;
+  const out: Share = {};
+  const f = weekFocus(state, pb, week);
+  if (f) for (const d of dayRoleMap(state, pb, f, week)) {
+    const prof = state.equipment.find((e) => e.id === d.profileId);
+    const role = f.roles[d.role];
+    if (!prof || !role) continue;
+    const ab = isAWeek(week) ? "A" : "B";
+    for (const r of roleSlots(role.blocks.filter((b) => !b.rotation || b.rotation === ab), prof)) if (r.kind === "strength") addTo(out, musclesOf(r.name), r.sets);
+  }
+  m.set(key, out);
+  return out;
+}
+/** Defizit je Muskel (0 = ausreichend, 1 = gar nicht getroffen), relativ zum Mittel */
+function muscleDeficit(have: Share): Share {
+  const norm = Object.fromEntries(Object.entries(BAL_TARGET).map(([m, t]) => [m, (have[m] ?? 0) / t]));
+  const mean = Object.values(norm).reduce((a, c) => a + c, 0) / Object.keys(norm).length;
+  if (!mean) return {};
+  return Object.fromEntries(Object.entries(norm).map(([m, v]) => [m, Math.max(0, 1 - v / mean)]));
+}
+/** Anteil einer Bestie, der auf unterversorgte Muskeln fällt (0…1) */
+function balanceScore(b: Beast, deficit: Share): number {
+  const sh = beastSets(b.id);
+  let hit = 0, tot = 0;
+  for (const [m, v] of Object.entries(sh)) { if (!(m in BAL_TARGET)) continue; tot += v; hit += v * (deficit[m] ?? 0); }
+  return tot ? hit / tot : 0;
+}
+
+/** Kürzeste Bestie, die das Budget noch zulässt (Minuten) */
+const MIN_BEAST = 6;
+/** Tageslimit: Dauer der Rolle, mindestens der Richtwert des Ordens. Minus alles außer dieser Bestie. */
+export function beastBudget(block: Extract<Block, { type: "beast" }>, opts: BeastOpts): number {
+  const pb = opts.state.plan.find((p) => p.id === opts.blockId);
+  const f = pb ? weekFocus(opts.state, pb, opts.week) : undefined;
+  const role = f ? Object.values(f.roles).find((r) => r.blocks.some((b) => b.type === "beast" && b.id === block.id)) : undefined;
+  if (!f || !role) return Infinity;
+  const cap = Math.max(role.minutes, f.session_min);
+  const e = estimateRole(role, opts.profile, opts.state.user, opts.week, opts.reduced);
+  return cap - (e.total - blockSeconds(block, opts.profile, opts.reduced) / 60);
+}
+
 function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {
   const { profile, state } = opts;
   const pb = state.plan.find((p) => p.id === opts.blockId);
@@ -399,7 +456,10 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   let classes = block.classes?.length ? block.classes : (["bestie", "ungeheuer"] as BeastClass[]);
   if (opts.downgrade) classes = classes.map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]);
   if (opts.reduced) classes = ["plage"];
-  const lo = Math.min(...classes.map((c) => CLASS_RANGE[c][0])), hi = Math.max(...classes.map((c) => CLASS_RANGE[c][1]));
+  let lo = Math.min(...classes.map((c) => CLASS_RANGE[c][0])), hi = Math.max(...classes.map((c) => CLASS_RANGE[c][1]));
+  // Zeitbudget: die Bestie darf die Dauer des Tages nicht reißen (Rest der Einheit geschätzt, inkl. Aufwärmsätzen)
+  const budget = beastBudget(block, opts);
+  if (budget < hi) { hi = Math.max(MIN_BEAST, budget); if (hi <= lo) lo = 0; }
   const inSlot = (m: number) => m > lo && m <= hi;
   const skills = state.user.skills ? new Set(state.user.skills) : null;
   // Fehlt ein Skill, kommt die Bestie mutiert: die betroffenen Übungen durch ihren Ersatz getauscht
@@ -454,6 +514,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
 
   // Varianz im Orden: wann war welche Bestie zuletzt dran (alle Tage dieser Phase, geplant und geloggt)
   const lastUsed = new Map<string, number>();
+  const beastVol: Share = {};
   const mark = (id: string, w: number) => beastFamily(id).forEach((f) => lastUsed.set(f, Math.max(lastUsed.get(f) ?? 0, w)));
   if (pb) {
     for (let k = 1; k <= opts.week; k++) {
@@ -462,7 +523,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
       for (let i = 0; i < Math.max(0, upto); i++) {
         const [b, prof] = targets[i];
         const x = pickBeast(b, { ...opts, week: k, profile: prof, reduced: false });
-        if (x) mark(x.id, k);
+        if (x) { mark(x.id, k); addTo(beastVol, beastSets(x.id)); }
       }
       // Block, der nicht im Wochenplan steht (z. B. Test oder Sonderfall): eigene Vorwochen zählen trotzdem
       if (k < opts.week && !targets.some(([b]) => b.id === block.id)) {
@@ -487,7 +548,11 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   const list = pool.filter((c) => c.kind === kind).sort((a, c) => hash(seed + key(a)) - hash(seed + key(c)));
   const goal = pb ? weekFocus(state, pb, opts.week)?.goals.primary : undefined;
   const gw = (goal && GOAL_W[goal]) || { cardio: 0.7, core: 0.7, strength: 0.7 };
-  const weight = (c: Cand) => c.units.reduce((sum, u) => { const m = mixOf(u); return sum + 0.2 + m.cardio * gw.cardio + m.core * gw.core + m.strength * gw.strength; }, 0) / c.units.length;
+  // Muskelbalance des Ordens bis hierher: feste Sätze aller bisherigen Wochen plus die Bestien davor
+  const have: Share = { ...beastVol };
+  if (pb) for (let k = 1; k <= opts.week; k++) addTo(have, plannedWeekSets(state, pb, k));
+  const deficit = muscleDeficit(have);
+  const weight = (c: Cand) => c.units.reduce((sum, u) => { const m = mixOf(u); return sum + (0.2 + m.cardio * gw.cardio + m.core * gw.core + m.strength * gw.strength) * (1 + BAL_K * balanceScore(u, deficit)); }, 0) / c.units.length;
   const ws = list.map((c) => weight(c) ** 2);
   let u = r("pick") * ws.reduce((x, y) => x + y, 0);
   for (let i = 0; i < list.length; i++) { u -= ws[i]; if (u <= 0) return build(list[i]); }

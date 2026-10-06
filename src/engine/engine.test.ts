@@ -413,7 +413,9 @@ describe("hexed und Grundlagentempo", () => {
   });
   it("Assassin: Einzel, Doppel und Serien gemischt, ohne Wiederholung", async () => {
     const { pickBeast, beastFamily } = await import("./plan");
-    const s = { ...sample(), schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as AppState["schedule"] };
+    // Der Bestientag mit Schwert (sonst füllt der Ersatzblock das Zeitbudget)
+    const s0 = sample();
+    const s = { ...s0, equipment: s0.equipment.map((e) => (e.id === "g" ? { ...e, has: { ...e.has, sword: true } } : e)), schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as AppState["schedule"] };
     const all = SKILLS.skills.map((x) => x.id);
     for (const skills of [all, all.filter((x) => x !== "muscle_up")]) {
       const st = { ...s, user: { ...s.user, skills } };
@@ -739,3 +741,25 @@ describe("Nord und Süd", () => {
     expect(beastRegion(BEASTS.find((b) => b.name === "Undine")!)).toBe("nord");
   });
 });
+
+describe("Zeitbudget der Bestie", () => {
+  it("Bestie plus Rest der Einheit bleibt in der Tagesdauer (Rolle, mindestens Orden-Richtwert)", async () => {
+    const { pickBeast, beastBudget, beastMinutes } = await import("./plan");
+    const { estimateRole, blockSeconds } = await import("./duration");
+    const s = sample();
+    for (const f of Object.values(FOCUS_BY_ID)) for (const [rk, role] of Object.entries(f.roles)) for (const b of role.blocks) {
+      if (b.type !== "beast" || b.pool?.length) continue;
+      const st = { ...s, plan: [{ id: "b1", focusId: f.id, label: "", start: "2026-09-28", end: "2026-12-20", load: "medium" as const, travel: false }] };
+      for (const prof of st.equipment) for (const week of [1, 2]) {
+        const opts = { blockId: "b1", week, profile: prof, state: st, reduced: false, downgrade: false };
+        const x = pickBeast(b, opts);
+        if (!x) continue;
+        const budget = beastBudget(b, opts);
+        const rest = estimateRole(role, prof, st.user, week).total - blockSeconds(b, prof) / 60;
+        if (budget < 6) continue; // Tag ohne Platz: kürzeste Bestie
+        expect(rest + beastMinutes(x, undefined).min, `${f.id}.${rk} ${prof.id} W${week} ${x.name}`).toBeLessThanOrEqual(Math.max(role.minutes, f.session_min) + 0.5);
+      }
+    }
+  }, 120000);
+});
+
