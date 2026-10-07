@@ -137,6 +137,8 @@ export interface Exercise {
 
 export interface Beast {
   id: string;
+  /** Nie kürzen (auch wenn die Runden es zuließen) */
+  noShort?: boolean;
   name: string;
   orig: string;
   rounds: number;

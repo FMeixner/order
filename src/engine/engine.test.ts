@@ -449,7 +449,9 @@ describe("hexed und Grundlagentempo", () => {
     expect(new Set(ws.map((x) => beastFamily(x.id)[0])).size).toBeGreaterThanOrEqual(10);
     const sb = ws.find((x) => x.id.includes("~r"))!;
     expect(beastById(sb.id)?.name).toBe(sb.name);
-    expect(canShorten(BEASTS.find((b) => b.name === "Nachzehrer")!)).toBe(false); // 21/15/9
+    expect(shortBeast(BEASTS.find((b) => b.name === "Nachzehrer")!, 2)?.work).toBe("21/15 Pullups · 21/15 Handstand Pushups"); // Leiter: erste Stufen
+    expect(shortBeast(BEASTS.find((b) => b.name === "Klabautermann")!, 3)?.work).toContain("Buy-out: 100 Single Unders"); // Buy-in/-out bleiben
+    expect(canShorten(BEASTS.find((b) => b.name === "Undine")!)).toBe(false);
     expect(shortBeast(BEASTS.find((b) => b.name === "Banshee")!, 2)?.rounds).toBe(2);
   });
   it("spontaner fünfter Tag am Sonntag kommt nach den erledigten Einheiten, nicht in die Wochenmitte", () => {
@@ -736,8 +738,8 @@ describe("Nord und Süd", () => {
   it("Morgenlandbestien haben externen Widerstand, Nordbestien nicht, und die Namen passen", async () => {
     const { beastRegion } = await import("./plan");
     const sued = BEASTS.filter((b) => beastRegion(b) === "sued").map((b) => b.name).sort();
-    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Mantikor", "Marid", "Peri", "Qarin", "Roch", "Schahmaran", "Schedu", "Simurgh", "Sirrusch", "Tiamat", "Ugallu", "Zahhak"]);
-    expect(BEASTS.filter((b) => beastRegion(b) === "nord").length).toBe(55);
+    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Mantikor", "Marid", "Peri", "Qarin", "Roch", "Schahmaran", "Schedu", "Simurgh", "Sirrusch", "Ugallu", "Zahhak"]);
+    expect(BEASTS.filter((b) => beastRegion(b) === "nord").length).toBe(56);
     expect(beastRegion(BEASTS.find((b) => b.name === "Undine")!)).toBe("nord");
   });
 });

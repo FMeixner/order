@@ -177,11 +177,11 @@ export function beastClass(min: number): BeastClass {
 export type BeastNeed = "rings" | "bar" | "band" | "band_or_cable" | "barbell" | "kb_db" | "rower" | "bike";
 const NEED_RULES: [RegExp, BeastNeed | null][] = [
   [/^plank/i, null],
-  [/ring push|rto ring|ring dip|ring row|ring triceps/i, "rings"],
-  [/muscle-?up|pull-?up|chin-?up|c2b|toes-to-bar|\bttb\b|knees-to-elbow|hanging|passive hang|commando|archer row|incline row/i, "bar"],
+  [/ring push|rto ring|ring dip|ring row|ring triceps|ring chest fl/i, "rings"],
+  [/muscle-?up|pull-?up|chin-?up|c2b|toes-to-bar|\bttb\b|knees-to-elbow|hanging|passive hang|commando|archer row|incline row|windshield wiper/i, "bar"],
   [/face pull|ext(ernal)? rotation/i, "band_or_cable"],
-  [/^band /i, "band"],
-  [/bench press|deadlift|squats \(50%\)|good morning|pull press|barbell curl|skull crusher|power clean|bent-over row/i, "barbell"],
+  [/^(oa |sl )?band /i, "band"],
+  [/bench press|deadlift|squats \(50%\)|good morning|pull press|barbell curl|skull crusher|power clean|bent-over row|muscle snatch/i, "barbell"],
   [/\bkb\b|kettlebell|swing|db snatch|goblet|halo|biceps curl|bar curl|triceps ext|shrug|thruster|chest fl|reverse fl|db lunge/i, "kb_db"],
   [/\bbike\b/i, "bike"],
 ];
@@ -300,12 +300,21 @@ function hash(s: string): number {
 type BeastOpts = { blockId: string; week: number; profile: EquipmentProfile; state: AppState; reduced: boolean; downgrade: boolean };
 
 /** Kurzform: gleiche Bestie mit weniger Runden. Nur bei gleichen Runden (keine Leitern wie 21/15/9, kein AMRAP, kein Buy-in). */
+/** Kürzbar: mindestens zwei Runden. Leitern (21/15/9) behalten die ersten Stufen, Buy-in und Buy-out bleiben, gekürzt wird der Innenteil. */
 export function canShorten(b: Beast): boolean {
-  return b.rounds >= 3 && !b.parts && !b.repeat && !/\d\/\d|amrap|buy-(in|out)/i.test(b.work);
+  return b.rounds >= 2 && !b.parts && !b.repeat && !b.noShort && !/amrap/i.test(b.work);
 }
+const LADDER_RX = /^((?:buy-(?:in|out):\s*)?)(\d+(?:\/\d+)+)/i;
 export function shortBeast(b: Beast, k: number): Beast | null {
-  if (!canShorten(b) || k < 2 || k >= b.rounds) return null;
-  return { ...b, id: `${b.id}~r${k}`, name: `${b.name} (${k}/${b.rounds} Runden)`, rounds: k, minutes: (b.minutes * k) / b.rounds };
+  if (!canShorten(b) || k < 1 || k >= b.rounds) return null;
+  const parts = b.work.split(" · ");
+  const lad = parts.map((p) => p.match(LADDER_RX)?.[2]).find(Boolean);
+  // Anteil der Arbeit: bei Leitern nach Wiederholungen der ersten Stufen, mit Buy-in/-out bleibt ein fester Teil
+  const nums = lad?.split("/").map(Number);
+  let ratio = nums && nums.length === b.rounds ? nums.slice(0, k).reduce((a, c) => a + c, 0) / nums.reduce((a, c) => a + c, 0) : k / b.rounds;
+  if (/buy-(in|out)/i.test(b.work)) ratio = 0.3 + 0.7 * ratio;
+  const work = parts.map((p) => p.replace(LADDER_RX, (_m, pre: string, n: string) => pre + n.split("/").slice(0, k).join("/"))).join(" · ");
+  return { ...b, id: `${b.id}~r${k}`, name: `${b.name} (${k}/${b.rounds} Runden)`, rounds: k, minutes: b.minutes * ratio, work };
 }
 
 /** Grund-Bestien einer Id: "a~hex:x" → a, "a×2+b" → a, b */
@@ -515,10 +524,15 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
     if (inSlot(m * 2)) cands.push({ kind: "double", units: [b], fam: f });
     // Zu lang fürs Fenster: Kurzform mit so vielen Runden, wie hineinpassen (zählt als Einzelbestie)
     if (m > hi && canShorten(b)) {
-      const per = m / b.rounds;
-      const k = Math.min(b.rounds - 1, Math.floor(hi / per));
-      const sb = shortBeast(b, k);
-      if (sb && inSlot(per * k)) { mins.set(sb.id, per * k); cands.push({ kind: "single", units: [sb], fam: f }); }
+      // Längste Kurzform, die passt (Leitern: die ersten Stufen, Buy-in und Buy-out bleiben)
+      for (let k = b.rounds - 1; k >= 1; k--) {
+        const sb = shortBeast(b, k);
+        if (!sb) break;
+        const mm = sb.minutes * (m / b.minutes);
+        if (mm > hi) continue;
+        if (inSlot(mm)) { mins.set(sb.id, mm); cands.push({ kind: "single", units: [sb], fam: f }); }
+        break;
+      }
     }
   }
   const shortest = Math.min(...mins.values());

@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.36.0] – 2026-10-07
+
+### Geändert
+- Bestien nach Kuratierung: neue Übungen, Runden und Startwerte bei Aufhocker, Fliegender Holländer (ohne Handstand), Golem, Huldra, Klabautermann, Kobold, Krampus, Mittagsfrau, Nachtkrapp, Sylphe, Waldschrat, Wechselbalg, Wila, Huma, Humbaba, Kusarikku, Peri, Qarin, Roch (Band), Sirrusch (Langhantel) und Zahhak. Zwerg braucht die Stange.
+- Tiamat ist jetzt reines Körpergewicht und heißt als Nordbestie Fafnir.
+- Kurzformen: Leitern behalten die ersten Stufen (16/12/8/4 → 16/12), Buy-in und Buy-out bleiben, gekürzt wird der Innenteil. Bestien mit zwei Runden lassen sich auf eine kürzen. Einzelne Bestien sind als nicht kürzbar markiert.
+
 ## [0.35.0] – 2026-10-07
 
 ### Neu

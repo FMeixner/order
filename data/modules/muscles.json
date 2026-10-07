@@ -30,6 +30,9 @@
     "Tragen": {"Unterarme": 1, "Rumpf": 0.5}
   },
   "exercises": {
+    "Jackknives": {"Rumpf": 1},
+    "Weightless Windmill": {"Rumpf": 0.5, "Schultern": 0.5},
+    "Band Skis": {"Rücken": 0.5, "Trizeps": 0.5, "Rumpf": 0.5},
     "Skull Crushers": {"Trizeps": 1},
     "Pull Press": {"Schultern": 1, "Nacken": 0.5},
     "Band Pull-Aparts": {"Schultern": 0.5, "Rücken": 0.5},
