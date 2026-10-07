@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FLOWS, FOCI, FOCUS_BY_ID } from "../data";
-import { CLASS_LABEL, defaultRoles, trainingDays } from "../engine/plan";
+import { CLASS_LABEL, defaultRoles, focusName, trainingDays } from "../engine/plan";
 import { shapeFocus } from "../engine/weekplan";
 import { resolveSlot } from "../engine/resolve";
 import { ladderStart } from "../engine/skills";
@@ -59,7 +59,7 @@ export function FocusDetail({ f, profile, skills, days }: { f: Focus; profile?: 
       {f.medley && (
         <div className="card">
           <strong>Die Reihe</strong>
-          <ol className="slot-list">{f.medley.map((id, i) => <li key={i}><strong>{FOCUS_BY_ID[id]?.name}</strong> · {FOCUS_BY_ID[id]?.tagline}</li>)}</ol>
+          <ol className="slot-list">{f.medley.map((id, i) => <li key={i}><strong>{focusName(id)}</strong> · {FOCUS_BY_ID[id]?.tagline}</li>)}</ol>
           <p className="muted small">Die einzelnen Wochen findest du bei den jeweiligen Orden.</p>
         </div>
       )}
@@ -83,7 +83,7 @@ export function FociBrowser({ state }: { state: AppState }) {
       <p className="muted">Alle Orden im Überblick. Welchem Orden du dich in welcher Phase anschließt, legst du im Plan fest.</p>
       {FOCI.map((f) => (
         <button key={f.id} className="focus-card solo" onClick={() => setOpen(f)}>
-          <div className="focus-name">{f.name}</div>
+          <div className="focus-name">{focusName(f.id)}</div>
           <div className="focus-tag">{f.tagline}</div>
           <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {LOAD_FIT_LABEL[f.load_fit]} · {f.session_min} Min{f.travel ? " · unterwegs möglich" : ""}</div>
         </button>

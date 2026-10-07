@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.38.0] – 2026-10-07
+
+### Neu
+- Weibliche Ordensnamen, wenn im Profil „weiblich“ eingetragen ist: Queen, Huntress, Gladiatrix, Trobairitz, Dame, Conqueress, Arlecchina und Amazon (statt Witcher). Die übrigen Namen sind neutral. Unter Setup › Profil lässt sich die Grundform wählen.
+
 ## [0.37.0] – 2026-10-07
 
 ### Neu

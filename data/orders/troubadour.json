@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "troubadour",
-  "name": "Troubadour",
+  "name": "Troubadour", "name_w": "Trobairitz",
   "tagline": "Kraft und Ausdauer im Verhältnis 1:1.",
   "description": "Ein ausgewogenes Grundgerüst für alle, die nichts verlieren und alles erhalten wollen. Kraft und Ausdauer an getrennten Tagen. Die Sorge vor dem Interferenzeffekt ist für Muskelmasse und Maximalkraft weitgehend unbegründet.",
   "goals": {"primary": "strength", "secondary": ["endurance", "wellbeing"]},

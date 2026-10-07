@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "witcher",
-  "name": "Witcher",
+  "name": "Witcher", "name_w": "Amazon",
   "tagline": "Masse aufbauen, beweglich bleiben.",
   "description": "Muskelaufbau mit leichtem Überschuss. Pro Muskel etwa 12 Sätze pro Woche, Übungen mit Betonung der Dehnposition. Freitag schwer mit Kontrastpaaren im A/B-Wechsel: 30 s vom schweren zum explosiven Satz, 3 Min bis zum nächsten Paar. Donnerstag zuhause, mit Schwert als Klammer am Anfang und Ende.",
   "goals": {"primary": "hypertrophy", "secondary": ["strength", "power", "skill"]},

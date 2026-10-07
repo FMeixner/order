@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "conqueror",
-  "name": "Conqueror",
+  "name": "Conqueror", "name_w": "Conqueress",
   "tagline": "Unterwegs belastbar bleiben, Kraft halten.",
   "description": "Für Reisephasen: einmal pro Woche Studio, sonst Körpergewicht und Bänder. Belastbarkeit und Ausdauer haben Vorrang. Ist in einer Woche kein Studio da, läuft der Studiotag mit den Reise-Übungen. Jede dritte Woche wiederholt die Belastbarkeitseinheit die Bestie aus Woche 1 als Zwischenwert. Kraft überwiegend mit Körpergewicht in Stufen (Liegestütz, Klimmzug, Pistol, Pike), nur Kniebeuge und Kreuzheben mit Langhantel: Das läuft an jedem Ort gleich.",
   "goals": {"primary": "conditioning", "secondary": ["strength", "endurance"]},

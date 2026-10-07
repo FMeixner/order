@@ -11,7 +11,7 @@ import { DOMAINS, SHARPEN } from "../data";
 import type { AppState, Block, Focus, Goal, PlanBlock } from "../types";
 import type { AxisId } from "./balance";
 import { evaluateBlock } from "./norms";
-import { blockFocus, rolesFor } from "./plan";
+import { blockFocus, focusName, rolesFor } from "./plan";
 
 export type DomainId = "speed" | "power" | "strength" | "ke" | "anaerob" | "aerob" | "skill" | "mobility";
 export interface Deficit { id: DomainId; name: string; score: number | null; kind: "norm" | "trend" }
@@ -79,7 +79,7 @@ export function slotFor(state: AppState, b: PlanBlock): SlotPlan {
   const f = blockFocus(b);
   const none = (reason: string, deferred: Deficit[] = []): SlotPlan => ({ domain: null, source: "none", reason, deferred });
   if (!f) return none("");
-  if (!slotEligible(f)) return none(`${f.name} hat keinen Schwerpunkt-Slot.`);
+  if (!slotEligible(f)) return none(`${focusName(f.id)} hat keinen Schwerpunkt-Slot.`);
   if (b.sharpen === "off") return { domain: null, source: "off", reason: "Für diese Phase ausgeschaltet.", deferred: [] };
   if (b.sharpen && SHARPEN[b.sharpen]) return { domain: b.sharpen as DomainId, source: "manual", reason: "Selbst gewählt.", deferred: [] };
   if (state.user.focusMode === "special") return none("Spezialist: kein Slot, der Orden bekommt die volle Zeit.");
@@ -91,7 +91,7 @@ export function slotFor(state: AppState, b: PlanBlock): SlotPlan {
   const deferred = src.list.filter((d) => !own.has(d.id) && (!SHARPEN[d.id] || interferes(f, d.id)));
   const skipped: string[] = [];
   for (const d of src.list) {
-    if (own.has(d.id)) { skipped.push(`${d.name} trainiert ${f.name} selbst`); continue; }
+    if (own.has(d.id)) { skipped.push(`${d.name} trainiert ${focusName(f.id)} selbst`); continue; }
     if (deferred.includes(d)) continue;
     const basis = d.kind === "norm" ? `${d.score} Punkte in der letzten Testwoche` : "schlechter als beim letzten Test";
     return { domain: d.id, source: "auto", reason: `${basis[0].toUpperCase()}${basis.slice(1)}.${skipped.length ? ` ${skipped.join(", ")}, deshalb der nächste Bereich.` : ""}`, deferred };

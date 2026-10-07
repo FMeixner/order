@@ -1,5 +1,5 @@
 import { evaluateBlock } from "../engine/norms";
-import { isTestBlock } from "../engine/plan";
+import { focusName, isTestBlock } from "../engine/plan";
 import { deficitsOf, domainName, slotFor } from "../engine/sharpen";
 import { FOCUS_BY_ID, SHARPEN } from "../data";
 import type { AppState } from "../types";
@@ -52,7 +52,7 @@ export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; b
         )}
         {defs.length === 0 && ev.suggestions.length > 0 && (
           <div className="card note">
-            <strong>Vorschlag für die nächste Phase:</strong> {ev.suggestions.map((f) => f.name).join(", ")}.
+            <strong>Vorschlag für die nächste Phase:</strong> {ev.suggestions.map((f) => focusName(f.id)).join(", ")}.
             <div className="small muted">{ev.who5 != null && ev.who5 < 52 ? "Grund: niedriges Wohlbefinden." : `Grund: ${ev.weakest!.name} ist dein schwächster Bereich im Vergleich zur Norm.`} Das ist ein Hinweis, keine Pflicht. Ändern kannst du den Plan unter „Plan“.</div>
           </div>
         )}
@@ -61,12 +61,12 @@ export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; b
             <strong>Defizite:</strong> {defs.map((d) => `${d.name}${d.kind === "norm" ? ` (${d.score})` : " (Rückgang)"}`).join(", ")}.
             <ul className="slot-list small">
               {slot && nextB && (
-                <li>Nächste Phase, {FOCUS_BY_ID[nextB.focusId].name}: {slot.domain
+                <li>Nächste Phase, {focusName(nextB.focusId)}: {slot.domain
                   ? <>Schwerpunkt-Slot <strong>{domainName(slot.domain)}</strong>, {SHARPEN[slot.domain].days === "all" ? "jeden Trainingstag" : SHARPEN[slot.domain].days === 2 ? "zweimal pro Woche" : "einmal pro Woche"}. {slot.reason}</>
                   : slot.reason}</li>
               )}
-              {slot && slot.deferred.length > 0 && <li>{slot.deferred.map((d) => d.name).join(" und ")} {slot.deferred.length > 1 ? "passen" : "passt"} nicht in {FOCUS_BY_ID[nextB!.focusId].name}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>}
-              {ev.suggestions.length > 0 && <li>{ev.who5 != null && ev.who5 < 52 ? "Wohlbefinden ist eingeschränkt, Orden für Erholung" : `Orden, die ${ev.weakest?.name ?? defs[0].name} direkt trainieren`}: {ev.suggestions.map((f) => f.name).join(", ")}.</li>}
+              {slot && slot.deferred.length > 0 && <li>{slot.deferred.map((d) => d.name).join(" und ")} {slot.deferred.length > 1 ? "passen" : "passt"} nicht in {focusName(nextB!.focusId)}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>}
+              {ev.suggestions.length > 0 && <li>{ev.who5 != null && ev.who5 < 52 ? "Wohlbefinden ist eingeschränkt, Orden für Erholung" : `Orden, die ${ev.weakest?.name ?? defs[0].name} direkt trainieren`}: {ev.suggestions.map((f) => focusName(f.id)).join(", ")}.</li>}
             </ul>
             <div className="small muted">Nur Vorschläge. Slot und Blockfolge änderst du im Plan.</div>
           </div>

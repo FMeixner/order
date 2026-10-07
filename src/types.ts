@@ -101,6 +101,8 @@ export interface Focus {
   load_fit: Load;
   level: string;
   session_min: number;
+  /** Weibliche Fassung des Namens (King → Queen), sonst gilt name */
+  name_w?: string;
   weeks: { min: number; max: number };
   /** Letzte Blockwoche ist Testwoche */
   test_week?: boolean;
@@ -233,6 +235,8 @@ export interface UserProfile {
   skillTraining?: boolean;
   /** Allrounder: Schwerpunkt-Slot und Blockfolge folgen den Defiziten. Spezialist: kein Slot, Blockfolge wie geplant. */
   focusMode?: "allround" | "special";
+  /** Ordensnamen: passend zum Profil (Standard) oder immer die Grundform */
+  orderNames?: "auto" | "base";
   /** Veraltet (0.1): wird beim Laden in has.sword der Heim-Profile übernommen */
   doppelmesser?: boolean;
 }

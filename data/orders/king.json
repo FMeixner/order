@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "king",
-  "name": "King",
+  "name": "King", "name_w": "Queen",
   "tagline": "Harte Tage, bewusste Erholung.",
   "description": "Intensive Tage im Wechsel mit Meditation und Yoga. Nach jedem harten Tag fragt die App, wie es sich angefühlt hat (Feeling Scale −5 bis +5). Zweimal hintereinander −1 oder schlechter: Die nächste harte Einheit wird leichter.",
   "goals": {"primary": "conditioning", "secondary": ["wellbeing"]},

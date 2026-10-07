@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "gladiator",
-  "name": "Gladiator",
+  "name": "Gladiator", "name_w": "Gladiatrix",
   "tagline": "Physis aufbauen, Kondition über das Schwert.",
   "description": "Zweite Aufbauwelle ohne Kontrasttraining. Oberkörper und Unterkörper im Studio, kurze Arm-Einheit, zuhause mit Gewichtsweste und Schwert-Intervallen. Übungen variieren gegenüber Witcher. In Woche 8 ein kurzer Kraftcheck über Top-Sätze.",
   "goals": {"primary": "hypertrophy", "secondary": ["skill", "conditioning"]},

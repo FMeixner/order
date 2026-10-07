@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "huntsman",
-  "name": "Huntsman",
+  "name": "Huntsman", "name_w": "Huntress",
   "tagline": "Unberechenbar und wach.",
   "description": "Parkour-Grundlagen draußen, jede Woche eine andere Bestie, Sprungkraft auf einer Kraftbasis. Präzisionssprünge und Vaults erst ab Woche 3, vorher nur Landetechnik.",
   "goals": {"primary": "skill", "secondary": ["conditioning", "power"]},

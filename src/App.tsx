@@ -5,7 +5,7 @@ import { useAppState } from "./store";
 import { Almanac } from "./ui/Almanac";
 import { Onboarding } from "./ui/Onboarding";
 import { PlanList } from "./ui/PlanEditor";
-import { addDays, freezePlan, trainingDays } from "./engine/plan";
+import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan";
 import { deficitsBefore, deficitWeights, slotFor } from "./engine/sharpen";
 import { YearBalance } from "./ui/YearBalance";
 import { Setup } from "./ui/Setup";
@@ -22,6 +22,7 @@ const TABS: { k: Tab; l: string }[] = [
 
 export default function App() {
   const [state, update, replace] = useAppState();
+  setOrderNames(state.user);
   useEffect(() => {
     const t = state.theme ?? "auto";
     if (t === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;

@@ -149,8 +149,8 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       <div className="card hero">
         <div className="hero-top">
           <div>
-            <div className="hero-focus">{baseFocus.name}</div>
-            <div className="muted small">{baseFocus.medley ? `Diese Woche: ${focus.name}` : block.label || focus.tagline}</div>
+            <div className="hero-focus">{focusName(baseFocus.id)}</div>
+            <div className="muted small">{baseFocus.medley ? `Diese Woche: ${focusName(focus.id)}` : block.label || focus.tagline}</div>
           </div>
           <div className="week-nav">
             <button onClick={() => go(week - 1)} disabled={week <= 1} aria-label="Vorige Woche">‹</button>

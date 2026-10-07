@@ -70,7 +70,10 @@ export function newerFocus(b: PlanBlock): boolean {
 export function refreeze(b: PlanBlock, today: string): PlanBlock {
   return { ...b, frozen: undefined, ...(freezePlan([{ ...b, frozen: undefined }], today)?.[0] ?? {}) };
 }
-export const focusName = (id: string) => (id === TEST_BLOCK ? "Testwoche" : FOCUS_BY_ID[id]?.name ?? "Orden fehlt");
+/** Ordensnamen: weibliche Fassung (Queen, Huntress …), wenn das Profil „weiblich“ ist und nichts anderes gewählt wurde */
+let female = false;
+export const setOrderNames = (u: Pick<UserProfile, "sex" | "orderNames">) => { female = u.sex === "w" && (u.orderNames ?? "auto") === "auto"; };
+export const focusName = (id: string) => (id === TEST_BLOCK ? "Testwoche" : (female && FOCUS_BY_ID[id]?.name_w) || FOCUS_BY_ID[id]?.name || "Orden fehlt");
 /** Folgt direkt eine eigene Testwoche? Dann entfällt die Testwoche im Orden, die letzte Woche läuft mit −1 Satz. */
 export function followedByTest(plan: PlanBlock[], b: PlanBlock): boolean {
   return plan.some((x) => isTestBlock(x) && x.start === addDays(b.end, 1));

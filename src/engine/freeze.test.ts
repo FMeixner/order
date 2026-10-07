@@ -43,3 +43,15 @@ describe("Phase einfrieren", () => {
     for (const id of h.medley!) expect(p[0].frozen?.foci[id]).toBeTruthy();
   });
 });
+
+describe("Ordensnamen", () => {
+  it("weiblich, wenn das Profil weiblich ist; Grundform wählbar", async () => {
+    const { focusName, setOrderNames } = await import("./plan");
+    setOrderNames({ sex: "w" });
+    expect([focusName("king"), focusName("witcher"), focusName("knight"), focusName("monk"), focusName("assassin")]).toEqual(["Queen", "Amazon", "Dame", "Monk", "Assassin"]);
+    setOrderNames({ sex: "w", orderNames: "base" });
+    expect(focusName("king")).toBe("King");
+    setOrderNames({ sex: "m" });
+    expect(focusName("huntsman")).toBe("Huntsman");
+  });
+});

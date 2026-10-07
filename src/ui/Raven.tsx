@@ -2,7 +2,7 @@
 import { useRef, useState } from "react";
 import { FOCUS_BY_ID } from "../data";
 import { chapterOf, checkPack, GENERIC_PACK, narratorOf, tournamentOf, type Line } from "../engine/saga";
-import { isTestBlock, weekInBlock } from "../engine/plan";
+import { focusName, isTestBlock, weekInBlock } from "../engine/plan";
 import type { AppState, PlanBlock } from "../types";
 import { Collapse, Field, Seg } from "./common";
 
@@ -90,7 +90,7 @@ export function RavenChronicle({ state, today }: { state: AppState; today: strin
         {blocks.map((b) => {
           const ch = chapterOf(state, b, today);
           return (
-            <Collapse key={b.id} title={ch.scene.name} meta={`${FOCUS_BY_ID[b.focusId].name}${ch.ended ? " · abgeschlossen" : ` · Woche ${ch.weeks.length}`}`}>
+            <Collapse key={b.id} title={ch.scene.name} meta={`${focusName(b.focusId)}${ch.ended ? " · abgeschlossen" : ` · Woche ${ch.weeks.length}`}`}>
               {ch.ended && <RavenLines lines={ch.saga} aside={nr.aside} />}
               {ch.ended ? <Collapse title="Alle Ausgaben" meta={`${ch.weeks.length} Wochen`}><Weeks ch={ch} aside={nr.aside} /></Collapse> : <><RavenLines lines={ch.prologue.slice(1)} aside={nr.aside} /><Weeks ch={ch} aside={nr.aside} /></>}
             </Collapse>

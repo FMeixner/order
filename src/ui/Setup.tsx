@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { FOCI, SKILLS } from "../data";
-import { blockAt, rolesFor, trainingDays, weekInBlock } from "../engine/plan";
+import { blockAt, focusName, rolesFor, trainingDays, weekInBlock } from "../engine/plan";
 import { focusFor } from "../engine/weekplan";
 import { exportState, migrate } from "../store";
 import { AUTO_FILE, backupFile, canPickFile, chooseBackupFile, forgetBackupFile } from "../backup";
@@ -78,6 +78,11 @@ export function NormFields({ user, onChange }: { user: UserProfile; onChange: (u
         <Seg value={(user.sex ?? "-") as "m" | "w" | "-"} options={[{ value: "-", label: "–" }, { value: "w", label: "weiblich" }, { value: "m", label: "männlich" }]}
           onChange={(v) => onChange({ ...user, sex: v === "-" ? null : v })} />
       </Field>
+      {user.sex === "w" && (
+        <Field label="Ordensnamen" hint="Weibliche Fassung: Queen, Huntress, Gladiatrix, Trobairitz, Dame, Conqueress, Arlecchina, Amazon">
+          <Seg value={user.orderNames ?? "auto"} options={[{ value: "auto", label: "weiblich" }, { value: "base", label: "Grundform" }]} onChange={(orderNames) => onChange({ ...user, orderNames })} />
+        </Field>
+      )}
     </div>
   );
 }
@@ -134,7 +139,7 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
         <WeekEditor schedule={state.schedule} profiles={state.equipment} onChange={(schedule) => update((st) => ({ ...st, schedule }))} />
       </Collapse>
       {block && focus && (
-        <Collapse title="Einheiten auf Tage verteilen" meta={focus.name}>
+        <Collapse title="Einheiten auf Tage verteilen" meta={focusName(focus.id)}>
           <p className="muted small">Gilt für die aktuelle Phase. Mit den Pfeilen tauschst du die Reihenfolge, im Menü wählst du eine andere Einheit.</p>
           {roles.map((r, i) => (
             <div key={i} className="week-row">

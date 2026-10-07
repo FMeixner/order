@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "knight",
-  "name": "Knight",
+  "name": "Knight", "name_w": "Dame",
   "tagline": "Klassischer Muskelaufbau, jeder Muskel zweimal pro Woche.",
   "description": "Oberkörper und Unterkörper im Wechsel. Bei gleichem Volumen bringt zweimal pro Woche etwas mehr Wachstum als einmal. Ziel sind 10–16 harte Sätze pro Muskel und Woche, Übungen mit Betonung der Dehnposition.",
   "goals": {"primary": "hypertrophy", "secondary": ["strength"]},
