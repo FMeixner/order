@@ -202,6 +202,8 @@ export interface PlanBlock {
   label: string;
   load: Load;
   travel: boolean;
+  /** Stand der Orden-Daten zu Beginn der Phase: Änderungen an den Orden gelten erst ab der nächsten Phase oder nach „übernehmen“ */
+  frozen?: { at: string; foci: Record<string, Focus> };
   /** Kurztag: diese Rolle nur mit drei Kernübungen, die übrigen Tage gleichen aus, wenn das Ziel leidet */
   shortRole?: string;
   /** Abweichender Wochenplan für diesen Block (z. B. Semesterferien). Fehlt: globaler Wochenplan. */

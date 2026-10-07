@@ -4,12 +4,12 @@
    und Pausen um 15 s gekürzt. Schwere Grundübungen bleiben unangetastet.
    Fünf Tage: Der Zusatztag (Rolle außerhalb von week_4, meist „bonus“) kommt zwischen die schweren Tage.
    Harlequin: Orden mit "medley" nehmen jede Woche einen anderen Orden. */
-import { FOCUS_BY_ID, SWAP_GROUPS } from "../data";
+import { SWAP_GROUPS } from "../data";
 import { EQUIPMENT_PRESETS } from "../store";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot } from "../types";
 import { estimateRole } from "./duration";
 import { parseReps } from "./resolve";
-import { defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { blockFocus, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { shortDay } from "./shortday";
 import { applySlot } from "./sharpen";
 
@@ -112,20 +112,19 @@ function compress(f: Focus): Focus {
   return { ...f, roles, week_3: kept };
 }
 
-const cache = new Map<string, Focus>();
-/** Orden in der Form für n Trainingstage */
+const cache = new WeakMap<Focus, Focus>();
+/** Orden in der Form für n Trainingstage (Cache je Datenstand: eingefrorene Phasen haben eigene Objekte) */
 export function shapeFocus(f: Focus, nDays: number): Focus {
   if (nDays !== 3) return f;
-  const key = `${f.id}:3`;
-  if (!cache.has(key)) cache.set(key, compress(f));
-  return cache.get(key)!;
+  if (!cache.has(f)) cache.set(f, compress(f));
+  return cache.get(f)!;
 }
 
 /** Orden einer Woche: Harlequin nimmt jede Woche einen anderen, danach die Form für die Zahl der Trainingstage */
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {
-  const base = FOCUS_BY_ID[b.focusId];
+  const base = blockFocus(b);
   if (!base) return null;
-  const f = base.medley?.length ? FOCUS_BY_ID[base.medley[(week - 1) % base.medley.length]] ?? base : base;
+  const f = base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base;
   const n = trainingDays(state, b).length;
   let shaped = shapeFocus(f, n);
   // Kurztag: gekürzte Rolle, die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet

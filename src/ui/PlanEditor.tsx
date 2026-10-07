@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FOCI, FOCUS_BY_ID, SHARPEN } from "../data";
 import { domainName, interferes, slotEligible, type DomainId, type SlotPlan } from "../engine/sharpen";
 import type { DeficitWeights } from "../engine/sequence";
-import { addDays, blockWeeks, defaultRoles, fitScore, fmtDate, focusName, followedByTest, insertTestWeek, isoDate, isTestBlock, mondayOf, splitTestWeek } from "../engine/plan";
+import { addDays, blockFocus, blockWeeks, defaultRoles, fitScore, newerFocus, refreeze, fmtDate, focusName, followedByTest, insertTestWeek, isoDate, isTestBlock, mondayOf, splitTestWeek } from "../engine/plan";
 import { uid } from "../store";
 import type { EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { shapeFocus } from "../engine/weekplan";
@@ -85,7 +85,7 @@ export function FocusPicker({ load, travel, value, onPick, profile, days }: { lo
 export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCancel, onDelete, onInsertTest, onSplitTest }: { block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotPlan; onSave: (b: PlanBlock) => void; onCancel: () => void; onDelete?: () => void; onInsertTest?: () => void; onSplitTest?: () => void }) {
   const [b, setB] = useState<PlanBlock>(block);
   const [ownWeek, setOwnWeek] = useState(!!block.schedule && Object.values(block.schedule).some(Boolean));
-  const f = FOCUS_BY_ID[b.focusId];
+  const f = blockFocus(b);
   const weeks = blockWeeks(b);
   const valid = b.start <= b.end && (!!f || isTestBlock(b));
   if (isTestBlock(b)) return (
@@ -196,11 +196,19 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
       {sorted.map((b) => {
         const now = b.start <= today && today <= b.end;
         return (
-          <button key={b.id} className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""}`} onClick={() => setEdit(b)}>
+          <div key={b.id} className="stack" style={{ gap: 4 }}>
+          <button className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""}`} onClick={() => setEdit(b)}>
             <div className="block-dates">{fmtDate(b.start)} – {fmtDate(b.end)}</div>
             <div className="block-name">{focusName(b.focusId)} {now && <span className="tag teal">jetzt</span>}</div>
             <div className="muted small">{isTestBlock(b) ? "fünf Cups, Auswertung danach" : `${b.label || "–"} · Last ${LOAD_LABEL[b.load]}${b.travel ? " · unterwegs" : ""} · ${blockWeeks(b)} Wochen${b.shortRole && FOCUS_BY_ID[b.focusId]?.roles[b.shortRole] ? ` · Kurztag: ${FOCUS_BY_ID[b.focusId].roles[b.shortRole].name}` : ""}`}</div>
           </button>
+            {newerFocus(b) && (
+              <div className="row wrap small">
+                <span className="muted">Neue Fassung des Ordens verfügbar. Diese Phase läuft mit dem Stand vom {fmtDate(b.frozen!.at)}.</span>
+                <button className="btn ghost small" onClick={() => { if (confirm("Neue Fassung des Ordens für diese Phase übernehmen? Übungen und Tage können sich ändern, Einträge im Log bleiben.")) onChange(plan.map((x) => (x.id === b.id ? refreeze(x, today) : x))); }}>Übernehmen</button>
+              </div>
+            )}
+          </div>
         );
       })}
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}

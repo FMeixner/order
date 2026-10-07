@@ -6,8 +6,8 @@ export function Help() {
       <ul>
         <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche. Mit ‹ › neben der Wochenzahl blätterst du: künftige Wochen als Vorschau, vergangene zum Nachtragen.</li>
         <li><strong>Plan</strong> ist dein Jahr in Phasen. Jede Phase hat einen Orden und eine Alltagslast. „Blockfolge vorschlagen“ wählt die Orden für kommende Phasen, auf Wunsch mit Schwerpunkt. Eine Testwoche kann als eigener Block hinter jede Phase: Phase antippen, „Letzte Woche als Testwoche“ oder „Danach eine Woche einschieben“.</li>
-        <li><strong>Orden</strong> listet alle Programme mit Details.</li>
-        <li><strong>Log</strong> zeigt abgeschlossene Einheiten, Bestzeiten und Tests.</li>
+        <li><strong>Almanach</strong>: Orden (alle Programme), Bestien (mit Bestzeiten, zum freien Jagen), Übungen (Arbeitsgewicht, 1RM, Verlauf) und das Log.</li>
+        <li>Eine Phase behält den Stand ihres Ordens ab ihrem Start. Ändert sich ein Orden durch ein Update, steht im Plan „Neue Fassung verfügbar“; erst mit „Übernehmen“ gilt sie für die laufende Phase.</li>
         <li><strong>Setup</strong>: Equipment, Wochenplan, Sicherung.</li>
       </ul>
 
@@ -19,6 +19,7 @@ export function Help() {
           <strong> Schwer</strong> = gerade so geschafft, <strong>OK</strong> = 1–2 Wiederholungen wären noch gegangen,
           <strong> Leicht</strong> = 3 oder mehr, <strong>Sehr leicht</strong> = deutlich zu leicht.</li>
         <li>Am Ende „Einheit abschließen“. Erst dann rechnet die App die Vorschläge für das nächste Mal.</li>
+        <li>Aufwärmsatz: Die erste schwere Mehrgelenksübung jeder Körperhälfte am Tag (etwa die Beinpresse, die erste Brust- oder Schulterpresse) hat einen gestrichelten Kreis davor: 8 Wiederholungen mit der Hälfte des Arbeitsgewichts, bei schwerer Langhantel zwei Steigerungssätze (50 % × 5, 75 % × 3). Abhaken wie einen Satz, danach 30 s bis zum ersten Arbeitssatz.</li>
       </ul>
 
       <h3>So steigert die App</h3>
@@ -47,8 +48,12 @@ export function Help() {
         <li>Kein Laufen möglich (Wetter, Reise, Knie)? Unter ⚙ Anpassen „Heute kein Laufen möglich“ anhaken: Aus dem Lauf wird eine Bestie ähnlicher Dauer.</li>
         <li>Jede Bestie gibt es <em>entfesselt</em> (die volle Fassung) und <em>mutiert</em>. Ist ein Skill (Setup › Können) nicht angekreuzt, kommt sie mutiert: Nur die Übungen dieses Skills werden durch ihren Ersatz getauscht, etwa Pistols → doppelt so viele Squats, Dragon Flags → dreimal so viele Leg Raises. Alle mutierten Fassungen einer Bestie teilen sich eine Bestzeit. Dieselbe Bestie kommt nie zwei Wochen hintereinander.</li>
         <li>Reiter „Almanach“: Orden, Bestiarium (alle Bestien mit Übungen, Länge oder Timecap, Ausrüstung, Bestzeiten bzw. Rekorden), Übungen (Arbeitsgewicht, 1RM selbst eintragen oder aus dem Log geschätzt, Verlauf) und das Log.</li>
+        <li>Rundentracker: Bei laufender Stoppuhr hakst du jede Runde ab, bei Bestien mit nur einem Durchgang jede Übung. Das letzte Häkchen stoppt die Uhr und speichert die Zeit. Zu früh abgehakt? „Wieder aufnehmen“: Die Uhr läuft ab dem ersten Start weiter, gespeichert wird nur die neue Zeit. Die Stoppuhr übersteht Reiterwechsel.</li>
+        <li>Zwei Bestien an einem Tag: Nach der ersten startet automatisch die 2-Minuten-Pause.</li>
+        <li>Freie Jagd: Im Almanach unter Bestien lässt sich jede Bestie direkt jagen, entfesselt oder mutiert. Die Zeit zählt für Bestzeit, Log und Flugblatt, aber nicht als Trainingseinheit.</li>
+        <li>Finisher: In manchen Orden kommt statt eines Arm- oder Rumpf-Supersets eine kurze Bestie aus einem kleinen Pool, die sich abwechseln. Passt keine zum Ort, bleibt das Superset.</li>
         <li>Pullups in Bestien sind immer strikt. Mutiert werden daraus Assisted Pullups, mit Band oder Kipping; bei Muscle-Ups genauso.</li>
-        <li>Bestienwahl in allen Orden: Einzelbestie, Doppel (×2) und Serie aus zwei Bestien sind gleichrangig. Die Dauer passt zum Zeitfenster des Tages, das Ziel des Ordens gewichtet (Kraft, Kondition, Ausdauer, Beweglichkeit). Vorrang hat Abwechslung: Was in der Phase schon dran war, kommt erst wieder, wenn alles Passende durch ist. Ist eine Bestie für den Slot zu lang, kommt sie als Kurzform mit weniger Runden (eigene Bestzeit).</li>
+        <li>Bestienwahl in allen Orden: Einzelbestie, Doppel (×2) und Serie aus zwei Bestien sind gleichrangig. Die Dauer passt zum Zeitfenster des Tages, das Ziel des Ordens gewichtet (Kraft, Kondition, Ausdauer, Beweglichkeit). Vorrang hat Abwechslung: Was in der Phase schon dran war, kommt erst wieder, wenn alles Passende durch ist. Ist eine Bestie für den Slot zu lang, kommt sie als Kurzform mit weniger Runden (eigene Bestzeit): Leitern behalten die ersten Stufen (16/12/8/4 → 16/12), Buy-in und Buy-out bleiben, gekürzt wird der Innenteil. Die Bestie passt immer in die Zeit, die vom Tag übrig ist. Über den ganzen Orden bevorzugt die Wahl Bestien für Muskeln, die die festen Übungen wenig treffen.</li>
       </ul>
 
       <h3>Anderer Ort heute</h3>
@@ -89,7 +94,7 @@ export function Help() {
 
       <h3>Können</h3>
       <ul>
-        <li>Unter Setup › Können hakst du ab, was sauber sitzt: Klimmzug, Pistol Squat, Muscle-Up und mehr. Fehlt ein Skill, nimmt die App eine leichtere Variante (Hinweis „leichter“) und lässt Bestien mit dieser Übung weg.</li>
+        <li>Unter Setup › Können hakst du ab, was sauber sitzt: Klimmzug, Pistol Squat, Muscle-Up und mehr. Fehlt ein Skill, nimmt die App eine leichtere Variante (Hinweis „leichter“), und Bestien mit dieser Übung kommen mutiert.</li>
         <li>Übungsleitern bleiben der Lernweg zum Skill. Mit abgehaktem Skill starten sie auf der passenden Stufe.</li>
       </ul>
 
@@ -105,6 +110,17 @@ export function Help() {
         <li>Bei fünf Tagen kommt ein Zusatztag zwischen die schweren Tage: eine Bestie plus etwas, das es nur dann gibt, je nach Orden zum Beispiel Unterarme, Nacken, Füße, Seilspringen oder Qigong.</li>
       </ul>
 
+      <h3>Kurztag</h3>
+      <ul>
+        <li>Plan › Phase antippen › Kurztag: Ein Tag der Woche läuft nur mit drei Kernübungen. Darunter zeigt die App, was bleibt, was wegfällt und wie die anderen Tage ausgleichen.</li>
+        <li>Ausgeglichen wird nur, wenn das Ziel des Ordens leidet: Muskeln, die der Orden aufbaut, bleiben an der unteren Grenze deines Volumenbereichs, alle anderen bei der Erhaltung (4 Sätze pro Woche). Erst kommt ein Satz mehr an passenden Übungen dazu, dann wandern weggefallene Kernübungen auf einen anderen Tag, und wenn die Zeit knapp wird, laufen Übungen als Superset. Kein Tag überschreitet dabei sein Zeitlimit.</li>
+      </ul>
+
+      <h3>Schweißfreier Ort</h3>
+      <ul>
+        <li>Setup › Equipment › „Schweißfrei“ (etwa für den Arbeitsplatz): An Tagen an diesem Ort kommen keine Bestien, kein Laufen und keine Intervalle, Finisher bleiben Superset und das Warm-up ist kurz.</li>
+      </ul>
+
       <h3>Alltagslast</h3>
       <ul>
         <li>Ist in einer Phase viel los, läuft etwa die Hälfte der freien Übungen an Maschine oder Kabel, wenn das Studio sie hat. Der erste große Lift des Tages bleibt frei.</li>
@@ -114,6 +130,7 @@ export function Help() {
       <h3>Timer</h3>
       <ul>
         <li>Zeitübungen starten mit 4 Sekunden Vorlauf, die letzten 5 Sekunden piepen. Der Ton braucht einmal einen Fingertipp auf die Seite.</li>
+        <li>Übungen für links und rechts: Nach Ablauf der linken Seite startet die rechte von selbst, wieder mit 4 Sekunden Vorlauf.</li>
       </ul>
 
       <h3>Deine Daten</h3>

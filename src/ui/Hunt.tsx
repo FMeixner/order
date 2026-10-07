@@ -42,7 +42,7 @@ export function Hunt({ state, update, today, id, onClose }: { state: AppState; u
     if (!cur) return st;
     let next = fn(cur);
     let beastTimes = st.beastTimes;
-    const timed = allRuns(next).filter((r) => r.seconds);
+    const timed = allRuns(next).filter((r) => r.seconds != null);
     if (!next.done && timed.length) {
       next = { ...next, done: true, date: today };
       beastTimes = { ...beastTimes };

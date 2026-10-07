@@ -248,7 +248,8 @@ describe("Normen", () => {
     const push = findNorm("t-pushups", undefined, "m", 37)!;
     expect(normScore(push, 30, null)!.label).toBe("Silber-Niveau");
     expect(normScore(findNorm("t-pushups", undefined, "w", 37)!, 16, null)!.label).toBe("Gold-Niveau");
-    expect(findNorm("t-5rm-squat", "legpress", "w", 37)).toBeNull();
+    expect(findNorm("t-5rm-squat", "legpress", "w", 37)?.type).toBe("cat"); // Frauen: Kategorien
+    expect(findNorm("t-5rm-squat", "legpress", "w", 65)).toBeNull();
     expect(findNorm("t-pushups", undefined, "m", 45)).toBeNull();
     const lp = findNorm("t-5rm-squat", "legpress", "m", 37)!;
     // 5RM 125 kg bei 84 kg: 1RM ≈ 145,8 → 1,74 × KG ≈ Mittelwert → P50
@@ -765,3 +766,11 @@ describe("Zeitbudget der Bestie", () => {
   }, 120000);
 });
 
+describe("Normen für Frauen", () => {
+  it("jede Norm für Männer hat ein Gegenstück für Frauen", async () => {
+    const norms = (await import("../../data/modules/norms.json")).default as { norms: { test: string; variant?: string; sex: string }[] };
+    const key = (n: { test: string; variant?: string }) => `${n.test}|${n.variant ?? ""}`;
+    const w = new Set(norms.norms.filter((n) => n.sex === "w").map(key));
+    expect(norms.norms.filter((n) => n.sex === "m").map(key).filter((k) => !w.has(k))).toEqual([]);
+  });
+});

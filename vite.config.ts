@@ -17,5 +17,5 @@ export default defineConfig({
     __SINGLE__: JSON.stringify(single),
   },
   build: { outDir: single ? "dist-single" : "dist", emptyOutDir: true },
-  test: { environment: "node" },
+  test: { environment: "node", exclude: ["e2e/**", "node_modules/**"] },
 });

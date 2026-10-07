@@ -7,7 +7,7 @@ import genericJson from "../../data/narrative/generic.json";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Session } from "../types";
 import { evaluateBlock } from "./norms";
-import { addDays, beastById, blockWeeks, mondayOf, dayRoleMap, isDeloadWeek, isTestBlock, weekInBlock } from "./plan";
+import { addDays, beastById, blockFocus, blockWeeks, mondayOf, dayRoleMap, isDeloadWeek, isTestBlock, weekInBlock } from "./plan";
 import { focusFor } from "./weekplan";
 
 /* ---------- Welt-Paket ---------- */
@@ -157,7 +157,7 @@ function huntsOfWeek(state: AppState, b: PlanBlock, week: number): Session[] {
   return state.sessions.filter((s) => s.done && isHunt(s) && s.date >= ws && s.date < we);
 }
 function plannedOf(state: AppState, b: PlanBlock, week: number): number {
-  const f = focusFor(state, b, week) ?? FOCUS_BY_ID[b.focusId];
+  const f = focusFor(state, b, week) ?? blockFocus(b);
   return f ? dayRoleMap(state, b, f).length : 0;
 }
 /** Bestzeiten dieser Einheiten: nur echte Verbesserungen gegen frühere Zeiten derselben Bestie */
@@ -248,7 +248,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
       lines.push({ kind: "head", text: pack.narrator.acts[act(w) - 1] || (act(w) === 2 ? "Zweiter Akt" : "Dritter Akt") });
       lines.push({ kind: "text", text: T(act(w) === 2 ? "act2" : "act3", 0).replace(/^(Zweiter|Dritter) Akt\.\s*/, "") });
     }
-    const f = FOCUS_BY_ID[b.focusId];
+    const f = blockFocus(b);
     const reduced = !!state.reduced[`${b.id}:${w}`] || (f ? isDeloadWeek(f, w) : false);
     const schar = deck(scene.schar, `${seed}:schar`, w);
     const ratio = planned ? done / planned : 0;

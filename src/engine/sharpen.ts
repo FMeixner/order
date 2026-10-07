@@ -7,11 +7,11 @@
    3. Kein Nachlaufen: Defizit nur deutlich unter der Norm (≤ 40 Punkte bei mehreren Tests, ≤ 30 bei einem)
       oder, ohne Norm, wenn Tests jenseits des Messfehlers schlechter wurden und keiner besser.
    Spezialisten bekommen keinen Slot. Laufende Phasen bekommen nur einen, wenn vor ihrem Start getestet wurde. */
-import { DOMAINS, FOCUS_BY_ID, SHARPEN } from "../data";
+import { DOMAINS, SHARPEN } from "../data";
 import type { AppState, Block, Focus, Goal, PlanBlock } from "../types";
 import type { AxisId } from "./balance";
 import { evaluateBlock } from "./norms";
-import { rolesFor } from "./plan";
+import { blockFocus, rolesFor } from "./plan";
 
 export type DomainId = "speed" | "power" | "strength" | "ke" | "anaerob" | "aerob" | "skill" | "mobility";
 export interface Deficit { id: DomainId; name: string; score: number | null; kind: "norm" | "trend" }
@@ -76,7 +76,7 @@ export interface SlotPlan {
 }
 
 export function slotFor(state: AppState, b: PlanBlock): SlotPlan {
-  const f = FOCUS_BY_ID[b.focusId];
+  const f = blockFocus(b);
   const none = (reason: string, deferred: Deficit[] = []): SlotPlan => ({ domain: null, source: "none", reason, deferred });
   if (!f) return none("");
   if (!slotEligible(f)) return none(`${f.name} hat keinen Schwerpunkt-Slot.`);

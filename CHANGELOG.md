@@ -2,6 +2,20 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.37.0] – 2026-10-07
+
+### Neu
+- Phasen behalten ihren Orden-Stand: Ab Start läuft eine Phase mit der Fassung des Ordens von diesem Tag. Ändert ein Update den Orden, steht im Plan „Neue Fassung verfügbar“, mit „Übernehmen“ gilt sie auch für die laufende Phase.
+- Durchklick-Tests im Browser (Playwright), bei jedem Push in der CI: Einheit abschließen, freie Jagd mit Rundentracker und „Wieder aufnehmen“, Kurztag, Sicherung speichern und laden, Seitenwechsel im Warm-up, schweißfreier Ort.
+- Alte Datenstände (0.1, 0.20, 0.30) als feste Testfälle: Laden, Plan, Einheiten, Flugblatt, Volumen und Export/Import laufen.
+- Normen für Frauen ergänzt: Beinpresse (20–49 Jahre, Kategorien) und 500 m Rudern (30–39, nur Orientierung). Jede Norm für Männer hat jetzt ein Gegenstück.
+
+### Geändert
+- Hilfe: Almanach, Aufwärmsätze, Rundentracker, freie Jagd, Finisher, Kurztag, schweißfreier Ort, Seitenwechsel, eingefrorene Phasen.
+
+### Behoben
+- Freie Jagd: Eine Zeit von 0 s (sofort abgehakt) wurde nicht eingetragen.
+
 ## [0.36.0] – 2026-10-07
 
 ### Geändert

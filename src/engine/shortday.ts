@@ -69,13 +69,15 @@ export interface ShortDayReport {
   volume: Record<string, [number, number]>;
 }
 
-const memo = new Map<string, { focus: Focus; report: ShortDayReport }>();
+const memo = new WeakMap<Focus, Map<string, { focus: Focus; report: ShortDayReport }>>();
 
 /** Orden mit Kurztag: gekürzte Rolle und, wenn nötig, ausgeglichene übrige Tage */
 export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles: string[]): { focus: Focus; report: ShortDayReport } {
   const lo = volumeRange(user)[0];
   const key = `${f.id}:${roleKey}:${lo}:${weekRoles.join(",")}`;
-  const hit = memo.get(key);
+  let mf = memo.get(f);
+  if (!mf) memo.set(f, (mf = new Map()));
+  const hit = mf.get(key);
   if (hit) return hit;
   const roles: Record<string, Role> = JSON.parse(JSON.stringify(f.roles));
   const short = roles[roleKey];
@@ -205,6 +207,6 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
     volume: Object.fromEntries(MUSCLES.map((m) => [m, [Math.round(before[m] ?? 0), Math.round(after[m] ?? 0)]])),
   };
   const out = { focus: { ...f, roles }, report };
-  memo.set(key, out);
+  mf.set(key, out);
   return out;
 }

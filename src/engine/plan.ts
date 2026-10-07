@@ -46,6 +46,30 @@ export function blockWeeks(b: PlanBlock): number {
 /* ---------- Testwoche als eigener Block ---------- */
 export const TEST_BLOCK = "test";
 export const isTestBlock = (b: PlanBlock | null | undefined) => b?.focusId === TEST_BLOCK;
+/** Orden einer Phase: eingefrorener Stand, sonst die aktuellen Daten */
+export const blockFocus = (b: PlanBlock, id: string = b.focusId): Focus | undefined => b.frozen?.foci?.[id] ?? FOCUS_BY_ID[id];
+/** Gestartete Phasen ohne Stand bekommen den aktuellen Stand der Orden-Daten (mit den Orden eines Medleys) */
+export function freezePlan(plan: PlanBlock[], today: string): PlanBlock[] | null {
+  let changed = false;
+  const out = plan.map((b) => {
+    const f = FOCUS_BY_ID[b.focusId];
+    if (isTestBlock(b) || !f || b.start > today || b.frozen?.foci?.[b.focusId]) return b;
+    changed = true;
+    const foci: Record<string, Focus> = { [f.id]: f };
+    for (const id of f.medley ?? []) if (FOCUS_BY_ID[id]) foci[id] = FOCUS_BY_ID[id];
+    return { ...b, frozen: { at: today, foci: JSON.parse(JSON.stringify(foci)) } };
+  });
+  return changed ? out : null;
+}
+/** Gibt es eine neuere Fassung des Ordens als den eingefrorenen Stand? */
+export function newerFocus(b: PlanBlock): boolean {
+  if (!b.frozen) return false;
+  return Object.entries(b.frozen.foci).some(([id, f]) => FOCUS_BY_ID[id] && JSON.stringify(FOCUS_BY_ID[id]) !== JSON.stringify(f));
+}
+/** Neue Fassung übernehmen: Stand auf die aktuellen Daten setzen */
+export function refreeze(b: PlanBlock, today: string): PlanBlock {
+  return { ...b, frozen: undefined, ...(freezePlan([{ ...b, frozen: undefined }], today)?.[0] ?? {}) };
+}
 export const focusName = (id: string) => (id === TEST_BLOCK ? "Testwoche" : FOCUS_BY_ID[id]?.name ?? "Orden fehlt");
 /** Folgt direkt eine eigene Testwoche? Dann entfällt die Testwoche im Orden, die letzte Woche läuft mit −1 Satz. */
 export function followedByTest(plan: PlanBlock[], b: PlanBlock): boolean {
@@ -109,7 +133,7 @@ export function defaultRoles(f: Focus, nDays: number): string[] {
 }
 
 export function rolesFor(state: AppState, b: PlanBlock, focus?: Focus): string[] {
-  const f = focus ?? FOCUS_BY_ID[b.focusId];
+  const f = focus ?? blockFocus(b);
   if (!f) return [];
   const n = trainingDays(state, b).length;
   const custom = state.roleOrder[b.id];
@@ -346,7 +370,7 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
 }
 
 /** Orden einer Woche (Harlequin, Drei-Tage-Form, Slot). weekplan.ts trägt focusFor ein; so entsteht kein Import-Kreis. */
-let weekFocus: (state: AppState, b: PlanBlock, week: number) => Focus | null = (_s, b) => FOCUS_BY_ID[b.focusId] ?? null;
+let weekFocus: (state: AppState, b: PlanBlock, week: number) => Focus | null = (_s, b) => blockFocus(b) ?? null;
 export const setWeekFocus = (fn: typeof weekFocus) => { weekFocus = fn; };
 
 /** Rolle so, wie sie an diesem Ort läuft. Schweißfrei: ohne Bestien, Laufen und Intervalle, Finisher bleiben Superset, kurzes Warm-up. */

@@ -1,0 +1,219 @@
+{
+ "version": 1,
+ "onboarded": true,
+ "user": {
+  "name": "Neu",
+  "birthYear": 1988,
+  "sex": "w",
+  "skills": [
+   "pullup",
+   "muscle_up"
+  ],
+  "level": "fortgeschritten",
+  "focusMode": "allround"
+ },
+ "equipment": [
+  {
+   "id": "g",
+   "name": "Studio",
+   "tier": "gym",
+   "dumbbells": [
+    2.5,
+    5,
+    7.5,
+    10,
+    12.5,
+    15,
+    17.5,
+    20
+   ],
+   "kettlebells": [
+    8,
+    12,
+    16
+   ],
+   "barbell": {
+    "bar": 20,
+    "smallestPlate": 1.25
+   },
+   "cableStep": 2.5,
+   "machineStep": 5,
+   "vest": [],
+   "bands": [],
+   "has": {
+    "bar": true,
+    "rings": false,
+    "bench": true,
+    "rower": true,
+    "bike": true,
+    "box": true,
+    "sandbag": false,
+    "cable": true,
+    "machines": true,
+    "medball": false
+   }
+  },
+  {
+   "id": "h",
+   "name": "Zuhause",
+   "tier": "home",
+   "dumbbells": [
+    2,
+    4,
+    6,
+    8
+   ],
+   "kettlebells": [],
+   "barbell": null,
+   "cableStep": 2.5,
+   "machineStep": 5,
+   "vest": [],
+   "bands": [
+    "leicht",
+    "mittel"
+   ],
+   "has": {
+    "bar": true,
+    "rings": false,
+    "bench": true,
+    "rower": false,
+    "bike": false,
+    "box": false,
+    "sandbag": false,
+    "cable": false,
+    "machines": false,
+    "medball": false,
+    "sword": true
+   }
+  }
+ ],
+ "schedule": {
+  "Mo": "g",
+  "Di": "g",
+  "Do": "h",
+  "Fr": "g"
+ },
+ "roleOrder": {},
+ "plan": [
+  {
+   "id": "b1",
+   "focusId": "assassin",
+   "label": "Herbst",
+   "start": "2026-09-28",
+   "end": "2026-12-06",
+   "load": "medium",
+   "travel": false
+  }
+ ],
+ "slots": {},
+ "sessions": [
+  {
+   "id": "b1:1:kraft_a",
+   "date": "2026-09-28",
+   "blockId": "b1",
+   "focusId": "assassin",
+   "week": 1,
+   "role": "kraft_a",
+   "profileId": "g",
+   "entries": {
+    "ka-1|Leg Press": {
+     "key": "ka-1|Leg Press",
+     "slotId": "ka-1",
+     "name": "Leg Press",
+     "prog": "double",
+     "sets": [
+      {
+       "done": true,
+       "reps": 12,
+       "weight": 100
+      },
+      {
+       "done": true,
+       "reps": 11,
+       "weight": 100
+      }
+     ]
+    }
+   },
+   "drills": {},
+   "menu": {},
+   "done": true
+  },
+  {
+   "id": "b1:1:bonus",
+   "date": "2026-10-03",
+   "blockId": "b1",
+   "focusId": "assassin",
+   "week": 1,
+   "role": "bonus",
+   "profileId": "g",
+   "entries": {
+    "ka-1|Leg Press": {
+     "key": "ka-1|Leg Press",
+     "slotId": "ka-1",
+     "name": "Leg Press",
+     "prog": "double",
+     "sets": [
+      {
+       "done": true,
+       "reps": 12,
+       "weight": 100
+      },
+      {
+       "done": true,
+       "reps": 11,
+       "weight": 100
+      }
+     ]
+    }
+   },
+   "drills": {},
+   "menu": {},
+   "done": true,
+   "beastRuns": {
+    "bx-xx-bst": {
+     "beast": {
+      "id": "ng-magnisson",
+      "seconds": 420,
+      "kg": 25,
+      "tech": "gut"
+     }
+    },
+    "bx-xx-bst2": {
+     "beast": {
+      "id": "ng-garm×2",
+      "seconds": 1300
+     }
+    }
+   }
+  }
+ ],
+ "beastTimes": {
+  "ng-magnisson": [
+   {
+    "date": "2026-10-03",
+    "seconds": 420,
+    "kg": 25,
+    "tech": "gut"
+   }
+  ],
+  "ng-garm×2": [
+   {
+    "date": "2026-10-03",
+    "seconds": 1300
+   }
+  ]
+ },
+ "reduced": {},
+ "menuChoice": {},
+ "tests": {},
+ "who5": [],
+ "feeling": [],
+ "swaps": {},
+ "oneRM": {
+  "Bench Press": {
+   "kg": 60,
+   "date": "2026-09-30"
+  }
+ }
+}

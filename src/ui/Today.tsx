@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { FOCUS_BY_ID } from "../data";
-import { addDays, roleAt, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
+import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
@@ -54,7 +53,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       <TestWeek state={state} update={update} block={block} today={today} />
     </div>
   );
-  const baseFocus = FOCUS_BY_ID[block.focusId];
+  const baseFocus = blockFocus(block);
   if (!baseFocus) return <div className="card">Der Orden dieser Phase fehlt. <button className="btn small" onClick={goPlan}>Plan öffnen</button></div>;
   const curWeek = weekInBlock(block, anchor);
   const total = blockWeeks(block);

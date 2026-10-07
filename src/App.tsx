@@ -5,7 +5,7 @@ import { useAppState } from "./store";
 import { Almanac } from "./ui/Almanac";
 import { Onboarding } from "./ui/Onboarding";
 import { PlanList } from "./ui/PlanEditor";
-import { addDays, trainingDays } from "./engine/plan";
+import { addDays, freezePlan, trainingDays } from "./engine/plan";
 import { deficitsBefore, deficitWeights, slotFor } from "./engine/sharpen";
 import { YearBalance } from "./ui/YearBalance";
 import { Setup } from "./ui/Setup";
@@ -38,6 +38,11 @@ export default function App() {
     lastDone.current = doneCount;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doneCount]);
+  // Gestartete Phasen behalten den Stand ihres Ordens; spätere Änderungen an den Orden-Daten gelten erst nach „übernehmen“
+  const todayIso = isoDate(new Date());
+  useEffect(() => {
+    if (freezePlan(state.plan, todayIso)) update((s) => ({ ...s, plan: freezePlan(s.plan, todayIso) ?? s.plan }));
+  }, [state.plan, todayIso, update]);
   const [tab, setTab] = useState<Tab>("heute");
   const [help, setHelp] = useState(false);
   const today = isoDate(new Date());
