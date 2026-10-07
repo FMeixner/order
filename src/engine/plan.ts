@@ -2,8 +2,8 @@
 import { allRuns } from "./runs";
 import { blockSeconds, estimateRole, roleSlots } from "./duration";
 import { beastSets, musclesOf } from "./volume";
-import { BEASTS, BEAST_BY_ID, DM_VARIANTS, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
-import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, UserProfile, Weekday } from "../types";
+import { BEASTS, BEAST_BY_ID, DM_VARIANTS, EXERCISES, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
+import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, Role, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, beastSkills, hexFor, hexWith } from "./skills";
 
@@ -340,6 +340,22 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
 let weekFocus: (state: AppState, b: PlanBlock, week: number) => Focus | null = (_s, b) => FOCUS_BY_ID[b.focusId] ?? null;
 export const setWeekFocus = (fn: typeof weekFocus) => { weekFocus = fn; };
 
+/** Rolle so, wie sie an diesem Ort läuft. Schweißfrei: ohne Bestien, Laufen und Intervalle, Finisher bleiben Superset, kurzes Warm-up. */
+const sweatMemo = new WeakMap<Role, Role>();
+export function roleAt(role: Role, p: EquipmentProfile | undefined): Role {
+  if (!p?.sweatFree) return role;
+  let r = sweatMemo.get(role);
+  if (r) return r;
+  const sweaty = (b: Block) => b.type === "beast" || (b.type === "single" && (!!EXERCISES[b.slot.name]?.run || b.slot.kind === "interval"));
+  r = {
+    ...role,
+    blocks: role.blocks.filter((b) => !sweaty(b)).map((b) => (b.type === "superset" && b.finisher ? { ...b, finisher: undefined } : b.type === "module" && b.fallback?.kind === "interval" ? { ...b, fallback: undefined } : b)),
+    warmup: ["short_base", ...(role.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l))],
+  };
+  sweatMemo.set(role, r);
+  return r;
+}
+
 /** Finisher: Superset, das in passenden Wochen als Bestie aus einem Pool kommt. null, wenn diese Woche das Superset gilt. */
 export function finisherBlock(b: Block, week: number): Extract<Block, { type: "beast" }> | null {
   if (b.type !== "superset" || !b.finisher) return null;
@@ -354,7 +370,7 @@ let weekBeastBlocks: (state: AppState, pb: PlanBlock, week: number) => BeastTarg
   return dayRoleMap(state, pb, f, week).flatMap((d) => {
     const pid = state.profileFor?.[`${pb.id}:${week}:${d.role}`] ?? d.profileId;
     const prof = state.equipment.find((e) => e.id === pid);
-    return prof ? (f.roles[d.role]?.blocks ?? []).map((b) => finisherBlock(b, week) ?? b).filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast").map((b) => [b, prof] as BeastTarget) : [];
+    return prof ? (f.roles[d.role] ? roleAt(f.roles[d.role], prof).blocks : []).map((b) => finisherBlock(b, week) ?? b).filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast").map((b) => [b, prof] as BeastTarget) : [];
   });
 };
 export const setWeekBeastBlocks = (fn: typeof weekBeastBlocks) => { weekBeastBlocks = fn; };
@@ -418,7 +434,7 @@ function plannedWeekSets(state: AppState, pb: PlanBlock, week: number): Share {
   const f = weekFocus(state, pb, week);
   if (f) for (const d of dayRoleMap(state, pb, f, week)) {
     const prof = state.equipment.find((e) => e.id === d.profileId);
-    const role = f.roles[d.role];
+    const role = f.roles[d.role] && roleAt(f.roles[d.role], prof);
     if (!prof || !role) continue;
     const ab = isAWeek(week) ? "A" : "B";
     for (const r of roleSlots(role.blocks.filter((b) => !b.rotation || b.rotation === ab), prof)) if (r.kind === "strength") addTo(out, musclesOf(r.name), r.sets);
@@ -450,7 +466,7 @@ export function beastBudget(block: Extract<Block, { type: "beast" }>, opts: Beas
   const role = f ? Object.values(f.roles).find((r) => r.blocks.some((b) => b.type === "beast" && b.id === block.id)) : undefined;
   if (!f || !role) return Infinity;
   const cap = role.cap ?? Math.max(role.minutes, f.session_min);
-  const e = estimateRole(role, opts.profile, opts.state.user, opts.week, opts.reduced);
+  const e = estimateRole(roleAt(role, opts.profile), opts.profile, opts.state.user, opts.week, opts.reduced);
   return cap - (e.total - blockSeconds(block, opts.profile, opts.reduced) / 60);
 }
 

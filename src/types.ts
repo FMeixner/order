@@ -186,6 +186,8 @@ export interface EquipmentProfile {
   vest: number[];
   bands: string[];
   has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean };
+  /** Schweißfrei (z. B. Arbeitsplatz): keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up */
+  sweatFree?: boolean;
 }
 
 export interface PlanBlock {

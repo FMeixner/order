@@ -63,6 +63,10 @@ export function ProfileForm({ p, onChange, onDelete }: { p: EquipmentProfile; on
       <Field label="Bänder" hint="Stärken, leicht nach schwer, mit Semikolon getrennt">
         <input type="text" defaultValue={p.bands.join("; ")} onBlur={(e) => set({ bands: e.target.value.split(";").map((x) => x.trim()).filter(Boolean) })} placeholder="leicht; mittel; schwer" />
       </Field>
+      <label className="check">
+        <input type="checkbox" checked={!!p.sweatFree} onChange={(e) => set({ sweatFree: e.target.checked || undefined })} />
+        <span>Schweißfrei: An diesem Ort keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up (z. B. Arbeitsplatz)</span>
+      </label>
       {onDelete && <button className="btn danger small" onClick={onDelete}>Profil löschen</button>}
     </div>
   );

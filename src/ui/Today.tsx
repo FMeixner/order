@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FOCUS_BY_ID } from "../data";
-import { addDays, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
+import { addDays, roleAt, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
@@ -102,7 +102,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
 
   // Anpassungen für heute, gebündelt hinter dem Zahnrad neben der Überschrift der Einheit
   const sid = sel ? sessionId(block.id, week, sel.role) : "";
-  const hasRun = !!(sel && focus.roles[sel.role]?.blocks.some(isRunBlock));
+  const hasRun = !!(sel && focus.roles[sel.role] && roleAt(focus.roles[sel.role], profile ?? undefined).blocks.some(isRunBlock));
   const canReduce = !deload && !future;
   const activeAdj = sel ? [profile && profile.id !== sel.profileId, canReduce && !!state.reduced[rkey], hasRun && !!state.noRun?.[sid]].filter(Boolean).length : 0;
   const adjustButton = (

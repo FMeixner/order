@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.34.0] – 2026-10-07
+
+### Neu
+- Ort „schweißfrei“ (Setup › Equipment): An Tagen an diesem Ort keine Bestien, kein Laufen, keine Intervalle, Finisher bleiben Superset, kurzes Warm-up. Dauerschätzung und Bestienwahl der Woche rechnen damit.
+
 ## [0.33.1] – 2026-10-06
 
 ### Geändert

@@ -69,3 +69,23 @@ describe("Zwei Bestien an einem Tag", () => {
     expect(after.map((i) => i.beast!.id)).toEqual(before.map((i) => i.beast!.id));
   });
 });
+
+describe("Schweißfreier Ort", () => {
+  it("keine Bestien, kein Laufen, keine Intervalle, Finisher bleibt Superset", () => {
+    const s0 = emptyState();
+    for (const fid of Object.keys(FOCUS_BY_ID)) {
+      const st: AppState = {
+        ...s0, equipment: [{ ...gym, id: "g", sweatFree: true }], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" },
+        plan: [{ id: "b1", focusId: fid, label: "", start: "2026-09-28", end: "2026-12-20", load: "medium", travel: false }],
+      };
+      const block = st.plan[0];
+      for (const w of [1, 2]) {
+        const focus = focusFor(st, block, w)!;
+        for (const d of dayRoleMap(st, block, focus, w)) {
+          const items = collectItems({ state: st, block, focus, week: w, roleKey: d.role, profile: st.equipment[0], date: "2026-10-01", reduced: false } as never);
+          expect(items.filter((i) => i.beast !== undefined || isRunBlock(i.block) || i.resolved.some((r) => r.kind === "interval")), `${fid} ${d.role}`).toEqual([]);
+        }
+      }
+    }
+  });
+});

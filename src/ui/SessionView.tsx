@@ -7,7 +7,7 @@ import { allRuns } from "../engine/runs";
 import { capOf, isLoadBeast, loadKind, loadRecord, pctLift, suggestLoad } from "../engine/loadbeast";
 import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { affectDowngrade, beastById, finisherBlock, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
+import { affectDowngrade, beastById, finisherBlock, roleAt, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import { WARM_REST, warmupKeys, warmupSets } from "../engine/warmup";
@@ -40,7 +40,7 @@ export const sessionId = (blockId: string, week: number, role: string) => `${blo
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
 /** Zusatz an einer Bestien-Übung: Band-Stufe oder Gewicht am heutigen Ort */
 
-const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(ctx.focus.roles[ctx.roleKey], ctx.profile, ctx.state.user, ctx.week, ctx.reduced).total / 5) * 5);
+const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile), ctx.profile, ctx.state.user, ctx.week, ctx.reduced).total / 5) * 5);
 
 /** Skills aus dem Skillcheck; null, solange keiner gemacht wurde */
 export const skillSet = (st: AppState): Set<string> | null => (st.user.skills ? new Set(st.user.skills) : null);
@@ -81,7 +81,7 @@ setWeekBeastBlocks((state, pb, week) => {
     if (!profile) return [];
     const noRun = !!state.noRun?.[sessionId(pb.id, week, d.role)];
     const ctx = { profile } as SessionCtx;
-    return (f.roles[d.role]?.blocks ?? [])
+    return (f.roles[d.role] ? roleAt(f.roles[d.role], profile).blocks : [])
       .filter((b) => !b.rotation || b.rotation === ab)
       .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : finisherBlock(b, week) ?? b))
       .filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast")
@@ -98,7 +98,7 @@ function runToBeast(b: Block, ctx: SessionCtx): Block {
 }
 
 export function collectItems(ctx: SessionCtx): Item[] {
-  const role = ctx.focus.roles[ctx.roleKey];
+  const role = roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile);
   const ab = isAWeek(ctx.week) ? "A" : "B";
   const noRun = !!ctx.state.noRun?.[sessionId(ctx.block.id, ctx.week, ctx.roleKey)];
   const done = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey) && s.done);
@@ -142,7 +142,7 @@ const WarmCtx = createContext<Map<string, number>>(new Map());
 /* ---------- Hauptansicht ---------- */
 export function SessionView(ctx: SessionCtx) {
   const { state, update, focus, roleKey, week, block } = ctx;
-  const role = focus.roles[roleKey];
+  const role = roleAt(focus.roles[roleKey], ctx.profile);
   const id = sessionId(block.id, week, roleKey);
   const session = state.sessions.find((s) => s.id === id);
   const items = useMemo(() => collectItems(ctx), [ctx]);
@@ -824,7 +824,7 @@ function previewDose(r: Resolved): string {
 const BLOCK_TITLE: Partial<Record<Block["type"], string>> = { superset: "Superset", contrast: "Kontrastpaar", menu: "Wahl" };
 
 export function SessionPreview(ctx: SessionCtx) {
-  const role = ctx.focus.roles[ctx.roleKey];
+  const role = roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile);
   const items = collectItems(ctx);
   const warm = expandDrills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || ctx.profile.has.sword), ctx.state.user, ctx.week);
   const cool = expandDrills(role.cooldown ?? ["cd_general"], ctx.state.user, ctx.week);
