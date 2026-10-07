@@ -23,9 +23,9 @@
       "name": "Kraft 1: Squat und Bench", "location": "gym", "minutes": 60,
       "warmup": ["base", "lower_prep"], "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "single", "slot": {"id": "pf-1-1", "name": "Back Squat", "home": "Goblet Squat", "sets": 4, "reps": "5", "prog": "topset", "step": 2, "rest": 180, "note": "1 Top-Satz, dann 3 Sätze mit −10 %"}},
-        {"type": "single", "slot": {"id": "pf-1-2", "name": "Bench Press", "home": "DB Bench Press", "sets": 4, "reps": "5", "prog": "topset", "step": 1, "rest": 180, "note": "1 Top-Satz, dann 3 Sätze mit −10 %"}},
-        {"type": "single", "slot": {"id": "pf-1-3", "name": "Weighted Pull-Up", "home": "Pull-Up + Weste", "sets": 3, "reps": "5-6", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "pf-1-1", "core": true, "name": "Back Squat", "home": "Goblet Squat", "sets": 4, "reps": "5", "prog": "topset", "step": 2, "rest": 180, "note": "1 Top-Satz, dann 3 Sätze mit −10 %"}},
+        {"type": "single", "slot": {"id": "pf-1-2", "core": true, "name": "Bench Press", "home": "DB Bench Press", "sets": 4, "reps": "5", "prog": "topset", "step": 1, "rest": 180, "note": "1 Top-Satz, dann 3 Sätze mit −10 %"}},
+        {"type": "single", "slot": {"id": "pf-1-3", "core": true, "name": "Weighted Pull-Up", "home": "Pull-Up + Weste", "sets": 3, "reps": "5-6", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "pf-1-4", "name": "Bulgarian Split Squat", "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "pf-1-5a", "name": "Face Pull", "home": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "double"},
@@ -37,9 +37,9 @@
       "name": "Kraft 2: Deadlift und Press", "location": "gym", "minutes": 60,
       "warmup": ["base", "lat_box"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "pf-2-1", "name": "Deadlift", "home": "KB Deadlift", "sets": 3, "reps": "3", "prog": "topset", "step": 2, "rest": 210, "note": "1 Top-Satz, dann 2 Sätze mit −10 %"}},
-        {"type": "single", "slot": {"id": "pf-2-2", "name": "Overhead Press", "home": "DB Shoulder Press", "sets": 4, "reps": "5", "prog": "topset", "step": 1, "rest": 180}},
-        {"type": "single", "slot": {"id": "pf-2-3", "name": "Barbell Row", "home": "Ring Row", "sets": 3, "reps": "8", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "pf-2-1", "core": true, "name": "Deadlift", "home": "KB Deadlift", "sets": 3, "reps": "3", "prog": "topset", "step": 2, "rest": 210, "note": "1 Top-Satz, dann 2 Sätze mit −10 %"}},
+        {"type": "single", "slot": {"id": "pf-2-2", "core": true, "name": "Overhead Press", "home": "DB Shoulder Press", "sets": 4, "reps": "5", "prog": "topset", "step": 1, "rest": 180}},
+        {"type": "single", "slot": {"id": "pf-2-3", "core": true, "name": "Barbell Row", "home": "Ring Row", "sets": 3, "reps": "8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "pf-2-4", "name": "Hip Thrust", "home": "DB Hip Thrust", "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "pf-2-5a", "name": "DB Lateral Raise", "sets": 3, "reps": "12-15", "prog": "double"},
@@ -51,9 +51,9 @@
       "name": "Kraft 3: Front Squat und Incline", "location": "gym", "minutes": 60,
       "warmup": ["base", "lower_prep"], "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "single", "slot": {"id": "pf-3-1", "name": "Front Squat", "home": "Goblet Squat", "sets": 4, "reps": "4-6", "prog": "double", "rest": 180}},
-        {"type": "single", "slot": {"id": "pf-3-2", "name": "Incline Bench Press", "home": "Incline DB Press", "sets": 4, "reps": "6", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "pf-3-3", "name": "Weighted Chin-Up", "home": "Chin-Up + Weste", "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "pf-3-1", "core": true, "name": "Front Squat", "home": "Goblet Squat", "sets": 4, "reps": "4-6", "prog": "double", "rest": 180}},
+        {"type": "single", "slot": {"id": "pf-3-2", "core": true, "name": "Incline Bench Press", "home": "Incline DB Press", "sets": 4, "reps": "6", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "pf-3-3", "core": true, "name": "Weighted Chin-Up", "home": "Chin-Up + Weste", "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "pf-3-4", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "pf-3-5a", "name": "Seated Cable Row", "home": "1-Arm DB Row", "sets": 3, "reps": "10-12", "prog": "double"},
@@ -65,11 +65,11 @@
       "name": "Kraft 4: Hinge und Carry", "location": "gym", "minutes": 60,
       "warmup": ["base", "core_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "pf-4-1", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "sets": 3, "reps": "8", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "pf-4-2", "name": "Weighted Dip", "home": "Ring Dip + Weste", "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "pf-4-1", "core": true, "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "sets": 3, "reps": "8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "pf-4-2", "core": true, "name": "Weighted Dip", "home": "Ring Dip + Weste", "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "pf-4-3", "name": "Farmer's Carry", "sets": 3, "reps": "30 m", "prog": "weight", "rest": 120}},
         {"type": "single", "slot": {"id": "pf-4-4", "name": "Ab Wheel Rollout (Knie)", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Ab Wheel Rollout (Knie)", "Ab Wheel Rollout (Knie, weit)", "Ab Wheel Rollout (stehend, Teilbereich)"], "rest": 60}},
-        {"type": "single", "slot": {"id": "pf-4-5", "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "pf-4-5", "core": true, "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "pf-4-6a", "name": "Walking Lunge", "sets": 3, "reps": "8/Seite", "prog": "double"},
           {"id": "pf-4-6b", "name": "Hammer Curl", "sets": 3, "reps": "10-12", "prog": "double"}

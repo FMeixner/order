@@ -40,10 +40,10 @@
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "contrast", "transfer": 30, "rest": 180,
-          "heavy": {"id": "hu-k-1", "name": "Bulgarian Split Squat", "sets": 3, "reps": "8/Seite", "prog": "double"},
+          "heavy": {"id": "hu-k-1", "core": true, "name": "Bulgarian Split Squat", "sets": 3, "reps": "8/Seite", "prog": "double"},
           "explosive": {"id": "hu-k-1x", "name": "Broad Jump", "sets": 3, "reps": "3", "prog": "none"}},
-        {"type": "single", "slot": {"id": "hu-k-2", "name": "Pull-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "3-8", "prog": "ladder", "ladder": ["Pull-Up", "Chest-to-Bar Pull-Up", "Muscle-Up-Übergang (Band)"], "rest": 120}},
-        {"type": "single", "slot": {"id": "hu-k-3", "name": "Push-Up", "sets": 3, "reps": "8", "prog": "ladder", "ladder": ["Push-Up", "Clap Push-Up"], "rest": 90}},
+        {"type": "single", "slot": {"id": "hu-k-2", "core": true, "name": "Pull-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "3-8", "prog": "ladder", "ladder": ["Pull-Up", "Chest-to-Bar Pull-Up", "Muscle-Up-Übergang (Band)"], "rest": 120}},
+        {"type": "single", "slot": {"id": "hu-k-3", "core": true, "name": "Push-Up", "sets": 3, "reps": "8", "prog": "ladder", "ladder": ["Push-Up", "Clap Push-Up"], "rest": 90}},
         {"type": "single", "slot": {"id": "hu-k-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}}
       ]
     },

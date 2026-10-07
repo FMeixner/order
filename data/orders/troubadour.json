@@ -21,9 +21,9 @@
       "name": "Kraft A", "location": "gym", "minutes": 45,
       "warmup": ["base", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "lo-a-1", "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "lo-a-2", "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "lo-a-3", "name": "Pull-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "3-8", "prog": "ladder", "ladder": ["Band-Assisted Pull-Up", "Pull-Up", "Weighted Pull-Up"], "rest": 120}},
+        {"type": "single", "slot": {"id": "lo-a-1", "core": true, "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "lo-a-2", "core": true, "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "lo-a-3", "core": true, "name": "Pull-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "3-8", "prog": "ladder", "ladder": ["Band-Assisted Pull-Up", "Pull-Up", "Weighted Pull-Up"], "rest": 120}},
         {"type": "single", "slot": {"id": "lo-a-4", "name": "Band Pallof Press", "sets": 2, "reps": "12/Seite", "prog": "reps", "rest": 45}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "lo-a-5a", "name": "DB Lateral Raise", "sets": 3, "reps": "12-15", "prog": "double"},
@@ -42,9 +42,9 @@
       "name": "Kraft B", "location": "gym", "minutes": 45,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "lo-b-1", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "lo-b-2", "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "lo-b-3", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "lo-b-1", "core": true, "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "lo-b-2", "core": true, "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "lo-b-3", "core": true, "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "lo-b-4", "name": "Walking Lunge", "reise": {"name": "Walking Lunge", "prog": "reps"}, "sets": 2, "reps": "10/Seite", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "lo-b-5a", "name": "Face Pull", "home": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "double"},

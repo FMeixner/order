@@ -83,7 +83,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
         <div className="stack">
           <h2>Dein Jahr</h2>
           <p className="muted">Teile dein Jahr in Phasen, so wie dein Alltag läuft: Semester, Projektzeiten, Urlaub, Saison. Gib für jede Phase an, wie viel los ist, und wähle einen Orden. Die App zeigt, welche Orden zur Phase passen.</p>
-          <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
+          <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
         </div>
       )}
 

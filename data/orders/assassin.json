@@ -24,22 +24,25 @@
       "blocks": [
         {"type": "single", "slot": {"id": "ka-5", "name": "Cable Chest Fly", "home": "DB Fly", "reise": {"name": "Band Fly", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "ka-8", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "ka-1", "name": "Leg Press", "home": "Goblet Squat", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "ka-1", "core": true, "name": "Leg Press", "home": "Goblet Squat", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "ka-2", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "6-8", "prog": "reps"}, "reise": {"name": "Nordic Curl Negative", "reps": "6-8", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "ka-3", "name": "Lat Pulldown (Overhand)", "home": {"name": "Pull-Up", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "ka-4", "name": "Seated Cable Row (Untergriff)", "home": {"name": "1-Arm DB Row", "reps": "8-10/Seite"}, "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "ka-3", "core": true, "name": "Lat Pulldown (Overhand)", "home": {"name": "Pull-Up", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "ka-4", "core": true, "name": "Seated Cable Row (Untergriff)", "home": {"name": "1-Arm DB Row", "reps": "8-10/Seite"}, "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "ka-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "ka-7", "name": "Cable Woodchopper", "home": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double", "rest": 60}}
       ]
     },
     "arme_schultern": {
-      "name": "Arme und Schultern", "location": "gym", "minutes": 30,
+      "name": "Oberkörper und Gesäß", "location": "gym", "minutes": 45,
       "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"],
       "cooldown": ["cd_di"],
       "blocks": [
-        {"type": "single", "slot": {"id": "kas-1", "name": "Shoulder Press Machine", "home": "DB Shoulder Press", "reise": {"name": "Pike Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "kas-1", "core": true, "name": "Shoulder Press Machine", "home": "DB Shoulder Press", "reise": {"name": "Pike Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "kas-6", "core": true, "name": "Incline Chest Press Machine", "home": "Incline DB Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "kas-3", "name": "Cable Rear Delt Fly", "home": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "kas-5", "name": "Cable Biceps Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "kas-5", "core": true, "name": "Cable Biceps Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "kas-7", "name": "Rope Pushdown", "home": "DB Kickback", "reise": {"name": "Band Pushdown", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "kas-8", "name": "Hip Thrust Machine", "home": "DB Hip Thrust", "reise": {"name": "Single-Leg Glute Bridge", "reps": "12-15/Seite", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
       ]
     },
     "skill_kondition": {
@@ -56,10 +59,10 @@
       "warmup": ["short_base", "lat_box", "dislocate", "core_prep", "hip9090"],
       "cooldown": ["cd_mdf"],
       "blocks": [
-        {"type": "single", "slot": {"id": "kb-1", "name": "Cable Pull-Through", "home": "DB Romanian Deadlift", "reise": {"name": "Band Pull-Through", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "kb-1", "core": true, "name": "Cable Pull-Through", "home": "DB Romanian Deadlift", "reise": {"name": "Band Pull-Through", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "kb-2", "name": "Leg Extension", "home": {"name": "Bulgarian Split Squat", "reps": "8-10/Seite"}, "reise": {"name": "Bulgarian Split Squat", "reps": "12-15/Seite", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "kb-3", "name": "Chest Press Machine", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "kb-4", "name": "Lat Pulldown (V-Griff)", "home": {"name": "Pull-Up (Close Grip)", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "kb-3", "core": true, "name": "Chest Press Machine", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "kb-4", "core": true, "name": "Lat Pulldown (V-Griff)", "home": {"name": "Pull-Up (Close Grip)", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "kb-5", "name": "Seated Row (zwei Seilzüge)", "home": {"name": "1-Arm DB Row", "reps": "8-10/Seite"}, "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "kb-6", "name": "Rope Crunch", "home": "Weighted Sit-Up", "reise": {"name": "Sit-Up", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "kb-7", "name": "Cable Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 60}},

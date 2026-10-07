@@ -65,7 +65,7 @@ export default function App() {
             <div className="stack">
               <p className="muted">Dein Jahr in Phasen. Tippe eine Phase an, um Zeitraum, Alltagslast oder Orden zu ändern.</p>
               {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
-              <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} today={today}
+              <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}
                 deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotFor(state, b)}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>

@@ -9,7 +9,8 @@ import { EQUIPMENT_PRESETS } from "../store";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot } from "../types";
 import { estimateRole } from "./duration";
 import { parseReps } from "./resolve";
-import { setWeekFocus, trainingDays } from "./plan";
+import { defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { shortDay } from "./shortday";
 import { applySlot } from "./sharpen";
 
 let presets: Record<Role["location"], ReturnType<(typeof EQUIPMENT_PRESETS)[0]["make"]>> | null = null;
@@ -125,7 +126,11 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   const base = FOCUS_BY_ID[b.focusId];
   if (!base) return null;
   const f = base.medley?.length ? FOCUS_BY_ID[base.medley[(week - 1) % base.medley.length]] ?? base : base;
-  return applySlot(shapeFocus(f, trainingDays(state, b).length), state, b);
+  const n = trainingDays(state, b).length;
+  let shaped = shapeFocus(f, n);
+  // Kurztag: gekürzte Rolle, die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet
+  if (b.shortRole && shaped.roles[b.shortRole] && !base.medley?.length) shaped = shortDay(shaped, b.shortRole, state.user, defaultRoles(shaped, n)).focus;
+  return applySlot(shaped, state, b);
 }
 
 setWeekFocus(focusFor);

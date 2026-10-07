@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.35.0] – 2026-10-07
+
+### Neu
+- Kurztag (Plan › Phase bearbeiten): Ein Tag läuft nur mit drei Kernübungen. Die App prüft das Wochenvolumen je Muskel: Aufbau-Muskeln bleiben an der unteren Grenze des Volumenbereichs, alle anderen bei der Erhaltung (4 Sätze). Leidet nichts, bleiben die anderen Tage unverändert. Sonst gleichen sie aus: +1 Satz an passenden Übungen, weggefallene Kernübungen wandern auf einen anderen Tag, Supersets halten das Zeitlimit. Was nicht ganz reicht, steht offen da.
+- Kernübungen sind in allen Orden markiert.
+
+### Geändert
+- Standardlänge statt fester Kurztage: Assassin Dienstag ist jetzt „Oberkörper und Gesäß“ (45 Min, mit Schrägbank-Brustpresse, Pushdown und Hip Thrust Maschine), Gladiator Dienstag „Arme und Schultern“ (40 Min), Witcher Dienstag heißt „Arme und Schultern“. Der bisherige kurze Dienstag entsteht über den Kurztag.
+
 ## [0.34.0] – 2026-10-07
 
 ### Neu

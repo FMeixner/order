@@ -22,6 +22,8 @@ export interface Choice {
 export interface Slot {
   /** Stabile Kennung. Historie und Gewichte hängen daran (plus Übungsname). */
   id: string;
+  /** Kernübung des Ordens: bleibt am Kurztag, fällt sie weg, wandert sie auf einen anderen Tag */
+  core?: boolean;
   /** Übung auf Stufe gym (Studio). */
   name: string;
   /** Ersatz zuhause. Fehlt: wie gym. null: entfällt. */
@@ -198,6 +200,8 @@ export interface PlanBlock {
   label: string;
   load: Load;
   travel: boolean;
+  /** Kurztag: diese Rolle nur mit drei Kernübungen, die übrigen Tage gleichen aus, wenn das Ziel leidet */
+  shortRole?: string;
   /** Abweichender Wochenplan für diesen Block (z. B. Semesterferien). Fehlt: globaler Wochenplan. */
   schedule?: Partial<Record<Weekday, string | null>>;
   /** Schwerpunkt-Slot: Bereich (speed, power, mobility, ke, anaerob, aerob) oder "off". Fehlt: automatisch nach der letzten Testwoche. */

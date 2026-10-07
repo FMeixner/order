@@ -34,13 +34,13 @@
       "name": "Kraft und Rotation", "location": "home", "minutes": 45,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "fi-r-1", "name": "Medicine Ball Rotational Throw", "reise": {"name": "Band Woodchopper", "reps": "10/Seite", "prog": "reps"}, "sets": 4, "reps": "5/Seite", "prog": "none", "rest": 60}},
+        {"type": "single", "slot": {"id": "fi-r-1", "core": true, "name": "Medicine Ball Rotational Throw", "reise": {"name": "Band Woodchopper", "reps": "10/Seite", "prog": "reps"}, "sets": 4, "reps": "5/Seite", "prog": "none", "rest": 60}},
         {"type": "single", "slot": {"id": "fi-r-2", "name": "Cable Woodchopper", "home": "KB Woodchop", "reise": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "10/Seite", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "fi-r-3a", "name": "Cossack Squat", "sets": 3, "reps": "8-15/Seite", "prog": "reps"},
+          {"id": "fi-r-3a", "core": true, "name": "Cossack Squat", "sets": 3, "reps": "8-15/Seite", "prog": "reps"},
           {"id": "fi-r-3b", "name": "Push-Up", "sets": 3, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
         ]},
-        {"type": "single", "slot": {"id": "fi-r-4", "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 75}}
+        {"type": "single", "slot": {"id": "fi-r-4", "core": true, "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 75}}
       ]
     },
     "runden_kondition": {
@@ -60,8 +60,8 @@
           {"id": "fi-n-2a", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"},
           {"id": "fi-n-2b", "name": "Band Pallof Press", "sets": 3, "reps": "12/Seite", "prog": "reps"}
         ]},
-        {"type": "single", "slot": {"id": "fi-n-3", "name": "Turkish Get-Up", "reise": {"name": "Turkish Get-Up (ohne Last)", "prog": "reps"}, "sets": 3, "reps": "2/Seite", "prog": "weight", "rest": 60}},
-        {"type": "single", "slot": {"id": "fi-n-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
+        {"type": "single", "slot": {"id": "fi-n-3", "core": true, "name": "Turkish Get-Up", "reise": {"name": "Turkish Get-Up (ohne Last)", "prog": "reps"}, "sets": 3, "reps": "2/Seite", "prog": "weight", "rest": 60}},
+        {"type": "single", "slot": {"id": "fi-n-4", "core": true, "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
         {"type": "single", "slot": {"id": "fi-n-5", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 2, "prog": "hold", "rest": 30, "note": "pro Seite"}}
       ]
     },

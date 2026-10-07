@@ -33,9 +33,9 @@
       "name": "Kraft-Erhaltung", "location": "home", "minutes": 45,
       "warmup": ["base"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "rh-k-1", "name": "Single-Leg RDL", "sets": 3, "reps": "10-15/Seite", "prog": "reps", "rest": 60}},
-        {"type": "single", "slot": {"id": "rh-k-2", "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 75}},
-        {"type": "single", "slot": {"id": "rh-k-3", "name": "Pistol Squat (Box)", "sets": 3, "reps": "6-15/Seite", "prog": "ladder", "ladder": ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"], "rest": 75}},
+        {"type": "single", "slot": {"id": "rh-k-1", "core": true, "name": "Single-Leg RDL", "sets": 3, "reps": "10-15/Seite", "prog": "reps", "rest": 60}},
+        {"type": "single", "slot": {"id": "rh-k-2", "core": true, "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 75}},
+        {"type": "single", "slot": {"id": "rh-k-3", "core": true, "name": "Pistol Squat (Box)", "sets": 3, "reps": "6-15/Seite", "prog": "ladder", "ladder": ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"], "rest": 75}},
         {"type": "single", "slot": {"id": "rh-k-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
         {"type": "single", "slot": {"id": "rh-k-5", "name": "Lockeres Ausfahren", "kind": "timer", "minutes": 15, "prog": "none"}}
       ]

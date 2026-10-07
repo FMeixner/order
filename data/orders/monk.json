@@ -21,9 +21,9 @@
       "name": "Kraft A", "location": "home", "minutes": 40,
       "warmup": ["base"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "single", "slot": {"id": "zw-a-1", "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "zw-a-2", "name": "Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"], "rest": 90}},
-        {"type": "single", "slot": {"id": "zw-a-3", "name": "Ring Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-a-1", "core": true, "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-a-2", "core": true, "name": "Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"], "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-a-3", "core": true, "name": "Ring Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 90}},
         {"type": "single", "slot": {"id": "zw-a-4", "name": "KB Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "weight", "rest": 90}},
         {"type": "single", "slot": {"id": "zw-a-5", "name": "Atemfokus", "kind": "timer", "minutes": 5, "max": 10, "step": 1, "prog": "minutes"}}
       ]
@@ -40,9 +40,9 @@
       "name": "Kraft B", "location": "home", "minutes": 50,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "single", "slot": {"id": "zw-b-1", "name": "Reverse Lunge", "reise": {"name": "Reverse Lunge", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "zw-b-2", "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "zw-b-3", "name": "Chin-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "3-8", "prog": "ladder", "ladder": ["Band-Assisted Negative Chin-Up", "Negative Chin-Up", "Chin-Up"], "rest": 120}},
+        {"type": "single", "slot": {"id": "zw-b-1", "core": true, "name": "Reverse Lunge", "reise": {"name": "Reverse Lunge", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-b-2", "core": true, "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-b-3", "core": true, "name": "Chin-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "3-8", "prog": "ladder", "ladder": ["Band-Assisted Negative Chin-Up", "Negative Chin-Up", "Chin-Up"], "rest": 120}},
         {"type": "single", "slot": {"id": "zw-b-4", "name": "Glute Bridge", "sets": 3, "reps": "12", "prog": "ladder", "ladder": ["Glute Bridge", "Single-Leg Glute Bridge"], "rest": 60}},
         {"type": "single", "slot": {"id": "zw-b-5", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 2, "prog": "hold", "rest": 45, "note": "pro Seite"}},
         {"type": "beast", "rotation": "A", "id": "zw-bst-a", "classes": ["plage"]},
