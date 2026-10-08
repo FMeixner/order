@@ -5,6 +5,8 @@ import { fixture, seed, stored } from "./fixture";
 test("Einheit abschließen: Satz eintragen, abschließen, im Log", async ({ page }) => {
   await seed(page);
   await page.goto("./");
+  // Unabhängig vom Wochentag: den Krafttag wählen
+  await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
   const reps = page.getByLabel("Wiederholungen Satz 1").first();
   await reps.fill("10");
   await page.getByRole("button", { name: "Satz 1" }).first().click();
