@@ -774,3 +774,16 @@ describe("Normen für Frauen", () => {
     expect(norms.norms.filter((n) => n.sex === "m").map(key).filter((k) => !w.has(k))).toEqual([]);
   });
 });
+
+describe("Wiederholungs-Progression", () => {
+  it("zählt vom Geschafften: 2 × 20 bei Ziel 15 → 21; Sehr leicht +2; Schwer hält; verfehlt bleibt das Ziel", async () => {
+    const { advance } = await import("./progression");
+    const r = resolveSlot({ id: "nk", name: "Neck Curl", sets: 2, reps: "15-25", prog: "reps" }, gym)!;
+    const e = (reps: number[], fb?: SessionEntry["feedback"]): SessionEntry => ({ key: r.key, slotId: "nk", name: r.name, prog: "reps", feedback: fb, sets: reps.map((x) => ({ done: true, reps: x })) });
+    expect(advance(r, undefined, e([20, 20], "ok"), gym, "2026-10-08").target).toBe(21);
+    expect(advance(r, undefined, e([20, 20], "sehrleicht"), gym, "2026-10-08").target).toBe(22);
+    expect(advance(r, undefined, e([20, 20], "schwer"), gym, "2026-10-08").target).toBe(20);
+    const st = advance(r, undefined, e([20, 20], "ok"), gym, "2026-10-08");
+    expect(advance(r, st, e([21, 18], "ok"), gym, "2026-10-09").target).toBe(21);
+  });
+});

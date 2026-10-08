@@ -409,7 +409,13 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const [swapOpen, setSwapOpen] = useState(false);
   const canSwap = r.kind === "strength" || r.kind === "hold";
   const st = sharedState(ctx.state.slots, r);
-  const raw: Suggestion = suggest(r, st, ctx.week, ctx.profile);
+  const raw0: Suggestion = suggest(r, st, ctx.week, ctx.profile);
+  // Ältere Stände zählten bei Wiederholungs-Progression vom Ziel statt vom Geschafften (2 × 20 → 16): hier nachziehen
+  const lastEntry = [...ctx.state.sessions].filter((x) => x.done && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
+  const lastMin = lastEntry && r.prog === "reps" && lastEntry.sets.every((y) => y.done && y.reps != null) ? Math.min(...lastEntry.sets.map((y) => y.reps!)) : null;
+  const raw: Suggestion = lastMin != null && raw0.targetReps != null && lastMin >= raw0.targetReps
+    ? { ...raw0, targetReps: lastMin + (lastEntry!.feedback === "schwer" ? 0 : 1), repsLabel: `${lastMin + (lastEntry!.feedback === "schwer" ? 0 : 1)}${parseReps(r.reps).suffix}` }
+    : raw0;
   // Nach längerer Pause (14 Tage und mehr an dieser Übung): 10 % leichter wieder einsteigen
   const pausedDays = st?.updated && /^\d{4}-/.test(st.updated) ? daysBetween(st.updated, ctx.date) : 0;
   const sug: Suggestion = pausedDays >= 14 && raw.weight != null && r.loadable

@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.38.1] – 2026-10-08
+
+### Behoben
+- Wiederholungs-Progression ohne Gewicht (z. B. Neck Curl 15–25): Das nächste Ziel zählt jetzt vom Geschafften statt vom alten Ziel. 2 × 20 bei Ziel 15 ergibt 21 statt 16. „Sehr leicht“ +2, „Schwer“ hält. Bereits gespeicherte Ziele werden in der Anzeige nachgezogen.
+
 ## [0.38.0] – 2026-10-07
 
 ### Neu

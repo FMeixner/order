@@ -234,8 +234,9 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
     }
     case "reps": {
       if (rp.amrap) { s.target = Math.max(...repsDone); break; }
+      // Vom tatsächlich Geschafften aus: 2 × 20 bei Ziel 15 → nächstes Ziel 21, nicht 16. „Sehr leicht“ +2, „Schwer“ hält.
       const tgt = s.target ?? rp.lo ?? 0;
-      if (allDone && fb !== "schwer" && repsDone.every((x) => x >= tgt)) s.target = tgt + (r.step || 1);
+      if (allDone && minReps >= tgt) s.target = fb === "schwer" ? minReps : minReps + (r.step || 1) * (fb === "sehrleicht" ? 2 : 1);
       else s.target = tgt;
       break;
     }
