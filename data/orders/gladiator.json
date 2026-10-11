@@ -23,8 +23,8 @@
       "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "single", "slot": {"id": "gl-mo-1", "core": true, "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "gl-mo-2", "core": true, "name": "Weighted Pull-Up", "home": {"name": "Pull-Up + Weste", "reps": "6-8"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "gl-mo-3", "core": true, "name": "Weighted Dip", "home": "Ring Dip + Weste", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "gl-mo-2", "core": true, "name": "Pull-Up", "load": "plate", "home": {"name": "Pull-Up", "load": "plate", "reps": "6-8"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "gl-mo-3", "core": true, "name": "Dip", "load": "plate", "home": {"name": "Ring Dip", "load": "plate"}, "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "gl-mo-4", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "gl-mo-5", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-magnisson", "ng-fjalar", "ng-ubba", "ng-nott", "ng-garm", "ng-mani"], "only": "B", "note": "B-Woche: Arm-Finisher statt Curl + Pushdown."}, "slots": [
@@ -50,9 +50,9 @@
       "warmup": ["short_base", "thoracic_roller", "dislocate", "sword_prep"], "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "wechselhau", "fallback": {"id": "gl-do-fb", "name": "Shadow Boxing", "kind": "timer", "minutes": 8, "prog": "none"}},
-        {"type": "single", "slot": {"id": "gl-do-2", "name": "Deficit Push-Up + Weste", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "gl-do-3", "name": "Chin-Up + Weste", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "6-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "gl-do-4", "name": "Bulgarian Split Squat + Weste", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "gl-do-2", "name": "Deficit Push-Up", "load": "plate", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "gl-do-3", "name": "Chin-Up", "load": "plate", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "6-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "gl-do-4", "name": "Bulgarian Split Squat", "load": "plate", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
         {"type": "module", "module": "sword", "variant": "intervalle", "fallback": {"id": "gl-do-fb2", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 40, "rounds": 8}, "prog": "none"}},
         {"type": "beast", "id": "gl-bst", "classes": ["plage"]}
       ]

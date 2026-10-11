@@ -5,7 +5,7 @@ import { focusFor } from "../engine/weekplan";
 import { parseClock } from "../engine/clock";
 import { allRuns } from "../engine/runs";
 import { capOf, isLoadBeast, loadKind, loadRecord, pctLift, suggestLoad } from "../engine/loadbeast";
-import { backoffLoad, advance, suggest, type Suggestion, sharedState } from "../engine/progression";
+import { backoffLoad, advance, loadPhase, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
 import { affectDowngrade, beastById, finisherBlock, roleAt, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
@@ -51,7 +51,9 @@ interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drill
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
     if (s.gate_week && ctx.week < s.gate_week) return null;
-    return resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer", ctx.state.swaps?.[swapKey(s.id, ctx.profile.tier)], skillSet(ctx.state));
+    const res = resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer", ctx.state.swaps?.[swapKey(s.id, ctx.profile.tier)], skillSet(ctx.state));
+    // Grenze erreicht: dieselbe Übung mit Zusatzlast
+    return res && loadPhase(res, ctx.state.slots[res.key], ctx.profile);
   };
   switch (b.type) {
     case "single": return [r(b.slot)].filter(Boolean) as Resolved[];
@@ -537,7 +539,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
                 value={enteredW ?? ""} onChange={(e) => setWeight(e.target.value === "" ? null : parseFloat(e.target.value.replace(",", ".")))}
                 onBlur={(e) => { const v = parseFloat(e.target.value.replace(",", ".")); if (!isNaN(v)) setWeight(snapNearest(ctx.profile, r.equip, v)); }}
                 aria-label="Gewicht" />
-              <span className="muted small">kg{r.prog === "topset" && topBack != null ? ` Top-Satz, danach ${kg(topBack)}` : ""}</span>
+              <span className="muted small">kg{r.equip === "plate" ? " Zusatzlast (Weste oder Gürtel)" : ""}{r.prog === "topset" && topBack != null ? ` Top-Satz, danach ${kg(topBack)}` : ""}</span>
             </div>
           )}
           {warmSets.length > 0 && (

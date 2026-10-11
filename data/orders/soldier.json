@@ -22,11 +22,11 @@
       "blocks": [
         {"type": "single", "slot": {"id": "so-a-1", "name": "Back Squat", "home": "Goblet Squat", "sets": 3, "reps": "5", "prog": "weight", "rest": 180}},
         {"type": "single", "slot": {"id": "so-a-2", "name": "Bench Press", "home": "DB Bench Press", "sets": 3, "reps": "5", "prog": "weight", "rest": 180}},
-        {"type": "single", "slot": {"id": "so-a-3", "name": "Weighted Pull-Up", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "5", "prog": "weight", "rest": 150}},
+        {"type": "single", "slot": {"id": "so-a-3", "name": "Pull-Up", "load": "plate", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "5", "prog": "weight", "rest": 150}},
         {"type": "menu", "id": "so-a-4", "label": "Schwerpunkt 1", "options": {
           "Speed": {"id": "gpp-speed", "name": "Fliegende 20 m", "sets": 6, "reps": "20 m", "prog": "none", "rest": 120, "note": "Nur draußen. Im Studio: Rad-Sprints 6 × 10 s."},
           "Power": {"id": "gpp-power", "name": "Box Jump", "sets": 5, "reps": "3", "prog": "none", "rest": 120},
-          "Strength": {"id": "gpp-strength", "name": "Back Squat Top-Satz", "sets": 1, "reps": "3", "prog": "topset", "step": 1, "rest": 180, "note": "Ein Top-Satz bei gefühlt 2 Wdh in Reserve."},
+          "Strength": {"id": "gpp-strength", "name": "Back Squat", "sets": 1, "reps": "3", "prog": "topset", "step": 1, "rest": 180, "note": "Ein Top-Satz bei gefühlt 2 Wdh in Reserve."},
           "Kraftausdauer": {"id": "gpp-endurance-str", "name": "Push-Up und Pull-Up Leiter", "sets": 1, "reps": "1-10", "prog": "none", "note": "1 Pull-Up, 1 Push-Up, 2, 2 … bis 10 oder Formverlust."},
           "Work Capacity": {"id": "gpp-work", "name": "Assault-Bike oder Rudern 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 30, "rounds": 10}, "prog": "none"},
           "Aerob": {"id": "gpp-aerob", "name": "Intervalle 4 × 4 Min (Rudern)", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none"},
@@ -44,7 +44,7 @@
           "Work Capacity": {"id": "gpp-work-h", "name": "Bestie Klasse Ungeheuer (frei wählen)", "kind": "timer", "minutes": 20, "prog": "none"},
           "Kraftausdauer": {"id": "gpp-endurance-h", "name": "Push-Up und Pull-Up Leiter", "sets": 1, "reps": "1-10", "prog": "none"},
           "Mobility": {"id": "gpp-mob-h", "name": "Mobility-Block: Sit and Reach, Ausschultern, 90/90", "kind": "timer", "minutes": 12, "prog": "none"},
-          "Power": {"id": "gpp-power-h", "name": "KB Swing, schwer", "sets": 5, "reps": "10", "prog": "weight", "rest": 90},
+          "Power": {"id": "gpp-power-h", "name": "KB Swing", "sets": 5, "reps": "10", "prog": "weight", "rest": 90},
           "Anaerob": {"id": "gpp-anaerob-h", "name": "Rudern 6 × 250 m", "sets": 6, "reps": "250 m", "prog": "none", "rest": 90}
         }}
       ]
@@ -59,7 +59,7 @@
         {"type": "menu", "id": "so-b-4", "label": "Schwerpunkt 2", "options": {
           "Speed": {"id": "gpp-speed", "name": "Fliegende 20 m", "sets": 6, "reps": "20 m", "prog": "none", "rest": 120},
           "Power": {"id": "gpp-power2", "name": "Medizinball-Brustwurf", "sets": 5, "reps": "3", "prog": "none", "rest": 90},
-          "Strength": {"id": "gpp-strength2", "name": "Deadlift Top-Satz", "sets": 1, "reps": "3", "prog": "topset", "step": 1, "rest": 180},
+          "Strength": {"id": "gpp-strength2", "name": "Deadlift", "sets": 1, "reps": "3", "prog": "topset", "step": 1, "rest": 180},
           "Kraftausdauer": {"id": "gpp-endurance-str", "name": "Push-Up und Pull-Up Leiter", "sets": 1, "reps": "1-10", "prog": "none"},
           "Work Capacity": {"id": "gpp-work", "name": "Assault-Bike oder Rudern 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 30, "rounds": 10}, "prog": "none"},
           "Aerob": {"id": "gpp-aerob", "name": "Intervalle 4 × 4 Min (Rudern)", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none"},

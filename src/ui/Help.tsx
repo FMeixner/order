@@ -29,7 +29,8 @@ export function Help() {
         <li>Große Sprünge zwischen deinen Hanteln (etwa 10 auf 12 kg): Die App hebt die Obergrenze an, zum Beispiel auf 16 Wiederholungen, und springt erst dann. Danach startet sie mit einer geschätzten Zahl an Wiederholungen. Der Hinweis steht in Orange bei der Übung.</li>
         <li>Dreimal „OK“ mit gleichem Gewicht, ohne mehr Wiederholungen: Beim nächsten Mal schlägt die App die nächste Stufe vor (bei großem Sprung zwei Wiederholungen mehr). Manchmal geht mehr, als man denkt. Wenn nicht, „Schwer“ geben.</li>
         <li>Anderer Ort: Gleiche Übung, gleiche Daten. Gibt es das Gewicht dort nicht, rechnet die App auf die Stufen des Profils um. War es zuletzt „leicht“, darf es die nächsthöhere Stufe sein (12 kg leicht im Studio → 13 kg zuhause), sonst die nächstniedrigere mit mehr Wiederholungen.</li>
-        <li>Ohne Gewicht steigen Übungen über Wiederholungen oder über eine schwerere Variante (Stufe 1, 2, 3).</li>
+        <li>Ohne Gewicht steigen Übungen über Wiederholungen oder über eine schwerere Variante (Stufe 1, 2, 3). Gezählt wird vom Geschafften: 2 × 20 bei Ziel 15 ergibt als nächstes Ziel 21.</li>
+        <li>Zusatzlast: Nacken, Schienbein und Waden steigen bis 30 Wiederholungen, Rumpf und Beine bis 25, Oberkörper bis 20 (bei Leitern: die letzte Stufe zweimal am oberen Ende). Danach kommt dieselbe Übung mit Weste oder Gürtel, beides ist austauschbar, und es geht weiter wie bei Hanteln: erst Wiederholungen, dann Gewicht. Klimmzüge, Dips und andere Übungen, die der Orden von Anfang an schwer will, laufen gleich mit Zusatzlast.</li>
         <li>In der ersten Woche wählst du die Startgewichte selbst: so, dass am Ende noch 2–3 Wiederholungen gegangen wären.</li>
       </ul>
 

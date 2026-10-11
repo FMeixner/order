@@ -307,12 +307,14 @@ describe("Letzter Satz verfehlt", () => {
 
 describe("Skillcheck", () => {
   const none = new Set<string>();
-  it("ohne Klimmzug: Latziehen statt Klimmzug mit Gewicht", () => {
-    const r = resolveSlot({ id: "k", name: "Weighted Pull-Up", home: "Pull-Up + Weste", sets: 3, reps: "5-6", prog: "double" }, gym, false, undefined, none)!;
-    expect(r.name).toBe("Lat Pulldown");
-    expect(r.regressedFrom).toBe("Weighted Pull-Up");
-    expect(resolveSlot({ id: "k", name: "Weighted Pull-Up", sets: 3, reps: "5-6", prog: "double" }, gym, false, undefined, new Set(["pullup"]))!.name).toBe("Weighted Pull-Up");
-    expect(resolveSlot({ id: "k", name: "Weighted Pull-Up", sets: 3, reps: "5-6", prog: "double" }, gym)!.name).toBe("Weighted Pull-Up");
+  it("ohne Klimmzug: leichtere Variante ohne Zusatzlast statt Klimmzug mit Zusatzlast", () => {
+    const slot: Slot = { id: "k", name: "Pull-Up", load: "plate", home: { name: "Pull-Up", load: "plate" }, sets: 3, reps: "5-6", prog: "double" };
+    const r = resolveSlot(slot, gym, false, undefined, none)!;
+    expect(r.name).not.toBe("Pull-Up");
+    expect(r.regressedFrom).toBe("Pull-Up");
+    expect(r.equip).not.toBe("plate");
+    const w = resolveSlot(slot, gym, false, undefined, new Set(["pullup"]))!;
+    expect([w.name, w.equip, w.loadable]).toEqual(["Pull-Up", "plate", true]);
   });
   it("Leiter: leichtere Stufe davor ohne Skill, höherer Start mit Skill", () => {
     const pl: Slot = { id: "p", name: "Pistol Squat (Box)", sets: 3, reps: "3-6/Seite", prog: "ladder", ladder: ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"] };
@@ -787,3 +789,28 @@ describe("Wiederholungs-Progression", () => {
     expect(advance(r, st, e([21, 18], "ok"), gym, "2026-10-09").target).toBe(21);
   });
 });
+
+describe("Zusatzlast nach der Wiederholungsgrenze", () => {
+  it("Neck Curl: bis 30, dann mit Zusatzlast 15–20; Liegestütz schon ab 20", async () => {
+    const { advance, loadPhase, repCap } = await import("./progression");
+    expect([repCap("Neck Curl"), repCap("Hanging Leg Raise"), repCap("Push-Up")]).toEqual([30, 25, 20]);
+    const r = resolveSlot({ id: "nk", name: "Neck Curl", sets: 2, reps: "15-25", prog: "reps" }, home)!;
+    const e = (reps: number[]): SessionEntry => ({ key: r.key, slotId: "nk", name: r.name, prog: "reps", feedback: "ok", sets: reps.map((x) => ({ done: true, reps: x })) });
+    const s29 = advance(r, undefined, e([29, 29]), home, "2026-10-11");
+    expect([s29.target, s29.loaded]).toEqual([30, undefined]);
+    const s30 = advance(r, s29, e([30, 30]), home, "2026-10-12");
+    expect(s30.loaded).toBe(true);
+    expect(s30.target).toBe(15);
+    expect(s30.weight).toBeGreaterThan(0);
+    const lr = loadPhase(r, s30, home);
+    expect([lr.name, lr.equip, lr.prog, lr.reps, lr.loadable]).toEqual(["Neck Curl", "plate", "double", "15-20", true]);
+  });
+  it("Übung ohne Zusatzlast-Möglichkeit steigt weiter über die Grenze", async () => {
+    const { advance } = await import("./progression");
+    const r = resolveSlot({ id: "db", name: "Dead Bug", sets: 2, reps: "8/Seite", prog: "reps" }, home)!;
+    const e: SessionEntry = { key: r.key, slotId: "db", name: r.name, prog: "reps", feedback: "ok", sets: [{ done: true, reps: 30 }, { done: true, reps: 30 }] };
+    const st = advance(r, undefined, e, home, "2026-10-11");
+    expect([st.target, st.loaded]).toEqual([31, undefined]);
+  });
+});
+

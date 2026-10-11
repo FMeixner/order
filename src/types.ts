@@ -13,6 +13,8 @@ export type BeastClass = "plage" | "bestie" | "ungeheuer" | "uralte" | "verfluch
 /** Ersatz-Übung für eine Equipment-Stufe. Als Text nur der Name, als Objekt mit abweichender Dosis. */
 export interface Choice {
   name: string;
+  /** Mit Zusatzlast (Weste oder Gürtel, austauschbar) */
+  load?: "plate";
   reps?: string;
   sets?: number;
   prog?: Prog;
@@ -22,6 +24,8 @@ export interface Choice {
 export interface Slot {
   /** Stabile Kennung. Historie und Gewichte hängen daran (plus Übungsname). */
   id: string;
+  /** Mit Zusatzlast (Weste oder Gürtel, austauschbar): gilt für die Übung des Slots, nicht für Alternativen mit eigenem Namen */
+  load?: "plate";
   /** Kernübung des Ordens: bleibt am Kurztag, fällt sie weg, wandert sie auf einen anderen Tag */
   core?: boolean;
   /** Übung auf Stufe gym (Studio). */
@@ -130,6 +134,8 @@ export type Equip =
 
 export interface Exercise {
   equip: Equip;
+  /** Ohne Gewicht, aber mit Zusatzlast steigerbar: nach der Wiederholungsgrenze geht es mit Weste oder Gürtel weiter */
+  weighted?: boolean;
   /** Laufen: kann für einen Tag gegen eine Bestie getauscht werden */
   run?: boolean;
   /** Zusätzlich nötig, z. B. "bar" (Klimmzugstange), "rings", "bench", "rower", "box" */
@@ -255,6 +261,8 @@ export interface SlotState {
   hist?: { w: number | null; r: number }[];
   /** Nächstes Mal mehr, weil dreimal OK mit gleichem Gewicht */
   nudge?: boolean;
+  /** Übung ohne Gewicht hat die Wiederholungsgrenze erreicht: weiter mit Zusatzlast */
+  loaded?: boolean;
 }
 
 export interface SetEntry { done: boolean; reps?: number; weight?: number | null; seconds?: number }

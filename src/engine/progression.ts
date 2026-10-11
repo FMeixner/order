@@ -18,7 +18,9 @@
    Anderes Profil (Studio → Zuhause): Gibt es das Gewicht dort nicht, rechnet die App über die Leistung (Epley)
    auf die Stufen des Profils um. Stand zuletzt »leicht« an, darf es dabei die nächsthöhere Stufe sein. */
 import type { EquipmentProfile, Feedback, SessionEntry, SlotState } from "../types";
-import { snapDown, snapNearest, stepLoad } from "./loads";
+import { EXERCISES } from "../data";
+import { loadScale, snapDown, snapNearest, stepLoad } from "./loads";
+import { musclesOf } from "./volume";
 import { parseReps, type Resolved } from "./resolve";
 
 export interface Suggestion {
@@ -71,6 +73,29 @@ function fixedCeiling(p: EquipmentProfile, equip: Resolved["equip"], w: number, 
 }
 
 const fmtKg = (n: number) => String(n).replace(".", ",");
+
+/* ---------- Ohne Gewicht bis zur Grenze, dann Zusatzlast ----------
+   Nacken, Schienbein, Waden bis 30 Wiederholungen, Rumpf und Beine bis 25, Oberkörper bis 20.
+   Danach dieselbe Übung mit Weste oder Gürtel, unteres Ende eines neuen Bereichs, Steigerung wie bei Hanteln. */
+export function repCap(name: string): number {
+  const m = Object.entries(musclesOf(name)).sort((a, b) => b[1] - a[1])[0]?.[0];
+  if (m === "Nacken" || m === "Waden") return 30;
+  if (m && ["Brust", "Rücken", "Schultern", "Bizeps", "Trizeps"].includes(m)) return 20;
+  return 25;
+}
+export function loadedRange(name: string): string {
+  const c = repCap(name);
+  return c >= 30 ? "15-20" : c >= 25 ? "12-15" : "8-12";
+}
+/** Hat die Übung die Grenze erreicht (Zustand „loaded“), läuft sie mit Zusatzlast wie eine Hantelübung */
+export function loadPhase(r: Resolved, st: SlotState | undefined, p: EquipmentProfile): Resolved {
+  const name = r.prog === "ladder" && r.ladder ? r.ladder[r.ladder.length - 1] : r.name;
+  if (!st?.loaded || r.loadable || !EXERCISES[name]?.weighted || !loadScale(p, "plate")) return r;
+  const atTop = r.prog === "ladder" ? !!r.ladder && st.stage >= r.ladder.length - 1 : r.prog === "reps";
+  if (!atTop) return r;
+  return { ...r, name, equip: "plate", loadable: true, prog: "double", reps: r.prog === "ladder" ? r.reps : loadedRange(name), ladder: undefined };
+}
+const firstLoad = (p: EquipmentProfile) => stepLoad(p, "plate", 0, 1);
 
 export const EMPTY_STATE: SlotState = { weight: null, target: null, stage: 0, fb: [], topHits: 0, updated: "" };
 
@@ -238,6 +263,12 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
       const tgt = s.target ?? rp.lo ?? 0;
       if (allDone && minReps >= tgt) s.target = fb === "schwer" ? minReps : minReps + (r.step || 1) * (fb === "sehrleicht" ? 2 : 1);
       else s.target = tgt;
+      // Grenze überschritten: weiter mit Zusatzlast, wenn die Übung das kann und der Ort Last hat
+      if (EXERCISES[r.name]?.weighted && s.target > repCap(r.name) && loadScale(p, "plate")) {
+        s.loaded = true;
+        s.weight = firstLoad(p);
+        s.target = parseReps(loadedRange(r.name)).lo;
+      }
       break;
     }
     case "ladder": {
@@ -258,6 +289,10 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
       else if (allTop && fb !== "schwer") {
         s.topHits += 1;
         if (s.topHits >= 2 && s.stage < r.ladder.length - 1) { s.stage += 1; s.topHits = 0; s.target = rp.lo; }
+        else if (s.topHits >= 2 && EXERCISES[r.ladder[s.stage]]?.weighted && loadScale(p, "plate")) {
+          // Letzte Stufe zweimal oben: dieselbe Übung mit Zusatzlast
+          s.loaded = true; s.topHits = 0; s.weight = firstLoad(p); s.target = rp.lo;
+        }
         else s.target = top;
       } else {
         s.topHits = 0;

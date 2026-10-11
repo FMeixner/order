@@ -20,12 +20,15 @@ export function loadScale(p: EquipmentProfile, equip: Equip): { list: number[] }
       return { list: out };
     }
     case "plate": {
-      // Gürtel oder Weste mit Scheiben: Zusatzgewicht in Schritten der kleinsten Scheibe
-      const step = p.barbell ? p.barbell.smallestPlate : p.vest.length ? 0 : 2.5;
-      if (!step) return p.vest.length ? { list: [0, ...p.vest] } : null;
-      const out: number[] = [];
-      for (let w = 0; w <= 100; w = round(w + step)) out.push(w);
-      return { list: out };
+      // Zusatzlast, Weste oder Gürtel austauschbar: Scheiben in Schritten der kleinsten Scheibe,
+      // sonst alles, was sich umhängen lässt (Weste, Kurzhanteln, Kettlebells), zur Not 2,5-kg-Schritte
+      if (p.barbell) {
+        const out: number[] = [];
+        for (let w = 0; w <= 100; w = round(w + p.barbell.smallestPlate)) out.push(w);
+        return { list: out };
+      }
+      const list = [...new Set([0, ...p.vest, ...p.dumbbells, ...p.kettlebells])].sort((a, b) => a - b);
+      return list.length > 1 ? { list } : { step: 2.5 };
     }
     case "dumbbell":
       return p.dumbbells.length ? { list: [...p.dumbbells].sort((a, b) => a - b) } : p.kettlebells.length ? { list: [...p.kettlebells].sort((a, b) => a - b) } : null;

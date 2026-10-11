@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.39.0] – 2026-10-11
+
+### Neu
+- Zusatzlast nach der Wiederholungsgrenze: Übungen ohne Gewicht steigen bis 30 (Nacken, Schienbein, Waden), 25 (Rumpf, Beine) oder 20 Wiederholungen (Oberkörper). Danach dieselbe Übung mit Weste oder Gürtel, neuer Bereich (15–20, 12–15 oder 8–12), Steigerung wie bei Hanteln. Leitern wechseln nach der letzten Stufe. Ohne passende Last am Ort geht es mit Wiederholungen weiter.
+- Zusatzlast nimmt alles, was sich umhängen lässt: Scheiben, Weste, Kurzhanteln oder Kettlebells.
+
+### Geändert
+- Eine Übung je Bewegung: „Back Squat Top-Satz“, „Deadlift Top-Satz“, „KB Swing, schwer“, „… + Weste“ und „Weighted Pull-Up/Chin-Up/Dip“ sind mit der Grundübung zusammengeführt. Die Dosierung steht im Slot, die Zusatzlast ist eine Eigenschaft. Gewichte, Verlauf und 1RM wandern mit.
+- Bibliothek: 244 statt 254 Übungen; „Dip“ (Barren) ist neu als Grundübung.
+
 ## [0.38.1] – 2026-10-08
 
 ### Behoben

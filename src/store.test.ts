@@ -54,4 +54,14 @@ describe("Alte Datenstände laden", () => {
     expect(migrate(null).sessions).toEqual([]);
     expect(migrate("quatsch").onboarded).toBe(false);
   });
+  it("0.39: zusammengeführte Übungen behalten ihre Daten (Weighted Pull-Up → Pull-Up, Top-Satz → Grundübung)", () => {
+    const raw = JSON.parse(JSON.stringify(v030));
+    raw.slots = { "gl-mo-2|Weighted Pull-Up": { weight: 10, target: 6, stage: 0, fb: [], topHits: 0, updated: "2026-10-01" } };
+    raw.sessions[0].entries = { "gpp-strength|Back Squat Top-Satz": { key: "gpp-strength|Back Squat Top-Satz", slotId: "gpp-strength", name: "Back Squat Top-Satz", prog: "topset", sets: [{ done: true, reps: 3, weight: 100 }] } };
+    raw.oneRM = { "Weighted Dip": { kg: 30, date: "2026-10-01" } };
+    const s = migrate(raw);
+    expect(s.slots["gl-mo-2|Pull-Up"].weight).toBe(10);
+    expect(s.sessions[0].entries["gpp-strength|Back Squat"].name).toBe("Back Squat");
+    expect(s.oneRM?.Dip.kg).toBe(30);
+  });
 });

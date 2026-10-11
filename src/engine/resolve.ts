@@ -51,12 +51,13 @@ const TIER_ORDER: Record<Tier, Tier[]> = {
 };
 
 function choiceFor(slot: Slot, tier: Tier): Choice | null | undefined {
-  if (tier === "gym") return { name: slot.name };
+  const own: Choice = slot.load ? { name: slot.name, load: slot.load } : { name: slot.name };
+  if (tier === "gym") return own;
   const v = tier === "home" ? slot.home : slot.reise;
   if (v === null) return null;
   if (v === undefined) {
-    if (tier === "reise") return slot.home === undefined ? { name: slot.name } : choiceFor(slot, "home");
-    return { name: slot.name };
+    if (tier === "reise") return slot.home === undefined ? own : choiceFor(slot, "home");
+    return own;
   }
   return typeof v === "string" ? { name: v } : v;
 }
@@ -113,7 +114,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
     if (!skillOk(c.name, skills) && !ladderHere) {
       // Skill fehlt: erst eine leichtere Variante derselben Übung, dann die nächste Alternative des Slots
       const easier = regressions(c.name).find((n) => available(n, p, skills));
-      if (easier) { chosen = { c: { ...c, name: easier }, tier: t }; regressedFrom = c.name; break; }
+      if (easier) { chosen = { c: { ...c, name: easier, load: undefined }, tier: t }; regressedFrom = c.name; break; }
       continue;
     }
     if (available(c.name, p)) { chosen = { c, tier: t }; break; }
@@ -121,9 +122,11 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
   const pick = chosen ?? fallback;
   if (!pick) return null;
   const c = pick.c;
-  const equip = equipOf(c.name);
+  // Zusatzlast (Weste oder Gürtel): die Übung bleibt dieselbe, nur die Last kommt dazu
+  const equip: Equip = c.load === "plate" ? "plate" : equipOf(c.name);
   const kind: SlotKind = (c as Choice & { kind?: SlotKind }).kind ?? slot.kind ?? "strength";
   let prog: Prog = c.prog ?? slot.prog ?? "none";
+  if (c.load === "plate" && (prog === "reps" || prog === "ladder")) prog = "double";
   // Leiter: fehlt der Skill für die erste Stufe, kommt eine leichtere davor; mit Skill startet sie höher
   let ladder = pick.tier === "gym" || c.name === slot.name ? slot.ladder : undefined;
   if (ladder && !skillOk(ladder[0], skills)) {
