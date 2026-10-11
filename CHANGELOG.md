@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.42.2] – 2026-10-11
+
+### Geändert
+- Aufwärmsatz nur noch vor schweren Mehrgelenksübungen: Bereich beginnt bei höchstens 10 Wiederholungen. KB Swings mit 15–20 bekommen keinen mehr, der Aufwärmsatz geht an die nächste passende Übung derselben Körperhälfte.
+
 ## [0.42.1] – 2026-10-11
 
 ### Geändert

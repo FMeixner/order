@@ -19,7 +19,7 @@ export function Help() {
           <strong> Schwer</strong> = gerade so geschafft, <strong>OK</strong> = 1–2 Wiederholungen wären noch gegangen,
           <strong> Leicht</strong> = 3 oder mehr, <strong>Sehr leicht</strong> = deutlich zu leicht.</li>
         <li>Am Ende „Einheit abschließen“. Erst dann rechnet die App die Vorschläge für das nächste Mal.</li>
-        <li>Aufwärmsatz: Die erste schwere Mehrgelenksübung jeder Körperhälfte am Tag (etwa die Beinpresse, die erste Brust- oder Schulterpresse) hat einen gestrichelten Kreis davor: 8 Wiederholungen mit der Hälfte des Arbeitsgewichts, bei schwerer Langhantel zwei Steigerungssätze (50 % × 5, 75 % × 3). Abhaken wie einen Satz, danach 30 s bis zum ersten Arbeitssatz.</li>
+        <li>Aufwärmsatz: Die erste schwere Mehrgelenksübung jeder Körperhälfte am Tag (etwa die Beinpresse, die erste Brust- oder Schulterpresse), sofern sie im Bereich um 8–12 Wiederholungen oder schwerer liegt, hat einen gestrichelten Kreis davor: 8 Wiederholungen mit der Hälfte des Arbeitsgewichts, bei schwerer Langhantel zwei Steigerungssätze (50 % × 5, 75 % × 3). Abhaken wie einen Satz, danach 30 s bis zum ersten Arbeitssatz.</li>
       </ul>
 
       <h3>So steigert die App</h3>

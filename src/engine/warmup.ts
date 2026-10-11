@@ -1,4 +1,5 @@
-/* Aufwärmsatz: ein leichter Satz vor der ersten schweren Mehrgelenksübung jeder Körperhälfte am Tag.
+/* Aufwärmsatz: ein leichter Satz vor der ersten schweren Mehrgelenksübung jeder Körperhälfte am Tag
+   (schwer heißt: Bereich ab höchstens 10 Wiederholungen; Swings mit 15–20 brauchen keinen).
    Montags Beinpresse ja, die Beinbeuger danach nicht. Freitags die erste Brustpresse ja, die übrigen Oberkörperübungen nicht.
    Gewicht: die Hälfte des Arbeitsgewichts × 8, auf eine vorhandene Last gelegt.
    Schwere Langhantel (≤ 6 Wdh oder Top-Satz): zwei Steigerungssätze, 50 % × 5 und 75 % × 3. */
@@ -33,6 +34,9 @@ export function warmupKeys(list: Slotish[]): Map<string, number> {
   const out = new Map<string, number>();
   for (const r of list) {
     if (r.kind !== "strength" || !r.loadable || !LOADED.has(r.equip)) continue;
+    // Nur schwere Sätze brauchen einen Aufwärmsatz: Bereich beginnt bei höchstens 10 Wiederholungen (10–12 ja, KB Swing 15–20 nein)
+    const rp = parseReps(r.reps);
+    if (rp.amrap || (rp.lo ?? 99) > 10) continue;
     const h = halfOf(r.name);
     if (!h || warm.has(h)) continue;
     warm.add(h);
