@@ -80,8 +80,17 @@ export function available(name: string, p: EquipmentProfile, skills?: SkillSet):
     if (n === "bench" && !p.has.bench) return false;
     if (n === "rower" && !p.has.rower) return false;
     if (n === "medball" && !p.has.medball) return false;
+    if (n === "box" && !p.has.box) return false;
+    // Defizit: Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln als Griffe
+    if (n === "deficit" && !p.has.handles && !p.has.rings && !p.dumbbells.length) return false;
   }
   return true;
+}
+
+/** Ersatz einer Übung, die am Ort nicht geht (Feld „instead“ in exercises.json) */
+export function insteadOf(name: string, p: EquipmentProfile, skills?: SkillSet): { name: string; sets?: number } | null {
+  if (available(name, p, skills)) return null;
+  return EXERCISES[name]?.instead?.find((x) => available(x.name, p, skills)) ?? null;
 }
 
 function slotNames(slot: Slot): string[] {
@@ -118,6 +127,9 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
       continue;
     }
     if (available(c.name, p)) { chosen = { c, tier: t }; break; }
+    // Ersatz aus der Bibliothek (z. B. Deficit Push-Up ohne Griffe: Banded Push-Up, sonst Push-Up mit einem Satz mehr)
+    const alt = insteadOf(c.name, p, skills);
+    if (alt) { chosen = { c: { ...c, name: alt.name, load: undefined, sets: (c.sets ?? slot.sets ?? 1) + (alt.sets ?? 0) }, tier: t }; break; }
   }
   const pick = chosen ?? fallback;
   if (!pick) return null;
@@ -134,6 +146,8 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
     if (easier) ladder = [easier, ...ladder];
   }
   if (regressedFrom && ladder) ladder = undefined;
+  // Stufen, die am Ort nicht gehen, durch ihren Ersatz tauschen (Länge bleibt, damit die Stufe passt)
+  if (ladder) ladder = ladder.map((n) => (available(n, p) ? n : insteadOf(n, p, skills)?.name ?? n));
   if (prog === "ladder" && !ladder) prog = kind === "hold" ? "hold" : "reps";
   const loadable = isLoadable(equip) && (prog === "double" || prog === "weight" || prog === "topset");
   if ((prog === "double" || prog === "weight" || prog === "topset") && !isLoadable(equip)) prog = "reps";

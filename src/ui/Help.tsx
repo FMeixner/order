@@ -120,6 +120,7 @@ export function Help() {
       <h3>Schweißfreier Ort</h3>
       <ul>
         <li>Setup › Equipment › „Schweißfrei“ (etwa für den Arbeitsplatz): An Tagen an diesem Ort kommen keine Bestien, kein Laufen und keine Intervalle, Finisher bleiben Superset und das Warm-up ist kurz.</li>
+        <li>Deficit Push-Ups brauchen Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln (Setup › Equipment). Fehlt das am Ort, kommen Banded Push-Ups, ohne Band normale Push-Ups mit einem Satz mehr.</li>
       </ul>
 
       <h3>Alltagslast</h3>

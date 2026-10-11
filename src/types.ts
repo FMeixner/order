@@ -146,6 +146,8 @@ export interface Exercise {
   run?: boolean;
   /** Zusätzlich nötig, z. B. "bar" (Klimmzugstange), "rings", "bench", "rower", "box" */
   needs?: string[];
+  /** Geht die Übung am Ort nicht: diese stattdessen, in dieser Reihenfolge (sets: zusätzliche Sätze) */
+  instead?: { name: string; sets?: number }[];
   desc?: string;
 }
 
@@ -203,7 +205,7 @@ export interface EquipmentProfile {
   machineStep: number;
   vest: number[];
   bands: string[];
-  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean };
+  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean };
   /** Schweißfrei (z. B. Arbeitsplatz): keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up */
   sweatFree?: boolean;
 }

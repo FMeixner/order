@@ -15,7 +15,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Studio", tier: "gym",
       dumbbells: range(2.5, 50, 2.5), kettlebells: [8, 12, 16, 20, 24, 28, 32],
       barbell: { bar: 20, smallestPlate: 1.25 }, cableStep: 2.5, machineStep: 5, vest: [], bands: [],
-      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false },
+      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false, handles: true },
     }),
   },
   {
@@ -24,7 +24,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Zuhause", tier: "home",
       dumbbells: range(2, 24, 2), kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false },
+      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false },
     }),
   },
   {
@@ -33,7 +33,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Unterwegs", tier: "reise",
       dumbbells: [], kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false },
+      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false },
     }),
   },
 ];
@@ -110,7 +110,7 @@ function renameExercises(s: AppState): void {
   if (s.oneRM) s.oneRM = Object.fromEntries(Object.entries(s.oneRM).map(([k, v]) => [RENAMED[k] ?? k, v]));
 }
 function base_has(): EquipmentProfile["has"] {
-  return { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false };
+  return { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false };
 }
 
 function load(): AppState {

@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.41.0] – 2026-10-11
+
+### Neu
+- Equipment: „Liegestützgriffe oder Yoga-Blöcke“. Deficit Push-Ups gibt es nur noch, wo Griffe, Blöcke, Ringe oder Kurzhanteln da sind. Sonst Banded Push-Up (neu in der Bibliothek), ohne Band normale Push-Ups mit einem Satz mehr. Gilt in allen Orden, auch für Leiterstufen.
+
+### Behoben
+- Box Jumps prüfen jetzt, ob am Ort eine Box steht.
+
 ## [0.40.1] – 2026-10-11
 
 ### Neu

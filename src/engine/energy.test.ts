@@ -64,3 +64,19 @@ describe("Bestien an Tag 5 und Energie", () => {
     expect(longer).toBeGreaterThan(12);
   });
 });
+
+describe("Defizit braucht Griffe", () => {
+  it("ohne Griffe: Banded Push-Up, ohne Band: Push-Up mit einem Satz mehr", async () => {
+    const { resolveSlot } = await import("./resolve");
+    const reise = EQUIPMENT_PRESETS[2].make();
+    const slot = { id: "t", name: "Deficit Push-Up", sets: 3, reps: "AMRAP", prog: "reps" as const };
+    const bare = { ...reise, dumbbells: [], kettlebells: [], has: { ...reise.has, rings: false, handles: false } };
+    expect(resolveSlot(slot, { ...bare, bands: ["leicht"] })).toMatchObject({ name: "Banded Push-Up", sets: 3, missingEquipment: false });
+    expect(resolveSlot(slot, { ...bare, bands: [] })).toMatchObject({ name: "Push-Up", sets: 4, missingEquipment: false });
+    expect(resolveSlot(slot, { ...bare, has: { ...bare.has, handles: true } })?.name).toBe("Deficit Push-Up");
+    expect(resolveSlot(slot, { ...bare, has: { ...bare.has, rings: true } })?.name).toBe("Deficit Push-Up");
+    // Leiter: Stufe wird getauscht, Länge bleibt
+    const lad = { id: "l", name: "Push-Up", sets: 3, reps: "10-25", prog: "ladder" as const, ladder: ["Push-Up", "Deficit Push-Up", "Archer Push-Up"] };
+    expect(resolveSlot(lad, { ...bare, bands: [], tier: "gym" as const })?.ladder).toEqual(["Push-Up", "Push-Up", "Archer Push-Up"]);
+  });
+});
