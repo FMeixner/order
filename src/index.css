@@ -194,6 +194,7 @@ details.card[open] summary { margin-bottom: 10px; }
 .drills { display: flex; flex-direction: column; gap: 12px; }
 .drill { display: flex; flex-direction: column; gap: 6px; }
 .drill-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.drill-remove { margin-left: auto; color: var(--muted, inherit); }
 .drill-name { font-weight: 500; }
 .drill-groups { display: flex; flex-wrap: wrap; gap: 10px; }
 .drill-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }

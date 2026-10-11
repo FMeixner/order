@@ -103,7 +103,10 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const sid = sel ? sessionId(block.id, week, sel.role) : "";
   const hasRun = !!(sel && focus.roles[sel.role] && roleAt(focus.roles[sel.role], profile ?? undefined).blocks.some(isRunBlock));
   const canReduce = !deload && !future;
-  const activeAdj = sel ? [profile && profile.id !== sel.profileId, canReduce && !!state.reduced[rkey], hasRun && !!state.noRun?.[sid]].filter(Boolean).length : 0;
+  // Viel Energie: nur mit Bestie oder Schwert am Tag, nicht zusammen mit −1 Satz
+  const canBoost = !!(sel && focus.roles[sel.role]) && canReduce && !state.reduced[rkey]
+    && roleAt(focus.roles[sel.role], profile ?? undefined).blocks.some((b) => b.type === "beast" || (b.type === "module" && b.module === "sword" && !!profile?.has.sword));
+  const activeAdj = sel ? [profile && profile.id !== sel.profileId, canReduce && !!state.reduced[rkey], hasRun && !!state.noRun?.[sid], canBoost && !!state.energy?.[sid]].filter(Boolean).length : 0;
   const adjustButton = (
     <button className={`btn ghost small adjust-btn ${activeAdj ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
       <span aria-hidden>⚙</span> Anpassen{activeAdj ? ` · ${activeAdj}` : ""}
@@ -121,6 +124,12 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
         <label className="check small">
           <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => ({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }))} />
           <span>Diese Woche −1 Satz (müde, krank, viel los)</span>
+        </label>
+      )}
+      {canBoost && (
+        <label className="check small">
+          <input type="checkbox" checked={!!state.energy?.[sid]} onChange={(e) => update((st) => ({ ...st, energy: { ...(st.energy ?? {}), [sid]: e.target.checked } }))} />
+          <span>Heute viel Energie: Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben.</span>
         </label>
       )}
       {hasRun && (

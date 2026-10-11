@@ -126,6 +126,8 @@ export function Help() {
       <ul>
         <li>Ist in einer Phase viel los, läuft etwa die Hälfte der freien Übungen an Maschine oder Kabel, wenn das Studio sie hat. Der erste große Lift des Tages bleibt frei.</li>
         <li>Eine akut schwere Woche (krank, Prüfungen, schlecht geschlafen): unter ⚙ Anpassen „−1 Satz“ anhaken. Die Zahl am Zahnrad zeigt, wie viele Anpassungen gerade aktiv sind.</li>
+        <li>Viel Energie heute: unter ⚙ Anpassen anhaken. Bestien kommen eine Klasse länger (der Tag darf bis zu 15 Minuten länger werden), jede Schwertübung bekommt einen Satz mehr. Kraft, Hypertrophie und Ausdauer bleiben, wie geplant. Mit −1 Satz geht das nicht zusammen.</li>
+        <li>Warm-up und Cool-down anpassen: in der Einheit aufklappen, „✎ Bearbeiten“. Mit ✕ fliegt eine Übung raus, über „+ Übung hinzufügen“ kommt eine aus dem Katalog dazu. Das gilt dauerhaft für diesen Tag des Ordens, auch in späteren Phasen. „Auf Vorgabe des Ordens zurücksetzen“ macht es rückgängig. Das Training selbst bleibt fest.</li>
       </ul>
 
       <h3>Timer</h3>

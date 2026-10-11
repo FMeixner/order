@@ -185,6 +185,7 @@
   "Ring Row (Füße erhöht)": {"equip": "bodyweight", "needs": ["rings"]},
   "Romanian Deadlift": {"equip": "barbell", "desc": "Knie leicht gebeugt, Hüfte nach hinten schieben, Hantel nah am Bein bis unter die Knie, Rücken lang."},
   "Rope Crunch": {"equip": "cable"},
+  "Ab Crunch Machine": {"equip": "machine", "desc": "Crunch-Maschine: Rumpf gegen den Widerstand einrollen, Becken bleibt am Sitz."},
   "Rope Hammer Curl": {"equip": "cable", "desc": "Seil am unteren Kabel, Daumen oben, Curl bis zur Schulter."},
   "Rope Pushdown": {"equip": "cable"},
   "RTO Ring Dip": {"equip": "bodyweight", "needs": ["rings"]},

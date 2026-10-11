@@ -92,7 +92,13 @@ export interface Role {
   blocks: Block[];
   optional?: boolean;
   note?: string;
+  /** Eigene Änderungen an Warm-up und Cool-down (aus AppState.drillEdits, nicht in den Orden-Dateien) */
+  drillEdit?: DrillEdits;
 }
+
+/** Warm-up (wu) und Cool-down (cd): entfernte und hinzugefügte Übungen (Drill-Ids) */
+export interface DrillEdit { off: string[]; add: string[] }
+export type DrillEdits = { wu?: DrillEdit; cd?: DrillEdit };
 
 export interface Focus {
   schema: 1;
@@ -326,6 +332,10 @@ export interface AppState {
   feeling: { date: string; sessionId: string; value: number }[];
   /** Eigene Übungswahl: "slotId:Stufe" → Übungsname. Überlebt Updates der Orden-Dateien. */
   swaps: Record<string, string>;
+  /** Eigene Warm-up- und Cool-down-Listen je Tag: "focusId:rolle" → Änderungen. Gilt dauerhaft für diesen Tag des Ordens. */
+  drillEdits?: Record<string, DrillEdits>;
+  /** Viel Energie heute (Session-Id → true): Bestien eine Klasse länger, Schwertübungen +1 Satz */
+  energy?: Record<string, boolean>;
   /** Einheiten, in denen heute nicht gelaufen werden kann (Session-Id → true): Lauf wird zur Bestie */
   noRun?: Record<string, boolean>;
   /** Anderer Trainingsort für eine Einheit (Session-Id → Equipment-Profil-ID): Übungen und Gewichtsstufen folgen dem Profil */

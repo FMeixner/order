@@ -3,7 +3,7 @@
    Umbau zwischen den Übungen, Warm-up und Cool-down aus den Listen. */
 import { BEAST_BY_ID, DM_VARIANTS } from "../data";
 import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile } from "../types";
-import { expandDrills, moduleDrills } from "./plan";
+import { CLASS_ORDER, moduleDrills, roleDrills } from "./plan";
 import { parseReps, resolveSlot, type Resolved } from "./resolve";
 import { WARM_SEC, warmupKeys } from "./warmup";
 
@@ -56,7 +56,10 @@ export function drillSeconds(d: Drill, groups: { value: number; sets: number }[]
   return groups.reduce((sum, g) => sum + g.sets * (d.mode === "reps" ? g.value * (d.rep_s ?? 3) : g.value), 0) + 10;
 }
 
-export function blockSeconds(b: Block, p: EquipmentProfile, red = false): number {
+/** Viel Energie: Bestie eine Klasse länger (nicht bei −1 Satz und nicht bei festen Pools) */
+export const boostClass = (c: BeastClass): BeastClass => CLASS_ORDER[Math.min(CLASS_ORDER.length - 1, CLASS_ORDER.indexOf(c) + 1)];
+
+export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost = false): number {
   switch (b.type) {
     case "single": {
       const s = b.slot;
@@ -81,12 +84,13 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false): number
         const ms = b.pool.map((id) => BEAST_BY_ID[id]?.minutes ?? 15);
         return (ms.reduce((a, c) => a + c, 0) / ms.length) * 60 + SETUP;
       }
-      const cls = b.classes?.length ? b.classes : (["bestie"] as BeastClass[]);
+      let cls = b.classes?.length ? b.classes : (["bestie"] as BeastClass[]);
+      if (boost) cls = cls.map(boostClass);
       return (cls.reduce((a, c) => a + CLASS_MIN[c], 0) / cls.length) * 60 + SETUP;
     }
     case "module": {
       if (b.module === "flow" || b.module === "sharpen") return moduleDrills(b.variant, NEUTRAL_USER, 1, b.module).reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
-      if (p.has.sword) return (DM_VARIANTS[b.variant] ?? []).reduce((sum, d) => sum + d.value * (d.sets ?? 1) * (d.sides ? 2 : 1), 0) + SETUP;
+      if (p.has.sword) return (DM_VARIANTS[b.variant] ?? []).reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0) + SETUP;
       return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p, red) : 0;
     }
     case "menu": {
@@ -99,14 +103,14 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false): number
 export interface DurationEstimate { warmup: number; main: number; cooldown: number; total: number }
 
 /** Geschätzte Minuten einer Einheit (A-Woche, ohne −1 Satz). */
-export function estimateRole(role: Role, p: EquipmentProfile, user: UserProfile = NEUTRAL_USER, week = 1, reduced = false): DurationEstimate {
+export function estimateRole(role: Role, p: EquipmentProfile, user: UserProfile = NEUTRAL_USER, week = 1, reduced = false, boost = false): DurationEstimate {
   const ab = week % 2 === 1 ? "A" : "B";
   const blocks = role.blocks.filter((b) => !b.rotation || b.rotation === ab);
-  const drills = (lists: string[]) => expandDrills(lists, user, week).reduce((s, d) => s + drillSeconds(d, d.groups), 0);
-  const warmup = drills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || p.has.sword)) / 60;
-  const cooldown = drills(role.cooldown ?? ["cd_general"]) / 60;
+  const drills = (kind: "wu" | "cd") => roleDrills(role, kind, p, user, week).reduce((s, d) => s + drillSeconds(d, d.groups), 0);
+  const warmup = drills("wu") / 60;
+  const cooldown = drills("cd") / 60;
   // Aufwärmsätze vor der ersten schweren Mehrgelenksübung je Körperhälfte
   const warmSets = [...warmupKeys(roleSlots(blocks, p)).values()].reduce((a, c) => a + c, 0);
-  const main = (blocks.reduce((s, b) => s + blockSeconds(b, p, reduced), 0) + warmSets * WARM_SEC) / 60;
+  const main = (blocks.reduce((s, b) => s + blockSeconds(b, p, reduced, boost && !reduced), 0) + warmSets * WARM_SEC) / 60;
   return { warmup, main, cooldown, total: warmup + main + cooldown };
 }

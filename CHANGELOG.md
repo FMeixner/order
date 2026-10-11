@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.40.0] – 2026-10-11
+
+### Neu
+- Warm-up und Cool-down anpassen: In der Einheit unter „✎ Bearbeiten“ Übungen entfernen (✕) oder aus dem Katalog hinzufügen. Gilt dauerhaft für diesen Tag des Ordens, die Zeitschätzung folgt. Zurücksetzen auf die Vorgabe jederzeit möglich.
+- „Heute viel Energie“ unter ⚙ Anpassen: Bestien eine Klasse länger (Tageslimit +15 Minuten), Schwertübungen +1 Satz. Kraft, Hypertrophie und Ausdauer bleiben unverändert. Finisher-Pools und Zwischenwert-Bestien bleiben, wie sie sind.
+
+### Geändert
+- Assassin, neue Fassung: KB Swing statt Cable Pull-Through, Bulgarian Split Squat statt Leg Extension (auch im Gym), Dip statt Rope Pushdown (zu Hause und unterwegs Deficit Push-Up), Ab Crunch Machine statt Rope Crunch. Laufende Phasen übernehmen sie im Plan über „Übernehmen“.
+- Neu in der Bibliothek: Ab Crunch Machine.
+
 ## [0.39.0] – 2026-10-11
 
 ### Neu

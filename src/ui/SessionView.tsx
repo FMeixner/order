@@ -7,7 +7,7 @@ import { allRuns } from "../engine/runs";
 import { capOf, isLoadBeast, loadKind, loadRecord, pctLift, suggestLoad } from "../engine/loadbeast";
 import { backoffLoad, advance, loadPhase, suggest, type Suggestion, sharedState } from "../engine/progression";
 import { guidedKeys, parseReps, resolveSlot, swapKey, swapOptions, toGuided, type Resolved } from "../engine/resolve";
-import { affectDowngrade, beastById, finisherBlock, roleAt, daysBetween, beastMinutes, COMBO_REST, expandDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
+import { affectDowngrade, beastById, finisherBlock, roleAt, daysBetween, beastMinutes, COMBO_REST, drillPool, roleDrills, isAWeek, moduleDrills, pickBeast, dayRoleMap, setWeekBeastBlocks, type BeastTarget, type DrillView } from "../engine/plan";
 import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import { WARM_REST, warmupKeys, warmupSets } from "../engine/warmup";
@@ -40,7 +40,9 @@ export const sessionId = (blockId: string, week: number, role: string) => `${blo
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
 /** Zusatz an einer Bestien-Übung: Band-Stufe oder Gewicht am heutigen Ort */
 
-const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile), ctx.profile, ctx.state.user, ctx.week, ctx.reduced).total / 5) * 5);
+const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile), ctx.profile, ctx.state.user, ctx.week, ctx.reduced, boostOf(ctx)).total / 5) * 5);
+/** Viel Energie heute: Bestien eine Klasse länger, Schwertübungen +1 Satz (nicht bei −1 Satz) */
+export const boostOf = (ctx: Pick<SessionCtx, "state" | "block" | "week" | "roleKey" | "reduced">) => !ctx.reduced && !!ctx.state.energy?.[sessionId(ctx.block.id, ctx.week, ctx.roleKey)];
 
 /** Skills aus dem Skillcheck; null, solange keiner gemacht wurde */
 export const skillSet = (st: AppState): Set<string> | null => (st.user.skills ? new Set(st.user.skills) : null);
@@ -110,10 +112,14 @@ export function collectItems(ctx: SessionCtx): Item[] {
     const logged = r?.parts?.length ? r.parts.map((p) => p.id).join("+") : r?.beast?.id;
     const lb = logged ? beastById(logged) : null;
     if (lb) return { block: b, resolved: [], beast: lb };
-    return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state) }) };
+    return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state), boost: boostOf(ctx) }) };
   };
   const otherItem = (b: Block): Item => {
-    if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) return { block: b, resolved: [], drills: moduleDrills(b.variant, ctx.state.user, ctx.week, b.module) };
+    if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) {
+      const drills = moduleDrills(b.variant, ctx.state.user, ctx.week, b.module);
+      // Viel Energie: jede Schwertübung einen Satz mehr
+      return { block: b, resolved: [], drills: b.module === "sword" && boostOf(ctx) ? drills.map((d) => ({ ...d, groups: d.groups.map((g) => ({ ...g, sets: g.sets + 1 })) })) : drills };
+    }
     return { block: b, resolved: slotsOf(b, ctx) };
   };
   const all: Item[] = role.blocks
@@ -150,8 +156,8 @@ export function SessionView(ctx: SessionCtx) {
   const items = useMemo(() => collectItems(ctx), [ctx]);
   // Erste schwere Mehrgelenksübung je Körperhälfte: Aufwärmsatz
   const warmMap = useMemo(() => warmupKeys(items.flatMap((it) => it.resolved)), [items]);
-  const warm = expandDrills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || ctx.profile.has.sword), state.user, week);
-  const cool = expandDrills(role.cooldown ?? ["cd_general"], state.user, week);
+  const warm = roleDrills(role, "wu", ctx.profile, state.user, week);
+  const cool = roleDrills(role, "cd", ctx.profile, state.user, week);
   const [feeling, setFeeling] = useState<number | null>(null);
   const hard = items.some((it) => it.beast || it.resolved.some((r) => r.kind === "interval"));
 
@@ -193,18 +199,14 @@ export function SessionView(ctx: SessionCtx) {
     <div className="stack session">
       <div className="session-head">
         {/* Name und Ort stehen schon im Tagesknopf darüber */}
-        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</span>{ctx.headAction}</div>
+        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : boostOf(ctx) ? " · viel Energie" : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
         {role.note && <p className="note">{role.note}</p>}
         {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
       </div>
 
-      {warm.length > 0 && (
-        <Collapse title="Warm-up" meta={`${warm.length} Übungen`} tone="amber">
-          <DrillList drills={warm} done={session?.drills ?? {}} prefix="wu" onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
-        </Collapse>
-      )}
+      <DrillSection kind="wu" drills={warm} ctx={ctx} session={session} mut={mut} />
 
       <WarmCtx.Provider value={warmMap}>
         {items.map((it, i) => (
@@ -212,11 +214,7 @@ export function SessionView(ctx: SessionCtx) {
         ))}
       </WarmCtx.Provider>
 
-      {cool.length > 0 && (
-        <Collapse title="Cool-down" meta={`${cool.length} Übungen`} tone="amber">
-          <DrillList drills={cool} done={session?.drills ?? {}} prefix="cd" onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
-        </Collapse>
-      )}
+      <DrillSection kind="cd" drills={cool} ctx={ctx} session={session} mut={mut} />
 
       <div className="card finish">
         {focus.affect_rule && hard && !session?.done && (
@@ -245,7 +243,50 @@ function toggleDrill(s: Session, key: string, i: number): Session {
 }
 
 /* ---------- Warm-up, Cool-down, Module ---------- */
-function DrillList({ drills, done, prefix, onToggle }: { drills: DrillView[]; done: Record<string, boolean[]>; prefix: string; onToggle: (key: string, i: number) => void }) {
+/** Warm-up oder Cool-down mit eigenen Änderungen: Übungen entfernen und aus dem Katalog hinzufügen, dauerhaft für diesen Tag des Ordens */
+function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" | "cd"; drills: DrillView[]; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void }) {
+  const [edit, setEdit] = useState(false);
+  const key = `${ctx.focus.id}:${ctx.roleKey}`;
+  const ed = ctx.state.drillEdits?.[key]?.[kind];
+  const changed = !!ed && (ed.off.length > 0 || ed.add.length > 0);
+  const setEd = (fn: (e: { off: string[]; add: string[] }) => { off: string[]; add: string[] } | null) =>
+    ctx.update((st) => {
+      const all = { ...(st.drillEdits ?? {}) };
+      const cur = { ...(all[key] ?? {}) };
+      const next = fn(cur[kind] ?? { off: [], add: [] });
+      if (next && (next.off.length || next.add.length)) cur[kind] = next; else delete cur[kind];
+      if (cur.wu || cur.cd) all[key] = cur; else delete all[key];
+      return { ...st, drillEdits: all };
+    });
+  const remove = (id: string) => setEd((e) => (e.add.includes(id) ? { ...e, add: e.add.filter((x) => x !== id) } : { ...e, off: [...e.off, id] }));
+  const add = (id: string) => setEd((e) => (e.off.includes(id) ? { ...e, off: e.off.filter((x) => x !== id) } : { ...e, add: [...e.add, id] }));
+  const shown = new Set(drills.map((d) => d.id));
+  const pool = drillPool(kind, ctx.profile).filter((d) => !shown.has(d.id));
+  const title = kind === "wu" ? "Warm-up" : "Cool-down";
+  return (
+    <Collapse title={title} meta={`${drills.length} Übungen${changed ? " · angepasst" : ""}`} tone="amber">
+      <div className="row between">
+        <span className="muted small">{edit ? `Änderungen gelten dauerhaft für ${ctx.focus.roles[ctx.roleKey]?.name ?? "diesen Tag"}.` : ""}</span>
+        <button className="btn ghost small" onClick={() => setEdit((o) => !o)} aria-pressed={edit}>{edit ? "Fertig" : "✎ Bearbeiten"}</button>
+      </div>
+      <DrillList drills={drills} done={session?.drills ?? {}} prefix={kind} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))}
+        onRemove={edit ? remove : undefined} />
+      {edit && (
+        <div className="stack">
+          {pool.length > 0 && (
+            <select value="" aria-label={`${title}: Übung hinzufügen`} onChange={(e) => e.target.value && add(e.target.value)}>
+              <option value="">+ Übung hinzufügen …</option>
+              {pool.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
+          )}
+          {changed && <button className="btn ghost small" onClick={() => setEd(() => null)}>Auf Vorgabe des Ordens zurücksetzen</button>}
+        </div>
+      )}
+    </Collapse>
+  );
+}
+
+function DrillList({ drills, done, prefix, onToggle, onRemove }: { drills: DrillView[]; done: Record<string, boolean[]>; prefix: string; onToggle: (key: string, i: number) => void; onRemove?: (id: string) => void }) {
   const t = useTimer();
   return (
     <div className="drills">
@@ -268,6 +309,7 @@ function DrillList({ drills, done, prefix, onToggle }: { drills: DrillView[]; do
             <div className="drill-head">
               <span className="drill-name">{d.name}</span>
               <Desc text={d.desc} />
+              {onRemove && <button className="btn ghost small drill-remove" onClick={() => onRemove(d.id)} aria-label={`${d.name} entfernen`}>✕</button>}
             </div>
             {d.note && <div className="muted small">{d.note}</div>}
             <div className="drill-groups">
@@ -834,13 +876,13 @@ const BLOCK_TITLE: Partial<Record<Block["type"], string>> = { superset: "Superse
 export function SessionPreview(ctx: SessionCtx) {
   const role = roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile);
   const items = collectItems(ctx);
-  const warm = expandDrills((role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || ctx.profile.has.sword), ctx.state.user, ctx.week);
-  const cool = expandDrills(role.cooldown ?? ["cd_general"], ctx.state.user, ctx.week);
+  const warm = roleDrills(role, "wu", ctx.profile, ctx.state.user, ctx.week);
+  const cool = roleDrills(role, "cd", ctx.profile, ctx.state.user, ctx.week);
   return (
     <div className="stack session">
       <div className="session-head">
         {/* Name und Ort stehen schon im Tagesknopf darüber */}
-        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : ""}</span>{ctx.headAction}</div>
+        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : boostOf(ctx) ? " · viel Energie" : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
       </div>
       <section className="card preview">

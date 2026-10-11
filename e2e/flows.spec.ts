@@ -102,3 +102,35 @@ test("Schweißfreier Ort: keine Bestie am Tag", async ({ page }) => {
     await expect(page.locator(".card.beast")).toHaveCount(0);
   }
 });
+
+test("Warm-up anpassen: entfernen und hinzufügen, dauerhaft für den Tag", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
+  await page.locator(".collapse-head").filter({ hasText: "Warm-up" }).click();
+  const names = page.locator(".collapse.amber").first().locator(".drill-name");
+  const n = await names.count();
+  const first = await names.first().innerText();
+  await page.getByRole("button", { name: "✎ Bearbeiten" }).first().click();
+  await page.getByRole("button", { name: `${first} entfernen` }).click();
+  await expect(names).toHaveCount(n - 1);
+  await page.getByLabel("Warm-up: Übung hinzufügen").selectOption({ index: 1 });
+  await expect(names).toHaveCount(n);
+  const st = await stored(page);
+  const ed = st.drillEdits["assassin:kraft_a"].wu;
+  expect(ed.off.length).toBe(1);
+  expect(ed.add.length).toBe(1);
+  await page.getByRole("button", { name: "Auf Vorgabe des Ordens zurücksetzen" }).first().click();
+  expect((await stored(page)).drillEdits?.["assassin:kraft_a"]).toBeUndefined();
+});
+
+test("Viel Energie: Haken im Anpassen-Menü, Hinweis in der Einheit", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Schwert und Bestie" }).click();
+  await page.getByRole("button", { name: "Anpassen für heute" }).click();
+  await page.getByText(/Heute viel Energie/).click();
+  await expect(page.getByText(/· viel Energie/)).toBeVisible();
+  const st = await stored(page);
+  expect(Object.values(st.energy ?? {})).toContain(true);
+});

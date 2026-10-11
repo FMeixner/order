@@ -9,7 +9,7 @@ import { EQUIPMENT_PRESETS } from "../store";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot } from "../types";
 import { estimateRole } from "./duration";
 import { parseReps } from "./resolve";
-import { blockFocus, defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { applyDrillEdits, blockFocus, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { shortDay } from "./shortday";
 import { applySlot } from "./sharpen";
 
@@ -129,7 +129,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   let shaped = shapeFocus(f, n);
   // Kurztag: gekürzte Rolle, die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet
   if (b.shortRole && shaped.roles[b.shortRole] && !base.medley?.length) shaped = shortDay(shaped, b.shortRole, state.user, defaultRoles(shaped, n)).focus;
-  return applySlot(shaped, state, b);
+  return applyDrillEdits(applySlot(shaped, state, b), state.drillEdits);
 }
 
 setWeekFocus(focusFor);

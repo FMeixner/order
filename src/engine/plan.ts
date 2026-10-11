@@ -1,6 +1,6 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
 import { allRuns } from "./runs";
-import { blockSeconds, estimateRole, roleSlots } from "./duration";
+import { blockSeconds, boostClass, estimateRole, roleSlots } from "./duration";
 import { beastSets, musclesOf } from "./volume";
 import { BEASTS, BEAST_BY_ID, DM_VARIANTS, EXERCISES, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, Role, UserProfile, Weekday } from "../types";
@@ -324,7 +324,9 @@ function hash(s: string): number {
   return h;
 }
 
-type BeastOpts = { blockId: string; week: number; profile: EquipmentProfile; state: AppState; reduced: boolean; downgrade: boolean };
+type BeastOpts = { blockId: string; week: number; profile: EquipmentProfile; state: AppState; reduced: boolean; downgrade: boolean; /** Viel Energie: eine Klasse länger, Tageslimit + BOOST_MIN */ boost?: boolean };
+/** Viel Energie: so viele Minuten darf der Tag länger werden */
+export const BOOST_MIN = 15;
 
 /** Kurzform: gleiche Bestie mit weniger Runden. Nur bei gleichen Runden (keine Leitern wie 21/15/9, kein AMRAP, kein Buy-in). */
 /** Kürzbar: mindestens zwei Runden. Leitern (21/15/9) behalten die ersten Stufen, Buy-in und Buy-out bleiben, gekürzt wird der Innenteil. */
@@ -365,7 +367,7 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
     const targets = pb ? weekBeastBlocks(opts.state, pb, opts.week - 1) : [];
     if (!targets.some(([b]) => b.id === block.id)) targets.push([block, opts.profile]);
     for (const [b, prof] of targets) for (const reduced of [false, true]) {
-      const p = pickBeast(b, { ...opts, week: opts.week - 1, profile: prof, reduced });
+      const p = pickBeast(b, { ...opts, boost: false, week: opts.week - 1, profile: prof, reduced });
       if (p) add(p.id);
     }
   }
@@ -417,7 +419,7 @@ const beastMemo = new WeakMap<AppState, Map<string, Beast | null>>();
 export function pickBeast(block: Extract<Block, { type: "beast" }>, opts: BeastOpts): Beast | null {
   let m = beastMemo.get(opts.state);
   if (!m) beastMemo.set(opts.state, (m = new Map()));
-  const key = JSON.stringify([opts.blockId, block, opts.week, opts.profile, opts.reduced, opts.downgrade]);
+  const key = JSON.stringify([opts.blockId, block, opts.week, opts.profile, opts.reduced, opts.downgrade, !!opts.boost]);
   if (m.has(key)) return m.get(key)!;
   const r = pickWith(block, opts, lastWeekBeasts(block, opts));
   m.set(key, r);
@@ -501,9 +503,10 @@ export function beastBudget(block: Extract<Block, { type: "beast" }>, opts: Beas
   const f = pb ? weekFocus(opts.state, pb, opts.week) : undefined;
   const role = f ? Object.values(f.roles).find((r) => r.blocks.some((b) => b.type === "beast" && b.id === block.id)) : undefined;
   if (!f || !role) return Infinity;
-  const cap = role.cap ?? Math.max(role.minutes, f.session_min);
-  const e = estimateRole(roleAt(role, opts.profile), opts.profile, opts.state.user, opts.week, opts.reduced);
-  return cap - (e.total - blockSeconds(block, opts.profile, opts.reduced) / 60);
+  const boost = !!opts.boost && !opts.reduced;
+  const cap = (role.cap ?? Math.max(role.minutes, f.session_min)) + (boost ? BOOST_MIN : 0);
+  const e = estimateRole(roleAt(role, opts.profile), opts.profile, opts.state.user, opts.week, opts.reduced, boost);
+  return cap - (e.total - blockSeconds(block, opts.profile, opts.reduced, boost) / 60);
 }
 
 function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {
@@ -514,6 +517,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   let classes = block.classes?.length ? block.classes : (["bestie", "ungeheuer"] as BeastClass[]);
   if (opts.downgrade) classes = classes.map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]);
   if (opts.reduced) classes = ["plage"];
+  else if (opts.boost && !block.pool?.length) classes = classes.map(boostClass);
   let lo = Math.min(...classes.map((c) => CLASS_RANGE[c][0])), hi = Math.max(...classes.map((c) => CLASS_RANGE[c][1]));
   // Zeitbudget: die Bestie darf die Dauer des Tages nicht reißen (Rest der Einheit geschätzt, inkl. Aufwärmsätzen)
   const budget = beastBudget(block, opts);
@@ -527,13 +531,13 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
 
   // Zwischenwert (Conqueror): dieselbe Bestie wie in Woche 1
   if (block.benchmark_every && opts.week > 1 && (opts.week - 1) % block.benchmark_every === 0 && !opts.reduced) {
-    const w1 = pickBeast(block, { ...opts, week: 1, reduced: false });
+    const w1 = pickBeast(block, { ...opts, boost: false, week: 1, reduced: false });
     if (w1) return w1;
   }
 
   // Woche vor dem Zwischenwert: dessen Bestie hier nicht nehmen
   if (block.benchmark_every && opts.week % block.benchmark_every === 0 && opts.week > 1) {
-    const w1 = pickBeast(block, { ...opts, week: 1, reduced: false });
+    const w1 = pickBeast(block, { ...opts, boost: false, week: 1, reduced: false });
     if (w1) beastFamily(w1.id).forEach((x) => avoid.add(x));
   }
   // Kandidaten (Serien erst zusammensetzen, wenn sie gewählt sind)
@@ -588,12 +592,12 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
       const upto = k < opts.week ? targets.length : targets.findIndex(([b]) => b.id === block.id);
       for (let i = 0; i < Math.max(0, upto); i++) {
         const [b, prof] = targets[i];
-        const x = pickBeast(b, { ...opts, week: k, profile: prof, reduced: false });
+        const x = pickBeast(b, { ...opts, boost: false, week: k, profile: prof, reduced: false });
         if (x) { mark(x.id, k); addTo(beastVol, beastSets(x.id)); }
       }
       // Block, der nicht im Wochenplan steht (z. B. Test oder Sonderfall): eigene Vorwochen zählen trotzdem
       if (k < opts.week && !targets.some(([b]) => b.id === block.id)) {
-        const x = pickBeast(block, { ...opts, week: k, reduced: false });
+        const x = pickBeast(block, { ...opts, boost: false, week: k, reduced: false });
         if (x) mark(x.id, k);
       }
     }
@@ -641,6 +645,47 @@ export function expandDrills(listNames: string[] | undefined, _user: UserProfile
       out.push(drillView(d, week));
     }
   }
+  return out;
+}
+
+/** Alle Warm-up- bzw. Cool-down-Übungen des Katalogs (Cool-down: Listen „cd_…“), nach Namen */
+export function drillPool(kind: "wu" | "cd", p?: EquipmentProfile): Drill[] {
+  const out = new Map<string, Drill>();
+  for (const [ln, list] of Object.entries(DRILL_LISTS)) {
+    if (ln.startsWith("cd_") !== (kind === "cd") || (ln.startsWith("sword") && p && !p.has.sword)) continue;
+    for (const d of list) if (!out.has(d.id)) out.set(d.id, d);
+  }
+  return [...out.values()].sort((a, b) => a.name.localeCompare(b.name, "de"));
+}
+
+/** Warm-up oder Cool-down eines Tages: Listen der Rolle, ohne Entferntes, plus eigene Ergänzungen */
+export function roleDrills(role: Role, kind: "wu" | "cd", p: EquipmentProfile | undefined, user: UserProfile, week: number): DrillView[] {
+  const lists = kind === "wu" ? (role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || !!p?.has.sword) : role.cooldown ?? ["cd_general"];
+  const ed = role.drillEdit?.[kind];
+  const base = expandDrills(lists, user, week);
+  if (!ed) return base;
+  const off = new Set(ed.off);
+  const have = new Set(base.map((d) => d.id));
+  const pool = new Map(drillPool(kind, p).map((d) => [d.id, d]));
+  const extra = ed.add.filter((id) => !have.has(id) && pool.has(id)).map((id) => drillView(pool.get(id)!, week));
+  return [...base, ...extra].filter((d) => !off.has(d.id));
+}
+
+/** Eigene Warm-up-/Cool-down-Änderungen in die Rollen eines Ordens legen */
+const editMemo = new WeakMap<Focus, [AppState["drillEdits"], Focus]>();
+export function applyDrillEdits(f: Focus, edits: AppState["drillEdits"]): Focus {
+  if (!edits) return f;
+  const hit = editMemo.get(f);
+  if (hit && hit[0] === edits) return hit[1];
+  let roles: Focus["roles"] | null = null;
+  for (const [rk, r] of Object.entries(f.roles)) {
+    const ed = edits[`${f.id}:${rk}`];
+    if (!ed) continue;
+    roles ??= { ...f.roles };
+    roles[rk] = { ...r, drillEdit: ed };
+  }
+  const out = roles ? { ...f, roles } : f;
+  editMemo.set(f, [edits, out]);
   return out;
 }
 

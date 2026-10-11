@@ -24,7 +24,7 @@
     "Bizeps": ["Barbell Curl", "DB Biceps Curl", "Incline DB Curl", "Hammer Curl", "Cable Curl", "Cable Biceps Curl", "Bayesian Cable Curl", "Rope Hammer Curl", "Band Curl"],
     "Trizeps": ["DB Overhead Triceps Extension", "Cable Overhead Triceps Extension", "Band Overhead Triceps Extension", "DB Kickback", "Rope Pushdown", "Band Pushdown", "Diamond Push-Up"],
     "Rotation": ["Landmine Rotational Press", "Cable Rotational Press", "Band Rotational Press", "KB Woodchop", "Cable Woodchopper", "Band Woodchopper", "KB Russian Twist", "Russian Twist", "Band Pallof Press"],
-    "Bauch": ["Weighted Sit-Up", "Cable Crunch", "Rope Crunch", "Sit-Up", "Reverse Crunch", "Hanging Leg Raise"],
+    "Bauch": ["Weighted Sit-Up", "Cable Crunch", "Rope Crunch", "Ab Crunch Machine", "Sit-Up", "Reverse Crunch", "Hanging Leg Raise"],
     "Rumpf gegen Streckung": ["Ab Wheel Rollout", "Ab Wheel Rollout (Knie)", "Ab Wheel Rollout (Knie, weit)", "Dead Bug"],
     "Tragen": ["Farmer's Carry", "Suitcase Carry"]
   }
