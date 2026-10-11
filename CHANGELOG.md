@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.41.1] – 2026-10-11
+
+### Behoben
+- Bestien wechselten mitten in der Einheit: Die Auswahl wurde bei jedem Klick neu berechnet und hing an Dingen, die sich währenddessen ändern können (Zeitschätzung, eigenes Warm-up, Daten-Update, Zeiten anderer Bestien). Jetzt werden die Bestien beim ersten Eintrag oder Start der Stoppuhr festgehalten. Neu gewählt wird nur nach einer bewussten Anpassung (Ort, −1 Satz, viel Energie, kein Laufen), und auch dann nur Bestien, für die noch keine Zeit steht.
+
 ## [0.41.0] – 2026-10-11
 
 ### Neu

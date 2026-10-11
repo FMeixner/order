@@ -3,7 +3,7 @@ import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedB
 import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
-import { isRunBlock, SessionPreview, SessionView, sessionId } from "./SessionView";
+import { isRunBlock, SessionPreview, SessionView, sessionId, unpinBeasts } from "./SessionView";
 import { focusFor } from "../engine/weekplan";
 import { exportState } from "../store";
 import { TestWeek } from "./TestWeek";
@@ -96,7 +96,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
     const pf = { ...(st.profileFor ?? {}) };
     const k = sessionId(block.id, week, sel.role);
     if (pid === sel.profileId) delete pf[k]; else pf[k] = pid;
-    return { ...st, profileFor: pf };
+    return unpinBeasts({ ...st, profileFor: pf }, (s) => s.id === k);
   });
 
   // Anpassungen für heute, gebündelt hinter dem Zahnrad neben der Überschrift der Einheit
@@ -122,19 +122,19 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       )}
       {canReduce && (
         <label className="check small">
-          <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => ({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }))} />
+          <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => unpinBeasts({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }, (s) => s.blockId === block.id && s.week === week))} />
           <span>Diese Woche −1 Satz (müde, krank, viel los)</span>
         </label>
       )}
       {canBoost && (
         <label className="check small">
-          <input type="checkbox" checked={!!state.energy?.[sid]} onChange={(e) => update((st) => ({ ...st, energy: { ...(st.energy ?? {}), [sid]: e.target.checked } }))} />
+          <input type="checkbox" checked={!!state.energy?.[sid]} onChange={(e) => update((st) => unpinBeasts({ ...st, energy: { ...(st.energy ?? {}), [sid]: e.target.checked } }, (s) => s.id === sid))} />
           <span>Heute viel Energie: Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben.</span>
         </label>
       )}
       {hasRun && (
         <label className="check small">
-          <input type="checkbox" checked={!!state.noRun?.[sid]} onChange={(e) => update((st) => ({ ...st, noRun: { ...(st.noRun ?? {}), [sid]: e.target.checked } }))} />
+          <input type="checkbox" checked={!!state.noRun?.[sid]} onChange={(e) => update((st) => unpinBeasts({ ...st, noRun: { ...(st.noRun ?? {}), [sid]: e.target.checked } }, (s) => s.id === sid))} />
           <span>Heute kein Laufen möglich: Bestie statt Lauf</span>
         </label>
       )}

@@ -105,10 +105,12 @@ export function collectItems(ctx: SessionCtx): Item[] {
   const role = roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile);
   const ab = isAWeek(ctx.week) ? "A" : "B";
   const noRun = !!ctx.state.noRun?.[sessionId(ctx.block.id, ctx.week, ctx.roleKey)];
-  const done = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey) && s.done);
+  const cur = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey));
+  const done = cur?.done ? cur : undefined;
+  // Angefangen oder erledigt: die Bestien bleiben, wie sie beim ersten Klick waren (nicht neu würfeln)
+  const pinned = cur?.beastRuns;
   const beastItem = (b: Extract<Block, { type: "beast" }>): Item => {
-    // Schon erledigt: die Bestie, die tatsächlich gemacht wurde, nicht neu würfeln
-    const r = done?.beastRuns?.[b.id] ?? (done && !done.beastRuns && role.blocks.filter((x) => x.type === "beast").length === 1 ? { beast: done.beast, parts: done.beastParts } : undefined);
+    const r = pinned?.[b.id] ?? (done && !done.beastRuns && role.blocks.filter((x) => x.type === "beast").length === 1 ? { beast: done.beast, parts: done.beastParts } : undefined);
     const logged = r?.parts?.length ? r.parts.map((p) => p.id).join("+") : r?.beast?.id;
     const lb = logged ? beastById(logged) : null;
     if (lb) return { block: b, resolved: [], beast: lb };
@@ -128,7 +130,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
     .map((b) => {
       // Finisher: passt eine Bestie aus dem Pool, kommt sie statt des Supersets (erledigte Einheit: so, wie sie war)
       const fb = finisherBlock(b, ctx.week);
-      if (fb && (!done || done.beastRuns?.[fb.id])) {
+      if (fb && (pinned ? pinned[fb.id] : !done)) {
         const it = beastItem(fb);
         if (it.beast) return it;
       }
@@ -167,7 +169,7 @@ export function SessionView(ctx: SessionCtx) {
         id, date: ctx.date, blockId: block.id, focusId: focus.id, week, role: roleKey, profileId: ctx.profile.id,
         entries: {}, drills: {}, menu: {}, done: false,
       };
-      const next = fn({ ...cur, date: cur.done ? cur.date : ctx.date, profileId: cur.done ? cur.profileId : ctx.profile.id });
+      const next = pinBeasts(fn({ ...cur, date: cur.done ? cur.date : ctx.date, profileId: cur.done ? cur.profileId : ctx.profile.id }), items);
       return { ...st, sessions: [...st.sessions.filter((s) => s.id !== id), next] };
     });
 
@@ -234,6 +236,31 @@ export function SessionView(ctx: SessionCtx) {
       </div>
     </div>
   );
+}
+
+/** Gezeigte Bestien festhalten, sobald die Einheit angefangen ist: spätere Änderungen am Zustand würfeln sie nicht neu */
+export function runFor(beast: Beast): BeastRun {
+  return beast.parts ? { parts: beast.parts.map((p) => ({ id: p.id, seconds: null })) } : { beast: { id: beast.id, seconds: null } };
+}
+/** Bewusste Anpassung (Ort, −1 Satz, viel Energie, kein Laufen): festgehaltene Bestien ohne Zeit freigeben, damit sie neu passen */
+export function unpinBeasts(st: AppState, match: (s: Session) => boolean): AppState {
+  const timed = (r: BeastRun) => r.beast?.seconds != null || !!r.parts?.some((p) => p.seconds != null);
+  return {
+    ...st,
+    sessions: st.sessions.map((s) => {
+      if (s.done || !s.beastRuns || !match(s)) return s;
+      const runs = Object.fromEntries(Object.entries(s.beastRuns).filter(([, r]) => timed(r)));
+      return { ...s, beastRuns: runs };
+    }),
+  };
+}
+function pinBeasts(s: Session, items: Item[]): Session {
+  if (s.done || (s.beast !== undefined || s.beastParts?.length) && !s.beastRuns) return s;
+  const missing = items.flatMap((it) => (it.beast && it.block.type === "beast" && !s.beastRuns?.[it.block.id] ? [{ id: it.block.id, beast: it.beast }] : []));
+  if (!missing.length) return s;
+  const runs = { ...(s.beastRuns ?? {}) };
+  for (const m of missing) runs[m.id] = runFor(m.beast);
+  return { ...s, beastRuns: runs };
 }
 
 function toggleDrill(s: Session, key: string, i: number): Session {
@@ -654,7 +681,7 @@ function readWatch(k?: string): Watch {
   try { const v = k ? localStorage.getItem(WATCH_KEY(k)) : null; if (v) return JSON.parse(v) as Watch; } catch { /* egal */ }
   return { startedAt: null, done: 0, last: null };
 }
-function BeastTimer({ times, label, saved, steps, watchKey, onSave }: { times: { seconds: number }[]; label?: string; saved: number | null; steps?: string[]; watchKey?: string; onSave: (sec: number) => void }) {
+function BeastTimer({ times, label, saved, steps, watchKey, onSave, onStart }: { times: { seconds: number }[]; label?: string; saved: number | null; steps?: string[]; watchKey?: string; onSave: (sec: number) => void; onStart?: () => void }) {
   const t = useTimer();
   const [w, setW] = useState<Watch>(() => readWatch(watchKey));
   const put = (nw: Watch) => {
@@ -697,7 +724,7 @@ function BeastTimer({ times, label, saved, steps, watchKey, onSave }: { times: {
       {label && <div className="small muted">{label}</div>}
       <div className="row wrap">
         {!running
-          ? <button className="btn primary" onClick={() => put({ startedAt: Date.now(), done: 0, last: null })}>▶ Stoppuhr</button>
+          ? <button className="btn primary" onClick={() => { onStart?.(); put({ startedAt: Date.now(), done: 0, last: null }); }}>▶ Stoppuhr</button>
           : <button className="btn primary" onClick={() => stop(w.done)}>■ Stopp {fmt(elapsed)}</button>}
         {!running && w.last != null && Date.now() - w.last < 3 * 3600e3 && <button className="btn ghost" onClick={resume}>↺ Wieder aufnehmen</button>}
         {!running && <input type="text" inputMode="decimal" placeholder="oder mm.ss" value={manual} onChange={(e) => setManual(e.target.value)}
@@ -848,7 +875,7 @@ export function BeastCard({ blockId, beast, ctx, session, mut, note, easy, nextB
               <div className="small"><strong>{u + 1}. {pt.name}</strong></div>
               {work(pt)}
               {isLoadBeast(beastById(pt.id)!) && <LoadField beast={beastById(pt.id)!} ctx={ctx} cur={curPart(u)} onChange={(l) => { syncTime(pt.id, curPart(u)?.seconds, l); patchUnit(u, l); }} />}
-              <BeastTimer times={isLoadBeast(beastById(pt.id)!) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={curPart(u)?.seconds ?? null} steps={stepsOf(pt)} watchKey={`${watchBase}:${blockId}:${u}:${pt.id}`} onSave={(sec) => saveUnit(u, sec)} />
+              <BeastTimer times={isLoadBeast(beastById(pt.id)!) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={curPart(u)?.seconds ?? null} steps={stepsOf(pt)} watchKey={`${watchBase}:${blockId}:${u}:${pt.id}`} onSave={(sec) => saveUnit(u, sec)} onStart={() => mut((s) => s)} />
             </div>
           ))}
         </>
@@ -856,7 +883,7 @@ export function BeastCard({ blockId, beast, ctx, session, mut, note, easy, nextB
         <>
           {work(beast)}
           {isLoadBeast(beast) && <LoadField beast={beast} ctx={ctx} cur={cur} onChange={setLoadSingle} />}
-          <BeastTimer times={isLoadBeast(beast) ? [] : ctx.state.beastTimes[beast.id] ?? []} saved={cur?.seconds ?? null} steps={stepsOf(beast)} watchKey={`${watchBase}:${blockId}:${beast.id}`} onSave={saveSingle} />
+          <BeastTimer times={isLoadBeast(beast) ? [] : ctx.state.beastTimes[beast.id] ?? []} saved={cur?.seconds ?? null} steps={stepsOf(beast)} watchKey={`${watchBase}:${blockId}:${beast.id}`} onSave={saveSingle} onStart={() => mut((s) => s)} />
         </>
       )}
       {note && <div className="muted small">{note}</div>}

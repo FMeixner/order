@@ -134,3 +134,26 @@ test("Viel Energie: Haken im Anpassen-Menü, Hinweis in der Einheit", async ({ p
   const st = await stored(page);
   expect(Object.values(st.energy ?? {})).toContain(true);
 });
+
+test("Bestien bleiben nach dem ersten Klick fest, auch wenn sich das Warm-up ändert", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Bonus" }).click();
+  await page.getByLabel("Wiederholungen Satz 1").first().fill("15");
+  await page.getByRole("button", { name: "Satz 1" }).first().click();
+  const pins = async () => {
+    const st = await stored(page);
+    const s = st.sessions.find((x: { role: string }) => x.role === "bonus");
+    return JSON.stringify(s?.beastRuns ?? null);
+  };
+  const before = await pins();
+  expect(Object.keys(JSON.parse(before)).length).toBe(2);
+  // Warm-up leeren: ändert die Zeitschätzung, die Bestien dürfen sich nicht ändern
+  await page.locator(".collapse-head").filter({ hasText: "Warm-up" }).click();
+  await page.getByRole("button", { name: "✎ Bearbeiten" }).first().click();
+  const rm = page.locator(".drill-remove");
+  while (await rm.count()) await rm.first().click();
+  await page.getByLabel("Wiederholungen Satz 2").first().fill("15");
+  await page.getByRole("button", { name: "Satz 2" }).first().click();
+  expect(await pins()).toBe(before);
+});
