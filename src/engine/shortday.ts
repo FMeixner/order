@@ -10,7 +10,7 @@
 import { EQUIPMENT_PRESETS } from "../store";
 import type { Block, Focus, Role, Slot, UserProfile } from "../types";
 import { estimateRole } from "./duration";
-import { parseReps } from "./resolve";
+import { equipOf, parseReps } from "./resolve";
 import { musclesOf, volumeRange } from "./volume";
 import { halfOf } from "./warmup";
 
@@ -21,6 +21,8 @@ const MUSCLES = ["Brust", "Rücken", "Schultern", "Quadrizeps", "Gesäß", "Bein
 const MAINTAIN = 4;
 const MAX_SETS = 5;
 const MAX_ADDS = 2;
+/** Feste Geräte: nie zwei davon als Superset */
+const STATION = new Set(["machine", "cable"]);
 
 let presets: Record<Role["location"], ReturnType<(typeof EQUIPMENT_PRESETS)[0]["make"]>> | null = null;
 const P = () => (presets ??= { gym: EQUIPMENT_PRESETS[0].make(), home: EQUIPMENT_PRESETS[1].make(), reise: EQUIPMENT_PRESETS[2].make() });
@@ -117,6 +119,8 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
       for (let x = 0; x < cands.length && !pair; x++) for (let y = x + 1; y < cands.length && !pair; y++) {
         const a = cands[x].b.slot, c = cands[y].b.slot;
         if (primary(a) && primary(a) === primary(c)) continue;
+        // Zwei Maschinen oder Kabel im Wechsel sind im Studio umständlich (zwei Geräte blockieren)
+        if (r.location === "gym" && STATION.has(equipOf(a.name)) && STATION.has(equipOf(c.name))) continue;
         pair = [cands[x].i, cands[y].i];
       }
       if (!pair) return false;
@@ -184,7 +188,8 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
       break;
     }
     const v = cur()[m] ?? 0;
-    if (v < need(m) - 0.25) unresolved.push(`${m}: ${Math.round(v)} statt ${need(m)} Sätze pro Woche`);
+    const n1 = (x: number) => (Number.isInteger(x) ? String(x) : x.toFixed(1).replace(".", ","));
+    if (v < need(m) - 0.25) unresolved.push(`${m}: ${n1(Math.round(v * 2) / 2)} statt ${need(m)} Sätze pro Woche`);
   }
 
   const merge = (ns: string[]) => {

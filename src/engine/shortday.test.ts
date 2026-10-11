@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { FOCUS_BY_ID } from "../data";
 import { emptyState, EQUIPMENT_PRESETS } from "../store";
 import { estimateRole } from "./duration";
+import { equipOf } from "./resolve";
 import { defaultRoles } from "./plan";
 import { shortDay, shortEligible } from "./shortday";
 
@@ -26,6 +27,17 @@ describe("Kurztag", () => {
         const cores = (JSON.stringify(f.roles[rk].blocks).match(/"id":"[^"]+","core":true/g) ?? []).map((x) => x.replace(/,"core":true/, ""));
         const missing = cores.filter((c) => !all.has(c));
         expect(missing.length <= report.unresolved.filter((u) => u.includes("passt an keinem")).length).toBe(true);
+        // Ausgleich: im Studio nie zwei Maschinen oder Kabel als Superset
+        for (const k of wr.filter((x) => x !== rk)) {
+          const r = focus.roles[k];
+          if (r.location !== "gym") continue;
+          const ids = (x: { slots: { id: string }[] }) => x.slots.map((y) => y.id).join("+");
+          const orig = new Set(f.roles[k].blocks.flatMap((x) => (x.type === "superset" ? [ids(x)] : [])));
+          for (const bl of r.blocks) if (bl.type === "superset" && !bl.finisher && !orig.has(ids(bl))) {
+            const st = bl.slots.filter((x) => ["machine", "cable"].includes(equipOf(x.name)));
+            expect(st.length, `${k}: ${bl.slots.map((x) => x.name).join(" + ")}`).toBeLessThan(2);
+          }
+        }
       });
     }
   }

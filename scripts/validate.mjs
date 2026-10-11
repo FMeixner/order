@@ -134,6 +134,8 @@ for (const [f, d] of allFoci) {
         case "single": checkSlot(b.slot, ctx); break;
         case "superset": b.slots.forEach((s) => checkSlot(s, ctx)); for (const id of b.finisher?.pool || []) if (!beastIds.has(id)) err(f, `${ctx}: Finisher-Bestie ${id} unbekannt`);
           for (const c of b.finisher?.classes || []) if (!CLASSES.has(c)) err(f, `${ctx}: Klasse ${c} unbekannt`);
+          // Im Studio nie zwei feste Geräte im Wechsel
+          if (r.location === "gym" && b.slots.filter((s) => ["machine", "cable"].includes(exercises[s.name]?.equip)).length > 1) err(f, `${ctx}: Superset aus zwei Maschinen/Kabeln (${b.slots.map((s) => s.name).join(" + ")})`);
           break;
         case "contrast": checkSlot(b.heavy, ctx); checkSlot(b.explosive, ctx); break;
         case "menu": Object.values(b.options).forEach((s) => checkSlot(s, `${ctx}/${b.id}`)); break;

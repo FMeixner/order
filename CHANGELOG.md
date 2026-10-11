@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.42.0] – 2026-10-11
+
+### Geändert
+- Nie zwei Maschinen oder Kabel als Superset im Studio: weder beim Ausgleich für den Kurztag noch in den Orden-Dateien noch bei den geführten Varianten in Phasen mit hoher Last. Maschine mit Körpergewicht, Kurzhantel oder Kettlebell bleibt erlaubt. Die Datenprüfung meldet solche Paare künftig.
+- Assassin, Kraft A: Latzug und Rudern je 2 statt 3 Sätze, Cable Chest Fly 4 statt 3. Mehr Brust, weniger Rücken. Mit Kurztag am Dienstag fällt damit das Superset am Montag weg.
+- Angepasste Paare: Smith (DB Lateral Raise statt Cable Lateral Raise), Troubadour (DB Overhead Triceps Extension statt Rope Pushdown), Witcher (DB Rear Delt Fly statt Reverse Pec Deck), Gladiator-Arm-Finisher (DB Biceps Curl statt Cable Curl).
+
+### Behoben
+- Kurztag-Bericht: fehlende Sätze mit halben Sätzen statt gerundet („9,5 statt 10“ statt „10 statt 10“).
+
 ## [0.41.1] – 2026-10-11
 
 ### Behoben

@@ -191,10 +191,11 @@ describe("Geführte Varianten bei hoher Last", () => {
     const { FOCUS_BY_ID } = await import("../data");
     const { guidedKeys, resolveSlot, toGuided } = await import("./resolve");
     const role = FOCUS_BY_ID.witcher.roles.kraft_a;
-    const list = role.blocks.flatMap((b) => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : []))
-      .map((s) => ({ r: resolveSlot(s, gym)!, contrast: false }));
+    const list = role.blocks.flatMap((b, g) => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : []).map((s) => ({ s, group: b.type === "superset" ? g : undefined })))
+      .map(({ s, group }) => ({ r: resolveSlot(s, gym)!, contrast: false, group }));
     const keys = guidedKeys(list, gym);
     const names = list.filter((x) => keys.has(x.r.key)).map((x) => toGuided(x.r, gym)!.name);
+    // Rear Delt Fly bleibt frei: sein Superset-Partner ist schon ein Kabel
     expect(names).toEqual(["Seated Dip Machine", "Seated Cable Row"]);
     expect(guidedKeys(list, home).size).toBe(0);
   });

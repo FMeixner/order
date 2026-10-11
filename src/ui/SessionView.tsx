@@ -139,7 +139,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
   const items: Item[] = all.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
   // Phase mit hoher Alltagslast: etwa die Hälfte der freien Übungen geführt, sofern das Profil Maschinen oder Kabel hat
   if (ctx.block.load === "high") {
-    const all = items.flatMap((it) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0 })));
+    const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })));
     const keys = guidedKeys(all, ctx.profile);
     if (keys.size) for (const it of items) it.resolved = it.resolved.map((r) => (keys.has(r.key) ? toGuided(r, ctx.profile) ?? r : r));
   }

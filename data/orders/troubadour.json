@@ -48,7 +48,7 @@
         {"type": "single", "slot": {"id": "lo-b-4", "name": "Walking Lunge", "reise": {"name": "Walking Lunge", "prog": "reps"}, "sets": 2, "reps": "10/Seite", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "lo-b-5a", "name": "Face Pull", "home": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "double"},
-          {"id": "lo-b-5b", "name": "Rope Pushdown", "home": "DB Overhead Triceps Extension", "sets": 3, "reps": "10-12", "prog": "double"}
+          {"id": "lo-b-5b", "name": "DB Overhead Triceps Extension", "sets": 3, "reps": "10-12", "prog": "double"}
         ]}
       ]
     },

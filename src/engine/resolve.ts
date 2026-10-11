@@ -219,11 +219,22 @@ export function toGuided(r: Resolved, p: EquipmentProfile): Resolved | null {
 /** Welche Stellen eines Tages geführt werden: etwa die Hälfte der freien Übungen,
     der erste freie Lift bleibt frei, schwere Sätze in Kontrastpaaren bleiben frei,
     bevorzugt die späteren Übungen des Tages. Gibt die Slot-Schlüssel zurück. */
-export function guidedKeys(list: { r: Resolved; contrast: boolean }[], p: EquipmentProfile): Set<string> {
-  const free = list.filter((x) => FREE_WEIGHT.includes(x.r.equip));
+export function guidedKeys(list: { r: Resolved; contrast: boolean; group?: number }[], p: EquipmentProfile): Set<string> {
+  // Superset: nie zwei feste Geräte im Wechsel. Ist der Partner schon Maschine oder Kabel, bleibt die Übung frei (und zählt nicht mit).
+  const station = (r: Resolved) => r.equip === "machine" || r.equip === "cable";
+  const partnerStation = (x: { r: Resolved; group?: number }) => x.group != null && list.some((o) => o !== x && o.group === x.group && station(o.r));
+  const free = list.filter((x) => FREE_WEIGHT.includes(x.r.equip) && !partnerStation(x));
   const n = Math.round(free.length / 2);
-  const cands = free.slice(1).filter((x) => !x.contrast && !x.r.swapped && toGuided(x.r, p));
-  return new Set(cands.slice(Math.max(0, cands.length - n)).map((x) => x.r.key));
+  const cands = free.slice(1).filter((x) => !x.contrast && !x.r.swapped && !partnerStation(x) && toGuided(x.r, p));
+  const out = new Set<string>();
+  const taken = new Set<number>();
+  for (const x of cands.slice().reverse()) {
+    if (out.size >= n) break;
+    if (x.group != null && taken.has(x.group)) continue;
+    out.add(x.r.key);
+    if (x.group != null) taken.add(x.group);
+  }
+  return out;
 }
 
 /** Wiederholungsangabe zerlegen: "8-10/Seite", "AMRAP-2", "12", "40 m" */

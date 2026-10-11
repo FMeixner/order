@@ -57,7 +57,7 @@
         {"type": "single", "slot": {"id": "pf-3-4", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "pf-3-5a", "name": "Seated Cable Row", "home": "1-Arm DB Row", "sets": 3, "reps": "10-12", "prog": "double"},
-          {"id": "pf-3-5b", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "sets": 3, "reps": "12-15", "prog": "double"}
+          {"id": "pf-3-5b", "name": "DB Lateral Raise", "sets": 3, "reps": "12-15", "prog": "double"}
         ]}
       ]
     },
