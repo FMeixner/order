@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.40.1] – 2026-10-11
+
+### Neu
+- Black-Roll-Übungen im Katalog zum Hinzufügen: Warm-up kurz und zügig (30 s: Waden, Oberschenkel vorn, Adduktoren, Gesäß, Latissimus, Fußsohle, Brust mit Ball), Cool-down langsam (45–60 s: zusätzlich Beinbeuger, Brustwirbelsäule, Unterarme mit Ball).
+
+### Geändert
+- Assassin: Dip zu Hause als Ring Dip (6–10), unterwegs weiter Deficit Push-Up.
+
 ## [0.40.0] – 2026-10-11
 
 ### Neu

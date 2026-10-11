@@ -41,7 +41,7 @@
         {"type": "single", "slot": {"id": "kas-6", "core": true, "name": "Incline Chest Press Machine", "home": "Incline DB Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "kas-3", "name": "Cable Rear Delt Fly", "home": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "kas-5", "core": true, "name": "Cable Biceps Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "kas-7", "name": "Dip", "home": "Deficit Push-Up", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP"}, "sets": 3, "reps": "8-12", "prog": "reps", "rest": 90}},
+        {"type": "single", "slot": {"id": "kas-7", "name": "Dip", "home": {"name": "Ring Dip", "reps": "6-10"}, "reise": {"name": "Deficit Push-Up", "reps": "AMRAP"}, "sets": 3, "reps": "8-12", "prog": "reps", "rest": 90}},
         {"type": "single", "slot": {"id": "kas-8", "name": "Hip Thrust Machine", "home": "DB Hip Thrust", "reise": {"name": "Single-Leg Glute Bridge", "reps": "12-15/Seite", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
       ]
     },

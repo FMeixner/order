@@ -73,6 +73,25 @@
       {"id": "dm-still", "name": "Stillschritt", "mode": "reps", "value": 10, "sides": ["vorwärts", "rückwärts"], "desc": "Wie der Gleitschritt, aber so leise wie möglich abrollen, erst Ballen, dann Ferse."}
     ],
 
+    "roller": [
+      {"id": "wu-roll-calf", "name": "Black Roll: Waden", "mode": "activity", "value": 30, "sides": true, "desc": "Wade auf der Rolle, anderes Bein darüber für mehr Druck. Zügig von Achillessehne bis Kniekehle rollen, Fuß dabei kreisen."},
+      {"id": "wu-roll-quad", "name": "Black Roll: Oberschenkel vorn", "mode": "activity", "value": 30, "sides": true, "desc": "Unterarmstütz, Rolle unter dem Oberschenkel. Von Hüfte bis knapp über das Knie rollen, zwischendurch Knie beugen und strecken."},
+      {"id": "wu-roll-add", "name": "Black Roll: Adduktoren", "mode": "activity", "value": 30, "sides": true, "desc": "Bauchlage, Bein angewinkelt zur Seite, Rolle längs unter der Oberschenkel-Innenseite. Vom Knie zur Leiste rollen."},
+      {"id": "wu-roll-glute", "name": "Black Roll: Gesäß", "mode": "activity", "value": 30, "sides": true, "desc": "Auf der Rolle sitzen, Knöchel aufs andere Knie legen (Figur 4), zur Seite des aufgelegten Beins kippen und rollen."},
+      {"id": "wu-roll-lat", "name": "Black Roll: Latissimus", "mode": "activity", "value": 30, "sides": true, "desc": "Seitlage, Arm über Kopf gestreckt, Rolle unter der Achsel. Bis zur Mitte der Rippen rollen, Brustkorb leicht vor- und zurückdrehen."},
+      {"id": "wu-roll-foot", "name": "Black-Roll-Ball: Fußsohle", "mode": "activity", "value": 30, "sides": true, "desc": "Im Stand Ball unter die Fußsohle, mit mittlerem Druck von Ferse bis Ballen rollen."},
+      {"id": "wu-roll-pec", "name": "Black-Roll-Ball: Brust", "mode": "activity", "value": 30, "sides": true, "desc": "Ball zwischen Brust (unter dem Schlüsselbein, nahe der Schulter) und Wand. Kleine Kreise, Arm dabei langsam heben und senken."}
+    ],
+    "cd_roller": [
+      {"id": "cd-roll-calf", "name": "Black Roll: Waden (langsam)", "mode": "activity", "value": 45, "sides": true, "desc": "Langsam rollen, an spürbaren Stellen 10 Sekunden liegen bleiben und ausatmen."},
+      {"id": "cd-roll-quad", "name": "Black Roll: Oberschenkel vorn (langsam)", "mode": "activity", "value": 45, "sides": true, "desc": "Unterarmstütz, langsam von Hüfte bis über das Knie, an festen Stellen kurz halten."},
+      {"id": "cd-roll-ham", "name": "Black Roll: Beinbeuger", "mode": "activity", "value": 45, "sides": true, "desc": "Sitzend, Rolle unter der Oberschenkel-Rückseite, anderes Bein darüber. Von Gesäß bis Kniekehle, Fuß nach innen und außen drehen."},
+      {"id": "cd-roll-glute", "name": "Black Roll: Gesäß (langsam)", "mode": "activity", "value": 45, "sides": true, "desc": "Figur 4 auf der Rolle, langsam, an festen Stellen halten und ausatmen."},
+      {"id": "cd-roll-tspine", "name": "Black Roll: Brustwirbelsäule", "mode": "activity", "value": 60, "desc": "Rolle quer unter dem oberen Rücken, Hände am Hinterkopf, Gesäß am Boden. Segmentweise über die Rolle nach hinten sinken. Lendenwirbelsäule nicht rollen."},
+      {"id": "cd-roll-lat", "name": "Black Roll: Latissimus (langsam)", "mode": "activity", "value": 45, "sides": true, "desc": "Seitlage, Arm über Kopf, langsam unter Achsel bis Rippenmitte."},
+      {"id": "cd-roll-forearm", "name": "Black-Roll-Ball: Unterarme", "mode": "activity", "value": 30, "sides": ["Beuger links", "Strecker links", "Beuger rechts", "Strecker rechts"], "desc": "Unterarm auf den Ball am Tisch oder Boden, mit der anderen Hand Druck geben. Innenseite (Beuger) und Außenseite (Strecker) je Arm."},
+      {"id": "cd-roll-foot", "name": "Black-Roll-Ball: Fußsohle (langsam)", "mode": "activity", "value": 45, "sides": true, "desc": "Im Sitzen oder Stand, langsam von Ferse bis Ballen, an festen Stellen halten."}
+    ],
     "cd_general": [
       {"id": "cd-neckfwd", "name": "Neck Forward Flexion Stretch", "mode": "hold", "value": 30, "desc": "Kinn sanft zur Brust, Schultern unten lassen."},
       {"id": "cd-pigeon", "name": "Pigeon Stretch", "mode": "hold", "value": 30, "sides": true, "desc": "Vorderes Bein angewinkelt vor dem Körper, hinteres lang nach hinten. Dehnt Hüftaußenrotatoren und Gesäß."},
