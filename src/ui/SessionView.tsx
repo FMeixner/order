@@ -137,7 +137,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
       return b.type === "beast" ? beastItem(b) : otherItem(b);
     });
   const items: Item[] = all.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
-  // Phase mit hoher Alltagslast: etwa die Hälfte der freien Übungen geführt, sofern das Profil Maschinen oder Kabel hat
+  // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
   if (ctx.block.load === "high") {
     const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })));
     const keys = guidedKeys(all, ctx.profile);
@@ -204,7 +204,7 @@ export function SessionView(ctx: SessionCtx) {
         <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : boostOf(ctx) ? " · viel Energie" : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
         {role.note && <p className="note">{role.note}</p>}
-        {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der freien Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
+        {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
       </div>
 

@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.42.1] – 2026-10-11
+
+### Geändert
+- Phasen mit hoher Alltagslast: Ziel ist jetzt etwa die Hälfte aller Übungen eines Tages an Maschine oder Kabel, nicht die Hälfte der freien. Was ohnehin geführt ist, zählt mit. Maschinentage wie Assassin Kraft B bleiben dadurch unverändert (KB Swing und Bulgarian Split Squat bleiben frei).
+
 ## [0.42.0] – 2026-10-11
 
 ### Geändert

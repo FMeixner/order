@@ -216,15 +216,18 @@ export function toGuided(r: Resolved, p: EquipmentProfile): Resolved | null {
   return { ...r, key: `${r.slotId}|${name}`, name, equip, prog, loadable: true, ladder: undefined, missingEquipment: false, guided: true };
 }
 
-/** Welche Stellen eines Tages geführt werden: etwa die Hälfte der freien Übungen,
-    der erste freie Lift bleibt frei, schwere Sätze in Kontrastpaaren bleiben frei,
+/** Welche Stellen eines Tages geführt werden: Ziel ist, dass etwa die Hälfte aller Kraftübungen des Tages an
+    Maschine oder Kabel läuft. Was schon geführt ist, zählt mit; ein Maschinentag bleibt also, wie er ist.
+    Der erste freie Lift bleibt frei, schwere Sätze in Kontrastpaaren bleiben frei,
     bevorzugt die späteren Übungen des Tages. Gibt die Slot-Schlüssel zurück. */
 export function guidedKeys(list: { r: Resolved; contrast: boolean; group?: number }[], p: EquipmentProfile): Set<string> {
   // Superset: nie zwei feste Geräte im Wechsel. Ist der Partner schon Maschine oder Kabel, bleibt die Übung frei (und zählt nicht mit).
   const station = (r: Resolved) => r.equip === "machine" || r.equip === "cable";
   const partnerStation = (x: { r: Resolved; group?: number }) => x.group != null && list.some((o) => o !== x && o.group === x.group && station(o.r));
   const free = list.filter((x) => FREE_WEIGHT.includes(x.r.equip) && !partnerStation(x));
-  const n = Math.round(free.length / 2);
+  const strength = list.filter((x) => x.r.kind === "strength");
+  const n = Math.max(0, Math.round(strength.length / 2) - strength.filter((x) => station(x.r)).length);
+  if (!n) return new Set();
   const cands = free.slice(1).filter((x) => !x.contrast && !x.r.swapped && !partnerStation(x) && toGuided(x.r, p));
   const out = new Set<string>();
   const taken = new Set<number>();

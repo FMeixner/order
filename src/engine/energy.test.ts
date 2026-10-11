@@ -80,3 +80,14 @@ describe("Defizit braucht Griffe", () => {
     expect(resolveSlot(lad, { ...bare, bands: [], tier: "gym" as const })?.ladder).toEqual(["Push-Up", "Push-Up", "Archer Push-Up"]);
   });
 });
+
+describe("Geführt bei hoher Last: Hälfte des Tages", () => {
+  it("Assassin Kraft B ist schon ein Maschinentag: Swing und Split Squat bleiben frei", async () => {
+    const { FOCUS_BY_ID } = await import("../data");
+    const { guidedKeys, resolveSlot } = await import("./resolve");
+    const role = FOCUS_BY_ID.assassin.roles.kraft_b;
+    const list = role.blocks.flatMap((b, g) => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : []).map((s) => ({ s, group: b.type === "superset" ? g : undefined })))
+      .map(({ s, group }) => ({ r: resolveSlot(s, gym)!, contrast: false, group }));
+    expect(guidedKeys(list, gym).size).toBe(0);
+  });
+});
