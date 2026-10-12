@@ -12,6 +12,7 @@ import { snapDown, snapNearest } from "../engine/loads";
 import { blockSeconds, estimateRole } from "../engine/duration";
 import { WARM_REST, warmupKeys, warmupSets } from "../engine/warmup";
 import type { AppState, Beast, BeastResult, BeastRun, BeastClass, Block, EquipmentProfile, Feedback, Focus, PlanBlock, Session, SessionEntry, SetEntry } from "../types";
+import { FEEDBACK_LABEL } from "../types";
 import { Collapse, Desc, kg, Modal, Seg } from "./common";
 import { fmt, useTimer } from "./Timer";
 
@@ -425,7 +426,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
   return <section className="card">{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}</section>;
 }
 
-const FB: { k: Feedback; l: string }[] = [{ k: "schwer", l: "Schwer" }, { k: "ok", l: "OK" }, { k: "leicht", l: "Leicht" }, { k: "sehrleicht", l: "Sehr leicht" }];
+const FB: Feedback[] = ["zuschwer", "schwer", "ok", "leicht", "sehrleicht"];
 
 const TIER_LABEL = { gym: "Studio", home: "Zuhause", reise: "Unterwegs" } as const;
 
@@ -485,7 +486,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const lastEntry = [...ctx.state.sessions].filter((x) => x.done && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
   const lastMin = lastEntry && r.prog === "reps" && lastEntry.sets.every((y) => y.done && y.reps != null) ? Math.min(...lastEntry.sets.map((y) => y.reps!)) : null;
   const raw: Suggestion = lastMin != null && raw0.targetReps != null && lastMin >= raw0.targetReps
-    ? { ...raw0, targetReps: lastMin + (lastEntry!.feedback === "schwer" ? 0 : 1), repsLabel: `${lastMin + (lastEntry!.feedback === "schwer" ? 0 : 1)}${parseReps(r.reps).suffix}` }
+    ? { ...raw0, targetReps: lastMin + (/schwer/.test(lastEntry!.feedback ?? "") ? 0 : 1), repsLabel: `${lastMin + (/schwer/.test(lastEntry!.feedback ?? "") ? 0 : 1)}${parseReps(r.reps).suffix}` }
     : raw0;
   // Nach längerer Pause (14 Tage und mehr an dieser Übung): 10 % leichter wieder einsteigen
   const pausedDays = st?.updated && /^\d{4}-/.test(st.updated) ? daysBetween(st.updated, ctx.date) : 0;
@@ -495,6 +496,9 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const entry: SessionEntry = session?.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
   const sets: SetEntry[] = Array.from({ length: r.kind === "timer" || r.kind === "interval" ? 1 : r.sets }, (_, i) => entry.sets[i] ?? { done: false });
   const desc = EXERCISES[sug.name]?.desc ?? EXERCISES[r.name]?.desc;
+  const rp = parseReps(r.reps ?? "");
+  const amrap = rp.amrap;
+  const [more, setMore] = useState(false);
   /** Ein Gewicht pro Übung: das eingetragene, sonst der Vorschlag. Beim Top-Satz gilt es für Satz 1, die Back-off-Sätze rechnet die App. */
   const enteredW = entry.sets[0]?.weight ?? null;
   const baseW = enteredW ?? sug.weight;
@@ -521,9 +525,8 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const markDone = (i: number) => {
     const cur = sets[i];
     if (cur.done) return writeSet(i, { done: false });
-    // Bei Übungen mit Wiederholungen trägst du die tatsächliche Zahl ein; ohne Zahl springt der Fokus ins Feld
-    const needsReps = r.kind === "strength" && r.prog !== "none";
-    if (needsReps && cur.reps == null) { document.getElementById(`reps-${r.key}-${i}`)?.focus(); return; }
+    // Antippen heißt: Ziel geschafft. Nur AMRAP braucht die Zahl; ohne Zahl springt der Fokus ins Feld
+    if (amrap && cur.reps == null) { document.getElementById(`reps-${r.key}-${i}`)?.focus(); return; }
     writeSet(i, {
       done: true,
       reps: cur.reps ?? sug.targetReps ?? undefined,
@@ -548,9 +551,28 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
     if (!was) t.rest(i < warmSets.length - 1 ? "Pause, dann nächster Aufwärmsatz" : `Gleich: ${sug.name}, Satz 1`, WARM_REST);
   };
 
+  // Rückmeldung: „Zu schwer“ fragt die Zahl im letzten Satz, „Sehr leicht“ die Zahl je Satz (vorbelegt mit Ziel + 2).
+  // Alle anderen: die abgehakten Sätze zählen mit dem Ziel.
+  const target = sug.targetReps;
+  const askable = r.kind === "strength" && r.prog !== "none" && !amrap && target != null;
   const setFb = (fb: Feedback) => mut((s) => {
     const e: SessionEntry = s.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
-    return { ...s, entries: { ...s.entries, [r.key]: { ...e, feedback: e.feedback === fb ? undefined : fb } } };
+    const next = e.feedback === fb ? undefined : fb;
+    let arr = e.sets;
+    if (askable) {
+      const reps = next === "sehrleicht" ? target! + 2 : target!;
+      arr = e.sets.map((x) => (x.done ? { ...x, reps } : x));
+    }
+    return { ...s, entries: { ...s.entries, [r.key]: { ...e, feedback: next, sets: arr } } };
+  });
+  const doneIdx = sets.map((x, i) => (x.done ? i : -1)).filter((i) => i >= 0);
+  const lastIdx = doneIdx[doneIdx.length - 1];
+  const askReps = askable && lastIdx != null && (entry.feedback === "zuschwer" || entry.feedback === "sehrleicht");
+  const askValue = lastIdx != null ? sets[lastIdx].reps : undefined;
+  const writeAsked = (v: number | undefined) => mut((s) => {
+    const e: SessionEntry = s.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
+    const arr = e.sets.map((x, k) => (!x.done ? x : e.feedback === "zuschwer" ? (k === lastIdx ? { ...x, reps: v } : x) : { ...x, reps: v }));
+    return { ...s, entries: { ...s.entries, [r.key]: { ...e, sets: arr } } };
   });
 
   const last = [...ctx.state.sessions].filter((x) => x.done && x.id !== session?.id && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
@@ -561,16 +583,17 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   const lastLine = last && r.kind === "strength" && lastDone.length
     ? (lastReps.every((x) => x === lastReps[0]) ? `${lastReps.length} × ${lastReps[0]}` : lastReps.join("/")) + (lastW != null && lastW !== sug.weight ? ` mit ${kg(lastW)}` : "")
     : null;
-  // Nach der ersten Einheit eine konkrete Vorgabe statt des Bereichs: „3 × 13 @ 10 kg“
-  const rp = parseReps(r.reps ?? "");
-  const concrete = !!last && r.kind === "strength" && r.prog !== "none" && !rp.amrap && sug.targetReps != null;
+  // Konkrete Vorgabe statt des Bereichs: „3 × 13 · 10 kg“. Der Bereich steht in den Details.
+  const concrete = r.kind === "strength" && r.prog !== "none" && !rp.amrap && sug.targetReps != null;
   const doseLabel =
     r.kind === "timer" ? `${sug.minutes} Min`
     : r.kind === "interval" && r.interval ? `${r.interval.rounds} × ${fmt(r.interval.work)} Arbeit, ${fmt(r.interval.rest)} Pause`
     : r.kind === "hold" ? `${r.sets} × ${sug.seconds} s`
-    : concrete ? `${r.sets} × ${sug.targetReps}${rp.suffix}${r.loadable && sug.weight != null ? ` @ ${kg(sug.weight)}` : ""}`
+    : concrete ? `${r.sets} × ${sug.targetReps}${rp.suffix}${r.loadable && sug.weight != null ? ` · ${kg(sug.weight)}` : ""}`
     : `${r.sets} × ${sug.repsLabel}`;
   const showFb = r.prog !== "none" && (sets.some((x) => x.done) || !!entry.feedback || !!session?.done);
+  // Vorausschau („→ bis 3 × 12, dann 27,5 kg“) gehört in die Details; Hinweise zum Heute (Pause, Dreimal OK) bleiben sichtbar
+  const detailGap = sug.gap?.startsWith("→") ? sug.gap : undefined;
 
   return (
     <div className="slot">
@@ -588,18 +611,27 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
           {canSwap && <button className="info-btn swap-btn" onClick={() => setSwapOpen(true)} aria-label="Übung tauschen" title="Übung tauschen">⇄</button>}
         </div>
       </div>
-      <div className="slot-dose">
+      <button className="slot-dose" onClick={() => setMore((o) => !o)} aria-expanded={more} title="Details">
         {concrete ? <strong>{doseLabel}</strong> : doseLabel}
-        {lastLine && <span className="muted"> · zuletzt {lastLine}</span>}
-
-      </div>
+        {(lastLine || concrete || detailGap) && <span className="muted small"> {more ? "▴" : "▾"}</span>}
+      </button>
+      {more && (
+        <div className="muted small slot-more">
+          {concrete && <div>Bereich {r.reps}{r.prog === "double" && r.loadable ? ", oben angekommen steigt das Gewicht" : ""}</div>}
+          {lastLine && <div>Zuletzt {lastLine}</div>}
+          {detailGap && <div>{detailGap}</div>}
+        </div>
+      )}
+      {warmSets.length > 0 && (
+        <div className="muted small">Satz 0 aufwärmen: {warmSets.map((w) => `${w.reps} × ${w.kg != null ? kg(w.kg) : "leicht"}`).join(", dann ")}{warmSets.every((w) => w.kg == null) ? " (halbes Gewicht)" : ""}</div>
+      )}
       {swapOpen && <SwapDialog r={r} ctx={ctx} onClose={() => setSwapOpen(false)} />}
       {r.swapped && <div className="muted small">Statt {r.original}.</div>}
       {r.regressedFrom && <div className="muted small">Statt {r.regressedFrom}, bis der Skill sitzt (Setup › Können).</div>}
       {r.swapUnavailable && <div className="muted small">Dein Tausch „{r.swapUnavailable}“ geht mit „{ctx.profile.name}“ nicht, heute deshalb das Original.</div>}
       {r.missingEquipment && <div className="note warn small">Für diese Übung fehlt im Profil „{ctx.profile.name}“ Equipment. Nimm eine passende Alternative.</div>}
       {r.note && <div className="muted small">{r.note}</div>}
-      {sug.gap && <div className="gap-note small">{sug.gap}</div>}
+      {sug.gap && !detailGap && <div className="gap-note small">{sug.gap}</div>}
       {r.kind === "strength" && (
         <div className="sets">
           {r.loadable && (
@@ -611,25 +643,19 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
               <span className="muted small">kg{r.equip === "plate" ? " Zusatzlast (Weste oder Gürtel)" : ""}{r.prog === "topset" && topBack != null ? ` Top-Satz, danach ${kg(topBack)}` : ""}</span>
             </div>
           )}
-          {warmSets.length > 0 && (
-            <div className="warm-line">
-              <span className="muted small">Aufwärmen</span>
-              {warmSets.map((w, i) => (
-                <button key={i} className={`set-btn warm ${warmDone[i] ? "done" : ""}`} onClick={() => markWarm(i)} aria-label={`Aufwärmsatz ${i + 1}`}>
-                  {warmDone[i] ? "✓" : `${w.reps} × ${w.kg != null ? kg(w.kg) : "leicht"}`}
-                </button>
-              ))}
-              {warmSets.every((w) => w.kg == null) && <span className="muted small">etwa die Hälfte des Arbeitsgewichts</span>}
-            </div>
-          )}
           <div className="set-pills">
-            {sets.map((s, i) => (
+            {warmSets.map((_w, i) => (
+              <button key={`w${i}`} className={`set-btn warm0 ${warmDone[i] ? "done" : ""}`} onClick={() => markWarm(i)} aria-label={`Aufwärmsatz ${i + 1}`}>{warmDone[i] ? "✓" : "0"}</button>
+            ))}
+            {sets.map((s, i) => (amrap ? (
               <div key={i} className={`set-pill ${s.done ? "done" : ""}`}>
                 <button className={`set-btn ${s.done ? "done" : ""}`} onClick={() => markDone(i)} aria-label={`Satz ${i + 1}`}>{s.done ? "✓" : i + 1}</button>
                 <input id={`reps-${r.key}-${i}`} type="number" inputMode="numeric" className="reps-in" placeholder="Wdh"
                   value={s.reps ?? ""} onChange={(e) => writeSet(i, { reps: e.target.value === "" ? undefined : parseInt(e.target.value) })} aria-label={`Wiederholungen Satz ${i + 1}`} />
               </div>
-            ))}
+            ) : (
+              <button key={i} className={`set-btn ${s.done ? "done" : ""}`} onClick={() => markDone(i)} aria-label={`Satz ${i + 1}`}>{s.done ? "✓" : i + 1}</button>
+            )))}
           </div>
         </div>
       )}
@@ -661,8 +687,15 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
 
       {showFb && (
         <div className="fb">
-          {FB.map((f) => <button key={f.k} className={entry.feedback === f.k ? "on" : ""} onClick={() => setFb(f.k)}>{f.l}</button>)}
+          {FB.map((f) => <button key={f} className={entry.feedback === f ? "on" : ""} onClick={() => setFb(f)}>{FEEDBACK_LABEL[f]}</button>)}
         </div>
+      )}
+      {askReps && (
+        <label className="row ask-reps small">
+          <span>{entry.feedback === "zuschwer" ? "Wie viele im letzten Satz?" : "Wie viele je Satz?"}</span>
+          <input type="number" inputMode="numeric" className="reps-in" value={askValue ?? ""} autoFocus={entry.feedback === "zuschwer"}
+            onChange={(e) => writeAsked(e.target.value === "" ? undefined : parseInt(e.target.value))} aria-label="Geschaffte Wiederholungen" />
+        </label>
       )}
     </div>
   );

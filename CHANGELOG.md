@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.43.0] – 2026-10-12
+
+### Geändert
+- Satzkarte aufgeräumt: konkrete Vorgabe („3 × 13 · 25 kg“) statt Bereich, Antippen eines Kreises heißt „Ziel geschafft“. Kein Zahlenfeld mehr pro Satz (außer AMRAP).
+- Rückmeldung mit fünf Stufen: „Zu schwer“ fragt die Wiederholungen im letzten Satz, „Sehr leicht“ die Wiederholungen je Satz (vorbelegt mit Ziel + 2). Die Progression rechnet damit wie bisher.
+- Aufwärmsatz als Kreis „0“ vor den Arbeitssätzen, die Dosis steht als Zeile unter der Vorgabe.
+- Details auf Wunsch: Antippen der Vorgabe zeigt Bereich, letzte Einheit und den nächsten Schritt.
+
 ## [0.42.5] – 2026-10-12
 
 ### Geändert

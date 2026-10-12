@@ -13,13 +13,14 @@ export function Help() {
 
       <h3>Eine Übung eintragen</h3>
       <ul>
-        <li>Gewicht einmal pro Übung eintragen. Nach jedem Satz die geschafften Wiederholungen eintragen und den Kreis antippen, die Pause startet. Die Angabe „3 × 10–12“ ist der Bereich, in dem du landen sollst; „zuletzt“ zeigt, was du beim letzten Mal geschafft hast.</li>
-        <li>Die Wiederholungen je Satz zählen: Der schwächste Satz setzt das nächste Ziel. Fehlen 2 oder mehr Wiederholungen zum unteren Ende, geht das Gewicht eine Stufe runter.</li>
-        <li>Nach der letzten Serie kurz Feedback geben:
-          <strong> Schwer</strong> = gerade so geschafft, <strong>OK</strong> = 1–2 Wiederholungen wären noch gegangen,
-          <strong> Leicht</strong> = 3 oder mehr, <strong>Sehr leicht</strong> = deutlich zu leicht.</li>
+        <li>Die Vorgabe ist konkret, etwa „3 × 13 · 25 kg“. Gewicht einmal pro Übung eintragen (oder den Vorschlag lassen), nach jedem Satz den Kreis antippen: Das heißt „Ziel geschafft“, die Pause startet. Nur bei AMRAP trägst du die Zahl ein.</li>
+        <li>Antippen der Vorgabe zeigt die Details: den Bereich dahinter (oben angekommen steigt das Gewicht), was du zuletzt geschafft hast und was als Nächstes kommt.</li>
+        <li>Nach dem letzten Satz kurz Feedback geben:
+          <strong> Zu schwer</strong> = Ziel verfehlt (die App fragt, wie viele im letzten Satz gingen), <strong>Schwer</strong> = gerade so geschafft, <strong>OK</strong> = 1–2 Wiederholungen wären noch gegangen,
+          <strong> Leicht</strong> = 3 oder mehr, <strong>Sehr leicht</strong> = deutlich zu leicht (die App fragt, wie viele je Satz gingen).</li>
+        <li>Fehlen 2 oder mehr Wiederholungen zum unteren Ende des Bereichs, geht das Gewicht eine Stufe runter.</li>
         <li>Am Ende „Einheit abschließen“. Erst dann rechnet die App die Vorschläge für das nächste Mal.</li>
-        <li>Aufwärmsatz: Die erste schwere Mehrgelenksübung jeder Körperhälfte am Tag (etwa die Beinpresse, die erste Brust- oder Schulterpresse), sofern sie im Bereich um 8–12 Wiederholungen oder schwerer liegt, hat einen gestrichelten Kreis davor: 8 Wiederholungen mit der Hälfte des Arbeitsgewichts, bei schwerer Langhantel zwei Steigerungssätze (50 % × 5, 75 % × 3). Abhaken wie einen Satz, danach 30 s bis zum ersten Arbeitssatz.</li>
+        <li>Aufwärmsatz: Die erste schwere Mehrgelenksübung jeder Körperhälfte am Tag (etwa die Beinpresse, die erste Brust- oder Schulterpresse), sofern sie im Bereich um 8–12 Wiederholungen oder schwerer liegt, hat einen gestrichelten Kreis „0“ vor den Sätzen. Die Zeile darüber nennt die Dosis: 8 Wiederholungen mit der Hälfte des Arbeitsgewichts, bei schwerer Langhantel zwei Steigerungssätze (50 % × 5, 75 % × 3). Abhaken wie einen Satz, danach 30 s bis zum ersten Arbeitssatz.</li>
       </ul>
 
       <h3>So steigert die App</h3>

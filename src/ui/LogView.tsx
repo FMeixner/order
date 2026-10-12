@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import { beastById, fmtDate } from "../engine/plan";
 import type { AppState, Session } from "../types";
+import { FEEDBACK_LABEL } from "../types";
 import { Collapse, kg } from "./common";
 import { Evaluation } from "./Evaluation";
 import { ProgressView, VolumeView } from "./Progress";
@@ -16,7 +17,7 @@ function sessionText(s: Session, state: AppState): string {
     const done = e.sets.filter((x) => x.done);
     if (!done.length) continue;
     const sets = done.map((x) => (x.seconds ? `${x.seconds}s` : `${x.reps ?? "?"}${x.weight != null ? `×${String(x.weight).replace(".", ",")}kg` : ""}`)).join(", ");
-    lines.push(`- ${e.name}: ${sets}${e.feedback ? ` (${e.feedback})` : ""}`);
+    lines.push(`- ${e.name}: ${sets}${e.feedback ? ` (${FEEDBACK_LABEL[e.feedback]})` : ""}`);
   }
   for (const r of allRuns(s)) if (r.seconds) lines.push(`- Bestie ${beastById(r.id)?.name}: ${fmt(r.seconds)}${r.kg != null ? ` (${String(r.kg).replace(".", ",")} kg)` : r.band ? ` (Band ${r.band})` : ""}`);
   if (s.note) lines.push(`- Notiz: ${s.note}`);
@@ -52,7 +53,7 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
               {entries.map((e) => (
                 <li key={e.key}>
                   <strong>{e.name}</strong>: {e.sets.filter((x) => x.done).map((x) => (x.seconds ? `${x.seconds} s` : `${x.reps ?? "?"}${x.weight != null ? ` × ${kg(x.weight)}` : ""}`)).join(" · ")}
-                  {e.feedback && <span className="muted"> ({e.feedback})</span>}
+                  {e.feedback && <span className="muted"> ({FEEDBACK_LABEL[e.feedback]})</span>}
                 </li>
               ))}
 

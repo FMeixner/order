@@ -256,7 +256,9 @@ export interface UserProfile {
 }
 
 /** Feedback nach einer Übung */
-export type Feedback = "schwer" | "ok" | "leicht" | "sehrleicht";
+/** Rückmeldung nach der Übung. „zuschwer“: Ziel verfehlt (Zahl im letzten Satz nachgefragt), „schwer“: geschafft, aber am Limit */
+export type Feedback = "zuschwer" | "schwer" | "ok" | "leicht" | "sehrleicht";
+export const FEEDBACK_LABEL: Record<Feedback, string> = { zuschwer: "Zu schwer", schwer: "Schwer", ok: "OK", leicht: "Leicht", sehrleicht: "Sehr leicht" };
 
 export interface SlotState {
   weight: number | null;

@@ -91,3 +91,18 @@ describe("Geführt bei hoher Last: Hälfte des Tages", () => {
     expect(guidedKeys(list, gym).size).toBe(0);
   });
 });
+
+describe("Rückmeldung „Zu schwer“", () => {
+  it("wirkt wie „Schwer“ mit der nachgefragten Zahl, zweimal hintereinander nimmt 5 % weg", async () => {
+    const { advance } = await import("./progression");
+    const { resolveSlot } = await import("./resolve");
+    const r = resolveSlot({ id: "t", name: "Leg Press", sets: 3, reps: "10-12", prog: "double" }, gym)!;
+    const st0 = { weight: 100, target: 12, stage: 0, fb: [], topHits: 0, updated: "" };
+    const e = (fb: "zuschwer") => ({ key: r.key, slotId: "t", name: r.name, prog: r.prog, feedback: fb, sets: [12, 12, 7].map((reps) => ({ done: true, reps, weight: 100 })) });
+    const s1 = advance(r, st0, e("zuschwer"), gym, "2026-10-12");
+    expect(s1.weight).toBeLessThan(100); // 7 ≤ 10 − 2: eine Stufe runter
+    const s2 = advance(r, { ...st0, fb: ["zuschwer"] }, { ...e("zuschwer"), sets: [12, 12, 11].map((reps) => ({ done: true, reps, weight: 100 })) }, gym, "2026-10-13");
+    expect(s2.weight).toBeLessThan(100); // zweimal hart
+    expect(s2.fb.at(-1)).toBe("zuschwer");
+  });
+});

@@ -41,7 +41,7 @@ export interface Suggestion {
 export const GAP_CAP = 20;
 /** Ab diesem Sprung gilt die Lückenregel bei festen Wiederholungen */
 export const FIXED_GAP = 0.075;
-const RIR: Record<Feedback, number> = { schwer: 1, ok: 2, leicht: 3, sehrleicht: 4 };
+const RIR: Record<Feedback, number> = { zuschwer: 0, schwer: 1, ok: 2, leicht: 3, sehrleicht: 4 };
 
 /** Nächste Last und relativer Sprung dorthin */
 export function nextLoad(p: EquipmentProfile, equip: Resolved["equip"], w: number): { next: number; jump: number } | null {
@@ -197,9 +197,11 @@ export function backoffLoad(p: EquipmentProfile, r: Resolved, top: number): numb
 export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEntry, p: EquipmentProfile, today: string): SlotState {
   const s: SlotState = { ...(st ?? EMPTY_STATE), fb: [...(st?.fb ?? [])] };
   if (r.ladder && (r.ladderStart ?? 0) > s.stage) s.stage = r.ladderStart!; // Skillcheck: Leiter startet höher
-  const fb: Feedback = entry.feedback ?? "ok";
-  const prevFb = s.fb[s.fb.length - 1];
-  s.fb = [...s.fb, fb].slice(-5);
+  const fb0: Feedback = entry.feedback ?? "ok";
+  // „Zu schwer“ wirkt wie „Schwer“; die verfehlte Zahl steckt in den Sätzen (letzter Satz nachgefragt)
+  const fb: Feedback = fb0 === "zuschwer" ? "schwer" : fb0;
+  const prevFb = s.fb[s.fb.length - 1] === "zuschwer" ? "schwer" : s.fb[s.fb.length - 1];
+  s.fb = [...s.fb, fb0].slice(-5);
   s.updated = today;
   s.nudge = false;
   const done = entry.sets.filter((x) => x.done);

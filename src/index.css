@@ -170,7 +170,10 @@ details.card[open] summary { margin-bottom: 10px; }
 .slot-head .desc { flex-basis: 100%; order: 10; }
 .slot-title { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0; }
 .slot-name { font-weight: 600; font-size: 15.5px; }
-.slot-dose { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin-top: -4px; }
+.slot-dose { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin-top: -4px; background: none; border: 0; padding: 2px 0; text-align: left; cursor: pointer; align-self: flex-start; }
+.slot-more { display: grid; gap: 2px; }
+.ask-reps { align-items: center; gap: 8px; }
+.ask-reps .reps-in { width: 64px; height: 40px; text-align: center; }
 .slot-dose strong { color: var(--text); font-weight: 600; }
 .info-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-lit); background: none; color: var(--muted); font-size: 13px; font-family: var(--mono); cursor: pointer; padding: 0; }
 .desc { width: 100%; font-size: 13px; color: var(--muted); background: var(--surface2); border-radius: 8px; padding: 8px 10px; }
@@ -185,7 +188,8 @@ details.card[open] summary { margin-bottom: 10px; }
 .step-btn .set-btn { flex: none; display: inline-flex; align-items: center; justify-content: center; }
 .step-btn.done > span:last-child { color: var(--muted); text-decoration: line-through; }
 .step-btn.done .set-btn { border-color: var(--teal); background: var(--teal-dim); color: var(--text); }
-.fb { display: flex; gap: 6px; flex-wrap: wrap; }
+.fb { display: flex; gap: 6px; }
+.fb button { flex: 1 1 0; min-width: 0; padding: 6px 2px; line-height: 1.15; }
 .fb button { background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; min-height: 40px; font-size: 12.5px; color: var(--muted); cursor: pointer; }
 .fb button.on { border-color: var(--teal); background: var(--teal-dim); color: var(--text); }
 .arrow { text-align: center; }
@@ -342,3 +346,5 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .warm-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
 .set-btn.warm { border-style: dashed; padding: 0 12px; }
 .set-btn.warm.done { border-style: solid; }
+.set-btn.warm0 { border-style: dashed; }
+.set-btn.warm0.done { border-style: solid; }

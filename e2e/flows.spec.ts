@@ -7,8 +7,6 @@ test("Einheit abschließen: Satz eintragen, abschließen, im Log", async ({ page
   await page.goto("./");
   // Unabhängig vom Wochentag: den Krafttag wählen
   await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
-  const reps = page.getByLabel("Wiederholungen Satz 1").first();
-  await reps.fill("10");
   await page.getByRole("button", { name: "Satz 1" }).first().click();
   await page.getByRole("button", { name: "Einheit abschließen" }).click();
   // Die Ansicht springt zur nächsten offenen Einheit; der erledigte Tag trägt ein Häkchen
@@ -139,7 +137,6 @@ test("Bestien bleiben nach dem ersten Klick fest, auch wenn sich das Warm-up än
   await seed(page);
   await page.goto("./");
   await page.locator(".day-btn").filter({ hasText: "Bonus" }).click();
-  await page.getByLabel("Wiederholungen Satz 1").first().fill("15");
   await page.getByRole("button", { name: "Satz 1" }).first().click();
   const pins = async () => {
     const st = await stored(page);
@@ -153,7 +150,25 @@ test("Bestien bleiben nach dem ersten Klick fest, auch wenn sich das Warm-up än
   await page.getByRole("button", { name: "✎ Bearbeiten" }).first().click();
   const rm = page.locator(".drill-remove");
   while (await rm.count()) await rm.first().click();
-  await page.getByLabel("Wiederholungen Satz 2").first().fill("15");
   await page.getByRole("button", { name: "Satz 2" }).first().click();
   expect(await pins()).toBe(before);
+});
+
+test("Satz antippen speichert das Ziel, „Zu schwer“ fragt den letzten Satz", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
+  const card = page.locator(".slot").filter({ has: page.getByText("Cable Lateral Raise", { exact: true }) });
+  const dose = (await card.locator(".slot-dose strong").innerText()).match(/× (\d+)/)![1];
+  for (let i = 1; i <= 3; i++) await card.getByRole("button", { name: `Satz ${i}`, exact: true }).click();
+  let e = (await stored(page)).sessions[0].entries;
+  const key = Object.keys(e).find((k) => k.includes("Cable Lateral Raise"))!;
+  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose, +dose, +dose]);
+  await card.getByRole("button", { name: "Zu schwer" }).click();
+  await card.getByLabel("Geschaffte Wiederholungen").fill("9");
+  e = (await stored(page)).sessions[0].entries;
+  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose, +dose, 9]);
+  await card.getByRole("button", { name: "Sehr leicht" }).click();
+  e = (await stored(page)).sessions[0].entries;
+  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose + 2, +dose + 2, +dose + 2]);
 });
