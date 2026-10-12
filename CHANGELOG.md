@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.42.3] – 2026-10-12
+
+### Geändert
+- Assassin, Kraft A: Latzug und Rudern wieder 3 Sätze (Cable Chest Fly bleibt bei 4). Mit Kurztag am Dienstag bekommt der Montag dadurch keine Zusatzsätze mehr, die Triceps Extension bleibt bei 3. Ausgleich ist nur noch der Dip am Schwert-Tag.
+- Witcher, Kraft Kontrast: Seated Leg Curl 3 × 10–12 (zu Hause und unterwegs Nordic Curl Negative 5–8). Beinbeuger 7 statt 4 Sätze pro Woche.
+
 ## [0.42.2] – 2026-10-11
 
 ### Geändert
