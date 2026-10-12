@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.42.4] – 2026-10-12
+
+### Geändert
+- Bis zu vier Sätze stehen in einer Zeile (ab etwa 350 px Bildschirmbreite): Knopf und Feld werden etwas schmaler und teilen sich die Breite. Ab fünf Sätzen wird wie bisher umgebrochen.
+
 ## [0.42.3] – 2026-10-12
 
 ### Geändert
