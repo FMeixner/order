@@ -274,13 +274,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* Satz-Eingabe: ein Gewicht, Wiederholungen je Satz */
 .kg-line { display: flex; align-items: center; gap: 8px; }
 .set-pills { display: flex; flex-wrap: wrap; gap: 8px; }
-/* Bis vier Sätze: eine Zeile, die Felder teilen sich die Breite (ab etwa 350 px Bildschirmbreite) */
-@media (min-width: 350px) {
-  .set-pills.fit { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 6px; }
-  .set-pills.fit .set-pill { min-width: 0; gap: 3px; padding: 2px 3px 2px 2px; }
-  .set-pills.fit .set-pill .reps-in { flex: 1 1 auto; width: 100%; min-width: 24px; max-width: 56px; padding-left: 2px; padding-right: 2px; }
-  .set-pills.fit .set-pill .set-btn { min-width: 36px; padding: 0 4px; flex: none; }
-}
 .set-pill { display: flex; align-items: center; gap: 4px; padding: 3px 5px 3px 3px; border: 1px solid var(--border); border-radius: 24px; }
 .set-pill.done { border-color: var(--teal-dim); }
 .set-pill .reps-in { width: 46px; height: 42px; text-align: center; padding-left: 4px; padding-right: 4px; }

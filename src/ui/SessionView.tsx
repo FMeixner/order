@@ -622,7 +622,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
               {warmSets.every((w) => w.kg == null) && <span className="muted small">etwa die Hälfte des Arbeitsgewichts</span>}
             </div>
           )}
-          <div className={`set-pills ${sets.length <= 4 ? "fit" : ""}`} style={{ ["--n" as string]: sets.length }}>
+          <div className="set-pills">
             {sets.map((s, i) => (
               <div key={i} className={`set-pill ${s.done ? "done" : ""}`}>
                 <button className={`set-btn ${s.done ? "done" : ""}`} onClick={() => markDone(i)} aria-label={`Satz ${i + 1}`}>{s.done ? "✓" : i + 1}</button>

@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.42.5] – 2026-10-12
+
+### Geändert
+- Zurückgenommen: Satzknöpfe wieder in voller Größe, vier Sätze brechen wie zuvor um.
+
 ## [0.42.4] – 2026-10-12
 
 ### Geändert
