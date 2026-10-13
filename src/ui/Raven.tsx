@@ -1,10 +1,10 @@
-/* Erzähler (Der Aschekurier): Ausgabe der Woche auf „Heute“, Archiv im Log, Turnierbeilage in der Testwoche, Einstellungen im Setup. */
+/* Erzähler (Der Aschekurier): Ausgabe der Woche als Logo in der Ordenskarte auf „Heute“, Archiv im Log, Turnierbeilage in der Testwoche, Einstellungen im Setup. */
 import { useRef, useState } from "react";
 import { FOCUS_BY_ID } from "../data";
 import { chapterOf, checkPack, GENERIC_PACK, narratorOf, tournamentOf, type Line } from "../engine/saga";
 import { focusName, isTestBlock, weekInBlock } from "../engine/plan";
 import type { AppState, PlanBlock } from "../types";
-import { Collapse, Field, Seg } from "./common";
+import { Collapse, Field, Modal, Seg } from "./common";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -46,36 +46,42 @@ export function RavenLines({ lines, aside = "In eigener Sache" }: { lines: Line[
   );
 }
 
-/** Karte auf „Heute“: Prolog in Woche 1, sonst der Bericht der letzten abgeschlossenen Woche. Neu = aufgeklappt. */
-export function RavenToday({ state, update, block, today }: { state: AppState; update: Update; block: PlanBlock; today: string }) {
+/** Kleines Logo in der Ordenskarte auf „Heute“; Antippen öffnet die Ausgabe: Prolog in Woche 1, sonst der Bericht
+    der letzten abgeschlossenen Woche. Ein Punkt zeigt eine ungelesene Ausgabe. */
+export function RavenBadge({ state, update, block, today }: { state: AppState; update: Update; block: PlanBlock; today: string }) {
   const ch = chapterOf(state, block, today);
   const cur = weekInBlock(block, today);
   const last = ch.weeks[ch.weeks.length - 1];
   const showWeek = last && (last.week === cur || last.week === cur - 1) ? last : null;
   const key = `${block.id}:${showWeek?.week ?? 0}`;
-  const [open, setOpen] = useState(state.narrative?.seen !== key);
-  const toggle = () => {
-    setOpen((o) => !o);
-    if (state.narrative?.seen !== key) update((st) => ({ ...st, narrative: { ...st.narrative!, seen: key } }));
+  const unseen = state.narrative?.seen !== key;
+  const [open, setOpen] = useState(false);
+  const show = () => {
+    setOpen(true);
+    if (unseen) update((st) => ({ ...st, narrative: { ...st.narrative!, seen: key } }));
   };
   const nr = narratorOf(state);
   const title = showWeek ? (ch.ended ? `${nr.name}: ${nr.special}` : `${nr.name}: ${nr.issue} ${showWeek.week}`) : `${nr.name}: ${nr.first}`;
   return (
-    <section className="card collapse raven">
-      <button className="collapse-head" onClick={toggle} aria-expanded={open}>
-        <span className="collapse-title">{title}</span>
-        <span className="collapse-meta">{state.narrative?.seen !== key ? "neu" : `${cap1(ch.foe.nom)} ${Math.max(ch.liveHp > 0 ? 1 : 0, Math.round((100 * ch.liveHp) / ch.hp))} %`}</span>
-        <span className={`chev ${open ? "open" : ""}`} aria-hidden>›</span>
+    <>
+      <button className={`raven-badge ${unseen ? "unseen" : ""}`} onClick={show} aria-label={`${title}${unseen ? " (neu)" : ""}`} title={nr.name}>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+          <path d="M20 3c-6 1-11 5-13 11l-2 6 2-1c1-3 3-6 6-8-2 3-3 5-4 8 6-1 10-7 11-16z" fill="currentColor" />
+          <path d="M4 21h9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+        {unseen && <span className="raven-dot" aria-hidden />}
       </button>
       {open && (
-        <div className="collapse-body">
-          <RavenLines lines={(showWeek ? showWeek.lines : ch.prologue).filter((l) => ch.ended || l.kind !== "hp")} aside={nr.aside} />
-          {!ch.ended && <RavenLines lines={[{ kind: "hp", text: cap1(ch.foe.nom), value: ch.liveHp, max: ch.hp }]} />}
-          {ch.ended && <><hr /><RavenLines lines={ch.saga} aside={nr.aside} /></>}
-          {showWeek && <p className="muted small">Alle Ausgaben stehen im Log unter „{nr.archive}“.</p>}
-        </div>
+        <Modal title={title} onClose={() => setOpen(false)}>
+          <div className="raven">
+            <RavenLines lines={(showWeek ? showWeek.lines : ch.prologue).filter((l) => ch.ended || l.kind !== "hp")} aside={nr.aside} />
+            {!ch.ended && <RavenLines lines={[{ kind: "hp", text: cap1(ch.foe.nom), value: ch.liveHp, max: ch.hp }]} />}
+            {ch.ended && <><hr /><RavenLines lines={ch.saga} aside={nr.aside} /></>}
+            {showWeek && <p className="muted small">Alle Ausgaben stehen im Log unter „{nr.archive}“.</p>}
+          </div>
+        </Modal>
       )}
-    </section>
+    </>
   );
 }
 

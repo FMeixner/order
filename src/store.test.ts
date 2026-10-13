@@ -38,8 +38,20 @@ describe("Alte Datenstände laden", () => {
   });
   it("0.1: Doppelmesser wird zum Schwert am Heim-Profil", () => {
     const s = migrate(JSON.parse(JSON.stringify(v01)));
-    expect(s.equipment.find((e) => e.tier === "home")?.has.sword).toBe(true);
+    expect(s.equipment.find((e) => e.name === "Zuhause")?.has.sword).toBe(true);
     expect(s.user.doppelmesser).toBeUndefined();
+  });
+  it("0.45: Orte ohne Kategorie, Tausche je Ort, Dip-Barren und Bauchroller aus der alten Kategorie", () => {
+    const raw = JSON.parse(JSON.stringify(v01));
+    raw.equipment.push({ ...raw.equipment[1], id: "eq-zwei", name: "Ferienwohnung" });
+    raw.swaps = { "kb-2:home": "Split Squat", "kb-1:gym": "KB Swing" };
+    const s = migrate(raw);
+    expect(s.equipment.every((e) => !("tier" in e))).toBe(true);
+    const [studio, zuhause, fewo] = s.equipment;
+    expect([studio.has.dip, studio.has.wheel, zuhause.has.dip, zuhause.has.wheel]).toEqual([true, true, false, true]);
+    expect(s.swaps).toEqual({ [`kb-2:${zuhause.id}`]: "Split Squat", [`kb-2:${fewo.id}`]: "Split Squat", [`kb-1:${studio.id}`]: "KB Swing" });
+    // ein zweites Laden ändert nichts
+    expect(migrate(JSON.parse(JSON.stringify(s)))).toEqual(s);
   });
   it("0.20: alle hexed-Fassungen teilen sich eine Bestzeit", () => {
     const s = migrate(JSON.parse(JSON.stringify(v020)));

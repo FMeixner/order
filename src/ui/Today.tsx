@@ -8,7 +8,7 @@ import { focusFor } from "../engine/weekplan";
 import { exportState } from "../store";
 import { TestWeek } from "./TestWeek";
 import { Seg } from "./common";
-import { RavenToday, ravenOn } from "./Raven";
+import { RavenBadge, ravenOn } from "./Raven";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -161,6 +161,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
             <div className="hero-focus">{focusName(baseFocus.id)}</div>
             <div className="muted small">{baseFocus.medley ? `Diese Woche: ${focusName(focus.id)}` : block.label || focus.tagline}</div>
           </div>
+          {ravenOn(state) && <RavenBadge key={`${block.id}:${today}`} state={state} update={update} block={block} today={today} />}
           <div className="week-nav">
             <button onClick={() => go(week - 1)} disabled={week <= 1} aria-label="Vorige Woche">‹</button>
             <div className="hero-week">Woche {Math.min(week, total)}<span className="muted">/{total}</span></div>
@@ -179,7 +180,6 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
         {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
       </div>
 
-      {ravenOn(state) && <RavenToday key={`${block.id}:${today}`} state={state} update={update} block={block} today={today} />}
 
       {test && future ? (
         <div className="card stack">

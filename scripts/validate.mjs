@@ -78,7 +78,7 @@ const GOALS = new Set(["hypertrophy", "strength", "power", "speed", "conditionin
 
 for (const [name, e] of Object.entries(exercises)) {
   if (!EQUIPS.has(e.equip)) err("exercises.json", `${name}: unbekanntes equip "${e.equip}"`);
-  for (const n of e.needs ?? []) if (!["bar", "rings", "bench", "rower", "medball", "box", "deficit"].includes(n)) err("exercises.json", `${name}: unbekanntes needs "${n}"`);
+  for (const n of e.needs ?? []) if (!["bar", "rings", "bench", "rower", "medball", "box", "deficit", "dip", "wheel"].includes(n)) err("exercises.json", `${name}: unbekanntes needs "${n}"`);
   for (const x of e.instead ?? []) if (!exercises[x.name]) err("exercises.json", `${name}: Ersatz "${x.name}" fehlt`);
 }
 for (const b of beasts) {

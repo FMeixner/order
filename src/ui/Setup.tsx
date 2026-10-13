@@ -206,7 +206,6 @@ function AutoBackupFields({ state, update }: { state: AppState; update: Update }
   );
 }
 
-const TIER_LABEL = { gym: "Studio", home: "Zuhause", reise: "Unterwegs" } as const;
 
 /** Übersicht der eigenen Übungswahl, mit Zurücksetzen */
 function SwapList({ state, update }: { state: AppState; update: Update }) {
@@ -221,14 +220,16 @@ function SwapList({ state, update }: { state: AppState; update: Update }) {
   };
   return (
     <Collapse title="Getauschte Übungen" meta={`${entries.length}`}>
-      <p className="muted small">Deine eigene Wahl statt der Übung aus dem Orden. Gilt je Stelle und je Ort (Studio, Zuhause, Unterwegs). Gewichte werden je Übung getrennt geführt.</p>
+      <p className="muted small">Deine eigene Wahl statt der Übung aus dem Orden. Gilt je Stelle und je Ort. Gewichte werden je Übung getrennt geführt.</p>
       <ul className="slot-list">
         {entries.map(([k, name]) => {
-          const [slotId, tier] = k.split(":");
+          const i = k.lastIndexOf(":");
+          const slotId = k.slice(0, i);
+          const place = state.equipment.find((e) => e.id === k.slice(i + 1))?.name ?? "Ort gelöscht";
           const w = where(slotId);
           return (
             <li key={k} className="row between">
-              <span>{w ? `${w.focus} · ${w.role}: ` : ""}{w?.orig ? <><s>{w.orig}</s> → </> : null}<strong>{name}</strong> <span className="muted">({TIER_LABEL[tier as keyof typeof TIER_LABEL] ?? tier})</span></span>
+              <span>{w ? `${w.focus} · ${w.role}: ` : ""}{w?.orig ? <><s>{w.orig}</s> → </> : null}<strong>{name}</strong> <span className="muted">({place})</span></span>
               <button className="btn ghost small" onClick={() => update((st) => { const sw = { ...st.swaps }; delete sw[k]; return { ...st, swaps: sw }; })}>Zurück</button>
             </li>
           );

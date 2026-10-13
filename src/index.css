@@ -324,6 +324,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* Erzähler */
 .card.raven { border-left: 3px solid var(--amber); }
+.hero-top > div:first-child { flex: 1; }
+.hero-top .raven-badge { align-self: center; }
+.raven-badge { position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-lit); background: var(--surface2); color: var(--amber); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.raven-badge:hover { border-color: var(--amber); }
+.raven-dot { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 2px var(--surface); }
 .raven-lines p { margin: 0 0 8px; }
 .raven-lines p:last-child { margin-bottom: 0; }
 .raven-head { font-size: 15px; margin: 10px 0 6px; color: var(--amber); }

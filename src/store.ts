@@ -12,28 +12,28 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
   {
     label: "Studio komplett",
     make: () => ({
-      id: uid("eq"), name: "Studio", tier: "gym",
+      id: uid("eq"), name: "Studio",
       dumbbells: range(2.5, 50, 2.5), kettlebells: [8, 12, 16, 20, 24, 28, 32],
       barbell: { bar: 20, smallestPlate: 1.25 }, cableStep: 2.5, machineStep: 5, vest: [], bands: [],
-      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false, handles: true },
+      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false, handles: true, dip: true, wheel: true },
     }),
   },
   {
     label: "Zuhause: Kurzhanteln und Stange",
     make: () => ({
-      id: uid("eq"), name: "Zuhause", tier: "home",
+      id: uid("eq"), name: "Zuhause",
       dumbbells: range(2, 24, 2), kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false },
+      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: true },
     }),
   },
   {
     label: "Unterwegs: nur Bänder",
     make: () => ({
-      id: uid("eq"), name: "Unterwegs", tier: "reise",
+      id: uid("eq"), name: "Unterwegs",
       dumbbells: [], kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false },
+      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: false },
     }),
   },
 ];
@@ -76,14 +76,37 @@ export function migrate(raw: unknown): AppState {
     ...(se.beastParts ? { beastParts: se.beastParts.map((pt) => ({ ...pt, id: hx(pt.id) })) } : {}),
     ...(se.beastRuns ? { beastRuns: Object.fromEntries(Object.entries(se.beastRuns).map(([k, r]) => [k, { ...(r.beast ? { beast: { ...r.beast, id: hx(r.beast.id) } } : {}), ...(r.parts ? { parts: r.parts.map((pt) => ({ ...pt, id: hx(pt.id) })) } : {}) }])) } : {}),
   }));
-  s.equipment = (s.equipment ?? []).map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
+  s.equipment = s.equipment ?? [];
   // 0.1 → 0.2: Schalter „Doppelmesser“ wird zum Equipment „Schwert“ an den Heim-Profilen
-  if (s.user.doppelmesser && !s.equipment.some((e) => e.has.sword)) {
+  if (s.user.doppelmesser && !s.equipment.some((e) => e.has?.sword)) {
     s.equipment = s.equipment.map((e) => (e.tier === "home" ? { ...e, has: { ...e.has, sword: true } } : e));
   }
   delete s.user.doppelmesser;
+  dropTiers(s);
+  s.equipment = s.equipment.map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   renameExercises(s);
   return s;
+}
+/** 0.45: Orte ohne Kategorie. Was die Kategorie stillschweigend annahm (Studio: Dip-Barren und Bauchroller,
+    Zuhause: Bauchroller), wird zu Ausstattung; Tausche gelten je Ort statt je Kategorie. */
+function dropTiers(s: AppState): void {
+  const raw = s.equipment as (Omit<EquipmentProfile, "has"> & { has?: Partial<EquipmentProfile["has"]> })[];
+  if (!raw.some((e) => e.tier)) return;
+  if (s.swaps) {
+    const out: Record<string, string> = {};
+    for (const [k, v] of Object.entries(s.swaps)) {
+      const i = k.lastIndexOf(":");
+      const t = k.slice(i + 1);
+      if (t === "gym" || t === "home" || t === "reise") {
+        for (const e of raw) if (e.tier === t) out[`${k.slice(0, i)}:${e.id}`] = v;
+      } else out[k] = v;
+    }
+    s.swaps = out;
+  }
+  s.equipment = raw.map(({ tier, ...e }) => {
+    if (!tier) return e;
+    return { ...e, has: { ...e.has, dip: e.has?.dip ?? tier === "gym", wheel: e.has?.wheel ?? tier !== "reise" } };
+  }) as EquipmentProfile[];
 }
 /** 0.39: eine Übung je Bewegung. Dosierung (Top-Satz, schwer) steht im Slot, Zusatzlast (Weste, Gürtel) ist keine eigene Übung mehr. */
 export const RENAMED: Record<string, string> = {
@@ -110,7 +133,7 @@ function renameExercises(s: AppState): void {
   if (s.oneRM) s.oneRM = Object.fromEntries(Object.entries(s.oneRM).map(([k, v]) => [RENAMED[k] ?? k, v]));
 }
 function base_has(): EquipmentProfile["has"] {
-  return { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false };
+  return { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: false };
 }
 
 function load(): AppState {

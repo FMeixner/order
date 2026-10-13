@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
-import type { AppState } from "../types";
+import type { AppState, Slot } from "../types";
 import { beastClass, drillPool, pickBeast, roleDrills } from "./plan";
 import { focusFor } from "./weekplan";
 import { estimateRole } from "./duration";
+import { resolveSlot } from "./resolve";
 
 const gym = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
 const home = { ...EQUIPMENT_PRESETS[1].make(), id: "h" };
@@ -104,5 +105,28 @@ describe("Rückmeldung „Zu schwer“", () => {
     const s2 = advance(r, { ...st0, fb: ["zuschwer"] }, { ...e("zuschwer"), sets: [12, 12, 11].map((reps) => ({ done: true, reps, weight: 100 })) }, gym, "2026-10-13");
     expect(s2.weight).toBeLessThan(100); // zweimal hart
     expect(s2.fb.at(-1)).toBe("zuschwer");
+  });
+});
+
+describe("Orte ohne Kategorie (0.45)", () => {
+  const slot = (x: Partial<Slot> & { name: string }): Slot => ({ id: "t", sets: 3, reps: "5", prog: "double", ...x });
+  it("nimmt die Übung des Ordens, wenn das Equipment reicht, sonst die nächste Variante", () => {
+    const s = slot({ name: "Chest-Supported Row", home: "1-Arm DB Row" });
+    expect(resolveSlot(s, home)?.name).toBe("Chest-Supported Row");
+    expect(resolveSlot(s, { ...home, has: { ...home.has, bench: false } })?.name).toBe("1-Arm DB Row");
+  });
+  it("Dip braucht Barren: zuhause Ringe, sonst Chair Dip", () => {
+    const s = slot({ name: "Dip", home: "Ring Dip", reps: "8-12" });
+    expect(resolveSlot(s, gym)?.name).toBe("Dip");
+    expect(resolveSlot(s, { ...home, has: { ...home.has, rings: true } })?.name).toBe("Ring Dip");
+    expect(resolveSlot(s, home)?.name).toBe("Chair Dip");
+  });
+  it("Zusatzlast ohne Weste: eigene Fassung des Ordens, sonst ohne Last", () => {
+    const own = slot({ name: "Pull-Up", load: "plate", home: { name: "Pull-Up", reps: "AMRAP-2" } });
+    expect(resolveSlot(own, home)?.reps).toBe("AMRAP-2");
+    expect(resolveSlot(own, { ...home, vest: [10] })?.reps).toBe("5");
+    const plain = slot({ name: "Pull-Up", load: "plate", home: "Band Pulldown" });
+    const r = resolveSlot(plain, home)!;
+    expect([r.name, r.equip]).toEqual(["Pull-Up", "bodyweight"]);
   });
 });

@@ -54,7 +54,7 @@ interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drill
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
     if (s.gate_week && ctx.week < s.gate_week) return null;
-    const res = resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer", ctx.state.swaps?.[swapKey(s.id, ctx.profile.tier)], skillSet(ctx.state));
+    const res = resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer", ctx.state.swaps?.[swapKey(s.id, ctx.profile.id)], skillSet(ctx.state));
     // Grenze erreicht: dieselbe Übung mit Zusatzlast
     return res && loadPhase(res, ctx.state.slots[res.key], ctx.profile);
   };
@@ -427,12 +427,11 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
 
 const FB: Feedback[] = ["zuschwer", "schwer", "ok", "leicht", "sehrleicht"];
 
-const TIER_LABEL = { gym: "Studio", home: "Zuhause", reise: "Unterwegs" } as const;
 
 /** Übung für diese Stelle tauschen. Die Wahl gilt je Slot und Ort und bleibt bei Updates erhalten. */
 function SwapDialog({ r, ctx, onClose }: { r: Resolved; ctx: SessionCtx; onClose: () => void }) {
   const opts = swapOptions(r, ctx.profile, skillSet(ctx.state));
-  const key = swapKey(r.slotId, ctx.profile.tier);
+  const key = swapKey(r.slotId, ctx.profile.id);
   const set = (name: string | null) => {
     ctx.update((st) => {
       const sw = { ...(st.swaps ?? {}) };
@@ -446,7 +445,7 @@ function SwapDialog({ r, ctx, onClose }: { r: Resolved; ctx: SessionCtx; onClose
   return (
     <Modal title="Übung tauschen" onClose={onClose}>
       <div className="stack">
-        <p className="muted small">Gilt für diese Stelle im Orden, immer wenn du {TIER_LABEL[ctx.profile.tier]} trainierst. Satz- und Wiederholungsvorgaben bleiben, das Gewicht führt die App für jede Übung getrennt.</p>
+        <p className="muted small">Gilt für diese Stelle im Orden, immer an diesem Ort ({ctx.profile.name}). Satz- und Wiederholungsvorgaben bleiben, das Gewicht führt die App für jede Übung getrennt.</p>
         {(r.swapped || r.swapUnavailable) && (
           <button className="btn wide" onClick={() => set(null)}>Zurück zum Original: {r.original}</button>
         )}
@@ -635,13 +634,14 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
       </div>
       <button className="slot-dose" onClick={() => setMore((o) => !o)} aria-expanded={more} title="Details">
         {concrete ? <strong>{doseLabel}</strong> : doseLabel}
-        {(lastLine || concrete || detailGap) && <span className="muted small"> {more ? "▴" : "▾"}</span>}
+        {(lastLine || concrete || detailGap || r.why) && <span className="muted small"> {more ? "▴" : "▾"}</span>}
       </button>
       {more && (
         <div className="muted small slot-more">
           {concrete && <div>Bereich {r.reps}{r.prog === "double" && r.loadable ? ", oben angekommen steigt das Gewicht" : ""}</div>}
           {lastLine && <div>Zuletzt {lastLine}</div>}
           {detailGap && <div>{detailGap}</div>}
+          {r.why?.map((w) => <div key={w}>{w}</div>)}
         </div>
       )}
       {warmSets.length > 0 && (

@@ -68,7 +68,7 @@ export function Help() {
       <h3>Übung tauschen</h3>
       <ul>
         <li>Passt dir eine Übung nicht (Gerät besetzt, zwickt, keine Lust): auf <strong>⇄</strong> neben dem Namen tippen und eine Alternative mit ähnlichem Bewegungsmuster wählen.</li>
-        <li>Der Tausch gilt für diese Stelle, getrennt für Studio, Zuhause und Unterwegs, und bleibt bei Updates erhalten. Die neue Übung bekommt ihre eigenen Gewichte.</li>
+        <li>Der Tausch gilt für diese Stelle, getrennt je Ort, und bleibt bei Updates erhalten. Die neue Übung bekommt ihre eigenen Gewichte.</li>
         <li>Zurücktauschen: wieder auf ⇄, oder unter Setup › Getauschte Übungen.</li>
       </ul>
 
@@ -87,9 +87,15 @@ export function Help() {
         <li>Spezialist (Setup): kein Slot, die Blockfolge bleibt, wie du sie planst. Je Phase kannst du den Slot im Plan auch fest wählen oder ausschalten.</li>
       </ul>
 
+      <h3>Orte</h3>
+      <ul>
+        <li>Ein Ort ist ein Name plus das, was dort steht. Eine Kategorie gibt es nicht: Die App nimmt die Übung des Ordens, wenn das Equipment reicht, sonst die nächste Variante aus dem Orden, und erst dann einen Ersatz aus der Bibliothek.</li>
+        <li>Fehlen Weste oder Scheiben, läuft die Übung ohne Zusatzlast, außer der Orden sieht dafür eine eigene Fassung vor (etwa Klimmzüge bis kurz vor Schluss statt schwerer Fünfer).</li>
+      </ul>
+
       <h3>Der Aschekurier (Erzähler)</h3>
       <ul>
-        <li>Unter Setup › Erzähler einschalten. Ein Flugblatt berichtet über jeden Orden: ein Widersacher als Endgegner, die Bestien sind sein Gefolge. Die Ausgabe der Woche steht auf <em>Heute</em>, alle Ausgaben im Log, am Ende eine Sonderausgabe.</li>
+        <li>Unter Setup › Erzähler einschalten. Ein Flugblatt berichtet über jeden Orden: ein Widersacher als Endgegner, die Bestien sind sein Gefolge. Die Ausgabe der Woche öffnet das kleine Feder-Logo in der Ordenskarte auf <em>Heute</em> (ein Punkt heißt: neue Ausgabe), alle Ausgaben stehen im Log, am Ende eine Sonderausgabe.</li>
         <li>Einheiten treffen den Widersacher. Volle Wochen, Bestzeiten und mehr Gewicht treffen zusätzlich, einer davon doppelt (die Schwachstelle). Ein W20 pro Woche würzt: 20 ist ein kritischer Treffer, 1 ein harmloser Patzer. Die Würfel stehen fest, Neuladen ändert nichts.</li>
         <li>Ruhige Wochen kosten nichts. Der Widersacher fällt nie vor dem letzten Akt; mit etwa 90 % der Einheiten ist er besiegt, sonst entkommt er gezeichnet.</li>
         <li>Die Testwoche wird zum Turnier der Klingen. Jede Klinge muss neu verdient werden: besser, gehalten (im Messfehler) oder diesmal nicht.</li>
@@ -116,7 +122,7 @@ export function Help() {
 
       <h3>Kurztag</h3>
       <ul>
-        <li>Plan › Phase antippen › Kurztag: Ein Tag der Woche läuft nur mit drei Kernübungen. Darunter zeigt die App, was bleibt, was wegfällt und wie die anderen Tage ausgleichen.</li>
+        <li>Plan › Phase antippen › Kurztag: Ein Tag der Woche läuft nur mit drei Kernübungen. Darunter zeigt die App, was bleibt, was wegfällt und wie die anderen Tage ausgleichen. In der Einheit steht der Grund in den Details der betroffenen Übung (Dosis antippen).</li>
         <li>Ausgeglichen wird nur, wenn das Ziel des Ordens leidet: Muskeln, die der Orden aufbaut, bleiben an der unteren Grenze deines Volumenbereichs, alle anderen bei der Erhaltung (4 Sätze pro Woche). Erst kommt ein Satz mehr an passenden Übungen dazu, dann wandern weggefallene Kernübungen auf einen anderen Tag, und wenn die Zeit knapp wird, laufen Übungen als Superset. Kein Tag überschreitet dabei sein Zeitlimit.</li>
       </ul>
 

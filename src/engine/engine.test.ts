@@ -201,9 +201,9 @@ describe("Geführte Varianten bei hoher Last", () => {
   });
   it("Doppelmesser-Schalter wird zu Schwert am Heim-Profil", async () => {
     const { migrate } = await import("../store");
-    const s = migrate({ ...emptyState(), user: { ...emptyState().user, doppelmesser: true }, equipment: [home, gym] });
-    expect(s.equipment.find((e) => e.tier === "home")!.has.sword).toBe(true);
-    expect(s.equipment.find((e) => e.tier === "gym")!.has.sword).toBe(false);
+    const s = migrate({ ...emptyState(), user: { ...emptyState().user, doppelmesser: true }, equipment: [{ ...home, tier: "home" as const }, { ...gym, tier: "gym" as const }] });
+    expect(s.equipment.find((e) => e.id === home.id)!.has.sword).toBe(true);
+    expect(s.equipment.find((e) => e.id === gym.id)!.has.sword).toBe(false);
   });
 });
 

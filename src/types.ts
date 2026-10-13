@@ -26,6 +26,8 @@ export interface Slot {
   id: string;
   /** Mit Zusatzlast (Weste oder Gürtel, austauschbar): gilt für die Übung des Slots, nicht für Alternativen mit eigenem Namen */
   load?: "plate";
+  /** Anpassung durch die App (z. B. Kurztag-Ausgleich); nur in den Details der Übung sichtbar */
+  why?: string[];
   /** Kernübung des Ordens: bleibt am Kurztag, fällt sie weg, wandert sie auf einen anderen Tag */
   core?: boolean;
   /** Übung auf Stufe gym (Studio). */
@@ -197,7 +199,8 @@ export interface Drill {
 export interface EquipmentProfile {
   id: string;
   name: string;
-  tier: Tier;
+  /** Alt (bis 0.44): Kategorie Studio/Zuhause/Unterwegs; wird beim Laden entfernt */
+  tier?: Tier;
   dumbbells: number[];
   kettlebells: number[];
   barbell: { bar: number; smallestPlate: number } | null;
@@ -205,7 +208,7 @@ export interface EquipmentProfile {
   machineStep: number;
   vest: number[];
   bands: string[];
-  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean };
+  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean };
   /** Schweißfrei (z. B. Arbeitsplatz): keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up */
   sweatFree?: boolean;
 }

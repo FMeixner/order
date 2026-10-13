@@ -8,6 +8,7 @@ export interface Resolved {
   slotId: string;
   key: string; // slotId|Name: daran hängt die Historie
   name: string;
+  /** Welche Variante des Slots gewählt wurde (Hauptübung = gym) */
   tier: Tier;
   equip: Equip;
   sets: number;
@@ -29,6 +30,8 @@ export interface Resolved {
   guided?: boolean;
   /** Vom Nutzer getauschte Übung */
   swapped?: boolean;
+  /** Anpassungen durch die App, für die Details */
+  why?: string[];
   /** Übung, die ohne Tausch dran wäre */
   original: string;
   /** Übungen, die im Slot selbst stehen (Studio, Zuhause, Unterwegs, Leiter) */
@@ -41,14 +44,12 @@ export interface Resolved {
   ladderStart?: number;
 }
 
-/** Schlüssel für einen Tausch: gilt je Slot und Equipment-Stufe */
-export const swapKey = (slotId: string, tier: Tier) => `${slotId}:${tier}`;
+/** Schlüssel für einen Tausch: gilt je Slot und Ort (Equipment-Profil) */
+export const swapKey = (slotId: string, profileId: string) => `${slotId}:${profileId}`;
 
-const TIER_ORDER: Record<Tier, Tier[]> = {
-  gym: ["gym", "home", "reise"],
-  home: ["home", "gym", "reise"],
-  reise: ["reise", "home", "gym"],
-};
+/** Reihenfolge der Varianten eines Slots: Hauptübung des Ordens, dann die Varianten mit weniger Equipment.
+    Der Ort hat keine Kategorie; es zählt nur, was dort verfügbar ist. */
+const VARIANT_ORDER: Tier[] = ["gym", "home", "reise"];
 
 function choiceFor(slot: Slot, tier: Tier): Choice | null | undefined {
   const own: Choice = slot.load ? { name: slot.name, load: slot.load } : { name: slot.name };
@@ -81,10 +82,17 @@ export function available(name: string, p: EquipmentProfile, skills?: SkillSet):
     if (n === "rower" && !p.has.rower) return false;
     if (n === "medball" && !p.has.medball) return false;
     if (n === "box" && !p.has.box) return false;
+    if (n === "dip" && !p.has.dip) return false;
+    if (n === "wheel" && !p.has.wheel) return false;
     // Defizit: Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln als Griffe
     if (n === "deficit" && !p.has.handles && !p.has.rings && !p.dumbbells.length) return false;
   }
   return true;
+}
+
+/** Zusatzlast (Gürtel mit Scheiben oder Weste): nur mit Langhantelscheiben oder Weste am Ort */
+function loadOk(c: Choice, p: EquipmentProfile): boolean {
+  return c.load !== "plate" || !!p.barbell || p.vest.length > 0;
 }
 
 /** Ersatz einer Übung, die am Ort nicht geht (Feld „instead“ in exercises.json) */
@@ -115,10 +123,10 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
   let chosen: { c: Choice; tier: Tier } | null = null;
   let fallback: { c: Choice; tier: Tier } | null = null;
   let regressedFrom: string | undefined;
-  for (const t of TIER_ORDER[p.tier]) {
-    const c = choiceFor(slot, t);
-    if (!c) continue;
-    if (!fallback) fallback = { c, tier: t };
+  const cands = VARIANT_ORDER.map((t) => ({ t, c: choiceFor(slot, t) })).filter((x): x is { t: Tier; c: Choice } => !!x.c);
+  // Erster Durchgang: Varianten des Ordens, die am Ort gehen (Hauptübung zuerst)
+  for (const { t, c } of cands) {
+    fallback = { c, tier: t }; // nichts machbar: die Variante mit dem wenigsten Equipment zeigen
     const ladderHere = !!slot.ladder && (t === "gym" || c.name === slot.name);
     if (!skillOk(c.name, skills) && !ladderHere) {
       // Skill fehlt: erst eine leichtere Variante derselben Übung, dann die nächste Alternative des Slots
@@ -126,8 +134,15 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
       if (easier) { chosen = { c: { ...c, name: easier, load: undefined }, tier: t }; regressedFrom = c.name; break; }
       continue;
     }
-    if (available(c.name, p)) { chosen = { c, tier: t }; break; }
-    // Ersatz aus der Bibliothek (z. B. Deficit Push-Up ohne Griffe: Banded Push-Up, sonst Push-Up mit einem Satz mehr)
+    if (!available(c.name, p)) continue;
+    if (loadOk(c, p)) { chosen = { c, tier: t }; break; }
+    // Zusatzlast fehlt: dieselbe Übung ohne Last, außer der Orden hat dafür eine eigene Variante (z. B. AMRAP statt 5er)
+    if (!cands.some((x) => x.c !== c && x.c.name === c.name && loadOk(x.c, p))) { chosen = { c: { ...c, load: undefined }, tier: t }; break; }
+  }
+  // Zweiter Durchgang: Ersatz aus der Bibliothek (z. B. Deficit Push-Up ohne Griffe: Banded Push-Up, sonst Push-Up mit einem Satz mehr)
+  // Die Variante mit dem wenigsten Equipment zuerst: für diesen Fall hat der Orden sie vorgesehen
+  if (!chosen) for (const { t, c } of [...cands].reverse()) {
+    if (!skillOk(c.name, skills) && !(slot.ladder && (t === "gym" || c.name === slot.name))) continue;
     const alt = insteadOf(c.name, p, skills);
     if (alt) { chosen = { c: { ...c, name: alt.name, load: undefined, sets: (c.sets ?? slot.sets ?? 1) + (alt.sets ?? 0) }, tier: t }; break; }
   }
@@ -148,6 +163,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
   if (regressedFrom && ladder) ladder = undefined;
   // Stufen, die am Ort nicht gehen, durch ihren Ersatz tauschen (Länge bleibt, damit die Stufe passt)
   if (ladder) ladder = ladder.map((n) => (available(n, p) ? n : insteadOf(n, p, skills)?.name ?? n));
+  if (ladder && new Set(ladder).size === 1) ladder = undefined; // alle Stufen ersetzt: keine Leiter mehr
   if (prog === "ladder" && !ladder) prog = kind === "hold" ? "hold" : "reps";
   const loadable = isLoadable(equip) && (prog === "double" || prog === "weight" || prog === "topset");
   if ((prog === "double" || prog === "weight" || prog === "topset") && !isLoadable(equip)) prog = "reps";
@@ -172,6 +188,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
     regressedFrom,
     rest: compactRest(slot.rest ?? 90),
     note: slot.note,
+    why: slot.why,
     proposal: slot.proposal,
     missingEquipment: !chosen,
     loadable,

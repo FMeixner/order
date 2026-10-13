@@ -96,7 +96,6 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   short.warmup = ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
   short.cooldown = (short.cooldown ?? []).slice(0, 1);
   short.name = `${short.name} (Kurztag)`;
-  short.note = `Kurztag: nur die drei Kernübungen.`;
   short.minutes = Math.max(15, Math.round(est(short) / 5) * 5);
 
   const changes: string[] = [];
@@ -199,8 +198,17 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   };
   changes.length = 0;
   for (const [k, ns] of Object.entries(noteFor)) for (const n of merge(ns)) changes.push(`${roles[k].name}: ${n}`);
+  // Gründe stehen in den Details der betroffenen Übung, nicht als Zeile über der Einheit
   for (const [k, ns] of Object.entries(noteFor)) if (ns.length) {
-    roles[k].note = `${roles[k].note ? roles[k].note + " " : ""}Ausgleich für den Kurztag: ${merge(ns).join(", ")}.`;
+    const orig = new Map(f.roles[k].blocks.flatMap((b) => slotsOf(b).map((s) => [s.id, { sets: s.sets ?? 3, single: b.type === "single" }] as const)));
+    for (const b of roles[k].blocks) for (const s of b.type === "single" || b.type === "superset" ? slotsOf(b) : []) {
+      const o = orig.get(s.id);
+      const why: string[] = [];
+      if (!o) why.push("Vom Kurztag hierher verschoben, damit die Woche ihr Ziel hält.");
+      else if ((s.sets ?? 3) > o.sets) why.push(`${(s.sets ?? 3) - o.sets === 1 ? "+1 Satz" : `+${(s.sets ?? 3) - o.sets} Sätze`} als Ausgleich für den Kurztag.`);
+      if (b.type === "superset" && (!o || o.single)) why.push("Als Superset gepaart, damit der Tag in seine Zeit passt.");
+      if (why.length) s.why = [...(s.why ?? []), ...why];
+    }
     roles[k].minutes = Math.round(est(roles[k]) / 5) * 5;
   }
   const after = cur();

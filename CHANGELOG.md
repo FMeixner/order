@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.45.0] – 2026-10-13
+
+### Geändert
+- Orte haben keine Kategorie mehr (Studio, Zuhause, Unterwegs), nur einen Namen und ihr Equipment. Die App nimmt die Übung des Ordens, wenn das Equipment reicht, sonst die nächste Variante aus dem Orden und erst dann einen Ersatz aus der Bibliothek. Getauschte Übungen gelten jetzt je Ort und sind übernommen.
+- Neu in der Ausstattung: Dip-Barren und Bauchroller. Bisher hat die Kategorie das stillschweigend angenommen; vorhandene Studio-Profile haben beides, Zuhause den Bauchroller. Ohne Barren wird aus Dips Ring Dip (mit Ringen) oder Chair Dip.
+- Fehlen Weste und Scheiben, läuft eine Übung mit Zusatzlast ohne Last, außer der Orden hat dafür eine eigene Fassung.
+- Der Aschekurier ist ein kleines Feder-Logo in der Ordenskarte auf „Heute“; Antippen öffnet die Ausgabe, ein Punkt zeigt eine neue.
+- Kurztag: Die Hinweiszeilen über der Einheit entfallen. Warum eine Übung einen Satz mehr hat, verschoben oder als Superset gepaart ist, steht in ihren Details (Dosis antippen).
+
 ## [0.44.0] – 2026-10-13
 
 ### Neu

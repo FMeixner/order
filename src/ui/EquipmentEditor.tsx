@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { formatWeightList, parseWeightList } from "../engine/loads";
 import { EQUIPMENT_PRESETS } from "../store";
-import type { EquipmentProfile, Tier } from "../types";
-import { Check, Field, Seg } from "./common";
+import type { EquipmentProfile } from "../types";
+import { Check, Field } from "./common";
 
-const TIER_LABEL: Record<Tier, string> = { gym: "Studio", home: "Zuhause", reise: "Unterwegs" };
 const HAS_LABEL: Record<keyof EquipmentProfile["has"], string> = {
   bar: "Klimmzugstange", rings: "Ringe", bench: "Bank", rower: "Rudergerät", bike: "Rad/Ergometer",
-  box: "Box/Stufe", sandbag: "Sandsack", cable: "Kabelzug", machines: "Maschinen", medball: "Medizinball 2 kg", sword: "Schwert oder Stock", handles: "Liegestützgriffe oder Yoga-Blöcke",
+  box: "Box/Stufe", sandbag: "Sandsack", cable: "Kabelzug", machines: "Maschinen", medball: "Medizinball 2 kg", sword: "Schwert oder Stock", handles: "Liegestützgriffe oder Yoga-Blöcke", dip: "Dip-Barren", wheel: "Bauchroller",
 };
 
 function ListInput({ value, onChange, placeholder }: { value: number[]; onChange: (v: number[]) => void; placeholder: string }) {
@@ -28,9 +27,6 @@ export function ProfileForm({ p, onChange, onDelete }: { p: EquipmentProfile; on
       <div className="row">
         <Field label="Name"><input type="text" value={p.name} onChange={(e) => set({ name: e.target.value })} /></Field>
       </div>
-      <Field label="Art des Orts" hint="Bestimmt, welche Übungsvariante zuerst gewählt wird.">
-        <Seg value={p.tier} options={(Object.keys(TIER_LABEL) as Tier[]).map((t) => ({ value: t, label: TIER_LABEL[t] }))} onChange={(tier) => set({ tier })} />
-      </Field>
       <Field label="Kurzhanteln (kg, je Hantel)">
         <ListInput value={p.dumbbells} onChange={(dumbbells) => set({ dumbbells })} placeholder="z. B. 2-24/2 oder 5; 7,5; 10" />
       </Field>
@@ -79,7 +75,7 @@ export function EquipmentEditor({ list, onChange }: { list: EquipmentProfile[]; 
       {list.map((p) => (
         <div key={p.id}>
           <button className={`list-row ${openId === p.id ? "on" : ""}`} onClick={() => setOpenId(openId === p.id ? null : p.id)}>
-            <span><strong>{p.name || "Ohne Namen"}</strong> <span className="muted">· {TIER_LABEL[p.tier]}</span></span>
+            <span><strong>{p.name || "Ohne Namen"}</strong></span>
             <span className="muted small">{summary(p)}</span>
           </button>
           {openId === p.id && (
