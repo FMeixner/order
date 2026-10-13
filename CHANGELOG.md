@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.48.2] – 2026-10-13
+
+### Behoben
+- „Blockfolge vorschlagen“ reagiert etwa dreimal so schnell: Die Jahresbalance wird je Variante nur noch einmal berechnet. Der Vorschlag selbst bleibt gleich.
+
 ## [0.48.1] – 2026-10-13
 
 ### Geändert

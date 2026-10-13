@@ -49,8 +49,10 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
       }
     }
     // Zwischenstand mit Balance-Anteil bewerten, damit die Suche das Ziel früh berücksichtigt
-    const withAim = (bm: Beam) => bm.score + aimScore(sorted.slice(0, bm.seq.length).map((x, i) => ({ ...x, focusId: bm.seq[i] })), from, to, aim, deficits);
-    beams = next.sort((a, c) => withAim(c) - withAim(a)).slice(0, BEAM);
+    // Ziel-Punkte einmal je Variante rechnen, nicht bei jedem Vergleich im Sortieren
+    const head = sorted.slice(0, next[0]?.seq.length ?? 0);
+    beams = next.map((bm) => ({ bm, v: bm.score + aimScore(head.map((x, i) => ({ ...x, focusId: bm.seq[i] })), from, to, aim, deficits) }))
+      .sort((a, c) => c.v - a.v).slice(0, BEAM).map((x) => x.bm);
   }
   const best = beams[0];
   const proposed = sorted.map((b, i) => ({ ...b, focusId: best?.seq[i] ?? b.focusId }));
