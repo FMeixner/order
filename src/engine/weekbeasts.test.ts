@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { dayMods, withQuiet } from "./dayadj";
 import { FOCUS_BY_ID, SKILLS } from "../data";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState } from "../types";
@@ -70,19 +71,21 @@ describe("Zwei Bestien an einem Tag", () => {
   });
 });
 
-describe("Schweißfreier Ort", () => {
+describe("Leise (früher schweißfreier Ort)", () => {
   it("keine Bestien, kein Laufen, keine Intervalle, Finisher bleibt Superset", () => {
     const s0 = emptyState();
     for (const fid of Object.keys(FOCUS_BY_ID)) {
       const st: AppState = {
-        ...s0, equipment: [{ ...gym, id: "g", sweatFree: true }], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" },
+        ...s0, equipment: [{ ...gym, id: "g" }], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" },
+        dayFlags: { Mo: { quiet: true }, Di: { quiet: true }, Do: { quiet: true }, Fr: { quiet: true } },
         plan: [{ id: "b1", focusId: fid, label: "", start: "2026-09-28", end: "2026-12-20", load: "medium", travel: false }],
       };
       const block = st.plan[0];
       for (const w of [1, 2]) {
         const focus = focusFor(st, block, w)!;
         for (const d of dayRoleMap(st, block, focus, w)) {
-          const items = collectItems({ state: st, block, focus, week: w, roleKey: d.role, profile: st.equipment[0], date: "2026-10-01", reduced: false } as never);
+          const profile = withQuiet(st.equipment[0], dayMods(st, block, w, d.role, d.day).quiet);
+          const items = collectItems({ state: st, block, focus, week: w, roleKey: d.role, profile, date: "2026-10-01", reduced: false } as never);
           expect(items.filter((i) => i.beast !== undefined || isRunBlock(i.block) || i.resolved.some((r) => r.kind === "interval")), `${fid} ${d.role}`).toEqual([]);
         }
       }

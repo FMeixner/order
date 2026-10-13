@@ -15,6 +15,8 @@ import { musclesOf, volumeRange } from "./volume";
 import { halfOf } from "./warmup";
 
 export const SHORT_KEEP = 3;
+/** Lässt sich kürzen: mindestens eine Kraftübung (sonst bliebe nichts übrig) */
+export const canShorten = (r: Role) => r.blocks.some(strengthBlock);
 /** Taugt als Kurztag: mehr als drei Kraftübungen */
 export const shortEligible = (r: Role) => r.blocks.flatMap((b) => slotsOf(b)).filter((s) => (s.kind ?? "strength") === "strength").length > SHORT_KEEP;
 const MUSCLES = ["Brust", "Rücken", "Schultern", "Quadrizeps", "Gesäß", "Beinbeuger", "Bizeps", "Trizeps"];
@@ -74,16 +76,17 @@ export interface ShortDayReport {
 const memo = new WeakMap<Focus, Map<string, { focus: Focus; report: ShortDayReport }>>();
 
 /** Orden mit Kurztag: gekürzte Rolle und, wenn nötig, ausgeglichene übrige Tage */
-export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles: string[]): { focus: Focus; report: ShortDayReport } {
+/** targets: Tage, die ausgleichen dürfen (spontaner Kurztag: nur die Tage danach); sonst alle übrigen der Woche */
+export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles: string[], targets?: string[]): { focus: Focus; report: ShortDayReport } {
   const lo = volumeRange(user)[0];
-  const key = `${f.id}:${roleKey}:${lo}:${weekRoles.join(",")}`;
+  const key = `${f.id}:${roleKey}:${lo}:${weekRoles.join(",")}:${targets?.join(",") ?? "*"}`;
   let mf = memo.get(f);
   if (!mf) memo.set(f, (mf = new Map()));
   const hit = mf.get(key);
   if (hit) return hit;
   const roles: Record<string, Role> = JSON.parse(JSON.stringify(f.roles));
   const short = roles[roleKey];
-  const others = weekRoles.filter((k) => k !== roleKey && roles[k]);
+  const others = (targets ?? weekRoles).filter((k) => k !== roleKey && roles[k]);
   const before = weekVolume(weekRoles.map((k) => f.roles[k]).filter(Boolean));
 
   // 1. Kurztag: die drei Kernübungen, sonst nichts (keine Bestie, kein Modul), kurzes Warm-up

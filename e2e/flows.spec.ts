@@ -43,17 +43,19 @@ test("Freie Jagd: Rundentracker stoppt die Uhr, Wieder aufnehmen speichert nur d
   expect(after[0].seconds).toBeGreaterThan(first[0].seconds);
 });
 
-test("Kurztag: im Plan wählen, Bericht sehen, gespeichert", async ({ page }) => {
+test("Kurz: spontan für heute, als Wochentag merken, Kraftübungen weniger", async ({ page }) => {
   await seed(page);
   await page.goto("./");
-  await page.getByRole("button", { name: "Plan" }).click();
-  await page.locator(".block-row").first().click();
-  const sel = page.locator("select").filter({ has: page.locator("option", { hasText: "Kein Kurztag" }) });
-  await sel.selectOption({ label: "Oberkörper und Gesäß" });
-  await expect(page.getByText(/^Bleibt:/)).toBeVisible();
-  await page.getByRole("button", { name: "Speichern" }).click();
-  await expect(page.getByText(/Kurztag: Oberkörper und Gesäß/)).toBeVisible();
-  expect((await stored(page)).plan[0].shortRole).toBe("arme_schultern");
+  await page.locator(".day-btn").filter({ hasText: "Oberkörper und Gesäß" }).click();
+  const before = await page.locator(".slot-name").count();
+  await page.getByRole("button", { name: "Anpassen für heute" }).click();
+  await page.getByRole("button", { name: "Kurz", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Kurz", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText(/etwa \d+ Min · Kurz/)).toBeVisible();
+  expect(await page.locator(".slot-name").count()).toBeLessThan(before);
+  await page.getByText(/^Kurz jeden /).click();
+  const st = await stored(page);
+  expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.short).length).toBe(1);
 });
 
 test("Sicherung: speichern und wieder laden", async ({ page }, info) => {
@@ -90,7 +92,7 @@ test("Warm-up: nach links startet rechts von selbst", async ({ page }) => {
   await expect(page.locator(".timerbar-label")).toContainText("Rechts");
 });
 
-test("Schweißfreier Ort: keine Bestie am Tag", async ({ page }) => {
+test("Leise an allen Tagen (alter schweißfreier Ort): keine Bestie am Tag", async ({ page }) => {
   const st = fixture();
   st.equipment = st.equipment.map((e) => ({ ...e, sweatFree: true }));
   await seed(page, st);
@@ -122,13 +124,15 @@ test("Warm-up anpassen: entfernen und hinzufügen, dauerhaft für den Tag", asyn
   expect((await stored(page)).drillEdits?.["assassin:kraft_a"]).toBeUndefined();
 });
 
-test("Viel Energie: Haken im Anpassen-Menü, Hinweis in der Einheit", async ({ page }) => {
+test("Intensiv: Schalter im Anpassen-Menü, löst Leise, Hinweis in der Einheit", async ({ page }) => {
   await seed(page);
   await page.goto("./");
   await page.locator(".day-btn").filter({ hasText: "Schwert und Bestie" }).click();
   await page.getByRole("button", { name: "Anpassen für heute" }).click();
-  await page.getByText(/Heute viel Energie/).click();
-  await expect(page.getByText(/· viel Energie/)).toBeVisible();
+  await page.getByRole("button", { name: "Leise", exact: true }).click();
+  await page.getByRole("button", { name: "Intensiv", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Leise", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText(/etwa \d+ Min · Intensiv/)).toBeVisible();
   const st = await stored(page);
   expect(Object.values(st.energy ?? {})).toContain(true);
 });

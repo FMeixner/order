@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { dayMods, withQuiet } from "../engine/dayadj";
 import { EXERCISES, FLOWS, SHARPEN } from "../data";
 import { menuDefault } from "../engine/sharpen";
 import { focusFor } from "../engine/weekplan";
@@ -28,6 +29,8 @@ export interface SessionCtx {
   profile: EquipmentProfile;
   date: string;
   reduced: boolean;
+  /** Aktive Tagesanpassung für die Kopfzeile, z. B. „Kurz · Leise“ */
+  modsLabel?: string;
   /** Knopf neben der Überschrift (⚙ Anpassen) und die aufgeklappte Karte darunter */
   headAction?: ReactNode;
   headPanel?: ReactNode;
@@ -82,8 +85,9 @@ setWeekBeastBlocks((state, pb, week) => {
   const ab = isAWeek(week) ? "A" : "B";
   return dayRoleMap(state, pb, f, week).flatMap((d) => {
     const pid = state.profileFor?.[sessionId(pb.id, week, d.role)] ?? d.profileId;
-    const profile = state.equipment.find((e) => e.id === pid);
-    if (!profile) return [];
+    const p0 = state.equipment.find((e) => e.id === pid);
+    if (!p0) return [];
+    const profile = withQuiet(p0, dayMods(state, pb, week, d.role, d.day).quiet);
     const noRun = !!state.noRun?.[sessionId(pb.id, week, d.role)];
     const ctx = { profile } as SessionCtx;
     return (f.roles[d.role] ? roleAt(f.roles[d.role], profile).blocks : [])
@@ -202,7 +206,7 @@ export function SessionView(ctx: SessionCtx) {
     <div className="stack session">
       <div className="session-head">
         {/* Name und Ort stehen schon im Tagesknopf darüber */}
-        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : boostOf(ctx) ? " · viel Energie" : ""}</span>{ctx.headAction}</div>
+        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.modsLabel ? ` · ${ctx.modsLabel}` : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
         {role.note && <p className="note">{role.note}</p>}
         {items.some((it) => it.resolved.some((r) => r.guided)) && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
@@ -964,7 +968,7 @@ export function SessionPreview(ctx: SessionCtx) {
     <div className="stack session">
       <div className="session-head">
         {/* Name und Ort stehen schon im Tagesknopf darüber */}
-        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.reduced ? " · −1 Satz" : boostOf(ctx) ? " · viel Energie" : ""}</span>{ctx.headAction}</div>
+        <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.modsLabel ? ` · ${ctx.modsLabel}` : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
       </div>
       <section className="card preview">

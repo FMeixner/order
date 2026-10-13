@@ -5,6 +5,10 @@ import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { isRunBlock, SessionPreview, SessionView, sessionId, unpinBeasts } from "./SessionView";
 import { focusFor } from "../engine/weekplan";
+import { dayMods, rememberMod, remembered, toggleMod, withQuiet, type DayKey } from "../engine/dayadj";
+import { canShorten } from "../engine/shortday";
+
+const DAY_NAME: Record<Weekday, string> = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag", Sa: "Samstag", So: "Sonntag" };
 import { exportState } from "../store";
 import { TestWeek } from "./TestWeek";
 import { Seg } from "./common";
@@ -67,7 +71,6 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const extTest = followedByTest(state.plan, block);
   const test = !extTest && isTestWeek(baseFocus, block, week);
   const deload = isDeloadWeek(baseFocus, week);
-  const rkey = `${block.id}:${week}`;
   const beforeTest = extTest ? week === total : isTestWeek(baseFocus, block, week + 1);
   // Wiedereinstieg: letzte abgeschlossene Einheit liegt 10 Tage oder mehr zurück
   // gilt für die ganze Woche: Abstand zwischen der letzten Einheit vor dieser Woche und der ersten in dieser Woche (oder heute)
@@ -75,7 +78,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const firstThis = state.sessions.filter((s) => s.done && s.date >= weekStart).map((s) => s.date).sort()[0] ?? today;
   const pauseDays = lastBefore ? daysBetween(lastBefore, firstThis) : 0;
   const comeback = isCur && pauseDays >= 10;
-  const reduced = deload || !!state.reduced[rkey] || beforeTest || comeback;
+  const sysReduced = deload || beforeTest || comeback;
   const days = dayRoleMap(state, block, focus, week);
   const todayWd = weekdayOf(today);
   const doneRoles = new Set(state.sessions.filter((s) => s.blockId === block.id && s.week === week && s.done).map((s) => s.role));
@@ -91,7 +94,10 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const sel = days.find((d) => d.day === (pick ?? defaultDay));
   // Trainingsort für diesen Tag: Standard aus dem Wochenplan, heute umschaltbar
   const pidOf = (d: { role: string; profileId: string }) => state.profileFor?.[sessionId(block.id, week, d.role)] ?? d.profileId;
-  const profile = sel ? state.equipment.find((e) => e.id === pidOf(sel)) : undefined;
+  const profile0 = sel ? state.equipment.find((e) => e.id === pidOf(sel)) : undefined;
+  const mods = sel ? dayMods(state, block, week, sel.role, sel.day) : null;
+  const reduced = sysReduced || !!mods?.light;
+  const profile = profile0 && withQuiet(profile0, !!mods?.quiet);
   const setPlace = (pid: string) => sel && update((st) => {
     const pf = { ...(st.profileFor ?? {}) };
     const k = sessionId(block.id, week, sel.role);
@@ -101,12 +107,25 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
 
   // Anpassungen für heute, gebündelt hinter dem Zahnrad neben der Überschrift der Einheit
   const sid = sel ? sessionId(block.id, week, sel.role) : "";
-  const hasRun = !!(sel && focus.roles[sel.role] && roleAt(focus.roles[sel.role], profile ?? undefined).blocks.some(isRunBlock));
-  const canReduce = !deload && !future;
-  // Viel Energie: nur mit Bestie oder Schwert am Tag, nicht zusammen mit −1 Satz
-  const canBoost = !!(sel && focus.roles[sel.role]) && canReduce && !state.reduced[rkey]
-    && roleAt(focus.roles[sel.role], profile ?? undefined).blocks.some((b) => b.type === "beast" || (b.type === "module" && b.module === "sword" && !!profile?.has.sword));
-  const activeAdj = sel ? [profile && profile.id !== sel.profileId, canReduce && !!state.reduced[rkey], hasRun && !!state.noRun?.[sid], canBoost && !!state.energy?.[sid]].filter(Boolean).length : 0;
+  const role0 = sel ? focus.roles[sel.role] : undefined;
+  const hasRun = !!(role0 && roleAt(role0, profile ?? undefined).blocks.some(isRunBlock));
+  const canAdjust = !!role0 && !future;
+  // Intensiv: nur mit Bestie oder Schwert am Tag und nicht in Wochen, die ohnehin leichter laufen
+  const canBoost = canAdjust && !sysReduced
+    && roleAt(role0!, profile0 ?? undefined).blocks.some((b) => b.type === "beast" || (b.type === "module" && b.module === "sword" && !!profile0?.has.sword));
+  const chips: { k: DayKey | "intense"; label: string; on: boolean; disabled?: boolean; info: string }[] = mods ? [
+    { k: "short", label: "Kurz", on: mods.short, disabled: !role0 || !canShorten(role0), info: remembered(state, block, sel!.role, sel!.day).short ? "Nur die drei Kernübungen. Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Nur die drei Kernübungen. Letzter Tag der Woche, daher kein Ausgleich." : "Nur die drei Kernübungen. Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
+    { k: "light", label: "Leicht", on: mods.light || sysReduced, disabled: sysReduced, info: sysReduced ? "Diese Woche läuft ohnehin mit −1 Satz." : "−1 Satz je Übung, Bestien nur als Plage." },
+    { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben." },
+    { k: "quiet", label: "Leise", on: mods.quiet, info: "Keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up." },
+  ] : [];
+  const weekMatch = (s: { blockId: string; week: number }) => s.blockId === block.id && s.week === week;
+  // Kurz verändert die ganze Woche (Ausgleich), der Rest nur diesen Tag
+  const flip = (k: DayKey | "intense") => sel && update((st) => unpinBeasts(toggleMod(st, block, week, sel.role, sel.day, k), k === "short" ? weekMatch : (s) => s.id === sid));
+  const remember = (k: "short" | "quiet", on: boolean) => sel && update((st) => unpinBeasts(rememberMod(st, block, week, sel.role, sel.day, k, on), weekMatch));
+  const mem = sel ? remembered(state, block, sel.role, sel.day) : { short: false, quiet: false };
+  const activeAdj = sel ? [profile0 && profile0.id !== sel.profileId, mods?.short, mods?.light, mods?.intense, mods?.quiet, hasRun && !!state.noRun?.[sid]].filter(Boolean).length : 0;
+  const modsLabel = chips.filter((c) => c.on).map((c) => c.label).join(" · ");
   const adjustButton = (
     <button className={`btn ghost small adjust-btn ${activeAdj ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
       <span aria-hidden>⚙</span> Anpassen{activeAdj ? ` · ${activeAdj}` : ""}
@@ -114,23 +133,27 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   );
   const adjustPanel = adjust && sel ? (
     <div className="card stack adjust-panel">
+      {canAdjust && (
+        <div className="stack">
+          <div className="day-mods" role="group" aria-label="Heute">
+            {chips.map((c) => (
+              <button key={c.k} className={`mod-chip ${c.on ? "on" : ""}`} aria-pressed={c.on} disabled={c.disabled} onClick={() => flip(c.k)}>{c.label}</button>
+            ))}
+          </div>
+          {chips.filter((c) => c.on).map((c) => <div key={c.k} className="muted small"><strong>{c.label}:</strong> {c.info}</div>)}
+          {(["short", "quiet"] as const).filter((k) => mods?.[k] || mem[k]).map((k) => (
+            <label key={k} className="check small">
+              <input type="checkbox" checked={mem[k]} onChange={(e) => remember(k, e.target.checked)} />
+              <span>{k === "short" ? "Kurz" : "Leise"} jeden {DAY_NAME[sel.day]}{k === "short" ? " (dann gleicht die ganze Woche aus)" : ""}</span>
+            </label>
+          ))}
+        </div>
+      )}
       {state.equipment.length > 1 && (
         <div className="stack">
           <span className="field-label">Ort für diese Einheit</span>
-          <Seg value={profile?.id ?? sel.profileId} options={state.equipment.map((e) => ({ value: e.id, label: e.name }))} onChange={setPlace} />
+          <Seg value={profile0?.id ?? sel.profileId} options={state.equipment.map((e) => ({ value: e.id, label: e.name }))} onChange={setPlace} />
         </div>
-      )}
-      {canReduce && (
-        <label className="check small">
-          <input type="checkbox" checked={!!state.reduced[rkey]} onChange={(e) => update((st) => unpinBeasts({ ...st, reduced: { ...st.reduced, [rkey]: e.target.checked } }, (s) => s.blockId === block.id && s.week === week))} />
-          <span>Diese Woche −1 Satz (müde, krank, viel los)</span>
-        </label>
-      )}
-      {canBoost && (
-        <label className="check small">
-          <input type="checkbox" checked={!!state.energy?.[sid]} onChange={(e) => update((st) => unpinBeasts({ ...st, energy: { ...(st.energy ?? {}), [sid]: e.target.checked } }, (s) => s.id === sid))} />
-          <span>Heute viel Energie: Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben.</span>
-        </label>
       )}
       {hasRun && (
         <label className="check small">
@@ -210,9 +233,9 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
             })}
           </div>
           {sel && profile && future ? (
-            <SessionPreview state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} headAction={adjustButton} headPanel={adjustPanel} />
+            <SessionPreview state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} modsLabel={modsLabel} headAction={adjustButton} headPanel={adjustPanel} />
           ) : sel && profile ? (
-            <SessionView key={sessionId(block.id, week, sel.role) + profile.id} state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} headAction={adjustButton} headPanel={adjustPanel} />
+            <SessionView key={sessionId(block.id, week, sel.role) + profile.id} state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} modsLabel={modsLabel} headAction={adjustButton} headPanel={adjustPanel} />
           ) : (
             <div className="card muted">Kein Trainingstag eingerichtet oder Equipment-Profil fehlt. Unter Setup den Wochenplan prüfen.</div>
           )}

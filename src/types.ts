@@ -209,8 +209,10 @@ export interface EquipmentProfile {
   vest: number[];
   bands: string[];
   has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean };
-  /** Schweißfrei (z. B. Arbeitsplatz): keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up */
+  /** Alt (bis 0.45): Schweißfrei am Ort; wird beim Laden zu „Leise“ an den Wochentagen dieses Orts */
   sweatFree?: boolean;
+  /** Nur zur Laufzeit: Leise an diesem Tag (keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up) */
+  quiet?: boolean;
 }
 
 export interface PlanBlock {
@@ -341,7 +343,11 @@ export interface AppState {
   swaps: Record<string, string>;
   /** Eigene Warm-up- und Cool-down-Listen je Tag: "focusId:rolle" → Änderungen. Gilt dauerhaft für diesen Tag des Ordens. */
   drillEdits?: Record<string, DrillEdits>;
-  /** Viel Energie heute (Session-Id → true): Bestien eine Klasse länger, Schwertübungen +1 Satz */
+  /** Tagesanpassung je Einheit (Session-Id): eigene Wahl für Kurz, Leicht, Leise; fehlt sie, gilt das Gemerkte */
+  dayAdj?: Record<string, { short?: boolean; light?: boolean; quiet?: boolean }>;
+  /** Je Wochentag gemerkt, gilt in allen Phasen: Kurz (höchstens ein Tag) und Leise */
+  dayFlags?: Partial<Record<Weekday, { short?: boolean; quiet?: boolean }>>;
+  /** Intensiv (Session-Id → true): Bestien eine Klasse länger, Schwertübungen +1 Satz */
   energy?: Record<string, boolean>;
   /** Einheiten, in denen heute nicht gelaufen werden kann (Session-Id → true): Lauf wird zur Bestie */
   noRun?: Record<string, boolean>;

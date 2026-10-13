@@ -1,4 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
+import { dayMods, withQuiet } from "./dayadj";
 import { allRuns } from "./runs";
 import { blockSeconds, boostClass, estimateRole, roleSlots } from "./duration";
 import { beastSets, musclesOf } from "./volume";
@@ -378,10 +379,10 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
 let weekFocus: (state: AppState, b: PlanBlock, week: number) => Focus | null = (_s, b) => blockFocus(b) ?? null;
 export const setWeekFocus = (fn: typeof weekFocus) => { weekFocus = fn; };
 
-/** Rolle so, wie sie an diesem Ort läuft. Schweißfrei: ohne Bestien, Laufen und Intervalle, Finisher bleiben Superset, kurzes Warm-up. */
+/** Rolle so, wie sie an diesem Tag läuft. Leise: ohne Bestien, Laufen und Intervalle, Finisher bleiben Superset, kurzes Warm-up. */
 const sweatMemo = new WeakMap<Role, Role>();
 export function roleAt(role: Role, p: EquipmentProfile | undefined): Role {
-  if (!p?.sweatFree) return role;
+  if (!p?.quiet) return role;
   let r = sweatMemo.get(role);
   if (r) return r;
   const sweaty = (b: Block) => b.type === "beast" || (b.type === "single" && (!!EXERCISES[b.slot.name]?.run || b.slot.kind === "interval"));
@@ -407,7 +408,8 @@ let weekBeastBlocks: (state: AppState, pb: PlanBlock, week: number) => BeastTarg
   if (!f) return [];
   return dayRoleMap(state, pb, f, week).flatMap((d) => {
     const pid = state.profileFor?.[`${pb.id}:${week}:${d.role}`] ?? d.profileId;
-    const prof = state.equipment.find((e) => e.id === pid);
+    const p0 = state.equipment.find((e) => e.id === pid);
+    const prof = p0 && withQuiet(p0, dayMods(state, pb, week, d.role, d.day).quiet);
     return prof ? (f.roles[d.role] ? roleAt(f.roles[d.role], prof).blocks : []).map((b) => finisherBlock(b, week) ?? b).filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast").map((b) => [b, prof] as BeastTarget) : [];
   });
 };
@@ -471,7 +473,8 @@ function plannedWeekSets(state: AppState, pb: PlanBlock, week: number): Share {
   const out: Share = {};
   const f = weekFocus(state, pb, week);
   if (f) for (const d of dayRoleMap(state, pb, f, week)) {
-    const prof = state.equipment.find((e) => e.id === d.profileId);
+    const p0 = state.equipment.find((e) => e.id === d.profileId);
+    const prof = p0 && withQuiet(p0, dayMods(state, pb, week, d.role, d.day).quiet);
     const role = f.roles[d.role] && roleAt(f.roles[d.role], prof);
     if (!prof || !role) continue;
     const ab = isAWeek(week) ? "A" : "B";

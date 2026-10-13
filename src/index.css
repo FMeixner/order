@@ -346,6 +346,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .session-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .adjust-panel { margin-top: 8px; }
 .adjust-btn.on { border-color: var(--teal); color: var(--text); }
+.day-mods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.mod-chip { padding: 9px 4px; border-radius: 10px; border: 1px solid var(--border-lit); background: var(--surface2); color: var(--text); font: inherit; font-size: 14px; cursor: pointer; }
+.mod-chip.on { border-color: var(--teal); background: var(--teal-dim); font-weight: 600; }
+.mod-chip:disabled { opacity: 0.4; cursor: default; }
 
 /* Bestiarium */
 .pr-table { width: 100%; border-collapse: collapse; }

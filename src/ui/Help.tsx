@@ -120,23 +120,20 @@ export function Help() {
         <li>Bei fünf Tagen kommt ein Zusatztag zwischen die schweren Tage: eine Bestie plus etwas, das es nur dann gibt, je nach Orden zum Beispiel Unterarme, Nacken, Füße, Seilspringen oder Qigong.</li>
       </ul>
 
-      <h3>Kurztag</h3>
+      <h3>Tagesanpassung: Kurz · Leicht · Intensiv · Leise</h3>
       <ul>
-        <li>Plan › Phase antippen › Kurztag: Ein Tag der Woche läuft nur mit drei Kernübungen. Darunter zeigt die App, was bleibt, was wegfällt und wie die anderen Tage ausgleichen. In der Einheit steht der Grund in den Details der betroffenen Übung (Dosis antippen).</li>
-        <li>Ausgeglichen wird nur, wenn das Ziel des Ordens leidet: Muskeln, die der Orden aufbaut, bleiben an der unteren Grenze deines Volumenbereichs, alle anderen bei der Erhaltung (4 Sätze pro Woche). Erst kommt ein Satz mehr an passenden Übungen dazu, dann wandern weggefallene Kernübungen auf einen anderen Tag, und wenn die Zeit knapp wird, laufen Übungen als Superset. Kein Tag überschreitet dabei sein Zeitlimit.</li>
-      </ul>
-
-      <h3>Schweißfreier Ort</h3>
-      <ul>
-        <li>Setup › Equipment › „Schweißfrei“ (etwa für den Arbeitsplatz): An Tagen an diesem Ort kommen keine Bestien, kein Laufen und keine Intervalle, Finisher bleiben Superset und das Warm-up ist kurz.</li>
+        <li>Unter ⚙ Anpassen neben dem Namen der Einheit. Kurz, Leicht und Leise lassen sich kombinieren, Intensiv steht allein. Die Zahl am Zahnrad zeigt, wie viele Anpassungen aktiv sind.</li>
+        <li><strong>Kurz:</strong> nur die drei Kernübungen. Ausgeglichen wird nur, wenn das Ziel des Ordens leidet: Muskeln, die der Orden aufbaut, bleiben an der unteren Grenze deines Volumenbereichs, alle anderen bei der Erhaltung (4 Sätze pro Woche). Erst kommt ein Satz mehr an passenden Übungen dazu, dann wandern weggefallene Kernübungen auf einen anderen Tag, und wenn die Zeit knapp wird, laufen Übungen als Superset. Kein Tag überschreitet sein Zeitlimit. Spontan gleichen nur die Tage danach aus; ist es der letzte Tag der Woche, entfällt der Ausgleich. Der Grund steht in den Details der betroffenen Übung (Dosis antippen).</li>
+        <li><strong>Leicht:</strong> −1 Satz je Übung, Bestien nur als Plage. Für akut schwere Tage (krank, Prüfungen, schlecht geschlafen).</li>
+        <li><strong>Intensiv:</strong> Bestien kommen eine Klasse länger (der Tag darf bis zu 15 Minuten länger werden), jede Schwertübung bekommt einen Satz mehr. Kraft, Hypertrophie und Ausdauer bleiben, wie geplant. Nur an Tagen mit Bestie oder Schwert.</li>
+        <li><strong>Leise:</strong> keine Bestien, kein Laufen, keine Intervalle, Finisher bleiben Superset, kurzes Warm-up. Etwa für den Arbeitsplatz; mit Kurz oder Leicht zusammen wird es noch ruhiger.</li>
+        <li>Kurz und Leise lassen sich für einen Wochentag merken („jeden Freitag“), über alle Phasen. Dann plant die App die Woche schon darauf hin: Ein gemerkter Kurztag gleicht über die ganze Woche aus. Kurz geht nur für einen Wochentag.</li>
         <li>Deficit Push-Ups brauchen Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln (Setup › Equipment). Fehlt das am Ort, kommen Banded Push-Ups, ohne Band normale Push-Ups mit einem Satz mehr.</li>
       </ul>
 
       <h3>Alltagslast</h3>
       <ul>
         <li>Ist in einer Phase viel los, läuft etwa die Hälfte der Übungen eines Tages an Maschine oder Kabel, wenn das Studio sie hat. Was ohnehin an Maschine oder Kabel läuft, zählt mit: Ein Maschinentag bleibt unverändert. Der erste große Lift des Tages bleibt frei.</li>
-        <li>Eine akut schwere Woche (krank, Prüfungen, schlecht geschlafen): unter ⚙ Anpassen „−1 Satz“ anhaken. Die Zahl am Zahnrad zeigt, wie viele Anpassungen gerade aktiv sind.</li>
-        <li>Viel Energie heute: unter ⚙ Anpassen anhaken. Bestien kommen eine Klasse länger (der Tag darf bis zu 15 Minuten länger werden), jede Schwertübung bekommt einen Satz mehr. Kraft, Hypertrophie und Ausdauer bleiben, wie geplant. Mit −1 Satz geht das nicht zusammen.</li>
         <li>Warm-up und Cool-down anpassen: in der Einheit aufklappen, „✎ Bearbeiten“. Mit ✕ fliegt eine Übung raus, über „+ Übung hinzufügen“ kommt eine aus dem Katalog dazu. Das gilt dauerhaft für diesen Tag des Ordens, auch in späteren Phasen. „Auf Vorgabe des Ordens zurücksetzen“ macht es rückgängig. Das Training selbst bleibt fest.</li>
       </ul>
 

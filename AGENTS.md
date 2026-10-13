@@ -9,10 +9,11 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 - `data/` – Inhalte als JSON: `orders/*.json` (Orden, Format in `docs/ORDER-FORMAT.md`), `beasts.json`, `exercises.json`, `modules/*.json` (Warm-up-Listen, Tauschgruppen, Muskeln, Normen …). Geprüft von `scripts/validate.mjs`.
 - `src/engine/` – Logik ohne UI:
   - `plan.ts` (Jahresplan, Bestienwahl, Warm-up-Listen)
-  - `weekplan.ts` (`focusFor`: eingefrorene Fassung → 3-Tage-Form → Kurztag → Schwerpunkt-Slot → eigene Warm-up-Änderungen)
+  - `weekplan.ts` (`focusFor`: eingefrorene Fassung → 3-Tage-Form → Kurz (gemerkt: ganze Woche, spontan: Folgetage) → Schwerpunkt-Slot → eigene Warm-up-Änderungen)
   - `shortday.ts` (Kurztag mit Ausgleich)
+  - `dayadj.ts` (Tagesanpassung Kurz · Leicht · Intensiv · Leise; Kurz und Leise je Wochentag gemerkt in `dayFlags`)
   - `progression.ts` (`suggest`, `advance`)
-  - `resolve.ts` (Übung am Ort: Equipment, Skills, Tausch, `instead`-Ersatz, geführte Varianten)
+  - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
   - `warmup.ts`, `duration.ts`, `saga.ts` (Erzähler „Aschekurier“)
 - `src/ui/` – React-Ansichten; die Einheit ist `SessionView.tsx`.
 - `src/store.ts` – Zustand im `localStorage` unter `order:v1`, Migrationen für alte Stände (Testfälle in `src/fixtures/`).

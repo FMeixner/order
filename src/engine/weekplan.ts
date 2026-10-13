@@ -9,8 +9,9 @@ import { EQUIPMENT_PRESETS } from "../store";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot } from "../types";
 import { estimateRole } from "./duration";
 import { parseReps } from "./resolve";
-import { applyDrillEdits, blockFocus, defaultRoles, setWeekFocus, trainingDays } from "./plan";
-import { shortDay } from "./shortday";
+import { applyDrillEdits, blockFocus, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { canShorten, shortDay } from "./shortday";
+import { dayMods, remembered } from "./dayadj";
 import { applySlot } from "./sharpen";
 
 let presets: Record<Role["location"], ReturnType<(typeof EQUIPMENT_PRESETS)[0]["make"]>> | null = null;
@@ -127,8 +128,22 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   const f = base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base;
   const n = trainingDays(state, b).length;
   let shaped = shapeFocus(f, n);
-  // Kurztag: gekürzte Rolle, die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet
-  if (b.shortRole && shaped.roles[b.shortRole] && !base.medley?.length) shaped = shortDay(shaped, b.shortRole, state.user, defaultRoles(shaped, n)).focus;
+  // Kurz: gekürzte Rolle; die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet.
+  // Gemerkter Kurztag: die ganze Woche gleicht aus. Spontan: nur die Tage danach.
+  if (!base.medley?.length) {
+    const weekRoles = defaultRoles(shaped, n);
+    const days = dayRoleMap(state, b, shaped, week);
+    const shorts = days.map((d, i) => ({ ...d, i, mods: dayMods(state, b, week, d.role, d.day) }))
+      .filter((d) => d.mods.short && shaped.roles[d.role] && canShorten(shaped.roles[d.role]))
+      .map((d) => ({ ...d, planned: remembered(state, b, d.role, d.day).short && state.dayAdj?.[`${b.id}:${week}:${d.role}`]?.short === undefined }))
+      .sort((x, y) => Number(y.planned) - Number(x.planned) || x.i - y.i);
+    const done = new Set<string>();
+    for (const d of shorts) {
+      const targets = (d.planned ? weekRoles : days.slice(d.i + 1).map((x) => x.role)).filter((r) => !done.has(r) && r !== d.role);
+      shaped = shortDay(shaped, d.role, state.user, weekRoles, targets).focus;
+      done.add(d.role);
+    }
+  }
   return applyDrillEdits(applySlot(shaped, state, b), state.drillEdits);
 }
 

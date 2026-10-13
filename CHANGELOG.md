@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.46.0] – 2026-10-13
+
+### Neu
+- Tagesanpassung als vier Schalter unter ⚙ Anpassen: **Kurz · Leicht · Intensiv · Leise**. Kurz, Leicht und Leise lassen sich kombinieren, Intensiv steht allein.
+- Kurz geht spontan: Nur die drei Kernübungen, die Tage danach gleichen aus. Am letzten Tag der Woche entfällt der Ausgleich.
+- Kurz und Leise lassen sich je Wochentag merken („Kurz jeden Freitag“), über alle Phasen. Ein gemerkter Kurztag gleicht über die ganze Woche aus.
+
+### Geändert
+- Leicht ersetzt „Diese Woche −1 Satz“ und gilt nur für den Tag.
+- Intensiv ersetzt „Heute viel Energie“.
+- Leise ersetzt den schweißfreien Ort: Wer einen Ort als schweißfrei markiert hatte, hat jetzt Leise an den Wochentagen dieses Orts gemerkt.
+- Der Kurztag im Plan entfällt; ein bestehender gilt weiter, bis du für einen Wochentag „Kurz“ merkst oder ihn dort ausschaltest.
+
 ## [0.45.0] – 2026-10-13
 
 ### Geändert

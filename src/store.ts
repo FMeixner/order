@@ -1,6 +1,6 @@
 /* Zustand der App: im Browser gespeichert (localStorage), exportier- und importierbar als JSON. */
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { AppState, EquipmentProfile } from "./types";
+import type { AppState, EquipmentProfile, Weekday } from "./types";
 
 const KEY = "order:v1";
 
@@ -83,9 +83,20 @@ export function migrate(raw: unknown): AppState {
   }
   delete s.user.doppelmesser;
   dropTiers(s);
+  quietDays(s);
   s.equipment = s.equipment.map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   renameExercises(s);
   return s;
+}
+/** 0.46: Schweißfrei ist kein Ort mehr, sondern „Leise“ an den Wochentagen, an denen dieser Ort im Wochenplan steht */
+function quietDays(s: AppState): void {
+  const sf = new Set(s.equipment.filter((e) => e.sweatFree).map((e) => e.id));
+  if (!sf.size) return;
+  const flags = { ...(s.dayFlags ?? {}) };
+  for (const sch of [s.schedule ?? {}, ...(s.plan ?? []).map((b) => b.schedule ?? {})])
+    for (const [d, pid] of Object.entries(sch) as [Weekday, string | null][]) if (pid && sf.has(pid)) flags[d] = { ...(flags[d] ?? {}), quiet: true };
+  s.dayFlags = flags;
+  s.equipment = s.equipment.map(({ sweatFree: _sf, ...e }) => e);
 }
 /** 0.45: Orte ohne Kategorie. Was die Kategorie stillschweigend annahm (Studio: Dip-Barren und Bauchroller,
     Zuhause: Bauchroller), wird zu Ausstattung; Tausche gelten je Ort statt je Kategorie. */
