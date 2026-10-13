@@ -324,14 +324,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* Erzähler */
 .card.raven { border-left: 3px solid var(--amber); }
-.hero-top > div:first-child { flex: 1; }
+.hero-top > div:first-child { flex: 1; min-width: 0; }
 .hero-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.hero-top > div:first-child { min-width: 0; }
 .hero-top .week-nav { flex: none; }
 @media (max-width: 400px) { .wk-word { display: none; } }
-.hero-name .raven-badge { width: 30px; height: 30px; }
-.hero-name .raven-badge svg { width: 17px; height: 17px; }
-.raven-badge { position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-lit); background: var(--surface2); color: var(--amber); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.raven-badge { position: relative; flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border-lit); background: var(--surface2); color: var(--amber); display: grid; place-items: center; cursor: pointer; padding: 0; }
 .raven-badge:hover { border-color: var(--amber); }
 .raven-dot { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 2px var(--surface); }
 .raven-lines p { margin: 0 0 8px; }

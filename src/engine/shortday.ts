@@ -7,10 +7,9 @@
    2. weggefallene Kernübungen (oder die einzige Übung für einen Muskel) wandern auf einen anderen Tag derselben Körperhälfte,
    3. passt es nicht in die Zeit: Supersets aus Übungen, die sich nicht in die Quere kommen.
    Kein Tag überschreitet dabei sein Zeitlimit. Was nicht reicht, wird offen gemeldet. */
-import { EQUIPMENT_PRESETS } from "../store";
 import type { Block, Focus, Role, Slot, UserProfile } from "../types";
-import { estimateRole } from "./duration";
-import { equipOf, parseReps } from "./resolve";
+import { isHeavy, isStrength, planMinutes } from "./slots";
+import { equipOf } from "./resolve";
 import { musclesOf, volumeRange } from "./volume";
 import { halfOf } from "./warmup";
 
@@ -26,14 +25,10 @@ const MAX_ADDS = 2;
 /** Feste Geräte: nie zwei davon als Superset */
 const STATION = new Set(["machine", "cable"]);
 
-let presets: Record<Role["location"], ReturnType<(typeof EQUIPMENT_PRESETS)[0]["make"]>> | null = null;
-const P = () => (presets ??= { gym: EQUIPMENT_PRESETS[0].make(), home: EQUIPMENT_PRESETS[1].make(), reise: EQUIPMENT_PRESETS[2].make() });
-const est = (r: Role) => estimateRole(r, P()[r.location]).total;
+const est = planMinutes;
 
 type Share = Record<string, number>;
 const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : b.type === "menu" ? Object.values(b.options).slice(0, 1) : []);
-const isStrength = (s: Slot) => (s.kind ?? "strength") === "strength";
-const isHeavy = (s: Slot) => (s.rest ?? 90) >= 150 || s.prog === "topset" || (parseReps(s.reps ?? "").hi ?? 99) <= 6;
 const strengthBlock = (b: Block) => (b.type === "single" && (isStrength(b.slot) || b.slot.kind === "hold")) || b.type === "superset" || b.type === "contrast" || b.type === "menu";
 const primary = (s: Slot) => Object.entries(musclesOf(s.name)).sort((a, c) => c[1] - a[1])[0]?.[0];
 

@@ -480,7 +480,8 @@ describe("hexed und Grundlagentempo", () => {
     }
   });
   it("kein Laufen: Laufblock wird Bestie", async () => {
-    const { collectItems, sessionId } = await import("../ui/SessionView");
+    const { collectItems } = await import("../ui/session/items");
+    const { sessionId } = await import("../ui/session/ctx");
     const s = sample();
     const block = { id: "bx", focusId: "conqueror", start: "2026-09-28", end: "2026-12-06", label: "", load: "medium" as const, travel: false };
     s.plan = [block];

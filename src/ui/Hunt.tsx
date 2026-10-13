@@ -5,7 +5,7 @@ import { isLoadBeast } from "../engine/loadbeast";
 import { allRuns, HUNT, isHunt } from "../engine/runs";
 import type { AppState, BeastResult, Session } from "../types";
 import { Seg } from "./common";
-import { BeastCard } from "./SessionView";
+import { BeastCard } from "./session/BeastCard";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 const RUN = "jagd";

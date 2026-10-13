@@ -65,7 +65,7 @@ export function RavenBadge({ state, update, block, today }: { state: AppState; u
   return (
     <>
       <button className={`raven-badge ${unseen ? "unseen" : ""}`} onClick={show} aria-label={`${title}${unseen ? " (neu)" : ""}`} title={nr.name}>
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden>
           <path d="M20 3c-6 1-11 5-13 11l-2 6 2-1c1-3 3-6 6-8-2 3-3 5-4 8 6-1 10-7 11-16z" fill="currentColor" />
           <path d="M4 21h9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
         </svg>

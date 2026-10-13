@@ -6,7 +6,7 @@ import { exportState, migrate } from "../store";
 import { AUTO_FILE, backupFile, canPickFile, chooseBackupFile, forgetBackupFile } from "../backup";
 import type { AppState, UserProfile } from "../types";
 import { WEEKDAYS } from "../types";
-import { unpinBeasts } from "./SessionView";
+import { unpinBeasts } from "./session/items";
 import { Collapse, Field, Seg } from "./common";
 import { NarrativeSettings } from "./Raven";
 import { EquipmentEditor } from "./EquipmentEditor";

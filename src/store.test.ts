@@ -8,7 +8,7 @@ import { chapterOf } from "./engine/saga";
 import { weeklyVolume } from "./engine/volume";
 import { freezePlan, dayRoleMap } from "./engine/plan";
 import { focusFor } from "./engine/weekplan";
-import { collectItems } from "./ui/SessionView";
+import { collectItems } from "./ui/session/items";
 import { allRuns } from "./engine/runs";
 import type { AppState } from "./types";
 

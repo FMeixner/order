@@ -3,7 +3,9 @@ import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedB
 import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
-import { isRunBlock, SessionPreview, SessionView, sessionId, unpinBeasts } from "./SessionView";
+import { SessionPreview, SessionView } from "./SessionView";
+import { sessionId } from "./session/ctx";
+import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
 import { dayMods, rememberMod, remembered, toggleMod, withQuiet, type DayKey } from "../engine/dayadj";
 import { canShorten } from "../engine/shortday";

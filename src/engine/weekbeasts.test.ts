@@ -3,7 +3,8 @@ import { dayMods, withQuiet } from "./dayadj";
 import { FOCUS_BY_ID, SKILLS } from "../data";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState } from "../types";
-import { collectItems, isRunBlock, sessionId } from "../ui/SessionView";
+import { collectItems, isRunBlock } from "../ui/session/items";
+import { sessionId } from "../ui/session/ctx";
 import { beastFamily, dayRoleMap } from "./plan";
 import { focusFor } from "./weekplan";
 

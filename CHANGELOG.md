@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.46.3] – 2026-10-13
+
+### Intern
+- Code aufgeräumt: Die Einheit ist in kleinere Dateien aufgeteilt (Satzkarte, Bestie, Warm-up/Cool-down, Inhalte), doppelte Helfer zusammengeführt, eine ungenutzte Funktion entfernt. Für dich ändert sich nichts.
+
 ## [0.46.2] – 2026-10-13
 
 ### Geändert

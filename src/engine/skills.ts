@@ -9,8 +9,6 @@ const BEAST_RX = SKILLS.skills.filter((s) => s.beast).map((s) => ({ id: s.id, rx
 
 export type SkillSet = ReadonlySet<string> | null | undefined;
 
-export const requiredSkill = (name: string): string | undefined => NEEDS[name];
-
 /** Ohne Skillcheck (null) ist alles erlaubt */
 export function skillOk(name: string, skills: SkillSet): boolean {
   if (!skills) return true;

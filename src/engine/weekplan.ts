@@ -5,23 +5,17 @@
    Fünf Tage: Der Zusatztag (Rolle außerhalb von week_4, meist „bonus“) kommt zwischen die schweren Tage.
    Harlequin: Orden mit "medley" nehmen jede Woche einen anderen Orden. */
 import { SWAP_GROUPS } from "../data";
-import { EQUIPMENT_PRESETS } from "../store";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot } from "../types";
-import { estimateRole } from "./duration";
-import { parseReps } from "./resolve";
+import { isHeavy, isStrength, planMinutes } from "./slots";
 import { applyDrillEdits, blockFocus, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { canShorten, shortDay } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlot } from "./sharpen";
 
-let presets: Record<Role["location"], ReturnType<(typeof EQUIPMENT_PRESETS)[0]["make"]>> | null = null;
-const P = () => (presets ??= { gym: EQUIPMENT_PRESETS[0].make(), home: EQUIPMENT_PRESETS[1].make(), reise: EQUIPMENT_PRESETS[2].make() });
-const est = (r: Role) => estimateRole(r, P()[r.location]).total;
+const est = planMinutes;
 
 const groupOf = (name: string) => Object.entries(SWAP_GROUPS).find(([, m]) => m.includes(name))?.[0] ?? name;
 const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy] : []);
-const isStrength = (s: Slot) => (s.kind ?? "strength") === "strength";
-const isHeavy = (s: Slot) => (s.rest ?? 90) >= 150 || s.prog === "topset" || (parseReps(s.reps ?? "").hi ?? 99) <= 6;
 const TIER_RANK = { gym: 2, home: 1, reise: 0 } as const;
 
 /** Drei-Tage-Woche: Rollen aus week_3, angereichert mit dem Wichtigsten aus dem gestrichenen Tag */
