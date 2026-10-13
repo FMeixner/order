@@ -274,6 +274,7 @@ function toggleDrill(s: Session, key: string, i: number): Session {
 /** Warm-up oder Cool-down mit eigenen Änderungen: Übungen entfernen und aus dem Katalog hinzufügen, dauerhaft für diesen Tag des Ordens */
 function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" | "cd"; drills: DrillView[]; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void }) {
   const [edit, setEdit] = useState(false);
+  const [open, setOpen] = useState(false);
   const key = `${ctx.focus.id}:${ctx.roleKey}`;
   const ed = ctx.state.drillEdits?.[key]?.[kind];
   const changed = !!ed && (ed.off.length > 0 || ed.add.length > 0);
@@ -292,11 +293,9 @@ function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" | "cd"; 
   const pool = drillPool(kind, ctx.profile).filter((d) => !shown.has(d.id));
   const title = kind === "wu" ? "Warm-up" : "Cool-down";
   return (
-    <Collapse title={title} meta={`${drills.length} Übungen${changed ? " · angepasst" : ""}`} tone="amber">
-      <div className="row between">
-        <span className="muted small">{edit ? `Änderungen gelten dauerhaft für ${ctx.focus.roles[ctx.roleKey]?.name ?? "diesen Tag"}.` : ""}</span>
-        <button className="btn ghost small" onClick={() => setEdit((o) => !o)} aria-pressed={edit}>{edit ? "Fertig" : "✎ Bearbeiten"}</button>
-      </div>
+    <Collapse title={title} meta={`${drills.length} Übungen${changed ? " · angepasst" : ""}`} tone="amber" open={open} onOpenChange={setOpen}
+      extra={<button className={`pen-btn ${edit ? "on" : ""}`} onClick={() => { setEdit((o) => !o); setOpen(true); }} aria-pressed={edit} aria-label={`${title} bearbeiten`} title="Bearbeiten">✎</button>}>
+      {edit && <span className="muted small">Änderungen gelten dauerhaft für {ctx.focus.roles[ctx.roleKey]?.name ?? "diesen Tag"}.</span>}
       <DrillList drills={drills} done={session?.drills ?? {}} prefix={kind} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))}
         onRemove={edit ? remove : undefined} />
       {edit && (
@@ -595,6 +594,29 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
   // Vorausschau („→ bis 3 × 12, dann 27,5 kg“) gehört in die Details; Hinweise zum Heute (Pause, Dreimal OK) bleiben sichtbar
   const detailGap = sug.gap?.startsWith("→") ? sug.gap : undefined;
 
+  // Fertig: alle Sätze abgehakt, Rückmeldung gegeben (bei „Zu schwer“ auch die Zahl). Dann klappt die Übung nach kurzer Zeit ein.
+  const needsFb = r.prog !== "none";
+  const missedOpen = entry.feedback === "zuschwer" && askable && (askValue == null || askValue >= (target ?? 0));
+  const complete = sets.every((x) => x.done) && (!needsFb || !!entry.feedback) && !missedOpen;
+  const [folded, setFolded] = useState<boolean>(complete);
+  const [typing, setTyping] = useState(false);
+  useEffect(() => {
+    if (!complete) { setFolded(false); return; }
+    if (typing || folded) return;
+    const id = setTimeout(() => setFolded(true), 2500);
+    return () => clearTimeout(id);
+  }, [complete, typing, entry.feedback, askValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (folded && complete) {
+    return (
+      <button className="slot slot-done" onClick={() => setFolded(false)} aria-label={`${sug.name} erledigt, aufklappen`}>
+        <span className="slot-done-check" aria-hidden>✓</span>
+        <span className="slot-name">{sug.name}</span>
+        <span className="muted small">{entry.feedback ? FEEDBACK_LABEL[entry.feedback] : ""}</span>
+      </button>
+    );
+  }
+
   return (
     <div className="slot">
       <div className="slot-head">
@@ -693,7 +715,7 @@ function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx: Sessi
       {askReps && (
         <label className="row ask-reps small">
           <span>{entry.feedback === "zuschwer" ? "Wie viele im letzten Satz?" : "Wie viele je Satz?"}</span>
-          <input type="number" inputMode="numeric" className="reps-in" value={askValue ?? ""} autoFocus={entry.feedback === "zuschwer"}
+          <input type="number" inputMode="numeric" className="reps-in" value={askValue ?? ""} autoFocus={entry.feedback === "zuschwer"} onFocus={() => setTyping(true)} onBlur={() => setTyping(false)}
             onChange={(e) => writeAsked(e.target.value === "" ? undefined : parseInt(e.target.value))} aria-label="Geschaffte Wiederholungen" />
         </label>
       )}

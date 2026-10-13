@@ -92,7 +92,10 @@ textarea { resize: vertical; }
 
 .collapse { padding: 0; }
 .collapse-head { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: 0; padding: 13px 14px; cursor: pointer; text-align: left; }
-.collapse-title { font-weight: 600; flex: 1; }
+.collapse-title { font-weight: 600; flex: 1; display: flex; align-items: center; gap: 6px; }
+.collapse-extra { display: inline-flex; }
+.pen-btn { background: none; border: 0; padding: 4px 6px; margin: -4px 0; cursor: pointer; color: var(--muted); font-size: 15px; line-height: 1; border-radius: 6px; }
+.pen-btn.on { color: var(--text); background: var(--teal-dim); }
 .collapse-meta { color: var(--muted); font-size: 12.5px; }
 .chev { color: var(--muted); transition: transform 0.15s; font-size: 18px; }
 .chev.open { transform: rotate(90deg); }
@@ -350,3 +353,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .set-btn.warm0.done { border-style: solid; }
 
 .refs { padding-left: 18px; display: grid; gap: 6px; }
+.slot-done { display: flex; flex-direction: row; align-items: center; gap: 10px; width: 100%; background: none; border: 0; padding: 8px 0; text-align: left; cursor: pointer; opacity: 0.55; color: var(--text); font: inherit; }
+.slot + .slot-done, .slot-done + .slot, .slot-done + .slot-done { border-top: 1px solid var(--border); }
+.slot-done .slot-name { flex: 1; font-weight: 500; }
+.slot-done-check { width: 22px; height: 22px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; background: var(--teal-dim); color: var(--text); font-size: 12px; }
+.card:has(> .slot-done:only-child) { padding-top: 4px; padding-bottom: 4px; }

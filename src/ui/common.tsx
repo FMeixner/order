@@ -1,14 +1,25 @@
 import { useState, type ReactNode } from "react";
 
-export function Collapse({ title, meta, children, defaultOpen = false, tone }: { title: ReactNode; meta?: ReactNode; children: ReactNode; defaultOpen?: boolean; tone?: "amber" | "teal" }) {
-  const [open, setOpen] = useState(defaultOpen);
+export function Collapse({ title, meta, children, defaultOpen = false, tone, extra, open: openProp, onOpenChange }: {
+  title: ReactNode; meta?: ReactNode; children: ReactNode; defaultOpen?: boolean; tone?: "amber" | "teal";
+  /** Kleiner Knopf direkt neben dem Titel (z. B. ✎); öffnet nicht mit */
+  extra?: ReactNode; open?: boolean; onOpenChange?: (open: boolean) => void;
+}) {
+  const [own, setOwn] = useState(defaultOpen);
+  const open = openProp ?? own;
+  const toggle = () => { const n = !open; setOwn(n); onOpenChange?.(n); };
+  const inner = (
+    <>
+      <span className="collapse-title">{title}{extra && <span className="collapse-extra" onClick={(e) => e.stopPropagation()}>{extra}</span>}</span>
+      {meta && <span className="collapse-meta">{meta}</span>}
+      <span className={`chev ${open ? "open" : ""}`} aria-hidden>›</span>
+    </>
+  );
   return (
     <section className={`card collapse ${tone ?? ""}`}>
-      <button className="collapse-head" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-        <span className="collapse-title">{title}</span>
-        {meta && <span className="collapse-meta">{meta}</span>}
-        <span className={`chev ${open ? "open" : ""}`} aria-hidden>›</span>
-      </button>
+      {extra
+        ? <div className="collapse-head" role="button" tabIndex={0} aria-expanded={open} onClick={toggle} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } }}>{inner}</div>
+        : <button className="collapse-head" onClick={toggle} aria-expanded={open}>{inner}</button>}
       {open && <div className="collapse-body">{children}</div>}
     </section>
   );

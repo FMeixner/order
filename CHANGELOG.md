@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.44.0] – 2026-10-13
+
+### Neu
+- Erledigte Übungen klappen ein: Sind alle Sätze abgehakt und die Rückmeldung gegeben (bei „Zu schwer“ mit Zahl), wird die Übung nach gut zwei Sekunden zu einer schmalen, ausgegrauten Zeile mit Haken. Antippen öffnet sie wieder.
+
+### Geändert
+- Warm-up und Cool-down: Bearbeiten ist jetzt ein Stift direkt neben der Überschrift.
+
 ## [0.43.1] – 2026-10-13
 
 ### Neu

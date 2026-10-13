@@ -109,7 +109,7 @@ test("Warm-up anpassen: entfernen und hinzufügen, dauerhaft für den Tag", asyn
   const names = page.locator(".collapse.amber").first().locator(".drill-name");
   const n = await names.count();
   const first = await names.first().innerText();
-  await page.getByRole("button", { name: "✎ Bearbeiten" }).first().click();
+  await page.getByRole("button", { name: "Warm-up bearbeiten", exact: true }).click();
   await page.getByRole("button", { name: `${first} entfernen` }).click();
   await expect(names).toHaveCount(n - 1);
   await page.getByLabel("Warm-up: Übung hinzufügen").selectOption({ index: 1 });
@@ -147,7 +147,7 @@ test("Bestien bleiben nach dem ersten Klick fest, auch wenn sich das Warm-up än
   expect(Object.keys(JSON.parse(before)).length).toBe(2);
   // Warm-up leeren: ändert die Zeitschätzung, die Bestien dürfen sich nicht ändern
   await page.locator(".collapse-head").filter({ hasText: "Warm-up" }).click();
-  await page.getByRole("button", { name: "✎ Bearbeiten" }).first().click();
+  await page.getByRole("button", { name: "Warm-up bearbeiten", exact: true }).click();
   const rm = page.locator(".drill-remove");
   while (await rm.count()) await rm.first().click();
   await page.getByRole("button", { name: "Satz 2" }).first().click();
@@ -171,4 +171,10 @@ test("Satz antippen speichert das Ziel, „Zu schwer“ fragt den letzten Satz",
   await card.getByRole("button", { name: "Sehr leicht" }).click();
   e = (await stored(page)).sessions[0].entries;
   expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose + 2, +dose + 2, +dose + 2]);
+  // Fertig: Die Übung klappt nach kurzer Zeit ein, Antippen öffnet sie wieder
+  await page.locator("body").click({ position: { x: 5, y: 5 } });
+  const done = page.getByRole("button", { name: "Cable Lateral Raise erledigt, aufklappen" });
+  await expect(done).toBeVisible({ timeout: 6000 });
+  await done.click();
+  await expect(card.getByRole("button", { name: "Sehr leicht" })).toBeVisible();
 });
