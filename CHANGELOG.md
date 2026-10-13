@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.48.1] – 2026-10-13
+
+### Geändert
+- Leise: Passt die Bestie an keinem anderen Tag in die Zeit, paart die App dort Übungen zu Supersets und erlaubt höchstens 5 Minuten mehr. Warum gepaart wurde, steht in den Details der Übung.
+
 ## [0.48.0] – 2026-10-13
 
 ### Neu

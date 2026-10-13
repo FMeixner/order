@@ -8,7 +8,7 @@ import { SWAP_GROUPS } from "../data";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot, Weekday } from "../types";
 import { isHeavy, isStrength, planMinutes } from "./slots";
 import { applyDrillEdits, blockFocus, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
-import { canShorten, shortDay } from "./shortday";
+import { canShorten, pairToFit, shortDay } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlot } from "./sharpen";
 
@@ -139,15 +139,20 @@ function quietMoves(state: AppState, b: PlanBlock, week: number, f: Focus, days:
       const order = ["plage", "bestie", "ungeheuer", "uralte", "verfluchte"] as const;
       const lo = Math.min(...(beast.classes ?? ["bestie"]).map((x) => order.indexOf(x)));
       const tries = [beast, ...order.slice(0, Math.max(0, lo)).reverse().map((x) => ({ ...beast, classes: [x], pool: undefined }))];
-      outer: for (const c of cands) for (const t of tries) {
+      // Je Zieltag: erst ohne Eingriff, dann mit Supersets und höchstens QUIET_EXTRA Minuten mehr
+      outer: for (const c of cands) for (const dense of [false, true]) for (const t of tries) {
         const moved: Block = { ...t, note: [beast.note, `Vom leisen ${DAY_LONG[q.day]} hierher.`].filter(Boolean).join(" ") };
-        const next = { ...roles[c.role], blocks: [...roles[c.role].blocks, moved] };
-        if (planMinutes(next) <= limit(c.role) + 0.5) { roles[c.role] = next; break outer; }
+        const next: Role = JSON.parse(JSON.stringify({ ...roles[c.role], blocks: [...roles[c.role].blocks, moved] }));
+        if (!dense) { if (planMinutes(next) <= limit(c.role) + 0.5) { roles[c.role] = next; break outer; } continue; }
+        const why = `Als Superset gepaart, damit die Bestie vom leisen ${DAY_LONG[q.day]} Platz hat.`;
+        if (pairToFit(next, limit(c.role) + QUIET_EXTRA, (a, b) => { a.why = [...(a.why ?? []), why]; b.why = [...(b.why ?? []), why]; })) { roles[c.role] = next; break outer; }
       }
     }
   }
   return { ...f, roles };
 }
+/** So viel länger darf ein Tag werden, der die Bestie eines leisen Tages aufnimmt (nach dem Verdichten) */
+const QUIET_EXTRA = 5;
 const DAY_LONG: Record<Weekday, string> = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag", Sa: "Samstag", So: "Sonntag" };
 
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {

@@ -120,7 +120,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
     { k: "short", label: "Kurz", on: mods.short, disabled: !role0 || !canShorten(role0), info: remembered(state, block, sel!.role, sel!.day).short ? "Nur die drei Kernübungen. Fixiert: Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Nur die drei Kernübungen. Letzter Tag der Woche, daher kein Ausgleich." : "Nur die drei Kernübungen. Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
     { k: "light", label: "Leicht", on: mods.light || sysReduced, disabled: sysReduced, info: sysReduced ? "Diese Woche läuft ohnehin mit −1 Satz." : "−1 Satz je Übung, Bestien nur als Plage." },
     { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben." },
-    { k: "quiet", label: "Leise", on: mods.quiet, info: "Keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up. Die Bestie wandert auf einen anderen Tag dieser Woche, wenn dort Zeit ist." },
+    { k: "quiet", label: "Leise", on: mods.quiet, info: "Keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up. Die Bestie wandert auf einen anderen Tag dieser Woche, wenn dort Zeit ist (notfalls mit Supersets, höchstens 5 Min länger)." },
   ] : [];
   const weekMatch = (s: { blockId: string; week: number }) => s.blockId === block.id && s.week === week;
   // Kurz verändert die ganze Woche (Ausgleich), der Rest nur diesen Tag

@@ -14,6 +14,32 @@ import { musclesOf, volumeRange } from "./volume";
 import { halfOf } from "./warmup";
 
 export const SHORT_KEEP = 3;
+/** Supersets aus Übungen, die sich nicht in die Quere kommen, bis die Rolle ins Zeitlimit (Minuten) passt.
+    Nie die erste Kraftübung, nie große Grundübungen oder Kernübungen, nie zwei Übungen für denselben Hauptmuskel,
+    im Studio nie zwei Maschinen oder Kabel. Ändert die Rolle direkt; true, wenn sie danach passt. */
+export function pairToFit(r: Role, limit: number, onPair?: (a: Slot, c: Slot) => void): boolean {
+  let guard = 10;
+  while (est(r) > limit + 0.5 && guard--) {
+    const first = r.blocks.findIndex(strengthBlock);
+    const big = (x: Slot) => isHeavy(x) || !!x.core || (!!halfOf(x.name) && (x.rest ?? 90) >= 120);
+    const cands = r.blocks.map((b, i) => ({ b, i })).filter(({ b, i }) => i > first && b.type === "single" && isStrength(b.slot) && !big(b.slot)) as { b: Extract<Block, { type: "single" }>; i: number }[];
+    let pair: [number, number] | null = null;
+    for (let x = 0; x < cands.length && !pair; x++) for (let y = x + 1; y < cands.length && !pair; y++) {
+      const a = cands[x].b.slot, c = cands[y].b.slot;
+      if (primary(a) && primary(a) === primary(c)) continue;
+      if (r.location === "gym" && STATION.has(equipOf(a.name)) && STATION.has(equipOf(c.name))) continue;
+      pair = [cands[x].i, cands[y].i];
+    }
+    if (!pair) return false;
+    const a = (r.blocks[pair[0]] as Extract<Block, { type: "single" }>).slot, c = (r.blocks[pair[1]] as Extract<Block, { type: "single" }>).slot;
+    const { rest: _a, ...sa } = a; const { rest: _c, ...sc } = c; void _a; void _c;
+    r.blocks.splice(pair[1], 1);
+    r.blocks.splice(pair[0], 1, { type: "superset", rest: 75, slots: [sa, sc] });
+    onPair?.(sa, sc);
+  }
+  return est(r) <= limit + 0.5;
+}
+
 /** Lässt sich kürzen: mindestens eine Kraftübung (sonst bliebe nichts übrig) */
 export const canShorten = (r: Role) => r.blocks.some(strengthBlock);
 /** Taugt als Kurztag: mehr als drei Kraftübungen */
@@ -103,32 +129,7 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   const noteFor: Record<string, string[]> = {};
   const note = (k: string, t: string) => { (noteFor[k] ??= []).push(t); changes.push(`${roles[k].name.replace(/ \(Kurztag\)$/, "")}: ${t}`); };
 
-  // Supersets aus Übungen, die sich nicht in die Quere kommen (nie die erste schwere Übung, nie zwei schwere)
-  const densify = (k: string) => {
-    const r = roles[k];
-    let guard = 10;
-    while (est(r) > limit(k) + 0.5 && guard--) {
-      const first = r.blocks.findIndex(strengthBlock);
-      // Große Grundübungen (Mehrgelenk mit langer Pause) und Kernübungen bleiben allein
-      const big = (x: Slot) => isHeavy(x) || !!x.core || (!!halfOf(x.name) && (x.rest ?? 90) >= 120);
-      const cands = r.blocks.map((b, i) => ({ b, i })).filter(({ b, i }) => i > first && b.type === "single" && isStrength(b.slot) && !big(b.slot)) as { b: Extract<Block, { type: "single" }>; i: number }[];
-      let pair: [number, number] | null = null;
-      for (let x = 0; x < cands.length && !pair; x++) for (let y = x + 1; y < cands.length && !pair; y++) {
-        const a = cands[x].b.slot, c = cands[y].b.slot;
-        if (primary(a) && primary(a) === primary(c)) continue;
-        // Zwei Maschinen oder Kabel im Wechsel sind im Studio umständlich (zwei Geräte blockieren)
-        if (r.location === "gym" && STATION.has(equipOf(a.name)) && STATION.has(equipOf(c.name))) continue;
-        pair = [cands[x].i, cands[y].i];
-      }
-      if (!pair) return false;
-      const a = (r.blocks[pair[0]] as Extract<Block, { type: "single" }>).slot, c = (r.blocks[pair[1]] as Extract<Block, { type: "single" }>).slot;
-      const { rest: _a, ...sa } = a; const { rest: _c, ...sc } = c; void _a; void _c;
-      r.blocks.splice(pair[1], 1);
-      r.blocks.splice(pair[0], 1, { type: "superset", rest: 75, slots: [sa, sc] });
-      note(k, `${a.name} + ${c.name} als Superset`);
-    }
-    return est(r) <= limit(k) + 0.5;
-  };
+  const densify = (k: string) => pairToFit(roles[k], limit(k), (a, c) => note(k, `${a.name} + ${c.name} als Superset`));
 
   // Übung auf einen anderen Tag derselben Körperhälfte (vor Bestie und Finisher)
   const place = (s: Slot): boolean => {

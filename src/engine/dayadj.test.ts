@@ -85,3 +85,19 @@ describe("Leise: Bestie wandert", () => {
     expect(f2.roles[q.role].blocks.some((b) => b.type === "beast")).toBe(false);
   });
 });
+
+describe("Leise mit Verdichtung", () => {
+  it("fixiert: Bestie landet als Plage auf einem anderen Tag, der höchstens 5 Minuten über seinem Limit liegt", async () => {
+    const { planMinutes } = await import("./slots");
+    const s0 = st({ plan: [{ id: "b1", focusId: "knight", label: "x", start: "2026-09-21", end: "2026-11-29", load: "medium", travel: false }] });
+    const f0 = focusFor(s0, s0.plan[0], 2)!;
+    const q = days(s0).find((d) => f0.roles[d.role].blocks.some((b) => b.type === "beast"))!;
+    const s = rememberMod(s0, s0.plan[0], 2, q.role, q.day, "quiet", true);
+    const f = focusFor(s, s.plan[0], 2)!;
+    const host = days(s).find((d) => f.roles[d.role].blocks.some((b) => b.type === "beast" && /Vom leisen/.test(b.note ?? "")));
+    expect(host).toBeDefined();
+    const r0 = f0.roles[host!.role];
+    const lim = Math.max(r0.cap ?? Math.max(r0.minutes, f0.session_min), planMinutes(r0));
+    expect(planMinutes(f.roles[host!.role])).toBeLessThanOrEqual(lim + 5.5);
+  });
+});
