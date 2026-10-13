@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.47.0] – 2026-10-13
+
+### Neu
+- Plan › Deine Woche: Ort je Wochentag, gemerktes Kurz oder Leise und welche Einheit an welchem Tag läuft, an einer Stelle. Wählst du eine Einheit, die schon an einem anderen Tag steht, tauschen die beiden. Ersetzt „Wochenplan“ und „Einheiten auf Tage verteilen“ im Setup.
+- Ordenssymbole als dezentes Wasserzeichen hinter den Ordenskarten in Plan und Almanach.
+
+### Behoben
+- Eine eigene Verteilung der Einheiten ging verloren, wenn die Woche mehr Trainingstage als Einheiten hatte.
+
 ## [0.46.3] – 2026-10-13
 
 ### Intern

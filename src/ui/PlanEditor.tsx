@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { OrderMark } from "./OrderIcon";
 import { FOCI, SHARPEN } from "../data";
 import { domainName, interferes, slotEligible, type DomainId, type SlotPlan } from "../engine/sharpen";
 import type { DeficitWeights } from "../engine/sequence";
 import { addDays, blockFocus, blockWeeks, fitScore, newerFocus, refreeze, fmtDate, focusName, followedByTest, insertTestWeek, isoDate, isTestBlock, mondayOf, splitTestWeek } from "../engine/plan";
 import { uid } from "../store";
-import type { AppState, EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
+import type { EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { Check, Field, Modal, Seg } from "./common";
 import { FocusDetail } from "./FociBrowser";
@@ -21,18 +22,7 @@ export const GOAL_LABEL: Record<string, string> = {
   endurance: "Ausdauer", fatloss: "Fett verlieren", skill: "Skill", mobility: "Beweglichkeit", wellbeing: "Wohlbefinden", test: "Testen",
 };
 
-type DayFlags = NonNullable<AppState["dayFlags"]>;
-/** Kurz (höchstens ein Tag) oder Leise für einen Wochentag umschalten */
-function flipFlag(flags: DayFlags, d: Weekday, k: "short" | "quiet"): DayFlags {
-  const out: DayFlags = { ...flags };
-  const on = !out[d]?.[k];
-  if (k === "short" && on) for (const x of WEEKDAYS) if (out[x]?.short) out[x] = { ...out[x], short: undefined };
-  out[d] = { ...(out[d] ?? {}), [k]: on || undefined };
-  for (const x of WEEKDAYS) if (out[x] && !out[x]!.short && !out[x]!.quiet) delete out[x];
-  return out;
-}
-
-export function WeekEditor({ schedule, profiles, onChange, allowEmpty, flags, onFlags }: { schedule: Partial<Record<Weekday, string | null>>; profiles: EquipmentProfile[]; onChange: (s: Partial<Record<Weekday, string | null>>) => void; allowEmpty?: boolean; flags?: DayFlags; onFlags?: (f: DayFlags) => void }) {
+export function WeekEditor({ schedule, profiles, onChange, allowEmpty }: { schedule: Partial<Record<Weekday, string | null>>; profiles: EquipmentProfile[]; onChange: (s: Partial<Record<Weekday, string | null>>) => void; allowEmpty?: boolean }) {
   const count = WEEKDAYS.filter((d) => schedule[d]).length;
   return (
     <div className="stack">
@@ -43,13 +33,8 @@ export function WeekEditor({ schedule, profiles, onChange, allowEmpty, flags, on
             <option value="">kein Training</option>
             {profiles.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
-          {onFlags && schedule[d] && (["short", "quiet"] as const).map((k) => (
-            <button key={k} className={`mod-chip small ${flags?.[d]?.[k] ? "on" : ""}`} aria-pressed={!!flags?.[d]?.[k]} aria-label={`${k === "short" ? "Kurz" : "Leise"} am ${d}`}
-              onClick={() => onFlags(flipFlag(flags ?? {}, d, k))}>{k === "short" ? "Kurz" : "Leise"}</button>
-          ))}
         </div>
       ))}
-      {onFlags && <div className="muted small">Kurz und Leise gelten jede Woche an diesem Tag, in allen Phasen; Kurz für höchstens einen Tag. Heute anders: ⚙ Anpassen in der Einheit.</div>}
       <div className={`muted small ${!allowEmpty && count < 3 ? "warn" : ""}`}>
         {count === 0 && allowEmpty ? "Kein eigener Wochenplan: Es gilt der allgemeine." : `${count} Trainingstage. ${count < 3 ? "Die Orden brauchen mindestens 3." : count > 4 ? "Ab dem fünften Tag kommen optionale Einheiten dazu, falls der Fokus welche hat." : ""}`}
       </div>
@@ -83,6 +68,7 @@ export function FocusPicker({ load, travel, value, onPick, profile, days }: { lo
       </div>
       {ranked.map(({ f, score, reasons }) => (
         <div key={f.id} className={`focus-card ${value === f.id ? "on" : ""} ${score < 0 ? "dim" : ""}`}>
+          <OrderMark id={f.id} />
           <button className="focus-main" onClick={() => onPick(f.id)} aria-pressed={value === f.id}>
             <div className="focus-name">{focusName(f.id)}{value === f.id && <span className="tag teal">gewählt</span>}{score < 0 && <span className="tag">passt nicht</span>}</div>
             <div className="focus-tag">{f.tagline}</div>
@@ -186,6 +172,7 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
         return (
           <div key={b.id} className="stack" style={{ gap: 4 }}>
           <button className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""}`} onClick={() => setEdit(b)}>
+            {!isTestBlock(b) && <OrderMark id={b.focusId} />}
             <div className="block-dates">{fmtDate(b.start)} – {fmtDate(b.end)}</div>
             <div className="block-name">{focusName(b.focusId)} {now && <span className="tag teal">jetzt</span>}</div>
             <div className="muted small">{isTestBlock(b) ? "fünf Cups, Auswertung danach" : `${b.label || "–"} · Last ${LOAD_LABEL[b.load]}${b.travel ? " · unterwegs" : ""} · ${blockWeeks(b)} Wochen`}</div>

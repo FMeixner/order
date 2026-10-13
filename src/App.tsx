@@ -5,6 +5,7 @@ import { useAppState } from "./store";
 import { Almanac } from "./ui/Almanac";
 import { Onboarding } from "./ui/Onboarding";
 import { PlanList } from "./ui/PlanEditor";
+import { WeekCard } from "./ui/WeekCard";
 import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan";
 import { deficitsBefore, deficitWeights, slotFor } from "./engine/sharpen";
 import { YearBalance } from "./ui/YearBalance";
@@ -69,7 +70,8 @@ export default function App() {
           {tab === "heute" && <Today state={state} update={update} today={today} goPlan={() => setTab("plan")} />}
           {tab === "plan" && (
             <div className="stack">
-              <p className="muted">Dein Jahr in Phasen. Tippe eine Phase an, um Zeitraum, Alltagslast oder Orden zu ändern.</p>
+              <p className="muted">Deine Woche und dein Jahr in Phasen. Tippe eine Phase an, um Zeitraum, Alltagslast oder Orden zu ändern.</p>
+              <WeekCard state={state} update={update} today={today} />
               {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}
                 deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotFor(state, b)}
@@ -77,7 +79,7 @@ export default function App() {
             </div>
           )}
           {tab === "almanach" && <Almanac state={state} update={update} today={today} />}
-          {tab === "setup" && <Setup state={state} update={update} replace={replace} today={today} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
+          {tab === "setup" && <Setup state={state} update={update} replace={replace} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
         </main>
         <TimerBar />
         {help && <Modal title="Anleitung" onClose={() => setHelp(false)} wide><Help /></Modal>}

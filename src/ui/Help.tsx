@@ -7,10 +7,10 @@ export function Help() {
       <h3>Der Ablauf</h3>
       <ul>
         <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche. Mit ‹ › neben der Wochenzahl blätterst du: künftige Wochen als Vorschau, vergangene zum Nachtragen.</li>
-        <li><strong>Plan</strong> ist dein Jahr in Phasen. Jede Phase hat einen Orden und eine Alltagslast. „Blockfolge vorschlagen“ wählt die Orden für kommende Phasen, auf Wunsch mit Schwerpunkt. Eine Testwoche kann als eigener Block hinter jede Phase: Phase antippen, „Letzte Woche als Testwoche“ oder „Danach eine Woche einschieben“.</li>
+        <li><strong>Plan</strong>: oben „Deine Woche“ (Ort je Wochentag, gemerktes Kurz oder Leise, welche Einheit an welchem Tag), darunter dein Jahr in Phasen. Jede Phase hat einen Orden und eine Alltagslast. „Blockfolge vorschlagen“ wählt die Orden für kommende Phasen, auf Wunsch mit Schwerpunkt. Eine Testwoche kann als eigener Block hinter jede Phase: Phase antippen, „Letzte Woche als Testwoche“ oder „Danach eine Woche einschieben“.</li>
         <li><strong>Almanach</strong>: Orden (alle Programme), Bestien (mit Bestzeiten, zum freien Jagen), Übungen (Arbeitsgewicht, 1RM, Verlauf) und das Log.</li>
         <li>Eine Phase behält den Stand ihres Ordens ab ihrem Start. Ändert sich ein Orden durch ein Update, steht im Plan „Neue Fassung verfügbar“; erst mit „Übernehmen“ gilt sie für die laufende Phase.</li>
-        <li><strong>Setup</strong>: Equipment, Wochenplan, Sicherung.</li>
+        <li><strong>Setup</strong>: Profil, Equipment, Können, Sicherung.</li>
       </ul>
 
       <h3>Eine Übung eintragen</h3>
@@ -127,7 +127,7 @@ export function Help() {
         <li><strong>Leicht:</strong> −1 Satz je Übung, Bestien nur als Plage. Für akut schwere Tage (krank, Prüfungen, schlecht geschlafen).</li>
         <li><strong>Intensiv:</strong> Bestien kommen eine Klasse länger (der Tag darf bis zu 15 Minuten länger werden), jede Schwertübung bekommt einen Satz mehr. Kraft, Hypertrophie und Ausdauer bleiben, wie geplant. Nur an Tagen mit Bestie oder Schwert.</li>
         <li><strong>Leise:</strong> keine Bestien, kein Laufen, keine Intervalle, Finisher bleiben Superset, kurzes Warm-up. Etwa für den Arbeitsplatz; mit Kurz oder Leicht zusammen wird es noch ruhiger.</li>
-        <li>Kurz und Leise lassen sich für einen Wochentag merken („jeden Freitag“), über alle Phasen. Dann plant die App die Woche schon darauf hin: Ein gemerkter Kurztag gleicht über die ganze Woche aus. Kurz geht nur für einen Wochentag.</li>
+        <li>Kurz und Leise lassen sich für einen Wochentag merken („jeden Freitag“ im Anpassen-Menü oder unter Plan › Deine Woche), über alle Phasen. Dann plant die App die Woche schon darauf hin: Ein gemerkter Kurztag gleicht über die ganze Woche aus. Kurz geht nur für einen Wochentag.</li>
         <li>Deficit Push-Ups brauchen Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln (Setup › Equipment). Fehlt das am Ort, kommen Banded Push-Ups, ohne Band normale Push-Ups mit einem Satz mehr.</li>
       </ul>
 

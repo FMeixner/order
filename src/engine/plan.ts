@@ -141,8 +141,10 @@ export function rolesFor(state: AppState, b: PlanBlock, focus?: Focus): string[]
   if (!f) return [];
   const n = trainingDays(state, b).length;
   const custom = state.roleOrder[b.id];
-  if (custom && custom.length === n && custom.every((r) => f.roles[r])) return custom;
-  return defaultRoles(f, n);
+  const def = defaultRoles(f, n);
+  // Eigene Verteilung gilt, solange sie zur Zahl der Einheiten passt (bei mehr Tagen als Einheiten bleiben Tage frei)
+  if (custom && custom.length === def.length && custom.every((r) => f.roles[r])) return custom;
+  return def;
 }
 
 export function dayRoleMap(state: AppState, b: PlanBlock, focus?: Focus, week?: number): { day: Weekday; role: string; profileId: string }[] {

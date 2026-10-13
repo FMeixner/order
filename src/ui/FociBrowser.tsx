@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { OrderMark } from "./OrderIcon";
 import { FLOWS, FOCI, FOCUS_BY_ID } from "../data";
 import { CLASS_LABEL, defaultRoles, focusName, trainingDays } from "../engine/plan";
 import { shapeFocus } from "../engine/weekplan";
@@ -83,6 +84,7 @@ export function FociBrowser({ state }: { state: AppState }) {
       <p className="muted">Alle Orden im Überblick. Welchem Orden du dich in welcher Phase anschließt, legst du im Plan fest.</p>
       {FOCI.map((f) => (
         <button key={f.id} className="focus-card solo" onClick={() => setOpen(f)}>
+          <OrderMark id={f.id} />
           <div className="focus-name">{focusName(f.id)}</div>
           <div className="focus-tag">{f.tagline}</div>
           <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {LOAD_FIT_LABEL[f.load_fit]} · {f.session_min} Min{f.travel ? " · unterwegs möglich" : ""}</div>

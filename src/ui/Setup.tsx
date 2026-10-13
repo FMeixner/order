@@ -1,16 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import { FOCI, SKILLS } from "../data";
-import { blockAt, focusName, rolesFor, trainingDays, weekInBlock } from "../engine/plan";
-import { focusFor } from "../engine/weekplan";
 import { exportState, migrate } from "../store";
 import { AUTO_FILE, backupFile, canPickFile, chooseBackupFile, forgetBackupFile } from "../backup";
 import type { AppState, UserProfile } from "../types";
-import { WEEKDAYS } from "../types";
-import { unpinBeasts } from "./session/items";
 import { Collapse, Field, Seg } from "./common";
 import { NarrativeSettings } from "./Raven";
 import { EquipmentEditor } from "./EquipmentEditor";
-import { WeekEditor } from "./PlanEditor";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -89,27 +84,9 @@ export function NormFields({ user, onChange }: { user: UserProfile; onChange: (u
   );
 }
 
-export function Setup({ state, update, replace, today, restartOnboarding }: { state: AppState; update: Update; replace: (s: AppState) => void; today: string; restartOnboarding: () => void }) {
+export function Setup({ state, update, replace, restartOnboarding }: { state: AppState; update: Update; replace: (s: AppState) => void; restartOnboarding: () => void }) {
   const file = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState("");
-  const block = blockAt(state.plan, today);
-  const focus = block ? focusFor(state, block, weekInBlock(block, today)) : null;
-  const roles = block && focus ? rolesFor(state, block, focus) : [];
-  const days = block ? trainingDays(state, block) : [];
-  const move = (i: number, d: number) => {
-    if (!block) return;
-    const r = [...roles];
-    const j = i + d;
-    if (j < 0 || j >= r.length) return;
-    [r[i], r[j]] = [r[j], r[i]];
-    update((st) => ({ ...st, roleOrder: { ...st.roleOrder, [block.id]: r } }));
-  };
-  const swapRole = (i: number, role: string) => {
-    if (!block) return;
-    const r = [...roles];
-    r[i] = role;
-    update((st) => ({ ...st, roleOrder: { ...st.roleOrder, [block.id]: r } }));
-  };
   return (
     <div className="stack">
       <Collapse title="Profil" meta={state.user.name || "ohne Namen"} defaultOpen>
@@ -137,26 +114,6 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
       <Collapse title="Equipment-Profile" meta={`${state.equipment.length}`}>
         <EquipmentEditor list={state.equipment} onChange={(equipment) => update((st) => ({ ...st, equipment }))} />
       </Collapse>
-      <Collapse title="Wochenplan" meta={[`${trainingDays(state).length} Tage`, ...WEEKDAYS.filter((d) => state.dayFlags?.[d]).map((d) => `${d} ${[state.dayFlags![d]!.short && "kurz", state.dayFlags![d]!.quiet && "leise"].filter(Boolean).join("+")}`)].join(" · ")}>
-        <WeekEditor schedule={state.schedule} profiles={state.equipment} onChange={(schedule) => update((st) => ({ ...st, schedule }))}
-          flags={state.dayFlags ?? {}} onFlags={(dayFlags) => update((st) => unpinBeasts({ ...st, dayFlags, plan: st.plan.map((p) => (p.shortRole && Object.values(dayFlags).some((f) => f?.short) ? { ...p, shortRole: undefined } : p)) }, () => true))} />
-      </Collapse>
-      {block && focus && (
-        <Collapse title="Einheiten auf Tage verteilen" meta={focusName(focus.id)}>
-          <p className="muted small">Gilt für die aktuelle Phase. Mit den Pfeilen tauschst du die Reihenfolge, im Menü wählst du eine andere Einheit.</p>
-          {roles.map((r, i) => (
-            <div key={i} className="week-row">
-              <span className="day">{days[i]}</span>
-              <select value={r} onChange={(e) => swapRole(i, e.target.value)}>
-                {Object.entries(focus.roles).map(([k, v]) => <option key={k} value={k}>{v.name}</option>)}
-              </select>
-              <button className="btn ghost small" onClick={() => move(i, -1)} aria-label="nach oben">↑</button>
-              <button className="btn ghost small" onClick={() => move(i, 1)} aria-label="nach unten">↓</button>
-            </div>
-          ))}
-          <button className="btn ghost small" onClick={() => update((st) => { const ro = { ...st.roleOrder }; delete ro[block.id]; return { ...st, roleOrder: ro }; })}>Standard wiederherstellen</button>
-        </Collapse>
-      )}
       <Collapse title="Sichern und Wiederherstellen">
         <p className="muted small">Alle Daten liegen nur auf diesem Gerät, im Browser. Sichere regelmäßig, vor allem vor einem Gerätewechsel.</p>
         <div className="row wrap">
