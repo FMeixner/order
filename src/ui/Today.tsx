@@ -181,13 +181,15 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       <div className="card hero">
         <div className="hero-top">
           <div>
-            <div className="hero-focus">{focusName(baseFocus.id)}</div>
+            <div className="hero-name">
+              <div className="hero-focus">{focusName(baseFocus.id)}</div>
+              {ravenOn(state) && <RavenBadge key={`${block.id}:${today}`} state={state} update={update} block={block} today={today} />}
+            </div>
             <div className="muted small">{baseFocus.medley ? `Diese Woche: ${focusName(focus.id)}` : block.label || focus.tagline}</div>
           </div>
-          {ravenOn(state) && <RavenBadge key={`${block.id}:${today}`} state={state} update={update} block={block} today={today} />}
           <div className="week-nav">
             <button onClick={() => go(week - 1)} disabled={week <= 1} aria-label="Vorige Woche">‹</button>
-            <div className="hero-week">Woche {Math.min(week, total)}<span className="muted">/{total}</span></div>
+            <div className="hero-week" aria-label={`Woche ${Math.min(week, total)} von ${total}`}><span className="wk-word">Woche </span>{Math.min(week, total)}<span className="muted">/{total}</span></div>
             <button onClick={() => go(week + 1)} disabled={week >= total} aria-label="Nächste Woche">›</button>
           </div>
         </div>
