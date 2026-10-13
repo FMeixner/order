@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.48.3] – 2026-10-13
+
+### Geändert
+- Blockfolge vorschlagen: Statt „Jahresbalance 0.78 → 0.64“ steht dort jetzt „Breite übers Jahr: etwa 5 von 8 Bereichen → etwa 4 von 8“, dazu, welche Bereiche gewinnen und verlieren (z. B. „mehr Kraft, weniger Kondition“).
+
 ## [0.48.2] – 2026-10-13
 
 ### Behoben
