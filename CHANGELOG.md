@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.43.1] – 2026-10-13
+
+### Neu
+- Hilfe › Literatur: alle Quellen der App mit vollständiger Angabe und Link, geprüft am 13.10.2026. Ein Test stellt sicher, dass jede zitierte Studie in der Liste steht.
+
+### Geändert
+- Hilfe „Körpergewicht zählt“: Liegestütze brachten ähnliche Kraftzuwächse wie Bankdrücken; ähnliches Muskelwachstum zeigt nur die Studie mit vergleichbarer Belastung (Kikuchi & Nakazato, 2017). Vorher klang es, als belegten alle drei Studien beides.
+- Smith: Quelle eindeutig benannt (Schoenfeld, Grgic et al., 2017, leichte vs. schwere Lasten).
+
 ## [0.43.0] – 2026-10-12
 
 ### Geändert

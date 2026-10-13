@@ -1,4 +1,6 @@
 /* Kurze Anleitung, erreichbar über das ? oben rechts. */
+import REFS from "../../data/modules/references.json";
+import { Collapse } from "./common";
 export function Help() {
   return (
     <div className="stack help-body">
@@ -37,7 +39,7 @@ export function Help() {
 
       <h3>Körpergewicht zählt</h3>
       <ul>
-        <li>Liegestütz, Klimmzug oder Pistol Squat sind vollwertiges Krafttraining, wenn die Sätze nah ans Muskelversagen gehen. Für Einsteiger reichen wenige Wiederholungen, für Geübte sind 20–30 fordernd. Liegestütze in Stufen brachten in Studien ähnliche Kraft- und Muskelzuwächse wie Bankdrücken (Calatayud et al., 2015; Kikuchi &amp; Nakazato, 2017; Kotarsky et al., 2018). Bei leichter Last entscheidet die Nähe zum Versagen (Refalo et al., 2023).</li>
+        <li>Liegestütz, Klimmzug oder Pistol Squat sind vollwertiges Krafttraining, wenn die Sätze nah ans Muskelversagen gehen. Für Einsteiger reichen wenige Wiederholungen, für Geübte sind 20–30 fordernd. Liegestütze in Stufen brachten in Studien ähnliche Kraftzuwächse wie Bankdrücken (Calatayud et al., 2015; Kotarsky et al., 2018), bei vergleichbarer Belastung auch ähnliches Muskelwachstum (Kikuchi &amp; Nakazato, 2017). Bei leichter Last entscheidet die Nähe zum Versagen (Refalo et al., 2023).</li>
         <li>Orden mit Kondition oder Reise setzen deshalb auf Stufen mit Körpergewicht: ohne Aufbau, überall gleich. Orden für maximalen Muskelaufbau und Maximalkraft bleiben beim Eisen.</li>
         <li>Stufen steigen, wenn alle Sätze zweimal am oberen Ende liegen, zum Beispiel Liegestütz → Deficit → Archer.</li>
       </ul>
@@ -137,6 +139,13 @@ export function Help() {
         <li>Zeitübungen starten mit 4 Sekunden Vorlauf, die letzten 5 Sekunden piepen. Der Ton braucht einmal einen Fingertipp auf die Seite.</li>
         <li>Übungen für links und rechts: Nach Ablauf der linken Seite startet die rechte von selbst, wieder mit 4 Sekunden Vorlauf.</li>
       </ul>
+
+      <h3>Literatur</h3>
+      <Collapse title="Quellen der App" meta={`${REFS.refs.length} · geprüft ${REFS.checked.split("-").reverse().join(".")}`}>
+        <ul className="refs small">
+          {REFS.refs.map((r) => <li key={r.short}>{r.text} <a href={r.url} target="_blank" rel="noreferrer">Link</a></li>)}
+        </ul>
+      </Collapse>
 
       <h3>Deine Daten</h3>
       <ul>

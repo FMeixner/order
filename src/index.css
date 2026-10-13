@@ -348,3 +348,5 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .set-btn.warm.done { border-style: solid; }
 .set-btn.warm0 { border-style: dashed; }
 .set-btn.warm0.done { border-style: solid; }
+
+.refs { padding-left: 18px; display: grid; gap: 6px; }

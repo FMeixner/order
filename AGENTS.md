@@ -31,4 +31,5 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 - Im Studio nie zwei Maschinen oder Kabel als Superset (prüft `validate.mjs`).
 - Typprüfung mit `npx tsc -b`; `tsc --noEmit -p .` prüft hier nichts.
 - Bestien einer Einheit werden beim ersten Eintrag festgehalten (`beastRuns`); nur bewusste Anpassungen geben sie frei.
+- Jede zitierte Studie steht mit vollständiger Angabe und Link in `data/modules/references.json` (Kurzform wie im Text; `src/engine/references.test.ts` prüft Orden-Quellen, Hilfe und Normen). Zitate vor dem Eintragen gegen Titel, Autoren, Jahr und Aussage prüfen.
 - UI-Texte auf Deutsch, Du-Form, knapp.

@@ -15,7 +15,7 @@
   "travel": false,
   "modules": ["correctives"],
   "successors": ["knight", "olympian", "soldier"],
-  "sources": ["Schoenfeld et al. (2017)", "Helms et al. (2016)"],
+  "sources": ["Schoenfeld, Grgic et al. (2017)", "Helms et al. (2016)"],
   "week_4": ["kraft_1", "kraft_2", "kraft_3", "kraft_4"],
   "week_3": ["kraft_1", "kraft_2", "kraft_3"],
   "roles": {
