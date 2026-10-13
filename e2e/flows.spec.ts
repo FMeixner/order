@@ -58,6 +58,20 @@ test("Kurz: spontan für heute, als Wochentag merken, Kraftübungen weniger", as
   expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.short).length).toBe(1);
 });
 
+test("Wochenplan: Kurz und Leise je Wochentag merken, Kurz nur für einen Tag", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Setup" }).click();
+  await page.getByRole("button", { name: /Wochenplan/ }).click();
+  const days = await page.getByRole("button", { name: /^Kurz am / }).all();
+  await days[0].click();
+  await days[1].click();
+  await page.getByRole("button", { name: /^Leise am / }).first().click();
+  const st = await stored(page);
+  expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.short).length).toBe(1);
+  expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.quiet).length).toBe(1);
+});
+
 test("Sicherung: speichern und wieder laden", async ({ page }, info) => {
   const st = fixture();
   st.sessions = [{ id: "x", date: st.plan[0].start, blockId: "b1", focusId: "assassin", week: 1, role: "kraft_a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true }];

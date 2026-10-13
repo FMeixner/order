@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.46.1] – 2026-10-13
+
+### Neu
+- Setup › Wochenplan: Neben jedem Trainingstag lassen sich Kurz und Leise direkt merken; die Kopfzeile zeigt, was gemerkt ist (z. B. „Fr kurz“).
+
 ## [0.46.0] – 2026-10-13
 
 ### Neu

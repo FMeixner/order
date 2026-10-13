@@ -5,6 +5,8 @@ import { focusFor } from "../engine/weekplan";
 import { exportState, migrate } from "../store";
 import { AUTO_FILE, backupFile, canPickFile, chooseBackupFile, forgetBackupFile } from "../backup";
 import type { AppState, UserProfile } from "../types";
+import { WEEKDAYS } from "../types";
+import { unpinBeasts } from "./SessionView";
 import { Collapse, Field, Seg } from "./common";
 import { NarrativeSettings } from "./Raven";
 import { EquipmentEditor } from "./EquipmentEditor";
@@ -135,8 +137,9 @@ export function Setup({ state, update, replace, today, restartOnboarding }: { st
       <Collapse title="Equipment-Profile" meta={`${state.equipment.length}`}>
         <EquipmentEditor list={state.equipment} onChange={(equipment) => update((st) => ({ ...st, equipment }))} />
       </Collapse>
-      <Collapse title="Wochenplan" meta={`${trainingDays(state).length} Tage`}>
-        <WeekEditor schedule={state.schedule} profiles={state.equipment} onChange={(schedule) => update((st) => ({ ...st, schedule }))} />
+      <Collapse title="Wochenplan" meta={[`${trainingDays(state).length} Tage`, ...WEEKDAYS.filter((d) => state.dayFlags?.[d]).map((d) => `${d} ${[state.dayFlags![d]!.short && "kurz", state.dayFlags![d]!.quiet && "leise"].filter(Boolean).join("+")}`)].join(" · ")}>
+        <WeekEditor schedule={state.schedule} profiles={state.equipment} onChange={(schedule) => update((st) => ({ ...st, schedule }))}
+          flags={state.dayFlags ?? {}} onFlags={(dayFlags) => update((st) => unpinBeasts({ ...st, dayFlags, plan: st.plan.map((p) => (p.shortRole && Object.values(dayFlags).some((f) => f?.short) ? { ...p, shortRole: undefined } : p)) }, () => true))} />
       </Collapse>
       {block && focus && (
         <Collapse title="Einheiten auf Tage verteilen" meta={focusName(focus.id)}>

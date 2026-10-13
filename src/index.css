@@ -125,7 +125,7 @@ details.card[open] summary { margin-bottom: 10px; }
 .preset-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 
 .week-row { display: flex; gap: 8px; align-items: center; }
-.week-row .day { font-family: var(--mono); width: 28px; color: var(--muted); }
+.week-row .day { font-family: var(--mono); width: 28px; flex: none; color: var(--muted); }
 
 .focus-card { display: flex; gap: 8px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: left; }
 .focus-card.solo { flex-direction: column; gap: 3px; cursor: pointer; width: 100%; }
@@ -349,6 +349,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .day-mods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .mod-chip { padding: 9px 4px; border-radius: 10px; border: 1px solid var(--border-lit); background: var(--surface2); color: var(--text); font: inherit; font-size: 14px; cursor: pointer; }
 .mod-chip.on { border-color: var(--teal); background: var(--teal-dim); font-weight: 600; }
+.mod-chip.small { padding: 6px 10px; font-size: 13px; flex: none; }
 .mod-chip:disabled { opacity: 0.4; cursor: default; }
 
 /* Bestiarium */
