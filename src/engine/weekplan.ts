@@ -5,7 +5,7 @@
    Fünf Tage: Der Zusatztag (Rolle außerhalb von week_4, meist „bonus“) kommt zwischen die schweren Tage.
    Harlequin: Orden mit "medley" nehmen jede Woche einen anderen Orden. */
 import { SWAP_GROUPS } from "../data";
-import type { AppState, Block, Focus, PlanBlock, Role, Slot } from "../types";
+import type { AppState, Block, Focus, PlanBlock, Role, Slot, Weekday } from "../types";
 import { isHeavy, isStrength, planMinutes } from "./slots";
 import { applyDrillEdits, blockFocus, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { canShorten, shortDay } from "./shortday";
@@ -116,6 +116,40 @@ export function shapeFocus(f: Focus, nDays: number): Focus {
 }
 
 /** Orden einer Woche: Harlequin nimmt jede Woche einen anderen, danach die Form für die Zahl der Trainingstage */
+/** Leise: Die Bestie des leisen Tages wandert auf einen anderen Tag dieser Woche, wenn dort Zeit ist.
+    Fixiert (gemerkt): jeder andere Tag; spontan: nur die Tage danach. Nie auf erledigte, kurze oder leise Tage;
+    Tage ohne eigene Bestie zuerst. Passt sie nirgends, entfällt sie. */
+function quietMoves(state: AppState, b: PlanBlock, week: number, f: Focus, days: { day: Weekday; role: string }[], shortened: Set<string>): Focus {
+  const mods = days.map((d, i) => ({ ...d, i, m: dayMods(state, b, week, d.role, d.day) }));
+  const quiet = mods.filter((d) => d.m.quiet && f.roles[d.role]?.blocks.some((x) => x.type === "beast"));
+  if (!quiet.length) return f;
+  const done = new Set(state.sessions.filter((s) => s.blockId === b.id && s.week === week && s.done).map((s) => s.role));
+  const roles = { ...f.roles };
+  const limit = (k: string) => Math.max(roles[k].cap ?? Math.max(roles[k].minutes, f.session_min), planMinutes(f.roles[k]));
+  for (const q of quiet) {
+    if (done.has(q.role)) continue;
+    const fixed = remembered(state, b, q.role, q.day).quiet && state.dayAdj?.[`${b.id}:${week}:${q.role}`]?.quiet === undefined;
+    const beasts = roles[q.role].blocks.filter((x): x is Extract<Block, { type: "beast" }> => x.type === "beast");
+    roles[q.role] = { ...roles[q.role], blocks: roles[q.role].blocks.filter((x) => x.type !== "beast") };
+    for (const beast of beasts) {
+      const cands = mods.filter((d) => d.role !== q.role && (fixed || d.i > q.i) && !d.m.quiet && !shortened.has(d.role) && !done.has(d.role) && roles[d.role])
+        .sort((x, y) => Number(roles[x.role].blocks.some((z) => z.type === "beast")) - Number(roles[y.role].blocks.some((z) => z.type === "beast"))
+          || (limit(y.role) - planMinutes(roles[y.role])) - (limit(x.role) - planMinutes(roles[x.role])));
+      // Erst in voller Länge, sonst Klasse für Klasse kürzer (bis zur Plage)
+      const order = ["plage", "bestie", "ungeheuer", "uralte", "verfluchte"] as const;
+      const lo = Math.min(...(beast.classes ?? ["bestie"]).map((x) => order.indexOf(x)));
+      const tries = [beast, ...order.slice(0, Math.max(0, lo)).reverse().map((x) => ({ ...beast, classes: [x], pool: undefined }))];
+      outer: for (const c of cands) for (const t of tries) {
+        const moved: Block = { ...t, note: [beast.note, `Vom leisen ${DAY_LONG[q.day]} hierher.`].filter(Boolean).join(" ") };
+        const next = { ...roles[c.role], blocks: [...roles[c.role].blocks, moved] };
+        if (planMinutes(next) <= limit(c.role) + 0.5) { roles[c.role] = next; break outer; }
+      }
+    }
+  }
+  return { ...f, roles };
+}
+const DAY_LONG: Record<Weekday, string> = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag", Sa: "Samstag", So: "Sonntag" };
+
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {
   const base = blockFocus(b);
   if (!base) return null;
@@ -131,12 +165,13 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
       .filter((d) => d.mods.short && shaped.roles[d.role] && canShorten(shaped.roles[d.role]))
       .map((d) => ({ ...d, planned: remembered(state, b, d.role, d.day).short && state.dayAdj?.[`${b.id}:${week}:${d.role}`]?.short === undefined }))
       .sort((x, y) => Number(y.planned) - Number(x.planned) || x.i - y.i);
-    const done = new Set<string>();
+    const shortened = new Set<string>();
     for (const d of shorts) {
-      const targets = (d.planned ? weekRoles : days.slice(d.i + 1).map((x) => x.role)).filter((r) => !done.has(r) && r !== d.role);
+      const targets = (d.planned ? weekRoles : days.slice(d.i + 1).map((x) => x.role)).filter((r) => !shortened.has(r) && r !== d.role);
       shaped = shortDay(shaped, d.role, state.user, weekRoles, targets).focus;
-      done.add(d.role);
+      shortened.add(d.role);
     }
+    shaped = quietMoves(state, b, week, shaped, days, shortened);
   }
   return applyDrillEdits(applySlot(shaped, state, b), state.drillEdits);
 }

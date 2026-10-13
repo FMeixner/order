@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.48.0] – 2026-10-13
+
+### Neu
+- Testwochen im Plan: bernsteinfarben hervorgehoben, mit eigenem Symbol (gekreuzte Lanzen und Schild).
+- Leise: Die Bestie des Tages wandert auf einen anderen Tag dieser Woche, wenn dort Zeit ist, notfalls als kürzere Klasse. Spontan nur auf die Tage danach, fixiert auf jeden Tag. Passt sie nirgends, entfällt sie.
+
+### Geändert
+- Kurz und Leise fixierst du nur noch im Anpassen-Menü der Einheit („Für jeden Freitag fixieren“). „Deine Woche“ zeigt fixierte Tage nur noch als Hinweis.
+
+### Behoben
+- Nach „Leise“ ließ sich „Intensiv“ nicht mehr wählen.
+
 ## [0.47.0] – 2026-10-13
 
 ### Neu

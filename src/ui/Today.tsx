@@ -114,16 +114,17 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const canAdjust = !!role0 && !future;
   // Intensiv: nur mit Bestie oder Schwert am Tag und nicht in Wochen, die ohnehin leichter laufen
   const canBoost = canAdjust && !sysReduced
-    && roleAt(role0!, profile0 ?? undefined).blocks.some((b) => b.type === "beast" || (b.type === "module" && b.module === "sword" && !!profile0?.has.sword));
+    // Der Tag, wie der Orden ihn vorsieht (Leise nimmt die Bestie heraus, Intensiv soll trotzdem wählbar bleiben)
+    && ((baseFocus.medley ? undefined : baseFocus.roles[sel!.role]) ?? role0!).blocks.some((b) => b.type === "beast" || (b.type === "module" && b.module === "sword" && !!profile0?.has.sword));
   const chips: { k: DayKey | "intense"; label: string; on: boolean; disabled?: boolean; info: string }[] = mods ? [
-    { k: "short", label: "Kurz", on: mods.short, disabled: !role0 || !canShorten(role0), info: remembered(state, block, sel!.role, sel!.day).short ? "Nur die drei Kernübungen. Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Nur die drei Kernübungen. Letzter Tag der Woche, daher kein Ausgleich." : "Nur die drei Kernübungen. Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
+    { k: "short", label: "Kurz", on: mods.short, disabled: !role0 || !canShorten(role0), info: remembered(state, block, sel!.role, sel!.day).short ? "Nur die drei Kernübungen. Fixiert: Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Nur die drei Kernübungen. Letzter Tag der Woche, daher kein Ausgleich." : "Nur die drei Kernübungen. Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
     { k: "light", label: "Leicht", on: mods.light || sysReduced, disabled: sysReduced, info: sysReduced ? "Diese Woche läuft ohnehin mit −1 Satz." : "−1 Satz je Übung, Bestien nur als Plage." },
     { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben." },
-    { k: "quiet", label: "Leise", on: mods.quiet, info: "Keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up." },
+    { k: "quiet", label: "Leise", on: mods.quiet, info: "Keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up. Die Bestie wandert auf einen anderen Tag dieser Woche, wenn dort Zeit ist." },
   ] : [];
   const weekMatch = (s: { blockId: string; week: number }) => s.blockId === block.id && s.week === week;
   // Kurz verändert die ganze Woche (Ausgleich), der Rest nur diesen Tag
-  const flip = (k: DayKey | "intense") => sel && update((st) => unpinBeasts(toggleMod(st, block, week, sel.role, sel.day, k), k === "short" ? weekMatch : (s) => s.id === sid));
+  const flip = (k: DayKey | "intense") => sel && update((st) => unpinBeasts(toggleMod(st, block, week, sel.role, sel.day, k), k === "short" || k === "quiet" ? weekMatch : (s) => s.id === sid));
   const remember = (k: "short" | "quiet", on: boolean) => sel && update((st) => unpinBeasts(rememberMod(st, block, week, sel.role, sel.day, k, on), weekMatch));
   const mem = sel ? remembered(state, block, sel.role, sel.day) : { short: false, quiet: false };
   const activeAdj = sel ? [profile0 && profile0.id !== sel.profileId, mods?.short, mods?.light, mods?.intense, mods?.quiet, hasRun && !!state.noRun?.[sid]].filter(Boolean).length : 0;
@@ -146,7 +147,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           {(["short", "quiet"] as const).filter((k) => mods?.[k] || mem[k]).map((k) => (
             <label key={k} className="check small">
               <input type="checkbox" checked={mem[k]} onChange={(e) => remember(k, e.target.checked)} />
-              <span>{k === "short" ? "Kurz" : "Leise"} jeden {DAY_NAME[sel.day]}{k === "short" ? " (dann gleicht die ganze Woche aus)" : ""}</span>
+              <span>{k === "short" ? "Kurz" : "Leise"} für jeden {DAY_NAME[sel.day]} fixieren</span>
             </label>
           ))}
         </div>

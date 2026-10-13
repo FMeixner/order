@@ -171,8 +171,8 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
         const now = b.start <= today && today <= b.end;
         return (
           <div key={b.id} className="stack" style={{ gap: 4 }}>
-          <button className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""}`} onClick={() => setEdit(b)}>
-            {!isTestBlock(b) && <OrderMark id={b.focusId} />}
+          <button className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""} ${isTestBlock(b) ? "test" : ""}`} onClick={() => setEdit(b)}>
+            <OrderMark id={isTestBlock(b) ? "test" : b.focusId} />
             <div className="block-dates">{fmtDate(b.start)} – {fmtDate(b.end)}</div>
             <div className="block-name">{focusName(b.focusId)} {now && <span className="tag teal">jetzt</span>}</div>
             <div className="muted small">{isTestBlock(b) ? "fünf Cups, Auswertung danach" : `${b.label || "–"} · Last ${LOAD_LABEL[b.load]}${b.travel ? " · unterwegs" : ""} · ${blockWeeks(b)} Wochen`}</div>

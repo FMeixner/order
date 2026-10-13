@@ -1,5 +1,4 @@
 /* Deine Woche: je Wochentag Ort, gemerkte Anpassung (Kurz, Leise) und die Einheit der laufenden Phase. */
-import { flipFlag } from "../engine/dayadj";
 import { blockAt, focusName, rolesFor, trainingDays, weekInBlock } from "../engine/plan";
 import { focusFor } from "../engine/weekplan";
 import type { AppState, Weekday } from "../types";
@@ -19,12 +18,6 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
   const count = trainingDays(state).length;
 
   const setPlace = (d: Weekday, pid: string) => update((st) => ({ ...st, schedule: { ...st.schedule, [d]: pid || null } }));
-  const flip = (d: Weekday, k: "short" | "quiet") => update((st) => {
-    const dayFlags = flipFlag(st.dayFlags ?? {}, d, k);
-    // Ein gemerkter Kurztag ersetzt den alten Kurztag der Phasen
-    const plan = Object.values(dayFlags).some((f) => f?.short) ? st.plan.map((p) => (p.shortRole ? { ...p, shortRole: undefined } : p)) : st.plan;
-    return unpinBeasts({ ...st, dayFlags, plan }, () => true);
-  });
   // Einheit eines Tages wählen: steht sie schon an einem anderen Tag, tauschen die beiden
   const setRole = (i: number, role: string) => block && update((st) => {
     const r = [...roles];
@@ -49,11 +42,9 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
                   <option value="">kein Training</option>
                   {state.equipment.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </select>
-                {pid && (["short", "quiet"] as const).map((k) => (
-                  <button key={k} className={`mod-chip small ${flags[d]?.[k] ? "on" : ""}`} aria-pressed={!!flags[d]?.[k]} aria-label={`${k === "short" ? "Kurz" : "Leise"} am ${d}`} onClick={() => flip(d, k)}>
-                    {k === "short" ? "Kurz" : "Leise"}
-                  </button>
-                ))}
+                {pid && (flags[d]?.short || flags[d]?.quiet) && (
+                  <span className="muted small week-fixed" title="Fixiert im Anpassen-Menü der Einheit">{[flags[d]?.short && "kurz", flags[d]?.quiet && "leise"].filter(Boolean).join(" · ")}</span>
+                )}
               </div>
               {focus && i >= 0 && roles[i] && (
                 <select className="week-role" value={roles[i]} onChange={(e) => setRole(i, e.target.value)} aria-label={`Einheit am ${d}`}>
@@ -65,7 +56,7 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
         })}
         <p className="muted small">
           {count < 3 ? "Die Orden brauchen mindestens 3 Trainingstage. " : ""}
-          Kurz und Leise gelten jede Woche an diesem Tag, Kurz für höchstens einen Tag.
+          „kurz“ und „leise“ fixierst du im Anpassen-Menü der Einheit.
           {focus ? ` Einheiten gelten für ${focusName(focus.id)}; wählst du eine doppelt, tauschen die Tage.` : ""}
           {own ? " Diese Phase hat einen eigenen Wochenplan (Phase antippen)." : ""}
         </p>

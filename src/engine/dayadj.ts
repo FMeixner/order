@@ -83,14 +83,3 @@ export function rememberMod(state: AppState, b: PlanBlock, week: number, role: s
   // Gemerkt heißt: heute an
   return on && !dayMods(base, b, week, role, day)[key] ? toggleMod(base, b, week, role, day, key) : base;
 }
-
-type DayFlags = NonNullable<AppState["dayFlags"]>;
-/** Gemerktes Kurz (höchstens ein Tag) oder Leise für einen Wochentag umschalten */
-export function flipFlag(flags: DayFlags, d: Weekday, k: "short" | "quiet"): DayFlags {
-  const out: DayFlags = { ...flags };
-  const on = !out[d]?.[k];
-  if (k === "short" && on) for (const x of Object.keys(out) as Weekday[]) if (out[x]?.short) out[x] = { ...out[x], short: undefined };
-  out[d] = { ...(out[d] ?? {}), [k]: on || undefined };
-  for (const x of Object.keys(out) as Weekday[]) if (!out[x]?.short && !out[x]?.quiet) delete out[x];
-  return out;
-}

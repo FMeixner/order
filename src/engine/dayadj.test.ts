@@ -60,3 +60,28 @@ describe("Tagesanpassung", () => {
     expect(s.equipment.some((e) => "sweatFree" in e)).toBe(false);
   });
 });
+
+describe("Leise: Bestie wandert", () => {
+  const beastDays = (s: AppState) => {
+    const f = focusFor(s, s.plan[0], 2)!;
+    return days(s).filter((d) => f.roles[d.role].blocks.some((b) => b.type === "beast")).map((d) => d.day);
+  };
+  it("spontan nur auf spätere Tage, fixiert auf jeden Tag; nie auf leise Tage", () => {
+    const s0 = st();
+    const ds = days(s0);
+    const before = beastDays(s0);
+    expect(before.length).toBeGreaterThan(0);
+    const q = ds.find((d) => d.day === before[0])!;
+    const s1 = toggleMod(s0, s0.plan[0], 2, q.role, q.day, "quiet");
+    const f1 = focusFor(s1, s1.plan[0], 2)!;
+    expect(f1.roles[q.role].blocks.some((b) => b.type === "beast")).toBe(false);
+    const qi = ds.indexOf(q);
+    for (const d of ds.slice(0, qi)) expect(JSON.stringify(f1.roles[d.role])).toBe(JSON.stringify(focusFor(s0, s0.plan[0], 2)!.roles[d.role]));
+    const moved = ds.filter((d) => f1.roles[d.role].blocks.some((b) => b.type === "beast" && /Vom leisen/.test(b.note ?? "")));
+    for (const d of moved) expect(ds.indexOf(d)).toBeGreaterThan(qi);
+    // Fixiert: die Woche plant vorher, auch frühere Tage kommen in Frage
+    const s2 = rememberMod(s0, s0.plan[0], 2, q.role, q.day, "quiet", true);
+    const f2 = focusFor(s2, s2.plan[0], 2)!;
+    expect(f2.roles[q.role].blocks.some((b) => b.type === "beast")).toBe(false);
+  });
+});

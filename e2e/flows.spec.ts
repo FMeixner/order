@@ -53,30 +53,26 @@ test("Kurz: spontan für heute, als Wochentag merken, Kraftübungen weniger", as
   await expect(page.getByRole("button", { name: "Kurz", exact: true })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText(/etwa \d+ Min · Kurz/)).toBeVisible();
   expect(await page.locator(".slot-name").count()).toBeLessThan(before);
-  await page.getByText(/^Kurz jeden /).click();
+  await page.getByText(/^Kurz für jeden .* fixieren$/).click();
   const st = await stored(page);
   expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.short).length).toBe(1);
 });
 
-test("Deine Woche: Kurz und Leise je Wochentag merken, Einheiten tauschen", async ({ page }) => {
-  await seed(page);
+test("Deine Woche: Einheiten tauschen, fixierte Tage nur als Hinweis, Ordenssymbol", async ({ page }) => {
+  const st = fixture();
+  st.dayFlags = { Fr: { short: true } };
+  await seed(page, st);
   await page.goto("./");
   await page.getByRole("button", { name: "Plan" }).click();
   await page.getByRole("button", { name: /Deine Woche/ }).click();
-  const days = await page.getByRole("button", { name: /^Kurz am / }).all();
-  await days[0].click();
-  await days[1].click();
-  await page.getByRole("button", { name: /^Leise am / }).first().click();
-  const st = await stored(page);
-  expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.short).length).toBe(1);
-  expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.quiet).length).toBe(1);
+  await expect(page.locator(".week-fixed")).toHaveText("kurz");
+  await expect(page.getByRole("button", { name: /^Kurz am / })).toHaveCount(0);
   // Einheit des ersten Tages auf die des zweiten setzen: die beiden tauschen
   const roleSel = page.locator("select.week-role");
   const second = await roleSel.nth(1).inputValue();
   const first = await roleSel.nth(0).inputValue();
   await roleSel.nth(0).selectOption(second);
   await expect(roleSel.nth(1)).toHaveValue(first);
-  // Ordenssymbol hinter den Phasen
   await expect(page.locator(".block-row .order-mark").first()).toBeAttached();
 });
 
