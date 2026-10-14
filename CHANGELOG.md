@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.49.0] – 2026-10-14
+
+### Geändert
+- Leise: Statt die Bestie zu streichen oder zu verschieben, kommt eine leise Bestie, ohne Sprünge, Burpees, Split Lunges, Sprints und Läufe (37 der 81 Bestien). Verschoben wird nur noch, wenn es für einen Bestienblock gar keine leise Fassung gibt.
+
 ## [0.48.4] – 2026-10-14
 
 ### Geändert

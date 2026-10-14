@@ -114,13 +114,13 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const canAdjust = !!role0 && !future;
   // Intensiv: nur mit Bestie oder Schwert am Tag und nicht in Wochen, die ohnehin leichter laufen
   const canBoost = canAdjust && !sysReduced
-    // Der Tag, wie der Orden ihn vorsieht (Leise nimmt die Bestie heraus, Intensiv soll trotzdem wählbar bleiben)
+    // Der Tag, wie der Orden ihn vorsieht (Leise kann eine Bestie verschieben, Intensiv soll trotzdem wählbar bleiben)
     && ((baseFocus.medley ? undefined : baseFocus.roles[sel!.role]) ?? role0!).blocks.some((b) => b.type === "beast" || (b.type === "module" && b.module === "sword" && !!profile0?.has.sword));
   const chips: { k: DayKey | "intense"; label: string; on: boolean; disabled?: boolean; info: string }[] = mods ? [
     { k: "short", label: "Kurz", on: mods.short, disabled: !role0 || !canShorten(role0), info: remembered(state, block, sel!.role, sel!.day).short ? "Nur die drei Kernübungen. Fixiert: Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Nur die drei Kernübungen. Letzter Tag der Woche, daher kein Ausgleich." : "Nur die drei Kernübungen. Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
     { k: "light", label: "Leicht", on: mods.light || sysReduced, disabled: sysReduced, info: sysReduced ? "Diese Woche läuft ohnehin mit −1 Satz." : "−1 Satz je Übung, Bestien nur als Plage." },
     { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben." },
-    { k: "quiet", label: "Leise", on: mods.quiet, info: "Keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up. Die Bestie wandert auf einen anderen Tag dieser Woche, wenn dort Zeit ist (notfalls mit Supersets, höchstens 5 Min länger)." },
+    { k: "quiet", label: "Leise", on: mods.quiet, info: "Leise Bestie ohne Sprünge, Burpees und Sprints. Kein Laufen, keine Intervalle, kurzes Warm-up." },
   ] : [];
   const weekMatch = (s: { blockId: string; week: number }) => s.blockId === block.id && s.week === week;
   // Kurz verändert die ganze Woche (Ausgleich), der Rest nur diesen Tag

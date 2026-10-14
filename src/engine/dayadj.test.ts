@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS, emptyState, migrate } from "../store";
-import type { AppState, Block, Slot } from "../types";
+import type { AppState, Block, Focus, Slot } from "../types";
 import { dayMods, rememberMod, toggleMod } from "./dayadj";
 import { dayRoleMap } from "./plan";
 import { focusFor } from "./weekplan";
@@ -61,43 +61,35 @@ describe("Tagesanpassung", () => {
   });
 });
 
-describe("Leise: Bestie wandert", () => {
-  const beastDays = (s: AppState) => {
-    const f = focusFor(s, s.plan[0], 2)!;
-    return days(s).filter((d) => f.roles[d.role].blocks.some((b) => b.type === "beast")).map((d) => d.day);
-  };
-  it("spontan nur auf spätere Tage, fixiert auf jeden Tag; nie auf leise Tage", () => {
+describe("Leise: leise Bestie statt Wegfall", () => {
+  it("der Tag behält seine Bestie, gewählt wird eine leise", async () => {
+    const { pickBeast, quietBeast } = await import("./plan");
     const s0 = st();
-    const ds = days(s0);
-    const before = beastDays(s0);
-    expect(before.length).toBeGreaterThan(0);
-    const q = ds.find((d) => d.day === before[0])!;
+    const f0 = focusFor(s0, s0.plan[0], 2)!;
+    const q = days(s0).find((d) => f0.roles[d.role].blocks.some((b) => b.type === "beast"))!;
     const s1 = toggleMod(s0, s0.plan[0], 2, q.role, q.day, "quiet");
     const f1 = focusFor(s1, s1.plan[0], 2)!;
-    expect(f1.roles[q.role].blocks.some((b) => b.type === "beast")).toBe(false);
-    const qi = ds.indexOf(q);
-    for (const d of ds.slice(0, qi)) expect(JSON.stringify(f1.roles[d.role])).toBe(JSON.stringify(focusFor(s0, s0.plan[0], 2)!.roles[d.role]));
-    const moved = ds.filter((d) => f1.roles[d.role].blocks.some((b) => b.type === "beast" && /Vom leisen/.test(b.note ?? "")));
-    for (const d of moved) expect(ds.indexOf(d)).toBeGreaterThan(qi);
-    // Fixiert: die Woche plant vorher, auch frühere Tage kommen in Frage
-    const s2 = rememberMod(s0, s0.plan[0], 2, q.role, q.day, "quiet", true);
-    const f2 = focusFor(s2, s2.plan[0], 2)!;
-    expect(f2.roles[q.role].blocks.some((b) => b.type === "beast")).toBe(false);
+    const blk = f1.roles[q.role].blocks.find((b) => b.type === "beast") as Extract<Block, { type: "beast" }>;
+    expect(blk).toBeDefined();
+    const beast = pickBeast(blk, { blockId: "b1", week: 2, profile: { ...gym, quiet: true }, state: s1, reduced: false, downgrade: false });
+    expect(beast && quietBeast(beast)).toBe(true);
+    // nichts wandert, die übrigen Tage bleiben gleich
+    for (const d of days(s0).filter((x) => x.role !== q.role)) expect(JSON.stringify(f1.roles[d.role])).toBe(JSON.stringify(f0.roles[d.role]));
   });
-});
-
-describe("Leise mit Verdichtung", () => {
-  it("fixiert: Bestie landet als Plage auf einem anderen Tag, der höchstens 5 Minuten über seinem Limit liegt", async () => {
-    const { planMinutes } = await import("./slots");
-    const s0 = st({ plan: [{ id: "b1", focusId: "knight", label: "x", start: "2026-09-21", end: "2026-11-29", load: "medium", travel: false }] });
+  it("gibt es keine leise Fassung (Pool nur aus lauten Bestien), wandert die Bestie auf einen späteren Tag", async () => {
+    const { BEASTS } = await import("../data");
+    const { quietBeast } = await import("./plan");
+    const { FOCUS_BY_ID } = await import("../data");
+    const loud = BEASTS.filter((b) => !quietBeast(b)).slice(0, 4).map((b) => b.id);
+    const base: Focus = JSON.parse(JSON.stringify(FOCUS_BY_ID.knight));
+    for (const r of Object.values(base.roles)) for (const b of r.blocks) if (b.type === "beast") b.pool = loud;
+    const s0 = st({ plan: [{ id: "b1", focusId: "knight", label: "x", start: "2026-09-21", end: "2026-11-29", load: "medium", travel: false, frozen: { at: "2026-09-21", foci: { knight: base } } }] });
     const f0 = focusFor(s0, s0.plan[0], 2)!;
     const q = days(s0).find((d) => f0.roles[d.role].blocks.some((b) => b.type === "beast"))!;
     const s = rememberMod(s0, s0.plan[0], 2, q.role, q.day, "quiet", true);
     const f = focusFor(s, s.plan[0], 2)!;
+    expect(f.roles[q.role].blocks.some((b) => b.type === "beast")).toBe(false);
     const host = days(s).find((d) => f.roles[d.role].blocks.some((b) => b.type === "beast" && /Vom leisen/.test(b.note ?? "")));
     expect(host).toBeDefined();
-    const r0 = f0.roles[host!.role];
-    const lim = Math.max(r0.cap ?? Math.max(r0.minutes, f0.session_min), planMinutes(r0));
-    expect(planMinutes(f.roles[host!.role])).toBeLessThanOrEqual(lim + 5.5);
   });
 });

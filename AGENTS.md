@@ -11,7 +11,7 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
   - `plan.ts` (Jahresplan, Bestienwahl, Warm-up-Listen)
   - `weekplan.ts` (`focusFor`: eingefrorene Fassung → 3-Tage-Form → Kurz (gemerkt: ganze Woche, spontan: Folgetage) → Schwerpunkt-Slot → eigene Warm-up-Änderungen)
   - `shortday.ts` (Kurztag mit Ausgleich)
-  - `dayadj.ts` (Tagesanpassung Kurz · Leicht · Intensiv · Leise; Kurz und Leise je Wochentag gemerkt in `dayFlags`)
+  - `dayadj.ts` (Tagesanpassung Kurz · Leicht · Intensiv · Leise; Kurz und Leise je Wochentag gemerkt in `dayFlags`). Leise: nur leise Bestien (`quietBeast` in `plan.ts`); verschoben wird nur ohne leise Fassung (`quietMoves` in `weekplan.ts`)
   - `progression.ts` (`suggest`, `advance`)
   - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
   - `warmup.ts`, `duration.ts`, `saga.ts` (Erzähler „Aschekurier“)

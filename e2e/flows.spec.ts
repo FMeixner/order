@@ -110,14 +110,14 @@ test("Warm-up: nach links startet rechts von selbst", async ({ page }) => {
   await expect(page.locator(".timerbar-label")).toContainText("Rechts");
 });
 
-test("Leise an allen Tagen (alter schweißfreier Ort): keine Bestie am Tag", async ({ page }) => {
+test("Leise an allen Tagen (alter schweißfreier Ort): nur leise Bestien", async ({ page }) => {
   const st = fixture();
   st.equipment = st.equipment.map((e) => ({ ...e, sweatFree: true }));
   await seed(page, st);
   await page.goto("./");
   for (const day of await page.locator(".day-btn").all()) {
     await day.click();
-    await expect(page.locator(".card.beast")).toHaveCount(0);
+    for (const card of await page.locator(".card.beast").all()) await expect(card).not.toContainText(/jump|burpee|split lunge|sprint|\brun\b/i);
   }
 });
 

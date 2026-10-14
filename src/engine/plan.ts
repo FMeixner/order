@@ -248,6 +248,13 @@ export function beastRegion(b: Beast): BeastRegion {
   return loaded ? "sued" : "nord";
 }
 
+/** Laut: Sprünge, Burpees, Split Lunges, Sprints und Läufe, Seilspringen, Klatsch-Varianten, Sprawls */
+const LOUD = /jump|burpee|split lunge|sprint|\brun\b|obstacle|single under|skater|frogger|jumping jack|sprawl|clapping|combat roll|tuck jump|standup/i;
+/** Leise Bestie: keine lauten Übungen (für Leise-Tage, etwa Wohnung oder Arbeitsplatz) */
+/** Gibt es für diesen Bestienblock überhaupt eine leise Bestie? (eigener Pool, sonst alle) */
+export const canBeQuiet = (b: Extract<Block, { type: "beast" }>) => (b.pool?.length ? BEASTS.filter((x) => b.pool!.includes(x.id)) : BEASTS).some(quietBeast);
+export const quietBeast = (b: Beast) => ![b.work, ...(b.parts?.map((x) => x.work) ?? [])].some((w) => LOUD.test(w));
+
 export function beastFits(b: Beast, p: EquipmentProfile): boolean {
   const tagsOk = b.equipment.every((t) => {
     switch (t) {
@@ -381,13 +388,14 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
 let weekFocus: (state: AppState, b: PlanBlock, week: number) => Focus | null = (_s, b) => blockFocus(b) ?? null;
 export const setWeekFocus = (fn: typeof weekFocus) => { weekFocus = fn; };
 
-/** Rolle so, wie sie an diesem Tag läuft. Leise: ohne Bestien, Laufen und Intervalle, Finisher bleiben Superset, kurzes Warm-up. */
+/** Rolle so, wie sie an diesem Tag läuft. Leise (Bestien nur leise): ohne Bestien, Laufen und Intervalle, Finisher bleiben Superset, kurzes Warm-up. */
 const sweatMemo = new WeakMap<Role, Role>();
 export function roleAt(role: Role, p: EquipmentProfile | undefined): Role {
   if (!p?.quiet) return role;
   let r = sweatMemo.get(role);
   if (r) return r;
-  const sweaty = (b: Block) => b.type === "beast" || (b.type === "single" && (!!EXERCISES[b.slot.name]?.run || b.slot.kind === "interval"));
+  // Bestien bleiben, aber nur leise (siehe pickWith); Laufen und Intervalle fallen weg
+  const sweaty = (b: Block) => (b.type === "beast" && !canBeQuiet(b)) || (b.type === "single" && (!!EXERCISES[b.slot.name]?.run || b.slot.kind === "interval"));
   r = {
     ...role,
     blocks: role.blocks.filter((b) => !sweaty(b)).map((b) => (b.type === "superset" && b.finisher ? { ...b, finisher: undefined } : b.type === "module" && b.fallback?.kind === "interval" ? { ...b, fallback: undefined } : b)),
@@ -531,7 +539,8 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   const skills = state.user.skills ? new Set(state.user.skills) : null;
   // Fehlt ein Skill, kommt die Bestie mutiert: die betroffenen Übungen durch ihren Ersatz getauscht
   const serve = (b: Beast): Beast | null => (beastOk(b, skills) ? b : hexFor(b, skills));
-  const ok = (b: Beast) => beastFits(b, profile) && serve(b) != null;
+  // Leise: nur Bestien ohne Sprünge, Burpees, Sprints und Co.
+  const ok = (b: Beast) => beastFits(b, profile) && serve(b) != null && (!profile.quiet || quietBeast(serve(b)!));
   const min = (b: Beast) => beastMinutes(b, state.beastTimes[b.id]).min;
 
   // Zwischenwert (Conqueror): dieselbe Bestie wie in Woche 1
