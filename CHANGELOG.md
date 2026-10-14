@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.48.4] – 2026-10-14
+
+### Geändert
+- Blockfolge vorschlagen: Die Wirkung steht jetzt als Satz da, etwa „Diese Änderung der Blockfolge führt zu mehr Kraft und Erholung, aber weniger Kondition. Dein Jahr wird breiter: etwa 6 statt 5 von 8 Bereichen.“
+
 ## [0.48.3] – 2026-10-13
 
 ### Geändert

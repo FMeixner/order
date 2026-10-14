@@ -2,17 +2,21 @@ import { useMemo, useState } from "react";
 import { fmtDate, focusName, isTestBlock } from "../engine/plan";
 import { AIM_OPTIONS, suggestSequence, type Aim, type DeficitWeights } from "../engine/sequence";
 import type { PlanBlock } from "../types";
-import { AXES, type AxisId } from "../engine/balance";
+import { AXES, type Balance } from "../engine/balance";
 import { Modal } from "./common";
 
 /** Gleichmäßigkeit (0–1) als „effektiv gleich stark trainierte Bereiche“: Anzahl hoch Wert, gerundet */
 const spread = (score: number) => Math.max(1, Math.round(AXES.length ** score));
-/** Größte Gewinne und Verluste der Bereiche (ab 3 Prozentpunkten), z. B. „mehr Kraft, weniger Ausdauer“ */
-function shift(before: Record<AxisId, number>, after: Record<AxisId, number>): string {
-  const d = AXES.map((a) => ({ name: a.name, x: (after[a.id] ?? 0) - (before[a.id] ?? 0) })).filter((v) => Math.abs(v.x) >= 0.03);
+/** Satz zur Wirkung: welche Bereiche gewinnen und verlieren (ab 3 Prozentpunkten, je höchstens zwei), wie breit das Jahr wird */
+function summary(before: Balance, after: Balance, changes: number): string {
+  if (!changes) return "Die Blockfolge passt schon zu dieser Richtung.";
+  const d = AXES.map((a) => ({ name: a.name, x: (after.share[a.id] ?? 0) - (before.share[a.id] ?? 0) })).filter((v) => Math.abs(v.x) >= 0.03);
   const up = d.filter((v) => v.x > 0).sort((a, b) => b.x - a.x).slice(0, 2).map((v) => v.name);
   const down = d.filter((v) => v.x < 0).sort((a, b) => a.x - b.x).slice(0, 2).map((v) => v.name);
-  return [up.length && `mehr ${up.join(" und ")}`, down.length && `weniger ${down.join(" und ")}`].filter(Boolean).join(", ");
+  const what = [up.length && `mehr ${up.join(" und ")}`, down.length && `weniger ${down.join(" und ")}`].filter(Boolean).join(", aber ");
+  const b0 = before.score != null ? spread(before.score) : null, b1 = after.score != null ? spread(after.score) : null;
+  const width = b0 == null || b1 == null ? "" : b1 > b0 ? ` Dein Jahr wird breiter: etwa ${b1} statt ${b0} von ${AXES.length} Bereichen.` : b1 < b0 ? ` Dein Jahr wird schmaler: etwa ${b1} statt ${b0} von ${AXES.length} Bereichen.` : ` Die Breite bleibt bei etwa ${b1} von ${AXES.length} Bereichen.`;
+  return `${what ? `Diese Änderung der Blockfolge führt zu ${what}.` : "Diese Änderung der Blockfolge verschiebt die Bereiche kaum."}${width}`;
 }
 
 /** Vorschlag einer Blockfolge für alle künftigen Phasen, mit Ziel Allround oder einem Schwerpunkt. */
@@ -49,10 +53,7 @@ export function SequenceDialog({ plan, today, deficits = [], deficitNames = [], 
             );
           })}
         </div>
-        <div className="small">
-          Breite übers Jahr: {res.before.score != null ? `etwa ${spread(res.before.score)} von ${AXES.length} Bereichen` : "–"} → <strong>{res.balance.score != null ? `etwa ${spread(res.balance.score)} von ${AXES.length}` : "–"}</strong>
-          {shift(res.before.share, res.balance.share) && <span className="muted"> · {shift(res.before.share, res.balance.share)}</span>}
-        </div>
+        <p className="small">{summary(res.before, res.balance, changes)}</p>
         <div className="row">
           <button className="btn primary" disabled={!changes} onClick={() => { onApply(plan.map((b) => ({ ...b, focusId: res.items.find((x) => x.id === b.id)?.focusId ?? b.focusId }))); onClose(); }}>
             {changes ? `Übernehmen (${changes} ${changes === 1 ? "Phase" : "Phasen"})` : "Nichts zu ändern"}
