@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.51.2] – 2026-10-14
+
+### Geändert
+- Phasenkarten mit Symbolen statt Text: Balken für die Alltagslast, Koffer für viel unterwegs, ▶ läuft, ☆ empfohlen, ✓ selbst gewählt, Lanzen für eine Testwoche am Ende.
+- „Testwoche am Ende“ stellst du jetzt auf der Bearbeitungsseite ein; die Karte zeigt es nur an.
+- Testwochen zeigen beim Antippen eine Vorschau mit den fünf Cups; der Zusatztext auf der Karte entfällt.
+
 ## [0.51.1] – 2026-10-14
 
 ### Geändert

@@ -95,13 +95,19 @@ test("Plan als Stapel: Woche länger, Testwoche am Ende, Phase anhängen mit Emp
   await expect(card.locator(".sc-weeks")).toHaveText("10 Wo.");
   await card.getByRole("button", { name: "Eine Woche länger" }).click();
   await expect(card.locator(".sc-weeks")).toHaveText("11 Wo.");
-  await card.getByRole("button", { name: "ohne Test" }).click();
-  await expect(card.getByRole("button", { name: "Test am Ende" })).toBeVisible();
+  await card.getByRole("button", { name: "Phase bearbeiten" }).click();
+  await page.getByRole("dialog").getByText("Testwoche am Ende").click();
+  await page.getByRole("dialog").getByRole("button", { name: "Speichern" }).click();
   await expect(page.locator(".stack-card.test")).toHaveCount(1);
+  await expect(card.getByRole("img", { name: "mit Testwoche am Ende" })).toBeVisible();
   await expect(card.locator(".sc-weeks")).toHaveText("11 Wo.");
+  // Vorschau der Testwoche
+  await page.locator(".stack-card.test").click();
+  await expect(page.getByRole("dialog")).toContainText("Excalibur-Cup");
+  await page.getByRole("dialog").getByRole("button", { name: "Schließen" }).click();
   await page.getByRole("button", { name: "+ Phase anhängen" }).click();
   const next = page.locator(".stack-card:not(.test)").nth(1);
-  await expect(next.locator(".tag.rec")).toHaveText("empfohlen");
+  await expect(next.getByRole("img", { name: "empfohlen" })).toBeVisible();
   await next.getByRole("button", { name: "Phase bearbeiten" }).click();
   const dlg = page.getByRole("dialog");
   await expect(dlg.locator(".sc-alt .tag.rec")).toHaveText("empfohlen");

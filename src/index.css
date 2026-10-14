@@ -175,6 +175,11 @@ details.card[open] summary { margin-bottom: 10px; }
 .sc-order { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; }
 .sc-name { font-family: var(--display); font-size: 18px; background: none; border: 0; padding: 0; color: var(--text); cursor: pointer; text-align: left; }
 .tag.rec { border-color: var(--teal); color: var(--teal); }
+.sc-ico { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; color: var(--muted); vertical-align: middle; }
+.sc-ico.st-run, .sc-ico.st-rec { color: var(--teal); }
+.sc-ico.test { margin-left: 4px; }
+.sc-ico .order-mark { position: static; transform: none; width: 22px; height: 22px; stroke: var(--amber); opacity: 1; stroke-width: 2.6; }
+button.stack-card { text-align: left; font: inherit; color: inherit; cursor: pointer; width: 100%; }
 .sc-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .sc-edit { margin-left: auto; width: 36px; height: 36px; font-size: 17px; }
 .sc-step { display: flex; align-items: center; gap: 4px; flex: none; }

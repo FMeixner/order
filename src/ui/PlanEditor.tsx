@@ -12,7 +12,7 @@ import { FocusDetail } from "./FociBrowser";
 import { SequenceDialog } from "./SequenceDialog";
 import { PlanStack } from "./PlanStack";
 import { rankFor, type Aim } from "../engine/sequence";
-import { mergeNext, nextOf, splitBlock } from "../engine/stack";
+import { mergeNext, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
 /** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
@@ -89,12 +89,14 @@ export function FocusPicker({ load, travel, value, onPick, profile, days }: { lo
     dann Aufteilen (Teilen, Verbinden), zuletzt Feinheiten (Zeitraum, eigener Wochenplan, Schwerpunkt-Slot). */
 export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], onStructure, today }: {
   block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotPlan;
-  onSave: (b: PlanBlock) => void; onCancel: () => void; onDelete?: () => void;
+  onSave: (b: PlanBlock, opts?: { test?: boolean }) => void; onCancel: () => void; onDelete?: () => void;
   plan?: PlanBlock[]; aim?: Aim; deficits?: DeficitWeights; onStructure?: (p: PlanBlock[]) => void; today?: string;
 }) {
   const [b, setB] = useState<PlanBlock>(block);
   const [ownWeek, setOwnWeek] = useState(!!block.schedule && Object.values(block.schedule).some(Boolean));
   const [all, setAll] = useState(false);
+  // Testwoche am Ende: die letzte Woche der Phase wird Testwoche (ab 3 Wochen)
+  const [test, setTest] = useState(!!(plan && testAfter(plan, block)));
   const f = blockFocus(b);
   const weeks = blockWeeks(b);
   const valid = b.start <= b.end && (!!f || isTestBlock(b));
@@ -129,6 +131,9 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
         <Seg value={b.load} options={[{ value: "low", label: "niedrig" }, { value: "medium", label: "mittel" }, { value: "high", label: "hoch" }]} onChange={(load) => setB({ ...b, load })} />
       </Field>
       <Check checked={b.travel} onChange={(travel) => setB({ ...b, travel })} label="Viel unterwegs" />
+      {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && (
+        <Check checked={test} onChange={setTest} label="Testwoche am Ende (die letzte Woche wird zur Testwoche)" />
+      )}
 
       <div className="label teal"><span className="bar" />Orden · {weeks} Wochen{f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (passt für ${f.weeks.min}–${f.weeks.max})` : ""}</div>
       {locked ? (
@@ -171,7 +176,7 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
       <div className="sticky-actions">
         {onDelete && <button className="btn danger" onClick={onDelete}>Löschen</button>}
         <button className="btn ghost" onClick={onCancel}>Abbrechen</button>
-        <button className="btn primary" disabled={!valid} onClick={() => onSave(b)}>{f ? "Speichern" : "Erst Orden wählen"}</button>
+        <button className="btn primary" disabled={!valid} onClick={() => onSave(b, { test })}>{f ? "Speichern" : "Erst Orden wählen"}</button>
       </div>
     </div>
   );
@@ -232,7 +237,11 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
             aim={deficits?.length ? "deficits" : "allround"} deficits={deficits ?? []} onStructure={(p) => { onChange(p); setEdit(null); }}
             onCancel={() => setEdit(null)}
             onDelete={plan.some((x) => x.id === edit.id) ? () => { if (!confirm(`Phase ${fmtDate(edit.start)}–${fmtDate(edit.end)} löschen? Einträge im Log bleiben erhalten.`)) return; onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
-            onSave={(nb) => { onChange(plan.some((x) => x.id === nb.id) ? plan.map((x) => (x.id === nb.id ? nb : x)) : [...plan, nb]); setEdit(null); }} />
+            onSave={(nb, o) => {
+              const p = plan.some((x) => x.id === nb.id) ? plan.map((x) => (x.id === nb.id ? nb : x)) : [...plan, nb];
+              onChange(o?.test === undefined || isTestBlock(nb) ? p : setTestWeek(p, nb.id, o.test, uid("b")));
+              setEdit(null);
+            }} />
         </Modal>
       )}
     </div>
