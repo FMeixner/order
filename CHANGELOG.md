@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.51.3] – 2026-10-14
+
+### Behoben
+- Leise und Kein Platz: Eine schon festgehaltene Bestie ohne echte Zeit (auch mit 0 Sekunden) weicht jetzt, wenn sie nicht zum Tag passt, etwa Kobold mit Broad Jumps an einem Tag ohne Platz. Mit eingetragener Zeit bleibt sie, wie sie war.
+
 ## [0.51.2] – 2026-10-14
 
 ### Geändert

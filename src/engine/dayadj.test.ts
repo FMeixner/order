@@ -120,3 +120,26 @@ describe("Kein Platz und laute Übungen", () => {
     expect(s.dayFlags?.[d.day]?.tight).toBe(true);
   });
 });
+
+describe("Festgehaltene Bestie und Kein Platz", () => {
+  it("ohne echte Zeit (auch 0 s) weicht sie, wenn sie nicht zum Tag passt; mit Zeit bleibt sie", async () => {
+    const { collectItems, pinBeasts } = await import("../ui/session/items");
+    const { withDay } = await import("./dayadj");
+    const { beastForDay } = await import("./plan");
+    const s0 = st();
+    const f0 = focusFor(s0, s0.plan[0], 2)!;
+    const d = days(s0).find((x) => f0.roles[x.role].blocks.some((b) => b.type === "beast"))!;
+    const blk = f0.roles[d.role].blocks.find((b) => b.type === "beast")!;
+    const make = (sec: number | null) => ({ ...s0, dayFlags: { [d.day]: { tight: true } }, sessions: [{ id: `b1:2:${d.role}`, blockId: "b1", week: 2, role: d.role, date: "2026-09-29", done: false, entries: {}, beastRuns: { [blk.type === "beast" ? blk.id : ""]: { beast: { id: "ng-borr", seconds: sec } } } }] } as AppState);
+    const show = (s: AppState) => {
+      const f = focusFor(s, s.plan[0], 2)!;
+      const items = collectItems({ state: s, block: s.plan[0], focus: f, week: 2, roleKey: d.role, profile: withDay(gym, dayMods(s, s.plan[0], 2, d.role, d.day)), date: "2026-09-29", reduced: false } as never);
+      return { items, beast: items.find((i) => i.beast)!.beast! };
+    };
+    const zero = show(make(0));
+    expect(zero.beast.id).not.toBe("ng-borr");
+    expect(beastForDay(zero.beast, { tight: true })).toBe(true);
+    expect(JSON.stringify(pinBeasts(make(0).sessions[0], zero.items).beastRuns)).not.toContain("ng-borr");
+    expect(show(make(612)).beast.id).toBe("ng-borr");
+  });
+});

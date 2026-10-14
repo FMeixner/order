@@ -3,7 +3,7 @@ import { EXERCISES } from "../../data";
 import type { AppState, Beast, BeastClass, BeastRun, Block, Session } from "../../types";
 import { dayMods, withDay } from "../../engine/dayadj";
 import { blockSeconds } from "../../engine/duration";
-import { affectDowngrade, beastById, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks } from "../../engine/plan";
+import { affectDowngrade, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks } from "../../engine/plan";
 import { loadPhase } from "../../engine/progression";
 import { guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../../engine/resolve";
 import { menuDefault } from "../../engine/sharpen";
@@ -77,7 +77,8 @@ export function collectItems(ctx: SessionCtx): Item[] {
     const r = pinned?.[b.id] ?? (done && !done.beastRuns && role.blocks.filter((x) => x.type === "beast").length === 1 ? { beast: done.beast, parts: done.beastParts } : undefined);
     const logged = r?.parts?.length ? r.parts.map((p) => p.id).join("+") : r?.beast?.id;
     const lb = logged ? beastById(logged) : null;
-    if (lb) return { block: b, resolved: [], beast: lb };
+    // Festgehalten, aber noch ohne echte Zeit: passt sie nicht zu Leise oder Kein Platz, wird neu gewählt
+    if (lb && (done || hasTime(r) || beastForDay(lb, ctx.profile))) return { block: b, resolved: [], beast: lb };
     return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state), boost: boostOf(ctx) }) };
   };
   const otherItem = (b: Block): Item => {
@@ -115,8 +116,10 @@ export function runFor(beast: Beast): BeastRun {
   return beast.parts ? { parts: beast.parts.map((p) => ({ id: p.id, seconds: null })) } : { beast: { id: beast.id, seconds: null } };
 }
 /** Bewusste Anpassung (Ort, −1 Satz, viel Energie, kein Laufen): festgehaltene Bestien ohne Zeit freigeben, damit sie neu passen */
+/** Echte Zeit eingetragen (0 Sekunden zählt nicht) */
+export const hasTime = (r?: BeastRun) => !!r && ((r.beast?.seconds ?? 0) > 0 || !!r.parts?.some((p) => (p.seconds ?? 0) > 0));
 export function unpinBeasts(st: AppState, match: (s: Session) => boolean): AppState {
-  const timed = (r: BeastRun) => r.beast?.seconds != null || !!r.parts?.some((p) => p.seconds != null);
+  const timed = hasTime;
   return {
     ...st,
     sessions: st.sessions.map((s) => {
@@ -128,7 +131,13 @@ export function unpinBeasts(st: AppState, match: (s: Session) => boolean): AppSt
 }
 export function pinBeasts(s: Session, items: Item[]): Session {
   if (s.done || (s.beast !== undefined || s.beastParts?.length) && !s.beastRuns) return s;
-  const missing = items.flatMap((it) => (it.beast && it.block.type === "beast" && !s.beastRuns?.[it.block.id] ? [{ id: it.block.id, beast: it.beast }] : []));
+  // Fehlt der Eintrag oder zeigt die Einheit inzwischen eine andere Bestie (alter Eintrag ohne Zeit), gilt die gezeigte
+  const shownId = (r: BeastRun) => (r.parts?.length ? r.parts.map((p) => p.id).join("+") : r.beast?.id);
+  const missing = items.flatMap((it) => {
+    if (!it.beast || it.block.type !== "beast") return [];
+    const r = s.beastRuns?.[it.block.id];
+    return !r || (!hasTime(r) && shownId(r) !== shownId(runFor(it.beast))) ? [{ id: it.block.id, beast: it.beast }] : [];
+  });
   if (!missing.length) return s;
   const runs = { ...(s.beastRuns ?? {}) };
   for (const m of missing) runs[m.id] = runFor(m.beast);
