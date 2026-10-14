@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.53.0] – 2026-10-14
+
+### Geändert
+- Einrichtung, Schritt „Dein Jahr“: Du beschreibst dein Jahr in Abschnitten (oder nimmst die Vorlage Semester-Rhythmus), wählst die Richtung (Allround, Schwerpunkt oder „Weiß nicht“) und wie oft du testen willst. „Vorschlag erstellen“ legt Phasen, Orden und Testwochen an; danach stimmst du im Stapel fein ab. Wer lieber selbst plant, legt die Phasen wie bisher direkt an.
+
 ## [0.52.0] – 2026-10-14
 
 ### Neu

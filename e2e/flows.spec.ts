@@ -261,3 +261,28 @@ test("Satz antippen speichert das Ziel, „Zu schwer“ fragt den letzten Satz",
   await done.click();
   await expect(card.getByRole("button", { name: "Sehr leicht" })).toBeVisible();
 });
+
+test("Onboarding Dein Jahr: Vorlage, Schwerpunkt, Testwochen, Vorschlag als Stapel", async ({ page }) => {
+  await seed(page, { ...fixture(), onboarded: false, plan: [], user: { ...fixture().user, skills: [] } });
+  await page.goto("./");
+  page.on("dialog", (d) => d.accept());
+  for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Weiter" }).click();
+  await expect(page.getByRole("heading", { name: "Dein Jahr" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Weiter" })).toBeDisabled();
+  await page.getByRole("button", { name: "Vorlage Semester-Rhythmus" }).click();
+  await expect(page.locator(".sec-row").nth(3)).toBeVisible();
+  await page.getByRole("radio", { name: "Schwerpunkt" }).click();
+  await page.getByRole("radio", { name: "Kraft", exact: true }).click();
+  await page.getByRole("radio", { name: "zweimal im Jahr" }).click();
+  await page.getByRole("button", { name: "Vorschlag erstellen" }).click();
+  await expect(page.locator(".stack-card").first()).toBeVisible();
+  const st = await stored(page);
+  expect(st.plan.length).toBeGreaterThan(2);
+  expect(st.plan.every((b) => b.focusId)).toBe(true);
+  expect(st.plan.filter((b) => b.focusId === "test").length).toBe(2);
+  expect(st.yearAim).toBe("kraft");
+  expect(st.testPolicy).toBe("twice");
+  await page.getByRole("button", { name: "Weiter" }).click();
+  await page.getByRole("button", { name: "Los geht's" }).click();
+  expect((await stored(page)).onboarded).toBe(true);
+});

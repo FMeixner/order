@@ -4,8 +4,8 @@ import type { AppState } from "../types";
 import { WEEKDAYS } from "../types";
 import { Field } from "./common";
 import { EquipmentEditor } from "./EquipmentEditor";
-import { PlanList, WeekEditor } from "./PlanEditor";
-import { trainingDays } from "../engine/plan";
+import { WeekEditor } from "./PlanEditor";
+import { YearSetup } from "./YearSetup";
 import { LevelFields, NormFields, SkillEditor } from "./Setup";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -79,13 +79,7 @@ export function Onboarding({ state, update, replace, today }: { state: AppState;
         </div>
       )}
 
-      {step === 4 && (
-        <div className="stack">
-          <h2>Dein Jahr</h2>
-          <p className="muted">Teile dein Jahr in Phasen, so wie dein Alltag läuft: Semester, Projektzeiten, Urlaub, Saison. Gib für jede Phase an, wie viel los ist, und wähle einen Orden. Die App zeigt, welche Orden zur Phase passen.</p>
-          <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today} onChange={(plan) => update((s) => ({ ...s, plan }))} />
-        </div>
-      )}
+      {step === 4 && <YearSetup state={state} update={update} today={today} />}
 
       {step === 5 && (
         <div className="stack">
