@@ -87,7 +87,7 @@ test("Plan: Phase antippen zeigt den Orden, Bearbeiten erst im zweiten Schritt",
   await expect(page.getByRole("button", { name: "Speichern" })).toBeVisible();
 });
 
-test("Plan als Stapel: Woche länger, Testwoche am Ende, Phase anhängen mit Empfehlung", async ({ page }) => {
+test("Plan als Stapel: Woche länger, Testwoche am Ende, Phase anhängen mit Empfehlung, Bearbeiten-Seite", async ({ page }) => {
   await seed(page);
   await page.goto("./");
   await page.getByRole("button", { name: "Plan" }).click();
@@ -96,13 +96,17 @@ test("Plan als Stapel: Woche länger, Testwoche am Ende, Phase anhängen mit Emp
   await card.getByRole("button", { name: "Eine Woche länger" }).click();
   await expect(card.locator(".sc-weeks")).toHaveText("11 Wo.");
   await card.getByRole("button", { name: "ohne Test" }).click();
-  await expect(page.locator(".stack-test")).toHaveCount(1);
+  await expect(card.getByRole("button", { name: "Test am Ende" })).toBeVisible();
+  await expect(page.locator(".stack-card.test")).toHaveCount(1);
   await expect(card.locator(".sc-weeks")).toHaveText("11 Wo.");
   await page.getByRole("button", { name: "+ Phase anhängen" }).click();
-  const next = page.locator(".stack-card").nth(1);
-  await expect(next.locator(".tag.rec")).toBeVisible();
-  await next.locator(".sc-name").click();
-  await expect(next.locator(".sc-alt")).toHaveCount(4);
+  const next = page.locator(".stack-card:not(.test)").nth(1);
+  await expect(next.locator(".tag.rec")).toHaveText("empfohlen");
+  await next.getByRole("button", { name: "Phase bearbeiten" }).click();
+  const dlg = page.getByRole("dialog");
+  await expect(dlg.locator(".sc-alt .tag.rec")).toHaveText("empfohlen");
+  await expect(dlg.getByRole("button", { name: "In zwei Phasen teilen" })).toBeVisible();
+  await dlg.getByRole("button", { name: "Abbrechen" }).click();
   const st = await stored(page);
   expect(st.plan.length).toBe(3);
   expect(st.plan.some((b) => b.focusId === "test")).toBe(true);

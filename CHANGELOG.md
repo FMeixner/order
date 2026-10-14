@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.51.1] – 2026-10-14
+
+### Geändert
+- Phasenkarten: oben der Name der Phase mit Alltagslast, darunter der Orden mit „empfohlen“, „gewählt“ oder „läuft“, darunter der Zeitraum. Ordenssymbol und Testwochen-Symbol gleich groß und nie mehr unter den Knöpfen.
+- Bearbeiten (Stift) öffnet eine eigene Seite: Name, Alltagslast und unterwegs zuerst, dann die Ordenswahl mit Empfehlung, dann Teilen und Verbinden, unter „Mehr“ Zeitraum, eigener Wochenplan und Schwerpunkt. Die Alltagslast lässt sich nur noch dort ändern.
+
 ## [0.51.0] – 2026-10-14
 
 ### Neu
