@@ -1,22 +1,24 @@
-/* Tagesanpassung: Kurz · Leicht · Intensiv · Leise.
-   - Kurz, Leicht und Leise lassen sich kombinieren; Intensiv steht allein (mehr Zeit und Last widerspricht Kurz und Leicht).
-   - Kurz und Leise lassen sich je Wochentag merken (gilt in allen Phasen). Ein gemerkter Kurztag gleicht über die ganze
+/* Tagesanpassung: Kurz · Leicht · Intensiv · Leise · Kein Platz.
+   - Kurz, Leicht, Leise und Kein Platz lassen sich kombinieren; Intensiv steht allein (mehr Zeit und Last widerspricht Kurz und Leicht).
+   - Kurz, Leise und Kein Platz lassen sich je Wochentag merken (gilt in allen Phasen). Ein gemerkter Kurztag gleicht über die ganze
      Woche aus; ein spontaner nur in den Tagen danach. Ist danach nichts mehr, entfällt der Ausgleich.
    - Leicht: −1 Satz je Übung, Bestien nur Plagen. Gilt nur für diesen Tag.
-   - Leise: keine Bestien, kein Laufen, keine Intervalle, kurzes Warm-up (früher „Schweißfrei“ am Ort).
+   - Leise: leise Bestien, laute Übungen ersetzt (Sprünge, Langhantel vom Boden, Würfe), kein Laufen, keine Intervalle, kurzes Warm-up.
+   - Kein Platz: Bestien und Übungen ohne Strecke (kein Lunge Walk, Crawl, Carry, Broad Jump, Sprint).
    Je Einheit überschreibt eine Wahl (true/false) das Gemerkte; ohne Wahl gilt das Gemerkte. */
 import type { AppState, EquipmentProfile, PlanBlock, Weekday } from "../types";
 
-export type DayKey = "short" | "light" | "quiet";
-export interface DayMods { short: boolean; light: boolean; quiet: boolean; intense: boolean }
+export type DayKey = "short" | "light" | "quiet" | "tight";
+export type FixKey = "short" | "quiet" | "tight";
+export interface DayMods { short: boolean; light: boolean; quiet: boolean; tight: boolean; intense: boolean }
 
 const sid = (b: PlanBlock, week: number, role: string) => `${b.id}:${week}:${role}`;
 
 /** Gemerkt für diesen Wochentag (Kurz zusätzlich: alter Kurztag der Phase, solange kein Wochentag gemerkt ist) */
-export function remembered(state: AppState, b: PlanBlock, role: string, day: Weekday | undefined): { short: boolean; quiet: boolean } {
+export function remembered(state: AppState, b: PlanBlock, role: string, day: Weekday | undefined): Record<FixKey, boolean> {
   const f = day ? state.dayFlags?.[day] : undefined;
   const anyShort = Object.values(state.dayFlags ?? {}).some((x) => x?.short);
-  return { short: !!f?.short || (!anyShort && b.shortRole === role), quiet: !!f?.quiet };
+  return { short: !!f?.short || (!anyShort && b.shortRole === role), quiet: !!f?.quiet, tight: !!f?.tight };
 }
 
 /** Wirksame Anpassung einer Einheit. `day`: Wochentag der Einheit in dieser Woche. */
@@ -25,17 +27,19 @@ export function dayMods(state: AppState, b: PlanBlock, week: number, role: strin
   const own = state.dayAdj?.[id] ?? {};
   const mem = remembered(state, b, role, day);
   const intense = !!state.energy?.[id];
-  if (intense) return { short: false, light: false, quiet: false, intense };
+  if (intense) return { short: false, light: false, quiet: false, tight: false, intense };
   return {
     short: own.short ?? mem.short,
     light: own.light ?? !!state.reduced[`${b.id}:${week}`],
     quiet: own.quiet ?? mem.quiet,
+    tight: own.tight ?? mem.tight,
     intense,
   };
 }
 
-/** Profil, wie es an diesem Tag gilt (Leise als Eigenschaft des Tages, nicht des Orts) */
-export const withQuiet = (p: EquipmentProfile, quiet: boolean): EquipmentProfile => (quiet === !!p.quiet ? p : { ...p, quiet });
+/** Profil, wie es an diesem Tag gilt (Leise und Kein Platz als Eigenschaft des Tages, nicht des Orts) */
+export const withDay = (p: EquipmentProfile, m: { quiet: boolean; tight: boolean }): EquipmentProfile =>
+  m.quiet === !!p.quiet && m.tight === !!p.tight ? p : { ...p, quiet: m.quiet || undefined, tight: m.tight || undefined };
 
 /** Schalter umlegen. Intensiv löst die anderen, die anderen lösen Intensiv. */
 export function toggleMod(state: AppState, b: PlanBlock, week: number, role: string, day: Weekday | undefined, key: DayKey | "intense"): AppState {
@@ -50,7 +54,7 @@ export function toggleMod(state: AppState, b: PlanBlock, week: number, role: str
       energy[id] = true;
       // Gemerktes für heute ausschalten, eigene Wahl verwerfen
       const mem = remembered(state, b, role, day);
-      adj[id] = { ...(mem.short ? { short: false } : {}), ...(mem.quiet ? { quiet: false } : {}) };
+      adj[id] = { ...(mem.short ? { short: false } : {}), ...(mem.quiet ? { quiet: false } : {}), ...(mem.tight ? { tight: false } : {}) };
       if (!Object.keys(adj[id]).length) delete adj[id];
     }
     return { ...state, dayAdj: adj, energy };
@@ -67,12 +71,12 @@ export function toggleMod(state: AppState, b: PlanBlock, week: number, role: str
   return { ...state, dayAdj: adj, energy, reduced };
 }
 
-/** Kurz oder Leise für diesen Wochentag merken (oder vergessen). Kurz lässt sich nur für einen Wochentag merken. */
-export function rememberMod(state: AppState, b: PlanBlock, week: number, role: string, day: Weekday, key: "short" | "quiet", on: boolean): AppState {
+/** Kurz, Leise oder Kein Platz für diesen Wochentag merken (oder vergessen). Kurz lässt sich nur für einen Wochentag merken. */
+export function rememberMod(state: AppState, b: PlanBlock, week: number, role: string, day: Weekday, key: FixKey, on: boolean): AppState {
   const flags = { ...(state.dayFlags ?? {}) };
   if (key === "short" && on) for (const d of Object.keys(flags) as Weekday[]) if (flags[d]?.short) flags[d] = { ...flags[d], short: undefined };
   flags[day] = { ...(flags[day] ?? {}), [key]: on || undefined };
-  for (const d of Object.keys(flags) as Weekday[]) if (!flags[d]?.short && !flags[d]?.quiet) delete flags[d];
+  for (const d of Object.keys(flags) as Weekday[]) if (!flags[d]?.short && !flags[d]?.quiet && !flags[d]?.tight) delete flags[d];
   // Alter Kurztag der Phasen: wird durch den Wochentag ersetzt
   const plan = key === "short" ? state.plan.map((p) => (p.shortRole ? { ...p, shortRole: undefined } : p)) : state.plan;
   // Die eigene Wahl für heute fällt weg, das Gemerkte gilt

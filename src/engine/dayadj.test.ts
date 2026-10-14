@@ -25,7 +25,7 @@ describe("Tagesanpassung", () => {
     s = toggleMod(s, s.plan[0], 2, d.role, d.day, "quiet");
     expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toMatchObject({ short: true, quiet: true, intense: false });
     s = toggleMod(s, s.plan[0], 2, d.role, d.day, "intense");
-    expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toEqual({ short: false, light: false, quiet: false, intense: true });
+    expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toEqual({ short: false, light: false, quiet: false, tight: false, intense: true });
     s = toggleMod(s, s.plan[0], 2, d.role, d.day, "light");
     expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toMatchObject({ light: true, intense: false });
   });
@@ -91,5 +91,32 @@ describe("Leise: leise Bestie statt Wegfall", () => {
     expect(f.roles[q.role].blocks.some((b) => b.type === "beast")).toBe(false);
     const host = days(s).find((d) => f.roles[d.role].blocks.some((b) => b.type === "beast" && /Vom leisen/.test(b.note ?? "")));
     expect(host).toBeDefined();
+  });
+});
+
+describe("Kein Platz und laute Übungen", () => {
+  it("Leise ersetzt Langhantel-Deadlift und Sprünge, Kein Platz ersetzt Carry und Walking Lunge", async () => {
+    const { resolveSlot } = await import("./resolve");
+    const dl = { id: "x", name: "Deadlift", sets: 3, reps: "5", prog: "weight" as const };
+    expect(resolveSlot(dl, gym)?.name).toBe("Deadlift");
+    expect(resolveSlot(dl, { ...gym, quiet: true })?.name).toBe("Romanian Deadlift");
+    expect(resolveSlot({ id: "j", name: "Squat Jump", sets: 3, reps: "5", prog: "none" }, { ...gym, quiet: true })?.name).toBe("KB Swing");
+    const carry = resolveSlot({ id: "c", name: "Farmer's Carry", sets: 3, reps: "40 m", prog: "weight" }, { ...gym, tight: true })!;
+    expect([carry.name, carry.reps]).toEqual(["Farmer's March", "40 Schritte"]);
+    expect(resolveSlot({ id: "l", name: "Walking Lunge", sets: 3, reps: "10/Seite", prog: "double" }, { ...gym, tight: true })?.name).toBe("Reverse Lunge");
+    // Mountain Climbers und Swings bleiben an leisen Tagen
+    expect(resolveSlot({ id: "s", name: "KB Swing", sets: 3, reps: "15", prog: "double" }, { ...gym, quiet: true })?.name).toBe("KB Swing");
+  });
+  it("Bestien: leise ohne Langhantel vom Boden, kein Platz ohne Strecke; Schalter fixierbar", async () => {
+    const { BEASTS } = await import("../data");
+    const { beastForDay } = await import("./plan");
+    expect(BEASTS.filter((b) => /deadlift 50/i.test(b.work)).every((b) => !beastForDay(b, { quiet: true }))).toBe(true);
+    expect(BEASTS.filter((b) => /lunge walk|crawl/i.test(b.work)).every((b) => !beastForDay(b, { tight: true }))).toBe(true);
+    expect(BEASTS.filter((b) => /mountain climbers|swings/i.test(b.work) && !/jump|burpee|sprint|run\b/i.test(b.work)).some((b) => beastForDay(b, { quiet: true }))).toBe(true);
+    const s0 = st();
+    const [d] = days(s0);
+    const s = rememberMod(s0, s0.plan[0], 2, d.role, d.day, "tight", true);
+    expect(dayMods(s, s.plan[0], 3, d.role, d.day).tight).toBe(true);
+    expect(s.dayFlags?.[d.day]?.tight).toBe(true);
   });
 });

@@ -1,7 +1,7 @@
 /* Inhalte einer Einheit sammeln (Übungen, Bestien, Module) und Bestien festhalten. */
 import { EXERCISES } from "../../data";
 import type { AppState, Beast, BeastClass, BeastRun, Block, Session } from "../../types";
-import { dayMods, withQuiet } from "../../engine/dayadj";
+import { dayMods, withDay } from "../../engine/dayadj";
 import { blockSeconds } from "../../engine/duration";
 import { affectDowngrade, beastById, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks } from "../../engine/plan";
 import { loadPhase } from "../../engine/progression";
@@ -46,7 +46,7 @@ setWeekBeastBlocks((state, pb, week) => {
     const pid = state.profileFor?.[sessionId(pb.id, week, d.role)] ?? d.profileId;
     const p0 = state.equipment.find((e) => e.id === pid);
     if (!p0) return [];
-    const profile = withQuiet(p0, dayMods(state, pb, week, d.role, d.day).quiet);
+    const profile = withDay(p0, dayMods(state, pb, week, d.role, d.day));
     const noRun = !!state.noRun?.[sessionId(pb.id, week, d.role)];
     const ctx = { profile } as SessionCtx;
     return (f.roles[d.role] ? roleAt(f.roles[d.role], profile).blocks : [])

@@ -87,6 +87,9 @@ export function available(name: string, p: EquipmentProfile, skills?: SkillSet):
     // Defizit: Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln als Griffe
     if (n === "deficit" && !p.has.handles && !p.has.rings && !p.dumbbells.length) return false;
   }
+  // Tagesanpassung: Leise und Kein Platz
+  if (p.quiet && ex.loud) return false;
+  if (p.tight && ex.space) return false;
   return true;
 }
 
@@ -96,7 +99,7 @@ function loadOk(c: Choice, p: EquipmentProfile): boolean {
 }
 
 /** Ersatz einer Übung, die am Ort nicht geht (Feld „instead“ in exercises.json) */
-export function insteadOf(name: string, p: EquipmentProfile, skills?: SkillSet): { name: string; sets?: number } | null {
+export function insteadOf(name: string, p: EquipmentProfile, skills?: SkillSet): { name: string; sets?: number; reps?: string } | null {
   if (available(name, p, skills)) return null;
   return EXERCISES[name]?.instead?.find((x) => available(x.name, p, skills)) ?? null;
 }
@@ -144,7 +147,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
   if (!chosen) for (const { t, c } of [...cands].reverse()) {
     if (!skillOk(c.name, skills) && !(slot.ladder && (t === "gym" || c.name === slot.name))) continue;
     const alt = insteadOf(c.name, p, skills);
-    if (alt) { chosen = { c: { ...c, name: alt.name, load: undefined, sets: (c.sets ?? slot.sets ?? 1) + (alt.sets ?? 0) }, tier: t }; break; }
+    if (alt) { chosen = { c: { ...c, name: alt.name, load: undefined, sets: (c.sets ?? slot.sets ?? 1) + (alt.sets ?? 0), ...(alt.reps ? { reps: alt.reps } : {}) }, tier: t }; break; }
   }
   const pick = chosen ?? fallback;
   if (!pick) return null;

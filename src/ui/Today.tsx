@@ -7,7 +7,9 @@ import { SessionPreview, SessionView } from "./SessionView";
 import { sessionId } from "./session/ctx";
 import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
-import { dayMods, rememberMod, remembered, toggleMod, withQuiet, type DayKey } from "../engine/dayadj";
+import { dayMods, rememberMod, remembered, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
+
+const FIX_LABEL: Record<FixKey, string> = { short: "Kurz", quiet: "Leise", tight: "Kein Platz" };
 import { canShorten } from "../engine/shortday";
 
 const DAY_NAME: Record<Weekday, string> = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag", Sa: "Samstag", So: "Sonntag" };
@@ -99,7 +101,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const profile0 = sel ? state.equipment.find((e) => e.id === pidOf(sel)) : undefined;
   const mods = sel ? dayMods(state, block, week, sel.role, sel.day) : null;
   const reduced = sysReduced || !!mods?.light;
-  const profile = profile0 && withQuiet(profile0, !!mods?.quiet);
+  const profile = profile0 && withDay(profile0, { quiet: !!mods?.quiet, tight: !!mods?.tight });
   const setPlace = (pid: string) => sel && update((st) => {
     const pf = { ...(st.profileFor ?? {}) };
     const k = sessionId(block.id, week, sel.role);
@@ -120,14 +122,15 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
     { k: "short", label: "Kurz", on: mods.short, disabled: !role0 || !canShorten(role0), info: remembered(state, block, sel!.role, sel!.day).short ? "Nur die drei Kernübungen. Fixiert: Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Nur die drei Kernübungen. Letzter Tag der Woche, daher kein Ausgleich." : "Nur die drei Kernübungen. Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
     { k: "light", label: "Leicht", on: mods.light || sysReduced, disabled: sysReduced, info: sysReduced ? "Diese Woche läuft ohnehin mit −1 Satz." : "−1 Satz je Übung, Bestien nur als Plage." },
     { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben." },
-    { k: "quiet", label: "Leise", on: mods.quiet, info: "Leise Bestie ohne Sprünge, Burpees und Sprints. Kein Laufen, keine Intervalle, kurzes Warm-up." },
+    { k: "quiet", label: "Leise", on: mods.quiet, info: "Leise Bestie und leise Übungen: keine Sprünge, Burpees, Sprints, keine Langhantel vom Boden. Kein Laufen, keine Intervalle, kurzes Warm-up." },
+    { k: "tight", label: "Kein Platz", on: mods.tight, info: "Alles auf der Stelle: kein Lunge Walk, Crawl, Carry oder Weitsprung; Bestien ohne Strecke." },
   ] : [];
   const weekMatch = (s: { blockId: string; week: number }) => s.blockId === block.id && s.week === week;
   // Kurz verändert die ganze Woche (Ausgleich), der Rest nur diesen Tag
-  const flip = (k: DayKey | "intense") => sel && update((st) => unpinBeasts(toggleMod(st, block, week, sel.role, sel.day, k), k === "short" || k === "quiet" ? weekMatch : (s) => s.id === sid));
-  const remember = (k: "short" | "quiet", on: boolean) => sel && update((st) => unpinBeasts(rememberMod(st, block, week, sel.role, sel.day, k, on), weekMatch));
-  const mem = sel ? remembered(state, block, sel.role, sel.day) : { short: false, quiet: false };
-  const activeAdj = sel ? [profile0 && profile0.id !== sel.profileId, mods?.short, mods?.light, mods?.intense, mods?.quiet, hasRun && !!state.noRun?.[sid]].filter(Boolean).length : 0;
+  const flip = (k: DayKey | "intense") => sel && update((st) => unpinBeasts(toggleMod(st, block, week, sel.role, sel.day, k), k === "short" || k === "quiet" || k === "tight" ? weekMatch : (s) => s.id === sid));
+  const remember = (k: FixKey, on: boolean) => sel && update((st) => unpinBeasts(rememberMod(st, block, week, sel.role, sel.day, k, on), weekMatch));
+  const mem = sel ? remembered(state, block, sel.role, sel.day) : { short: false, quiet: false, tight: false };
+  const activeAdj = sel ? [profile0 && profile0.id !== sel.profileId, mods?.short, mods?.light, mods?.intense, mods?.quiet, mods?.tight, hasRun && !!state.noRun?.[sid]].filter(Boolean).length : 0;
   const modsLabel = chips.filter((c) => c.on).map((c) => c.label).join(" · ");
   const adjustButton = (
     <button className={`btn ghost small adjust-btn ${activeAdj ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
@@ -144,10 +147,10 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
             ))}
           </div>
           {chips.filter((c) => c.on).map((c) => <div key={c.k} className="muted small"><strong>{c.label}:</strong> {c.info}</div>)}
-          {(["short", "quiet"] as const).filter((k) => mods?.[k] || mem[k]).map((k) => (
+          {(["short", "quiet", "tight"] as const).filter((k) => mods?.[k] || mem[k]).map((k) => (
             <label key={k} className="check small">
               <input type="checkbox" checked={mem[k]} onChange={(e) => remember(k, e.target.checked)} />
-              <span>{k === "short" ? "Kurz" : "Leise"} für jeden {DAY_NAME[sel.day]} fixieren</span>
+              <span>{FIX_LABEL[k]} für jeden {DAY_NAME[sel.day]} fixieren</span>
             </label>
           ))}
         </div>

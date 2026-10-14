@@ -7,7 +7,7 @@
 import { SWAP_GROUPS } from "../data";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot, Weekday } from "../types";
 import { isHeavy, isStrength, planMinutes } from "./slots";
-import { applyDrillEdits, blockFocus, canBeQuiet, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { applyDrillEdits, blockFocus, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { canShorten, pairToFit, shortDay } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlot } from "./sharpen";
@@ -121,20 +121,21 @@ export function shapeFocus(f: Focus, nDays: number): Focus {
     Tage ohne eigene Bestie zuerst. Passt sie nirgends, entfällt sie. */
 function quietMoves(state: AppState, b: PlanBlock, week: number, f: Focus, days: { day: Weekday; role: string }[], shortened: Set<string>): Focus {
   const mods = days.map((d, i) => ({ ...d, i, m: dayMods(state, b, week, d.role, d.day) }));
-  // Nur Bestien, für die es keine leise Fassung gibt (etwa ein Pool nur aus Sprungbestien), wandern
-  const loud = (x: Block) => x.type === "beast" && !canBeQuiet(x);
-  const quiet = mods.filter((d) => d.m.quiet && f.roles[d.role]?.blocks.some(loud));
+  // Nur Bestien ohne passende Fassung (etwa ein Pool nur aus Sprungbestien) wandern
+  const unfit = (m: { quiet: boolean; tight: boolean }) => (x: Block) => x.type === "beast" && !canServe(x, m);
+  const quiet = mods.filter((d) => (d.m.quiet || d.m.tight) && f.roles[d.role]?.blocks.some(unfit(d.m)));
   if (!quiet.length) return f;
   const done = new Set(state.sessions.filter((s) => s.blockId === b.id && s.week === week && s.done).map((s) => s.role));
   const roles = { ...f.roles };
   const limit = (k: string) => Math.max(roles[k].cap ?? Math.max(roles[k].minutes, f.session_min), planMinutes(f.roles[k]));
   for (const q of quiet) {
     if (done.has(q.role)) continue;
-    const fixed = remembered(state, b, q.role, q.day).quiet && state.dayAdj?.[`${b.id}:${week}:${q.role}`]?.quiet === undefined;
+    const fixed = (["quiet", "tight"] as const).some((k) => q.m[k] && remembered(state, b, q.role, q.day)[k] && state.dayAdj?.[`${b.id}:${week}:${q.role}`]?.[k] === undefined);
+    const loud = unfit(q.m);
     const beasts = roles[q.role].blocks.filter((x): x is Extract<Block, { type: "beast" }> => loud(x));
     roles[q.role] = { ...roles[q.role], blocks: roles[q.role].blocks.filter((x) => !loud(x)) };
     for (const beast of beasts) {
-      const cands = mods.filter((d) => d.role !== q.role && (fixed || d.i > q.i) && !d.m.quiet && !shortened.has(d.role) && !done.has(d.role) && roles[d.role])
+      const cands = mods.filter((d) => d.role !== q.role && (fixed || d.i > q.i) && !d.m.quiet && !d.m.tight && !shortened.has(d.role) && !done.has(d.role) && roles[d.role])
         .sort((x, y) => Number(roles[x.role].blocks.some((z) => z.type === "beast")) - Number(roles[y.role].blocks.some((z) => z.type === "beast"))
           || (limit(y.role) - planMinutes(roles[y.role])) - (limit(x.role) - planMinutes(roles[x.role])));
       // Erst in voller Länge, sonst Klasse für Klasse kürzer (bis zur Plage)
@@ -143,10 +144,10 @@ function quietMoves(state: AppState, b: PlanBlock, week: number, f: Focus, days:
       const tries = [beast, ...(beast.pool?.length ? [{ ...beast, pool: undefined }] : []), ...order.slice(0, Math.max(0, lo)).reverse().map((x) => ({ ...beast, classes: [x], pool: undefined }))];
       // Je Zieltag: erst ohne Eingriff, dann mit Supersets und höchstens QUIET_EXTRA Minuten mehr
       outer: for (const c of cands) for (const dense of [false, true]) for (const t of tries) {
-        const moved: Block = { ...t, note: [beast.note, `Vom leisen ${DAY_LONG[q.day]} hierher.`].filter(Boolean).join(" ") };
+        const moved: Block = { ...t, note: [beast.note, `Vom ${q.m.quiet ? "leisen" : "engen"} ${DAY_LONG[q.day]} hierher.`].filter(Boolean).join(" ") };
         const next: Role = JSON.parse(JSON.stringify({ ...roles[c.role], blocks: [...roles[c.role].blocks, moved] }));
         if (!dense) { if (planMinutes(next) <= limit(c.role) + 0.5) { roles[c.role] = next; break outer; } continue; }
-        const why = `Als Superset gepaart, damit die Bestie vom leisen ${DAY_LONG[q.day]} Platz hat.`;
+        const why = `Als Superset gepaart, damit die Bestie vom ${q.m.quiet ? "leisen" : "engen"} ${DAY_LONG[q.day]} Platz hat.`;
         if (pairToFit(next, limit(c.role) + QUIET_EXTRA, (a, b) => { a.why = [...(a.why ?? []), why]; b.why = [...(b.why ?? []), why]; })) { roles[c.role] = next; break outer; }
       }
     }

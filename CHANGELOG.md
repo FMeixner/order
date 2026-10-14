@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.50.0] – 2026-10-14
+
+### Neu
+- Tagesanpassung „Kein Platz“: alles auf der Stelle. Farmer's und Suitcase Carry werden zum Marschieren auf der Stelle, Walking Lunges zu Reverse Lunges, Crawls zu Mountain Climbers; Bestien ohne Strecke (64 von 81). Fixierbar je Wochentag wie Kurz und Leise.
+
+### Geändert
+- Leise gilt jetzt auch für das Training selbst: Langhantel-Deadlift wird zum Romanian Deadlift, Sprünge zu KB Swings oder Goblet Squats, Medizinballwürfe zu Woodchopper oder Push-Ups. Leise Bestien schließen jetzt auch Langhantel vom Boden aus (33 von 81); Mountain Climbers und Swings bleiben erlaubt.
+
 ## [0.49.0] – 2026-10-14
 
 ### Geändert

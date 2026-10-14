@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dayMods, withQuiet } from "./dayadj";
+import { dayMods, withDay } from "./dayadj";
 import { FOCUS_BY_ID, SKILLS } from "../data";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState } from "../types";
@@ -85,7 +85,7 @@ describe("Leise (früher schweißfreier Ort)", () => {
       for (const w of [1, 2]) {
         const focus = focusFor(st, block, w)!;
         for (const d of dayRoleMap(st, block, focus, w)) {
-          const profile = withQuiet(st.equipment[0], dayMods(st, block, w, d.role, d.day).quiet);
+          const profile = withDay(st.equipment[0], dayMods(st, block, w, d.role, d.day));
           const items = collectItems({ state: st, block, focus, week: w, roleKey: d.role, profile, date: "2026-10-01", reduced: false } as never);
           expect(items.filter((i) => (i.beast && !quietBeast(i.beast)) || isRunBlock(i.block) || i.resolved.some((r) => r.kind === "interval")).map((i) => i.beast?.work ?? i.block.type), `${fid} ${d.role}`).toEqual([]);
         }

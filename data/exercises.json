@@ -148,7 +148,14 @@
     "desc": "Rücken zum Kabel, Arm hinter dem Körper. Curl aus der gedehnten Position, Ellbogen bleibt hinten."
   },
   "Bear Crawl, Crab Walk, Ape Walk (Zirkel)": {
-    "equip": "bodyweight"
+    "equip": "bodyweight",
+    "space": true,
+    "instead": [
+      {
+        "name": "Mountain Climber",
+        "reps": "20/Seite"
+      }
+    ]
   },
   "Beinarbeit-Drill (Linien)": {
     "equip": "skill"
@@ -181,7 +188,16 @@
     "needs": [
       "box"
     ],
-    "desc": "Aus dem Stand explosiv auf eine Box springen, leise landen, herabsteigen statt springen."
+    "desc": "Aus dem Stand explosiv auf eine Box springen, leise landen, herabsteigen statt springen.",
+    "loud": true,
+    "instead": [
+      {
+        "name": "KB Swing"
+      },
+      {
+        "name": "Goblet Squat"
+      }
+    ]
   },
   "Box Squat": {
     "equip": "bodyweight",
@@ -189,7 +205,17 @@
   },
   "Broad Jump": {
     "equip": "bodyweight",
-    "desc": "Aus dem Stand mit Armschwung so weit wie möglich nach vorn springen, stabil landen."
+    "desc": "Aus dem Stand mit Armschwung so weit wie möglich nach vorn springen, stabil landen.",
+    "loud": true,
+    "space": true,
+    "instead": [
+      {
+        "name": "KB Swing"
+      },
+      {
+        "name": "Goblet Squat"
+      }
+    ]
   },
   "Bulgarian Split Squat": {
     "equip": "dumbbell",
@@ -342,7 +368,19 @@
     ]
   },
   "Deadlift": {
-    "equip": "barbell"
+    "equip": "barbell",
+    "loud": true,
+    "instead": [
+      {
+        "name": "Romanian Deadlift"
+      },
+      {
+        "name": "DB Romanian Deadlift"
+      },
+      {
+        "name": "KB Romanian Deadlift"
+      }
+    ]
   },
   "Deficit Push-Up": {
     "equip": "bodyweight",
@@ -377,7 +415,14 @@
     "desc": "Seil auf Augenhöhe, zum Gesicht ziehen, Ellbogen hoch, am Ende nach außen rotieren."
   },
   "Farmer's Carry": {
-    "equip": "dumbbell"
+    "equip": "dumbbell",
+    "space": true,
+    "instead": [
+      {
+        "name": "Farmer's March",
+        "reps": "40 Schritte"
+      }
+    ]
   },
   "Fliegende 20 m": {
     "equip": "cardio",
@@ -515,7 +560,16 @@
   },
   "Jump Shrug": {
     "equip": "barbell",
-    "desc": "Langhantel über den Knien, explosiv Hüfte strecken und Schultern hochziehen, Füße verlassen kurz den Boden."
+    "desc": "Langhantel über den Knien, explosiv Hüfte strecken und Schultern hochziehen, Füße verlassen kurz den Boden.",
+    "loud": true,
+    "instead": [
+      {
+        "name": "KB Swing"
+      },
+      {
+        "name": "Romanian Deadlift"
+      }
+    ]
   },
   "KB Deadlift": {
     "equip": "kettlebell"
@@ -617,6 +671,15 @@
     "equip": "none",
     "needs": [
       "medball"
+    ],
+    "loud": true,
+    "instead": [
+      {
+        "name": "Cable Woodchopper"
+      },
+      {
+        "name": "Band Woodchopper"
+      }
     ]
   },
   "Meditation": {
@@ -629,6 +692,12 @@
     "equip": "none",
     "needs": [
       "medball"
+    ],
+    "loud": true,
+    "instead": [
+      {
+        "name": "Push-Up"
+      }
     ]
   },
   "Mobility-Block Hüfte und Schulter": {
@@ -697,10 +766,23 @@
   },
   "Pogo Hops": {
     "equip": "bodyweight",
-    "desc": "Kleine, schnelle Sprünge nur aus den Sprunggelenken, Knie fast gestreckt, kurzer Bodenkontakt."
+    "desc": "Kleine, schnelle Sprünge nur aus den Sprunggelenken, Knie fast gestreckt, kurzer Bodenkontakt.",
+    "loud": true,
+    "instead": [
+      {
+        "name": "Single-Leg Calf Raise"
+      }
+    ]
   },
   "Precision Jumps": {
-    "equip": "skill"
+    "equip": "skill",
+    "loud": true,
+    "space": true,
+    "instead": [
+      {
+        "name": "Single-Leg RDL"
+      }
+    ]
   },
   "Pull-Up": {
     "equip": "bodyweight",
@@ -834,7 +916,14 @@
   },
   "Seilspringen": {
     "equip": "bodyweight",
-    "desc": "Locker aus den Sprunggelenken, Ellbogen nah am Körper, das Seil kommt aus den Handgelenken. Fortgeschritten: Wechselschritt, Kreuzen, Doppelsprünge."
+    "desc": "Locker aus den Sprunggelenken, Ellbogen nah am Körper, das Seil kommt aus den Handgelenken. Fortgeschritten: Wechselschritt, Kreuzen, Doppelsprünge.",
+    "loud": true,
+    "space": true,
+    "instead": [
+      {
+        "name": "Mountain Climber"
+      }
+    ]
   },
   "Shadow Boxing": {
     "equip": "skill"
@@ -890,7 +979,16 @@
     "desc": "Rückenlage, Fersen auf Handtuch oder Slider, Becken hoch, Fersen zum Gesäß ziehen."
   },
   "Split Jump": {
-    "equip": "bodyweight"
+    "equip": "bodyweight",
+    "loud": true,
+    "instead": [
+      {
+        "name": "Reverse Lunge"
+      },
+      {
+        "name": "Bulgarian Split Squat"
+      }
+    ]
   },
   "Split Squat": {
     "equip": "dumbbell"
@@ -903,7 +1001,16 @@
   },
   "Squat Jump": {
     "equip": "bodyweight",
-    "desc": "Aus halber Hocke explosiv hochspringen, weich landen, kurz stabilisieren."
+    "desc": "Aus halber Hocke explosiv hochspringen, weich landen, kurz stabilisieren.",
+    "loud": true,
+    "instead": [
+      {
+        "name": "KB Swing"
+      },
+      {
+        "name": "Goblet Squat"
+      }
+    ]
   },
   "Standing Calf Raise": {
     "equip": "machine"
@@ -912,7 +1019,14 @@
     "equip": "bodyweight"
   },
   "Suitcase Carry": {
-    "equip": "kettlebell"
+    "equip": "kettlebell",
+    "space": true,
+    "instead": [
+      {
+        "name": "Suitcase March",
+        "reps": "40 Schritte"
+      }
+    ]
   },
   "Table Row": {
     "equip": "bodyweight",
@@ -924,7 +1038,19 @@
     "desc": "Rücken an der Wand, Fersen etwa eine Fußlänge davor. Fußspitzen so hoch wie möglich ziehen, langsam absetzen. Schützt Schienbein und Knie bei Sprüngen und Läufen."
   },
   "Trap Bar Deadlift": {
-    "equip": "barbell"
+    "equip": "barbell",
+    "loud": true,
+    "instead": [
+      {
+        "name": "Romanian Deadlift"
+      },
+      {
+        "name": "DB Romanian Deadlift"
+      },
+      {
+        "name": "KB Romanian Deadlift"
+      }
+    ]
   },
   "Turkish Get-Up": {
     "equip": "kettlebell",
@@ -937,7 +1063,13 @@
     "equip": "barbell"
   },
   "Walking Lunge": {
-    "equip": "dumbbell"
+    "equip": "dumbbell",
+    "space": true,
+    "instead": [
+      {
+        "name": "Reverse Lunge"
+      }
+    ]
   },
   "Wall Handstand (Brust zur Wand)": {
     "equip": "bodyweight"
@@ -987,5 +1119,17 @@
   },
   "Zügiger Spaziergang": {
     "equip": "cardio"
+  },
+  "Farmer's March": {
+    "equip": "dumbbell",
+    "desc": "Schwere Hanteln seitlich, auf der Stelle marschieren, Knie bis Hüfthöhe, Rumpf aufrecht und ruhig. Ersatz für Farmer's Carry ohne Platz."
+  },
+  "Suitcase March": {
+    "equip": "kettlebell",
+    "desc": "Eine Kettlebell oder Kurzhantel auf einer Seite, auf der Stelle marschieren, ohne zur Seite zu kippen. Seite nach der Hälfte wechseln."
+  },
+  "Mountain Climber": {
+    "equip": "bodyweight",
+    "desc": "Hoher Liegestütz, Knie abwechselnd zügig Richtung Brust, Hüfte bleibt tief, Hände unter den Schultern."
   }
 }

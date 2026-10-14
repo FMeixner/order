@@ -26,7 +26,7 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
     r[i] = role;
     return unpinBeasts({ ...st, roleOrder: { ...st.roleOrder, [block.id]: r } }, (s) => s.blockId === block.id);
   });
-  const meta = [`${count} Tage`, ...WEEKDAYS.filter((d) => flags[d]).map((d) => `${d} ${[flags[d]!.short && "kurz", flags[d]!.quiet && "leise"].filter(Boolean).join("+")}`)].join(" · ");
+  const meta = [`${count} Tage`, ...WEEKDAYS.filter((d) => flags[d]).map((d) => `${d} ${[flags[d]!.short && "kurz", flags[d]!.quiet && "leise", flags[d]!.tight && "eng"].filter(Boolean).join("+")}`)].join(" · ");
 
   return (
     <Collapse title="Deine Woche" meta={meta}>
@@ -42,8 +42,8 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
                   <option value="">kein Training</option>
                   {state.equipment.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </select>
-                {pid && (flags[d]?.short || flags[d]?.quiet) && (
-                  <span className="muted small week-fixed" title="Fixiert im Anpassen-Menü der Einheit">{[flags[d]?.short && "kurz", flags[d]?.quiet && "leise"].filter(Boolean).join(" · ")}</span>
+                {pid && (flags[d]?.short || flags[d]?.quiet || flags[d]?.tight) && (
+                  <span className="muted small week-fixed" title="Fixiert im Anpassen-Menü der Einheit">{[flags[d]?.short && "kurz", flags[d]?.quiet && "leise", flags[d]?.tight && "eng"].filter(Boolean).join(" · ")}</span>
                 )}
               </div>
               {focus && i >= 0 && roles[i] && (
@@ -56,7 +56,7 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
         })}
         <p className="muted small">
           {count < 3 ? "Die Orden brauchen mindestens 3 Trainingstage. " : ""}
-          „kurz“ und „leise“ fixierst du im Anpassen-Menü der Einheit.
+          „kurz“, „leise“ und „eng“ (kein Platz) fixierst du im Anpassen-Menü der Einheit.
           {focus ? ` Einheiten gelten für ${focusName(focus.id)}; wählst du eine doppelt, tauschen die Tage.` : ""}
           {own ? " Diese Phase hat einen eigenen Wochenplan (Phase antippen)." : ""}
         </p>
