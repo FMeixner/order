@@ -83,7 +83,7 @@ test("Plan: Phase antippen zeigt den Orden, Bearbeiten erst im zweiten Schritt",
   await page.locator(".sc-name").first().click();
   await expect(page.getByRole("dialog")).toContainText("Assassin");
   await expect(page.getByRole("button", { name: "Speichern" })).toHaveCount(0);
-  await page.getByRole("button", { name: "Phase bearbeiten" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Phase bearbeiten" }).click();
   await expect(page.getByRole("button", { name: "Speichern" })).toBeVisible();
 });
 
