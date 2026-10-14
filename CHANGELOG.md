@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.51.0] – 2026-10-14
+
+### Neu
+- Plan als Stapel: Oben zeigt ein Band das Jahr mit Ordenssymbolen, Testwochen und heute. Darunter je Phase eine Karte: − / + ändert die Länge um eine Woche (alles danach rückt mit), „ohne Test“ / „Testwoche am Ende“ schaltet die letzte Woche zur Testwoche, die Last lässt sich antippen. Ein Tipp auf den Ordensnamen zeigt die Empfehlung und zwei Alternativen, „Alle Orden …“ die ganze Liste. Unter ⋯: Details, Phase bearbeiten, Teilen, Mit der nächsten verbinden.
+- „+ Phase anhängen“ setzt gleich den empfohlenen Orden.
+
+### Geändert
+- Testwochen entstehen nur noch aus der letzten Woche einer Phase. „Danach eine Woche einschieben“ entfällt; bestehende Testwochen bleiben.
+
 ## [0.50.1] – 2026-10-14
 
 ### Geändert

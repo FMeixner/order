@@ -73,18 +73,39 @@ test("Deine Woche: Einheiten tauschen, fixierte Tage nur als Hinweis, Ordenssymb
   const first = await roleSel.nth(0).inputValue();
   await roleSel.nth(0).selectOption(second);
   await expect(roleSel.nth(1)).toHaveValue(first);
-  await expect(page.locator(".block-row .order-mark").first()).toBeAttached();
+  await expect(page.locator(".stack-card .order-mark").first()).toBeAttached();
 });
 
 test("Plan: Phase antippen zeigt den Orden, Bearbeiten erst im zweiten Schritt", async ({ page }) => {
   await seed(page);
   await page.goto("./");
   await page.getByRole("button", { name: "Plan" }).click();
-  await page.locator(".block-row").first().click();
+  await page.locator(".sc-name").first().click();
   await expect(page.getByRole("dialog")).toContainText("Assassin");
   await expect(page.getByRole("button", { name: "Speichern" })).toHaveCount(0);
   await page.getByRole("button", { name: "Phase bearbeiten" }).click();
   await expect(page.getByRole("button", { name: "Speichern" })).toBeVisible();
+});
+
+test("Plan als Stapel: Woche länger, Testwoche am Ende, Phase anhängen mit Empfehlung", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Plan" }).click();
+  const card = page.locator(".stack-card").first();
+  await expect(card.locator(".sc-weeks")).toHaveText("10 Wo.");
+  await card.getByRole("button", { name: "Eine Woche länger" }).click();
+  await expect(card.locator(".sc-weeks")).toHaveText("11 Wo.");
+  await card.getByRole("button", { name: "ohne Test" }).click();
+  await expect(page.locator(".stack-test")).toHaveCount(1);
+  await expect(card.locator(".sc-weeks")).toHaveText("11 Wo.");
+  await page.getByRole("button", { name: "+ Phase anhängen" }).click();
+  const next = page.locator(".stack-card").nth(1);
+  await expect(next.locator(".tag.rec")).toBeVisible();
+  await next.locator(".sc-name").click();
+  await expect(next.locator(".sc-alt")).toHaveCount(4);
+  const st = await stored(page);
+  expect(st.plan.length).toBe(3);
+  expect(st.plan.some((b) => b.focusId === "test")).toBe(true);
 });
 
 test("Sicherung: speichern und wieder laden", async ({ page }, info) => {

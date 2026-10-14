@@ -80,3 +80,24 @@ function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim, deficit
 }
 
 export const AIM_OPTIONS: { value: Aim; label: string }[] = [{ value: "deficits", label: "Defizite zuerst" }, { value: "allround", label: "Allround" }, ...AXES.map((a) => ({ value: a.id as Aim, label: a.name }))];
+
+/** Orden für eine Phase, beste zuerst: dieselbe Bewertung wie die Blockfolge (Last, Länge, Übergang, Wiederholung)
+    plus Beitrag zur Richtung des Jahres, mit dem Rest des Plans, wie er ist. */
+export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: DeficitWeights = []): { f: Focus; score: number; reasons: string[] }[] {
+  const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
+  const b = sorted.find((x) => x.id === id);
+  if (!b || isTestBlock(b)) return [];
+  const from = sorted[0].start, to = sorted[sorted.length - 1].end;
+  const before = sorted.filter((x) => x.start < b.start && !isTestBlock(x));
+  const prev = before.length ? FOCUS_BY_ID[before[before.length - 1].focusId] ?? null : null;
+  const used = sorted.filter((x) => x.id !== id && !isTestBlock(x)).map((x) => x.focusId);
+  return FOCI.filter((f) => fitScore(f, b.load, b.travel).score >= 0 || f.id === b.focusId)
+    .map((f) => {
+      const st = stepScore(f, b, prev, used);
+      const reasons = [...st.reasons];
+      if (fitScore(f, b.load, b.travel).score >= 0) reasons.unshift("passt zur Alltagslast");
+      const score = st.score + aimScore(sorted.map((x) => (x.id === id ? { ...x, focusId: f.id } : x)), from, to, aim, deficits);
+      return { f, score, reasons };
+    })
+    .sort((x, y) => y.score - x.score);
+}

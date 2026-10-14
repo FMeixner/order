@@ -3,13 +3,15 @@ import { OrderMark } from "./OrderIcon";
 import { FOCI, SHARPEN } from "../data";
 import { domainName, interferes, slotEligible, type DomainId, type SlotPlan } from "../engine/sharpen";
 import type { DeficitWeights } from "../engine/sequence";
-import { addDays, blockFocus, blockWeeks, fitScore, newerFocus, refreeze, fmtDate, focusName, followedByTest, insertTestWeek, isoDate, isTestBlock, mondayOf, splitTestWeek } from "../engine/plan";
+import { addDays, blockFocus, blockWeeks, fitScore, fmtDate, focusName, isoDate, isTestBlock, mondayOf } from "../engine/plan";
 import { uid } from "../store";
 import type { EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { Check, Field, Modal, Seg } from "./common";
 import { FocusDetail } from "./FociBrowser";
 import { SequenceDialog } from "./SequenceDialog";
+import { PlanStack } from "./PlanStack";
+import { rankFor } from "../engine/sequence";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
 /** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
@@ -82,7 +84,7 @@ export function FocusPicker({ load, travel, value, onPick, profile, days }: { lo
   );
 }
 
-export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete, onInsertTest, onSplitTest }: { block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotPlan; onSave: (b: PlanBlock) => void; onCancel: () => void; onDelete?: () => void; onInsertTest?: () => void; onSplitTest?: () => void }) {
+export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete }: { block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotPlan; onSave: (b: PlanBlock) => void; onCancel: () => void; onDelete?: () => void }) {
   const [b, setB] = useState<PlanBlock>(block);
   const [ownWeek, setOwnWeek] = useState(!!block.schedule && Object.values(block.schedule).some(Boolean));
   const f = blockFocus(b);
@@ -120,16 +122,6 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
       <div className="label teal"><span className="bar" />Orden {f ? `: ${focusName(f.id)}` : "wählen"} · {weeks} Wochen{f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (empfohlen ${f.weeks.min}–${f.weeks.max})` : ""}</div>
       <FocusPicker load={b.load} travel={b.travel} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} />
       {f && slotEligible(f) && <SlotField f={f} b={b} auto={slotInfo?.({ ...b, sharpen: undefined })} onChange={(sharpen) => setB({ ...b, sharpen })} />}
-      {(onInsertTest || onSplitTest) && (
-        <div className="stack">
-          <div className="small muted">Testwoche als eigener Block</div>
-          <div className="row wrap">
-            {onSplitTest && <button className="btn ghost small" onClick={onSplitTest}>Letzte Woche als Testwoche</button>}
-            {onInsertTest && <button className="btn ghost small" onClick={onInsertTest}>Danach eine Woche einschieben</button>}
-          </div>
-          <div className="muted small">„Letzte Woche“ kürzt diese Phase, der Rest des Jahres bleibt. „Einschieben“ verschiebt alle späteren Phasen um eine Woche.</div>
-        </div>
-      )}
       <div className="sticky-actions">
         {onDelete && <button className="btn danger" onClick={onDelete}>Löschen</button>}
         <button className="btn ghost" onClick={onCancel}>Abbrechen</button>
@@ -163,34 +155,18 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
   const [view, setView] = useState<PlanBlock | null>(null);
   const [seq, setSeq] = useState(false);
+  const [pick, setPick] = useState<PlanBlock | null>(null);
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const gaps: string[] = [];
   for (let i = 1; i < sorted.length; i++) if (addDays(sorted[i - 1].end, 1) < sorted[i].start) gaps.push(`${fmtDate(addDays(sorted[i - 1].end, 1))}–${fmtDate(addDays(sorted[i].start, -1))}`);
   for (let i = 1; i < sorted.length; i++) if (sorted[i].start <= sorted[i - 1].end) gaps.push(`Überschneidung bei ${fmtDate(sorted[i].start)}`);
   return (
     <div className="stack">
-      {sorted.map((b) => {
-        const now = b.start <= today && today <= b.end;
-        return (
-          <div key={b.id} className="stack" style={{ gap: 4 }}>
-          <button className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""} ${isTestBlock(b) ? "test" : ""}`} onClick={() => (isTestBlock(b) || !blockFocus(b) ? setEdit(b) : setView(b))}>
-            <OrderMark id={isTestBlock(b) ? "test" : b.focusId} />
-            <div className="block-dates">{fmtDate(b.start)} – {fmtDate(b.end)}</div>
-            <div className="block-name">{focusName(b.focusId)} {now && <span className="tag teal">jetzt</span>}</div>
-            <div className="muted small">{isTestBlock(b) ? "fünf Cups, Auswertung danach" : `${b.label || "–"} · Last ${LOAD_LABEL[b.load]}${b.travel ? " · unterwegs" : ""} · ${blockWeeks(b)} Wochen`}</div>
-          </button>
-            {newerFocus(b) && (
-              <div className="row wrap small">
-                <span className="muted">Neue Fassung des Ordens verfügbar. Diese Phase läuft mit dem Stand vom {fmtDate(b.frozen!.at)}.</span>
-                <button className="btn ghost small" onClick={() => { if (confirm("Neue Fassung des Ordens für diese Phase übernehmen? Übungen und Tage können sich ändern, Einträge im Log bleiben.")) onChange(plan.map((x) => (x.id === b.id ? refreeze(x, today) : x))); }}>Übernehmen</button>
-              </div>
-            )}
-          </div>
-        );
-      })}
+      <PlanStack plan={plan} today={today} aim={deficits?.length ? "deficits" : "allround"} deficits={deficits ?? []} onChange={onChange}
+        onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} onPickAll={(b) => setPick(b)} />
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">
-        <button className="btn ghost" onClick={() => setEdit(newBlock(plan))}>+ Phase hinzufügen</button>
+        <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, deficits?.length ? "deficits" : "allround", deficits ?? [])[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
         {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
       </div>
       {view && blockFocus(view) && (
@@ -204,14 +180,18 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
           </div>
         </Modal>
       )}
+      {pick && (
+        <Modal title={`Orden für ${fmtDate(pick.start)} – ${fmtDate(pick.end)}`} onClose={() => setPick(null)} wide>
+          <FocusPicker load={pick.load} travel={pick.travel} value={pick.focusId} profile={profiles[0]} days={days}
+            onPick={(id) => { onChange(plan.map((x) => (x.id === pick.id ? { ...x, focusId: id } : x))); setPick(null); }} />
+        </Modal>
+      )}
       {seq && <SequenceDialog plan={plan} today={today} deficits={deficits} deficitNames={deficitNames} onApply={onChange} onClose={() => setSeq(false)} />}
       {edit && (
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>
           <BlockForm block={edit} profiles={profiles} days={days} user={user} slotInfo={slotInfo}
             onCancel={() => setEdit(null)}
             onDelete={plan.some((x) => x.id === edit.id) ? () => { if (!confirm(`Phase ${fmtDate(edit.start)}–${fmtDate(edit.end)} löschen? Einträge im Log bleiben erhalten.`)) return; onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
-            onInsertTest={plan.some((x) => x.id === edit.id) && !isTestBlock(edit) && !followedByTest(plan, edit) ? () => { if (!confirm("Testwoche einschieben? Alle späteren Phasen rücken eine Woche nach hinten.")) return; onChange(insertTestWeek(plan, edit.id, uid("b"))); setEdit(null); } : undefined}
-            onSplitTest={plan.some((x) => x.id === edit.id) && !isTestBlock(edit) && !followedByTest(plan, edit) && blockWeeks(edit) >= 3 ? () => { onChange(splitTestWeek(plan, edit.id, uid("b"))); setEdit(null); } : undefined}
             onSave={(nb) => { onChange(plan.some((x) => x.id === nb.id) ? plan.map((x) => (x.id === nb.id ? nb : x)) : [...plan, nb]); setEdit(null); }} />
         </Modal>
       )}
