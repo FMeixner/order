@@ -70,7 +70,7 @@ export default function App() {
           {tab === "heute" && <Today state={state} update={update} today={today} goPlan={() => setTab("plan")} />}
           {tab === "plan" && (
             <div className="stack">
-              <p className="muted">Deine Woche und dein Jahr in Phasen. Tippe eine Phase an, um Zeitraum, Alltagslast oder Orden zu ändern.</p>
+              <p className="muted">Deine Woche und dein Jahr in Phasen. Tippe eine Phase an, um zu sehen, was ihr Orden abbildet; dort kannst du sie auch bearbeiten.</p>
               <WeekCard state={state} update={update} today={today} />
               {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}

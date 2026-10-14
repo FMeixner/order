@@ -7,7 +7,7 @@ export function Help() {
       <h3>Der Ablauf</h3>
       <ul>
         <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche. Mit ‹ › neben der Wochenzahl blätterst du: künftige Wochen als Vorschau, vergangene zum Nachtragen.</li>
-        <li><strong>Plan</strong>: oben „Deine Woche“ (Ort je Wochentag und welche Einheit an welchem Tag), darunter dein Jahr in Phasen. Jede Phase hat einen Orden und eine Alltagslast. „Blockfolge vorschlagen“ wählt die Orden für kommende Phasen, auf Wunsch mit Schwerpunkt. Eine Testwoche kann als eigener Block hinter jede Phase: Phase antippen, „Letzte Woche als Testwoche“ oder „Danach eine Woche einschieben“.</li>
+        <li><strong>Plan</strong>: oben „Deine Woche“ (Ort je Wochentag und welche Einheit an welchem Tag), darunter dein Jahr in Phasen. Jede Phase hat einen Orden und eine Alltagslast. „Blockfolge vorschlagen“ wählt die Orden für kommende Phasen, auf Wunsch mit Schwerpunkt. Eine Testwoche kann als eigener Block hinter jede Phase: Phase antippen › Phase bearbeiten, „Letzte Woche als Testwoche“ oder „Danach eine Woche einschieben“.</li>
         <li><strong>Almanach</strong>: Orden (alle Programme), Bestien (mit Bestzeiten, zum freien Jagen), Übungen (Arbeitsgewicht, 1RM, Verlauf) und das Log.</li>
         <li>Eine Phase behält den Stand ihres Ordens ab ihrem Start. Ändert sich ein Orden durch ein Update, steht im Plan „Neue Fassung verfügbar“; erst mit „Übernehmen“ gilt sie für die laufende Phase.</li>
         <li><strong>Setup</strong>: Profil, Equipment, Können, Sicherung.</li>

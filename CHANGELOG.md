@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.50.1] – 2026-10-14
+
+### Geändert
+- Plan: Eine Phase antippen zeigt zuerst, was ihr Orden abbildet; „Phase bearbeiten“ ist der zweite Schritt.
+- Plan: Die Jahresbalance ist zunächst eingeklappt.
+
 ## [0.50.0] – 2026-10-14
 
 ### Neu

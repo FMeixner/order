@@ -14,7 +14,7 @@ export function YearBalance({ plan }: { plan: PlanBlock[] }) {
   const sorted = [...AXES].sort((x, y) => b.share[y.id] - b.share[x.id]);
   const missing = AXES.filter((a) => b.share[a.id] < 0.02).map((a) => a.name);
   return (
-    <Collapse title="Jahresbalance" meta={b.score != null ? b.label : "–"} tone="teal" defaultOpen>
+    <Collapse title="Jahresbalance" meta={b.score != null ? b.label : "–"} tone="teal">
       <div className="stack">
         {windows.length > 1 && (
           <div className="chips">

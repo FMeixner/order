@@ -58,7 +58,7 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
           {count < 3 ? "Die Orden brauchen mindestens 3 Trainingstage. " : ""}
           „kurz“, „leise“ und „eng“ (kein Platz) fixierst du im Anpassen-Menü der Einheit.
           {focus ? ` Einheiten gelten für ${focusName(focus.id)}; wählst du eine doppelt, tauschen die Tage.` : ""}
-          {own ? " Diese Phase hat einen eigenen Wochenplan (Phase antippen)." : ""}
+          {own ? " Diese Phase hat einen eigenen Wochenplan (Phase antippen › Phase bearbeiten)." : ""}
         </p>
         {block && state.roleOrder[block.id] && (
           <button className="btn ghost small" onClick={() => update((st) => { const ro = { ...st.roleOrder }; delete ro[block.id]; return unpinBeasts({ ...st, roleOrder: ro }, (s) => s.blockId === block.id); })}>Einheiten wie im Orden verteilen</button>

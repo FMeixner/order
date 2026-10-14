@@ -160,6 +160,8 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
 
 export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotPlan; onChange: (p: PlanBlock[]) => void; today: string }) {
   const [edit, setEdit] = useState<PlanBlock | null>(null);
+  // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
+  const [view, setView] = useState<PlanBlock | null>(null);
   const [seq, setSeq] = useState(false);
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const gaps: string[] = [];
@@ -171,7 +173,7 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
         const now = b.start <= today && today <= b.end;
         return (
           <div key={b.id} className="stack" style={{ gap: 4 }}>
-          <button className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""} ${isTestBlock(b) ? "test" : ""}`} onClick={() => setEdit(b)}>
+          <button className={`block-row ${now ? "now" : ""} ${b.end < today ? "past" : ""} ${isTestBlock(b) ? "test" : ""}`} onClick={() => (isTestBlock(b) || !blockFocus(b) ? setEdit(b) : setView(b))}>
             <OrderMark id={isTestBlock(b) ? "test" : b.focusId} />
             <div className="block-dates">{fmtDate(b.start)} – {fmtDate(b.end)}</div>
             <div className="block-name">{focusName(b.focusId)} {now && <span className="tag teal">jetzt</span>}</div>
@@ -191,6 +193,17 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
         <button className="btn ghost" onClick={() => setEdit(newBlock(plan))}>+ Phase hinzufügen</button>
         {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
       </div>
+      {view && blockFocus(view) && (
+        <Modal title={focusName(view.focusId)} onClose={() => setView(null)} wide>
+          <div className="stack">
+            <div className="row between wrap">
+              <span className="muted small">{fmtDate(view.start)} – {fmtDate(view.end)} · {view.label || "–"} · Last {LOAD_LABEL[view.load]} · {blockWeeks(view)} Wochen</span>
+              <button className="btn small" onClick={() => { setEdit(view); setView(null); }}>Phase bearbeiten</button>
+            </div>
+            <FocusDetail f={blockFocus(view)!} profile={profiles[0]} days={days} skills={user?.skills ? new Set(user.skills) : null} />
+          </div>
+        </Modal>
+      )}
       {seq && <SequenceDialog plan={plan} today={today} deficits={deficits} deficitNames={deficitNames} onApply={onChange} onClose={() => setSeq(false)} />}
       {edit && (
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>

@@ -76,6 +76,17 @@ test("Deine Woche: Einheiten tauschen, fixierte Tage nur als Hinweis, Ordenssymb
   await expect(page.locator(".block-row .order-mark").first()).toBeAttached();
 });
 
+test("Plan: Phase antippen zeigt den Orden, Bearbeiten erst im zweiten Schritt", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Plan" }).click();
+  await page.locator(".block-row").first().click();
+  await expect(page.getByRole("dialog")).toContainText("Assassin");
+  await expect(page.getByRole("button", { name: "Speichern" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Phase bearbeiten" }).click();
+  await expect(page.getByRole("button", { name: "Speichern" })).toBeVisible();
+});
+
 test("Sicherung: speichern und wieder laden", async ({ page }, info) => {
   const st = fixture();
   st.sessions = [{ id: "x", date: st.plan[0].start, blockId: "b1", focusId: "assassin", week: 1, role: "kraft_a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true }];
