@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.52.0] – 2026-10-14
+
+### Neu
+- Plan › Lebensabschnitte: Beschreibe dein Jahr in Abschnitten mit eigenem Namen, Länge (− / + Wochen) und Alltagslast, oder nimm die Vorlage Semester-Rhythmus. Dazu wählst du die Richtung des Jahres und ob du nach jeder Phase, zweimal im Jahr oder gar nicht testen willst.
+- „Künftige Phasen neu vorschlagen“ baut aus den Abschnitten Phasen und Orden. Ob ein Abschnitt einen langen Orden oder mehrere kürzere bekommt, entscheidet, was deine Richtung am besten voranbringt. Kurze Abschnitte gehen in der Nachbarphase auf, gleich belastete Abschnitte hintereinander können durchlaufen. Laufende und vergangene Phasen bleiben.
+
 ## [0.51.3] – 2026-10-14
 
 ### Behoben

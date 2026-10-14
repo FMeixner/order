@@ -118,6 +118,25 @@ test("Plan als Stapel: Woche länger, Testwoche am Ende, Phase anhängen mit Emp
   expect(st.plan.some((b) => b.focusId === "test")).toBe(true);
 });
 
+test("Lebensabschnitte: Vorlage, Richtung, Testwochen, künftige Phasen neu vorschlagen", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Plan" }).click();
+  await page.getByRole("button", { name: /Lebensabschnitte/ }).click();
+  page.on("dialog", (d) => d.accept());
+  await page.getByRole("button", { name: "Vorlage Semester-Rhythmus" }).click();
+  await expect(page.locator(".sec-row").nth(3)).toBeVisible();
+  await page.getByRole("radio", { name: "Ausdauer" }).click();
+  await page.getByRole("radio", { name: "nach jeder Phase" }).click();
+  await page.getByRole("button", { name: "Künftige Phasen neu vorschlagen" }).click();
+  const st = await stored(page);
+  expect(st.plan.length).toBeGreaterThan(4);
+  expect(st.plan.some((b) => b.focusId === "test")).toBe(true);
+  expect(st.plan.find((b) => b.start <= new Date().toISOString().slice(0, 10))?.focusId).toBe("assassin");
+  expect(st.sectionsChanged).toBe(false);
+  expect(st.yearAim).toBe("ausdauer");
+});
+
 test("Sicherung: speichern und wieder laden", async ({ page }, info) => {
   const st = fixture();
   st.sessions = [{ id: "x", date: st.plan[0].start, blockId: "b1", focusId: "assassin", week: 1, role: "kraft_a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true }];

@@ -163,6 +163,19 @@ details.card[open] summary { margin-bottom: 10px; }
 .yb-seg.test { background: color-mix(in srgb, var(--amber) 55%, var(--surface)); }
 .yb-seg .order-mark { right: auto; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; opacity: 0.55; stroke-width: 2.4; }
 .yb-now { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text); }
+.sec-list { gap: 8px; }
+.sec-row { border: 1px solid var(--border); border-left: 4px solid var(--border-lit); border-radius: 0 10px 10px 0; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; background: var(--surface); }
+.sec-row.load-high { border-left-color: var(--red); }
+.sec-row.load-medium { border-left-color: var(--amber); }
+.sec-row.load-low { border-left-color: var(--teal); }
+.sec-top { display: flex; gap: 8px; align-items: center; }
+.sec-top input { flex: 1; min-width: 0; padding: 6px 10px; font-weight: 600; }
+.sec-row .block-dates { margin-top: -2px; }
+.sec-bottom { display: flex; gap: 8px; align-items: center; }
+.sec-bottom .seg { flex: 1; min-width: 0; }
+.sec-bottom .seg button { padding: 6px 4px; font-size: 13px; min-width: 0; }
+.sec-bottom .sc-step .btn { width: 30px; height: 30px; }
+.sec-bottom .sc-weeks { min-width: 40px; }
 .stack-card { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--c); border-radius: 0 12px 12px 0; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
 .stack-card.past { opacity: 0.6; }
 .stack-card.now { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--teal) 60%, transparent); }

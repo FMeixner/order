@@ -221,6 +221,8 @@ export interface EquipmentProfile {
   tight?: boolean;
 }
 
+export interface Section { id: string; name: string; start: string; end: string; load: Load; travel?: boolean }
+
 export interface PlanBlock {
   id: string;
   focusId: string;
@@ -353,6 +355,14 @@ export interface AppState {
   dayAdj?: Record<string, { short?: boolean; light?: boolean; quiet?: boolean; tight?: boolean }>;
   /** Je Wochentag gemerkt, gilt in allen Phasen: Kurz (höchstens ein Tag) und Leise */
   dayFlags?: Partial<Record<Weekday, { short?: boolean; quiet?: boolean; tight?: boolean }>>;
+  /** Lebensabschnitte des Jahres (Name frei, Zeitraum, Alltagslast): Grundlage für den Vorschlag der Phasen. Fehlt: aus den Phasen abgeleitet. */
+  sections?: Section[];
+  /** Abschnitte seit dem letzten Vorschlag der Phasen geändert */
+  sectionsChanged?: boolean;
+  /** Richtung des Jahres für Empfehlungen: allround, Defizite zuerst oder ein Bereich */
+  yearAim?: string;
+  /** Testwochen beim Vorschlag der Phasen: nach jeder Phase, zweimal im Jahr oder keine */
+  testPolicy?: "each" | "twice" | "none";
   /** Intensiv (Session-Id → true): Bestien eine Klasse länger, Schwertübungen +1 Satz */
   energy?: Record<string, boolean>;
   /** Einheiten, in denen heute nicht gelaufen werden kann (Session-Id → true): Lauf wird zur Bestie */

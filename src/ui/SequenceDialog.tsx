@@ -20,8 +20,8 @@ function summary(before: Balance, after: Balance, changes: number): string {
 }
 
 /** Vorschlag einer Blockfolge für alle künftigen Phasen, mit Ziel Allround oder einem Schwerpunkt. */
-export function SequenceDialog({ plan, today, deficits = [], deficitNames = [], onApply, onClose }: { plan: PlanBlock[]; today: string; deficits?: DeficitWeights; deficitNames?: string[]; onApply: (p: PlanBlock[]) => void; onClose: () => void }) {
-  const [aim, setAim] = useState<Aim>(deficits.length ? "deficits" : "allround");
+export function SequenceDialog({ plan, today, deficits = [], deficitNames = [], onApply, onClose, initialAim }: { plan: PlanBlock[]; today: string; deficits?: DeficitWeights; deficitNames?: string[]; onApply: (p: PlanBlock[]) => void; onClose: () => void; initialAim?: Aim }) {
+  const [aim, setAim] = useState<Aim>(initialAim ?? (deficits.length ? "deficits" : "allround"));
   const res = useMemo(() => suggestSequence(plan, today, aim, deficits), [plan, today, aim, deficits]);
   const byId = Object.fromEntries(plan.map((b) => [b.id, b]));
   const changes = res.items.filter((x) => !x.locked && x.focusId !== byId[x.id].focusId).length;

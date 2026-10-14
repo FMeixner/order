@@ -15,7 +15,7 @@ export interface SeqResult { items: SeqItem[]; balance: Balance; before: Balance
 
 const BEAM = 40;
 
-function stepScore(f: Focus, b: PlanBlock, prev: Focus | null, used: string[]): { score: number; reasons: string[] } {
+export function stepScore(f: Focus, b: PlanBlock, prev: Focus | null, used: string[]): { score: number; reasons: string[] } {
   const fit = fitScore(f, b.load, b.travel);
   let score = fit.score;
   const reasons = fit.reasons.filter((r) => /Reise/.test(r));
@@ -63,7 +63,7 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
   };
 }
 
-function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim, deficits: DeficitWeights): number {
+export function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim, deficits: DeficitWeights): number {
   if (aim === "allround" || (aim === "deficits" && !deficits.length)) {
     const bal = balanceOf(plan, from, to);
     return bal.score == null ? 0 : 8 * bal.score;

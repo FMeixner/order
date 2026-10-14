@@ -201,7 +201,8 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotPlan; onChange: (p: PlanBlock[]) => void; today: string }) {
+export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim }) {
+  const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
   const [view, setView] = useState<PlanBlock | null>(null);
@@ -212,11 +213,11 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
   for (let i = 1; i < sorted.length; i++) if (sorted[i].start <= sorted[i - 1].end) gaps.push(`Überschneidung bei ${fmtDate(sorted[i].start)}`);
   return (
     <div className="stack">
-      <PlanStack plan={plan} today={today} aim={deficits?.length ? "deficits" : "allround"} deficits={deficits ?? []} onChange={onChange}
+      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} onChange={onChange}
         onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} />
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">
-        <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, deficits?.length ? "deficits" : "allround", deficits ?? [])[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
+        <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [])[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
         {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
       </div>
       {view && blockFocus(view) && (
@@ -230,11 +231,11 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
           </div>
         </Modal>
       )}
-      {seq && <SequenceDialog plan={plan} today={today} deficits={deficits} deficitNames={deficitNames} onApply={onChange} onClose={() => setSeq(false)} />}
+      {seq && <SequenceDialog plan={plan} today={today} initialAim={aim} deficits={deficits} deficitNames={deficitNames} onApply={onChange} onClose={() => setSeq(false)} />}
       {edit && (
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>
           <BlockForm block={edit} profiles={profiles} days={days} user={user} slotInfo={slotInfo} plan={plan} today={today}
-            aim={deficits?.length ? "deficits" : "allround"} deficits={deficits ?? []} onStructure={(p) => { onChange(p); setEdit(null); }}
+            aim={aim} deficits={deficits ?? []} onStructure={(p) => { onChange(p); setEdit(null); }}
             onCancel={() => setEdit(null)}
             onDelete={plan.some((x) => x.id === edit.id) ? () => { if (!confirm(`Phase ${fmtDate(edit.start)}–${fmtDate(edit.end)} löschen? Einträge im Log bleiben erhalten.`)) return; onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
             onSave={(nb, o) => {

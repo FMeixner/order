@@ -6,6 +6,7 @@ import { Almanac } from "./ui/Almanac";
 import { Onboarding } from "./ui/Onboarding";
 import { PlanList } from "./ui/PlanEditor";
 import { WeekCard } from "./ui/WeekCard";
+import { SectionsCard, yearAimOf } from "./ui/SectionsCard";
 import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan";
 import { deficitsBefore, deficitWeights, slotFor } from "./engine/sharpen";
 import { YearBalance } from "./ui/YearBalance";
@@ -72,9 +73,10 @@ export default function App() {
             <div className="stack">
               <p className="muted">Deine Woche und dein Jahr. Mit − / + passt du Phasen wochenweise an, der Stift öffnet Ordenswahl, Last und Aufteilen.</p>
               <WeekCard state={state} update={update} today={today} />
+              <SectionsCard state={state} update={update} today={today} deficits={deficits} />
               {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}
-                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotFor(state, b)}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotFor(state, b)} aim={yearAimOf(state, deficits)}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
