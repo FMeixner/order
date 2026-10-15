@@ -8,7 +8,7 @@ const ids = (v: string, skills: string[] | null) => swordList(v, skills).map((d)
 describe("Schwert-Lernweg", () => {
   it("ohne Skill: Stufe 1, auch wenn der Orden eine schwerere Variante nennt", () => {
     expect(swordLevel(null)).toBe(0);
-    expect(ids("wechselhau", [])).toEqual(DM_VARIANTS.einzelmesser.map((d) => d.id));
+    expect(ids("drehhau", [])).toEqual(DM_VARIANTS.einzelmesser.map((d) => d.id));
   });
   it("Stufen nur der Reihe nach: ein späterer Skill ohne den früheren öffnet nichts", () => {
     expect(swordLevel(["schwert_kombi"])).toBe(0);

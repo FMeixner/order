@@ -1,13 +1,13 @@
 {
-  "_info": "Schwert-Modul. Aktiv, wenn das Equipment-Profil des Tages ein Schwert hat (Übungsschwert, Holzschwert oder Stock). Sonst greift der fallback-Slot der Rolle. rotation A = ungerade Blockwoche, B = gerade. Lernweg: \"levels\" sind die Stufen, jede braucht den Skill aus skills.json (Gruppe schwert) der Stufe davor; die erste ist offen. Varianten in \"leveled\" zeigen den Inhalt deiner Stufe statt eines festen Inhalts (der Orden bestimmt nur das Format). Ist die Variante selbst keine Stufe (z. B. lernweg), kommt ihr eigener Inhalt danach.",
+  "_info": "Schwert-Modul. Namen der Hiebe nach der deutschen Fechttradition; der Drehhau (Hieb mit Unterarmdrehung) ist eine eigene Form ohne historisches Vorbild, der historische Wechselhau (von unten steigend, dann von oben auf die andere Seite) kommt mit dem Klingentanz. Aktiv, wenn das Equipment-Profil des Tages ein Schwert hat (Übungsschwert, Holzschwert oder Stock). Sonst greift der fallback-Slot der Rolle. rotation A = ungerade Blockwoche, B = gerade. Lernweg: \"levels\" sind die Stufen, jede braucht den Skill aus skills.json (Gruppe schwert) der Stufe davor; die erste ist offen. Varianten in \"leveled\" zeigen den Inhalt deiner Stufe statt eines festen Inhalts (der Orden bestimmt nur das Format). Ist die Variante selbst keine Stufe (z. B. lernweg), kommt ihr eigener Inhalt danach.",
   "levels": [
     {"name": "Hiebe", "variant": "einzelmesser"},
     {"name": "Kombiformen", "variant": "kombiform", "skill": "schwert_hiebe"},
-    {"name": "Wechselhau", "variant": "wechselhau", "skill": "schwert_kombi"},
+    {"name": "Drehhau", "variant": "drehhau", "skill": "schwert_kombi"},
     {"name": "Doppelmesser", "variant": "doppelmesser", "skill": "schwert_wechsel"},
     {"name": "Wanderflechte", "variant": "wanderflechte", "skill": "schwert_flechte"}
   ],
-  "leveled": ["einzelmesser", "wechselhau", "lernweg"],
+  "leveled": ["einzelmesser", "drehhau", "lernweg"],
   "variants": {
     "einzelmesser": [
       {"id": "md-zornhau", "name": "Zornhau", "mode": "reps", "value": 15, "sets": 2, "sides": true, "note": "eine Hand · bewusst langsam", "desc": "Startposition Mittelwache. Diagonal von der Schulter schräg nach unten zur gegenüberliegenden Hüfte. Bewegung kommt aus einer kleinen Rumpfdrehung, nicht nur dem Arm. Kontrolliertes Abbremsen am Endpunkt."},
@@ -21,9 +21,9 @@
       {"id": "md-k-b", "name": "Kombiform: Scheitel → Zorn → Zwerch", "mode": "reps", "value": 5, "sets": 3, "sides": true, "note": "andere Übergänge", "desc": "Scheitelhau senkrecht, unten abbremsen, Klinge steigt diagonal auf die Schulter der Hiebseite direkt in die Zornhau-Ausholbewegung, Zornhau endet an der gegenüberliegenden Hüfte, Ellbogen hebt sich auf Schulterhöhe, Zwerchhau auf Kopfhöhe, dann Mittelwache. Schwierigste Stelle: Übergang von unten nach oben, Klinge eng am Körper führen."},
       {"id": "md-leiter", "name": "Zornhau-Leiter", "mode": "reps", "value": 90, "sides": true, "note": "10-20-30-20-10 · 20–30 s Pause zwischen den Stufen", "desc": "Zornhau in Stufen: 10, 20, 30, 20, 10 Wiederholungen, dazwischen 20–30 Sekunden Pause. Tempo zügig, aber jeder Hieb wird abgebremst. Wird die Bahn unsauber, Stufe kürzen."}
     ],
-    "wechselhau": [
-      {"id": "md-wechselhau", "name": "Wechselhau", "mode": "reps", "value": 10, "sets": 2, "sides": true, "note": "Technik · Zeitlupe zuerst", "desc": "Mittelwache. Diagonal wie beim Zornhau, aber mit Handumkehr in der Bewegung: Die Handfläche dreht sich während der Bahn. Zurück in die Mittelwache, Griff wieder normal."},
-      {"id": "md-wechselreihe", "name": "Wechselreihe: Zorn → Wechsel → Scheitel", "mode": "reps", "value": 5, "sets": 2, "sides": true, "note": "fließende Übergänge", "desc": "Zornhau, ohne Rückkehr in die Wache direkt in den Wechselhau, dann Scheitelhau. Erst langsam, Tempo erst steigern, wenn die Handumkehr sauber sitzt."},
+    "drehhau": [
+      {"id": "md-drehhau", "name": "Drehhau", "mode": "reps", "value": 10, "sets": 2, "sides": true, "note": "Technik · Zeitlupe zuerst", "desc": "Mittelwache. Diagonal wie beim Zornhau, aber in der Mitte der Bahn dreht der Unterarm einwärts: Du startest mit der Handfläche zu dir und endest mit dem Handrücken oben. Das Handgelenk bleibt gerade, die Drehung kommt aus dem Unterarm. Am Endpunkt abbremsen, Griff zurückdrehen, Mittelwache."},
+      {"id": "md-drehreihe", "name": "Drehreihe: Zorn → Dreh → Scheitel", "mode": "reps", "value": 5, "sets": 2, "sides": true, "note": "fließende Übergänge", "desc": "Zornhau, ohne Rückkehr in die Wache direkt in den Drehhau, dann Scheitelhau. Erst langsam, Tempo erst steigern, wenn die Unterarmdrehung sauber sitzt."},
       {"id": "md-acht", "name": "Liegende Acht, einhändig", "mode": "reps", "value": 10, "sides": true, "note": "Vorbereitung aufs Flechtwerk", "desc": "Eine Klinge, eine große, langsame Acht vor dem Körper in die Luft zeichnen. Bewegung aus dem Handgelenk und einer kleinen Rumpfdrehung, Schultern tief. Erst rechts, dann links."}
     ],
     "doppelmesser": [
@@ -43,7 +43,7 @@
       {"id": "md-bookend", "name": "Schwert: Hiebe fließend", "mode": "activity", "value": 300, "note": "5 Minuten · locker, sauber", "desc": "Zornhau, Zwerchhau und Scheitelhau im Wechsel, beide Seiten, ruhiges Tempo. Als Einstieg und als Ausklang des Tages."}
     ],
     "intervalle": [
-      {"id": "md-intervals", "name": "Schwert-Intervalle: Wechselhau-Serien", "mode": "activity", "value": 45, "sets": 8, "weekly_step": 5, "max": 60, "note": "8 × 45 s Arbeit, 45 s Pause · +5 s pro Woche bis 60 s", "desc": "Hiebserien mit Wechselhau im zügigen Tempo, beide Seiten im Wechsel. Technik geht vor Tempo: Wenn die Hiebe unsauber werden, Serie beenden."}
+      {"id": "md-intervals", "name": "Schwert-Intervalle: Drehhau-Serien", "mode": "activity", "value": 45, "sets": 8, "weekly_step": 5, "max": 60, "note": "8 × 45 s Arbeit, 45 s Pause · +5 s pro Woche bis 60 s", "desc": "Hiebserien mit Drehhau im zügigen Tempo, beide Seiten im Wechsel. Technik geht vor Tempo: Wenn die Hiebe unsauber werden, Serie beenden."}
     ],
     "technik20": [
       {"id": "md-tech20", "name": "Schwert: Hiebe und Kombiformen", "mode": "activity", "value": 1200, "note": "20 Minuten", "desc": "Hiebe einzeln, dann die Kombiformen der Woche. Ruhiges Tempo, saubere Übergänge."}

@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.54.1] – 2026-10-15
+
+### Geändert
+- Schwert: Der Hieb mit Unterarmdrehung heißt jetzt Drehhau (Stufe 3 im Lernweg, Drehreihe, Drehhau-Serien). In den historischen Fechtbüchern meint „Wechselhau“ etwas anderes: einen Hieb, der von unten steigt und dann von oben auf die andere Seite fällt. Diesen historischen Wechselhau gibt es später mit dem Klingentanz.
+
 ## [0.54.0] – 2026-10-15
 
 ### Neu

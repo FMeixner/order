@@ -94,7 +94,7 @@
       "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_kombi", "group": "schwert", "name": "Kombiformen", "test": "5 Kombiformen pro Seite (beide Reihenfolgen) ohne Stocken, Klinge eng am Körper",
       "exercises": [], "regress": {}, "beast": "" },
-    { "id": "schwert_wechsel", "group": "schwert", "name": "Wechselhau", "test": "10 Wechselhau pro Seite in normalem Tempo, saubere Handumkehr",
+    { "id": "schwert_wechsel", "group": "schwert", "name": "Drehhau", "test": "10 Drehhau pro Seite in normalem Tempo, saubere Unterarmdrehung, Handgelenk gerade",
       "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_flechte", "group": "schwert", "name": "Grundflechte", "test": "1 Minute Grundflechte mit zwei Klingen ohne Taktfehler",
       "exercises": [], "regress": {}, "beast": "" }
