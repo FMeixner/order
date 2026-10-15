@@ -29,7 +29,7 @@ export const BEAST_BY_ID: Record<string, Beast> = Object.fromEntries(BEASTS.map(
 export const DRILL_LISTS = (correctivesJson as unknown as { lists: Record<string, Drill[]> }).lists;
 export const DM_VARIANTS = (swordJson as unknown as { variants: Record<string, Drill[]> }).variants;
 /** Schwert-Lernweg: Stufen (je mit dem Skill der Stufe davor) und Varianten, die den Inhalt der Stufe zeigen */
-export const SWORD = swordJson as unknown as { levels: { name: string; variant: string; skill?: string }[]; leveled: string[] };
+export const SWORD = swordJson as unknown as { levels: { name: string; variant: string; skill?: string }[]; basics: Drill[]; leveled: string[] };
 /** Freie Übung → geführte Variante (Maschine/Kabel) für Phasen mit hoher Last */
 export const GUIDED = (guidedJson as unknown as { map: Record<string, string> }).map;
 export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; who5: string[]; who5_intro: string; who5_scale: string[] };

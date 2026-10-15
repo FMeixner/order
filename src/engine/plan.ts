@@ -1,7 +1,7 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
 import { dayMods, withDay } from "./dayadj";
 import { allRuns } from "./runs";
-import { blockSeconds, boostClass, estimateRole, roleSlots } from "./duration";
+import { blockSeconds, boostClass, estimateRole, roleSlots, swordSeconds } from "./duration";
 import { beastSets, musclesOf } from "./volume";
 import { BEASTS, BEAST_BY_ID, DM_VARIANTS, EXERCISES, DRILL_LISTS, FLOWS, FOCUS_BY_ID, SHARPEN, SKILLS, SWORD } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, Role, UserProfile, Weekday } from "../types";
@@ -512,8 +512,11 @@ export function beastBudget(block: Extract<Block, { type: "beast" }>, opts: Beas
   if (!f || !role) return Infinity;
   const boost = !!opts.boost && !opts.reduced;
   const cap = (role.cap ?? Math.max(role.minutes, f.session_min)) + (boost ? BOOST_MIN : 0);
-  const e = estimateRole(roleAt(role, opts.profile), opts.profile, opts.state.user, opts.week, opts.reduced, boost);
-  return cap - (e.total - blockSeconds(block, opts.profile, opts.reduced, boost) / 60);
+  const at = roleAt(role, opts.profile);
+  const e = estimateRole(at, opts.profile, opts.state.user, opts.week, opts.reduced, boost);
+  // Schwert über Stufe 1 (Basics, längere Stufen): der Tag wird länger, die Bestie bleibt
+  const sword = opts.profile.has.sword ? at.blocks.reduce((s, b) => s + (b.type === "module" && b.module === "sword" ? swordSeconds(b.variant, opts.state.user.skills ?? null, boost) - swordSeconds(b.variant, undefined, boost) : 0), 0) / 60 : 0;
+  return cap + sword - (e.total - blockSeconds(block, opts.profile, opts.reduced, boost) / 60);
 }
 
 function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {
@@ -710,11 +713,12 @@ export function swordNext(skills: string[] | null | undefined): { level: string;
   const sk = next && SKILLS.skills.find((s) => s.id === next.skill);
   return sk ? { level: next.name, test: sk.test } : null;
 }
-/** Schwertübungen einer Variante: Varianten des Lernwegs zeigen den Inhalt deiner Stufe */
+/** Schwertübungen einer Variante: Varianten des Lernwegs zeigen den Inhalt deiner Stufe, ab Stufe 2 mit kurzen Basics davor */
 export function swordList(variant: string, skills: string[] | null | undefined): Drill[] {
   if (!SWORD.leveled.includes(variant)) return DM_VARIANTS[variant] ?? [];
   const own = SWORD.levels.some((l) => l.variant === variant) ? [] : DM_VARIANTS[variant] ?? [];
-  return [...(DM_VARIANTS[SWORD.levels[swordLevel(skills)].variant] ?? []), ...own];
+  const lv = swordLevel(skills);
+  return [...(lv > 0 ? SWORD.basics : []), ...(DM_VARIANTS[SWORD.levels[lv].variant] ?? []), ...own];
 }
 
 export function moduleDrills(variant: string, user: UserProfile, week: number, module: "sword" | "flow" | "sharpen" = "sword"): DrillView[] {

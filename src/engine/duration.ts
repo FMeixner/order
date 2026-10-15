@@ -4,6 +4,12 @@
 import { BEAST_BY_ID } from "../data";
 import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile } from "../types";
 import { CLASS_ORDER, moduleDrills, roleDrills, swordList } from "./plan";
+
+/** Dauer eines Schwertblocks. Mit Skills (auch null): echte Dauer deiner Stufe, Wiederholungen je etwa 3 s. Ohne (undefined): Richtwert des Ordens wie bisher. */
+export function swordSeconds(variant: string, skills: string[] | null | undefined, boost = false): number {
+  if (skills === undefined) return swordList(variant, null).reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0);
+  return swordList(variant, skills).reduce((sum, d) => sum + drillSeconds(d, Array.from({ length: Array.isArray(d.sides) ? d.sides.length : d.sides ? 2 : 1 }, () => ({ value: d.value, sets: (d.sets ?? 1) + (boost ? 1 : 0) }))), 0);
+}
 import { parseReps, resolveSlot, type Resolved } from "./resolve";
 import { WARM_SEC, warmupKeys } from "./warmup";
 
@@ -59,7 +65,7 @@ export function drillSeconds(d: Drill, groups: { value: number; sets: number }[]
 /** Viel Energie: Bestie eine Klasse länger (nicht bei −1 Satz und nicht bei festen Pools) */
 export const boostClass = (c: BeastClass): BeastClass => CLASS_ORDER[Math.min(CLASS_ORDER.length - 1, CLASS_ORDER.indexOf(c) + 1)];
 
-export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost = false): number {
+export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost = false, skills?: string[] | null): number {
   switch (b.type) {
     case "single": {
       const s = b.slot;
@@ -90,7 +96,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
     }
     case "module": {
       if (b.module === "flow" || b.module === "sharpen") return moduleDrills(b.variant, NEUTRAL_USER, 1, b.module).reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
-      if (p.has.sword) return swordList(b.variant, null).reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0) + SETUP;
+      if (p.has.sword) return swordSeconds(b.variant, skills, boost) + SETUP;
       return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p, red) : 0;
     }
     case "menu": {
@@ -111,6 +117,7 @@ export function estimateRole(role: Role, p: EquipmentProfile, user: UserProfile 
   const cooldown = drills("cd") / 60;
   // Aufwärmsätze vor der ersten schweren Mehrgelenksübung je Körperhälfte
   const warmSets = [...warmupKeys(roleSlots(blocks, p)).values()].reduce((a, c) => a + c, 0);
-  const main = (blocks.reduce((s, b) => s + blockSeconds(b, p, reduced, boost && !reduced), 0) + warmSets * WARM_SEC) / 60;
+  const skills = user === NEUTRAL_USER ? undefined : user.skills ?? null;
+  const main = (blocks.reduce((s, b) => s + blockSeconds(b, p, reduced, boost && !reduced, skills), 0) + warmSets * WARM_SEC) / 60;
   return { warmup, main, cooldown, total: warmup + main + cooldown };
 }

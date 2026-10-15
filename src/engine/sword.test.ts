@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DM_VARIANTS, FOCUS_BY_ID, SWORD } from "../data";
 import { moduleDrills, swordLevel, swordList, swordNext } from "./plan";
+import { swordSeconds } from "./duration";
 import { emptyState } from "../store";
 
 const ids = (v: string, skills: string[] | null) => swordList(v, skills).map((d) => d.id);
@@ -16,14 +17,22 @@ describe("Schwert-Lernweg", () => {
     expect(swordLevel(SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toBe(SWORD.levels.length - 1);
   });
   it("Lernweg: Inhalt der Stufe, danach freies Üben; feste Formate bleiben", () => {
-    expect(ids("lernweg", ["schwert_hiebe"])).toEqual([...DM_VARIANTS.kombiform, ...DM_VARIANTS.lernweg].map((d) => d.id));
+    expect(ids("lernweg", ["schwert_hiebe"])).toEqual([...SWORD.basics, ...DM_VARIANTS.kombiform, ...DM_VARIANTS.lernweg].map((d) => d.id));
     expect(ids("bookend", ["schwert_hiebe"])).toEqual(DM_VARIANTS.bookend.map((d) => d.id));
-    expect(moduleDrills("einzelmesser", { ...emptyState().user, skills: ["schwert_hiebe"] }, 1).map((d) => d.id)).toEqual(DM_VARIANTS.kombiform.map((d) => d.id));
+    expect(moduleDrills("einzelmesser", { ...emptyState().user, skills: ["schwert_hiebe"] }, 1).map((d) => d.id)).toEqual([...SWORD.basics, ...DM_VARIANTS.kombiform].map((d) => d.id));
   });
   it("Klingentanz nach dem Drehhau, Heaven Six auf der letzten Stufe", () => {
-    expect(ids("lernweg", ["schwert_hiebe", "schwert_kombi", "schwert_wechsel"])).toEqual([...DM_VARIANTS.klingentanz, ...DM_VARIANTS.lernweg].map((d) => d.id));
+    expect(ids("lernweg", ["schwert_hiebe", "schwert_kombi", "schwert_wechsel"])).toEqual([...SWORD.basics, ...DM_VARIANTS.klingentanz, ...DM_VARIANTS.lernweg].map((d) => d.id));
     expect(swordNext(["schwert_hiebe", "schwert_kombi", "schwert_wechsel"])?.level).toBe("Doppelmesser");
     expect(ids("lernweg", SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toContain("md-heaven6");
+  });
+  it("Stufe 1 nur Einzelhiebe, ohne Kombiform und ohne doppelte Basics", () => {
+    expect(ids("einzelmesser", null)).toEqual(["md-zornhau", "md-zwerchhau", "md-scheitelhau"]);
+  });
+  it("höhere Stufe: Tag wird länger, Bestie behält ihr Budget", () => {
+    const base = swordSeconds("einzelmesser", undefined);
+    expect(swordSeconds("einzelmesser", ["schwert_hiebe"])).toBeGreaterThan(swordSeconds("einzelmesser", []));
+    expect(base).toBeGreaterThan(0);
   });
   it("nächster Schritt nennt Stufe und Test, auf der letzten Stufe nichts", () => {
     expect(swordNext([])).toEqual({ level: "Kombiformen", test: expect.stringContaining("Zornhau") });

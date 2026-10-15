@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.56.0] – 2026-10-15
+
+### Geändert
+- Schwert: Ab Stufe 2 beginnt jeder Schwertblock mit kurzen Basics (Zornhau, Zwerchhau, Scheitelhau je 10 pro Seite), dann kommt deine Stufe. Der Tag wird dadurch etwas länger; die Bestie behält ihre Zeit.
+- Stufe 1 übt nur die drei Einzelhiebe; die Kombiformen gehören jetzt ganz zu Stufe 2.
+- Die geschätzte Dauer rechnet den Schwertblock jetzt mit deiner Stufe (etwa 3 Sekunden je Hieb).
+
 ## [0.55.0] – 2026-10-15
 
 ### Neu
