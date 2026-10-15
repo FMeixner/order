@@ -42,6 +42,16 @@ for (const sk of skillsFile.skills) {
   }
   try { new RegExp(sk.beast, "i"); } catch { err(w, "beast ist kein gültiger Suchausdruck"); }
 }
+// Schwert-Lernweg: Stufen mit Variante und Skill (außer der ersten), Varianten des Lernwegs vorhanden
+{
+  const sw = read("modules/sword.json");
+  const skillIds = new Set(skillsFile.skills.map((s) => s.id));
+  sw.levels.forEach((l, i) => {
+    if (!dm[l.variant]) err("sword.json levels", `Stufe ${l.name}: Variante ${l.variant} fehlt`);
+    if (i > 0 && !skillIds.has(l.skill)) err("sword.json levels", `Stufe ${l.name}: Skill ${l.skill} fehlt in skills.json`);
+  });
+  for (const v of sw.leveled) if (!dm[v]) err("sword.json leveled", `Variante ${v} fehlt`);
+}
 const swaps = read("modules/swaps.json").groups;
 for (const [g, members] of Object.entries(swaps)) {
   for (const m of members) if (!exercises[m]) err("swaps.json", `Gruppe "${g}": "${m}" fehlt in exercises.json`);

@@ -1,9 +1,9 @@
 /* Eine Einheit: Ansicht der laufenden Woche und Vorschau künftiger Wochen. */
 import { useMemo, useState } from "react";
-import { FLOWS, SHARPEN } from "../data";
+import { FLOWS, SHARPEN, SWORD } from "../data";
 import type { BeastResult, Block, Session } from "../types";
 import { estimateRole } from "../engine/duration";
-import { roleAt, roleDrills } from "../engine/plan";
+import { roleAt, roleDrills, swordLevel, swordNext } from "../engine/plan";
 import { advance, sharedState } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
@@ -109,6 +109,18 @@ export function SessionView(ctx: SessionCtx) {
 }
 
 
+/** Stufe im Schwert-Lernweg; der nächste Test öffnet die nächste Stufe (abhaken unter Setup › Können) */
+function SwordLevel({ skills }: { skills: string[] | null | undefined }) {
+  const i = swordLevel(skills);
+  const next = swordNext(skills);
+  return (
+    <div className="muted small">
+      Stufe {i + 1} von {SWORD.levels.length}: {SWORD.levels[i].name}
+      {next && <> · Weiter zu {next.level}, wenn das sitzt: {next.test}. Abhaken unter Setup › Können.</>}
+    </div>
+  );
+}
+
 function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
@@ -119,6 +131,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
         <div className="block-label amber">{b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : "Schwert"}</div>
         {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
         {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
+        {b.module === "sword" && SWORD.leveled.includes(b.variant) && <SwordLevel skills={ctx.state.user.skills} />}
         <DrillList drills={it.drills} done={session?.drills ?? {}} prefix={b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : "dm"} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
       </section>
     );

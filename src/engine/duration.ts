@@ -1,9 +1,9 @@
 /* Schätzt die Dauer einer Einheit aus ihren Bausteinen. Grob, aber ehrlich:
    Arbeitszeit je Wiederholung, Pausen aus der Orden-Datei, Aufwärmsätze vor schweren Grundübungen,
    Umbau zwischen den Übungen, Warm-up und Cool-down aus den Listen. */
-import { BEAST_BY_ID, DM_VARIANTS } from "../data";
+import { BEAST_BY_ID } from "../data";
 import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile } from "../types";
-import { CLASS_ORDER, moduleDrills, roleDrills } from "./plan";
+import { CLASS_ORDER, moduleDrills, roleDrills, swordList } from "./plan";
 import { parseReps, resolveSlot, type Resolved } from "./resolve";
 import { WARM_SEC, warmupKeys } from "./warmup";
 
@@ -90,7 +90,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
     }
     case "module": {
       if (b.module === "flow" || b.module === "sharpen") return moduleDrills(b.variant, NEUTRAL_USER, 1, b.module).reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
-      if (p.has.sword) return (DM_VARIANTS[b.variant] ?? []).reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0) + SETUP;
+      if (p.has.sword) return swordList(b.variant, null).reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0) + SETUP;
       return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p, red) : 0;
     }
     case "menu": {

@@ -104,6 +104,10 @@
   "Band Pushdown": {
     "equip": "band"
   },
+  "Band Reverse Curl": {
+    "equip": "band",
+    "desc": "Wie Cable Reverse Curl, Band unter den Füßen, Obergriff."
+  },
   "Band Romanian Deadlift": {
     "equip": "band"
   },
@@ -252,6 +256,10 @@
   "Cable Rear Delt Fly": {
     "equip": "cable"
   },
+  "Cable Reverse Curl": {
+    "equip": "cable",
+    "desc": "Kabel unten, Obergriff (Handflächen nach unten). Ellbogen am Körper, curlen bis zur Schulter, langsam senken. Trifft Unterarm und Oberarmmuskel (Brachialis)."
+  },
   "Cable Rotational Press": {
     "equip": "cable",
     "desc": "Kabel auf Brusthöhe seitlich, aus der Hüftdrehung nach vorn drücken."
@@ -344,6 +352,10 @@
   },
   "DB Rear Delt Fly": {
     "equip": "dumbbell"
+  },
+  "DB Reverse Curl": {
+    "equip": "dumbbell",
+    "desc": "Wie Cable Reverse Curl, mit Kurzhanteln im Obergriff."
   },
   "DB Romanian Deadlift": {
     "equip": "dumbbell"

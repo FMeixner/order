@@ -3,7 +3,8 @@
   "groups": [
     { "id": "basis", "name": "Grundlagen" },
     { "id": "fortgeschritten", "name": "Fortgeschritten" },
-    { "id": "meister", "name": "Meisterstücke" }
+    { "id": "meister", "name": "Meisterstücke" },
+    { "id": "schwert", "name": "Schwert" }
   ],
   "skills": [
     { "id": "pullup", "group": "basis", "name": "Klimmzug", "test": "5 saubere Klimmzüge aus dem gestreckten Hang",
@@ -88,6 +89,14 @@
     { "id": "planche", "group": "meister", "name": "Planche-Liegestütz", "test": "3 mit weit vorgelehnten Schultern",
       "exercises": [], "regress": {},
       "hex": [["planche push-?ups", "Pseudo-Planche Push-Ups"]],
-      "beast": "planche" }
+      "beast": "planche" },
+    { "id": "schwert_hiebe", "group": "schwert", "name": "Hiebe", "test": "Zornhau, Zwerchhau und Scheitelhau je 15 pro Seite langsam: stabile Bahn, Rumpf dreht mit, sauber abgebremst",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "schwert_kombi", "group": "schwert", "name": "Kombiformen", "test": "5 Kombiformen pro Seite (beide Reihenfolgen) ohne Stocken, Klinge eng am Körper",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "schwert_wechsel", "group": "schwert", "name": "Wechselhau", "test": "10 Wechselhau pro Seite in normalem Tempo, saubere Handumkehr",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "schwert_flechte", "group": "schwert", "name": "Grundflechte", "test": "1 Minute Grundflechte mit zwei Klingen ohne Taktfehler",
+      "exercises": [], "regress": {}, "beast": "" }
   ]
 }

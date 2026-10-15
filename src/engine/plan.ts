@@ -3,7 +3,7 @@ import { dayMods, withDay } from "./dayadj";
 import { allRuns } from "./runs";
 import { blockSeconds, boostClass, estimateRole, roleSlots } from "./duration";
 import { beastSets, musclesOf } from "./volume";
-import { BEASTS, BEAST_BY_ID, DM_VARIANTS, EXERCISES, DRILL_LISTS, FLOWS, FOCUS_BY_ID , SHARPEN } from "../data";
+import { BEASTS, BEAST_BY_ID, DM_VARIANTS, EXERCISES, DRILL_LISTS, FLOWS, FOCUS_BY_ID, SHARPEN, SKILLS, SWORD } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, Role, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, beastSkills, hexFor, hexWith } from "./skills";
@@ -698,8 +698,27 @@ export function applyDrillEdits(f: Focus, edits: AppState["drillEdits"]): Focus 
   return out;
 }
 
-export function moduleDrills(variant: string, _user: UserProfile, week: number, module: "sword" | "flow" | "sharpen" = "sword"): DrillView[] {
-  const list = module === "flow" ? FLOWS[variant]?.drills ?? [] : module === "sharpen" ? SHARPEN[variant]?.drills ?? [] : DM_VARIANTS[variant] ?? [];
+/** Stufe im Schwert-Lernweg (0 = erste): so weit, wie die Skills der Reihe nach abgehakt sind */
+export function swordLevel(skills: string[] | null | undefined): number {
+  let i = 0;
+  while (i + 1 < SWORD.levels.length && skills?.includes(SWORD.levels[i + 1].skill ?? "")) i++;
+  return i;
+}
+/** Nächster Schritt im Lernweg: Skill mit Test, der die nächste Stufe öffnet */
+export function swordNext(skills: string[] | null | undefined): { level: string; test: string } | null {
+  const next = SWORD.levels[swordLevel(skills) + 1];
+  const sk = next && SKILLS.skills.find((s) => s.id === next.skill);
+  return sk ? { level: next.name, test: sk.test } : null;
+}
+/** Schwertübungen einer Variante: Varianten des Lernwegs zeigen den Inhalt deiner Stufe */
+export function swordList(variant: string, skills: string[] | null | undefined): Drill[] {
+  if (!SWORD.leveled.includes(variant)) return DM_VARIANTS[variant] ?? [];
+  const own = SWORD.levels.some((l) => l.variant === variant) ? [] : DM_VARIANTS[variant] ?? [];
+  return [...(DM_VARIANTS[SWORD.levels[swordLevel(skills)].variant] ?? []), ...own];
+}
+
+export function moduleDrills(variant: string, user: UserProfile, week: number, module: "sword" | "flow" | "sharpen" = "sword"): DrillView[] {
+  const list = module === "flow" ? FLOWS[variant]?.drills ?? [] : module === "sharpen" ? SHARPEN[variant]?.drills ?? [] : swordList(variant, user.skills);
   return list.filter((d) => !d.rotation || d.rotation === (isAWeek(week) ? "A" : "B")).map((d) => drillView(d, week));
 }
 

@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.54.0] – 2026-10-15
+
+### Neu
+- Schwert-Lernweg: Was du am Schwert übst, hängt von deinem Können ab, nicht vom Orden. Fünf Stufen (Hiebe, Kombiformen, Wechselhau, Doppelmesser, Wanderflechte), jede mit einem Test unter Setup › Können › Schwert. Die Schwert-Karte zeigt deine Stufe und was die nächste öffnet. Geübt wird ohne Zusatzgewicht.
+
+### Geändert
+- Witcher: Masse am Oberkörper, athletischer Unterkörper, Schwert als Fertigkeit. Montag ohne schwere Kniebeuge, dafür Seitheben und eine Plage für die Beine. Dienstag als voller Tag mit Seitheben und Reverse Curl (Unterarm und Griff). Donnerstag 20 Minuten Schwert auf deiner Stufe, dann Oberkörper und ein Rumpf-Finisher ohne Beinarbeit. Freitag bleibt schwer und explosiv.
+
 ## [0.53.0] – 2026-10-14
 
 ### Geändert
