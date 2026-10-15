@@ -20,6 +20,11 @@ describe("Schwert-Lernweg", () => {
     expect(ids("bookend", ["schwert_hiebe"])).toEqual(DM_VARIANTS.bookend.map((d) => d.id));
     expect(moduleDrills("einzelmesser", { ...emptyState().user, skills: ["schwert_hiebe"] }, 1).map((d) => d.id)).toEqual(DM_VARIANTS.kombiform.map((d) => d.id));
   });
+  it("Klingentanz nach dem Drehhau, Heaven Six auf der letzten Stufe", () => {
+    expect(ids("lernweg", ["schwert_hiebe", "schwert_kombi", "schwert_wechsel"])).toEqual([...DM_VARIANTS.klingentanz, ...DM_VARIANTS.lernweg].map((d) => d.id));
+    expect(swordNext(["schwert_hiebe", "schwert_kombi", "schwert_wechsel"])?.level).toBe("Doppelmesser");
+    expect(ids("lernweg", SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toContain("md-heaven6");
+  });
   it("nächster Schritt nennt Stufe und Test, auf der letzten Stufe nichts", () => {
     expect(swordNext([])).toEqual({ level: "Kombiformen", test: expect.stringContaining("Zornhau") });
     expect(swordNext(SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toBeNull();

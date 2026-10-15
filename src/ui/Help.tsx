@@ -107,7 +107,7 @@ export function Help() {
       <ul>
         <li>Unter Setup › Können hakst du ab, was sauber sitzt: Klimmzug, Pistol Squat, Muscle-Up und mehr. Fehlt ein Skill, nimmt die App eine leichtere Variante (Hinweis „leichter“), und Bestien mit dieser Übung kommen mutiert.</li>
         <li>Übungsleitern bleiben der Lernweg zum Skill. Mit abgehaktem Skill starten sie auf der passenden Stufe.</li>
-        <li>Schwert: Was du übst, hängt von deinem Können ab, nicht vom Orden. Der Lernweg hat fünf Stufen: Hiebe, Kombiformen, Drehhau, Doppelmesser (zwei kurze Stöcke), Wanderflechte. Sitzt der Test einer Stufe, hakst du sie unter Schwert ab; ab der nächsten Einheit kommt die nächste Stufe. Der Orden bestimmt nur das Format, etwa 5 Minuten als Klammer oder 20 Minuten Lernweg. Geübt wird ohne Zusatzgewicht.</li>
+        <li>Schwert: Was du übst, hängt von deinem Können ab, nicht vom Orden. Der Lernweg hat sechs Stufen: Hiebe, Kombiformen, Drehhau, Klingentanz (Drehungen, tiefe Hiebe, Formen am Stück), Doppelmesser (zwei kurze Stöcke), Wanderflechte mit Heaven Six. Sitzt der Test einer Stufe, hakst du sie unter Schwert ab; ab der nächsten Einheit kommt die nächste Stufe. Der Orden bestimmt nur das Format, etwa 5 Minuten als Klammer oder 20 Minuten Lernweg. Geübt wird ohne Zusatzgewicht.</li>
       </ul>
 
       <h3>Pausen</h3>

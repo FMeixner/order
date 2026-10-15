@@ -96,6 +96,8 @@
       "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_wechsel", "group": "schwert", "name": "Drehhau", "test": "10 Drehhau pro Seite in normalem Tempo, saubere Unterarmdrehung, Handgelenk gerade",
       "exercises": [], "regress": {}, "beast": "" },
+    { "id": "schwert_tanz", "group": "schwert", "name": "Klingentanz", "test": "Wendehieb in beide Richtungen 5-mal stabil gelandet und 1 Minute Form am Stück ohne Stocken",
+      "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_flechte", "group": "schwert", "name": "Grundflechte", "test": "1 Minute Grundflechte mit zwei Klingen ohne Taktfehler",
       "exercises": [], "regress": {}, "beast": "" }
   ]

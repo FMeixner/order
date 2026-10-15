@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.55.0] – 2026-10-15
+
+### Neu
+- Schwert-Lernweg, Stufe 4 Klingentanz (zwischen Drehhau und Doppelmesser): historischer Wechselhau (von unten steigend, dann von oben auf die andere Seite), Wendehieb (180° mit festem Blickpunkt), Ausfallhieb, Unterhau, tiefer Zwerchhau in der halben Kniebeuge und eine Form am Stück, die jede Woche um 20 Sekunden wächst (bis 3 Minuten). Test im Skillcheck: Klingentanz.
+- Letzte Stufe mit Heaven Six, dem Sinawali-Muster mit sechs Schlägen auf Kopfhöhe.
+
 ## [0.54.1] – 2026-10-15
 
 ### Geändert
