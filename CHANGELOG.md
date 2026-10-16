@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.59.1] – 2026-10-16
+
+### Geändert
+- Melusine: 20 Hip Raises (beidbeinig) statt 40 einbeinig.
+
 ## [0.59.0] – 2026-10-16
 
 ### Geändert

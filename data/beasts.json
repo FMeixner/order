@@ -68,7 +68,7 @@
   {"id":"ng-sindrar","name":"Zwerg","orig":"Sindrar","rounds":3,"minutes":14,"equipment":["bar_or_rings"],"work":"24 Pistol Squats · 12 Windshield Wipers · 12 Squat Jumps · 24 SL Hip Raises"},
   {"id":"ng-bragi","name":"Kelpie","orig":"Bragi","rounds":5,"minutes":13,"equipment":["bar_or_rings","box"],"work":"2/4/6/8/10 Burpee Box Jumps · 2/4/6/8/10 Toes-to-Bar"},
   {"id":"ng-vali","name":"Nachtmahr","orig":"Vali","rounds":5,"minutes":16,"equipment":["bodyweight_only"],"work":"15 Squat Jumps · 20 Bicycle Crunches · 20 Split Lunges · 20 SL Hip Raises"},
-  {"id":"ng-mimir","name":"Melusine","orig":"Mimir","rounds":3,"minutes":11,"equipment":["bodyweight_only"],"work":"30s Hollow Hold · 40 SL Hip Raises · 30 Supermen · 20 Squat Jumps"},
+  {"id":"ng-mimir","name":"Melusine","orig":"Mimir","rounds":3,"minutes":11,"equipment":["bodyweight_only"],"work":"30s Hollow Hold · 20 Hip Raises · 30 Supermen · 20 Squat Jumps"},
   {"id":"ng-modi","name":"Wolpertinger","orig":"Modi","rounds":3,"minutes":10,"equipment":["box"],"work":"6 Box Jumps · 6 Combat Rolls · 2x20m Lunge Walk · 6 Sprawls"},
   {"id":"ng-hoenir","name":"Elwetritsch","orig":"Hoenir","rounds":3,"minutes":10,"equipment":["bodyweight_only"],"work":"2x20m Broad Jumps · 20 Cossack Squats · 5 Standup Jumps"},
   {"id":"ng-yggdrasil","name":"Waldschrat","orig":"Yggdrasil","rounds":7,"minutes":16,"equipment":["bodyweight_only"],"work":"10 Weightless Single-Leg RDL · 5 Tuck Jumps · 10 Squats · 5 Burpees"},
