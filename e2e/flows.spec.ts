@@ -241,11 +241,11 @@ test("Satz antippen speichert das Ziel, „Zu schwer“ fragt den letzten Satz",
   await seed(page);
   await page.goto("./");
   await page.locator(".day-btn").filter({ hasText: "Oberkörper", hasNotText: "Swing" }).click();
-  const card = page.locator(".slot").filter({ has: page.getByText("Cable Rear Delt Fly", { exact: true }) });
+  const card = page.locator(".slot").filter({ has: page.getByText("Face Pull", { exact: true }) });
   const dose = (await card.locator(".slot-dose strong").innerText()).match(/× (\d+)/)![1];
   for (let i = 1; i <= 4; i++) await card.getByRole("button", { name: `Satz ${i}`, exact: true }).click();
   let e = (await stored(page)).sessions[0].entries;
-  const key = Object.keys(e).find((k) => k.includes("Cable Rear Delt Fly"))!;
+  const key = Object.keys(e).find((k) => k.includes("Face Pull"))!;
   expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose, +dose, +dose, +dose]);
   await card.getByRole("button", { name: "Zu schwer" }).click();
   await card.getByLabel("Geschaffte Wiederholungen").fill("9");
@@ -256,7 +256,7 @@ test("Satz antippen speichert das Ziel, „Zu schwer“ fragt den letzten Satz",
   expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose + 2, +dose + 2, +dose + 2, +dose + 2]);
   // Fertig: Die Übung klappt nach kurzer Zeit ein, Antippen öffnet sie wieder
   await page.locator("body").click({ position: { x: 5, y: 5 } });
-  const done = page.getByRole("button", { name: "Cable Rear Delt Fly erledigt, aufklappen" });
+  const done = page.getByRole("button", { name: "Face Pull erledigt, aufklappen" });
   await expect(done).toBeVisible({ timeout: 6000 });
   await done.click();
   await expect(card.getByRole("button", { name: "Sehr leicht" })).toBeVisible();

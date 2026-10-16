@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.59.0] – 2026-10-16
+
+### Geändert
+- Assassin, letzte Fassung vor dem Start (gilt bis zur Testwoche):
+  - Montag: Unterkörper wie bisher, dazu Trizeps über Kopf.
+  - Dienstag: Chest Press, Chest-Supported Row, Lat Pulldown, Face Pull, Incline Cable Curl. Nur Übungen, die an kleinen Kabeltürmen bequem gehen; als Kurztag bleiben Chest Press, Rudern, Face Pull und Curl, der Pulldown wandert dann auf den Donnerstag.
+  - Freitag: KB Swing, Dip, Lat Pulldown (V-Griff), Cable Fly, Bayesian Curl mit Seitheben an einer Station.
+- Neue Übung: Incline Cable Curl.
+
 ## [0.58.3] – 2026-10-16
 
 ### Geändert

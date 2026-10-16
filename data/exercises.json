@@ -527,6 +527,11 @@
       "bench"
     ]
   },
+  "Incline Cable Curl": {
+    "equip": "cable",
+    "needs": ["bench"],
+    "desc": "Schrägbank mit dem Rücken zum Kabelzug, Kabel unten, Arme hängen hinter dem Körper. Curl aus der gedehnten Position, Ellbogen bleiben hinten. Beidarmig mit zwei Griffen oder einarmig."
+  },
   "Incline Chest Press Machine": {
     "equip": "machine",
     "desc": "Schräge Brustpresse. Griffe auf Höhe der oberen Brust, tief in die Dehnung, dann drücken."
