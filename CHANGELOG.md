@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.58.0] – 2026-10-16
+
+### Geändert
+- Assassin nach Erholung zwischen den Tagen geordnet: Montag Unterkörper, Dienstag und Freitag Oberkörper. So belastet kein Tag dieselben Muskeln wie der Tag davor, auch wenn Freitag auf Sonntag rutscht.
+  - Montag: Leg Press, Lying Leg Curl, KB Cossack Squat mit Wadenheben, Cable Woodchopper, dazu eine kurze Plage ohne Drücken, Ziehen und weite Sprünge.
+  - Dienstag: Chest Press, Rudern im Untergriff, Rear Delt Fly, Curl (auch als Kurztag mit allen vier).
+  - Freitag: KB Swing zuerst, Dip, Lat Pulldown mit V-Griff, Fly mit Seitheben, Schrägbank-Curl mit Trizeps über Kopf.
+  - Woodchopper statt Russian Twist: Drehung im Stand aus der Hüfte, wie beim Hieb.
+- Supersets aus zwei Maschinen oder Kabeln gibt es nicht mehr, auch nicht nach einem Tausch oder an einem anderen Ort: Die beiden Übungen kommen dann nacheinander.
+
 ## [0.57.0] – 2026-10-16
 
 ### Geändert

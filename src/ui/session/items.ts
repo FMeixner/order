@@ -101,7 +101,14 @@ export function collectItems(ctx: SessionCtx): Item[] {
       }
       return b.type === "beast" ? beastItem(b) : otherItem(b);
     });
-  const items: Item[] = all.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
+  // Nie zwei feste Geräte (Maschine, Kabel) im Superset, auch nicht nach Tausch oder Ortswechsel: dann nacheinander
+  const station = (r: Resolved) => r.equip === "machine" || r.equip === "cable";
+  const split = all.flatMap((it): Item[] => {
+    const b = it.block;
+    if (b.type !== "superset" || it.resolved.filter(station).length < 2) return [it];
+    return it.resolved.map((r, i) => ({ block: { type: "single", slot: { ...(b.slots.find((x) => x.id === r.slotId) ?? b.slots[i]), rest: b.rest ?? 60 } }, resolved: [r] }));
+  });
+  const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
   // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
   if (ctx.block.load === "high") {
     const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })));

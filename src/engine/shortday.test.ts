@@ -51,7 +51,7 @@ describe("Kurztag", () => {
   it("Assassin: Kurztag am Dienstag behält alle vier Kernübungen, etwa 30 Minuten", () => {
     const f = FOCUS_BY_ID.assassin;
     const { report, focus } = shortDay(f, "arme_schultern", user, defaultRoles(f, 4));
-    expect(report.kept).toEqual(["Chest Press Machine", "Seated Row (zwei Seilzüge)", "Cable Lateral Raise", "Cable Biceps Curl"]);
+    expect(report.kept).toEqual(["Chest Press Machine", "Seated Cable Row (Untergriff)", "Cable Rear Delt Fly", "Cable Biceps Curl"]);
     expect(focus.roles.arme_schultern.minutes).toBeLessThanOrEqual(35);
   });
 });

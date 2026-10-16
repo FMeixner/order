@@ -6,7 +6,7 @@ test("Einheit abschließen: Satz eintragen, abschließen, im Log", async ({ page
   await seed(page);
   await page.goto("./");
   // Unabhängig vom Wochentag: den Krafttag wählen
-  await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
+  await page.locator(".day-btn").filter({ hasText: "Unterkörper" }).click();
   await page.getByRole("button", { name: "Satz 1" }).first().click();
   await page.getByRole("button", { name: "Einheit abschließen" }).click();
   // Die Ansicht springt zur nächsten offenen Einheit; der erledigte Tag trägt ein Häkchen
@@ -46,7 +46,7 @@ test("Freie Jagd: Rundentracker stoppt die Uhr, Wieder aufnehmen speichert nur d
 test("Kurz: spontan für heute, als Wochentag merken, Kraftübungen weniger", async ({ page }) => {
   await seed(page);
   await page.goto("./");
-  await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
+  await page.locator(".day-btn").filter({ hasText: "Unterkörper" }).click();
   const before = await page.locator(".slot-name").count();
   await page.getByRole("button", { name: "Anpassen für heute" }).click();
   await page.getByRole("button", { name: "Kurz", exact: true }).click();
@@ -185,7 +185,7 @@ test("Leise an allen Tagen (alter schweißfreier Ort): nur leise Bestien", async
 test("Warm-up anpassen: entfernen und hinzufügen, dauerhaft für den Tag", async ({ page }) => {
   await seed(page);
   await page.goto("./");
-  await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
+  await page.locator(".day-btn").filter({ hasText: "Unterkörper" }).click();
   await page.locator(".collapse-head").filter({ hasText: "Warm-up" }).click();
   const names = page.locator(".collapse.amber").first().locator(".drill-name");
   const n = await names.count();
@@ -240,12 +240,12 @@ test("Bestien bleiben nach dem ersten Klick fest, auch wenn sich das Warm-up än
 test("Satz antippen speichert das Ziel, „Zu schwer“ fragt den letzten Satz", async ({ page }) => {
   await seed(page);
   await page.goto("./");
-  await page.locator(".day-btn").filter({ hasText: "Oberkörper" }).click();
-  const card = page.locator(".slot").filter({ has: page.getByText("Cable Lateral Raise", { exact: true }) });
+  await page.locator(".day-btn").filter({ hasText: "Oberkörper", hasNotText: "Swing" }).click();
+  const card = page.locator(".slot").filter({ has: page.getByText("Cable Rear Delt Fly", { exact: true }) });
   const dose = (await card.locator(".slot-dose strong").innerText()).match(/× (\d+)/)![1];
   for (let i = 1; i <= 4; i++) await card.getByRole("button", { name: `Satz ${i}`, exact: true }).click();
   let e = (await stored(page)).sessions[0].entries;
-  const key = Object.keys(e).find((k) => k.includes("Cable Lateral Raise"))!;
+  const key = Object.keys(e).find((k) => k.includes("Cable Rear Delt Fly"))!;
   expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose, +dose, +dose, +dose]);
   await card.getByRole("button", { name: "Zu schwer" }).click();
   await card.getByLabel("Geschaffte Wiederholungen").fill("9");
@@ -256,7 +256,7 @@ test("Satz antippen speichert das Ziel, „Zu schwer“ fragt den letzten Satz",
   expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose + 2, +dose + 2, +dose + 2, +dose + 2]);
   // Fertig: Die Übung klappt nach kurzer Zeit ein, Antippen öffnet sie wieder
   await page.locator("body").click({ position: { x: 5, y: 5 } });
-  const done = page.getByRole("button", { name: "Cable Lateral Raise erledigt, aufklappen" });
+  const done = page.getByRole("button", { name: "Cable Rear Delt Fly erledigt, aufklappen" });
   await expect(done).toBeVisible({ timeout: 6000 });
   await done.click();
   await expect(card.getByRole("button", { name: "Sehr leicht" })).toBeVisible();
