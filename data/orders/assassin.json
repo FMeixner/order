@@ -53,21 +53,19 @@
       ]
     },
     "kraft_b": {
-      "name": "Oberkörper und Swing", "location": "gym", "minutes": 55, "cap": 60,
+      "name": "Oberkörper und Swing", "location": "gym", "minutes": 60, "cap": 65,
       "warmup": ["short_base", "lat_box", "dislocate", "core_prep", "hip9090"],
       "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "single", "slot": {"id": "kb-1", "core": true, "name": "KB Swing", "home": "KB Swing", "reise": {"name": "Band Pull-Through", "reps": "15-20", "prog": "reps"}, "sets": 4, "reps": "15", "prog": "double", "rest": 60, "note": "zuerst, solange die Technik frisch ist"}},
         {"type": "single", "slot": {"id": "kas-7", "core": true, "name": "Dip", "load": "plate", "home": {"name": "Ring Dip", "reps": "6-10"}, "reise": {"name": "Deficit Push-Up", "reps": "AMRAP"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120, "note": "tief bis die Brust dehnt"}},
         {"type": "single", "slot": {"id": "kb-4", "core": true, "name": "Lat Pulldown (V-Griff)", "home": {"name": "Pull-Up (Close Grip)", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
-        {"type": "superset", "rest": 60, "slots": [
-          {"id": "ka-5", "name": "Cable Chest Fly", "home": "DB Fly", "reise": {"name": "Band Fly", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
-          {"id": "ka-8d", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}
+        {"type": "single", "slot": {"id": "ka-5", "name": "Cable Chest Fly", "home": "DB Fly", "reise": {"name": "Band Fly", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
+        {"type": "superset", "rest": 45, "sameStation": true, "label": "an einer Kabelstation, Rolle unten, D-Griff", "slots": [
+          {"id": "kb-7b", "name": "Bayesian Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12/Seite", "prog": "double"},
+          {"id": "ka-8", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"}
         ]},
-        {"type": "superset", "rest": 60, "slots": [
-          {"id": "kb-7i", "name": "Incline DB Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
-          {"id": "ka-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"}
-        ]}
+        {"type": "single", "slot": {"id": "ka-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}}
       ]
     },
     "bonus": {

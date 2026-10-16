@@ -67,6 +67,8 @@ export type Block =
   | { type: "single"; slot: Slot; rotation?: "A" | "B" }
   | {
       type: "superset"; label?: string; slots: Slot[]; rest?: number; rotation?: "A" | "B";
+      /** Beide Übungen an derselben Kabelstation (gleiche Höhe, gleicher Griff): darf trotz zwei Kabeln ein Superset sein */
+      sameStation?: boolean;
       /** Statt des Supersets eine Bestie aus diesem Pool, wenn eine zum Ort passt (sonst bleibt das Superset). only: nur in A- oder B-Wochen */
       finisher?: { pool: string[]; classes?: BeastClass[]; only?: "A" | "B"; note?: string };
     }

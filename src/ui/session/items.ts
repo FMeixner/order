@@ -105,7 +105,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
   const station = (r: Resolved) => r.equip === "machine" || r.equip === "cable";
   const split = all.flatMap((it): Item[] => {
     const b = it.block;
-    if (b.type !== "superset" || it.resolved.filter(station).length < 2) return [it];
+    if (b.type !== "superset" || (b.sameStation && it.resolved.every((r) => r.equip === "cable")) || it.resolved.filter(station).length < 2) return [it];
     return it.resolved.map((r, i) => ({ block: { type: "single", slot: { ...(b.slots.find((x) => x.id === r.slotId) ?? b.slots[i]), rest: b.rest ?? 60 } }, resolved: [r] }));
   });
   const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");

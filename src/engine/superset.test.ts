@@ -19,4 +19,12 @@ describe("Superset aus zwei festen Geräten", () => {
     expect(sup(swapped)).toBe(0);
     expect(items(swapped).some((i) => i.resolved.some((r) => r.name === "Leg Extension"))).toBe(true);
   });
+  it("an derselben Kabelstation bleibt es ein Superset (Bayesian Curl + Seitheben)", () => {
+    const gym = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
+    const st: AppState = { ...emptyState(), onboarded: true, equipment: [gym], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" },
+      plan: [{ id: "b1", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium", travel: false }] };
+    const it2 = collectItems({ state: st, block: st.plan[0], focus: focusFor(st, st.plan[0], 1)!, week: 1, roleKey: "kraft_b", profile: gym, date: "2026-10-23", reduced: false } as never);
+    const sup = it2.filter((i) => i.block.type === "superset").map((i) => i.resolved.map((r) => r.name));
+    expect(sup).toContainEqual(["Bayesian Cable Curl", "Cable Lateral Raise"]);
+  });
 });

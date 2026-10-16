@@ -38,7 +38,7 @@ Hat jemand mehr Trainingstage als `week_4` Rollen, kommen weitere Rollen aus `ro
 | type | Inhalt |
 |---|---|
 | `single` | `slot` |
-| `superset` | `slots`, `rest` nach der Runde |
+| `superset` | `slots`, `rest` nach der Runde; `sameStation: true`, wenn beide Übungen an derselben Kabelstation laufen (gleiche Höhe, gleicher Griff) – nur dann sind zwei Kabelübungen als Superset erlaubt |
 | `contrast` | `heavy`, `explosive`, `transfer` (Standard 30 s), `rest` (Standard 180 s) |
 | `beast` | `pool` (feste Liste) oder `classes` (plage, bestie, ungeheuer, uralte, verfluchte), `draw` rotate oder random, `benchmark_every` |
 | `module` | `"module": "sword"`: Schwert-Variante aus `data/modules/sword.json`, nur wenn das Profil ein Schwert hat; sonst `fallback`-Slot |

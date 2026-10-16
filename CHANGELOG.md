@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.58.2] – 2026-10-16
+
+### Geändert
+- Assassin, Freitag: Bayesian Cable Curl und Cable Lateral Raise im Wechsel an derselben Kabelstation (Rolle unten, D-Griff), keine Kurzhanteln mehr am Kabelzug. Cable Fly und Trizeps über Kopf laufen einzeln.
+- Supersets aus zwei Kabelübungen sind erlaubt, wenn beide an derselben Station laufen; die Karte nennt dann Höhe und Griff.
+
 ## [0.58.1] – 2026-10-16
 
 ### Geändert

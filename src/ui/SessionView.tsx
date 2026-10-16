@@ -167,7 +167,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
     const last = it.resolved[it.resolved.length - 1];
     return (
       <section className="card superset">
-        <div className="block-label teal">Im Wechsel · direkt nacheinander, dann {b.rest ?? 60} s Pause</div>
+        <div className="block-label teal">Im Wechsel{b.sameStation && b.label ? ` · ${b.label}` : ""} · direkt nacheinander, dann {b.rest ?? 60} s Pause</div>
         {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(lastSet) => { if (r === last && !lastSet) t.rest("Pause, dann nächste Runde", b.rest ?? 60); }} />)}
       </section>
     );
