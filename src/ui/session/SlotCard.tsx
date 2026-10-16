@@ -125,7 +125,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
 
   // Aufwärmsätze: abhaken wie ein Satz, danach 30 s bis zum ersten Arbeitssatz
   const warmN = useContext(WarmCtx).get(r.key) ?? 0;
-  const warmSets = warmN ? warmupSets(r, baseW ?? null, ctx.profile).slice(0, warmN) : [];
+  const warmSets = warmN ? warmupSets(r, baseW ?? null, ctx.profile, warmN) : [];
   const warmDone = entry.warm ?? [];
   const markWarm = (i: number) => {
     const was = !!warmDone[i];

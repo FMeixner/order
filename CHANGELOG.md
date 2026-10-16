@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.56.1] – 2026-10-16
+
+### Geändert
+- Aufwärmsätze richten sich jetzt nach Last und Verletzungsrisiko statt nach Wiederholungen: Langhantel ab 50 kg ein Satz, ab 80 kg zwei; Maschine ab 80 kg ein Satz; Kurzhantel oder Kettlebell ab 24 kg je Hantel ein Satz. Kabel, Körpergewicht und Swings, Snatches oder Sprünge bekommen keinen. Weiterhin nur die erste so schwere Übung je Körperhälfte.
+
 ## [0.56.0] – 2026-10-15
 
 ### Geändert

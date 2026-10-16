@@ -23,7 +23,7 @@ export function Help() {
           <strong> Leicht</strong> = 3 oder mehr, <strong>Sehr leicht</strong> = deutlich zu leicht (die App fragt, wie viele je Satz gingen).</li>
         <li>Fehlen 2 oder mehr Wiederholungen zum unteren Ende des Bereichs, geht das Gewicht eine Stufe runter.</li>
         <li>Am Ende „Einheit abschließen“. Erst dann rechnet die App die Vorschläge für das nächste Mal.</li>
-        <li>Aufwärmsatz: Die erste schwere Mehrgelenksübung jeder Körperhälfte am Tag (etwa die Beinpresse, die erste Brust- oder Schulterpresse), sofern sie im Bereich um 8–12 Wiederholungen oder schwerer liegt, hat einen gestrichelten Kreis „0“ vor den Sätzen. Die Zeile darüber nennt die Dosis: 8 Wiederholungen mit der Hälfte des Arbeitsgewichts, bei schwerer Langhantel zwei Steigerungssätze (50 % × 5, 75 % × 3). Abhaken wie einen Satz, danach 30 s bis zum ersten Arbeitssatz.</li>
+        <li>Aufwärmsatz: hängt von der Last und dem Risiko ab, nicht von den Wiederholungen. Langhantel ab 50 kg ein Satz, ab 80 kg zwei; Maschine ab 80 kg ein Satz; Kurzhantel oder Kettlebell ab 24 kg je Hantel ein Satz. Kabel, Körpergewicht und schwungvolle Übungen wie Swings brauchen keinen, dafür reicht das allgemeine Warm-up. Je Körperhälfte bekommt nur die erste so schwere Übung des Tages einen, erkennbar am gestrichelten Kreis „0“ vor den Sätzen. Dosis: 8 Wiederholungen mit der Hälfte des Arbeitsgewichts, bei zwei Sätzen 50 % × 5 und 75 % × 3. Abhaken wie einen Satz, danach 30 s bis zum ersten Arbeitssatz.</li>
       </ul>
 
       <h3>So steigert die App</h3>

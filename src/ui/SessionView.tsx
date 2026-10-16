@@ -4,7 +4,7 @@ import { FLOWS, SHARPEN, SWORD } from "../data";
 import type { BeastResult, Block, Session } from "../types";
 import { estimateRole } from "../engine/duration";
 import { roleAt, roleDrills, swordLevel, swordNext } from "../engine/plan";
-import { advance, sharedState } from "../engine/progression";
+import { advance, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
 import { menuDefault } from "../engine/sharpen";
@@ -26,8 +26,8 @@ export function SessionView(ctx: SessionCtx) {
   const id = sessionId(block.id, week, roleKey);
   const session = state.sessions.find((s) => s.id === id);
   const items = useMemo(() => collectItems(ctx), [ctx]);
-  // Erste schwere Mehrgelenksübung je Körperhälfte: Aufwärmsatz
-  const warmMap = useMemo(() => warmupKeys(items.flatMap((it) => it.resolved)), [items]);
+  // Aufwärmsätze nach Last und Risiko (erste schwere Übung je Körperhälfte), Gewicht aus dem Vorschlag
+  const warmMap = useMemo(() => warmupKeys(items.flatMap((it) => it.resolved), (r) => { const x = r as Resolved; return suggest(x, sharedState(state.slots, x), week, ctx.profile).weight ?? null; }), [items, state.slots, week, ctx.profile]);
   const warm = roleDrills(role, "wu", ctx.profile, state.user, week);
   const cool = roleDrills(role, "cd", ctx.profile, state.user, week);
   const [feeling, setFeeling] = useState<number | null>(null);
