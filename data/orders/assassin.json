@@ -3,7 +3,7 @@
   "id": "assassin",
   "name": "Assassin",
   "tagline": "Fett runter, Kraft halten, Bewegung schärfen.",
-  "description": "Leichtes Defizit: Last halten, Volumen senken. Wenige Übungen mit mehr Sätzen, Oberkörper-Kernübungen schwer (6–8 Wdh), Beine und Isolation 8–15, etwa 10 harte Sätze pro Muskel und Woche. Übungen mit tiefer Dehnung und beidseitig, wo es gleichwertig geht. Montag Unterkörper mit kurzer Plage, Dienstag und Freitag Oberkörper: So überschneidet sich wenig, auch wenn Freitag auf Sonntag rutscht. Dienstag geht als Kurztag mit vier Kernübungen, Donnerstag Schwert und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
+  "description": "Leichtes Defizit: Last halten, Volumen senken. Wenige Übungen mit mehr Sätzen, Oberkörper-Kernübungen schwer (6–8 Wdh), Beine und Isolation 8–15, etwa 10 harte Sätze pro Muskel und Woche. Übungen mit tiefer Dehnung und beidseitig, wo es gleichwertig geht. Montag Unterkörper mit einer kurzen Plage, Dienstag und Freitag Oberkörper: So überschneidet sich wenig, auch wenn Freitag auf Sonntag rutscht. Dienstag geht als Kurztag mit vier Kernübungen, Donnerstag Schwert und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
   "goals": {"primary": "fatloss", "secondary": ["strength", "skill"]},
   "nutrition": "deficit",
   "load_fit": "high",
@@ -29,7 +29,7 @@
           {"id": "kb-8", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": {"name": "Single-Leg Calf Raise", "reps": "15-20/Seite", "prog": "reps"}, "sets": 3, "reps": "15", "prog": "double"}
         ]},
         {"type": "single", "slot": {"id": "ka-7", "name": "Cable Woodchopper", "home": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double", "rest": 45}},
-        {"type": "beast", "id": "ka-bst", "classes": ["plage"], "pool": ["ng-sol", "ng-balder", "ng-tyr", "ng-mimir", "ng-njord"], "note": "Kurz, ohne Drücken oder Ziehen (Dienstag ist Oberkörper) und ohne weite Sprünge nach den schweren Beinen."}
+        {"type": "beast", "id": "ka-bst", "classes": ["plage"]}
       ]
     },
     "arme_schultern": {

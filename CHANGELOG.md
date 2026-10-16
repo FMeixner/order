@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.58.1] – 2026-10-16
+
+### Geändert
+- Assassin, Montag: Die Plage kommt wieder aus allen kurzen Bestien, nicht mehr aus einer festen Auswahl.
+
 ## [0.58.0] – 2026-10-16
 
 ### Geändert
