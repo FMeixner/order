@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.57.0] – 2026-10-16
+
+### Geändert
+- Assassin neu, mit weniger Volumen für die Phase im Defizit: 15 statt 22 Übungen pro Woche, etwa 20 % weniger Sätze, dafür mehr Sätze pro Übung. Oberkörper-Kernübungen schwer (6–8 Wiederholungen), Beine und Isolation 8–15. Etwa 10 harte Sätze pro Muskel und Woche, Beine etwas weniger.
+  - Montag: Leg Press, Lat Pulldown, Cable Chest Fly, Seated Leg Curl (statt liegend), Trizeps über Kopf.
+  - Dienstag: Chest Press, Rudern beidarmig, Seitheben, Curl. Bleibt auch als Kurztag mit allen vier.
+  - Freitag: KB Swing, KB Cossack Squat (statt Bulgarian Split Squat), Dip, Lat Pulldown (V-Griff), Rear Delt Fly, Russian Twist mit Wadenheben.
+  - Die neue Fassung gilt in der laufenden Phase erst nach „Übernehmen“ im Plan.
+- Kurztag: vier Kernübungen, wenn der Orden vier markiert und der Tag bei gut 30 Minuten bleibt; sonst wie bisher drei.
+- Neue Übungen: Double DB Row, KB Cossack Squat.
+
 ## [0.56.1] – 2026-10-16
 
 ### Geändert

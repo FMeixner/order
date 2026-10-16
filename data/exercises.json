@@ -418,6 +418,10 @@
   "Diamond Push-Up": {
     "equip": "bodyweight"
   },
+  "Double DB Row": {
+    "equip": "dumbbell",
+    "desc": "Mit beiden Kurzhanteln gleichzeitig: Hüfte zurück, Oberkörper etwa 45° vorgeneigt, Rücken lang. Hanteln zur Hüfte ziehen, unten die Schulterblätter weit nach vorn gleiten lassen (Dehnung)."
+  },
   "Einbeinstand, Augen zu": {
     "equip": "bodyweight",
     "desc": "Auf einem Bein stehen, Knie weich, Augen schließen. Mit offenen Augen beginnen, wenn es zu wackelig ist."
@@ -582,6 +586,10 @@
         "name": "Romanian Deadlift"
       }
     ]
+  },
+  "KB Cossack Squat": {
+    "equip": "kettlebell",
+    "desc": "Breiter Stand, Kettlebell vor der Brust. Tief zur einen Seite sinken, das andere Bein bleibt gestreckt mit Zehen nach oben, Ferse am Boden. Über die Mitte zur anderen Seite."
   },
   "KB Deadlift": {
     "equip": "kettlebell"

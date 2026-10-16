@@ -83,13 +83,13 @@ describe("Defizit braucht Griffe", () => {
 });
 
 describe("Geführt bei hoher Last: Hälfte des Tages", () => {
-  it("Assassin Kraft B ist schon ein Maschinentag: Swing und Split Squat bleiben frei", async () => {
+  it("Assassin Kraft B bei hoher Last: Swing und Cossack Squat bleiben frei, höchstens der Dip wird geführt", async () => {
     const { FOCUS_BY_ID } = await import("../data");
     const { guidedKeys, resolveSlot } = await import("./resolve");
     const role = FOCUS_BY_ID.assassin.roles.kraft_b;
     const list = role.blocks.flatMap((b, g) => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : []).map((s) => ({ s, group: b.type === "superset" ? g : undefined })))
       .map(({ s, group }) => ({ r: resolveSlot(s, gym)!, contrast: false, group }));
-    expect(guidedKeys(list, gym).size).toBe(0);
+    expect([...guidedKeys(list, gym)].every((k) => k.endsWith("|Dip"))).toBe(true);
   });
 });
 

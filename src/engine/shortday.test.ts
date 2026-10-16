@@ -48,9 +48,10 @@ describe("Kurztag", () => {
     expect(report.changes).toEqual([]);
     for (const k of wr.filter((x) => x !== "kraft_1")) expect(focus.roles[k]).toEqual(f.roles[k]);
   });
-  it("Assassin: Kurztag am Dienstag behält Schulterdrücken, Schrägbank-Brustpresse und Curl", () => {
+  it("Assassin: Kurztag am Dienstag behält alle vier Kernübungen, etwa 30 Minuten", () => {
     const f = FOCUS_BY_ID.assassin;
-    const { report } = shortDay(f, "arme_schultern", user, defaultRoles(f, 4));
-    expect(report.kept).toEqual(["Shoulder Press Machine", "Incline Chest Press Machine", "Cable Biceps Curl"]);
+    const { report, focus } = shortDay(f, "arme_schultern", user, defaultRoles(f, 4));
+    expect(report.kept).toEqual(["Chest Press Machine", "Seated Row (zwei Seilzüge)", "Cable Lateral Raise", "Cable Biceps Curl"]);
+    expect(focus.roles.arme_schultern.minutes).toBeLessThanOrEqual(35);
   });
 });

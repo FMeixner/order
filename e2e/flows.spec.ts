@@ -46,7 +46,7 @@ test("Freie Jagd: Rundentracker stoppt die Uhr, Wieder aufnehmen speichert nur d
 test("Kurz: spontan für heute, als Wochentag merken, Kraftübungen weniger", async ({ page }) => {
   await seed(page);
   await page.goto("./");
-  await page.locator(".day-btn").filter({ hasText: "Oberkörper und Gesäß" }).click();
+  await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
   const before = await page.locator(".slot-name").count();
   await page.getByRole("button", { name: "Anpassen für heute" }).click();
   await page.getByRole("button", { name: "Kurz", exact: true }).click();
@@ -240,20 +240,20 @@ test("Bestien bleiben nach dem ersten Klick fest, auch wenn sich das Warm-up än
 test("Satz antippen speichert das Ziel, „Zu schwer“ fragt den letzten Satz", async ({ page }) => {
   await seed(page);
   await page.goto("./");
-  await page.locator(".day-btn").filter({ hasText: "Kraft A" }).click();
+  await page.locator(".day-btn").filter({ hasText: "Oberkörper" }).click();
   const card = page.locator(".slot").filter({ has: page.getByText("Cable Lateral Raise", { exact: true }) });
   const dose = (await card.locator(".slot-dose strong").innerText()).match(/× (\d+)/)![1];
-  for (let i = 1; i <= 3; i++) await card.getByRole("button", { name: `Satz ${i}`, exact: true }).click();
+  for (let i = 1; i <= 4; i++) await card.getByRole("button", { name: `Satz ${i}`, exact: true }).click();
   let e = (await stored(page)).sessions[0].entries;
   const key = Object.keys(e).find((k) => k.includes("Cable Lateral Raise"))!;
-  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose, +dose, +dose]);
+  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose, +dose, +dose, +dose]);
   await card.getByRole("button", { name: "Zu schwer" }).click();
   await card.getByLabel("Geschaffte Wiederholungen").fill("9");
   e = (await stored(page)).sessions[0].entries;
-  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose, +dose, 9]);
+  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose, +dose, +dose, 9]);
   await card.getByRole("button", { name: "Sehr leicht" }).click();
   e = (await stored(page)).sessions[0].entries;
-  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose + 2, +dose + 2, +dose + 2]);
+  expect(e[key].sets.map((x: { reps: number }) => x.reps)).toEqual([+dose + 2, +dose + 2, +dose + 2, +dose + 2]);
   // Fertig: Die Übung klappt nach kurzer Zeit ein, Antippen öffnet sie wieder
   await page.locator("body").click({ position: { x: 5, y: 5 } });
   const done = page.getByRole("button", { name: "Cable Lateral Raise erledigt, aufklappen" });

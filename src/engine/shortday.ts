@@ -1,4 +1,4 @@
-/* Kurztag: Ein Tag der Woche fällt kürzer aus, nur drei Kernübungen.
+/* Kurztag: Ein Tag der Woche fällt kürzer aus, nur drei Kernübungen (vier, wenn der Orden vier als Kern markiert und es bei etwa 30–35 Minuten bleibt).
    Danach wird geprüft, ob das Ziel des Ordens leidet (Sätze je Muskel und Woche):
    - Aufbau-Muskeln (im Orden schon im Zielbereich) bleiben mindestens an der unteren Grenze des Volumenbereichs,
    - alle anderen mindestens bei der Erhaltung (4 Sätze, etwa ein Drittel).
@@ -14,6 +14,9 @@ import { musclesOf, volumeRange } from "./volume";
 import { halfOf } from "./warmup";
 
 export const SHORT_KEEP = 3;
+/** Vier Kernübungen, wenn der Orden vier markiert und der Kurztag dabei bei etwa 30–35 Minuten bleibt */
+export const SHORT_MAX = 4;
+const SHORT_LIMIT = 38;
 /** Supersets aus Übungen, die sich nicht in die Quere kommen, bis die Rolle ins Zeitlimit (Minuten) passt.
     Nie die erste Kraftübung, nie große Grundübungen oder Kernübungen, nie zwei Übungen für denselben Hauptmuskel,
     im Studio nie zwei Maschinen oder Kabel. Ändert die Rolle direkt; true, wenn sie danach passt. */
@@ -112,12 +115,22 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
 
   // 1. Kurztag: die drei Kernübungen, sonst nichts (keine Bestie, kein Modul), kurzes Warm-up
   const ranked = short.blocks.map((b, i) => ({ b, i, r: strengthBlock(b) ? rank(b) : -1 })).filter((x) => x.r >= 0);
-  // A- und B-Woche getrennt: je drei Kernübungen
-  const keep = new Set<Block>();
-  for (const ab of ["A", "B"]) ranked.filter((x) => !x.b.rotation || x.b.rotation === ab).sort((a, c) => c.r - a.r || a.i - c.i).slice(0, SHORT_KEEP).forEach((x) => keep.add(x.b));
+  // A- und B-Woche getrennt: je drei Kernübungen; markiert der Orden vier, bleiben vier, solange es bei etwa 30–35 Minuten bleibt
+  const shortWarm = ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
+  const pick = (n: number) => {
+    const k = new Set<Block>();
+    for (const ab of ["A", "B"]) {
+      const wk = ranked.filter((x) => !x.b.rotation || x.b.rotation === ab).sort((a, c) => c.r - a.r || a.i - c.i);
+      const m = n > SHORT_KEEP && wk.filter((x) => x.r >= 100).length >= n ? n : SHORT_KEEP;
+      wk.slice(0, m).forEach((x) => k.add(x.b));
+    }
+    return k;
+  };
+  let keep = pick(SHORT_MAX);
+  if (keep.size > SHORT_KEEP && est({ ...short, warmup: shortWarm, cooldown: (short.cooldown ?? []).slice(0, 1), blocks: short.blocks.filter((b) => keep.has(b)) }) > SHORT_LIMIT) keep = pick(SHORT_KEEP);
   const droppedBlocks = ranked.filter((x) => !keep.has(x.b)).map((x) => x.b);
   short.blocks = short.blocks.filter((b) => keep.has(b));
-  short.warmup = ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
+  short.warmup = shortWarm;
   short.cooldown = (short.cooldown ?? []).slice(0, 1);
   short.name = `${short.name} (Kurztag)`;
   short.minutes = Math.max(15, Math.round(est(short) / 5) * 5);
