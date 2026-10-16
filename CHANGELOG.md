@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.58.3] – 2026-10-16
+
+### Geändert
+- Assassin, Dienstag wieder als voller Tag (~50 Min.): Chest Press, Rudern im Untergriff, Cable Fly, Rear Delt Fly, Curl, Trizeps über Kopf. Fly und Trizeps kommen vom Freitag, der damit kürzer wird (~50 statt ~60 Min.).
+- Als Kurztag bleiben am Dienstag die vier Kernübungen; den Rest gleicht die App bei Bedarf aus (zum Beispiel ein Satz mehr Dip am Freitag).
+
 ## [0.58.2] – 2026-10-16
 
 ### Geändert

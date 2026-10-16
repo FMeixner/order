@@ -3,7 +3,7 @@
   "id": "assassin",
   "name": "Assassin",
   "tagline": "Fett runter, Kraft halten, Bewegung schärfen.",
-  "description": "Leichtes Defizit: Last halten, Volumen senken. Wenige Übungen mit mehr Sätzen, Oberkörper-Kernübungen schwer (6–8 Wdh), Beine und Isolation 8–15, etwa 10 harte Sätze pro Muskel und Woche. Übungen mit tiefer Dehnung und beidseitig, wo es gleichwertig geht. Montag Unterkörper mit einer kurzen Plage, Dienstag und Freitag Oberkörper: So überschneidet sich wenig, auch wenn Freitag auf Sonntag rutscht. Dienstag geht als Kurztag mit vier Kernübungen, Donnerstag Schwert und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
+  "description": "Leichtes Defizit: Last halten, Volumen senken. Wenige Übungen mit mehr Sätzen, Oberkörper-Kernübungen schwer (6–8 Wdh), Beine und Isolation 8–15, etwa 10 harte Sätze pro Muskel und Woche. Übungen mit tiefer Dehnung und beidseitig, wo es gleichwertig geht. Montag Unterkörper mit einer kurzen Plage, Dienstag und Freitag Oberkörper: So überschneidet sich wenig, auch wenn Freitag auf Sonntag rutscht. Dienstag ist der längste Oberkörpertag und entlastet den Freitag; als Kurztag bleiben die vier Kernübungen, Donnerstag Schwert und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
   "goals": {"primary": "fatloss", "secondary": ["strength", "skill"]},
   "nutrition": "deficit",
   "load_fit": "high",
@@ -33,14 +33,16 @@
       ]
     },
     "arme_schultern": {
-      "name": "Oberkörper", "location": "gym", "minutes": 40,
+      "name": "Oberkörper", "location": "gym", "minutes": 50,
       "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"],
       "cooldown": ["cd_di"],
       "blocks": [
         {"type": "single", "slot": {"id": "kb-3", "core": true, "name": "Chest Press Machine", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "ka-4", "core": true, "name": "Seated Cable Row (Untergriff)", "home": "Double DB Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "ka-5", "name": "Cable Chest Fly", "home": "DB Fly", "reise": {"name": "Band Fly", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "kas-3", "core": true, "name": "Cable Rear Delt Fly", "home": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "kas-5", "core": true, "name": "Cable Biceps Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "kas-5", "core": true, "name": "Cable Biceps Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "ka-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}}
       ]
     },
     "skill_kondition": {
@@ -53,19 +55,17 @@
       ]
     },
     "kraft_b": {
-      "name": "Oberkörper und Swing", "location": "gym", "minutes": 60, "cap": 65,
+      "name": "Oberkörper und Swing", "location": "gym", "minutes": 50, "cap": 60,
       "warmup": ["short_base", "lat_box", "dislocate", "core_prep", "hip9090"],
       "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "single", "slot": {"id": "kb-1", "core": true, "name": "KB Swing", "home": "KB Swing", "reise": {"name": "Band Pull-Through", "reps": "15-20", "prog": "reps"}, "sets": 4, "reps": "15", "prog": "double", "rest": 60, "note": "zuerst, solange die Technik frisch ist"}},
         {"type": "single", "slot": {"id": "kas-7", "core": true, "name": "Dip", "load": "plate", "home": {"name": "Ring Dip", "reps": "6-10"}, "reise": {"name": "Deficit Push-Up", "reps": "AMRAP"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120, "note": "tief bis die Brust dehnt"}},
         {"type": "single", "slot": {"id": "kb-4", "core": true, "name": "Lat Pulldown (V-Griff)", "home": {"name": "Pull-Up (Close Grip)", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "ka-5", "name": "Cable Chest Fly", "home": "DB Fly", "reise": {"name": "Band Fly", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 45, "sameStation": true, "label": "an einer Kabelstation, Rolle unten, D-Griff", "slots": [
           {"id": "kb-7b", "name": "Bayesian Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12/Seite", "prog": "double"},
           {"id": "ka-8", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"}
-        ]},
-        {"type": "single", "slot": {"id": "ka-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}}
+        ]}
       ]
     },
     "bonus": {
