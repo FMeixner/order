@@ -64,6 +64,7 @@ export function Help() {
       <h3>Anderer Ort heute</h3>
       <ul>
         <li>Unter ⚙ Anpassen (neben dem Namen der Einheit auf <em>Heute</em>) wählst du den Ort für diese Einheit, zum Beispiel Zuhause statt Studio. Die App nimmt dann die Übungen und Gewichtsstufen dieses Profils. Der Wochenplan bleibt unverändert.</li>
+        <li>Gibt es dort dein Gewicht nicht, rechnet die App um: leichter mit mehr Wiederholungen, höchstens 5 über dem Bereich (KB Swing 24 kg × 15 im Studio wird zuhause mit 20 kg zu 20 Wiederholungen), schwerer mit weniger.</li>
       </ul>
 
       <h3>Übung tauschen</h3>

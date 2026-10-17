@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.59.2] – 2026-10-16
+
+### Behoben
+- Anderer Ort mit leichterer Last: Die App erhöht jetzt die Wiederholungen, statt beim alten Ziel zu bleiben. Beispiel: KB Swing mit 24 kg × 15 im Studio wird zuhause mit 20 kg zu 20 Wiederholungen. Höchstens 5 über dem Bereich, weil die Umrechnung bei vielen Wiederholungen sonst zu hoch greift.
+
 ## [0.59.1] – 2026-10-16
 
 ### Geändert
