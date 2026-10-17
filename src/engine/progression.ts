@@ -39,8 +39,8 @@ export interface Suggestion {
 
 /** Größte Zahl an Wiederholungen, auf die der Bereich bei großen Sprüngen angehoben wird */
 export const GAP_CAP = 20;
-/** Ortswechsel auf leichtere Last: höchstens so viele Wiederholungen über dem oberen Ende des Bereichs */
-export const MOVE_EXTRA = 5;
+/** Ortswechsel auf leichtere Last: höchstens so viele Wiederholungen */
+export const MOVE_CAP = 30;
 /** Ab diesem Sprung gilt die Lückenregel bei festen Wiederholungen */
 export const FIXED_GAP = 0.075;
 const RIR: Record<Feedback, number> = { zuschwer: 0, schwer: 1, ok: 2, leicht: 3, sehrleicht: 4 };
@@ -156,8 +156,8 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
     if (rp.lo !== null) {
       const hi = rp.hi ?? rp.lo;
       // Anderer Ort mit leichterer Last (z. B. Studio 24 kg, zuhause nur 20 kg): mehr Wiederholungen statt gleicher Zahl.
-      // Die Formel überschätzt bei vielen Wiederholungen, daher höchstens 5 über dem Bereich und nie über GAP_CAP.
-      const moved = st0 && s !== st0 && st0.weight != null && w0 != null && w0 < st0.weight && (s.target ?? 0) > hi ? Math.min(s.target!, hi + MOVE_EXTRA, Math.max(hi, GAP_CAP)) : 0;
+      // Höchstens MOVE_CAP Wiederholungen; passt es nicht, korrigiert die Rückmeldung beim nächsten Mal.
+      const moved = st0 && s !== st0 && st0.weight != null && w0 != null && w0 < st0.weight && (s.target ?? 0) > hi ? Math.min(s.target!, Math.max(hi, MOVE_CAP)) : 0;
       const ceil = Math.max(moved, p && w0 != null && r.prog === "double" ? gapCeiling(p, r.equip, w0, rp.lo, hi) : hi);
       targetReps = Math.min(ceil, Math.max(Math.max(1, rp.lo - 3), s.target ?? rp.lo));
       const from = Math.min(rp.lo, targetReps);

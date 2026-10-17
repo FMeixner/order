@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.59.3] – 2026-10-17
+
+### Geändert
+- Anderer Ort mit leichterer Last: bis zu 30 Wiederholungen statt höchstens 5 über dem Bereich (KB Swing 24 kg × 15 wird mit 20 kg zu 24, 28 kg × 15 zu 30).
+
 ## [0.59.2] – 2026-10-17
 
 ### Behoben
