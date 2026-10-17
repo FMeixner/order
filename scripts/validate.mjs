@@ -152,6 +152,7 @@ for (const [f, d] of allFoci) {
         case "module":
           if (b.module === "flow" ? !flows[b.variant] : b.module === "sharpen" ? !sharpen[b.variant] : b.module !== "sword" || !dm[b.variant]) err(f, `${ctx}: Modul-Variante ${b.variant} unbekannt`);
           if (b.fallback) checkSlot(b.fallback, ctx);
+          if (b.fallbackFlow && !flows[b.fallbackFlow]) err(f, `${ctx}: Ersatz-Flow ${b.fallbackFlow} unbekannt`);
           break;
         case "beast":
           for (const id of b.pool || []) if (!beastIds.has(id)) err(f, `${ctx}: Bestie ${id} unbekannt`);

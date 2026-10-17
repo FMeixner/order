@@ -50,7 +50,7 @@
       "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep", "neck_complex", "sword_prep"],
       "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
-        {"type": "module", "module": "sword", "variant": "einzelmesser", "fallback": {"id": "sk-fb", "name": "Mobility-Flow", "kind": "timer", "minutes": 12, "prog": "none"}},
+        {"type": "module", "module": "sword", "variant": "einzelmesser", "fallbackFlow": "mobility"},
         {"type": "beast", "id": "sk-beast", "classes": ["bestie", "ungeheuer"]}
       ]
     },

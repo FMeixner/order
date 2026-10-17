@@ -40,14 +40,16 @@ describe("Tagesanpassung", () => {
     const sFirst = toggleMod(s0, s0.plan[0], 2, first.role, first.day, "short");
     expect(sets(sFirst, first.role)).toBeLessThan(sets(s0, first.role));
   });
-  it("Gemerktes Kurz je Wochentag wirkt wie der alte Kurztag der Phase und ersetzt ihn", () => {
+  it("Alter Kurztag der Phase wirkt nicht mehr; gemerktes Kurz je Wochentag räumt ihn weg", () => {
     const s0 = st();
     const fr = days(s0).find((d) => d.day === "Fr")!;
     const legacy = st({ plan: [{ ...s0.plan[0], shortRole: fr.role }] });
     const s = rememberMod(legacy, legacy.plan[0], 2, fr.role, "Fr", "short", true);
     expect(s.plan[0].shortRole).toBeUndefined();
     expect(s.dayFlags?.Fr?.short).toBe(true);
-    expect(JSON.stringify(focusFor(s, s.plan[0], 2))).toBe(JSON.stringify(focusFor(legacy, legacy.plan[0], 2)));
+    // Der alte Kurztag der Phase ist abgeschaltet: ohne gemerktes Kurz ist jeder Tag normal lang
+    expect(JSON.stringify(focusFor(legacy, legacy.plan[0], 2))).toBe(JSON.stringify(focusFor(s0, s0.plan[0], 2)));
+    expect(JSON.stringify(focusFor(s, s.plan[0], 2))).not.toBe(JSON.stringify(focusFor(s0, s0.plan[0], 2)));
     // heute aus, gemerkt bleibt
     const off = toggleMod(s, s.plan[0], 2, fr.role, "Fr", "short");
     expect(dayMods(off, off.plan[0], 2, fr.role, "Fr").short).toBe(false);

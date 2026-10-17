@@ -719,7 +719,8 @@
     "equip": "skill"
   },
   "Mobility-Flow": {
-    "equip": "skill"
+    "equip": "skill",
+    "desc": "Ruhiger Durchgang für Hüfte, Brustwirbelsäule und Schultern, je Übung 6–8 langsame Wiederholungen oder 30–45 s: 90/90-Wechsel, weltbeste Dehnung, Hüftbeuger kniend, Thorax-Rotation im Vierfüßler, Stock-Ausschultern, tiefe Hocke, Wandengel. Zweimal durch."
   },
   "Muscle-Up-Übergang (Band)": {
     "equip": "bodyweight",

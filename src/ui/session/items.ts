@@ -11,7 +11,7 @@ import { focusFor } from "../../engine/weekplan";
 import { boostOf, type SessionCtx, sessionId, skillSet } from "./ctx";
 
 /* ---------- Slots dieser Einheit sammeln ---------- */
-export interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[] }
+export interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Schwertblock, der hier mangels Schwert ersetzt ist (Vorschau zeigt trotzdem das Schwert) */ sword?: Extract<Block, { type: "module" }> }
 
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
@@ -87,7 +87,11 @@ export function collectItems(ctx: SessionCtx): Item[] {
       // Viel Energie: jede Schwertübung einen Satz mehr
       return { block: b, resolved: [], drills: b.module === "sword" && boostOf(ctx) ? drills.map((d) => ({ ...d, groups: d.groups.map((g) => ({ ...g, sets: g.sets + 1 })) })) : drills };
     }
-    return { block: b, resolved: slotsOf(b, ctx) };
+    if (b.type === "module" && b.fallbackFlow) {
+      const flow: Block = { type: "module", module: "flow", variant: b.fallbackFlow, rotation: b.rotation };
+      return { block: flow, resolved: [], drills: moduleDrills(b.fallbackFlow, ctx.state.user, ctx.week, "flow"), sword: b };
+    }
+    return { block: b, resolved: slotsOf(b, ctx), ...(b.type === "module" && b.module === "sword" ? { sword: b } : {}) };
   };
   const all: Item[] = role.blocks
     .filter((b) => !b.rotation || b.rotation === ab)
@@ -108,7 +112,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
     if (b.type !== "superset" || (b.sameStation && it.resolved.every((r) => r.equip === "cable")) || it.resolved.filter(station).length < 2) return [it];
     return it.resolved.map((r, i) => ({ block: { type: "single", slot: { ...(b.slots.find((x) => x.id === r.slotId) ?? b.slots[i]), rest: b.rest ?? 60 } }, resolved: [r] }));
   });
-  const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.block.type === "menu");
+  const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword || it.block.type === "menu");
   // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
   if (ctx.block.load === "high") {
     const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })));

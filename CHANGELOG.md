@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.62.0] – 2026-10-17
+
+### Geändert
+- Kein geplanter Kurztag mehr: Jeder Dienstag ist normal lang. Kürzen geht weiter über „Anpassen › Kurz“.
+  - Gladiator, Dienstag: „Arme, Schultern und Rumpf“ mit je 4 Sätzen Seitheben, Bayesian Curl und Überkopf-Trizeps, 3 Sätzen Face Pull, Cable Crunch und einer Plage (etwa 50 statt 30 Min).
+  - Knight, Unterkörper A: dazu eine Plage (etwa 50 Min).
+  - Acrobat, Animal Flow: dazu eine Plage (etwa 40 Min).
+  - Ein alter, in der Phase gespeicherter Kurztag wirkt nicht mehr.
+- Schwert sichtbar planen: Tage mit Schwert tragen „Schwert“ im Tagesknopf. Die Vorschau und der Almanach zeigen den Schwertblock mit deiner Stufe auch für ein Profil ohne Schwert, darunter den Ersatz.
+- Ersatz ohne Schwert bei Assassin, Soldier und Witcher: statt eines leeren Timers „Mobility-Flow“ der geführte Flow „Mobility: Hüfte und Schulter“ (90/90, weltbeste Dehnung, Hüftbeuger, Thorax-Rotation, Ausschultern, tiefe Hocke, Wandengel).
+
 ## [0.61.0] – 2026-10-17
 
 ### Geändert

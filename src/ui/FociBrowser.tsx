@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
-import { FLOWS, FOCI, FOCUS_BY_ID } from "../data";
-import { CLASS_LABEL, defaultRoles, focusName, trainingDays } from "../engine/plan";
+import { FLOWS, FOCI, FOCUS_BY_ID, SWORD } from "../data";
+import { CLASS_LABEL, defaultRoles, focusName, swordLevel, swordList, trainingDays } from "../engine/plan";
 import { shapeFocus } from "../engine/weekplan";
 import { resolveSlot } from "../engine/resolve";
 import { ladderStart } from "../engine/skills";
@@ -23,6 +23,8 @@ function slotLine(s: Slot, c: Ctx): string | null {
   return `${name} · ${dose}`;
 }
 
+const hasSword = (r: { blocks: Block[] }) => r.blocks.some((b) => b.type === "module" && b.module === "sword");
+
 function BlockLines({ b, c }: { b: Block; c: Ctx }) {
   const rot = b.rotation ? ` (${b.rotation}-Woche)` : "";
   switch (b.type) {
@@ -32,7 +34,13 @@ function BlockLines({ b, c }: { b: Block; c: Ctx }) {
     case "beast": return <li>Bestie{rot}: {b.pool ? `aus ${b.pool.length} festgelegten` : (b.classes ?? []).map((x) => CLASS_LABEL[x]).join(" oder ")}{b.pace === "easy" ? ", ruhiges Grundlagentempo" : ""}{b.benchmark_every ? `, jede ${b.benchmark_every}. Woche Wiederholung` : ""}</li>;
     case "module":
       if (b.module === "flow") return <li>{FLOWS[b.variant]?.name ?? b.variant}{rot}: <ul>{(FLOWS[b.variant]?.drills ?? []).map((d) => <li key={d.id}>{d.name} · {d.mode === "reps" ? `${d.value}×` : `${d.value} s`}{d.sides ? " je Seite" : ""}</li>)}</ul></li>;
-      return <li>{c.profile && !c.profile.has.sword && b.fallback ? slotLine(b.fallback, c) : `Schwert: ${b.variant}`}{rot}</li>;
+    {
+      // Sonderrolle: Schwert immer zeigen, auch wenn das Profil keins hat; der Ersatz steht dahinter
+      const sk = c.skills ? [...c.skills] : null;
+      const lv = SWORD.leveled.includes(b.variant) ? ` · Stufe ${SWORD.levels[swordLevel(sk)].name}` : "";
+      const alt = b.fallbackFlow ? FLOWS[b.fallbackFlow]?.name : b.fallback ? slotLine(b.fallback, c) : null;
+      return <li><strong>Schwert{lv}</strong>{rot}: {swordList(b.variant, sk).map((d) => d.name).join(", ")}{alt ? <span className="muted"> · ohne Schwert: {alt}</span> : null}</li>;
+    }
     case "menu": return <li>{b.label}: nach Wahl aus {Object.keys(b.options).join(", ")}</li>;
   }
 }
@@ -68,7 +76,7 @@ export function FocusDetail({ f, profile, skills, days }: { f: Focus; profile?: 
         const r = sf.roles[rk];
         return (
           <div key={`${rk}-${i}`} className="card">
-            <div className="role-head"><strong>Tag {i + 1}: {r.name}</strong> <span className="muted small">{r.minutes} Min</span></div>
+            <div className="role-head"><strong>Tag {i + 1}: {r.name}</strong> {hasSword(r) && <span className="tag amber">Schwert</span>} <span className="muted small">{r.minutes} Min</span></div>
             <ul className="slot-list">{r.blocks.map((b, j) => <BlockLines key={j} b={b} c={c} />)}</ul>
           </div>
         );

@@ -235,7 +235,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
                 <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${isCur && inWeek && d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
                   <span className="day">{d.day}</span>
                   <span className="day-role">{r?.name ?? d.role}</span>
-                  <span className="muted small">{p?.name ?? "?"}{done ? " · ✓" : ""}</span>
+                  <span className="muted small">{p?.name ?? "?"}{r?.blocks.some((b) => b.type === "module" && b.module === "sword") ? " · Schwert" : ""}{done ? " · ✓" : ""}</span>
                 </button>
               );
             })}

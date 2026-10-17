@@ -97,6 +97,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
     case "module": {
       if (b.module === "flow" || b.module === "sharpen") return moduleDrills(b.variant, NEUTRAL_USER, 1, b.module).reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
       if (p.has.sword) return swordSeconds(b.variant, skills, boost) + SETUP;
+      if (b.fallbackFlow) return moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow").reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
       return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p, red) : 0;
     }
     case "menu": {

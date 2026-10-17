@@ -28,12 +28,13 @@
       ]
     },
     "animal_flow": {
-      "name": "Animal Flow", "location": "reise", "minutes": 30,
+      "name": "Animal Flow", "location": "reise", "minutes": 40,
       "warmup": ["base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-a-1", "name": "Bear Crawl, Crab Walk, Ape Walk (Zirkel)", "sets": 3, "reps": "20 m je Form", "prog": "none", "rest": 60}},
         {"type": "module", "module": "flow", "variant": "animal"},
-        {"type": "single", "slot": {"id": "pm-a-3", "name": "Hollow-Arch Rocks", "sets": 3, "reps": "15", "prog": "reps", "rest": 45}}
+        {"type": "single", "slot": {"id": "pm-a-3", "name": "Hollow-Arch Rocks", "sets": 3, "reps": "15", "prog": "reps", "rest": 45}},
+        {"type": "beast", "id": "pm-a-bst", "classes": ["plage"]}
       ]
     },
     "skill_druck": {

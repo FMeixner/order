@@ -81,7 +81,7 @@ export type Block =
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
     }
-  | { type: "module"; module: "sword" | "flow" | "sharpen"; variant: string; fallback?: Slot; rotation?: "A" | "B" }
+  | { type: "module"; module: "sword" | "flow" | "sharpen"; variant: string; fallback?: Slot; /** Ohne Schwert: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B" }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
 
 export interface Role {

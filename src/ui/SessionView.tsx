@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { FLOWS, SHARPEN, SWORD } from "../data";
 import type { BeastResult, Block, Session } from "../types";
 import { estimateRole } from "../engine/duration";
-import { roleAt, roleDrills, swordLevel, swordNext } from "../engine/plan";
+import { moduleDrills, roleAt, roleDrills, swordLevel, swordNext } from "../engine/plan";
 import { advance, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
@@ -25,7 +25,7 @@ export function SessionView(ctx: SessionCtx) {
   const role = roleAt(focus.roles[roleKey], ctx.profile);
   const id = sessionId(block.id, week, roleKey);
   const session = state.sessions.find((s) => s.id === id);
-  const items = useMemo(() => collectItems(ctx), [ctx]);
+  const items = useMemo(() => collectItems(ctx).filter((it) => !it.sword || it.drills || it.resolved.length), [ctx]);
   // Aufwärmsätze nach Last und Risiko (erste schwere Übung je Körperhälfte), Gewicht aus dem Vorschlag
   const warmMap = useMemo(() => warmupKeys(items.flatMap((it) => it.resolved), (r) => { const x = r as Resolved; return suggest(x, sharedState(state.slots, x), week, ctx.profile).weight ?? null; }), [items, state.slots, week, ctx.profile]);
   const warm = roleDrills(role, "wu", ctx.profile, state.user, week);
@@ -129,6 +129,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
     return (
       <section className="card">
         <div className="block-label amber">{b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : "Schwert"}</div>
+        {it.sword && <div className="muted small">Statt Schwert: „{ctx.profile.name}“ hat kein Schwert. Mit Schwert kommt hier dein Schwertblock.</div>}
         {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
         {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
         {b.module === "sword" && SWORD.leveled.includes(b.variant) && <SwordLevel skills={ctx.state.user.skills} />}
@@ -215,6 +216,19 @@ export function SessionPreview(ctx: SessionCtx) {
                     {pt.work.split(" · ").map((w, j) => <div key={j} className="preview-row"><span>{w}</span></div>)}
                   </div>
                 ))}
+              </div>
+            );
+          }
+          if (it.sword && !ctx.profile.has.sword) {
+            // Sonderrolle Schwert: die Vorschau zeigt den Schwertblock auch für ein Profil ohne Schwert, darunter den Ersatz
+            const sw = it.sword;
+            const lv = SWORD.leveled.includes(sw.variant) ? SWORD.levels[swordLevel(ctx.state.user.skills)].name : null;
+            const alt = it.block.type === "module" && it.block.module === "flow" ? FLOWS[it.block.variant]?.name : it.resolved.map((r) => `${r.name} · ${previewDose(r)}`).join(", ");
+            return (
+              <div key={i} className="preview-group">
+                <div className="block-label amber">Schwert{lv ? ` · Stufe ${lv}` : ""}</div>
+                {moduleDrills(sw.variant, ctx.state.user, ctx.week).map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.sets && d.sets > 1 ? `${d.sets} × ` : ""}${d.value}` : fmt(d.value * (d.sets ?? 1))}{d.sides ? " je Seite" : ""}</span></div>)}
+                <div className="preview-row muted"><span>Ohne Schwert („{ctx.profile.name}“): {alt || "entfällt"}</span></div>
               </div>
             );
           }

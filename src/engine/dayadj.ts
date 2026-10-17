@@ -14,11 +14,10 @@ export interface DayMods { short: boolean; light: boolean; quiet: boolean; tight
 
 const sid = (b: PlanBlock, week: number, role: string) => `${b.id}:${week}:${role}`;
 
-/** Gemerkt für diesen Wochentag (Kurz zusätzlich: alter Kurztag der Phase, solange kein Wochentag gemerkt ist) */
-export function remembered(state: AppState, b: PlanBlock, role: string, day: Weekday | undefined): Record<FixKey, boolean> {
+/** Gemerkt für diesen Wochentag. Der alte Kurztag der Phase (shortRole) wirkt nicht mehr: jeder Tag ist normal lang, gekürzt wird über Anpassen. */
+export function remembered(state: AppState, _b: PlanBlock, _role: string, day: Weekday | undefined): Record<FixKey, boolean> {
   const f = day ? state.dayFlags?.[day] : undefined;
-  const anyShort = Object.values(state.dayFlags ?? {}).some((x) => x?.short);
-  return { short: !!f?.short || (!anyShort && b.shortRole === role), quiet: !!f?.quiet, tight: !!f?.tight };
+  return { short: !!f?.short, quiet: !!f?.quiet, tight: !!f?.tight };
 }
 
 /** Wirksame Anpassung einer Einheit. `day`: Wochentag der Einheit in dieser Woche. */

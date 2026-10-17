@@ -26,10 +26,12 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 
 ## Gestaltung von Orden (Vorgaben des Nutzers, 16.10.2026)
 - Vorrang haben Übungen mit tiefer Dehnung und vollem Bewegungsumfang.
-- Bei gleichwertigen Optionen beidseitig gleichzeitig statt links/rechts im Wechsel (Double DB Row statt 1-Arm DB Row, Russian Twist statt Cable Woodchopper, KB Cossack Squat statt Bulgarian Split Squat). Einseitig nur, wenn das Ziel es verlangt.
+- Bei gleichwertigen Optionen beidseitig gleichzeitig statt links/rechts im Wechsel (Double DB Row statt 1-Arm DB Row, Cable Woodchopper statt Russian Twist, KB Cossack Squat statt Bulgarian Split Squat). Einseitig nur, wenn das Ziel es verlangt.
 - Lieber 4 Sätze einer Übung als 2 + 2 von zwei ähnlichen: weniger Übungswechsel spart Zeit und Kopf.
 - Richtwert etwa 10 harte Sätze pro Muskel und Woche, mit möglichst wenigen Übungen; im Defizit eher am unteren Rand.
 - Ein Kurztag kann vier Kernübungen tragen (etwa 30 Minuten).
+- Jeder Trainingstag ist normal lang geplant, auch der Dienstag; gekürzt wird nur über „Anpassen › Kurz“. Kein Orden plant einen Kurztag ein (das alte `shortRole` der Phase wirkt nicht mehr).
+- Schwert hat eine Sonderrolle: Tagesknopf und Vorschau zeigen den Schwertblock auch für ein Profil ohne Schwert, darunter den Ersatz. Ersatz ohne Schwert: `fallbackFlow` (geführter Flow aus `flows.json`, z. B. `mobility`) oder `fallback` (eine Übung, z. B. Schattenboxen).
 - Aufwärmsätze nur nach Last und Verletzungsrisiko (`warmCount` in `warmup.ts`), nicht nach Wiederholungen oder Mehrgelenkigkeit.
 
 ## Arbeitsablauf je Release

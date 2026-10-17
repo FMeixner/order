@@ -32,14 +32,15 @@
       ]
     },
     "lower_a": {
-      "name": "Unterkörper A", "location": "gym", "minutes": 45,
+      "name": "Unterkörper A", "location": "gym", "minutes": 50,
       "warmup": ["base", "lower_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "cl-la-1", "core": true, "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "cl-la-2", "core": true, "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-la-3", "name": "Seated Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "cl-la-4", "name": "Standing Calf Raise", "home": {"name": "Single-Leg Calf Raise", "reps": "12-20/Seite", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "cl-la-5", "name": "Cable Crunch", "home": {"name": "Ab Wheel Rollout", "reps": "8-12", "prog": "reps"}, "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "10-15", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "cl-la-5", "name": "Cable Crunch", "home": {"name": "Ab Wheel Rollout", "reps": "8-12", "prog": "reps"}, "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "10-15", "prog": "double", "rest": 60}},
+        {"type": "beast", "id": "cl-la-bst", "classes": ["plage"]}
       ]
     },
     "upper_b": {

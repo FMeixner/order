@@ -3,7 +3,7 @@
   "id": "gladiator",
   "name": "Gladiator", "name_w": "Gladiatrix",
   "tagline": "Physis aufbauen, Kondition über das Schwert.",
-  "description": "Zweite Aufbauwelle ohne Kontrasttraining. Oberkörper und Unterkörper im Studio, kurze Arm-Einheit, zuhause mit Gewichtsweste und Schwert-Intervallen. Übungen variieren gegenüber Witcher. In Woche 8 ein kurzer Kraftcheck über Top-Sätze.",
+  "description": "Zweite Aufbauwelle ohne Kontrasttraining. Oberkörper und Unterkörper im Studio, ein Tag für Arme, Schultern und Rumpf, zuhause mit Gewichtsweste und Schwert-Intervallen. Übungen variieren gegenüber Witcher. In Woche 8 ein kurzer Kraftcheck über Top-Sätze.",
   "goals": {"primary": "hypertrophy", "secondary": ["skill", "conditioning"]},
   "nutrition": "surplus",
   "load_fit": "high",
@@ -34,13 +34,15 @@
       ]
     },
     "arme_kurz": {
-      "name": "Arme und Schultern", "location": "gym", "minutes": 30,
+      "name": "Arme, Schultern und Rumpf", "location": "gym", "minutes": 50,
       "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"], "cooldown": ["cd_di"],
       "blocks": [
-        {"type": "single", "slot": {"id": "gl-di-4", "core": true, "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "gl-di-4", "core": true, "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "gl-di-1", "core": true, "name": "Bayesian Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 4, "reps": "10-12", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "gl-di-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 4, "reps": "10-12", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "gl-di-3", "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 2, "reps": "15", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "gl-di-3", "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "gl-di-7", "name": "Cable Crunch", "home": {"name": "Ab Wheel Rollout", "reps": "8-12", "prog": "reps"}, "reise": {"name": "Reverse Crunch", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "double", "rest": 60}},
+        {"type": "beast", "id": "gl-di-bst", "classes": ["plage"]}
       ]
     },
     "home_weste_schwert": {
