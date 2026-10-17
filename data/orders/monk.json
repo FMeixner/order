@@ -40,7 +40,7 @@
       "name": "Kraft B", "location": "home", "minutes": 50,
       "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "single", "slot": {"id": "zw-b-1", "core": true, "name": "Reverse Lunge", "reise": {"name": "Reverse Lunge", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "zw-b-1", "core": true, "name": "KB Cossack Squat", "reise": {"name": "Cossack Squat", "reps": "8-10/Seite", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "zw-b-2", "core": true, "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "zw-b-3", "core": true, "name": "Chin-Up", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "3-8", "prog": "ladder", "ladder": ["Band-Assisted Negative Chin-Up", "Negative Chin-Up", "Chin-Up"], "rest": 120}},
         {"type": "single", "slot": {"id": "zw-b-4", "name": "Glute Bridge", "sets": 3, "reps": "12", "prog": "ladder", "ladder": ["Glute Bridge", "Single-Leg Glute Bridge"], "rest": 60}},

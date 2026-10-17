@@ -27,7 +27,7 @@
         ]},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "fl-a-2a", "core": true, "name": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-1", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"},
-          {"id": "fl-a-2b", "name": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"}
+          {"id": "fl-a-2b", "name": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"}
         ]}
       ]
     },
@@ -40,7 +40,7 @@
           {"id": "fl-b-1b", "name": "Push-Up", "sets": 3, "reps": "8-15", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"]}
         ]},
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "fl-b-2a", "core": true, "name": "Walking Lunge", "reise": {"name": "Walking Lunge", "prog": "reps"}, "sets": 3, "reps": "10/Seite", "prog": "double"},
+          {"id": "fl-b-2a", "core": true, "name": "KB Cossack Squat", "reise": {"name": "Cossack Squat", "reps": "8-10/Seite", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double"},
           {"id": "fl-b-2b", "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"}
         ]}
       ]
@@ -50,7 +50,7 @@
       "warmup": ["short_base"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "fl-c-1a", "core": true, "name": "Split Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double"},
+          {"id": "fl-c-1a", "core": true, "name": "Goblet Squat mit Pause", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
           {"id": "fl-c-1b", "name": "Ring Row", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"]}
         ]},
         {"type": "superset", "rest": 60, "slots": [

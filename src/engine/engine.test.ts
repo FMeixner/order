@@ -382,12 +382,11 @@ describe("Blockfolge", () => {
   it("füllt offene Phasen, lässt laufende stehen, keine Wiederholung hintereinander", async () => {
     const { suggestSequence } = await import("./sequence");
     const blk = (id: string, focusId: string, start: string, end: string, load: "high" | "medium" | "low", travel = false) => ({ id, focusId, start, end, label: "", load, travel });
-    const plan = [blk("1", "assassin", "2026-09-28", "2026-12-06", "high"), blk("2", "", "2026-12-07", "2027-02-23", "high"), blk("3", "", "2027-02-24", "2027-03-31", "low"), blk("4", "", "2027-04-01", "2027-07-15", "high", true), blk("5", "", "2027-07-16", "2027-09-24", "medium")];
+    const plan = [blk("1", "assassin", "2026-09-28", "2026-12-06", "high"), blk("2", "", "2026-12-07", "2027-02-23", "high"), blk("3", "", "2027-02-24", "2027-03-31", "low"), blk("4", "", "2027-04-01", "2027-07-15", "high"), blk("5", "", "2027-07-16", "2027-09-24", "medium")];
     const r = suggestSequence(plan, "2026-09-29", "allround");
     expect(r.items[0]).toMatchObject({ focusId: "assassin", locked: true });
     expect(r.items.every((x) => !!FOCUS_BY_ID[x.focusId])).toBe(true);
     for (let i = 1; i < r.items.length; i++) expect(r.items[i].focusId).not.toBe(r.items[i - 1].focusId);
-    expect(FOCUS_BY_ID[r.items[3].focusId].travel).toBe(true);
     const mob = suggestSequence(plan, "2026-09-29", "beweglichkeit");
     expect(mob.balance.share.beweglichkeit).toBeGreaterThan(r.balance.share.beweglichkeit);
   });
@@ -521,7 +520,7 @@ describe("Wochenform", () => {
     }
     const k3 = shapeFocus(FOCUS_BY_ID.knight, 3);
     const names = k3.week_3.flatMap((k) => k3.roles[k].blocks.flatMap((b) => (b.type === "single" ? [b.slot.name] : b.type === "superset" ? b.slots.map((x) => x.name) : [])));
-    expect(names).toContain("Bulgarian Split Squat");
+    expect(names).toContain("Leg Press");
     expect(k3.week_3.some((k) => k3.roles[k].blocks.some((b) => b.type === "superset" && b.slots.length === 2))).toBe(true);
   });
   it("fünf Tage: Zusatztag in der Mitte", () => {

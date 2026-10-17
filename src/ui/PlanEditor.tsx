@@ -54,12 +54,12 @@ const GOAL_GROUPS: { label: string; goals: string[] }[] = [
   { label: "Skill", goals: ["skill"] },
 ];
 
-export function FocusPicker({ load, travel, value, onPick, profile, days }: { load: Load; travel: boolean; value?: string; onPick: (id: string) => void; profile?: EquipmentProfile; days?: number }) {
+export function FocusPicker({ load, value, onPick, profile, days }: { load: Load; value?: string; onPick: (id: string) => void; profile?: EquipmentProfile; days?: number }) {
   const [detail, setDetail] = useState<Focus | null>(null);
   const [group, setGroup] = useState(0);
   const goals = GOAL_GROUPS[group].goals;
   const ranked = [...FOCI]
-    .map((f) => ({ f, ...fitScore(f, load, travel) }))
+    .map((f) => ({ f, ...fitScore(f, load) }))
     .filter(({ f }) => !goals.length || goals.includes(f.goals.primary) || f.id === value)
     .sort((a, b) => (b.score >= 0 ? 1 : 0) - (a.score >= 0 ? 1 : 0));
   return (
@@ -85,7 +85,7 @@ export function FocusPicker({ load, travel, value, onPick, profile, days }: { lo
   );
 }
 
-/** Bearbeitungsseite einer Phase: erst die Phase (Name, Last, unterwegs), dann der Orden (Empfehlung zuerst),
+/** Bearbeitungsseite einer Phase: erst die Phase (Name, Last), dann der Orden (Empfehlung zuerst),
     dann Aufteilen (Teilen, Verbinden), zuletzt Feinheiten (Zeitraum, eigener Wochenplan, Schwerpunkt-Slot). */
 export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], onStructure, today }: {
   block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotPlan;
@@ -115,7 +115,7 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
       </div>
     </div>
   );
-  // Empfehlung mit den Einstellungen dieser Seite (Last, unterwegs), Rest des Plans wie er ist
+  // Empfehlung mit den Einstellungen dieser Seite (Last), Rest des Plans wie er ist
   const draftPlan = plan ? (plan.some((x) => x.id === b.id) ? plan.map((x) => (x.id === b.id ? b : x)) : [...plan, b]) : [b];
   const ranked = rankFor(draftPlan, b.id, aim, deficits).slice(0, 5);
   const locked = b.start <= day; // laufende Phase: Orden nicht hier wechseln (eingefroren)
@@ -130,7 +130,6 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
       <Field label="Alltagslast" hint="Hoch = wenig Energie und Zeit fürs Training übrig.">
         <Seg value={b.load} options={[{ value: "low", label: "niedrig" }, { value: "medium", label: "mittel" }, { value: "high", label: "hoch" }]} onChange={(load) => setB({ ...b, load })} />
       </Field>
-      <Check checked={b.travel} onChange={(travel) => setB({ ...b, travel })} label="Viel unterwegs" />
       {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && (
         <Check checked={test} onChange={setTest} label="Testwoche am Ende (die letzte Woche wird zur Testwoche)" />
       )}
@@ -147,7 +146,7 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
             </button>
           ))}
           <button className="sc-alt muted" aria-expanded={all} onClick={() => setAll((x) => !x)}>{all ? "Weniger" : "Alle Orden …"}</button>
-          {all && <FocusPicker load={b.load} travel={b.travel} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} />}
+          {all && <FocusPicker load={b.load} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} />}
         </div>
       )}
 

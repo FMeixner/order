@@ -16,7 +16,7 @@ export interface SeqResult { items: SeqItem[]; balance: Balance; before: Balance
 const BEAM = 40;
 
 export function stepScore(f: Focus, b: PlanBlock, prev: Focus | null, used: string[]): { score: number; reasons: string[] } {
-  const fit = fitScore(f, b.load, b.travel);
+  const fit = fitScore(f, b.load);
   let score = fit.score;
   const reasons = fit.reasons.filter((r) => /Reise/.test(r));
   const w = blockWeeks(b);
@@ -42,7 +42,7 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
     for (const bm of beams) {
       const lastReal = [...bm.seq].reverse().find((x) => x !== TEST_BLOCK);
       const prev = lastReal ? FOCUS_BY_ID[lastReal] ?? null : null;
-      const options = locked ? [FOCUS_BY_ID[b.focusId]] : FOCI.filter((f) => fitScore(f, b.load, b.travel).score >= 0);
+      const options = locked ? [FOCUS_BY_ID[b.focusId]] : FOCI.filter((f) => fitScore(f, b.load).score >= 0);
       for (const f of options) {
         const st = stepScore(f, b, prev, bm.seq);
         next.push({ seq: [...bm.seq, f.id], score: bm.score + (locked ? 0 : st.score), reasons: [...bm.reasons, locked ? ["läuft oder ist vorbei"] : st.reasons] });
@@ -91,11 +91,11 @@ export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: Defic
   const before = sorted.filter((x) => x.start < b.start && !isTestBlock(x));
   const prev = before.length ? FOCUS_BY_ID[before[before.length - 1].focusId] ?? null : null;
   const used = sorted.filter((x) => x.id !== id && !isTestBlock(x)).map((x) => x.focusId);
-  return FOCI.filter((f) => fitScore(f, b.load, b.travel).score >= 0 || f.id === b.focusId)
+  return FOCI.filter((f) => fitScore(f, b.load).score >= 0 || f.id === b.focusId)
     .map((f) => {
       const st = stepScore(f, b, prev, used);
       const reasons = [...st.reasons];
-      if (fitScore(f, b.load, b.travel).score >= 0) reasons.unshift("passt zur Alltagslast");
+      if (fitScore(f, b.load).score >= 0) reasons.unshift("passt zur Alltagslast");
       const score = st.score + aimScore(sorted.map((x) => (x.id === id ? { ...x, focusId: f.id } : x)), from, to, aim, deficits);
       return { f, score, reasons };
     })

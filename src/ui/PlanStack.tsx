@@ -23,20 +23,14 @@ function StatusIcon({ kind }: { kind: "läuft" | "empfohlen" | "gewählt" }) {
     </span>
   );
 }
-function LoadIcon({ load, travel }: { load: Load; travel: boolean }) {
+function LoadIcon({ load }: { load: Load }) {
   const n = { low: 1, medium: 2, high: 3 }[load];
-  const label = `${LOAD_TXT[load]}${travel ? ", viel unterwegs" : ""}`;
+  const label = LOAD_TXT[load];
   return (
     <span className="sc-ico load" role="img" aria-label={label} title={label}>
       <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden>
         {[0, 1, 2].map((i) => <rect key={i} x={2 + i * 4.5} y={11 - i * 3.5} width="3" height={3 + i * 3.5} rx="0.8" fill="currentColor" opacity={i < n ? 1 : 0.25} />)}
       </svg>
-      {travel && (
-        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden>
-          <rect x="2" y="5" width="12" height="8.5" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M6 5V3.5h4V5" fill="none" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      )}
     </span>
   );
 }
@@ -100,7 +94,7 @@ export function PlanStack({ plan, today, aim, deficits, onChange, onView, onEdit
           <div key={b.id} className={`stack-card ${now ? "now" : ""} ${past ? "past" : ""}`} style={{ ["--c" as string]: goalColor(b.focusId) }}>
             <OrderMark id={b.focusId} />
             <div className="sc-text">
-              <div className="sc-phase">{b.label || `Phase ${n}`}<LoadIcon load={b.load} travel={b.travel} /></div>
+              <div className="sc-phase">{b.label || `Phase ${n}`}<LoadIcon load={b.load} /></div>
               <div className="sc-order">
                 <button className="sc-name" onClick={() => onView(b)}>{focusName(b.focusId)}</button>
                 {tag && <StatusIcon kind={tag} />}

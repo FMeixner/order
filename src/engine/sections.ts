@@ -25,7 +25,7 @@ export function sectionsFromPlan(plan: PlanBlock[]): Section[] {
     if (isTestBlock(b)) { if (last) last.end = b.end; continue; }
     const name = base(b.label) || `Abschnitt ${out.length + 1}`;
     if (last && last.name === name && last.load === b.load) { last.end = b.end; continue; }
-    out.push({ id: newId("sec"), name, start: b.start, end: b.end, load: b.load, travel: b.travel || undefined });
+    out.push({ id: newId("sec"), name, start: b.start, end: b.end, load: b.load });
   }
   return out;
 }
@@ -72,7 +72,7 @@ export function semesterTemplate(start: string): Section[] {
   return out;
 }
 
-type Zone = { start: string; weeks: number; load: Load; travel: boolean; names: string[] };
+type Zone = { start: string; weeks: number; load: Load; names: string[] };
 
 /** Wochen ab `from` in Zonen gleicher Last; kurze Stücke (< 3 Wochen) gehen in der Nachbarzone auf */
 export function zonesOf(sections: Section[], from: string): Zone[] {
@@ -81,8 +81,8 @@ export function zonesOf(sections: Section[], from: string): Zone[] {
   const zones: Zone[] = [];
   for (const w of weeks) {
     const z = zones[zones.length - 1];
-    if (z && z.load === w.s.load && z.travel === !!w.s.travel) { z.weeks++; if (!z.names.includes(w.s.name)) z.names.push(w.s.name); }
-    else zones.push({ start: w.at, weeks: 1, load: w.s.load, travel: !!w.s.travel, names: [w.s.name] });
+    if (z && z.load === w.s.load) { z.weeks++; if (!z.names.includes(w.s.name)) z.names.push(w.s.name); }
+    else zones.push({ start: w.at, weeks: 1, load: w.s.load, names: [w.s.name] });
   }
   // Kurze Zonen der vorigen (sonst der nächsten) zuschlagen; ihre Last gilt dort nur als Hinweis
   for (let i = 0; i < zones.length; ) {
@@ -96,7 +96,7 @@ export function zonesOf(sections: Section[], from: string): Zone[] {
   // Danach gleich belastete Nachbarn wieder zusammenführen (A hoch · 2 Wochen Ferien · B hoch = eine Zone)
   for (let i = 1; i < zones.length; ) {
     const a = zones[i - 1], b = zones[i];
-    if (a.load === b.load && a.travel === b.travel) { a.weeks += b.weeks; for (const n of b.names) if (!a.names.includes(n)) a.names.push(n); zones.splice(i, 1); }
+    if (a.load === b.load) { a.weeks += b.weeks; for (const n of b.names) if (!a.names.includes(n)) a.names.push(n); zones.splice(i, 1); }
     else i++;
   }
   return zones;
@@ -130,7 +130,7 @@ export function proposePhases(plan: PlanBlock[], sections: Section[], today: str
         // Teil-Nummern fortführen, wenn der Abschnitt schon Phasen hat (z. B. laufendes „Wintersemester, Teil 1“)
         const before = z.names.length === 1 ? p.filter((x) => !isTestBlock(x) && x.label.replace(/,?\s*Teil\s*\d+\s*$/i, "").trim() === z.names[0]).length : 0;
         const label = z.names.length === 1 ? (parts.length > 1 || before ? `${z.names[0]}, Teil ${before + 1}` : z.names[0]) : z.names.join(" / ");
-        const b: PlanBlock = { id, focusId: "", label, start: at, end: addDays(at, 7 * w - 1), load: z.load, travel: z.travel };
+        const b: PlanBlock = { id, focusId: "", label, start: at, end: addDays(at, 7 * w - 1), load: z.load, travel: false };
         p = [...p, b];
         const top = rankFor(p, id, aim, deficits)[0];
         b.focusId = top?.f.id ?? "";

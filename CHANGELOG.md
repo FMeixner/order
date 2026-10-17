@@ -2,6 +2,22 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.61.0] – 2026-10-17
+
+### Geändert
+- Orden nach den Gestaltungsprinzipien durchgesehen (beidseitig statt abwechselnd, wo gleichwertig; lieber mehr Sätze einer Übung als zwei ähnliche):
+  - Zuhause überall Double DB Row statt einarmigem Rudern; Herald und Initiate rudern auch im Plan beidseitig.
+  - Knight: Oberkörper A ohne Chest Press, Unterkörper A ohne Beinpresse (je 45 Min). Unterkörper B mit tiefer Beinpresse 4×10–12 statt Bulgarian Split Squat.
+  - Smith: Tag 1 ohne Bulgarian Split Squat, dafür 4 Sätze Klimmzug. Tag 4 ohne Walking Lunge, Hammer Curl einzeln.
+  - Gladiator: Arm-Einheit mit je 4 Sätzen Bayesian Curl und Überkopf-Trizeps statt vier Übungen (30 Min). Unterkörper mit 4 Sätzen Kniebeuge statt zusätzlicher Beinpresse (55 Min). Zuhause KB Cossack Squat statt Bulgarian Split Squat.
+  - Conqueror: Studio-Kraft ohne Pistol (Box) und Table Row (55 Min). Unterwegs bleibt einbeinig, weil dort die Last fehlt.
+  - Initiate: Goblet Squat statt Split Squat. Troubadour: Beinpresse statt Walking Lunge. Herald: KB Cossack Squat statt Walking Lunge, Goblet Squat mit Pause statt Split Squat. Monk: KB Cossack Squat statt Reverse Lunge.
+  - Bewusst einseitig bleiben Olympian, Pilgrim und Huntsman, weil Sprint, Laufen und Parkour es verlangen.
+  - Eine laufende Phase behält ihre Fassung, bis du „Übernehmen“ tippst.
+
+### Entfernt
+- Schalter „Viel unterwegs“ an der Phase und das Koffer-Symbol. Er wirkte nur auf die Ordensempfehlung; ob ein Orden unterwegs geht, steht weiter im Almanach.
+
 ## [0.60.0] – 2026-10-17
 
 ### Geändert

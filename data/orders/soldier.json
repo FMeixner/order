@@ -55,7 +55,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "so-b-1", "name": "Deadlift", "home": "KB Deadlift", "sets": 3, "reps": "3-5", "prog": "double", "rest": 180}},
         {"type": "single", "slot": {"id": "so-b-2", "name": "Overhead Press", "home": "DB Shoulder Press", "sets": 3, "reps": "5", "prog": "weight", "rest": 150}},
-        {"type": "single", "slot": {"id": "so-b-3", "name": "Barbell Row", "home": "1-Arm DB Row", "sets": 3, "reps": "8", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "so-b-3", "name": "Barbell Row", "home": "Double DB Row", "sets": 3, "reps": "8", "prog": "double", "rest": 120}},
         {"type": "menu", "id": "so-b-4", "label": "Schwerpunkt 2", "options": {
           "Speed": {"id": "gpp-speed", "name": "Fliegende 20 m", "sets": 6, "reps": "20 m", "prog": "none", "rest": 120},
           "Power": {"id": "gpp-power2", "name": "Medicine Ball Chest Pass", "sets": 5, "reps": "3", "prog": "none", "rest": 90},

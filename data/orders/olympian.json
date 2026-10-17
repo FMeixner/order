@@ -42,7 +42,7 @@
         ]},
         {"type": "single", "slot": {"id": "at-o-3", "name": "Landmine Rotational Press", "home": "KB Half-Kneeling Press", "reise": {"name": "Band Rotational Press", "prog": "reps"}, "sets": 3, "reps": "6/Seite", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "at-o-4a", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "sets": 3, "reps": "8-10", "prog": "double"},
+          {"id": "at-o-4a", "name": "Chest-Supported Row", "home": "Double DB Row", "sets": 3, "reps": "8-10", "prog": "double"},
           {"id": "at-o-4b", "name": "Face Pull", "home": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "double"}
         ]}
       ]

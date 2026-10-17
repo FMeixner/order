@@ -154,15 +154,11 @@ export function dayRoleMap(state: AppState, b: PlanBlock, focus?: Focus, week?: 
 
 /* ---------- Orden-Vorschlag für einen Block ---------- */
 const LOAD_RANK: Record<Load, number> = { low: 0, medium: 1, high: 2 };
-export function fitScore(f: Focus, load: Load, travel: boolean): { score: number; reasons: string[] } {
+export function fitScore(f: Focus, load: Load): { score: number; reasons: string[] } {
   const reasons: string[] = [];
   let score = 0;
   if (LOAD_RANK[f.load_fit] >= LOAD_RANK[load]) { score += 2; reasons.push("passt zur Alltagslast"); }
   else { score -= 3; reasons.push("braucht mehr Kapazität, als die Phase hergibt"); }
-  if (travel) {
-    if (f.travel) { score += 1; reasons.push("hat eine Reisevariante"); }
-    else { score -= 5; reasons.push("keine Reisevariante"); }
-  }
   return { score, reasons };
 }
 

@@ -25,7 +25,7 @@
         {"type": "single", "slot": {"id": "gl-mo-1", "core": true, "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "gl-mo-2", "core": true, "name": "Pull-Up", "load": "plate", "home": {"name": "Pull-Up", "load": "plate", "reps": "6-8"}, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "gl-mo-3", "core": true, "name": "Dip", "load": "plate", "home": {"name": "Ring Dip", "load": "plate"}, "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "gl-mo-4", "name": "Chest-Supported Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "gl-mo-4", "name": "Chest-Supported Row", "home": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "gl-mo-5", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-magnisson", "ng-fjalar", "ng-ubba", "ng-nott", "ng-garm", "ng-mani"], "only": "B", "note": "B-Woche: Arm-Finisher statt Curl + Pushdown."}, "slots": [
           {"id": "gl-mo-6a", "name": "DB Biceps Curl", "sets": 3, "reps": "10-12", "prog": "double"},
@@ -34,14 +34,12 @@
       ]
     },
     "arme_kurz": {
-      "name": "Arme und Schultern", "location": "gym", "minutes": 40,
+      "name": "Arme und Schultern", "location": "gym", "minutes": 30,
       "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"], "cooldown": ["cd_di"],
       "blocks": [
         {"type": "single", "slot": {"id": "gl-di-4", "core": true, "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "gl-di-1", "core": true, "name": "Bayesian Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "gl-di-2", "core": true, "name": "Rope Pushdown", "home": "DB Kickback", "reise": {"name": "Band Pushdown", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "gl-di-5", "name": "Hammer Curl", "home": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "gl-di-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "gl-di-1", "core": true, "name": "Bayesian Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 4, "reps": "10-12", "prog": "double", "rest": 60}},
+        {"type": "single", "slot": {"id": "gl-di-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 4, "reps": "10-12", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "gl-di-3", "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 2, "reps": "15", "prog": "double", "rest": 60}}
       ]
     },
@@ -52,18 +50,17 @@
         {"type": "module", "module": "sword", "variant": "drehhau", "fallback": {"id": "gl-do-fb", "name": "Shadow Boxing", "kind": "timer", "minutes": 8, "prog": "none"}},
         {"type": "single", "slot": {"id": "gl-do-2", "name": "Deficit Push-Up", "load": "plate", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "gl-do-3", "name": "Chin-Up", "load": "plate", "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}, "sets": 3, "reps": "6-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "gl-do-4", "name": "Bulgarian Split Squat", "load": "plate", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-10/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "gl-do-4", "name": "KB Cossack Squat", "reise": {"name": "Cossack Squat", "reps": "8-10/Seite", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90}},
         {"type": "module", "module": "sword", "variant": "intervalle", "fallback": {"id": "gl-do-fb2", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": {"work": 40, "rest": 40, "rounds": 8}, "prog": "none"}},
         {"type": "beast", "id": "gl-bst", "classes": ["plage"]}
       ]
     },
     "unterkoerper": {
-      "name": "Unterkörper", "location": "gym", "minutes": 60,
+      "name": "Unterkörper", "location": "gym", "minutes": 55,
       "warmup": ["short_base", "lat_box", "lower_prep", "hip9090"], "cooldown": ["cd_mdf"],
       "blocks": [
-        {"type": "single", "slot": {"id": "gl-fr-1", "core": true, "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 180}},
+        {"type": "single", "slot": {"id": "gl-fr-1", "core": true, "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 180}},
         {"type": "single", "slot": {"id": "gl-fr-2", "core": true, "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "gl-fr-3", "core": true, "name": "Leg Press", "home": "Sandbag Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "gl-fr-4", "name": "Seated Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "reise": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "gl-fr-5", "name": "Standing Calf Raise", "home": {"name": "Single-Leg Calf Raise", "reps": "12-20/Seite", "prog": "reps"}, "sets": 4, "reps": "10-15", "prog": "double", "rest": 60}},
         {"type": "single", "slot": {"id": "gl-fr-6", "name": "Overhead Press", "home": "DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
