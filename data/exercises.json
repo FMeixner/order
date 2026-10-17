@@ -170,9 +170,6 @@
       "bench"
     ]
   },
-  "Bent-Over Row": {
-    "equip": "barbell"
-  },
   "Beschleunigung 10 m": {
     "equip": "cardio",
     "run": true,
@@ -224,9 +221,6 @@
   "Bulgarian Split Squat": {
     "equip": "dumbbell",
     "desc": "Hinterer Fuß auf einer Bank, vorderes Knie beugen, bis der hintere Oberschenkel fast senkrecht steht."
-  },
-  "Cable Biceps Curl": {
-    "equip": "cable"
   },
   "Cable Chest Fly": {
     "equip": "cable",
@@ -529,7 +523,9 @@
   },
   "Incline Cable Curl": {
     "equip": "cable",
-    "needs": ["bench"],
+    "needs": [
+      "bench"
+    ],
     "desc": "Schrägbank mit dem Rücken zum Kabelzug, Kabel unten, Arme hängen hinter dem Körper. Curl aus der gedehnten Position, Ellbogen bleiben hinten. Beidarmig mit zwei Griffen oder einarmig."
   },
   "Incline Chest Press Machine": {
@@ -650,9 +646,6 @@
   "Lat Pulldown": {
     "equip": "cable"
   },
-  "Lat Pulldown (Overhand)": {
-    "equip": "cable"
-  },
   "Lat Pulldown (Untergriff)": {
     "equip": "cable",
     "desc": "Latziehen mit Untergriff, schulterbreit, Stange zur oberen Brust."
@@ -690,6 +683,12 @@
     "equip": "none",
     "needs": [
       "medball"
+    ],
+    "loud": true,
+    "instead": [
+      {
+        "name": "Push-Up"
+      }
     ]
   },
   "Medicine Ball Rotational Throw": {
@@ -712,18 +711,6 @@
   },
   "Meditation, offenes Gewahrsein": {
     "equip": "skill"
-  },
-  "Medizinball-Brustwurf": {
-    "equip": "none",
-    "needs": [
-      "medball"
-    ],
-    "loud": true,
-    "instead": [
-      {
-        "name": "Push-Up"
-      }
-    ]
   },
   "Mobility-Block Hüfte und Schulter": {
     "equip": "skill"
@@ -871,9 +858,6 @@
   "Romanian Deadlift": {
     "equip": "barbell",
     "desc": "Knie leicht gebeugt, Hüfte nach hinten schieben, Hantel nah am Bein bis unter die Knie, Rücken lang."
-  },
-  "Rope Crunch": {
-    "equip": "cable"
   },
   "Ab Crunch Machine": {
     "equip": "machine",

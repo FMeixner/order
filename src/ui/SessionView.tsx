@@ -167,7 +167,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
     const last = it.resolved[it.resolved.length - 1];
     return (
       <section className="card superset">
-        <div className="block-label teal">Im Wechsel{b.sameStation && b.label ? ` · ${b.label}` : ""} · direkt nacheinander, dann {b.rest ?? 60} s Pause</div>
+        <div className="block-label teal">Im Wechsel{b.sameStation && b.label && it.resolved.every((r) => r.equip === "cable") ? ` · ${b.label}` : ""} · {b.rest ?? 60} s Pause</div>
         {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(lastSet) => { if (r === last && !lastSet) t.rest("Pause, dann nächste Runde", b.rest ?? 60); }} />)}
       </section>
     );
@@ -225,7 +225,13 @@ export function SessionPreview(ctx: SessionCtx) {
                 {it.drills.map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.value}×` : fmt(d.value)}{d.sides ? " je Seite" : ""}</span></div>)}
               </div>
             );
-            return <div key={i} className="preview-row"><span>Schwert: {it.drills.map((d) => d.name).join(", ")}</span></div>;
+            const lv = it.block.type === "module" && SWORD.leveled.includes(it.block.variant) ? SWORD.levels[swordLevel(ctx.state.user.skills)].name : null;
+            return (
+              <div key={i} className="preview-group">
+                <div className="block-label amber">Schwert{lv ? ` · Stufe ${lv}` : ""}</div>
+                {it.drills.map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.sets && d.sets > 1 ? `${d.sets} × ` : ""}${d.value}` : fmt(d.value * (d.sets ?? 1))}{d.sides ? " je Seite" : ""}</span></div>)}
+              </div>
+            );
           }
           if (it.block.type === "menu" && !it.resolved.length) return <div key={i} className="preview-row"><span>{it.block.label}</span><span className="muted">Wahl am Tag</span></div>;
           return (

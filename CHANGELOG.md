@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.60.0] – 2026-10-17
+
+### Geändert
+- Übungskatalog bereinigt, doppelte Einträge zusammengeführt: Cable Biceps Curl → Cable Curl, Lat Pulldown (Overhand) → Lat Pulldown, Bent-Over Row → Barbell Row, Rope Crunch → Cable Crunch, Medizinball-Brustwurf → Medicine Ball Chest Pass. Dein Verlauf zieht mit; eine laufende Phase behält ihre Fassung.
+- Übungskarte aufgeräumter: Hinweise zur Übung, „Statt …“ nach Tausch und „bis der Skill sitzt“ stehen jetzt in den Details (Antippen der Dosis). Superset-Kopf kürzer.
+- Vorschau: Der Schwertblock zeigt jede Übung mit Dosis und deine Stufe.
+
+### Behoben
+- Der Hinweis zur Kabelstation erschien auch, wenn zuhause Kurzhanteln statt Kabel kamen.
+- Assassin, Freitag zuhause: Schrägbank-Curl und Seitheben mit Kurzhanteln beidseitig (10–12 bzw. 12–15), nicht „je Seite“.
+
 ## [0.59.3] – 2026-10-17
 
 ### Geändert

@@ -124,6 +124,8 @@ export const RENAMED: Record<string, string> = {
   "Back Squat Top-Satz": "Back Squat", "Deadlift Top-Satz": "Deadlift", "KB Swing, schwer": "KB Swing",
   "Chin-Up + Weste": "Chin-Up", "Deficit Push-Up + Weste": "Deficit Push-Up", "Bulgarian Split Squat + Weste": "Bulgarian Split Squat",
   "Pull-Up + Weste": "Pull-Up", "Ring Dip + Weste": "Ring Dip", "Weighted Pull-Up": "Pull-Up", "Weighted Chin-Up": "Chin-Up", "Weighted Dip": "Dip",
+  // 0.60: doppelte Einträge im Katalog zusammengeführt
+  "Cable Biceps Curl": "Cable Curl", "Lat Pulldown (Overhand)": "Lat Pulldown", "Bent-Over Row": "Barbell Row", "Rope Crunch": "Cable Crunch", "Medizinball-Brustwurf": "Medicine Ball Chest Pass",
 };
 const renameKey = (k: string) => { const i = k.indexOf("|"); if (i < 0) return k; const n = k.slice(i + 1); return RENAMED[n] ? `${k.slice(0, i)}|${RENAMED[n]}` : k; };
 function renameExercises(s: AppState): void {
@@ -139,8 +141,14 @@ function renameExercises(s: AppState): void {
     return { ...se, entries };
   });
   if (s.swaps) s.swaps = Object.fromEntries(Object.entries(s.swaps).map(([k, v]) => [k, RENAMED[v] ?? v]));
-  // Eingefrorene Orden mit alten Übungsnamen: Stand neu nehmen (beim nächsten Start der App)
-  s.plan = (s.plan ?? []).map((b) => (b.frozen && Object.keys(RENAMED).some((n) => JSON.stringify(b.frozen).includes(`"${n}"`)) ? { ...b, frozen: undefined } : b));
+  // Eingefrorene Orden: alte Übungsnamen im eingefrorenen Stand umbenennen (die Fassung selbst bleibt, kein stilles „Übernehmen“)
+  s.plan = (s.plan ?? []).map((b) => {
+    if (!b.frozen) return b;
+    let txt = JSON.stringify(b.frozen);
+    const before = txt;
+    for (const [o, n] of Object.entries(RENAMED)) txt = txt.split(JSON.stringify(o)).join(JSON.stringify(n));
+    return txt === before ? b : { ...b, frozen: JSON.parse(txt) };
+  });
   if (s.oneRM) s.oneRM = Object.fromEntries(Object.entries(s.oneRM).map(([k, v]) => [RENAMED[k] ?? k, v]));
 }
 function base_has(): EquipmentProfile["has"] {

@@ -24,7 +24,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "w-mo-2", "core": true, "name": "Bench Press", "home": "DB Floor Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "w-mo-3", "name": "Dip", "load": "plate", "home": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "w-mo-4", "core": true, "name": "Bent-Over Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "w-mo-4", "core": true, "name": "Barbell Row", "home": "1-Arm DB Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "w-mo-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
           {"id": "w-mo-5c", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}

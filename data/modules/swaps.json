@@ -100,7 +100,6 @@
     "Ziehen senkrecht": [
       "Pull-Up",
       "Lat Pulldown",
-      "Lat Pulldown (Overhand)",
       "Band Pulldown",
       "Band-Assisted Pull-Up"
     ],
@@ -112,7 +111,6 @@
     ],
     "Rudern": [
       "Barbell Row",
-      "Bent-Over Row",
       "1-Arm DB Row",
       "Double DB Row",
       "Chest-Supported Row",
@@ -151,7 +149,6 @@
       "Incline Cable Curl",
       "Hammer Curl",
       "Cable Curl",
-      "Cable Biceps Curl",
       "Bayesian Cable Curl",
       "Rope Hammer Curl",
       "Band Curl"
@@ -179,7 +176,6 @@
     "Bauch": [
       "Weighted Sit-Up",
       "Cable Crunch",
-      "Rope Crunch",
       "Ab Crunch Machine",
       "Sit-Up",
       "Reverse Crunch",

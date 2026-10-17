@@ -77,3 +77,19 @@ describe("Alte Datenstände laden", () => {
     expect(s.oneRM?.Dip.kg).toBe(30);
   });
 });
+
+describe("Doppelte Übungen zusammengeführt (0.60)", () => {
+  it("benennt Verlauf und eingefrorene Fassung um, ohne die Fassung aufzutauen", async () => {
+    const { emptyState } = await import("./store");
+    const { FOCUS_BY_ID } = await import("./data");
+    const frozenFoci = JSON.parse(JSON.stringify({ assassin: FOCUS_BY_ID.assassin }).split('"Cable Curl"').join('"Cable Biceps Curl"'));
+    const s = { ...emptyState(), onboarded: true,
+      plan: [{ id: "b1", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium", travel: false, frozen: { at: "2026-09-28", foci: frozenFoci } }],
+      slots: { "kas-5|Cable Biceps Curl": { weight: 25, target: 10, stage: 0, fb: [], topHits: 0, updated: "2026-10-13" } } };
+    const m = migrate(JSON.parse(JSON.stringify(s)));
+    expect(m.plan[0].frozen).toBeDefined();
+    expect(m.plan[0].frozen!.at).toBe("2026-09-28");
+    expect(JSON.stringify(m.plan[0].frozen)).not.toContain("Cable Biceps Curl");
+    expect(m.slots["kas-5|Cable Curl"]?.weight).toBe(25);
+  });
+});

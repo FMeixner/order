@@ -223,7 +223,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
       </div>
       <button className="slot-dose" onClick={() => setMore((o) => !o)} aria-expanded={more} title="Details">
         {concrete ? <strong>{doseLabel}</strong> : doseLabel}
-        {(lastLine || concrete || detailGap || r.why) && <span className="muted small"> {more ? "▴" : "▾"}</span>}
+        {(lastLine || concrete || detailGap || r.why || r.note || r.regressedFrom || r.swapped) && <span className="muted small"> {more ? "▴" : "▾"}</span>}
       </button>
       {more && (
         <div className="muted small slot-more">
@@ -231,17 +231,17 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
           {lastLine && <div>Zuletzt {lastLine}</div>}
           {detailGap && <div>{detailGap}</div>}
           {r.why?.map((w) => <div key={w}>{w}</div>)}
+          {r.note && <div>{r.note}</div>}
+          {r.swapped && <div>Statt {r.original}.</div>}
+          {r.regressedFrom && <div>Statt {r.regressedFrom}, bis der Skill sitzt (Setup › Können).</div>}
         </div>
       )}
       {warmSets.length > 0 && (
         <div className="muted small">Satz 0 aufwärmen: {warmSets.map((w) => `${w.reps} × ${w.kg != null ? kg(w.kg) : "leicht"}`).join(", dann ")}{warmSets.every((w) => w.kg == null) ? " (halbes Gewicht)" : ""}</div>
       )}
       {swapOpen && <SwapDialog r={r} ctx={ctx} onClose={() => setSwapOpen(false)} />}
-      {r.swapped && <div className="muted small">Statt {r.original}.</div>}
-      {r.regressedFrom && <div className="muted small">Statt {r.regressedFrom}, bis der Skill sitzt (Setup › Können).</div>}
       {r.swapUnavailable && <div className="muted small">Dein Tausch „{r.swapUnavailable}“ geht mit „{ctx.profile.name}“ nicht, heute deshalb das Original.</div>}
       {r.missingEquipment && <div className="note warn small">Für diese Übung fehlt im Profil „{ctx.profile.name}“ Equipment. Nimm eine passende Alternative.</div>}
-      {r.note && <div className="muted small">{r.note}</div>}
       {sug.gap && !detailGap && <div className="gap-note small">{sug.gap}</div>}
       {r.kind === "strength" && (
         <div className="sets">
