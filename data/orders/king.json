@@ -20,10 +20,11 @@
   "week_3": ["hart_a", "erholung", "hart_b"],
   "roles": {
     "hart_a": {
-      "name": "Hart A", "location": "home", "minutes": 40,
+      "name": "Hart A", "location": "home", "minutes": 45,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "beast", "id": "ki-a-1", "classes": ["ungeheuer"]},
+        {"type": "single", "slot": {"id": "ki-a-3", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30}},
         {"type": "single", "slot": {"id": "ki-a-2", "name": "Lockeres Auslaufen", "kind": "timer", "minutes": 10, "prog": "none"}}
       ]
     },
@@ -50,7 +51,8 @@
       "name": "Hart C", "location": "home", "minutes": 30, "optional": true,
       "warmup": ["base"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "beast", "id": "ki-c-1", "classes": ["bestie"]}
+        {"type": "beast", "id": "ki-c-1", "classes": ["bestie"]},
+        {"type": "single", "slot": {"id": "ki-c-2", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 3, "prog": "hold", "rest": 30, "note": "pro Seite"}}
       ]
     },
     "bonus": {

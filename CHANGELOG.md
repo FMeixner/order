@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.63.0] – 2026-10-17
+
+### Geändert
+- Mehr direkte Rumpfarbeit, Richtwert etwa 6 Sätze pro Woche aus zwei Mustern (Einrollen und Rotation oder Anti-Rotation). Grundübungen fordern den Rumpf vor allem stabilisierend, die Bestien nur zufällig.
+  - Soldier: Hanging Leg Raise (Studio A) und Cable Woodchopper (Studio B).
+  - King: Hollow Hold nach der harten Bestie A, Side Plank nach Bestie C.
+  - Troubadour: Pallof Press 3 statt 2 Sätze, dazu Hanging Leg Raise an Kraft B (50 Min).
+  - Monk: Dead Bug an Kraft A, Side Plank 3 Sätze.
+  - Initiate: Dead Bug und Side Plank je 3 Sätze.
+  - Pilgrim: Dead Bug an der Kraft-Erhaltung (50 Min).
+  - Witcher: Cable Crunch am Dienstag, dazu Russian Twist und Pallof zuhause.
+  - Assassin bleibt bis zur Testwoche, wie er ist. Herald und Huntsman bleiben ohne Zusatz: kurze Ganzkörpersätze bzw. Parkour fordern den Rumpf genug.
+
 ## [0.62.0] – 2026-10-17
 
 ### Geändert

@@ -24,7 +24,7 @@
         {"type": "single", "slot": {"id": "r-a-2", "core": true, "name": "Incline Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Knee Push-Up", "Push-Up"], "rest": 90}},
         {"type": "single", "slot": {"id": "r-a-3", "core": true, "name": "Table Row", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 90}},
         {"type": "single", "slot": {"id": "r-a-4", "name": "Glute Bridge", "sets": 2, "reps": "12-15", "prog": "ladder", "ladder": ["Glute Bridge", "Single-Leg Glute Bridge"], "rest": 60}},
-        {"type": "single", "slot": {"id": "r-a-5", "name": "Dead Bug", "sets": 2, "reps": "8/Seite", "prog": "reps", "rest": 45}},
+        {"type": "single", "slot": {"id": "r-a-5", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps", "rest": 45}},
         {"type": "beast", "rotation": "A", "id": "r-bst-a", "classes": ["plage"]}
       ]
     },
@@ -51,7 +51,7 @@
         {"type": "single", "slot": {"id": "r-b-2", "core": true, "name": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "r-b-3", "core": true, "name": "Goblet Squat", "reise": {"name": "Bodyweight Squat", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "r-b-4", "name": "Knee Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Knee Push-Up", "Push-Up"], "rest": 90}},
-        {"type": "single", "slot": {"id": "r-b-5", "name": "Side Plank (Knie)", "kind": "hold", "hold": 20, "sets": 2, "prog": "ladder", "ladder": ["Side Plank (Knie)", "Side Plank"], "rest": 45, "note": "pro Seite"}},
+        {"type": "single", "slot": {"id": "r-b-5", "name": "Side Plank (Knie)", "kind": "hold", "hold": 20, "sets": 3, "prog": "ladder", "ladder": ["Side Plank (Knie)", "Side Plank"], "rest": 45, "note": "pro Seite"}},
         {"type": "beast", "rotation": "B", "id": "r-bst-b", "classes": ["bestie"], "pace": "easy"}
       ]
     },
