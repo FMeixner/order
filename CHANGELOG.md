@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.63.1] – 2026-10-18
+
+### Geändert
+- Witcher zuhause: Die Ringrudern-Leiter endet jetzt mit Archer Ring Row statt mit einarmigem Kurzhantelrudern.
+
 ## [0.63.0] – 2026-10-17
 
 ### Geändert

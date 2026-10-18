@@ -57,7 +57,7 @@
       "blocks": [
         {"type": "module", "module": "sword", "variant": "lernweg", "fallbackFlow": "mobility"},
         {"type": "single", "slot": {"id": "w-do-2", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "AMRAP", "prog": "reps", "rest": 90, "note": "Wenn 20+ Wdh: Weste dazu"}},
-        {"type": "single", "slot": {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "1-Arm DB Row"], "rest": 90}},
+        {"type": "single", "slot": {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"], "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "w-do-5c", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
           {"id": "w-do-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}

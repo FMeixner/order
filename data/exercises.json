@@ -856,6 +856,13 @@
       "rings"
     ]
   },
+  "Archer Ring Row": {
+    "equip": "bodyweight",
+    "needs": [
+      "rings"
+    ],
+    "desc": "Ringrudern mit einem Arm als Zugarm, der andere bleibt fast gestreckt und hilft nur mit. Körper steif wie ein Brett, Brust zu den Ringen. Seiten im Satz nicht wechseln: erst eine Seite komplett, dann die andere."
+  },
   "Romanian Deadlift": {
     "equip": "barbell",
     "desc": "Knie leicht gebeugt, Hüfte nach hinten schieben, Hantel nah am Bein bis unter die Knie, Rücken lang."
