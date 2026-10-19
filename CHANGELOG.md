@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.66.0] – 2026-10-19
+
+### Geändert
+- Magier und King halten jetzt auch die Kraft im Druck-Zug-Beine-Muster: Superset aus DB Pullover und Deficit Push-Ups (Brust und Haltung), ATG Split Squat (Kraft, Beweglichkeit und Knie-Prehab, erst eine Seite komplett), dazu Face Pull. King: Turkish Get-Up an Chaos A.
+- Rückwärtsgehen am Ende der Grundlage (Magier) und am Redner-Tag (King), 5 Min.
+- Neue Übungen: DB Pullover, ATG Split Squat, Rückwärtsgehen.
+
 ## [0.65.0] – 2026-10-19
 
 ### Geändert

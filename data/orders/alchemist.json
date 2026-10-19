@@ -18,11 +18,12 @@
   "week_3": ["stab_atem", "haltung_kraft", "grundlage"],
   "roles": {
     "stab_atem": {
-      "name": "Stab und Atem", "location": "home", "minutes": 30,
+      "name": "Stab und Atem", "location": "home", "minutes": 35,
       "warmup": ["short_base", "shake_out"], "cooldown": ["cd_speaker"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "stab"},
         {"type": "single", "slot": {"id": "mg-a-2", "name": "Einbeinstand, Augen zu", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}},
+        {"type": "single", "slot": {"id": "mg-a-4", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "mg-a-3", "name": "Resonanzatmung (6 pro Minute)", "kind": "timer", "minutes": 6, "max": 12, "step": 1, "prog": "minutes"}}
       ]
     },
@@ -30,24 +31,24 @@
       "name": "Haltungskraft", "location": "home", "minutes": 50,
       "warmup": ["base", "neck_complex"], "cooldown": ["cd_speaker"],
       "blocks": [
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "mg-h-pp-a", "core": true, "name": "DB Pullover", "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
+          {"id": "mg-h-pp-b", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "6-12", "prog": "reps"}
+        ]},
+        {"type": "single", "slot": {"id": "mg-h-atg", "core": true, "name": "ATG Split Squat", "sets": 3, "reps": "6-10/Seite", "prog": "reps", "rest": 60, "note": "erst eine Seite komplett, dann die andere"}},
         {"type": "superset", "rest": 45, "slots": [
           {"id": "mg-h-1a", "core": true, "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "reps"},
-          {"id": "mg-h-1b", "core": true, "name": "Prone Y-T-W", "sets": 3, "reps": "6", "prog": "reps", "note": "je Buchstabe"}
-        ]},
-        {"type": "single", "slot": {"id": "mg-h-2", "core": true, "name": "KB Romanian Deadlift", "sets": 3, "reps": "10", "prog": "weight", "rest": 75}},
-        {"type": "single", "slot": {"id": "mg-h-3", "core": true, "name": "Suitcase Carry", "sets": 3, "reps": "30 m/Seite", "prog": "weight", "rest": 60, "note": "aufrecht gehen, Schultern auf gleicher Höhe"}},
-        {"type": "superset", "rest": 45, "slots": [
-          {"id": "mg-h-4a", "name": "Neck Curl", "sets": 2, "reps": "15-25", "prog": "reps"},
-          {"id": "mg-h-4b", "name": "Neck Extension", "sets": 2, "reps": "15-25", "prog": "reps"}
+          {"id": "mg-h-1b", "name": "Prone Y-T-W", "sets": 3, "reps": "6", "prog": "reps", "note": "je Buchstabe"}
         ]},
         {"type": "beast", "id": "mg-h-bst", "classes": ["plage"]}
       ]
     },
     "grundlage": {
-      "name": "Grundlage", "location": "reise", "minutes": 40,
+      "name": "Grundlage", "location": "reise", "minutes": 45,
       "warmup": ["short_base"], "cooldown": ["cd_speaker"],
       "blocks": [
-        {"type": "single", "slot": {"id": "mg-g-1", "name": "Lockere Grundlage", "kind": "timer", "minutes": 30, "max": 45, "step": 5, "prog": "minutes", "note": "Sprechtempo: ganze Sätze gehen noch. Laufen, Rad, Rudern, Stepper oder zügig gehen."}}
+        {"type": "single", "slot": {"id": "mg-g-1", "name": "Lockere Grundlage", "kind": "timer", "minutes": 30, "max": 45, "step": 5, "prog": "minutes", "note": "Sprechtempo: ganze Sätze gehen noch. Laufen, Rad, Rudern, Stepper oder zügig gehen."}},
+        {"type": "single", "slot": {"id": "mg-g-2", "name": "Rückwärtsgehen", "kind": "timer", "minutes": 5, "max": 10, "step": 1, "prog": "minutes", "note": "am Ende der Grundlage; wer sicher ist, läuft locker rückwärts"}}
       ]
     },
     "stab_tanz": {

@@ -1177,5 +1177,19 @@
   "Resonanzatmung (6 pro Minute)": {
     "equip": "skill",
     "desc": "Sitzend oder liegend, 4 Sekunden ein durch die Nase, 6 Sekunden aus. Bauch weit, Schultern ruhig. Langsames Atmen senkt nachweislich Herzfrequenz und Angst."
+  },
+  "DB Pullover": {
+    "equip": "dumbbell",
+    "desc": "Rücken quer oder längs auf der Bank (oder auf dem Boden), eine Kurzhantel mit beiden Händen über der Brust. Mit leicht gebeugten Armen langsam hinter den Kopf sinken, bis Lat und Brust dehnen, Rippen bleiben unten. Zurück bis über die Brust."
+  },
+  "ATG Split Squat": {
+    "equip": "bodyweight",
+    "weighted": true,
+    "desc": "Langer Schritt, vorderes Knie weit über die Zehen schieben, bis der Oberschenkel auf der Wade liegt, hinteres Knie nah am Boden. Vordere Ferse bleibt unten. Erst eine Seite komplett, dann die andere. Kraft, Beweglichkeit und Knie-Prehab in einem; anfangs mit Händen an einer Stütze."
+  },
+  "Rückwärtsgehen": {
+    "equip": "cardio",
+    "space": true,
+    "desc": "Rückwärts gehen oder locker rückwärts laufen: draußen auf freier Strecke, Bergauf oder auf dem Laufband langsam mit Händen am Geländer. Kurze Schritte, über den Ballen abrollen. Schont das Knie und kräftigt den vorderen Oberschenkel."
   }
 }
