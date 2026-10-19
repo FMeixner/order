@@ -4,7 +4,8 @@ import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { SessionPreview, SessionView } from "./SessionView";
-import { sessionId } from "./session/ctx";
+import { runSubOf, sessionId } from "./session/ctx";
+import { SUB_LABEL } from "../engine/cardio";
 import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
 import { dayMods, rememberMod, remembered, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
@@ -113,6 +114,9 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const sid = sel ? sessionId(block.id, week, sel.role) : "";
   const role0 = sel ? focus.roles[sel.role] : undefined;
   const hasRun = !!(role0 && roleAt(role0, profile ?? undefined).blocks.some(isRunBlock));
+  // Laufen ersetzen: bei Laufblöcken und Bestien (Bestien mit Laufstrecke werden umgerechnet)
+  const hasBeast = !!(role0 && role0.blocks.some((b) => b.type === "beast" || (b.type === "superset" && !!b.finisher)));
+  const runSub = sel ? runSubOf(state, sid) : undefined;
   const canAdjust = !!role0 && !future;
   // Intensiv: nur mit Bestie oder Schwert am Tag und nicht in Wochen, die ohnehin leichter laufen
   const canBoost = canAdjust && !sysReduced
@@ -130,7 +134,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const flip = (k: DayKey | "intense") => sel && update((st) => unpinBeasts(toggleMod(st, block, week, sel.role, sel.day, k), k === "short" || k === "quiet" || k === "tight" ? weekMatch : (s) => s.id === sid));
   const remember = (k: FixKey, on: boolean) => sel && update((st) => unpinBeasts(rememberMod(st, block, week, sel.role, sel.day, k, on), weekMatch));
   const mem = sel ? remembered(state, block, sel.role, sel.day) : { short: false, quiet: false, tight: false };
-  const activeAdj = sel ? [profile0 && profile0.id !== sel.profileId, mods?.short, mods?.light, mods?.intense, mods?.quiet, mods?.tight, hasRun && !!state.noRun?.[sid]].filter(Boolean).length : 0;
+  const activeAdj = sel ? [profile0 && profile0.id !== sel.profileId, mods?.short, mods?.light, mods?.intense, mods?.quiet, mods?.tight, (hasRun || hasBeast) && !!runSub].filter(Boolean).length : 0;
   const modsLabel = chips.filter((c) => c.on).map((c) => c.label).join(" · ");
   const adjustButton = (
     <button className={`btn ghost small adjust-btn ${activeAdj ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
@@ -161,11 +165,19 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           <Seg value={profile0?.id ?? sel.profileId} options={state.equipment.map((e) => ({ value: e.id, label: e.name }))} onChange={setPlace} />
         </div>
       )}
-      {hasRun && (
-        <label className="check small">
-          <input type="checkbox" checked={!!state.noRun?.[sid]} onChange={(e) => update((st) => unpinBeasts({ ...st, noRun: { ...(st.noRun ?? {}), [sid]: e.target.checked } }, (s) => s.id === sid))} />
-          <span>Heute kein Laufen möglich: Bestie statt Lauf</span>
-        </label>
+      {(hasRun || hasBeast) && (
+        <div className="stack">
+          <span className="field-label">Laufen ersetzen</span>
+          <Seg value={runSub ?? ""} options={[{ value: "", label: "Laufen" }, ...(["row", "bike", "rope", "stair"] as const).map((k) => ({ value: k, label: SUB_LABEL[k] })), ...(hasRun ? [{ value: "beast", label: "Bestie" }] : [])]}
+            onChange={(v) => update((st) => {
+              const rs = { ...(st.runSub ?? {}) };
+              if (v) rs[sid] = v as NonNullable<typeof runSub>; else delete rs[sid];
+              const nr = { ...(st.noRun ?? {}) }; delete nr[sid];
+              return unpinBeasts({ ...st, runSub: rs, noRun: nr }, (s) => s.id === sid);
+            })} />
+          {runSub && runSub !== "beast" && <span className="muted small">Umgerechnet nach Belastungszeit, nicht 1:1: 400 m Laufen ≈ 500 m Rudern ≈ 1000 m Rad ≈ 2 Min Seil oder Stepper. Dauerläufe: gleiche Zeit im gleichen Tempo.</span>}
+          {runSub === "beast" && <span className="muted small">Laufblöcke werden zu einer Bestie ähnlicher Dauer.</span>}
+        </div>
       )}
     </div>
   ) : null;

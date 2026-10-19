@@ -13,6 +13,9 @@
       {"id": "wu-neck", "name": "Neck Lateral Stretch", "mode": "hold", "value": 20, "sides": true, "desc": "Ohr sanft zur Schulter neigen. Gegenüberliegende Schulter unten lassen."},
       {"id": "wu-chin", "name": "Chin Tucks", "mode": "reps", "value": 10, "desc": "Kinn waagerecht nach hinten schieben, 2 Sekunden halten. Nicht nicken."}
     ],
+    "shake_out": [
+      {"id": "wu-shake", "name": "Ausschütteln auf der Stelle", "mode": "activity", "value": 45, "desc": "Locker auf der Stelle federn, Arme, Schultern und Beine ausschütteln, Kiefer und Nacken lassen los. Ausatmen hörbar. Löst Spannung vor dem Training, gut auch vor einem Vortrag."}
+    ],
     "hip9090": [
       {"id": "wu-9090", "name": "90/90 Hip Rotations", "mode": "hold", "value": 25, "sides": true, "desc": "Beide Beine im 90°-Winkel ablegen, aus der Hüfte zur Seite rotieren und halten."}
     ],

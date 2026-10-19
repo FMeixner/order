@@ -18,7 +18,7 @@ test("Einheit abschließen: Satz eintragen, abschließen, im Log", async ({ page
   await expect(page.getByText("1 abgeschlossene Einheiten")).toBeVisible();
 });
 
-test("Freie Jagd: Rundentracker stoppt die Uhr, Wieder aufnehmen speichert nur die neue Zeit", async ({ page }) => {
+test("Freie Jagd: Schritt für Schritt, der letzte Schritt stoppt die Uhr, Wieder aufnehmen speichert nur die neue Zeit", async ({ page }) => {
   await seed(page);
   await page.goto("./");
   await page.getByRole("button", { name: "Almanach" }).click();
@@ -26,12 +26,14 @@ test("Freie Jagd: Rundentracker stoppt die Uhr, Wieder aufnehmen speichert nur d
   await page.getByPlaceholder("Suchen: Name oder Übung").fill("Huldra");
   await page.locator(".collapse-head").filter({ hasText: "Huldra" }).click();
   await page.getByRole("button", { name: /^Jagen/ }).first().click();
-  await page.getByRole("button", { name: /Stoppuhr/ }).click();
-  const rounds = page.locator(".rounds button");
-  const n = await rounds.count();
-  expect(n).toBe(3);
+  await page.getByRole("button", { name: /^▶ Start/ }).click();
+  const now = page.locator(".beast-now");
+  await expect(now).toBeVisible();
+  await expect(now.locator(".beast-now-next")).toContainText("Danach");
+  await page.screenshot({ path: "test-results/beast-now.png" });
   await page.waitForTimeout(1200);
-  for (let i = 0; i < n; i++) await rounds.nth(i).click();
+  // Fertig bei Wiederholungen, Weiter bei Zeitstationen, bis die Uhr stoppt
+  for (let i = 0; i < 80 && (await now.count()); i++) await now.locator("button.grow").click();
   await expect(page.getByText(/Besiegt und eingetragen/)).toBeVisible();
   const first = (await stored(page)).beastTimes["ng-fjalar"];
   expect(first?.length).toBe(1);
@@ -285,4 +287,15 @@ test("Onboarding Dein Jahr: Vorlage, Schwerpunkt, Testwochen, Vorschlag als Stap
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.getByRole("button", { name: "Los geht's" }).click();
   expect((await stored(page)).onboarded).toBe(true);
+});
+
+test("Laufen ersetzen: Auslaufen wird Rudergerät, gleiche Zeit", async ({ page }) => {
+  await seed(page, fixture("king"));
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Hart A" }).click();
+  await expect(page.getByText("Lockeres Auslaufen")).toBeVisible();
+  await page.getByRole("button", { name: "Anpassen für heute" }).click();
+  await page.getByRole("radio", { name: "Rudergerät" }).click();
+  await expect(page.locator(".slot-name").filter({ hasText: "Rudergerät" })).toBeVisible();
+  await expect(page.getByText("Lockeres Auslaufen")).toHaveCount(0);
 });

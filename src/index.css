@@ -429,3 +429,14 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .slot-done .slot-name { flex: 1; font-weight: 500; }
 .slot-done-check { width: 22px; height: 22px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; background: var(--teal-dim); color: var(--text); font-size: 12px; }
 .card:has(> .slot-done:only-child) { padding-top: 4px; padding-bottom: 4px; }
+
+/* Bestie Schritt für Schritt: feste Leiste unten (wie die Timerleiste) */
+.beast-now { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(62px + env(safe-area-inset-bottom)); width: min(680px, calc(100% - 16px)); background: var(--surface2); border: 1px solid var(--amber); border-radius: 14px; padding: 12px 14px; z-index: 31; overflow: hidden; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45); display: flex; flex-direction: column; gap: 6px; }
+.beast-now.rest { border-color: var(--teal); }
+.beast-now-progress { position: absolute; left: 0; top: 0; height: 3px; background: var(--amber); transition: width 0.25s linear; }
+.beast-now.rest .beast-now-progress { background: var(--teal); }
+.beast-now-head { display: flex; justify-content: space-between; color: var(--muted); }
+.beast-now-main { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.beast-now-text { font-size: 22px; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
+.beast-now-time { font-size: 26px; font-weight: 600; }
+.beast-now .grow { flex: 1; }

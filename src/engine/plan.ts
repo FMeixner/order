@@ -1,4 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
+import { mixesStations } from "./cardio";
 import { dayMods, withDay } from "./dayadj";
 import { allRuns } from "./runs";
 import { blockSeconds, boostClass, estimateRole, roleSlots, swordSeconds } from "./duration";
@@ -256,6 +257,8 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
     }
   });
   if (!tagsOk) return false;
+  // Ortsregel: Stationen weit auseinander (Studio) → keine Bestie, die Cardio mit fester Station oder zweitem Gerät mischt
+  if ((p.spread ?? !!p.has.machines) && mixesStations(b)) return false;
   // Gewichte legt man bei Lastbestien selbst fest; es zählt nur, dass das Item da ist
   for (const n of beastNeeds(b)) {
     const ok = n === "rings" ? p.has.rings

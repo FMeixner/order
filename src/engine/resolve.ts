@@ -80,6 +80,7 @@ export function available(name: string, p: EquipmentProfile, skills?: SkillSet):
     if (n === "rings" && !p.has.rings) return false;
     if (n === "bench" && !p.has.bench) return false;
     if (n === "rower" && !p.has.rower) return false;
+    if (n === "bike" && !p.has.bike) return false;
     if (n === "medball" && !p.has.medball) return false;
     if (n === "box" && !p.has.box) return false;
     if (n === "dip" && !p.has.dip) return false;

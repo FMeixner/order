@@ -31,3 +31,6 @@ export const boostOf = (ctx: Pick<SessionCtx, "state" | "block" | "week" | "role
 
 /** Skills aus dem Skillcheck; null, solange keiner gemacht wurde */
 export const skillSet = (st: AppState): Set<string> | null => (st.user.skills ? new Set(st.user.skills) : null);
+
+/** Laufen ersetzen in dieser Einheit (alt: noRun = Bestie statt Lauf) */
+export const runSubOf = (st: AppState, sid: string): "row" | "bike" | "rope" | "stair" | "beast" | undefined => st.runSub?.[sid] ?? (st.noRun?.[sid] ? "beast" : undefined);

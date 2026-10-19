@@ -47,6 +47,7 @@ export function ProfileForm({ p, onChange, onDelete }: { p: EquipmentProfile; on
           <Check key={k} checked={p.has[k]} onChange={(v) => set({ has: { ...p.has, [k]: v } })} label={HAS_LABEL[k]} />
         ))}
       </div>
+      <Check checked={p.spread ?? !!p.has.machines} onChange={(v) => set({ spread: v })} label="Stationen weit auseinander (Studio): keine Bestien, die Laufband oder Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen" />
       {(p.has.cable || p.has.machines) && (
         <div className="row two">
           {p.has.cable && <Field label="Kabelzug: Schritt (kg)"><input type="number" inputMode="decimal" step="0.25" value={p.cableStep} onChange={(e) => set({ cableStep: parseFloat(e.target.value) || 2.5 })} /></Field>}

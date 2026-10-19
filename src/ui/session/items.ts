@@ -8,10 +8,11 @@ import { loadPhase } from "../../engine/progression";
 import { guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../../engine/resolve";
 import { menuDefault } from "../../engine/sharpen";
 import { focusFor } from "../../engine/weekplan";
-import { boostOf, type SessionCtx, sessionId, skillSet } from "./ctx";
+import { boostOf, runSubOf, type SessionCtx, sessionId, skillSet } from "./ctx";
+import { type CardioSub, SUB_EXERCISE } from "../../engine/cardio";
 
 /* ---------- Slots dieser Einheit sammeln ---------- */
-export interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Schwertblock, der hier mangels Schwert ersetzt ist (Vorschau zeigt trotzdem das Schwert) */ sword?: Extract<Block, { type: "module" }> }
+export interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Schwertblock, der hier mangels Schwert ersetzt ist (Vorschau zeigt trotzdem das Schwert) */ sword?: Extract<Block, { type: "module" }> }
 
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
@@ -47,7 +48,7 @@ setWeekBeastBlocks((state, pb, week) => {
     const p0 = state.equipment.find((e) => e.id === pid);
     if (!p0) return [];
     const profile = withDay(p0, dayMods(state, pb, week, d.role, d.day));
-    const noRun = !!state.noRun?.[sessionId(pb.id, week, d.role)];
+    const noRun = runSubOf(state, sessionId(pb.id, week, d.role)) === "beast";
     const ctx = { profile } as SessionCtx;
     return (f.roles[d.role] ? roleAt(f.roles[d.role], profile).blocks : [])
       .filter((b) => !b.rotation || b.rotation === ab)
@@ -56,6 +57,17 @@ setWeekBeastBlocks((state, pb, week) => {
       .map((b) => [b, profile] as BeastTarget);
   });
 });
+
+/** Laufen ersetzt durch ein Gerät: Dauerlauf gleiche Zeit im gleichen Tempo, Sprints als kurze Sprints auf dem Gerät (etwa 0,17 s pro Meter, mindestens 5 s) */
+function runToDevice(b: Block, to: CardioSub): Block {
+  if (b.type !== "single") return b;
+  const s = b.slot;
+  const note = s.kind === "timer" || s.kind === "interval" ? `Statt ${s.name}: gleiche Zeit, gleiches Tempo (Sprechtempo bleibt Sprechtempo).` : `Statt ${s.name}: kurze Sprints auf dem Gerät, volle Pause wie geplant.`;
+  if (s.kind === "timer" || s.kind === "interval") return { ...b, slot: { ...s, name: SUB_EXERCISE[to], note } };
+  const per = (m: number) => Math.max(5, Math.round(m * 0.17));
+  const reps = (s.reps ?? "").replace(/(\d+)\s?m\b/g, (_x, m: string) => `${per(Number(m))} s`);
+  return { ...b, slot: { ...s, name: SUB_EXERCISE[to], reps: /\bs\b/.test(reps) ? `${reps} Sprint` : "6 s Sprint", note } };
+}
 
 /** Kein Laufen möglich: Laufblock wird zur Bestie ähnlicher Dauer */
 function runToBeast(b: Block, ctx: SessionCtx): Block {
@@ -68,7 +80,9 @@ function runToBeast(b: Block, ctx: SessionCtx): Block {
 export function collectItems(ctx: SessionCtx): Item[] {
   const role = roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile);
   const ab = isAWeek(ctx.week) ? "A" : "B";
-  const noRun = !!ctx.state.noRun?.[sessionId(ctx.block.id, ctx.week, ctx.roleKey)];
+  const sub = runSubOf(ctx.state, sessionId(ctx.block.id, ctx.week, ctx.roleKey));
+  const noRun = sub === "beast";
+  const cardio = sub && sub !== "beast" ? sub : undefined;
   const cur = ctx.state.sessions.find((s) => s.id === sessionId(ctx.block.id, ctx.week, ctx.roleKey));
   const done = cur?.done ? cur : undefined;
   // Angefangen oder erledigt: die Bestien bleiben, wie sie beim ersten Klick waren (nicht neu würfeln)
@@ -95,15 +109,15 @@ export function collectItems(ctx: SessionCtx): Item[] {
   };
   const all: Item[] = role.blocks
     .filter((b) => !b.rotation || b.rotation === ab)
-    .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : b))
+    .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : cardio && isRunBlock(b) ? runToDevice(b, cardio) : b))
     .map((b) => {
       // Finisher: passt eine Bestie aus dem Pool, kommt sie statt des Supersets (erledigte Einheit: so, wie sie war)
       const fb = finisherBlock(b, ctx.week);
       if (fb && (pinned ? pinned[fb.id] : !done)) {
         const it = beastItem(fb);
-        if (it.beast) return it;
+        if (it.beast) return cardio ? { ...it, cardio } : it;
       }
-      return b.type === "beast" ? beastItem(b) : otherItem(b);
+      return b.type === "beast" ? { ...beastItem(b), ...(cardio ? { cardio } : {}) } : otherItem(b);
     });
   // Nie zwei feste Geräte (Maschine, Kabel) im Superset, auch nicht nach Tausch oder Ortswechsel: dann nacheinander
   const station = (r: Resolved) => r.equip === "machine" || r.equip === "cable";

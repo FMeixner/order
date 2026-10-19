@@ -563,10 +563,7 @@
     ]
   },
   "Intervalle: Burpees oder Seilspringen": {
-    "equip": "bodyweight",
-    "needs": [
-      "rings"
-    ]
+    "equip": "bodyweight"
   },
   "Jefferson Curl": {
     "equip": "kettlebell",
@@ -1011,10 +1008,7 @@
     "equip": "dumbbell"
   },
   "Sprint oder Seilspringen 10 × 30 s": {
-    "equip": "bodyweight",
-    "needs": [
-      "rings"
-    ]
+    "equip": "bodyweight"
   },
   "Squat Jump": {
     "equip": "bodyweight",
@@ -1148,5 +1142,28 @@
   "Mountain Climber": {
     "equip": "bodyweight",
     "desc": "Hoher Liegestütz, Knie abwechselnd zügig Richtung Brust, Hüfte bleibt tief, Hände unter den Schultern."
+  },
+  "Laufband": {
+    "equip": "cardio",
+    "run": true,
+    "desc": "Auf Zeit, Tempo nach Vorgabe (Sprechtempo, zügig oder Intervall). 1 % Steigung entspricht etwa Laufen draußen."
+  },
+  "Rudergerät": {
+    "equip": "cardio",
+    "needs": [
+      "rower"
+    ],
+    "desc": "Auf Zeit. Beine drücken, dann Rumpf, dann Arme; zurück in umgekehrter Reihenfolge. Schlagzahl locker 18–22, zügig 24–28."
+  },
+  "Fahrrad-Ergometer": {
+    "equip": "cardio",
+    "needs": [
+      "bike"
+    ],
+    "desc": "Auf Zeit. Sattel so hoch, dass das Knie unten fast gestreckt ist. Trittfrequenz 80–100."
+  },
+  "Stepper (Stair Climber)": {
+    "equip": "cardio",
+    "desc": "Auf Zeit. Aufrecht, Hände nur leicht am Geländer, ganzer Fuß auf der Stufe. Fordert Gesäß und Waden, gelenkschonend."
   }
 }

@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { FLOWS, SHARPEN, SWORD } from "../data";
 import type { BeastResult, Block, Session } from "../types";
 import { estimateRole } from "../engine/duration";
+import { swapRunBeast } from "../engine/cardio";
 import { moduleDrills, roleAt, roleDrills, swordLevel, swordNext } from "../engine/plan";
 import { advance, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
@@ -124,7 +125,7 @@ function SwordLevel({ skills }: { skills: string[] | null | undefined }) {
 function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
-  if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
+  if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} cardio={it.cardio} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
   if (b.type === "module" && it.drills) {
     return (
       <section className="card">
@@ -206,7 +207,8 @@ export function SessionPreview(ctx: SessionCtx) {
         {items.map((it, i) => {
           const title = BLOCK_TITLE[it.block.type];
           if (it.beast !== undefined) {
-            const parts = it.beast?.parts ?? (it.beast ? [{ id: it.beast.id, name: it.beast.name, rounds: it.beast.rounds, work: it.beast.work, times: it.beast.repeat ?? 1 }] : []);
+            const bst = it.beast ? swapRunBeast(it.beast, it.cardio) : it.beast;
+            const parts = bst?.parts ?? (bst ? [{ id: bst.id, name: bst.name, rounds: bst.rounds, work: bst.work, times: bst.repeat ?? 1 }] : []);
             return (
               <div key={i} className="preview-group">
                 {!parts.length && <div className="block-label amber">Bestie: passend zum Equipment</div>}

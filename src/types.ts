@@ -217,6 +217,8 @@ export interface EquipmentProfile {
   has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean };
   /** Alt (bis 0.45): Schweißfrei am Ort; wird beim Laden zu „Leise“ an den Wochentagen dieses Orts */
   sweatFree?: boolean;
+  /** Stationen weit auseinander (Studio): keine Bestien, die Laufband/Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen. Fehlt: ja, wenn das Profil Maschinen hat. */
+  spread?: boolean;
   /** Nur zur Laufzeit: Leise an diesem Tag (leise Bestien und Übungen, kein Laufen, keine Intervalle, kurzes Warm-up) */
   quiet?: boolean;
   /** Nur zur Laufzeit: Kein Platz an diesem Tag (Bestien und Übungen ohne Strecke) */
@@ -369,6 +371,8 @@ export interface AppState {
   energy?: Record<string, boolean>;
   /** Einheiten, in denen heute nicht gelaufen werden kann (Session-Id → true): Lauf wird zur Bestie */
   noRun?: Record<string, boolean>;
+  /** Laufen ersetzen je Einheit: Gerät (skaliert) oder Bestie statt Laufblock. Löst noRun ab (noRun = "beast"). */
+  runSub?: Record<string, "row" | "bike" | "rope" | "stair" | "beast">;
   /** Anderer Trainingsort für eine Einheit (Session-Id → Equipment-Profil-ID): Übungen und Gewichtsstufen folgen dem Profil */
   profileFor?: Record<string, string>;
   /** Darstellung: automatisch nach System, hell oder dunkel */

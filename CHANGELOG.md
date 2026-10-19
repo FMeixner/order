@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.64.0] – 2026-10-19
+
+### Neu
+- Bestien Schritt für Schritt: Nach „▶ Start“ zeigt eine Leiste unten, was gerade dran ist und was danach kommt. Wiederholungen tippst du mit „Fertig“ ab, Zeitstationen (Halten, Pausen, Seil, Stepper) laufen mit Countdown und Tönen und gehen von selbst weiter. Der letzte Schritt stoppt die Uhr. Der Rundenzähler entfällt.
+- Laufen ersetzen (⚙ Anpassen): Rudergerät, Rad, Seilspringen oder Stepper statt Laufen, umgerechnet nach Belastungszeit statt 1:1 (400 m Laufen ≈ 500 m Rudern ≈ 1000 m Rad ≈ 2 Min Seil oder Stepper). Gilt für Laufblöcke und Bestien; Dauerläufe bleiben gleich lang im gleichen Tempo. „Bestie“ ersetzt wie bisher den Laufblock.
+- Ortsregel für Bestien: Im Studio keine Bestien mehr, die Laufband oder Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen (etwa Ifrit). Band oder Kettlebell zum Gerät mitnehmen bleibt erlaubt. Einstellbar je Ort: „Stationen weit auseinander“.
+- Übungen: Laufband, Rudergerät, Fahrrad-Ergometer und Stepper als Cardio auf Zeit.
+- Warm-up-Katalog: Ausschütteln auf der Stelle (45 s).
+
+### Behoben
+- „Sprint oder Seilspringen“ (King) und „Intervalle: Burpees oder Seilspringen“ (Gladiator) verlangten fälschlich Ringe und fielen ohne Ringe weg.
+
 ## [0.63.1] – 2026-10-18
 
 ### Geändert

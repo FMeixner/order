@@ -15,6 +15,7 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
   - `progression.ts` (`suggest`, `advance`)
   - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
   - `warmup.ts`, `duration.ts`, `saga.ts` (Erzähler „Aschekurier“)
+  - `cardio.ts` (Laufen ersetzen nach Belastungszeit, `swapRunBeast`; Ortsregel `mixesStations`/`spreadOut`, wirkt in `beastFits`), `beaststeps.ts` (Bestie als Schrittfolge für den Ablauf in `BeastCard.tsx`)
   - Schwert-Lernweg in `plan.ts` (`swordLevel`, `swordList`): Stufen in `data/modules/sword.json` (`levels`, `leveled`), Skills der Gruppe `schwert` in `skills.json`. Varianten in `leveled` zeigen den Inhalt der Stufe; der Orden bestimmt nur das Format. Gewichtsfrei.
 - `src/ui/` – React-Ansichten. Die Einheit: `SessionView.tsx` (Ansicht, Vorschau) mit `session/` (`ctx.ts` Kontext, `items.ts` Inhalte sammeln und Bestien festhalten, `SlotCard.tsx`, `BeastCard.tsx`, `Drills.tsx`).
 - `src/ui/PlanStack.tsx` (Plan als Stapel, Logik in `src/engine/stack.ts`: Länge ±1 Woche, Testwoche am Ende, Teilen, Verbinden; Empfehlung je Phase per `rankFor` in `sequence.ts`)
