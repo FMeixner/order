@@ -1,0 +1,14 @@
+{
+  "_info": "Bevorzugte Übungen bei gleichwertigen Optionen (Vorgabe des Nutzers). Beim Bau oder Umbau eines Ordens zuerst hier schauen; nur nehmen, wenn die Übung zum Ziel und Ort passt. Fehlt eine Übung noch in exercises.json, beim Einbau anlegen.",
+  "favorites": [
+    {"area": "Rumpf seitlich", "items": ["Roman Chair Side Bend (Hyperextension-Bank, Scheibe vor der Brust)", "Hanging Windshield Wipers"]},
+    {"area": "Rumpf vorn", "items": ["Dragon Flag (Skill-Leiter)"]},
+    {"area": "Rücken, Hüftstrecker", "items": ["Rumpfbeugen und Aufrichten am Hyperextension-Gerät mit KB vor der Brust", "Jefferson Curl"]},
+    {"area": "Druck", "items": ["One-Arm Push-Up (Leiter: Hände erhöht → Boden)", "Deficit Push-Up im Superset mit DB Pullover (Haltung und Brust)"]},
+    {"area": "Zug", "items": ["Ring Row (höchstens bis Archer Ring Row)", "DB Pullover"]},
+    {"area": "Beine, Knie", "items": ["ATG Split Squat (Kraft, Beweglichkeit, Prehab)", "Sissy Squat", "Bodyweight Leg Extension", "Goblet Jump Squat"]},
+    {"area": "Hüftzug, Power", "items": ["Olympic-Lift-Progressionen (Hang Power Clean, Hang Power Snatch über Vorübungen)", "Snatch-Grip Deadlift", "KB Sumo Pull / Sumo High Pull"]},
+    {"area": "Schulter, Warm-up", "items": ["KB Halo"]},
+    {"area": "Cardio, Knie", "items": ["Rückwärtsgehen / Rückwärtslaufen"]}
+  ]
+}
