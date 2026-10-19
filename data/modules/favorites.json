@@ -1,14 +1,23 @@
 {
-  "_info": "Bevorzugte Übungen bei gleichwertigen Optionen (Vorgabe des Nutzers). Beim Bau oder Umbau eines Ordens zuerst hier schauen; nur nehmen, wenn die Übung zum Ziel und Ort passt. Fehlt eine Übung noch in exercises.json, beim Einbau anlegen.",
+  "_info": "Bevorzugte Übungen des Nutzers. Nur als Entscheidung zwischen gleichwertigen Optionen nehmen, nicht als Vorgabe. Einteilung (Stand 19.10.2026): tier \"erste_wahl\" = für ihr Ziel tatsächlich erste Wahl; \"gut\" = gute Wahl, aber kein Allzweck-Sieger (Skill, Technikaufwand oder nur gleichwertig); \"nische\" = für Warm-up, Beweglichkeit oder Prehab. Wird ein Favorit gesetzt, wo er nicht gleichwertig ist, den Grund dazuschreiben (Changelog, Logbuch). Fehlt eine Übung noch in exercises.json, beim Einbau anlegen.",
   "favorites": [
-    {"area": "Rumpf seitlich", "items": ["Roman Chair Side Bend (Hyperextension-Bank, Scheibe vor der Brust)", "Hanging Windshield Wipers"]},
-    {"area": "Rumpf vorn", "items": ["Dragon Flag (Skill-Leiter)"]},
-    {"area": "Rücken, Hüftstrecker", "items": ["Rumpfbeugen und Aufrichten am Hyperextension-Gerät mit KB vor der Brust", "Jefferson Curl"]},
-    {"area": "Druck", "items": ["One-Arm Push-Up (Leiter: Hände erhöht → Boden)", "Deficit Push-Up im Superset mit DB Pullover (Haltung und Brust)"]},
-    {"area": "Zug", "items": ["Ring Row (höchstens bis Archer Ring Row)", "DB Pullover"]},
-    {"area": "Beine, Knie", "items": ["ATG Split Squat (Kraft, Beweglichkeit, Prehab)", "Sissy Squat", "Bodyweight Leg Extension", "Goblet Jump Squat"]},
-    {"area": "Hüftzug, Power", "items": ["Olympic-Lift-Progressionen (Hang Power Clean, Hang Power Snatch über Vorübungen)", "Snatch-Grip Deadlift", "KB Sumo Pull / Sumo High Pull"]},
-    {"area": "Schulter, Warm-up", "items": ["KB Halo"]},
-    {"area": "Cardio, Knie", "items": ["Rückwärtsgehen / Rückwärtslaufen"]}
+    {"name": "Deficit Push-Up", "area": "Druck", "tier": "erste_wahl", "why": "großer Bewegungsumfang, Dehnung unter Last; im Superset mit DB Pullover stark für Brust und Haltung"},
+    {"name": "DB Pullover", "area": "Zug", "tier": "erste_wahl", "why": "Lat und Brust in langer Position"},
+    {"name": "ATG Split Squat", "area": "Beine", "tier": "erste_wahl", "why": "tiefe Kniebeugung, Quadrizeps lang, Prehab, wenn das Knie es verträgt; einseitig vom Ziel gedeckt"},
+    {"name": "Sissy Squat", "area": "Beine", "tier": "erste_wahl", "why": "Quadrizeps in langer Position ohne Gerät"},
+    {"name": "Ring Row", "area": "Zug", "tier": "erste_wahl", "why": "skalierbar, zuhause, schulterfreundlich; höchstens bis Archer Ring Row"},
+    {"name": "Snatch-Grip Deadlift", "area": "Hüftzug", "tier": "erste_wahl", "why": "mehr Bewegungsweg, oberer Rücken, Vorstufe für Olympic Lifts"},
+    {"name": "Dragon Flag", "area": "Rumpf vorn", "tier": "gut", "why": "Skill und Fortschrittsziel; für Muskelaufbau nicht besser als eine einfache, schwer belastbare Alternative"},
+    {"name": "Hanging Windshield Wipers", "area": "Rumpf seitlich", "tier": "gut", "why": "Skill, Rotation an der Stange"},
+    {"name": "One-Arm Push-Up", "area": "Druck", "tier": "gut", "why": "Skill-Leiter (Hände erhöht → Boden), kein Hypertrophie-Vorteil"},
+    {"name": "Olympic-Lift-Progressionen", "area": "Power", "tier": "gut", "why": "Power, aber hoher Technikaufwand; Sprünge und Swings bringen für die meisten Ziele fast dasselbe"},
+    {"name": "Roman Chair Side Bend", "area": "Rumpf seitlich", "tier": "gut", "why": "solide und gut belastbar (Scheibe vor der Brust)"},
+    {"name": "Rumpfbeugen und Aufrichten am Hyperextension-Gerät mit KB", "area": "Rücken", "tier": "gut", "why": "solide, belastbar"},
+    {"name": "Goblet Jump Squat", "area": "Power", "tier": "gut", "why": "Bestien und Power zuhause, gleichwertig zu Alternativen"},
+    {"name": "KB Sumo High Pull", "area": "Hüftzug, Power", "tier": "gut", "why": "Brücke zwischen KB Deadlift und Swing/Clean, gleichwertig zu Alternativen"},
+    {"name": "Jefferson Curl", "area": "Rücken, Beweglichkeit", "tier": "nische", "why": "Beweglichkeit unter leichter Last; als Kraftübung wenig untersucht"},
+    {"name": "KB Halo", "area": "Schulter", "tier": "nische", "why": "Warm-up"},
+    {"name": "Bodyweight Leg Extension", "area": "Beine", "tier": "nische", "why": "hohe Kniespannung, dosiert einsetzen"},
+    {"name": "Rückwärtsgehen", "area": "Cardio, Knie", "tier": "nische", "why": "schonende Abwechslung; wirkt ähnlich wie normales Gehen (Alghadir et al., 2019)"}
   ]
 }
