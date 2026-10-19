@@ -3,7 +3,7 @@
   "id": "assassin",
   "name": "Assassin",
   "tagline": "Fett runter, Kraft halten, Bewegung schärfen.",
-  "description": "Leichtes Defizit: Last halten, Volumen senken. Wenige Übungen mit mehr Sätzen, Oberkörper-Kernübungen schwer (6–8 Wdh), Beine und Isolation 8–15, etwa 10 harte Sätze pro Muskel und Woche. Übungen mit tiefer Dehnung und beidseitig, wo es gleichwertig geht. Montag Unterkörper mit einer kurzen Plage, Dienstag und Freitag Oberkörper: So überschneidet sich wenig, auch wenn Freitag auf Sonntag rutscht. Dienstag Zug-Schwerpunkt mit Chest Press; als Kurztag bleiben die vier Kernübungen, Donnerstag Schwert und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
+  "description": "Leichtes Defizit: Last halten, Volumen senken. Wenige Übungen mit mehr Sätzen, Oberkörper-Kernübungen schwer (6–8 Wdh), Beine und Isolation 8–15, etwa 10 harte Sätze pro Muskel und Woche. Übungen mit tiefer Dehnung und beidseitig, wo es gleichwertig geht. Montag Unterkörper ohne Bestie, Dienstag und Freitag Oberkörper: So überschneidet sich wenig, auch wenn Freitag auf Sonntag rutscht. Dienstag Zug-Schwerpunkt mit Chest Press; als Kurztag bleiben die vier Kernübungen, Donnerstag Schwert und eine Bestie. Warm-ups mit Seitengewichtung für Asymmetrien. Woche 10 ist Testwoche.",
   "goals": {"primary": "fatloss", "secondary": ["strength", "skill"]},
   "nutrition": "deficit",
   "load_fit": "high",
@@ -18,7 +18,7 @@
   "week_3": ["kraft_a", "skill_kondition", "kraft_b"],
   "roles": {
     "kraft_a": {
-      "name": "Unterkörper und Trizeps", "location": "gym", "minutes": 55, "cap": 60,
+      "name": "Unterkörper und Trizeps", "location": "gym", "minutes": 50, "cap": 60,
       "warmup": ["short_base", "thoracic_roller", "dislocate", "lower_prep", "hip9090"],
       "cooldown": ["cd_mdf"],
       "blocks": [
@@ -29,8 +29,7 @@
           {"id": "kb-8", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": {"name": "Single-Leg Calf Raise", "reps": "15-20/Seite", "prog": "reps"}, "sets": 3, "reps": "15", "prog": "double"}
         ]},
         {"type": "single", "slot": {"id": "ka-7", "name": "Cable Woodchopper", "home": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double", "rest": 45}},
-        {"type": "single", "slot": {"id": "ka-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
-        {"type": "beast", "id": "ka-bst", "classes": ["plage"]}
+        {"type": "single", "slot": {"id": "ka-6", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}}
       ]
     },
     "arme_schultern": {

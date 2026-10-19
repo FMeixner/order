@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.64.1] – 2026-10-19
+
+### Geändert
+- Assassin, Montag: ohne Plage (etwa 50 Min). Die Woche war mit Bestie am Montag zu viel. Gilt nach „Übernehmen“ im Plan.
+
 ## [0.64.0] – 2026-10-19
 
 ### Neu
