@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.67.0] – 2026-10-19
+
+### Geändert
+- Ordensvorschau aufgeräumt: oben Leitsatz und Eckdaten, darunter je Tag nur Name, Minuten und die Übungen ohne Dosis. Antippen zeigt Sätze und Wiederholungen, „Mehr zum Orden“ die Beschreibung, Ernährung, Passung und Quellen.
+- Magier heißt Magician (Enchantress).
+
 ## [0.66.0] – 2026-10-19
 
 ### Geändert

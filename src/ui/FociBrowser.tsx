@@ -6,7 +6,7 @@ import { shapeFocus } from "../engine/weekplan";
 import { resolveSlot } from "../engine/resolve";
 import { ladderStart } from "../engine/skills";
 import type { AppState, Block, EquipmentProfile, Focus, Slot } from "../types";
-import { Modal } from "./common";
+import { Collapse, Modal } from "./common";
 import { GOAL_LABEL, LOAD_FIT_LABEL, levelLabel } from "./PlanEditor";
 
 const NUTR: Record<string, string> = { deficit: "leichtes Defizit", maintenance: "Erhaltung", surplus: "leichter Überschuss", any: "frei" };
@@ -23,7 +23,6 @@ function slotLine(s: Slot, c: Ctx): string | null {
   return `${name} · ${dose}`;
 }
 
-const hasSword = (r: { blocks: Block[] }) => r.blocks.some((b) => b.type === "module" && b.module === "sword");
 
 function BlockLines({ b, c }: { b: Block; c: Ctx }) {
   const rot = b.rotation ? ` (${b.rotation}-Woche)` : "";
@@ -45,42 +44,60 @@ function BlockLines({ b, c }: { b: Block; c: Ctx }) {
   }
 }
 
+/** Kurzfassung eines Blocks: nur Namen, ohne Dosis */
+function blockNames(b: Block, c: Ctx): string[] {
+  const nm = (s: Slot) => slotLine(s, c)?.split(" · ")[0] ?? null;
+  switch (b.type) {
+    case "single": return [nm(b.slot)].filter(Boolean) as string[];
+    case "superset": return b.slots.map(nm).filter(Boolean) as string[];
+    case "contrast": return [nm(b.heavy), b.explosive.name].filter(Boolean) as string[];
+    case "beast": return ["Bestie"];
+    case "module": return [b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sword" ? "Schwert" : "Schwerpunkt"];
+    case "menu": return [b.label];
+  }
+}
+
 export function FocusDetail({ f, profile, skills, days }: { f: Focus; profile?: EquipmentProfile; skills?: Set<string> | null; days?: number }) {
   const c: Ctx = { profile, skills };
   // Vorschau so, wie der Orden bei deiner Zahl an Trainingstagen aussieht (ohne Angabe: vier Tage)
   const n = days && days >= 1 ? days : 4;
   const sf = shapeFocus(f, n);
   const roles = defaultRoles(sf, n);
+  const facts = [GOAL_LABEL[f.goals.primary], `${f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen`, `etwa ${f.session_min} Min`, levelLabel(f.level)];
   return (
     <div className="stack focus-detail">
-      <p>{f.description}</p>
-      <p className="note small">Gezeigt für {n} Trainingstage{profile ? <> mit deinem Profil „{profile.name}“</> : null}. Mit einem anderen Profil tauscht die App die Übungen passend aus.</p>
-      <div className="kv">
-        <span>Ziel</span><span>{GOAL_LABEL[f.goals.primary]}{f.goals.secondary.length ? `, dazu ${f.goals.secondary.map((g) => GOAL_LABEL[g]).join(", ")}` : ""}</span>
-        <span>Ernährung</span><span>{NUTR[f.nutrition]}</span>
-        <span>Passt</span><span>{LOAD_FIT_LABEL[f.load_fit]}</span>
-        <span>Dauer</span><span>{f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen, etwa {f.session_min} Min pro Einheit</span>
-        <span>Niveau</span><span>{levelLabel(f.level)}</span>
-        <span>Unterwegs</span><span>{f.travel ? "ja" : "nein"}</span>
-        {f.test_week || f.test_weeks ? <><span>Testwoche</span><span>{f.test_weeks ? `Woche ${f.test_weeks.join(", ")}` : "letzte Woche"}</span></> : null}
-        {f.sources?.length ? <><span>Grundlagen</span><span>{f.sources.join("; ")}</span></> : null}
-      </div>
+      {f.tagline && <p><strong>{f.tagline}</strong></p>}
+      <p className="muted small">{facts.join(" · ")}</p>
       {f.medley && (
         <div className="card">
           <strong>Die Reihe</strong>
           <ol className="slot-list">{f.medley.map((id, i) => <li key={i}><strong>{focusName(id)}</strong> · {FOCUS_BY_ID[id]?.tagline}</li>)}</ol>
-          <p className="muted small">Die einzelnen Wochen findest du bei den jeweiligen Orden.</p>
         </div>
       )}
       {roles.map((rk, i) => {
         const r = sf.roles[rk];
+        const names = [...new Set(r.blocks.filter((b) => !b.rotation || b.rotation === "A").flatMap((b) => blockNames(b, c)))];
         return (
-          <div key={`${rk}-${i}`} className="card">
-            <div className="role-head"><strong>Tag {i + 1}: {r.name}</strong> {hasSword(r) && <span className="tag amber">Schwert</span>} <span className="muted small">{r.minutes} Min</span></div>
+          <Collapse key={`${rk}-${i}`} title={<span className="stack tight"><span>Tag {i + 1}: {r.name}</span><span className="muted small">{names.join(", ")}</span></span>}
+            meta={`${r.minutes} Min`}>
             <ul className="slot-list">{r.blocks.map((b, j) => <BlockLines key={j} b={b} c={c} />)}</ul>
-          </div>
+          </Collapse>
         );
       })}
+      <Collapse title="Mehr zum Orden">
+        <div className="stack">
+          <p>{f.description}</p>
+          <div className="kv">
+            <span>Ziel</span><span>{GOAL_LABEL[f.goals.primary]}{f.goals.secondary.length ? `, dazu ${f.goals.secondary.map((g) => GOAL_LABEL[g]).join(", ")}` : ""}</span>
+            <span>Ernährung</span><span>{NUTR[f.nutrition]}</span>
+            <span>Passt</span><span>{LOAD_FIT_LABEL[f.load_fit]}</span>
+            <span>Unterwegs</span><span>{f.travel ? "ja" : "nein"}</span>
+            {f.test_week || f.test_weeks ? <><span>Testwoche</span><span>{f.test_weeks ? `Woche ${f.test_weeks.join(", ")}` : "letzte Woche"}</span></> : null}
+            {f.sources?.length ? <><span>Grundlagen</span><span>{f.sources.join("; ")}</span></> : null}
+          </div>
+          <p className="muted small">Gezeigt für {n} Trainingstage{profile ? <> mit deinem Profil „{profile.name}“</> : null}. Mit einem anderen Profil tauscht die App die Übungen passend aus.</p>
+        </div>
+      </Collapse>
     </div>
   );
 }

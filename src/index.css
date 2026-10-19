@@ -440,3 +440,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .beast-now-text { font-size: 22px; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
 .beast-now-time { font-size: 26px; font-weight: 600; }
 .beast-now .grow { flex: 1; }
+
+/* Ordensvorschau kompakt: Tagesname, darunter nur die Übungsnamen */
+.focus-detail .collapse-title .stack.tight { gap: 2px; text-align: left; font-weight: 500; }
+.focus-detail .collapse-title .stack.tight .muted { font-weight: 400; }
+.focus-detail .collapse-meta { white-space: nowrap; }

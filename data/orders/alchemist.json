@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "alchemist",
-  "name": "Magier", "name_w": "Magierin",
+  "name": "Magician", "name_w": "Enchantress",
   "tagline": "Ruhiger Stand, lockerer Nacken, klare Stimme.",
   "description": "Bereitet Körper und Nerven auf das Sprechen vor Publikum vor: Stabmeditation mit dem Besenstiel und Balance, Haltungskraft für Nacken, Schultern und Rumpf, Grundlagenausdauer zur Stressfestigkeit und Dehnung für Brust, Nacken und Kiefer. Kraft und eine kleine Bestie halten nur, was da ist. Trainierte reagieren im Stresstest mit Rede vor Publikum mit weniger Cortisol, Herzfrequenz und Angst, langsames Atmen beruhigt. Eine aufrechte Haltung hob in einer Studie Stimmung und Selbstwert unter Stress; die Effekte sind klein. Dass eine „schlechte“ Haltung Rückenschmerzen verursacht, ist nicht belegt.",
   "goals": {"primary": "mobility", "secondary": ["wellbeing", "endurance", "strength"]},
