@@ -121,6 +121,13 @@
     "cd_ball": [
       {"id": "cd-ball", "name": "Black-Roll-Ball: Schulter", "mode": "hold", "value": 30, "sets": 2, "sides": ["vorn", "seitlich", "hinten"], "desc": "Ball zwischen Schulter und Wand, alle drei Schulterköpfe. Erster Satz links, zweiter rechts."}
     ],
+    "cd_speaker": [
+      {"id": "cd-pec-door", "name": "Brust dehnen im Türrahmen", "mode": "hold", "value": 30, "sides": true, "desc": "Unterarm am Türrahmen, Ellbogen auf Schulterhöhe, langsam vorlehnen, bis die Brust dehnt. Schulter bleibt unten."},
+      {"id": "cd-levator", "name": "Nacken hinten-seitlich: Nase zur Achsel", "mode": "hold", "value": 30, "sides": true, "desc": "Kopf drehen und neigen, als ob die Nase zur Achsel will. Die Hand auf dem Hinterkopf liegt nur auf, kein Ziehen."},
+      {"id": "cd-scalene", "name": "Hals vorn-seitlich", "mode": "hold", "value": 20, "sides": true, "desc": "Schlüsselbein mit der Hand sanft halten, Kopf zur Gegenseite neigen und leicht nach oben schauen."},
+      {"id": "cd-jaw", "name": "Kiefer lösen", "mode": "activity", "value": 45, "desc": "Lippen zu, Zähne auseinander. Kaumuskel vor dem Ohr mit den Fingern kreisend massieren, Unterkiefer locker hängen lassen."},
+      {"id": "cd-hum", "name": "Summen mit lockerem Kiefer", "mode": "activity", "value": 30, "desc": "Bequeme Tonhöhe, Lippen locker aufeinander, Vibration an Lippen und Nase spüren. Nicht pressen."}
+    ],
     "cd_calm": [
       {"id": "cd-child", "name": "Child's Pose", "mode": "hold", "value": 60, "desc": "Kniend, Gesäß zu den Fersen, Arme lang nach vorn, ruhig atmen."},
       {"id": "cd-supine-twist", "name": "Liegender Drehsitz", "mode": "hold", "value": 45, "sides": true, "desc": "Rückenlage, Knie zur Seite sinken lassen, Schultern bleiben am Boden."},

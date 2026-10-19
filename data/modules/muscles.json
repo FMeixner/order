@@ -57,7 +57,9 @@
     "Turkish Get-Up": {"Schultern": 0.5, "Rumpf": 1},
     "Skin the Cat": {"Rücken": 0.5, "Rumpf": 0.5},
     "Band External Rotation": {"Schultern": 0.5},
-    "Scapular Wall Slide": {"Schultern": 0.5, "Rücken": 0.5}
+    "Scapular Wall Slide": {"Schultern": 0.5, "Rücken": 0.5},
+    "Prone Y-T-W": {"Schultern": 0.5, "Rücken": 0.5},
+    "KB Halo": {"Schultern": 0.5, "Rumpf": 0.5}
   },
   "patterns": [
     ["neck|nacken", {"Nacken": 1}],

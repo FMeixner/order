@@ -1,7 +1,7 @@
 /* Ordenssymbole: eigene Strichzeichnungen (48er-Raster), als Wasserzeichen hinter Ordenskarten. */
 const PATHS: Record<string, string> = {
   acrobat: "M6 44V20M42 44V20M6 22q18 7 36 0M9 13q15 5 30 0M24 12v9M24 21l-3 3M24 21l3 3M27 8.5a3 3 0 1 1-6 0a3 3 0 1 1 6 0",
-  alchemist: "M19 5h10M21 5v13L11 37a4 4 0 0 0 3.5 6h19a4 4 0 0 0 3.5-6L27 18V5M15 31h18",
+  alchemist: "M14 44L29 17M31 4l2 5 5 .6-3.8 3.3 1.1 5-4.3-2.6-4.3 2.6 1.1-5L24 9.6l5-.6zM11 40l6 1",
   assassin: "M24 4l4 8v17h-8V12zM15 29h18M24 29v10M26.5 42a2.5 2.5 0 1 1-5 0a2.5 2.5 0 1 1 5 0",
   conqueror: "M12 44V5M12 8h24l-6 7 6 7H12M8 44h8",
   gladiator: "M41 24a17 17 0 1 1-34 0a17 17 0 1 1 34 0M28 24a4 4 0 1 1-8 0a4 4 0 1 1 8 0M24 7v13M24 28v13M7 24h13M28 24h13",

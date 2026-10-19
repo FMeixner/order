@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.65.0] – 2026-10-19
+
+### Geändert
+- Alchemist heißt jetzt **Magier** und bereitet aufs Sprechen vor Publikum vor: Stabmeditation mit dem Besenstiel (neuer geführter Flow), Balance und Resonanzatmung; Haltungskraft (Face Pull, Prone Y-T-W, KB Romanian Deadlift, Suitcase Carry, Nacken) mit einer Plage; Grundlage im Sprechtempo; Stabtanz und Body Scan. Cool-down für Brust, Nacken und Kiefer.
+- **King** neu als Anführer-Orden: zwei Chaos-Tage (wechselnde Bestien, Intervalle, KB-Komplex mit Halo), ein Redner-Tag (Grundlage, Resonanzatmung, Meditation) und ein Tag Haltung und Kraft (Turkish Get-Up, Farmer's Carry, Face Pull, Chin Tucks, Side Plank, Bestie). Die Feeling-Scale-Regel bleibt.
+- Neue Übungen: Prone Y-T-W, KB Halo, Resonanzatmung. Neue Cool-down-Liste „Redner“ (Brust im Türrahmen, Nacken, Hals, Kiefer lösen, Summen) auch im Katalog.
+
 ## [0.64.1] – 2026-10-19
 
 ### Geändert

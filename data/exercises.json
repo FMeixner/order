@@ -1165,5 +1165,17 @@
   "Stepper (Stair Climber)": {
     "equip": "cardio",
     "desc": "Auf Zeit. Aufrecht, Hände nur leicht am Geländer, ganzer Fuß auf der Stufe. Fordert Gesäß und Waden, gelenkschonend."
+  },
+  "Prone Y-T-W": {
+    "equip": "bodyweight",
+    "desc": "Bauchlage, Stirn auf einem Handtuch. Arme als Y, dann T, dann W anheben, Daumen zeigen nach oben, Schulterblätter nach hinten unten. Jede Position eine Wiederholung."
+  },
+  "KB Halo": {
+    "equip": "kettlebell",
+    "desc": "Kettlebell am Horn vor der Brust, langsam eng um den Kopf führen, Rumpf fest, Rippen unten. Beide Richtungen."
+  },
+  "Resonanzatmung (6 pro Minute)": {
+    "equip": "skill",
+    "desc": "Sitzend oder liegend, 4 Sekunden ein durch die Nase, 6 Sekunden aus. Bauch weit, Schultern ruhig. Langsames Atmen senkt nachweislich Herzfrequenz und Angst."
   }
 }

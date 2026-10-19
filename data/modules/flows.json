@@ -89,6 +89,31 @@
         { "id": "mo-6", "name": "Tiefe Hocke halten", "mode": "hold", "value": 60, "sets": 2 },
         { "id": "mo-7", "name": "Wandengel", "mode": "reps", "value": 10, "rep_s": 5 }
       ]
+    },
+    "stab": {
+      "name": "Stabmeditation (Besenstiel)",
+      "drills": [
+        { "id": "st-1", "name": "Ankommen: Stab senkrecht vor dir, Hände übereinander auf dem oberen Ende, Gewicht in die Füße sinken lassen, ruhig atmen", "mode": "hold", "value": 45 },
+        { "id": "st-2", "name": "Stab heben: waagerecht schulterbreit greifen, mit dem Einatmen langsam über den Kopf, mit dem Ausatmen sinken", "mode": "reps", "value": 6, "rep_s": 10 },
+        { "id": "st-3", "name": "Langer Rücken: Stab längs am Rücken (Hinterkopf, Brustwirbel, Kreuzbein berühren), langsam aus der Hüfte vorbeugen und aufrichten", "mode": "reps", "value": 8, "rep_s": 6 },
+        { "id": "st-4", "name": "Brust öffnen: Stab in den Ellbogenbeugen hinter dem Rücken, aufrecht stehen, langsam drehen, Becken bleibt", "mode": "reps", "value": 6, "sides": true, "rep_s": 6 },
+        { "id": "st-5", "name": "Achter: Stab mittig greifen, langsam eine liegende Acht vor dem Körper zeichnen, der Blick folgt dem Stabende", "mode": "reps", "value": 6, "sides": true, "rep_s": 8 },
+        { "id": "st-6", "name": "Schrittform: Stab waagerecht vor der Brust, langsamer Schritt vor, Gewicht verlagern, Stab schiebt nach vorn, zurück", "mode": "reps", "value": 6, "sides": true, "rep_s": 10 },
+        { "id": "st-7", "name": "Kranich: Einbeinstand, Stab waagerecht über dem Kopf, Blick ruhig auf einen Punkt", "mode": "hold", "value": 30, "sides": true },
+        { "id": "st-8", "name": "Stille: Stab senkrecht, Augen zu, sechs Atemzüge pro Minute (4 s ein, 6 s aus), Nacken und Kiefer locker", "mode": "hold", "value": 90 }
+      ]
+    },
+    "stabtanz": {
+      "name": "Stabtanz: fließende Formen",
+      "drills": [
+        { "id": "sd-1", "name": "Welle: Stab senkrecht vor dem Körper in langsamen Kreisen führen, Knie weich, das Gewicht wandert mit", "mode": "reps", "value": 8, "sides": true, "rep_s": 6 },
+        { "id": "sd-2", "name": "Stab über dem Kopf kreisen (langsamer Helikopter), Rumpf bleibt ruhig", "mode": "reps", "value": 6, "sides": true, "rep_s": 8 },
+        { "id": "sd-3", "name": "Übergabe: Stab hinter dem Rücken von Hand zu Hand, aufrecht bleiben", "mode": "reps", "value": 10, "rep_s": 5 },
+        { "id": "sd-4", "name": "Achter mit Schritt: Acht zeichnen, bei jedem Bogen ein Schritt zur Seite", "mode": "reps", "value": 6, "sides": true, "rep_s": 10 },
+        { "id": "sd-5", "name": "Zeitlupengehen: Stab waagerecht über dem Kopf, zehn Schritte vor und zehn zurück, jeder Schritt drei Sekunden", "mode": "reps", "value": 2, "rep_s": 60 },
+        { "id": "sd-6", "name": "Balance: Stab senkrecht auf der offenen Handfläche balancieren, Blick zum oberen Ende", "mode": "hold", "value": 45, "sides": true },
+        { "id": "sd-7", "name": "Freie Form: die Übergänge oben frei verbinden, langsam, ohne Pause", "mode": "hold", "value": 120 }
+      ]
     }
   }
 }

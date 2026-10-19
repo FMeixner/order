@@ -2,9 +2,9 @@
   "schema": 1,
   "id": "king",
   "name": "King", "name_w": "Queen",
-  "tagline": "Harte Tage, bewusste Erholung.",
-  "description": "Intensive Tage im Wechsel mit Meditation und Yoga. Nach jedem harten Tag fragt die App, wie es sich angefühlt hat (Feeling Scale −5 bis +5). Zweimal hintereinander −1 oder schlechter: Die nächste harte Einheit wird leichter.",
-  "goals": {"primary": "conditioning", "secondary": ["wellbeing"]},
+  "tagline": "Wer führt, ist auf Wechsel vorbereitet.",
+  "description": "Für Anführer und alle, die vor Leuten stehen: harte, wechselnde Tage im Stil des Chaos-Trainings (jede Woche eine andere Mischung aus Kraft, Turnen und Kondition), dazu ein Tag Haltung und Kraft und ein Redner-Tag mit Grundlage, Atmung und Dehnung für Brust, Nacken und Kiefer. Trainierte reagieren im Stresstest mit Rede vor Publikum mit weniger Cortisol, Herzfrequenz und Angst. Nach jedem harten Tag fragt die App, wie es sich angefühlt hat (Feeling Scale −5 bis +5). Zweimal hintereinander −1 oder schlechter: Die nächste harte Einheit wird leichter.",
+  "goals": {"primary": "conditioning", "secondary": ["wellbeing", "strength"]},
   "nutrition": "any",
   "load_fit": "medium",
   "level": "intermediate",
@@ -14,45 +14,53 @@
   "affect_rule": true,
   "travel": true,
   "modules": ["correctives", "beast"],
-  "successors": ["troubadour", "pilgrim", "monk"],
-  "sources": ["Ekkekakis et al. (2011)", "Hardy & Rejeski (1989)", "Kotarsky et al. (2018)"],
-  "week_4": ["hart_a", "erholung", "hart_b", "hart_c"],
-  "week_3": ["hart_a", "erholung", "hart_b"],
+  "successors": ["troubadour", "pilgrim", "alchemist"],
+  "sources": ["Rimmele et al. (2007)", "Ekkekakis et al. (2011)", "Hardy & Rejeski (1989)", "Kotarsky et al. (2018)"],
+  "week_4": ["chaos_a", "redner", "chaos_b", "haltung_kraft"],
+  "week_3": ["chaos_a", "redner", "haltung_kraft"],
   "roles": {
-    "hart_a": {
-      "name": "Hart A", "location": "home", "minutes": 45,
+    "chaos_a": {
+      "name": "Chaos A", "location": "home", "minutes": 45,
       "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "beast", "id": "ki-a-1", "classes": ["ungeheuer"]},
         {"type": "single", "slot": {"id": "ki-a-3", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30}},
-        {"type": "single", "slot": {"id": "ki-a-2", "name": "Lockeres Auslaufen", "kind": "timer", "minutes": 10, "prog": "none"}}
+        {"type": "single", "slot": {"id": "ki-a-2", "name": "Lockeres Auslaufen", "kind": "timer", "minutes": 5, "prog": "none"}}
       ]
     },
-    "erholung": {
-      "name": "Erholung", "location": "reise", "minutes": 35,
-      "warmup": [], "cooldown": [],
+    "redner": {
+      "name": "Redner-Tag", "location": "reise", "minutes": 45,
+      "warmup": ["short_base", "shake_out"], "cooldown": ["cd_speaker"],
       "blocks": [
-        {"type": "single", "slot": {"id": "ki-e-1", "name": "Meditation, offenes Gewahrsein", "kind": "timer", "minutes": 15, "max": 20, "step": 1, "prog": "minutes"}},
-        {"type": "module", "module": "flow", "variant": "slow"}
+        {"type": "single", "slot": {"id": "ki-r-1", "name": "Lockere Grundlage", "kind": "timer", "minutes": 20, "max": 35, "step": 5, "prog": "minutes", "note": "Sprechtempo: ganze Sätze gehen noch."}},
+        {"type": "single", "slot": {"id": "ki-r-2", "name": "Resonanzatmung (6 pro Minute)", "kind": "timer", "minutes": 6, "max": 12, "step": 1, "prog": "minutes"}},
+        {"type": "single", "slot": {"id": "ki-e-1", "name": "Meditation, offenes Gewahrsein", "kind": "timer", "minutes": 8, "max": 15, "step": 1, "prog": "minutes"}}
       ]
     },
-    "hart_b": {
-      "name": "Hart B", "location": "reise", "minutes": 35,
+    "chaos_b": {
+      "name": "Chaos B", "location": "reise", "minutes": 40,
       "warmup": ["run_prep", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "ki-b-1", "name": "Sprint oder Seilspringen 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 60, "rounds": 10}, "prog": "none"}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "ki-b-2a", "name": "KB Swing", "reise": {"name": "Band Pull-Through", "prog": "reps"}, "sets": 3, "reps": "15", "prog": "weight"},
           {"id": "ki-b-2b", "name": "Push-Up", "sets": 3, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
-        ]}
+        ]},
+        {"type": "single", "slot": {"id": "ki-b-3", "name": "KB Halo", "reise": {"name": "Stock-Ausschultern", "reps": "10", "prog": "reps"}, "sets": 2, "reps": "8/Richtung", "prog": "weight", "rest": 45}}
       ]
     },
-    "hart_c": {
-      "name": "Hart C", "location": "home", "minutes": 30, "optional": true,
-      "warmup": ["base"], "cooldown": ["cd_calm"],
+    "haltung_kraft": {
+      "name": "Haltung und Kraft", "location": "home", "minutes": 50,
+      "warmup": ["base", "neck_complex"], "cooldown": ["cd_speaker"],
       "blocks": [
-        {"type": "beast", "id": "ki-c-1", "classes": ["bestie"]},
-        {"type": "single", "slot": {"id": "ki-c-2", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 3, "prog": "hold", "rest": 30, "note": "pro Seite"}}
+        {"type": "single", "slot": {"id": "ki-c-3", "core": true, "name": "Turkish Get-Up", "reise": {"name": "Turkish Get-Up (ohne Last)", "prog": "reps"}, "sets": 3, "reps": "2/Seite", "prog": "weight", "rest": 60}},
+        {"type": "single", "slot": {"id": "ki-c-4", "core": true, "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
+        {"type": "superset", "rest": 45, "slots": [
+          {"id": "ki-c-5a", "core": true, "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "reps"},
+          {"id": "ki-c-5b", "name": "Chin Tuck mit Halten", "kind": "hold", "hold": 5, "sets": 3, "prog": "none", "note": "5-mal 5 s je Satz"}
+        ]},
+        {"type": "single", "slot": {"id": "ki-c-2", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 3, "prog": "hold", "rest": 30, "note": "pro Seite"}},
+        {"type": "beast", "id": "ki-c-1", "classes": ["bestie"]}
       ]
     },
     "bonus": {

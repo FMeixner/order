@@ -292,7 +292,7 @@ test("Onboarding Dein Jahr: Vorlage, Schwerpunkt, Testwochen, Vorschlag als Stap
 test("Laufen ersetzen: Auslaufen wird Rudergerät, gleiche Zeit", async ({ page }) => {
   await seed(page, fixture("king"));
   await page.goto("./");
-  await page.locator(".day-btn").filter({ hasText: "Hart A" }).click();
+  await page.locator(".day-btn").filter({ hasText: "Chaos A" }).click();
   await expect(page.getByText("Lockeres Auslaufen")).toBeVisible();
   await page.getByRole("button", { name: "Anpassen für heute" }).click();
   await page.getByRole("radio", { name: "Rudergerät" }).click();
