@@ -98,7 +98,7 @@ export function RavenBadge({ state, update, block, today }: { state: AppState; u
             {showWeek && showWeek.done > 0 && showWeek.roll == null && (
               <FoeRoll update={update} blockId={block.id} week={showWeek.week} />
             )}
-            {!ch.ended && <RavenLines lines={[{ kind: "hp", text: cap1(ch.foe.nom), value: ch.liveHp, max: ch.hp }]} />}}
+            {!ch.ended && <RavenLines lines={[{ kind: "hp", text: cap1(ch.foe.nom), value: ch.liveHp, max: ch.hp }]} />}
             {ch.ended && <><hr /><RavenLines lines={ch.saga} aside={nr.aside} /></>}
             {showWeek && <p className="muted small">Alle Ausgaben stehen im Log unter „{nr.archive}“.</p>}
           </div>
