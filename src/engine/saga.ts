@@ -285,16 +285,16 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
       // Wurf des Widersachers: du würfelst selbst und trägst ihn ein. Der Wurf allein trifft nie.
       roll = state.narrative?.rolls?.[`${b.id}:${w}`] ?? null;
       if (roll != null) {
-        if (roll <= 7) lines.push({ kind: "roll", value: roll, text: T("foe_fumble", w) });
-        else if (roll === 20) { stats.fumbles++; lines.push({ kind: "roll", value: 20, text: T("foe_dark", stats.fumbles - 1) }); }
-        else if (roll >= 15) lines.push({ kind: "roll", value: roll, text: T("foe_strike", w) });
+        if (roll <= 7) lines.push({ kind: "roll", value: roll, text: T("foe_fumble", w, { schar }) });
+        else if (roll === 20) { stats.fumbles++; lines.push({ kind: "roll", value: 20, text: T("foe_dark", stats.fumbles - 1, { schar }) }); }
+        else if (roll >= 15) lines.push({ kind: "roll", value: roll, text: T("foe_strike", w, { schar }) });
         else lines.push({ kind: "roll", value: roll, text: "" });
       }
       // Antwort: eine volle Woche nach Rückschlag (15–19) oder Dunkler Stunde (20) trifft extra.
       if (ratio >= 1 && prevRoll != null && prevRoll >= 15) {
         dmg += prevRoll === 20 ? DMG.session * 2 : DMG.session;
         stats.crits++;
-        lines.push({ kind: "text", text: T("retort", stats.crits - 1) });
+        lines.push({ kind: "text", text: T("retort", stats.crits - 1, { schar }) });
       }
       prevRoll = roll;
       // Besiegte Bestien der Woche: entfesselt oder mutiert, Serien als Doppelschlag
