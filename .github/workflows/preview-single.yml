@@ -45,6 +45,6 @@ jobs:
         run: |
           git config user.name "vibe-preview"
           git config user.email "noreply@mistral.ai"
-          git add dist-single
+          git add -f dist-single
           git commit -m "vorschau: single-file build"
           git push origin HEAD:${{ github.ref_name }}
