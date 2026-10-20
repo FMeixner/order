@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.70.0] – 2026-10-20
+
+### Geändert
+- Der Aschekurier hat eine Stimme: Alle Erzähltabellen sind in dunkel-epischer Tonalität neu geschrieben (näher an Mystik als an Stenogramm), mit längeren Perioden und selteneren Versalschlagzeilen. Die warmen Randnotizen (aside) bleiben unverändert.
+- Feuilleton: Jede Wochenmitteilung bekommt eine sinnliche zweite Zeile aus der Stadt — Nebel, Uhrmacher, Tauben, Kanäle.
+- Leitmotiv ({motiv}): Jeder Orden zieht einmal ein wiederkehrendes Motiv der Stadt, das im Feuilleton und im Finale zurückkehrt.
+- Tell des Widersachers ({tell}): Jeder Orden zeichnet einmal ein Erkennungsmerkmal des Widersachers, das in Steckbrief, Rückschlag und Stand verwoben wird.
+- Akkord-Kurve: Wochen-, Feuilleton- und Lagentexte liegen ab Akt 2 in eigenen Varianten vor (week_full_2, lage_3 …), der Orden verdichtet sich zum Finale hin. Ohne Variante fällt die Ausgabe auf die Basistabelle zurück; eigene Welten funktionieren unverändert weiter.
+
 ## [0.69.0] – 2026-10-20
 
 ### Geändert
