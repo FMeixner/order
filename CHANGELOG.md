@@ -9,6 +9,9 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 - Der Aschekurier druckt eine eigene Zeile für die Entlastungswoche („Die Pressen laufen langsamer“).
 - Hilfe: neuer Abschnitt zur Entlastungswoche mit der Forschungslage (Coleman et al., 2024; Pancar et al., 2026; Travis et al., 2022), Literaturliste entsprechend erweitert.
 
+### Behoben
+- Wochen-Vorsprung: Wer die laufende Woche komplett abschließt und danach auch die Folgewoche (etwa beim schnellen Durchklicken oder Nachtragen), blieb in der Folgewoche hängen — die Ansicht sprang nur eine Woche vor. Jetzt springt sie über jede voll erledigte Woche hinweg bis zur ersten offenen (auch über eine Phasengrenze, vor der Testwoche hält sie an).
+
 ## [0.70.0] – 2026-10-20
 
 ### Geändert
