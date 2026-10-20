@@ -25,13 +25,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-      - name: Schreibtest (darf GITHUB_TOKEN pushen?)
-        if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'schreibtest')
-        run: |
-          git config user.name "vibe-preview"
-          git config user.email "noreply@mistral.ai"
-          git commit --allow-empty -m "schreibtest: GITHUB_TOKEN darf pushen"
-          git push origin HEAD:${{ github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
