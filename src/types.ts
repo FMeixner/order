@@ -390,6 +390,8 @@ export interface AppState {
     pack?: Record<string, unknown> | null;
     /** Zuletzt gelesener Bericht, damit ein neuer Bericht aufgeklappt erscheint */
     seen?: string;
+    /** Würfe des Widersachers je Ordenswoche („blockId:Woche“ → 1–20). Du würfelst selbst; einmal eingetragen, bleibt die Zahl stehen. */
+    rolls?: Record<string, number>;
   };
 }
 

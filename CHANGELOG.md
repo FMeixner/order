@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.69.0] – 2026-10-20
+
+### Geändert
+- Wurf des Widersachers: Der W20 gehört jetzt dem Widersacher. Du würfelst physisch und trägst die Zahl im Wochenblatt ein. 1–7 ist ein rein erzählerischer Patzer, 8–14 läuft nur ins Protokoll, 15–19 (Rückschlag) und 20 (dunkle Stunde) beantwortet die Woche mit einer bzw. zwei zusätzlichen Einheiten-Treffern in der Folgewoche. Schaden entsteht nie direkt aus dem Würfel, und die Spielebene vergibt keine trainingsrelevanten Vorteile.
+- Galerie der Widersacher: Über dem Archiv der Chronik zeigt eine dauerhafte, aus dem Log abgeleitete Galerie jeden entkommenen und besiegten Widersacher mit Ausgang.
+- Entkommene Widersacher kehren im nächsten Orden derselben Szene zurück (Rache-Kapitel mit eigenem Prolog).
+- Neue Erzähltabellen für Patzer, Rückschlag, dunkle Stunde, Erwiderungen und Rückkehr; alte Kritisch-/Hohe-Treffer-Tabellen entfallen.
+
 ## [0.67.0] – 2026-10-19
 
 ### Geändert

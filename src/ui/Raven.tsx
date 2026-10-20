@@ -1,7 +1,7 @@
 /* Erzähler (Der Aschekurier): Ausgabe der Woche als Logo in der Ordenskarte auf „Heute“, Archiv im Log, Turnierbeilage in der Testwoche, Einstellungen im Setup. */
 import { useRef, useState } from "react";
 import { FOCUS_BY_ID } from "../data";
-import { chapterOf, checkPack, GENERIC_PACK, narratorOf, tournamentOf, type Line } from "../engine/saga";
+import { chapterOf, checkPack, foeGallery, GENERIC_PACK, narratorOf, tournamentOf, type Line } from "../engine/saga";
 import { focusName, isTestBlock, weekInBlock } from "../engine/plan";
 import type { AppState, PlanBlock } from "../types";
 import { Collapse, Field, Modal, Seg } from "./common";
@@ -46,6 +46,26 @@ export function RavenLines({ lines, aside = "In eigener Sache" }: { lines: Line[
   );
 }
 
+/** Wurf des Widersachers: du würfelst selbst (echter Würfel, Würfel-App), die Zahl bleibt in der Ausgabe stehen. */
+function FoeRoll({ update, blockId, week }: { update: Update; blockId: string; week: number }) {
+  const [v, setV] = useState("");
+  const enter = () => {
+    const n = parseInt(v.replace(",", ""), 10);
+    if (!(n >= 1 && n <= 20)) return;
+    update((st) => ({ ...st, narrative: { ...st.narrative!, rolls: { ...(st.narrative?.rolls ?? {}), [`${blockId}:${week}`]: n } } }));
+  };
+  return (
+    <div className="stack small">
+      <div className="row wrap">
+        <span className="muted small">Wurf des Widersachers (W20):</span>
+        <input type="number" inputMode="numeric" min={1} max={20} className="kg-in" style={{ width: "4.5rem" }} value={v} onChange={(e) => setV(e.target.value)} />
+        <button className="btn ghost small" onClick={enter}>Eintragen</button>
+      </div>
+      <p className="muted small">Du würfelst für den Widersacher. Der Wurf allein trifft nie: Erst die volle Woche danach ist die Antwort. Einmal eingetragen, bleibt die Zahl stehen.</p>
+    </div>
+  );
+}
+
 /** Kleines Logo in der Ordenskarte auf „Heute“; Antippen öffnet die Ausgabe: Prolog in Woche 1, sonst der Bericht
     der letzten abgeschlossenen Woche. Ein Punkt zeigt eine ungelesene Ausgabe. */
 export function RavenBadge({ state, update, block, today }: { state: AppState; update: Update; block: PlanBlock; today: string }) {
@@ -75,7 +95,10 @@ export function RavenBadge({ state, update, block, today }: { state: AppState; u
         <Modal title={title} onClose={() => setOpen(false)}>
           <div className="raven">
             <RavenLines lines={(showWeek ? showWeek.lines : ch.prologue).filter((l) => ch.ended || l.kind !== "hp")} aside={nr.aside} />
-            {!ch.ended && <RavenLines lines={[{ kind: "hp", text: cap1(ch.foe.nom), value: ch.liveHp, max: ch.hp }]} />}
+            {showWeek && showWeek.done > 0 && showWeek.roll == null && (
+              <FoeRoll update={update} blockId={block.id} week={showWeek.week} />
+            )}
+            {!ch.ended && <RavenLines lines={[{ kind: "hp", text: cap1(ch.foe.nom), value: ch.liveHp, max: ch.hp }]} />}}
             {ch.ended && <><hr /><RavenLines lines={ch.saga} aside={nr.aside} /></>}
             {showWeek && <p className="muted small">Alle Ausgaben stehen im Log unter „{nr.archive}“.</p>}
           </div>
@@ -88,10 +111,24 @@ export function RavenBadge({ state, update, block, today }: { state: AppState; u
 /** Chronik im Log: je Orden Prolog, Wochen und Saga */
 export function RavenChronicle({ state, today }: { state: AppState; today: string }) {
   const blocks = state.plan.filter((b) => !isTestBlock(b) && FOCUS_BY_ID[b.focusId] && b.start <= today).sort((a, b) => b.start.localeCompare(a.start));
+  const gal = foeGallery(state, today);
   if (!blocks.length) return null;
   const nr = narratorOf(state);
   return (
-    <Collapse title={nr.archive} meta={`${blocks.length} Orden`}>
+    <>
+      {gal.length > 0 && (
+        <Collapse title={nr.gallery} meta={`${gal.length} Widersacher`}>
+          <div className="stack">
+            {gal.map((r) => (
+              <div key={r.blockId} className="row between">
+                <span>{cap1(r.foe.nom)}{r.outcome === "close" ? " · entkommen" : r.outcome === "triumph" ? " · triumphal besiegt" : " · besiegt"}</span>
+                <span className="muted small">{focusName(r.focusId)} · {r.scene}</span>
+              </div>
+            ))}
+          </div>
+        </Collapse>
+      )}
+      <Collapse title={nr.archive} meta={`${blocks.length} Orden`}>
       <div className="stack">
         {blocks.map((b) => {
           const ch = chapterOf(state, b, today);
@@ -104,6 +141,7 @@ export function RavenChronicle({ state, today }: { state: AppState; today: strin
         })}
       </div>
     </Collapse>
+    </>
   );
 }
 
@@ -147,7 +185,7 @@ export function NarrativeSettings({ state, update }: { state: AppState; update: 
   return (
     <Collapse title="Erzähler" meta={n.on ? `an · ${packName}` : "aus"}>
       <div className="stack">
-        <p className="muted small">Der Aschekurier, ein Flugblatt, berichtet über deine Trainingswochen: ein Widersacher je Orden, eine Ausgabe pro Woche, am Ende eine Sonderausgabe. Die Testwoche wird zum Turnier. Am Training ändert sich nichts. Ausgeschaltet verschwindet nur der Text, beim Einschalten ist die Geschichte bis heute sofort da.</p>
+        <p className="muted small">Der Aschekurier, ein Flugblatt, berichtet über deine Trainingswochen: ein Widersacher je Orden, eine Ausgabe pro Woche, am Ende eine Sonderausgabe. Den W20 wirfst du selbst für den Widersacher; entkommene Widersacher kehren zurück, besiegte stehen in der Galerie im Log. Am Training ändert sich nichts. Ausgeschaltet verschwindet nur der Text, beim Einschalten ist die Geschichte bis heute sofort da.</p>
         <Seg value={n.on ? "on" : "off"} options={[{ value: "off", label: "aus" }, { value: "on", label: "an" }]} onChange={(v) => set({ on: v === "on" })} />
         {n.on && (
           <>
