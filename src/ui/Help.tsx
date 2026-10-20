@@ -136,6 +136,14 @@ export function Help() {
         <li>Deficit Push-Ups brauchen Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln (Setup › Equipment). Fehlt das am Ort, kommen Banded Push-Ups, ohne Band normale Push-Ups mit einem Satz mehr.</li>
       </ul>
 
+      <h3>Entlastungswoche</h3>
+      <ul>
+        <li>Vorschlag der App, wenn es Zeit ist: halbe Sätze, mindestens zwei, und keine Bestien. Gewichte, Übungen und Trainingstage bleiben, wie sie sind. Angenommen oder abgelehnt wird direkt in der Einblendung; über „Weiter normal trainieren“ jederzeit widerrufbar. Ein „nein“ gilt nur für die eine Woche.</li>
+        <li>Empfohlen wird nach Rhythmus — in Phasen ab acht Wochen ab der fünften Woche alle vier Wochen — oder reaktiv, wenn du in zwei Wochen dreimal „zu schwer“ gemeldet hast. Nie in oder direkt vor einer Testwoche und nie dicht nach der letzten Entlastung.</li>
+        <li>Warum kein Extra-Wachstum zu erwarten ist: Eine Woche Komplettpause mitten im Programm hat das Muskelwachstum nicht verbessert und die Unterkörper-Kraft sogar leicht verschlechtert (Coleman et al., 2024); Entlastungswochen mit weniger Volumen und Frequenz haben Wachstum und Kraftausdauer nicht gebremst (Pancar et al., 2026). Die Entlastung ist Ermüdungs- und Risikomanagement, kein Trainingsreiz.</li>
+        <li>Warum die leichte Woche besser ist als gar nicht trainieren: Beinkraft hält drei bis fünf Tage Pause aus, die Kraft oben war nach fünf Tagen schon messbar leichter (Travis et al., 2022). Weitertrainieren mit halber Last schlägt das Aussetzen.</li>
+      </ul>
+
       <h3>Alltagslast</h3>
       <ul>
         <li>Ist in einer Phase viel los, läuft etwa die Hälfte der Übungen eines Tages an Maschine oder Kabel, wenn das Studio sie hat. Was ohnehin an Maschine oder Kabel läuft, zählt mit: Ein Maschinentag bleibt unverändert. Der erste große Lift des Tages bleibt frei.</li>

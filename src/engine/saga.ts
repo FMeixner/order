@@ -11,6 +11,7 @@ import type { AppState, PlanBlock, Session } from "../types";
 import { evaluateBlock } from "./norms";
 import { addDays, beastById, blockFocus, blockWeeks, mondayOf, dayRoleMap, isDeloadWeek, isTestBlock, weekInBlock } from "./plan";
 import { focusFor } from "./weekplan";
+import { isDeloaded } from "./deload";
 
 /* ---------- Welt-Paket ---------- */
 export type Weak = "bestie" | "stahl" | "treue";
@@ -291,6 +292,8 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
     lines.push({ kind: "text", text: actT(done === 0 ? "week_rest" : ratio >= 1 ? "week_full" : ratio >= 0.5 ? "week_good" : "week_some", w, { n: done, von: planned, schar }) });
     // Feuilleton: die sinnliche Nahaufnahme, immer die zweite Stimme der Ausgabe
     lines.push({ kind: "text", text: actT(done === 0 ? "feuilleton_still" : "feuilleton", w, { schar }) });
+    // Entlastungswoche: die Stadt ruht, und der Widersacher wartet
+    if (isDeloaded(state, b, w)) lines.push({ kind: "text", text: T("deload", w) });
     let dmg = done * DMG.session;
     let roll: number | null = null;
     let weakHit = false;

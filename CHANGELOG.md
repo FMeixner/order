@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.71.0] – 2026-10-20
+
+### Neu
+- Entlastungswoche: Die App empfiehlt nach Rhythmus (ab der fünften Woche alle vier Wochen, in Phasen ab acht Wochen) oder reaktiv (dreimal „zu schwer“ innerhalb von zwei Wochen) eine Woche mit halben Sätzen — Bestien und Finisher ruhen, Gewichte, Übungen und Trainingstage bleiben. Angenommen oder abgelehnt wird in der Einblendung auf der Startseite, widerrufbar über „Weiter normal trainieren“; ein „Nein“ gilt nur für die eine Woche. Nie empfohlen in oder direkt vor einer Testwoche, nie dicht nach der letzten Entlastung.
+- Der Aschekurier druckt eine eigene Zeile für die Entlastungswoche („Die Pressen laufen langsamer“).
+- Hilfe: neuer Abschnitt zur Entlastungswoche mit der Forschungslage (Coleman et al., 2024; Pancar et al., 2026; Travis et al., 2022), Literaturliste entsprechend erweitert.
+
 ## [0.70.0] – 2026-10-20
 
 ### Geändert
