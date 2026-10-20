@@ -184,9 +184,10 @@ export function beastClass(min: number): BeastClass {
 /* ---------- Was eine Bestie wirklich braucht ----------
    Die Tags in beasts.json sind grob (bar_or_rings). Zusätzlich liest die App die Übungen aus dem Text:
    Ring Push-ups brauchen Ringe, Face Pulls ein Band oder Kabel, Kreuzheben eine Langhantel, „21c Row“ ein Rudergerät. */
-export type BeastNeed = "rings" | "bar" | "band" | "band_or_cable" | "barbell" | "kb_db" | "rower" | "bike";
+export type BeastNeed = "rings" | "bar" | "band" | "band_or_cable" | "barbell" | "kb_db" | "sandbag" | "rower" | "bike";
 const NEED_RULES: [RegExp, BeastNeed | null][] = [
   [/^plank/i, null],
+  [/sandbag/i, "sandbag"],
   [/ring push|rto ring|ring dip|ring row|ring triceps|ring chest fl/i, "rings"],
   [/muscle-?up|pull-?up|chin-?up|c2b|toes-to-bar|\bttb\b|knees-to-elbow|hanging|passive hang|commando|archer row|incline row|windshield wiper/i, "bar"],
   [/face pull|ext(ernal)? rotation/i, "band_or_cable"],
@@ -223,14 +224,14 @@ export function beastNeeds(b: Beast): Set<BeastNeed> {
 export type BeastRegion = "nord" | "sued";
 export function beastRegion(b: Beast): BeastRegion {
   const n = beastNeeds(b);
-  const loaded = n.has("kb_db") || n.has("barbell") || n.has("band") || n.has("band_or_cable")
+  const loaded = n.has("kb_db") || n.has("barbell") || n.has("band") || n.has("band_or_cable") || n.has("sandbag")
     || /\d+\s?%/.test(b.work);
   return loaded ? "sued" : "nord";
 }
 
 /** Laut: Sprünge, Burpees, Split Lunges, Sprints und Läufe, Seilspringen, Klatsch-Varianten, Sprawls,
     Langhantel vom Boden (Deadlift, Sumo Pull, Muscle Snatch). Mountain Climbers und Swings sind leise genug. */
-const LOUD = /jump|burpee|split lunge|sprint|\brun\b|obstacle|single under|skater|frogger|jumping jack|sprawl|clapping|combat roll|tuck jump|standup|(?<!band |single-leg )deadlift|sumo pull|muscle snatch/i;
+const LOUD = /jump|burpee|split lunge|sprint|\brun\b|obstacle|single under|skater|frogger|jumping jack|sprawl|clapping|combat roll|tuck jump|standup|(?<!band |single-leg |sandbag |romanian )deadlift|sumo pull|muscle snatch/i;
 /** Braucht Platz: Strecke statt Stelle (Lunge Walk, Crawls, Weitsprung, Sprints, Läufe, Skaters, Rollen) */
 const SPACE = /lunge walk|crawl|broad jump|sprint|\brun\b|obstacle|skater|frogger|combat roll|walk\b/i;
 const works = (b: Beast) => [b.work, ...(b.parts?.map((x) => x.work) ?? [])];
@@ -267,6 +268,7 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
       : n === "band_or_cable" ? p.bands.length > 0 || p.has.cable
       : n === "barbell" ? !!p.barbell
       : n === "kb_db" ? p.dumbbells.length > 0 || p.kettlebells.length > 0
+      : n === "sandbag" ? p.has.sandbag
       : n === "rower" ? p.has.rower
       : n === "bike" ? p.has.bike : true;
     if (!ok) return false;

@@ -136,7 +136,7 @@ function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: BeastCtx;
         <div className="row">
           <input type="number" inputMode="decimal" className="kg-in" placeholder={sug?.kg != null ? String(sug.kg) : "kg"} value={cur?.kg ?? ""}
             onChange={(e) => onChange({ kg: e.target.value === "" ? undefined : parseFloat(e.target.value.replace(",", ".")) })} />
-          <span className="muted">kg {kind === "barbell" ? "Langhantel" : kind === "kettlebell" ? "Kettlebell" : "je Kurzhantel"}, für alle Lastübungen</span>
+          <span className="muted">kg {kind === "barbell" ? "Langhantel" : kind === "kettlebell" ? "Kettlebell" : kind === "sandbag" ? "Sandsack" : "je Kurzhantel"}, für alle Lastübungen</span>
         </div>
       )}
       {pl && !sug && <div className="muted">1RM {pl.exercise} noch unbekannt: Gewicht selbst festlegen.</div>}
