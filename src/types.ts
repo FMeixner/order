@@ -347,6 +347,8 @@ export interface AppState {
   /** 1RM je Übung, selbst eingetragen (sonst geschätzt aus dem Log) */
   oneRM?: Record<string, { kg: number; date: string }>;
   reduced: Record<string, boolean>; // "blockId:week" → −1 Satz
+  /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
+  deload?: Record<string, "ja" | "nein">;
   menuChoice: Record<string, string>; // blockId:menuId → Option
   tests: Record<string, TestResult[]>;
   who5: { date: string; blockId: string; score: number }[];

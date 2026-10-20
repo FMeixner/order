@@ -839,6 +839,12 @@
       "STILLE. Die Stadt atmet aus. Irgendwo schlafen Glocken, die morgen wieder alles schlagen werden. {Held} ruht — und die Nacht lernt den Namen auswendig.",
       "AUS DEM FEUILLETON. Nichts geschehen, heißt es in den Gassen. Der Nebel korrigiert: Noch nichts geschehen. Beides druckt die Redaktion. Nur die Reihenfolge stimmt."
     ],
+    "deload": [
+      "ENTLASTUNGSWOCHE. Halbe Sätze, keine Bestien — auf Anordnung der Redaktion. {Feind} wartet. Auch ein Widersacher muss Geduld üben, und sei es unfreiwillig.",
+      "HALBTAKT. Die Pressen laufen langsamer diese Woche, und niemand im Blatt hält das für Schwäche. Manche Ausgaben drucken leiser und werden trotzdem gelesen.",
+      "KLEINE ANKÜNDIGUNG. {held} schärft diese Woche, statt zu schlagen. Der Stahl hat Geduld, sagt man {ort}. Und der Nebel hat noch mehr.",
+      "VERMERK DER REDAKTION. Keine Jagd diese Woche, keine Schlagzeilen. Wer Kraft sammelt, verliert keine Zeit. Er sammelt Zinsen."
+    ],
     "motiv": [
       "die Glockenfrau an der Brücke",
       "der Hund vor der Druckerei, der keinen Namen hat",
