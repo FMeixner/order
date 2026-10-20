@@ -6,8 +6,8 @@ import type { AppState, Beast, BeastTime, EquipmentProfile } from "../types";
 import { beastFamily, beastNeeds, beastRegion } from "./plan";
 import { snapNearest, stepLoad } from "./loads";
 
-export type LoadKind = "barbell" | "kettlebell" | "dumbbell" | "band";
-export const LOAD_LABEL: Record<LoadKind, string> = { barbell: "Langhantel", kettlebell: "Kettlebell", dumbbell: "Kurzhantel", band: "Band" };
+export type LoadKind = "barbell" | "kettlebell" | "dumbbell" | "band" | "sandbag";
+export const LOAD_LABEL: Record<LoadKind, string> = { barbell: "Langhantel", kettlebell: "Kettlebell", dumbbell: "Kurzhantel", band: "Band", sandbag: "Sandsack" };
 
 const base = (b: Beast): Beast => BEAST_BY_ID[beastFamily(b.id)[0]] ?? b;
 export const isLoadBeast = (b: Beast): boolean => !b.parts && beastRegion(base(b)) === "sued";
@@ -16,6 +16,7 @@ export const capOf = (b: Beast): number | null => (isLoadBeast(b) ? (base(b).cap
 const KB_RX = /\bkb\b|kettlebell|swing|halo|goblet|sumo pull|side bend/i;
 export function loadKind(b: Beast): LoadKind | null {
   const n = beastNeeds(base(b));
+  if (n.has("sandbag")) return "sandbag";
   if (n.has("barbell")) return "barbell";
   if (n.has("kb_db")) return KB_RX.test(b.work) && !/thruster|db |chest fl|reverse fl|curl|triceps|shrug/i.test(b.work) ? "kettlebell" : "dumbbell";
   if (n.has("band") || n.has("band_or_cable")) return "band";
@@ -66,7 +67,7 @@ export function loadRecord(b: Beast, times: BeastTime[] | undefined): BeastTime 
   return ok.reduce((a, c) => ((c.kg ?? -1) > (a.kg ?? -1) || (c.band && a.band && bandRank(c.band) > bandRank(a.band)) ? c : a), ok[0]);
 }
 
-const EQUIP_OF: Record<Exclude<LoadKind, "band">, "barbell" | "dumbbell" | "kettlebell"> = { barbell: "barbell", dumbbell: "dumbbell", kettlebell: "kettlebell" };
+const EQUIP_OF: Record<Exclude<LoadKind, "band">, "barbell" | "dumbbell" | "kettlebell" | "sandbag"> = { barbell: "barbell", dumbbell: "dumbbell", kettlebell: "kettlebell", sandbag: "sandbag" };
 
 /** Vorschlag fürs Gewicht, immer auf ein am Ort vorhandenes Gewicht gelegt:
     nach dem letzten Lauf eine Stufe höher (Technik gut, im Timecap), eine tiefer (Technik schlecht oder Timecap gerissen), sonst gleich.

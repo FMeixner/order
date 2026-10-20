@@ -12,6 +12,7 @@
     "finale": "Letzte Ausgabe",
     "aside": "In eigener Sache",
     "tournament": "Turnierbeilage",
+    "gallery": "Galerie der Widersacher",
     "acts": [
       "",
       "Die Lage spitzt sich zu",
@@ -641,21 +642,27 @@
       "LÜCKENLOS. {Held} wurde an jedem geplanten Tag gesichtet. {Feind} lässt nachts das Licht an.",
       "SONDERSEITE. Alle {von} Streifzüge. Leser fragen, ob {held} überhaupt schläft. Antwort: ja, und zwar gut."
     ],
-    "crit": [
-      "SENSATION: Natürliche Zwanzig! {Held} traf {feind_akk} an einer Stelle, von der Fachleute bislang nur Gerüchte kannten.",
-      "VOLLTREFFER. Die Würfel meinten es gut. Ein Augenzeuge: „So etwas habe ich noch nicht gesehen, und ich habe viel gesehen.“",
-      "GLÜCKSWURF DER WOCHE. Eine glatte Zwanzig. {Feind} lehnte jeden Kommentar ab."
+    "foe_fumble": [
+      "SCHLECHTER WURF. {Feind} griff an und traf nichts als die eigene Reputation. Die {schar} behaupten, sie hätten nichts gesehen. Wir glauben ihnen.",
+      "PANNE. {Feind} spielte einen Trumpf und verlor ihn im Nebel. Die Buchhaltung des Bösen überweist die Kosten an niemanden.",
+      "AUSRUTSCHER. {Feind} rutschte {ort} auf dem eigenen Machtrauch aus. Niemand lacht. Offiziell."
     ],
-    "fumble": [
-      "KURIOSES. {Held} verwechselte eine Tür und stand plötzlich in einer Wäscherei. Keine Verletzten. Die Wäscherei bittet um Rückgabe eines Bettlakens.",
-      "MISSGESCHICK. Sturz über die eigene Ausrüstung, vor Publikum. Schaden: keiner. Würde: angekratzt. Das Training zählt trotzdem voll.",
-      "Eine Eins. Unsere Karikaturistin hat bereits gezeichnet. Die Redaktion betont: Würfel strafen nicht, sie würzen.",
-      "PANNE AM RANDE. Der Plan war elegant, die Ausführung war auch eine Ausführung. Kein Schaden."
+    "foe_strike": [
+      "RÜCKSCHLAG. {Feind} hat zurückgeschlagen, hart und ohne Vorwarnung. Die Redaktion druckt diese Ausgabe schwarz am Rand. Antwortet {held} mit einer vollen Woche, trifft sie doppelt.",
+      "GEGENANGRIFF. Ein guter Wurf für {feind_akk}, ein dunkler Tag {ort}. An den Rand der Seite schreibt die Zeitung: Volle Woche, und der Rückschlag kehrt sich um."
     ],
-    "high": [
-      "Glück im Spiel: ein guter Wurf, ein sauberer Treffer mehr.",
-      "Die Würfel standen günstig. {Feind} spürte es bis in die Stiefel.",
-      "Günstige Sterne, laut Horoskopseite. Diesmal hatte sie recht."
+    "foe_dark": [
+      "DUNKLE STUNDE. Eine glatte Zwanzig für {feind_akk}: {fp} hat alles auf eine Karte gesetzt, und die Karte steht. Eine volle Woche als Antwort trifft jetzt doppelt so hart.",
+      "SONDERAUSGABE DES BÖSEN. {Feind} würfelte voll und weiß es. Die Redaktion hält die Titelseite frei – für die Antwort."
+    ],
+    "retort": [
+      "ANTWORT. Volle Woche trotz Rückschlag. Die Redaktion hebt den Hut, und zwar langsam.",
+      "DIE ANTWORT. {Held} kam wieder, Tag um Tag, und der Rückschlag {feind_gen} zersplitterte daran. So entsteht eine Legende, sagt die Druckerei.",
+      "GEGENSTOSS. Kein Wort, kein Pochen, nur die volle Woche. {Feind} hat die Rechnung bekommen, den Rahmen dazu gleich mit."
+    ],
+    "return_intro": [
+      "RÜCKKEHR. {Feind} ist wieder {ort}, mit den Narben der letzten Begegnung und einer Rechnung offen. Die alte Geschichte steht im Archiv.",
+      "BEKANNTES GESICHT. {Feind} kehrte zurück. Wer {ihn} schon einmal gestellt hat, weiß: Beim zweiten Mal gibt es keine Ausreden."
     ],
     "pr": [
       "REKORD. {Bestie}, aus dem Gefolge {feind_gen}, schneller bezwungen als je zuvor. Die Zeit liegt der Redaktion vor und ist beglaubigt.",

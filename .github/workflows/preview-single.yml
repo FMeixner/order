@@ -1,0 +1,35 @@
+name: Vorschau Single-File
+
+# Temporärer Workflow: baut die kombinierte Vorschau (Sandsack-Bestien + Aschekurier)
+# als einzelne HTML-Datei und legt sie im Branch ab, damit sie per CDN-Link im
+# Smartphone-Browser getestet werden kann. Kann gelöscht werden, sobald die PRs
+# gemergt sind und die Vorschau nicht mehr gebraucht wird.
+
+on:
+  push:
+    branches: [vorschau]
+    paths-ignore: ["dist-single/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: SINGLE=1 npm run build
+      - name: Single-File-Build committen
+        run: |
+          git config user.name "vibe-preview"
+          git config user.email "noreply@mistral.ai"
+          git add dist-single
+          git commit -m "vorschau: single-file build" || echo "nichts Neues zu committen"
+          git push

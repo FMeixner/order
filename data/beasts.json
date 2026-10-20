@@ -79,5 +79,10 @@
   {"id":"ng-gullinbursti","name":"Klabautermann","orig":"Gullinbursti","rounds":5,"minutes":18,"equipment":["box"],"work":"Buy-in: 100 Supermen · 20 Box Jumps · 20 Bulgarian Split Squats · Buy-out: 100 Single Unders"},
   {"id":"ng-gefjun","name":"Fliegender Holländer","orig":"Gefjun","rounds":1,"minutes":65,"equipment":["bike"],"work":"6k Bike · 3k Run · 6k Bike","noShort":true},
   {"id":"ng-solveig","name":"Lutin","orig":"Solveig","rounds":2,"minutes":16,"equipment":["bodyweight_only"],"work":"Buy-in: 100 Single Unders · 50 Pistol Squats · 50 Squat Jumps · Buy-out: 100 Single Unders"},
-  {"id":"ng-odinsson","name":"Huma","orig":"Odinsson","rounds":2,"minutes":11,"equipment":["kb_db"],"work":"50 KB Calf Raises · 40 Swings · 30 Goblet Lunges · 20 KB Snatches · 10 High Jumps · Rest 30s","cap":14,"start":{"kg":16}}
+  {"id":"ng-odinsson","name":"Huma","orig":"Odinsson","rounds":2,"minutes":11,"equipment":["kb_db"],"work":"50 KB Calf Raises · 40 Swings · 30 Goblet Lunges · 20 KB Snatches · 10 High Jumps · Rest 30s","cap":14,"start":{"kg":16}},
+  {"id":"ng-skuld","name":"Pazuzu","orig":"Skuld","rounds":3,"minutes":11,"equipment":["sandbag"],"work":"12 Sandbag Halo · 18 Sandbag Squat · 18 Sandbag Bent-Over Row · 9 Sandbag Ground-to-Shoulder","cap":14,"start":{"kg":20}},
+  {"id":"ng-verdandi","name":"Edimmu","orig":"Verdandi","rounds":5,"minutes":14,"equipment":["sandbag"],"work":"20/18/16/14/12 Sandbag Squat · 10 Sandbag Ground-to-Shoulder · Rest 60s","cap":18,"start":{"kg":20}},
+  {"id":"ng-urd","name":"Rabisu","orig":"Urd","rounds":3,"minutes":17,"equipment":["sandbag"],"work":"21/15/9 Sandbag Deadlift · 21/15/9 Sandbag Bent-Over Row · 21/15/9 Sandbag Squat","cap":21,"start":{"kg":20}},
+  {"id":"ng-eir","name":"Div","orig":"Eir","rounds":4,"minutes":12,"equipment":["sandbag"],"work":"15 Sandbag Squat · 12 Sandbag Romanian Deadlift · 9 Sandbag Ground-to-Shoulder · Rest 60s","cap":15,"start":{"kg":20}},
+  {"id":"ng-grid","name":"Ghaddar","orig":"Grid","rounds":2,"minutes":10,"equipment":["sandbag"],"work":"10 Sandbag Deadlift · 10 Sandbag Ground-to-Shoulder · 10 Sandbag Bent-Over Row · Rest 60s","cap":13,"start":{"kg":20}}
 ]
