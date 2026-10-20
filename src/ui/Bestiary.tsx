@@ -9,7 +9,7 @@ import { Collapse, kg, Seg } from "./common";
 import { fmt } from "./Timer";
 
 const NEED_LABEL: Record<BeastNeed, string> = {
-  rings: "Ringe", bar: "Stange", band: "Band", band_or_cable: "Band oder Kabel", barbell: "Langhantel", kb_db: "Hantel", rower: "Rudergerät", bike: "Rad",
+  rings: "Ringe", bar: "Stange", band: "Band", band_or_cable: "Band oder Kabel", barbell: "Langhantel", kb_db: "Hantel", sandbag: "Sandsack", rower: "Rudergerät", bike: "Rad",
 };
 
 type Stand = "alle" | "bezwungen" | "offen";
