@@ -168,7 +168,8 @@ describe("Wurf des Widersachers", () => {
   });
   it("keine Zeile verlässt die Druckerei mit ungefülltem Platzhalter", () => {
     const s0 = train(base(), A, 1);
-    for (const rolls of [{ "b1:1": 3, "b1:2": 18 }, { "b1:1": 20 }] as const) {
+    const cases: Record<string, number>[] = [{ "b1:1": 3, "b1:2": 18 }, { "b1:1": 20 }];
+    for (const rolls of cases) {
       const ch = chapterOf({ ...s0, narrative: { ...s0.narrative!, rolls } }, A, "2026-11-10");
       for (const wk of ch.weeks) for (const l of wk.lines) expect(l.text, `Woche ${wk.week}: ${l.text}`).not.toMatch(/\{[A-Za-z_]+\}/);
     }
