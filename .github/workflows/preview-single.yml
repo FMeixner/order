@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -32,4 +34,4 @@ jobs:
           git config user.email "noreply@mistral.ai"
           git add dist-single
           git commit -m "vorschau: single-file build" || echo "nichts Neues zu committen"
-          git push
+          git push origin HEAD:${{ github.ref_name }}
