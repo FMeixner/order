@@ -45,7 +45,6 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
     if (!blockAt(state.plan, nm)) break;
     anchor = nm;
   }
-  const todayBlock = blockAt(state.plan, today);
   const ahead = anchor !== today;
   const block = blockAt(state.plan, anchor);
   const [pick, setPick] = useState<Weekday | null>(null);
