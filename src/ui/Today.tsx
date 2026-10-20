@@ -33,11 +33,20 @@ function weekDone(state: AppState, b: PlanBlock, week: number): boolean {
 }
 
 export function Today({ state, update, today, goPlan }: { state: AppState; update: Update; today: string; goPlan: () => void }) {
-  // Woche geschafft: die Folgewoche ist ab sofort die laufende, voll bearbeitbar (auch über eine Phasengrenze)
+  // Woche(n) geschafft: Jede voll erledigte Woche vor der heutigen zählt als vorbei — auch mehrere hintereinander
+  // (schnelles Nachtragen oder Durchklicken) und über eine Phasengrenze hinweg. Die Ansicht springt in die
+  // erste Woche, die noch nicht komplett ist.
+  let anchor = today;
+  for (let guard = 0; guard < 60; guard++) {
+    const ab = blockAt(state.plan, anchor);
+    if (!ab || isTestBlock(ab)) break;
+    if (!weekDone(state, ab, weekInBlock(ab, anchor))) break;
+    const nm = addDays(mondayOf(anchor), 7);
+    if (!blockAt(state.plan, nm)) break;
+    anchor = nm;
+  }
   const todayBlock = blockAt(state.plan, today);
-  const nextMon = addDays(mondayOf(today), 7);
-  const ahead = !!todayBlock && weekDone(state, todayBlock, weekInBlock(todayBlock, today)) && !!blockAt(state.plan, nextMon);
-  const anchor = ahead ? nextMon : today;
+  const ahead = anchor !== today;
   const block = blockAt(state.plan, anchor);
   const [pick, setPick] = useState<Weekday | null>(null);
   const [showTraining, setShowTraining] = useState(false);
