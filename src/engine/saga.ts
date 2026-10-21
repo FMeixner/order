@@ -1,5 +1,7 @@
 /* Erzähler: Der Aschekurier, ein Flugblatt. Macht aus dem Log eine Geschichte, einen Orden lang.
-   Alles wird aus den Trainingsdaten berechnet, auch die Würfel (fester Startwert je Woche).
+   Alles wird aus den Trainingsdaten berechnet; der W20 gehört dem Widersacher und wird vom Nutzer
+   selbst gewürfelt und eingetragen (state.narrative.rolls), einmal eingetragen bleibt die Zahl stehen.
+   Der Wurf allein trifft nie: Erst die volle Woche danach ist die Antwort und trifft umso härter.
    Ein- und Ausschalten verliert also nichts, und die Geschichte ändert sich nicht beim Neuladen.
    Texte und Welt stehen in data/narrative/generic.json. Eigene Welten ersetzen Teile davon. */
 import { allRuns, isHunt, runGroups } from "./runs";
@@ -9,6 +11,7 @@ import type { AppState, PlanBlock, Session } from "../types";
 import { evaluateBlock } from "./norms";
 import { addDays, beastById, blockFocus, blockWeeks, mondayOf, dayRoleMap, isDeloadWeek, isTestBlock, weekInBlock } from "./plan";
 import { focusFor } from "./weekplan";
+import { isDeloaded } from "./deload";
 
 /* ---------- Welt-Paket ---------- */
 export type Weak = "bestie" | "stahl" | "treue";
@@ -17,7 +20,7 @@ export interface Scene { name: string; ort: string; setting: string[]; foes: Foe
 /** Wer erzählt, und wie die Rubriken heißen */
 export interface Narrator {
   name: string; archive: string; issue: string; first: string; special: string; finale: string;
-  aside: string; tournament: string; acts: string[]; parts: string[];
+  aside: string; tournament: string; gallery: string; acts: string[]; parts: string[];
 }
 export interface WorldPack {
   id: string;
@@ -89,9 +92,7 @@ export function deck<T>(arr: T[], seed: string, i: number): T {
   for (let k = idx.length - 1; k > 0; k--) { const j = Math.floor(r() * (k + 1)); [idx[k], idx[j]] = [idx[j], idx[k]]; }
   return arr[idx[((i % arr.length) + arr.length) % arr.length]];
 }
-export function d20(seed: string): number {
-  return 1 + Math.floor(rng(hash(seed))() * 20);
-}
+
 
 /* ---------- Platzhalter ---------- */
 export type Vars = Record<string, string | number | undefined>;
@@ -131,6 +132,8 @@ export interface Chapter {
   sceneId: string;
   scene: Scene;
   foe: Foe;
+  /** Der Widersacher ist entkommen und kehrt zurück: entkommen in einem früheren Orden derselben Szene */
+  returned: boolean;
   hp: number;
   /** Lebenspunkte jetzt, nach jeder erledigten Einheit (Start: hp) */
   liveHp: number;
@@ -146,7 +149,7 @@ export interface Chapter {
   vars: Vars;
 }
 
-const DMG = { session: 10, fullWeek: 5, pr: 5, steel: 2, crit: 10, high: 3 };
+const DMG = { session: 10, fullWeek: 5, pr: 5, steel: 2 };
 
 function sessionsOfWeek(state: AppState, b: PlanBlock, week: number): Session[] {
   return state.sessions.filter((s) => s.done && s.blockId === b.id && s.week === week);
@@ -201,20 +204,52 @@ export function previousOrderBlock(state: AppState, b: PlanBlock): PlanBlock | n
     .sort((a, c) => c.start.localeCompare(a.start))[0] ?? null;
 }
 
+/* ---------- Galerie der Widersacher ---------- */
+export interface FoeRecord { blockId: string; focusId: string; start: string; sceneId: string; scene: string; foe: Foe; outcome: Outcome; epithet: string }
+/** Abgeschlossene Kapitel mit ihrem Ausgang. Die Galerie wird aus dem Log abgeleitet, nichts wird gespeichert:
+    besiegt bleibt besiegt, entkommen bleibt entkommen – egal wie oft die App neu lädt. */
+export function foeGallery(state: AppState, today: string): FoeRecord[] {
+  return state.plan
+    .filter((b) => !isTestBlock(b) && FOCUS_BY_ID[b.focusId] && b.end <= today)
+    .sort((a, b) => a.start.localeCompare(b.start))
+    .map((b) => {
+      const ch = chapterOf(state, b, today, 1);
+      return { blockId: b.id, focusId: b.focusId, start: b.start, sceneId: ch.sceneId, scene: ch.scene.name, foe: ch.foe, outcome: ch.outcome!, epithet: ch.epithet };
+    })
+    .filter((r) => !!r.outcome);
+}
+
 export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 0): Chapter {
   const pack = mergePack(state.narrative?.pack as Partial<WorldPack> | null);
   const hero = heroOf(state);
   const [sceneId, scene] = sceneFor(pack, b.focusId);
   const seed = `${b.id}`;
-  const foe = deck(scene.foes, `${seed}:foe`, 0);
+  // Rückkehr: Der zuletzt entkommene Widersacher derselben Szene zieht wieder ein (Rache-Kapitel)
+  const escaped = depth === 0
+    ? foeGallery(state, today).filter((r) => r.blockId !== b.id && r.sceneId === sceneId && r.outcome === "close").at(-1) ?? null
+    : null;
+  const foe = escaped?.foe ?? deck(scene.foes, `${seed}:foe`, 0);
+  const returned = !!escaped;
   const total = blockWeeks(b);
   const curWeek = today > b.end ? total + 1 : weekInBlock(b, today);
   const epithet = deck(scene.epithets, `${seed}:epi`, 0);
+  // Leitmotiv und Tell: einmal pro Orden gezogen, ziehen sich durch alle Ausgaben.
+  // Der Tell darf {fp} enthalten — er wird deshalb gleich mit dem Pronomen des Widersachers gefüllt,
+  // sonst druckt die Druckerei den Platzhalter roh mit.
+  const foeVars: Vars = { fp: foe.pro, ort: scene.ort };
+  const motiv = fill(deck(pack.tables.motiv ?? [], `${seed}:motiv`, 0) || "", foeVars);
+  const tell = fill(deck(pack.tables.tell ?? [], `${seed}:tell`, 0) || "", foeVars);
   const vars: Vars = {
     ...heroVars(hero), feind: foe.nom, feind_dat: foe.dat, feind_akk: foe.akk, feind_gen: foe.gen ?? `von ${foe.dat}`, fp: foe.pro, ort: scene.ort,
-    beiname: fill(epithet, heroVars(hero)),
+    beiname: fill(epithet, heroVars(hero)), motiv, tell,
   };
   const T = (name: string, i: number, extra: Vars = {}) => fill(deck(pack.tables[name] ?? [""], `${seed}:${name}`, i), { ...vars, ...extra });
+  // Akkord-Kurve: Ab Akt 2 wird zuerst name_<akt> gesucht, sonst die Basistabelle.
+  const actT = (name: string, w: number, extra: Vars = {}) => {
+    const suf = act(w) >= 2 ? `_${act(w)}` : "";
+    const tbl = pack.tables[`${name}${suf}`] ?? pack.tables[name];
+    return fill(deck(tbl ?? [""], `${seed}:${name}${suf}`, w), { ...vars, ...extra });
+  };
 
   // Lebenspunkte: 90 % der geplanten Einheiten reichen für den Sieg
   let plannedTotal = 0;
@@ -230,12 +265,15 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
   } else prologue.push({ kind: "text", text: T("prolog", 0) });
   prologue.push({ kind: "text", text: deck(scene.setting, `${seed}:set`, 0) });
   prologue.push({ kind: "text", text: T("foe_intro", 0, { desc: foe.desc }) });
+  if (returned) prologue.push({ kind: "text", text: T("return_intro", 0) });
   prologue.push({ kind: "stat", text: T("weak_intro", 0, { weak: pack.weak[foe.weak] }) });
 
   const weeks: WeekRecap[] = [];
   let dealt = 0;
   const stats = { done: 0, planned: plannedTotal, prs: 0, steel: 0, crits: 0, fumbles: 0, beasts: 0 };
   let asideI = 0;
+  let prevRoll: number | null = null;
+  const act = (x: number) => (x <= Math.ceil(total / 3) ? 1 : x <= Math.ceil((2 * total) / 3) ? 2 : 3);
   for (let w = 1; w <= Math.min(total, curWeek); w++) {
     const list = sessionsOfWeek(state, b, w);
     const done = new Set(list.map((s) => s.role)).size;
@@ -243,7 +281,6 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
     const complete = w < curWeek || (planned > 0 && done >= planned);
     if (!complete) break;
     const lines: Line[] = [];
-    const act = (x: number) => (x <= Math.ceil(total / 3) ? 1 : x <= Math.ceil((2 * total) / 3) ? 2 : 3);
     if (w > 1 && act(w) !== act(w - 1)) {
       lines.push({ kind: "head", text: pack.narrator.acts[act(w) - 1] || (act(w) === 2 ? "Zweiter Akt" : "Dritter Akt") });
       lines.push({ kind: "text", text: T(act(w) === 2 ? "act2" : "act3", 0).replace(/^(Zweiter|Dritter) Akt\.\s*/, "") });
@@ -252,17 +289,31 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
     const reduced = !!state.reduced[`${b.id}:${w}`] || (f ? isDeloadWeek(f, w) : false);
     const schar = deck(scene.schar, `${seed}:schar`, w);
     const ratio = planned ? done / planned : 0;
-    lines.push({ kind: "text", text: T(done === 0 ? "week_rest" : ratio >= 1 ? "week_full" : ratio >= 0.5 ? "week_good" : "week_some", w, { n: done, von: planned, schar }) });
+    lines.push({ kind: "text", text: actT(done === 0 ? "week_rest" : ratio >= 1 ? "week_full" : ratio >= 0.5 ? "week_good" : "week_some", w, { n: done, von: planned, schar }) });
+    // Feuilleton: die sinnliche Nahaufnahme, immer die zweite Stimme der Ausgabe
+    lines.push({ kind: "text", text: actT(done === 0 ? "feuilleton_still" : "feuilleton", w, { schar }) });
+    // Entlastungswoche: die Stadt ruht, und der Widersacher wartet
+    if (isDeloaded(state, b, w)) lines.push({ kind: "text", text: T("deload", w) });
     let dmg = done * DMG.session;
     let roll: number | null = null;
     let weakHit = false;
     if (done > 0) {
       if (ratio >= 1) { dmg += DMG.fullWeek; if (foe.weak === "treue") { dmg += DMG.fullWeek * 2; weakHit = true; } }
-      roll = d20(`${seed}:w${w}`);
-      if (roll === 20) { dmg += DMG.crit; stats.crits++; lines.push({ kind: "roll", value: 20, text: T("crit", stats.crits - 1) }); }
-      else if (roll === 1) { stats.fumbles++; lines.push({ kind: "roll", value: 1, text: T("fumble", stats.fumbles - 1) }); }
-      else if (roll >= 15) { dmg += DMG.high; lines.push({ kind: "roll", value: roll, text: T("high", w) }); }
-      else lines.push({ kind: "roll", value: roll, text: "" });
+      // Wurf des Widersachers: du würfelst selbst und trägst ihn ein. Der Wurf allein trifft nie.
+      roll = state.narrative?.rolls?.[`${b.id}:${w}`] ?? null;
+      if (roll != null) {
+        if (roll <= 7) lines.push({ kind: "roll", value: roll, text: T("foe_fumble", w, { schar }) });
+        else if (roll === 20) { stats.fumbles++; lines.push({ kind: "roll", value: 20, text: T("foe_dark", stats.fumbles - 1, { schar }) }); }
+        else if (roll >= 15) lines.push({ kind: "roll", value: roll, text: T("foe_strike", w, { schar }) });
+        else lines.push({ kind: "roll", value: roll, text: "" });
+      }
+      // Antwort: eine volle Woche nach Rückschlag (15–19) oder Dunkler Stunde (20) trifft extra.
+      if (ratio >= 1 && prevRoll != null && prevRoll >= 15) {
+        dmg += prevRoll === 20 ? DMG.session * 2 : DMG.session;
+        stats.crits++;
+        lines.push({ kind: "text", text: T("retort", stats.crits - 1, { schar }) });
+      }
+      prevRoll = roll;
       // Besiegte Bestien der Woche: entfesselt oder mutiert, Serien als Doppelschlag
       const deeds = [...list, ...huntsOfWeek(state, b, w)];
       const runs = deeds.flatMap((x) => runGroups(x).map((g) => ({ parts: (g.parts?.length ? g.parts : g.beast ? [g.beast] : []).filter((p) => !!p.seconds).map((p) => p.id) }))).filter((r) => r.parts.length);
@@ -285,7 +336,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
       if (weakHit) lines.push({ kind: "text", text: T("weak", w) });
     }
     if (reduced) lines.push({ kind: "text", text: T("reduced", w) });
-    if (done > 0) lines.push({ kind: "text", text: T("lage", w, { schar }) });
+    if (done > 0) lines.push({ kind: "text", text: actT("lage", w, { schar }) });
     stats.done += done;
     dealt += Math.round(dmg);
     const last = w === total;
@@ -324,11 +375,11 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
     const parts = [`${stats.done} von ${stats.planned} Einheiten`];
     if (stats.prs) parts.push(`${stats.prs} ${stats.prs === 1 ? "Bestzeit" : "Bestzeiten"}`);
     if (stats.steel) parts.push(`${stats.steel}× Gewicht nachgelegt`);
-    if (stats.crits) parts.push(`${stats.crits} ${stats.crits === 1 ? "kritischer Treffer" : "kritische Treffer"}`);
-    if (stats.fumbles) parts.push(`${stats.fumbles} ${stats.fumbles === 1 ? "Patzer" : "Patzer"}`);
+    if (stats.crits) parts.push(`${stats.crits} ${stats.crits === 1 ? "Antwort" : "Antworten"}`);
+    if (stats.fumbles) parts.push(`${stats.fumbles} ${stats.fumbles === 1 ? "dunkle Stunde" : "dunkle Stunden"}`);
     saga.push({ kind: "stat", text: parts.join(" · ") });
   }
-  return { block: b, sceneId, scene, foe, hp, dealt, liveHp, weeks, prologue, ended, outcome, epithet: String(vars.beiname), saga, stats, vars };
+  return { block: b, sceneId, scene, foe, returned, hp, dealt, liveHp, weeks, prologue, ended, outcome, epithet: String(vars.beiname), saga, stats, vars };
 }
 
 function prevVars(prev: Chapter): Vars {

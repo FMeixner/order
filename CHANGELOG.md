@@ -2,6 +2,40 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.72.0] – 2026-10-21
+
+### Neu
+- „Lauf heute“: Läufe außerhalb der Einheiten auf der Startseite erfassen — heute oder gestern, Minuten und Pace-Empfindung (locker, zügig, hart; hart gewertet auch ab 60 Minuten). Die letzten Läufe stehen unter der Erfassung, im Log unter „Läufe“ mit.
+- Ein hart gewerteter Lauf entlastet den Beintag am selben und am Folgetag: Waden und Beinbeuger einen Satz weniger (mindestens einer), Oberschenkel erst ab vier Sätzen, Gesäß bleibt unangetastet. Die frei werdende Zeit füllt eine leichte Bestie (Plage) oder, am Tag ohne Bestie, ein Mobility-Flow; der Grund steht in den Details der betroffenen Übung. Nicht zusätzlich zu Wochen, die ohnehin leichter laufen, nicht auf Intensiv-Tage und nicht auf erledigte Einheiten.
+- Hilfe: neuer Abschnitt zum Lauf-Button mit der Forschungslage zum Interference-Effekt (Wilson et al., 2012), Literaturliste entsprechend erweitert.
+
+## [0.71.0] – 2026-10-20
+
+### Neu
+- Entlastungswoche: Die App empfiehlt nach Rhythmus (ab der fünften Woche alle vier Wochen, in Phasen ab acht Wochen) oder reaktiv (dreimal „zu schwer“ innerhalb von zwei Wochen) eine Woche mit halben Sätzen — Bestien und Finisher ruhen, Gewichte, Übungen und Trainingstage bleiben. Angenommen oder abgelehnt wird in der Einblendung auf der Startseite, widerrufbar über „Weiter normal trainieren“; ein „Nein“ gilt nur für die eine Woche. Nie empfohlen in oder direkt vor einer Testwoche, nie dicht nach der letzten Entlastung.
+- Der Aschekurier druckt eine eigene Zeile für die Entlastungswoche („Die Pressen laufen langsamer“).
+- Hilfe: neuer Abschnitt zur Entlastungswoche mit der Forschungslage (Coleman et al., 2024; Pancar et al., 2026; Travis et al., 2022), Literaturliste entsprechend erweitert.
+
+### Behoben
+- Wochen-Vorsprung: Wer die laufende Woche komplett abschließt und danach auch die Folgewoche (etwa beim schnellen Durchklicken oder Nachtragen), blieb in der Folgewoche hängen — die Ansicht sprang nur eine Woche vor. Jetzt springt sie über jede voll erledigte Woche hinweg bis zur ersten offenen (auch über eine Phasengrenze, vor der Testwoche hält sie an).
+
+## [0.70.0] – 2026-10-20
+
+### Geändert
+- Der Aschekurier hat eine Stimme: Alle Erzähltabellen sind in dunkel-epischer Tonalität neu geschrieben (näher an Mystik als an Stenogramm), mit längeren Perioden und selteneren Versalschlagzeilen. Die warmen Randnotizen (aside) bleiben unverändert.
+- Feuilleton: Jede Wochenmitteilung bekommt eine sinnliche zweite Zeile aus der Stadt — Nebel, Uhrmacher, Tauben, Kanäle.
+- Leitmotiv ({motiv}): Jeder Orden zieht einmal ein wiederkehrendes Motiv der Stadt, das im Feuilleton und im Finale zurückkehrt.
+- Tell des Widersachers ({tell}): Jeder Orden zeichnet einmal ein Erkennungsmerkmal des Widersachers, das in Steckbrief, Rückschlag und Stand verwoben wird.
+- Akkord-Kurve: Wochen-, Feuilleton- und Lagentexte liegen ab Akt 2 in eigenen Varianten vor (week_full_2, lage_3 …), der Orden verdichtet sich zum Finale hin. Ohne Variante fällt die Ausgabe auf die Basistabelle zurück; eigene Welten funktionieren unverändert weiter.
+
+## [0.69.0] – 2026-10-20
+
+### Geändert
+- Wurf des Widersachers: Der W20 gehört jetzt dem Widersacher. Du würfelst physisch und trägst die Zahl im Wochenblatt ein. 1–7 ist ein rein erzählerischer Patzer, 8–14 läuft nur ins Protokoll, 15–19 (Rückschlag) und 20 (dunkle Stunde) beantwortet die Woche mit einer bzw. zwei zusätzlichen Einheiten-Treffern in der Folgewoche. Schaden entsteht nie direkt aus dem Würfel, und die Spielebene vergibt keine trainingsrelevanten Vorteile.
+- Galerie der Widersacher: Über dem Archiv der Chronik zeigt eine dauerhafte, aus dem Log abgeleitete Galerie jeden entkommenen und besiegten Widersacher mit Ausgang.
+- Entkommene Widersacher kehren im nächsten Orden derselben Szene zurück (Rache-Kapitel mit eigenem Prolog).
+- Neue Erzähltabellen für Patzer, Rückschlag, dunkle Stunde, Erwiderungen und Rückkehr; alte Kritisch-/Hohe-Treffer-Tabellen entfallen.
+
 ## [0.67.0] – 2026-10-19
 
 ### Geändert
@@ -196,7 +230,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ## [0.52.0] – 2026-10-14
 
 ### Neu
-- Plan › Lebensabschnitte: Beschreibe dein Jahr in Abschnitten mit eigenem Namen, Länge (− / + Wochen) und Alltagslast, oder nimm die Vorlage Semester-Rhythmus. Dazu wählst du die Richtung des Jahres und ob du nach jeder Phase, zweimal im Jahr oder gar nicht testen willst.
+- Plan › Lebensabschnitte: Beschreibe dein Jahr in Abschnitten mit eigenem Namen, Länge (− / + Wochen) und Alltagslast, oder nimmst die Vorlage Semester-Rhythmus. Dazu wählst du die Richtung des Jahres und ob du nach jeder Phase, zweimal im Jahr oder gar nicht testen willst.
 - „Künftige Phasen neu vorschlagen“ baut aus den Abschnitten Phasen und Orden. Ob ein Abschnitt einen langen Orden oder mehrere kürzere bekommt, entscheidet, was deine Richtung am besten voranbringt. Kurze Abschnitte gehen in der Nachbarphase auf, gleich belastete Abschnitte hintereinander können durchlaufen. Laufende und vergangene Phasen bleiben.
 
 ## [0.51.3] – 2026-10-14
@@ -589,7 +623,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ### Geändert
 - Bestien entrümpelt: seltene Übungen durch gängige ersetzt, in allen Bestien. RTO Ring Pushups → Ring Pushups, Jackie Chan und Chest Tap Pushups → Clapping Pushups, X Pushups → Pushups, C2B Chinups → Chinups, OA Chinup → Chinups ×2, Around-the-World → Toes-to-Bar ×2, Dragon Flags → Leg Raises ×3, Pulse Ups → Reverse Crunches, Side Vaults → Lateral Jumps, Contraction Plank → Plank, Sprawl Springs → Sprawls, Depth High Jumps → Tuck Jumps, Back Extensions → Supermen. Bleiben: Muscle-Ups, Burpee Muscle-Ups, Clapping Pullups, Alt OA Hanging, Archer Pushups, Hanging Knee Wipers, Combat Rolls, Burpee Squat Jumps, Lizard Crawl, Plank Knees-to-Elbow, Obstacle Run.
 - Einheitliche Namen: Pullups (immer strikt), Strict Toes-to-Bar, Commando Pullups, Sprints, Mountain Climbers, Tuck Jumps (statt „Jumps“; High Jumps bleiben eigene Übung), Leg Raises, V-Ups, Tuck-Ups.
-- Verhexte Pullups und Muscle-Ups heißen jetzt „Assisted … (Band oder Kipping)“.
+- Verhexte Pullups und Muscle-Ups heißen jetzt „Assisted … (Band oder Kicking)“.
 - Bestzeiten bleiben, auch wenn sich bei 35 Bestien Übungen geändert haben.
 
 ## [0.24.1] – 2026-10-03
@@ -896,7 +930,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ## [0.5.0] – 2026-09-28
 
 ### Geändert
-- Einheiten auf ihre angegebene Dauer gebracht. Neu: eine Schätzung der Dauer aus Sätzen, Pausen, Aufwärmsätzen, Umbau, Warm-up und Cool-down; ein Test prüft jede Einheit auf ±8 Min. Ergänzt: Smith (je 2–3 Zusatzübungen), Knight (4 Sätze auf den ersten beiden Übungen, je eine Übung mehr), Olympian, Troubadour, Gladiator Oberkörper, Conqueror Studio, Witcher Arme, Acrobat, Alchemist, Pugilist. Angaben korrigiert bei Monk, Herald, Initiate, Assassin.
+- Einheiten auf ihre angegebene Dauer gebracht. Neu: eine Schätzung der Dauer aus Sätzen, Pausen, Aufwärmsätzen, Umbau, Warm-up und Cool-down; ein Test prüft jede Einheit auf ±8 Min. Ergänzt: Smith (je 2–3 Zusatzübungen), Knight (4 Sätze auf den ersten beiden Übungen, je eine Übung mehr), Olympian, Troubadour, Gladiator Oberkörper, Conquerer Studio, Witcher Arme, Acrobat, Alchemist, Pugilist. Angaben korrigiert bei Monk, Herald, Initiate, Assassin.
 - Tagesansicht aufgeräumt: Dosis und Gewichtsvorschlag in einer Zeile, Symbole rechts, keine wiederholten Einheiten-Wörter in den Satzzeilen, Feedback-Knöpfe erst nach dem ersten Satz, A/B-Woche nur noch oben.
 
 ## [0.4.0] – 2026-09-28
