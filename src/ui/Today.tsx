@@ -10,6 +10,8 @@ import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
 import { dayMods, rememberMod, remembered, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
 import { deloadAdvice, isDeloaded, setDeload } from "../engine/deload";
+import { easeTargets, isHardRun, PACE_LABEL } from "../engine/runadj";
+import type { RunEntry } from "../types";
 
 const FIX_LABEL: Record<FixKey, string> = { short: "Kurz", quiet: "Leise", tight: "Kein Platz" };
 import { canShorten } from "../engine/shortday";
@@ -51,6 +53,9 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const [showTraining, setShowTraining] = useState(false);
   const [viewWeek, setViewWeek] = useState<number | null>(null);
   const [adjust, setAdjust] = useState(false);
+  const [runDay, setRunDay] = useState<"heute" | "gestern">("heute");
+  const [runPace, setRunPace] = useState<RunEntry["pace"]>("locker");
+  const [runMin, setRunMin] = useState(30);
   if (!block) {
     const nb = nextBlock(state.plan, today);
     return (
@@ -198,6 +203,11 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   // Entlastungswoche: Vorschlag nach Rhythmus oder Signalen, nur für die laufende Woche und nie in Test- oder ohnehin leichten Wochen
   const advice = isCur && !test && !sysReduced && !entlastet ? deloadAdvice(state, block, week, today) : null;
   const ease = (v: "ja" | "nein") => update((st) => setDeload(st, block, week, v));
+  // Läufe außerhalb der Einheiten: erfassen für heute oder gestern; ein harter oder langer Lauf entlastet den Beintag
+  const eased = isCur && !test ? easeTargets(state, block, week, focus) : [];
+  const runs = state.runs ?? [];
+  const addRun = () => update((st) => ({ ...st, runs: [...(st.runs ?? []), { date: runDay === "heute" ? today : addDays(today, -1), minutes: Math.max(1, Math.round(runMin)), pace: runPace }] }));
+  const delRun = (i: number) => update((st) => ({ ...st, runs: (st.runs ?? []).filter((_, k) => k !== i) }));
   return (
     <div className="stack">
       {needBackup && (
@@ -229,6 +239,39 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           </span>
         </div>
       )}
+      {isCur && !test && (
+        <div className="note small row between wrap">
+          <span>Lauf heute</span>
+          <span className="row wrap">
+            <Seg value={runDay} options={[{ value: "heute", label: "Heute" }, { value: "gestern", label: "Gestern" }]} onChange={setRunDay} />
+            <Seg value={runPace} options={(["locker", "zügig", "hart"] as const).map((p) => ({ value: p, label: PACE_LABEL[p] }))} onChange={setRunPace} />
+            <input aria-label="Lauf: Minuten" type="number" inputMode="numeric" min={5} step={5} className="kg-in" style={{ width: "4.5rem" }} value={runMin} onChange={(e) => setRunMin(Math.max(0, Number(e.target.value)))} />
+            <span className="muted">Min</span>
+            <button className="btn small" onClick={addRun}>Eintragen</button>
+          </span>
+        </div>
+      )}
+      {runs.length > 0 && (
+        <div className="note small row between wrap">
+          <span>Letzte Läufe</span>
+          <span className="row wrap">
+            {[...runs].reverse().slice(0, 4).map((r, k) => {
+              const i = runs.length - 1 - k;
+              return (
+                <span key={`${r.date}-${i}`} className="row">
+                  <span>{fmtDate(r.date)} · {r.minutes} Min · {PACE_LABEL[r.pace]}{isHardRun(r) ? " · hart gewertet" : ""}</span>
+                  <button className="btn ghost small" aria-label={`Lauf vom ${fmtDate(r.date)} löschen`} onClick={() => delRun(i)}>✕</button>
+                </span>
+              );
+            })}
+          </span>
+        </div>
+      )}
+      {eased.length > 0 && (
+        <div className="note small">
+          Lauf eingerechnet: {eased.map((e) => `am ${DAY_NAME[e.day]}`).join(" und ")} läuft der Beintag mit entlasteten Beinen — Waden und Beinbeuger einen Satz weniger, Oberschenkel nur leicht, die frei werdende Zeit füllt eine leichte Bestie oder ein Mobility-Flow.
+        </div>
+      )}
       <div className="card hero">
         <div className="hero-top">
           <div>
@@ -256,7 +299,6 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
         {comeback && <div className="note small">Willkommen zurück. Nach {pauseDays} Tagen Pause läuft diese Woche mit −1 Satz, und Gewichte starten etwas leichter. Ab nächster Woche geht es normal weiter.</div>}
         {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
       </div>
-
 
       {test && future ? (
         <div className="card stack">
