@@ -12,6 +12,7 @@ import { canShorten, pairToFit, shortDay } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlot } from "./sharpen";
 import { deloadShape, isDeloaded } from "./deload";
+import { runEaseShape } from "./runadj";
 
 const est = planMinutes;
 
@@ -184,6 +185,8 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   }
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.
   if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
+  // Lauftage: ein harter oder langer Lauf entlastet den Beintag am selben und am Folgetag (nie zusätzlich zur Entlastungswoche)
+  else shaped = runEaseShape(state, b, week, shaped);
   return applyDrillEdits(applySlot(shaped, state, b), state.drillEdits);
 }
 
