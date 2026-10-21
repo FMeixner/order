@@ -73,4 +73,4 @@ Die Orden stützen sich, wo möglich, auf Studien; die Quellen stehen im jeweili
 
 ## Lizenz
 
-MIT, siehe [LICENSE](LICENSE).
+GNU Affero General Public License 3.0 (AGPL-3.0), siehe [LICENSE](LICENSE). Versionen bis einschließlich 0.71.0 stehen unter MIT.

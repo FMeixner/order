@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.71.1] – 2026-10-21
+
+### Geändert
+- Lizenz: Order steht ab dieser Version unter der GNU Affero General Public License 3.0 (AGPL-3.0). Wer die App weitergibt oder als Dienst anbietet, muss den Quelltext offenlegen. Für alle Versionen bis einschließlich 0.71.0 gilt weiterhin MIT.
+
 ## [0.71.0] – 2026-10-20
 
 ### Neu
