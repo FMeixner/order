@@ -64,7 +64,7 @@ describe("Lauf heute", () => {
     const f = focusFor(s, KNIGHT, 1)!;
     expect(byName(f, "lower_b", "Leg Press")!.sets).toBe(4);
     expect(byName(f, "lower_b", "Seated Calf Raise")!.sets).toBe(3);
-    // Lauf am Frittag selbst: Leg Extension (3 Sätze, Oberschenkel) bleibt, Hip Thrust (Gesäß) bleibt
+    // Lauf am Freitag selbst: Leg Extension (3 Sätze, Oberschenkel) bleibt, Hip Thrust (Gesäß) bleibt
     const sFri = st(KNIGHT, { runs: [{ date: "2026-10-23", minutes: 40, pace: "hart" }] });
     const fFri = focusFor(sFri, KNIGHT, 1)!;
     expect(byName(fFri, "lower_b", "Leg Extension")!.sets).toBe(3);
@@ -81,7 +81,7 @@ describe("Lauf heute", () => {
     const last = eased.roles.lower_a.blocks[eased.roles.lower_a.blocks.length - 1];
     expect(last.type === "module" && last.module === "flow" && last.variant === "mobility").toBe(true);
     // Superset mit Finisher: Finisher wird Plage
-    const withFin: Focus = { ...f0, roles: { ...f0.roles, lower_a: { ...f0.roles.lower_a, blocks: [{ type: "superset", rest: 60, slots: [{ id: "c1", name: "Standing Calf Raise", sets: 3 }], finisher: { pool: ["wampetre"] }] } } } };
+    const withFin: Focus = { ...f0, roles: { ...f0.roles, lower_a: { ...f0.roles.lower_a, blocks: [{ type: "superset", rest: 60, slots: [{ id: "c1", name: "Standing Calf Raise", sets: 3 }], finisher: { pool: ["wampetre"] } }] } } };
     const fin = runEaseShape(s, KNIGHT, 1, withFin);
     const ss = fin.roles.lower_a.blocks[0];
     expect(ss.type === "superset" && ss.finisher?.classes).toEqual(["plage"]);
