@@ -13,6 +13,7 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
   - `shortday.ts` (Kurztag mit Ausgleich)
   - `dayadj.ts` (Tagesanpassung Kurz · Leicht · Intensiv · Leise · Kein Platz; fixierbar je Wochentag in `dayFlags`). Leise/Kein Platz wirken über das Tagesprofil (`withDay`): Bestien per `beastForDay` in `plan.ts`, Übungen per `loud`/`space` in `exercises.json` mit `instead`-Ersatz; verschoben wird nur ohne passende Fassung (`quietMoves` in `weekplan.ts`)
   - `deload.ts` (Entlastungswoche: Empfehlung nach Rhythmus oder Signalen in `deloadAdvice`, Wochenentscheid in `AppState.deload` („ja“/„nein“), Umformung `deloadShape` greift in `focusFor`: halbe Sätze, keine Bestien und Finisher)
+  - `runadj.ts` („Lauf heute“: Läufe außerhalb der Einheiten in `AppState.runs`; ein hart gewerteter Lauf (Pace „hart“ oder ab 60 Min) entlastet den Beintag am selben und am Folgetag über `runEaseShape` in `focusFor`: Waden und Beinbeuger −1 Satz, Oberschenkel erst ab vier Sätzen, Gesäß bleibt, Bestie wird Plage oder Mobility-Flow als Ausgleich)
   - `progression.ts` (`suggest`, `advance`)
   - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
   - `warmup.ts`, `duration.ts`, `saga.ts` (Erzähler „Aschekurier“)

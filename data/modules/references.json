@@ -1,6 +1,6 @@
 {
-  "_info": "Literatur, auf die sich Orden, Hilfe und Normen stützen. Jede Angabe am 20.10.2026 gegen Titel, Autoren und Jahr geprüft. Kurzform = so, wie sie in der App zitiert wird.",
-  "checked": "2026-10-20",
+  "_info": "Literatur, auf die sich Orden, Hilfe und Normen stützen. Jede Angabe am 21.10.2026 gegen Titel, Autoren und Jahr geprüft. Kurzform = so, wie sie in der App zitiert wird.",
+  "checked": "2026-10-21",
   "refs": [
     {
       "short": "Calatayud et al., 2015",
@@ -156,6 +156,11 @@
       "short": "Travis et al., 2022",
       "text": "Travis, S. K., Mujika, I., Zwetsloot, K. A., Gentles, J. A., Stone, M. H., & Bazyler, C. D. (2022). The effects of 3 vs. 5 days of training cessation on maximal strength. Journal of Strength and Conditioning Research, 36(3), 633–640.",
       "url": "https://pubmed.ncbi.nlm.nih.gov/35180185/"
+    },
+    {
+      "short": "Wilson et al., 2012",
+      "text": "Wilson, J. M., Marin, P. J., Rhea, M. R., Wilson, S. M. C., Loenneke, J. P., & Anderson, J. C. (2012). Concurrent training: A meta-analysis examining interference of aerobic and resistance exercise. Journal of Strength and Conditioning Research, 26(8), 2293–2307.",
+      "url": "https://journals.lww.com/nsca-jscr/Fulltext/2012/08000/Concurrent_Training__A_Meta_Analysis_Examining.35.aspx"
     },
     {
       "short": "van den Hoek et al., 2024",
