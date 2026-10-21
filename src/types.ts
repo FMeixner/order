@@ -333,6 +333,9 @@ export interface Session {
   done: boolean;
 }
 
+/** Lauf außerhalb der Einheiten („Lauf heute“): Datum, Minuten und Pace-Empfindung */
+export interface RunEntry { date: string; minutes: number; pace: "locker" | "zügig" | "hart" }
+
 export interface AppState {
   version: 1;
   onboarded: boolean;
@@ -349,6 +352,8 @@ export interface AppState {
   reduced: Record<string, boolean>; // "blockId:week" → −1 Satz
   /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
   deload?: Record<string, "ja" | "nein">;
+  /** Läufe außerhalb der Einheiten („Lauf heute“). Ein hart gewerteter Lauf (Pace „hart“ oder ab 60 Minuten) entlastet den Beintag am selben und am Folgetag. */
+  runs?: RunEntry[];
   menuChoice: Record<string, string>; // blockId:menuId → Option
   tests: Record<string, TestResult[]>;
   who5: { date: string; blockId: string; score: number }[];
