@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
-import type { AppState, Block, Focus, PlanBlock, Session, Slot } from "../types";
+import type { AppState, Block, Focus, PlanBlock, RunEntry, Session, Slot } from "../types";
 import { addDays } from "./plan";
 import { setDeload } from "./deload";
 import { easeTargets, hardRunNear, isHardRun, legShare, runEaseShape } from "./runadj";
@@ -64,7 +64,7 @@ describe("Lauf heute", () => {
     const f = focusFor(s, KNIGHT, 1)!;
     expect(byName(f, "lower_b", "Leg Press")!.sets).toBe(4);
     expect(byName(f, "lower_b", "Seated Calf Raise")!.sets).toBe(3);
-    // Lauf am Fritag selbst: Leg Extension (3 Sätze, Oberschenkel) bleibt, Hip Thrust (Gesäß) bleibt
+    // Lauf am Frittag selbst: Leg Extension (3 Sätze, Oberschenkel) bleibt, Hip Thrust (Gesäß) bleibt
     const sFri = st(KNIGHT, { runs: [{ date: "2026-10-23", minutes: 40, pace: "hart" }] });
     const fFri = focusFor(sFri, KNIGHT, 1)!;
     expect(byName(fFri, "lower_b", "Leg Extension")!.sets).toBe(3);
@@ -81,7 +81,7 @@ describe("Lauf heute", () => {
     const last = eased.roles.lower_a.blocks[eased.roles.lower_a.blocks.length - 1];
     expect(last.type === "module" && last.module === "flow" && last.variant === "mobility").toBe(true);
     // Superset mit Finisher: Finisher wird Plage
-    const withFin: Focus = { ...f0, roles: { ...f0.roles, lower_a: { ...f0.roles.lower_a, blocks: [{ type: "superset", rest: 60, slots: [{ id: "c1", name: "Standing Calf Raise", sets: 3 }], finisher: { pool: ["wampetre"] } }] } } };
+    const withFin: Focus = { ...f0, roles: { ...f0.roles, lower_a: { ...f0.roles.lower_a, blocks: [{ type: "superset", rest: 60, slots: [{ id: "c1", name: "Standing Calf Raise", sets: 3 }], finisher: { pool: ["wampetre"] }] } } } };
     const fin = runEaseShape(s, KNIGHT, 1, withFin);
     const ss = fin.roles.lower_a.blocks[0];
     expect(ss.type === "superset" && ss.finisher?.classes).toEqual(["plage"]);
@@ -89,7 +89,7 @@ describe("Lauf heute", () => {
 
   it("Nicht auf erledigte Einheiten, nicht bei Leicht, nicht in Testwochen und Entlastungswochen", () => {
     const doneLeg: Session = { id: "b1:1:lower_a", date: LEG_DAY, blockId: "b1", focusId: "knight", week: 1, role: "lower_a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true };
-    const run = { date: addDays(LEG_DAY, -1), minutes: 70, pace: "locker" };
+    const run: RunEntry = { date: addDays(LEG_DAY, -1), minutes: 70, pace: "locker" };
     const sDone = st(KNIGHT, { runs: [run], sessions: [doneLeg] });
     expect(easeTargets(sDone, KNIGHT, 1, focusFor(sDone, KNIGHT, 1)!)).toHaveLength(0);
     // Leicht am Beintag: die Woche läuft ohnehin mit −1 Satz
