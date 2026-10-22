@@ -44,7 +44,7 @@ Alle Inhalte liegen als lesbare JSON-Dateien in [`data/`](data):
 
 - `data/orders/*.json`: ein Orden pro Datei. Eine neue Datei ist nach dem nächsten Build ein neuer Orden.
 - `data/exercises.json`: Übungskatalog mit Equipment-Art und Beschreibung.
-- `data/beasts.json`: das Bestiarium (81 Circuits).
+- `data/beasts.json`: das Bestiarium (86 Circuits).
 - `data/narrative/generic.json`: die Welt des Erzählers (Szenen je Orden, Widersacher, Textstapel). Eigene Welten mit gleichem Aufbau lädt man in der App, sie müssen nicht ins Repo.
 - `data/modules/`: Warm-up- und Cool-down-Listen, Schwert-Modul, Testwoche, geführte Varianten, Tauschgruppen (`swaps.json`) und Normen für die Testwoche (`norms.json`).
 

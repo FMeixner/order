@@ -34,6 +34,13 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 - Entkommene Widersacher kehren im nächsten Orden derselben Szene zurück (Rache-Kapitel mit eigenem Prolog).
 - Neue Erzähltabellen für Patzer, Rückschlag, dunkle Stunde, Erwiderungen und Rückkehr; alte Kritisch-/Hohe-Treffer-Tabellen entfallen.
 
+## [0.68.0] – 2026-10-20
+
+### Neu
+- Fünf Sandsack-Bestien im Morgenland: **Pazuzu**, **Edimmu**, **Rabisu**, **Div** und **Ghaddar**, alle mit festem Timecap und Startgewicht 20 kg. Sandsack im Equipment-Profil eintragen, dann kommen sie in die Bestienwahl; Steigerungen laufen in 5-kg-Schritten.
+- Neue Übungen: Sandbag Deadlift, Sandbag Romanian Deadlift, Sandbag Bent-Over Row, Sandbag Ground-to-Shoulder, Sandbag Halo, alle mit Beschreibung.
+- Die Datenprüfung wacht jetzt mit über die Kuratierregel für Sandsack-Bestien: nur Sandsack-Übungen, ein tragbares Gerät pro Bestie.
+
 ## [0.67.0] – 2026-10-19
 
 ### Geändert
