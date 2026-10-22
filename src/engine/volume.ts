@@ -40,6 +40,11 @@ export function volumeRange(u: UserProfile): [number, number] {
   return u.level === "einsteiger" ? [6, 10] : u.level === "erfahren" ? [12, 20] : [10, 16];
 }
 
+/** Erhaltung: in etwa die Hälfte des unteren Richtwerts. Erhaltung gelingt meist schon mit einem Drittel bis der Hälfte des Aufbauvolumens, darunter wird Halten von Kraft und Masse knapp. */
+export function maintenanceVolume(u: UserProfile): number {
+  return volumeRange(u)[0] / 2;
+}
+
 export interface WeekVolume { monday: string; sessions: number; sets: Record<string, number>; running: boolean }
 
 /** Wochen mit Einheiten, neueste zuerst */
