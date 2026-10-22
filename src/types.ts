@@ -347,6 +347,8 @@ export interface AppState {
   /** 1RM je Übung, selbst eingetragen (sonst geschätzt aus dem Log) */
   oneRM?: Record<string, { kg: number; date: string }>;
   reduced: Record<string, boolean>; // "blockId:week" → −1 Satz
+  /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
+  deload?: Record<string, "ja" | "nein">;
   menuChoice: Record<string, string>; // blockId:menuId → Option
   tests: Record<string, TestResult[]>;
   who5: { date: string; blockId: string; score: number }[];
@@ -390,6 +392,8 @@ export interface AppState {
     pack?: Record<string, unknown> | null;
     /** Zuletzt gelesener Bericht, damit ein neuer Bericht aufgeklappt erscheint */
     seen?: string;
+    /** Würfe des Widersachers je Ordenswoche („blockId:Woche“ → 1–20). Du würfelst selbst; einmal eingetragen, bleibt die Zahl stehen. */
+    rolls?: Record<string, number>;
   };
 }
 

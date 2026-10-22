@@ -12,6 +12,7 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
   - `weekplan.ts` (`focusFor`: eingefrorene Fassung → 3-Tage-Form → Kurz (gemerkt: ganze Woche, spontan: Folgetage) → Schwerpunkt-Slot → eigene Warm-up-Änderungen)
   - `shortday.ts` (Kurztag mit Ausgleich)
   - `dayadj.ts` (Tagesanpassung Kurz · Leicht · Intensiv · Leise · Kein Platz; fixierbar je Wochentag in `dayFlags`). Leise/Kein Platz wirken über das Tagesprofil (`withDay`): Bestien per `beastForDay` in `plan.ts`, Übungen per `loud`/`space` in `exercises.json` mit `instead`-Ersatz; verschoben wird nur ohne passende Fassung (`quietMoves` in `weekplan.ts`)
+  - `deload.ts` (Entlastungswoche: Empfehlung nach Rhythmus oder Signalen in `deloadAdvice`, Wochenentscheid in `AppState.deload` („ja“/„nein“), Umformung `deloadShape` greift in `focusFor`: halbe Sätze, keine Bestien und Finisher)
   - `progression.ts` (`suggest`, `advance`)
   - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
   - `warmup.ts`, `duration.ts`, `saga.ts` (Erzähler „Aschekurier“)
@@ -52,4 +53,5 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 - Typprüfung mit `npx tsc -b`; `tsc --noEmit -p .` prüft hier nichts.
 - Bestien einer Einheit werden beim ersten Eintrag festgehalten (`beastRuns`); nur bewusste Anpassungen geben sie frei.
 - Jede zitierte Studie steht mit vollständiger Angabe und Link in `data/modules/references.json` (Kurzform wie im Text; `src/engine/references.test.ts` prüft Orden-Quellen, Hilfe und Normen). Zitate vor dem Eintragen gegen Titel, Autoren, Jahr und Aussage prüfen.
+- Die Heute-Ansicht bleibt aufgeräumt: keine neuen Funktionsblöcke oben auf der Tageskarte; Erfassungs- und Tagesform-Funktionen gehören ins „Anpassen“-Menü.
 - UI-Texte auf Deutsch, Du-Form, knapp.

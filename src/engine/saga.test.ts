@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState, PlanBlock, Session } from "../types";
 import { addDays, blockWeeks, dayRoleMap } from "./plan";
-import { chapterOf, checkPack, deck, fill, GENERIC_PACK, tournamentOf } from "./saga";
+import { chapterOf, checkPack, deck, fill, foeGallery, GENERIC_PACK, tournamentOf } from "./saga";
 
 const g = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
 const A: PlanBlock = { id: "b1", focusId: "witcher", label: "", start: "2026-09-28", end: "2026-11-01", load: "medium", travel: false };
@@ -32,7 +32,7 @@ describe("Erzähler", () => {
     ];
     for (const pro of ["sie", "er"] as const) for (const name of ["", "Mara"]) {
       const f = pro === "sie";
-      const v = { held: name || (f ? "die Heldin" : "der Held"), sie: f ? "sie" : "er", ihn: f ? "sie" : "ihn", ihm: f ? "ihr" : "ihm", ihr: f ? "ihr" : "sein", die: f ? "die" : "der", in: f ? "in" : "", feind: "der Feind", feind_dat: "dem Feind", feind_akk: "den Feind", feind_gen: "des Feindes", desc: "Böse.", weak: "Bestzeiten.", fp: "er", ort: "hier", schar: "Ratten", bestie: "Undine", bestie_zwei: "Kobold", n: 2, stellen: "zwei Stellen", mal: "2-mal", von: 3, beiname: "Die Eiserne", vorsieg: "dem Sieg über", vorfeind_akk: "den Alten", vorfeind_dat: "dem Alten", klinge: "Balmung" };
+      const v = { held: name || (f ? "die Heldin" : "der Held"), sie: f ? "sie" : "er", ihn: f ? "sie" : "ihn", ihm: f ? "ihr" : "ihm", ihr: f ? "ihr" : "sein", die: f ? "die" : "der", in: f ? "in" : "", feind: "der Feind", feind_dat: "dem Feind", feind_akk: "den Feind", feind_gen: "des Feindes", desc: "Böse.", weak: "Bestzeiten.", fp: "er", ort: "hier", schar: "Ratten", bestie: "Undine", bestie_zwei: "Kobold", n: 2, stellen: "zwei Stellen", mal: "2-mal", von: 3, beiname: "Die Eiserne", vorsieg: "dem Sieg über", vorfeind_akk: "den Alten", vorfeind_dat: "dem Alten", klinge: "Balmung", motiv: "die Glockenfrau an der Brücke", tell: "die immer gleichen Handschuhe" };
       for (const t of allTexts) expect(fill(t, v), t).not.toMatch(/[{}]/);
     }
   });
@@ -138,5 +138,58 @@ describe("Bestien im Blatt", () => {
     expect(without.weeks[0].lines.map((l) => l.text).join(" ")).not.toMatch(/Undine/);
     expect(withHunt.weeks[0].lines.map((l) => l.text).join(" ")).toMatch(/Undine/);
     expect(withHunt.stats.done).toBe(without.stats.done);
+  });
+});
+
+describe("Wurf des Widersachers", () => {
+  it("trifft nie aus eigener Kraft: erst die volle Woche danach ist die Antwort", () => {
+    const s0 = train(base(), A, 1);
+    const noRoll = chapterOf(s0, A, "2026-11-10");
+    const struck = chapterOf({ ...s0, narrative: { ...s0.narrative!, rolls: { "b1:1": 18 } } }, A, "2026-11-10");
+    expect(struck.weeks[0].dmg).toBe(noRoll.weeks[0].dmg);
+    expect(struck.weeks[0].lines.some((l) => l.kind === "roll")).toBe(true);
+    expect(struck.weeks[1].dmg).toBe(noRoll.weeks[1].dmg + 10);
+    expect(struck.weeks[1].lines.map((l) => l.text).join(" ")).toMatch(/ANTWORT|DIE ANTWORT|GEGENSTOSS/);
+    const dark = chapterOf({ ...s0, narrative: { ...s0.narrative!, rolls: { "b1:1": 20 } } }, A, "2026-11-10");
+    expect(dark.weeks[1].dmg).toBe(noRoll.weeks[1].dmg + 20);
+    expect(dark.stats.fumbles).toBe(1);
+    expect(dark.stats.crits).toBe(1);
+  });
+  it("Patzer des Widersachers bleibt folgenlos, 8–14 nur Protokoll", () => {
+    const s0 = train(base(), A, 1);
+    const noRoll = chapterOf(s0, A, "2026-11-10");
+    const fumble = chapterOf({ ...s0, narrative: { ...s0.narrative!, rolls: { "b1:1": 3 } } }, A, "2026-11-10");
+    expect(fumble.weeks[0].dmg).toBe(noRoll.weeks[0].dmg);
+    expect(fumble.weeks[1].dmg).toBe(noRoll.weeks[1].dmg);
+    expect(fumble.weeks[0].lines.some((l) => l.kind === "roll" && /SCHLECHTER WURF|PANNE|AUSRUTSCHER/.test(l.text))).toBe(true);
+    const flat = chapterOf({ ...s0, narrative: { ...s0.narrative!, rolls: { "b1:1": 10 } } }, A, "2026-11-10");
+    expect(flat.weeks[0].dmg).toBe(noRoll.weeks[0].dmg);
+    expect(flat.weeks[1].dmg).toBe(noRoll.weeks[1].dmg);
+  });
+  it("keine Zeile verlässt die Druckerei mit ungefülltem Platzhalter", () => {
+    const s0 = train(base(), A, 1);
+    const cases: Record<string, number>[] = [{ "b1:1": 3, "b1:2": 18 }, { "b1:1": 20 }];
+    for (const rolls of cases) {
+      const ch = chapterOf({ ...s0, narrative: { ...s0.narrative!, rolls } }, A, "2026-11-10");
+      for (const wk of ch.weeks) for (const l of wk.lines) expect(l.text, `Woche ${wk.week}: ${l.text}`).not.toMatch(/\{[A-Za-z_]+\}/);
+    }
+  });
+});
+
+describe("Galerie der Widersacher", () => {
+  it("entkommener Widersacher kehrt im nächsten Orden derselben Szene zurück", () => {
+    const W: PlanBlock = { id: "b2", focusId: "huntsman", label: "", start: "2026-11-02", end: "2026-12-06", load: "medium", travel: false };
+    let s = train(base(), A, 0.34);
+    s = { ...s, plan: [A, W, T] };
+    s = train(s, W, 1);
+    const first = chapterOf(s, A, "2026-12-07");
+    expect(first.outcome).toBe("close");
+    const second = chapterOf(s, W, "2026-12-07");
+    expect(second.returned).toBe(true);
+    expect(second.foe.nom).toBe(first.foe.nom);
+    expect(second.prologue.map((l) => l.text).join(" ")).toMatch(/RÜCKKEHR|BEKANNTES GESICHT/);
+    const gal = foeGallery(s, "2026-12-07");
+    expect(gal.some((r) => r.outcome === "close" && r.foe.nom === first.foe.nom)).toBe(true);
+    expect(gal.some((r) => r.outcome !== "close" && r.blockId === "b2")).toBe(true);
   });
 });

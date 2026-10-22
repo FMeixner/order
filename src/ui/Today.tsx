@@ -9,6 +9,7 @@ import { SUB_LABEL } from "../engine/cardio";
 import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
 import { dayMods, rememberMod, remembered, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
+import { deloadAdvice, isDeloaded, setDeload } from "../engine/deload";
 
 const FIX_LABEL: Record<FixKey, string> = { short: "Kurz", quiet: "Leise", tight: "Kein Platz" };
 import { canShorten } from "../engine/shortday";
@@ -32,11 +33,19 @@ function weekDone(state: AppState, b: PlanBlock, week: number): boolean {
 }
 
 export function Today({ state, update, today, goPlan }: { state: AppState; update: Update; today: string; goPlan: () => void }) {
-  // Woche geschafft: die Folgewoche ist ab sofort die laufende, voll bearbeitbar (auch über eine Phasengrenze)
-  const todayBlock = blockAt(state.plan, today);
-  const nextMon = addDays(mondayOf(today), 7);
-  const ahead = !!todayBlock && weekDone(state, todayBlock, weekInBlock(todayBlock, today)) && !!blockAt(state.plan, nextMon);
-  const anchor = ahead ? nextMon : today;
+  // Woche(n) geschafft: Jede voll erledigte Woche vor der heutigen zählt als vorbei — auch mehrere hintereinander
+  // (schnelles Nachtragen oder Durchklicken) und über eine Phasengrenze hinweg. Die Ansicht springt in die
+  // erste Woche, die noch nicht komplett ist.
+  let anchor = today;
+  for (let guard = 0; guard < 60; guard++) {
+    const ab = blockAt(state.plan, anchor);
+    if (!ab || isTestBlock(ab)) break;
+    if (!weekDone(state, ab, weekInBlock(ab, anchor))) break;
+    const nm = addDays(mondayOf(anchor), 7);
+    if (!blockAt(state.plan, nm)) break;
+    anchor = nm;
+  }
+  const ahead = anchor !== today;
   const block = blockAt(state.plan, anchor);
   const [pick, setPick] = useState<Weekday | null>(null);
   const [showTraining, setShowTraining] = useState(false);
@@ -76,6 +85,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const extTest = followedByTest(state.plan, block);
   const test = !extTest && isTestWeek(baseFocus, block, week);
   const deload = isDeloadWeek(baseFocus, week);
+  const entlastet = isDeloaded(state, block, week);
   const beforeTest = extTest ? week === total : isTestWeek(baseFocus, block, week + 1);
   // Wiedereinstieg: letzte abgeschlossene Einheit liegt 10 Tage oder mehr zurück
   // gilt für die ganze Woche: Abstand zwischen der letzten Einheit vor dieser Woche und der ersten in dieser Woche (oder heute)
@@ -119,12 +129,12 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const runSub = sel ? runSubOf(state, sid) : undefined;
   const canAdjust = !!role0 && !future;
   // Intensiv: nur mit Bestie oder Schwert am Tag und nicht in Wochen, die ohnehin leichter laufen
-  const canBoost = canAdjust && !sysReduced
+  const canBoost = canAdjust && !sysReduced && !entlastet
     // Der Tag, wie der Orden ihn vorsieht (Leise kann eine Bestie verschieben, Intensiv soll trotzdem wählbar bleiben)
     && ((baseFocus.medley ? undefined : baseFocus.roles[sel!.role]) ?? role0!).blocks.some((b) => b.type === "beast" || (b.type === "module" && b.module === "sword" && !!profile0?.has.sword));
   const chips: { k: DayKey | "intense"; label: string; on: boolean; disabled?: boolean; info: string }[] = mods ? [
     { k: "short", label: "Kurz", on: mods.short, disabled: !role0 || !canShorten(role0), info: remembered(state, block, sel!.role, sel!.day).short ? "Nur die Kernübungen (drei, manchmal vier). Fixiert: Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Nur die Kernübungen (drei, manchmal vier). Letzter Tag der Woche, daher kein Ausgleich." : "Nur die Kernübungen (drei, manchmal vier). Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
-    { k: "light", label: "Leicht", on: mods.light || sysReduced, disabled: sysReduced, info: sysReduced ? "Diese Woche läuft ohnehin mit −1 Satz." : "−1 Satz je Übung, Bestien nur als Plage." },
+    { k: "light", label: "Leicht", on: mods.light || sysReduced, disabled: sysReduced || entlastet, info: sysReduced ? "Diese Woche läuft ohnehin mit −1 Satz." : entlastet ? "Die Entlastungswoche läuft ohnehin mit halben Sätzen." : "−1 Satz je Übung, Bestien nur als Plage." },
     { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben." },
     { k: "quiet", label: "Leise", on: mods.quiet, info: "Leise Bestie und leise Übungen: keine Sprünge, Burpees, Sprints, keine Langhantel vom Boden. Kein Laufen, keine Intervalle, kurzes Warm-up." },
     { k: "tight", label: "Kein Platz", on: mods.tight, info: "Alles auf der Stelle: kein Lunge Walk, Crawl, Carry oder Weitsprung; Bestien ohne Strecke." },
@@ -185,6 +195,9 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const doneCount = state.sessions.filter((s) => s.done).length;
   const backupAge = state.lastBackup ? daysBetween(state.lastBackup, today) : null;
   const needBackup = doneCount >= 3 && (backupAge == null || backupAge >= 14) && (state.autoBackup ?? "week") === "off";
+  // Entlastungswoche: Vorschlag nach Rhythmus oder Signalen, nur für die laufende Woche und nie in Test- oder ohnehin leichten Wochen
+  const advice = isCur && !test && !sysReduced && !entlastet ? deloadAdvice(state, block, week, today) : null;
+  const ease = (v: "ja" | "nein") => update((st) => setDeload(st, block, week, v));
   return (
     <div className="stack">
       {needBackup && (
@@ -195,6 +208,26 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       )}
       {state.user.skills == null && state.user.level !== "einsteiger" && (
         <div className="note small">Tipp: Unter Setup › Können angeben, was sitzt (Klimmzug, Pistol Squat, Muscle-Up …). Dann passt die App Übungen und Bestien an.</div>
+      )}
+      {entlastet && isCur && (
+        <div className="note small row between wrap">
+          <span>Entlastungswoche: halbe Sätze, keine Bestien. Gewichte, Übungen und Tage bleiben, nächste Woche geht es normal weiter.</span>
+          <button className="btn small" onClick={() => ease("nein")}>Weiter normal trainieren</button>
+        </div>
+      )}
+      {advice && (
+        <div className="note small row between wrap">
+          <span>
+            {advice.why === "signale"
+              ? `In den letzten zwei Wochen ${advice.count === 3 ? "dreimal" : `${advice.count}-mal`} „zu schwer“ gemeldet. `
+              : "Fünf Wochen am Stück — Zeit für eine Entlastungswoche. "}
+            Vorschlag: halbe Sätze, keine Bestien, Gewichte und Übungen bleiben.
+          </span>
+          <span className="row">
+            <button className="btn small primary" onClick={() => ease("ja")}>Diese Woche entlasten</button>
+            <button className="btn small" onClick={() => ease("nein")}>Normal weiter</button>
+          </span>
+        </div>
       )}
       <div className="card hero">
         <div className="hero-top">
@@ -212,10 +245,11 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           </div>
         </div>
         <div className="progress"><div style={{ width: `${Math.min(100, (100 * week) / total)}%` }} /></div>
-        {(!isCur || ahead || test || deload || beforeTest) && <div className="tags">
+        {(!isCur || ahead || test || deload || beforeTest || entlastet) && <div className="tags">
           {isCur && ahead && <span className="tag teal">Vorwoche geschafft · weiter ab {fmtDate(weekStart)}</span>}
           {!isCur && <span className="tag amber">{future ? "Vorschau" : "vergangen"} · ab {fmtDate(weekStart)}</span>}
           {test && <span className="tag teal">Testwoche</span>}
+          {entlastet && <span className="tag teal">Entlastungswoche</span>}
           {deload && <span className="tag">Entlastung −1 Satz</span>}
           {!deload && beforeTest && <span className="tag">vor der Testwoche −1 Satz</span>}
         </div>}
