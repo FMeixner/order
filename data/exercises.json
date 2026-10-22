@@ -906,11 +906,15 @@
   },
   "Sandbag Ground-to-Shoulder": {
     "equip": "sandbag",
-    "desc": "Sandsack vom Boden auf die Schulter heben, ein sauberer Zug mit Zwischenschritt, andere Seite danach."
+    "desc": "Sandsack vom Boden auf die Schulter heben, ein sauberer Zug mit Zwischenschritt. Alternierend links und rechts — die Zahl je Runde ist gerade."
   },
   "Sandbag Halo": {
     "equip": "sandbag",
-    "desc": "Sandsack mit beiden Händen um den Kopf kreisen, Rumpf ruhig, Richtung wechseln."
+    "desc": "Sandsack mit beiden Händen um den Kopf kreisen, Rumpf ruhig, Richtung wechseln. Vorsicht: Der Sack wächst mit dem Gewicht — Abstand zum Kopf, ruhiges Tempo, nichts unter Zeitdruck."
+  },
+  "Sandbag Push Press": {
+    "equip": "sandbag",
+    "desc": "Sandsack vor der Brust, kurz in die Knie federn und explosiv über Kopf drücken — die Beine helfen, der Rumpf bleibt dicht. Kontrolliert abfangen."
   },
   "Sandbag Romanian Deadlift": {
     "equip": "sandbag",
@@ -1193,7 +1197,7 @@
   },
   "KB Halo": {
     "equip": "kettlebell",
-    "desc": "Kettlebell am Horn vor der Brust, langsam eng um den Kopf führen, Rumpf fest, Rippen unten. Beide Richtungen."
+    "desc": "Kettlebell am Horn vor der Brust, langsam eng um den Kopf führen, Rumpf fest, Rippen unten. Beide Richtungen. Übung für Kontrolle, nicht fürs Tempo."
   },
   "Resonanzatmung (6 pro Minute)": {
     "equip": "skill",
