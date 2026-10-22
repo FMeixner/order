@@ -93,6 +93,11 @@ for (const [name, e] of Object.entries(exercises)) {
 }
 for (const b of beasts) {
   if (!b.id || !b.name || !b.rounds || !b.minutes) err("beasts.json", `unvollständig: ${JSON.stringify(b).slice(0, 60)}`);
+  // Kuratierregel Sandsack: ein tragbares Gerät, eine Stelle
+  if (b.equipment?.includes("sandbag")) {
+    const moves = String(b.work).split(" · ").map((x) => x.trim()).filter((x) => x && !/^rest\b/i.test(x));
+    if (moves.some((x) => !/sandbag/i.test(x))) err("beasts.json", `${b.id}: Sandsack-Bestie darf nur Sandsack-Übungen enthalten`);
+  }
 }
 
 const files = readdirSync(join(root, "orders")).filter((f) => f.endsWith(".json"));
