@@ -2,12 +2,37 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
-## [0.68.0] – 2026-10-20
+## [0.71.1] – 2026-10-21
+
+### Geändert
+- Lizenz: Order steht ab dieser Version unter der GNU Affero General Public License 3.0 (AGPL-3.0). Wer die App weitergibt oder als Dienst anbietet, muss den Quelltext offenlegen. Für alle Versionen bis einschließlich 0.71.0 gilt weiterhin MIT.
+
+## [0.71.0] – 2026-10-20
 
 ### Neu
-- Fünf Sandsack-Bestien im Morgenland: **Pazuzu**, **Edimmu**, **Rabisu**, **Div** und **Ghaddar**, alle mit festem Timecap und Startgewicht 20 kg. Sandsack im Equipment-Profil eintragen, dann kommen sie in die Bestienwahl; Steigerungen laufen in 5-kg-Schritten.
-- Neue Übungen: Sandbag Deadlift, Sandbag Romanian Deadlift, Sandbag Bent-Over Row, Sandbag Ground-to-Shoulder, Sandbag Halo, alle mit Beschreibung.
-- Die Datenprüfung wacht jetzt mit über die Kuratierregel für Sandsack-Bestien: nur Sandsack-Übungen, ein tragbares Gerät pro Bestie.
+- Entlastungswoche: Die App empfiehlt nach Rhythmus (ab der fünften Woche alle vier Wochen, in Phasen ab acht Wochen) oder reaktiv (dreimal „zu schwer“ innerhalb von zwei Wochen) eine Woche mit halben Sätzen — Bestien und Finisher ruhen, Gewichte, Übungen und Trainingstage bleiben. Angenommen oder abgelehnt wird in der Einblendung auf der Startseite, widerrufbar über „Weiter normal trainieren“; ein „Nein“ gilt nur für die eine Woche. Nie empfohlen in oder direkt vor einer Testwoche, nie dicht nach der letzten Entlastung.
+- Der Aschekurier druckt eine eigene Zeile für die Entlastungswoche („Die Pressen laufen langsamer“).
+- Hilfe: neuer Abschnitt zur Entlastungswoche mit der Forschungslage (Coleman et al., 2024; Pancar et al., 2026; Travis et al., 2022), Literaturliste entsprechend erweitert.
+
+### Behoben
+- Wochen-Vorsprung: Wer die laufende Woche komplett abschließt und danach auch die Folgewoche (etwa beim schnellen Durchklicken oder Nachtragen), blieb in der Folgewoche hängen — die Ansicht sprang nur eine Woche vor. Jetzt springt sie über jede voll erledigte Woche hinweg bis zur ersten offenen (auch über eine Phasengrenze, vor der Testwoche hält sie an).
+
+## [0.70.0] – 2026-10-20
+
+### Geändert
+- Der Aschekurier hat eine Stimme: Alle Erzähltabellen sind in dunkel-epischer Tonalität neu geschrieben (näher an Mystik als an Stenogramm), mit längeren Perioden und selteneren Versalschlagzeilen. Die warmen Randnotizen (aside) bleiben unverändert.
+- Feuilleton: Jede Wochenmitteilung bekommt eine sinnliche zweite Zeile aus der Stadt — Nebel, Uhrmacher, Tauben, Kanäle.
+- Leitmotiv ({motiv}): Jeder Orden zieht einmal ein wiederkehrendes Motiv der Stadt, das im Feuilleton und im Finale zurückkehrt.
+- Tell des Widersachers ({tell}): Jeder Orden zeichnet einmal ein Erkennungsmerkmal des Widersachers, das in Steckbrief, Rückschlag und Stand verwoben wird.
+- Akkord-Kurve: Wochen-, Feuilleton- und Lagentexte liegen ab Akt 2 in eigenen Varianten vor (week_full_2, lage_3 …), der Orden verdichtet sich zum Finale hin. Ohne Variante fällt die Ausgabe auf die Basistabelle zurück; eigene Welten funktionieren unverändert weiter.
+
+## [0.69.0] – 2026-10-20
+
+### Geändert
+- Wurf des Widersachers: Der W20 gehört jetzt dem Widersacher. Du würfelst physisch und trägst die Zahl im Wochenblatt ein. 1–7 ist ein rein erzählerischer Patzer, 8–14 läuft nur ins Protokoll, 15–19 (Rückschlag) und 20 (dunkle Stunde) beantwortet die Woche mit einer bzw. zwei zusätzlichen Einheiten-Treffern in der Folgewoche. Schaden entsteht nie direkt aus dem Würfel, und die Spielebene vergibt keine trainingsrelevanten Vorteile.
+- Galerie der Widersacher: Über dem Archiv der Chronik zeigt eine dauerhafte, aus dem Log abgeleitete Galerie jeden entkommenen und besiegten Widersacher mit Ausgang.
+- Entkommene Widersacher kehren im nächsten Orden derselben Szene zurück (Rache-Kapitel mit eigenem Prolog).
+- Neue Erzähltabellen für Patzer, Rückschlag, dunkle Stunde, Erwiderungen und Rückkehr; alte Kritisch-/Hohe-Treffer-Tabellen entfallen.
 
 ## [0.67.0] – 2026-10-19
 

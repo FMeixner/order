@@ -47,8 +47,8 @@ export function Help() {
 
       <h3>Bestien</h3>
       <ul>
-        <li>Zwei Familien: <strong>Morgenlandbestien</strong> (Namen aus Mesopotamien, Persien und Arabien: Humbaba, Lamassu, Simurgh, Ifrit …) arbeiten gegen externen Widerstand, also Hanteln, Kettlebell, Langhantel, Band oder Sandsack. <strong>Nordbestien</strong> (Volkssagen aus Wald, Moor und Gebirge: Kobold, Undine, Kelpie …) nur mit dem eigenen Körper; Stange, Ringe oder Rudergerät können dazugehören.</li>
-        <li>Lastbestien (Morgenland) brauchen genau ein Item (Langhantel, Kurzhantel, Kettlebell, Band oder Sandsack) und haben einen festen Timecap. Alle Lastübungen laufen mit demselben Gewicht bzw. Band. Der Rekord ist das schwerste Gewicht (oder stärkste Band), mit dem du die Bestie im Timecap bezwingst. „Bench Press 50 %“ heißt 50 % deines 1RM; ist es noch unbekannt, legst du das Gewicht selbst fest.</li>
+        <li>Zwei Familien: <strong>Morgenlandbestien</strong> (Namen aus Mesopotamien, Persien und Arabien: Humbaba, Lamassu, Simurgh, Ifrit …) arbeiten gegen externen Widerstand, also Hanteln, Kettlebell, Langhantel oder Band. <strong>Nordbestien</strong> (Volkssagen aus Wald, Moor und Gebirge: Kobold, Undine, Kelpie …) nur mit dem eigenen Körper; Stange, Ringe oder Rudergerät können dazugehören.</li>
+        <li>Lastbestien (Morgenland) brauchen genau ein Item (Langhantel, Kurzhantel, Kettlebell oder Band) und haben einen festen Timecap. Alle Lastübungen laufen mit demselben Gewicht bzw. Band. Der Rekord ist das schwerste Gewicht (oder stärkste Band), mit dem du die Bestie im Timecap bezwingst. „Bench Press 50 %“ heißt 50 % deines 1RM; ist es noch unbekannt, legst du das Gewicht selbst fest.</li>
         <li>Jeder Orden hat mindestens eine Bestie pro Woche. Bei ruhigeren Orden kommt in jeder zweiten Woche eine lange Bestie im Grundlagentempo; diese Zeit zählt nicht für die Bestzeit.</li>
         <li>Laufen ersetzen (Wetter, Reise, Knie): Unter ⚙ Anpassen „Laufen ersetzen“ wählen. Rudergerät, Rad, Seilspringen oder Stepper werden nach Belastungszeit umgerechnet, nicht 1:1: 400 m Laufen ≈ 500 m Rudern ≈ 1000 m Rad ≈ 2 Min Seil oder Stepper, Sprints werden zu kurzen Sprints auf dem Gerät. Dauerläufe bleiben gleich lang im gleichen Tempo. „Bestie“ macht aus einem Laufblock eine Bestie ähnlicher Dauer.</li>
         <li>Jede Bestie gibt es <em>entfesselt</em> (die volle Fassung) und <em>mutiert</em>. Ist ein Skill (Setup › Können) nicht angekreuzt, kommt sie mutiert: Nur die Übungen dieses Skills werden durch ihren Ersatz getauscht, etwa Pistols → doppelt so viele Squats, Dragon Flags → dreimal so viele Leg Raises. Alle mutierten Fassungen einer Bestie teilen sich eine Bestzeit. Dieselbe Bestie kommt nie zwei Wochen hintereinander.</li>
@@ -99,7 +99,7 @@ export function Help() {
       <h3>Der Aschekurier (Erzähler)</h3>
       <ul>
         <li>Unter Setup › Erzähler einschalten. Ein Flugblatt berichtet über jeden Orden: ein Widersacher als Endgegner, die Bestien sind sein Gefolge. Die Ausgabe der Woche öffnet das kleine Feder-Logo in der Ordenskarte auf <em>Heute</em> (ein Punkt heißt: neue Ausgabe), alle Ausgaben stehen im Log, am Ende eine Sonderausgabe.</li>
-        <li>Einheiten treffen den Widersacher. Volle Wochen, Bestzeiten und mehr Gewicht treffen zusätzlich, einer davon doppelt (die Schwachstelle). Ein W20 pro Woche würzt: 20 ist ein kritischer Treffer, 1 ein harmloser Patzer. Die Würfel stehen fest, Neuladen ändert nichts.</li>
+        <li>Einheiten treffen den Widersacher. Volle Wochen, Bestzeiten und mehr Gewicht treffen zusätzlich, einer davon doppelt (die Schwachstelle). Den W20 wirfst du selbst für den Widersacher und trägst ihn in der Wochenausgabe ein; die Zahl bleibt stehen. Der Wurf allein trifft nie: Erst die volle Woche danach ist die Antwort – nach einer Zwanzig trifft sie doppelt so hart. Besiegte Widersacher stehen in der Galerie im Log, entkommene kehren in einem späteren Orden derselben Szene zurück.</li>
         <li>Ruhige Wochen kosten nichts. Der Widersacher fällt nie vor dem letzten Akt; mit etwa 90 % der Einheiten ist er besiegt, sonst entkommt er gezeichnet.</li>
         <li>Die Testwoche wird zum Turnier der Klingen. Jede Klinge muss neu verdient werden: besser, gehalten (im Messfehler) oder diesmal nicht.</li>
         <li>Eigene Welt: eine JSON-Datei im Aufbau von <code>data/narrative/generic.json</code> unter Setup › Erzähler laden. Sie bleibt auf dem Gerät und in deiner Sicherung.</li>
@@ -134,6 +134,14 @@ export function Help() {
         <li><strong>Kein Platz:</strong> alles auf der Stelle. Farmer's Carry wird zum Marschieren auf der Stelle (40 Schritte), Walking Lunges zu Reverse Lunges, Crawls zu Mountain Climbers; Bestien ohne Lunge Walk, Crawl, Weitsprung oder Sprint.</li>
         <li>Kurz, Leise und Kein Platz lassen sich im Anpassen-Menü für einen Wochentag fixieren („Für jeden Freitag fixieren“), über alle Phasen; Plan › Deine Woche zeigt, was fixiert ist. Dann plant die App die Woche schon darauf hin: Ein gemerkter Kurztag gleicht über die ganze Woche aus. Kurz geht nur für einen Wochentag.</li>
         <li>Deficit Push-Ups brauchen Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln (Setup › Equipment). Fehlt das am Ort, kommen Banded Push-Ups, ohne Band normale Push-Ups mit einem Satz mehr.</li>
+      </ul>
+
+      <h3>Entlastungswoche</h3>
+      <ul>
+        <li>Vorschlag der App, wenn es Zeit ist: halbe Sätze, mindestens zwei, und keine Bestien. Gewichte, Übungen und Trainingstage bleiben, wie sie sind. Angenommen oder abgelehnt wird direkt in der Einblendung; über „Weiter normal trainieren“ jederzeit widerrufbar. Ein „nein“ gilt nur für die eine Woche.</li>
+        <li>Empfohlen wird nach Rhythmus — in Phasen ab acht Wochen ab der fünften Woche alle vier Wochen — oder reaktiv, wenn du in zwei Wochen dreimal „zu schwer“ gemeldet hast. Nie in oder direkt vor einer Testwoche und nie dicht nach der letzten Entlastung.</li>
+        <li>Warum kein Extra-Wachstum zu erwarten ist: Eine Woche Komplettpause mitten im Programm hat das Muskelwachstum nicht verbessert und die Unterkörper-Kraft sogar leicht verschlechtert (Coleman et al., 2024); Entlastungswochen mit weniger Volumen und Frequenz haben Wachstum und Kraftausdauer nicht gebremst (Pancar et al., 2026). Die Entlastung ist Ermüdungs- und Risikomanagement, kein Trainingsreiz.</li>
+        <li>Warum die leichte Woche besser ist als gar nicht trainieren: Beinkraft hält drei bis fünf Tage Pause aus, die Kraft oben war nach fünf Tagen schon messbar leichter (Travis et al., 2022). Weitertrainieren mit halber Last schlägt das Aussetzen.</li>
       </ul>
 
       <h3>Alltagslast</h3>
