@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.72.1] – 2026-10-22
+
+### Geändert
+- Pazuzu: Sandbag Halo ersetzt durch Sandbag Romanian Deadlift — der Sack wächst mit dem Gewicht, Halos um den Kopf sind unter Zeitdruck nichts für Sandsäcke. Ground-to-Shoulder von 9 auf 10, alternierend links/rechts.
+- Div: Ground-to-Shoulder von 9 auf 10 (alternierend, gerade Zahl je Runde).
+- Kusarikku: Halo ersetzt durch KB Swing. Halos sind eine Übung für Kontrolle, nicht für Speed — sie gehören nicht in Bestien.
+- Neue Kuratierregeln der Datenprüfung: Bestien enthalten keine Halos, Ground-to-Shoulder nur in gerader Zahl je Runde (beide Fassungen einer Bestie, work und parts). Übungsbeschreibungen für Halos und Ground-to-Shoulder entsprechend geschärft.
+
 ## [0.72.0] – 2026-10-22
 
 ### Neu

@@ -93,10 +93,18 @@ for (const [name, e] of Object.entries(exercises)) {
 }
 for (const b of beasts) {
   if (!b.id || !b.name || !b.rounds || !b.minutes) err("beasts.json", `unvollständig: ${JSON.stringify(b).slice(0, 60)}`);
-  // Kuratierregel Sandsack: ein tragbares Gerät, eine Stelle
-  if (b.equipment?.includes("sandbag")) {
-    const moves = String(b.work).split(" · ").map((x) => x.trim()).filter((x) => x && !/^rest\b/i.test(x));
-    if (moves.some((x) => !/sandbag/i.test(x))) err("beasts.json", `${b.id}: Sandsack-Bestie darf nur Sandsack-Übungen enthalten`);
+  // Bestien können aus mehreren Einheiten bestehen (parts) — alle Fassungen prüfen
+  for (const w of [b.work, ...(b.parts ?? []).map((x) => x.work)]) {
+    const moves = String(w).split(" · ").map((x) => x.trim()).filter((x) => x && !/^rest\b/i.test(x));
+    // Kuratierregel Sandsack: ein tragbares Gerät, eine Stelle
+    if (b.equipment?.includes("sandbag") && moves.some((x) => !/sandbag/i.test(x))) err("beasts.json", `${b.id}: Sandsack-Bestie darf nur Sandsack-Übungen enthalten`);
+    // Kuratierregel Halo: Kontrollübung, nichts für Zeitdruck — Halos gehören nicht in Bestien
+    if (moves.some((x) => /halo/i.test(x))) err("beasts.json", `${b.id}: Halos gehören nicht in Bestien (Kontrollübung, kein Speed)`);
+    // Kuratierregel Ground-to-Shoulder: alternierend links/rechts, Zahl je Runde gerade
+    for (const x of moves) {
+      if (!/ground-to-shoulder/i.test(x)) continue;
+      for (const n of x.match(/\d+/g) ?? []) if (n % 2) err("beasts.json", `${b.id}: Ground-to-Shoulder braucht gerade Zahlen (alternierend links/rechts)`);
+    }
   }
 }
 
