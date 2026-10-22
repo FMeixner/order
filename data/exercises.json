@@ -912,6 +912,10 @@
     "equip": "sandbag",
     "desc": "Sandsack mit beiden Händen um den Kopf kreisen, Rumpf ruhig, Richtung wechseln. Vorsicht: Der Sack wächst mit dem Gewicht — Abstand zum Kopf, ruhiges Tempo, nichts unter Zeitdruck."
   },
+  "Sandbag Push Press": {
+    "equip": "sandbag",
+    "desc": "Sandsack vor der Brust, kurz in die Knie federn und explosiv über Kopf drücken — die Beine helfen, der Rumpf bleibt dicht. Kontrolliert abfangen."
+  },
   "Sandbag Romanian Deadlift": {
     "equip": "sandbag",
     "desc": "Beine fast gestreckt, Hüfte nach hinten schieben, Sandsack an den Schienbeinen entlang führen und aufrichten."
