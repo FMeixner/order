@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.72.0] – 2026-10-22
+
+### Neu
+- Wochenüberblick: Eine schmale Linie je Muskel zeigt, wo in etwa der Erhaltungsbereich von Kraft und Masse liegt — etwa die Hälfte des unteren Richtwerts (z. B. 5 Sätze bei Fortgeschrittenen). Das helle Feld bleibt der Wachstumsbereich; zwischen Linie und Feld reicht es zum Halten, darunter wird es meist knapp.
+
 ## [0.71.1] – 2026-10-21
 
 ### Geändert
