@@ -663,6 +663,7 @@ describe("Lastbestien", () => {
     expect(loadKind(by("Anzu"))).toBe("dumbbell");
     expect(loadKind(by("Ugallu"))).toBe("barbell");
     expect(loadKind(by("Peri"))).toBe("band");
+    expect(loadKind(by("Pazuzu"))).toBe("sandbag");
     expect(loadKind(by("Undine"))).toBeNull();
     expect(capOf(by("Lamassu"))).toBe(17);
     expect(capOf(by("Undine"))).toBeNull();
@@ -731,7 +732,7 @@ describe("Nord und Süd", () => {
   it("Morgenlandbestien haben externen Widerstand, Nordbestien nicht, und die Namen passen", async () => {
     const { beastRegion } = await import("./plan");
     const sued = BEASTS.filter((b) => beastRegion(b) === "sued").map((b) => b.name).sort();
-    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Mantikor", "Marid", "Peri", "Qarin", "Roch", "Schahmaran", "Schedu", "Simurgh", "Sirrusch", "Ugallu", "Zahhak"]);
+    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Div", "Edimmu", "Ghaddar", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Mantikor", "Marid", "Pazuzu", "Peri", "Qarin", "Rabisu", "Roch", "Schahmaran", "Schedu", "Simurgh", "Sirrusch", "Ugallu", "Zahhak"]);
     expect(BEASTS.filter((b) => beastRegion(b) === "nord").length).toBe(56);
     expect(beastRegion(BEASTS.find((b) => b.name === "Undine")!)).toBe("nord");
   });
