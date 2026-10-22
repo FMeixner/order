@@ -93,6 +93,11 @@ for (const [name, e] of Object.entries(exercises)) {
 }
 for (const b of beasts) {
   if (!b.id || !b.name || !b.rounds || !b.minutes) err("beasts.json", `unvollständig: ${JSON.stringify(b).slice(0, 60)}`);
+  // Kuratierregel Sandsack: ein tragbares Gerät, eine Stelle
+  if (b.equipment?.includes("sandbag")) {
+    const moves = String(b.work).split(" · ").map((x) => x.trim()).filter((x) => x && !/^rest\b/i.test(x));
+    if (moves.some((x) => !/sandbag/i.test(x))) err("beasts.json", `${b.id}: Sandsack-Bestie darf nur Sandsack-Übungen enthalten`);
+  }
 }
 
 const files = readdirSync(join(root, "orders")).filter((f) => f.endsWith(".json"));
@@ -169,7 +174,7 @@ for (const [f, d] of allFoci) {
 {
   const f = "narrative/generic.json";
   const pack = read(f);
-  const tokens = new Set(["held", "sie", "ihn", "ihm", "ihr", "die", "in", "feind", "feind_dat", "feind_akk", "feind_gen", "desc", "weak", "fp", "ort", "schar", "bestie", "bestie_zwei", "n", "von", "stellen", "mal", "beiname", "vorsieg", "vorfeind_akk", "vorfeind_dat", "klinge", "motiv", "tell"]);
+  const tokens = new Set(["held", "sie", "ihn", "ihm", "ihr", "die", "in", "feind", "feind_dat", "feind_akk", "feind_gen", "desc", "weak", "fp", "ort", "schar", "bestie", "bestie_zwei", "n", "von", "stellen", "mal", "beiname", "vorsieg", "vorfeind_akk", "vorfeind_dat", "klinge"]);
   const check = (ctx, t) => {
     for (const m of t.matchAll(/\{([A-Za-z_]+)\}/g)) if (!tokens.has(m[1][0].toLowerCase() + m[1].slice(1))) err(f, `${ctx}: unbekannter Platzhalter {${m[1]}}`);
   };
