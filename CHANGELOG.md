@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.73.0] – 2026-10-26
+
+### Neu
+- Karten klappen jetzt von selbst ein, sobald alles erledigt ist — wie bei den Übungen schon immer: auch Warm-up, Cool-down und Bestien ziehen sich nach kurzer Zeit zusammen und lassen den Blick frei für das, was noch offen ist. Antippen öffnet wieder.
+
+### Geändert
+- „OK“ steigert jetzt schon: Wer die letzte Runde mit einer Wiederholung Reserve geschafft hat, bekommt beim nächsten Mal automatisch die nächste Stufe (bei Hanteln mit großem Sprung erst +1 Wiederholung). „Schwer“ hält das Gewicht. Die frühere „Dreimal OK“-Nachfrage fällt damit weg — dreimal dasselbe Feedback gibt keine neuen Informationen mehr.
+- „OK“ heißt in der Hilfe jetzt klar: letzte Runde mit einer Wiederholung Reserve geschafft.
+
 ## [0.72.1] – 2026-10-22
 
 ### Neu

@@ -157,6 +157,20 @@ function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: BeastCtx;
 export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, easy, nextBeast, watchBase, cardio }: { blockId: string; beast: Beast | null; ctx: BeastCtx; watchBase: string; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean; nextBeast?: string; /** Laufen ersetzt durch dieses Gerät (nur die Anzeige; Id und Bestzeit bleiben) */ cardio?: CardioSub }) {
   const t = useTimer();
   const beast = beast0 && cardio ? swapRunBeast(beast0, cardio) : beast0;
+  // Ergebnis dieses Bestien-Blocks (alte Einheiten: beast/beastParts) — vor dem Null-Fall, damit die Hooks immer laufen
+  const runOf = (s?: Session): BeastRun => s?.beastRuns?.[blockId] ?? (!s?.beastRuns && (s?.beast?.id === beast?.id || s?.beastParts?.length) ? { beast: s?.beast, parts: s?.beastParts } : {});
+  const run = runOf(session);
+  // Fertig: die Zeit steht — dann klappt die Karte nach kurzer Zeit ein wie eine Übungskarte
+  const done = !!beast && (beast.parts
+    ? beast.parts.every((pt, u) => (run.parts?.[u]?.id === pt.id ? run.parts[u] : undefined)?.seconds != null)
+    : (run.beast?.id === beast.id ? run.beast : undefined)?.seconds != null);
+  const [folded, setFolded] = useState<boolean>(done);
+  useEffect(() => {
+    if (!done) { setFolded(false); return; }
+    if (folded) return;
+    const id = setTimeout(() => setFolded(true), 2500);
+    return () => clearTimeout(id);
+  }, [done]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!beast) return <section className="card"><div className="muted">Keine passende Bestie für dieses Equipment gefunden.</div></section>;
   // Dauer: bei Serien aus den Teilen, mit gemessenen Zeiten, wo vorhanden
   const effMin = beast.parts
@@ -173,8 +187,6 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, eas
     });
   };
   // Ergebnis dieses Bestien-Blocks (alte Einheiten: beast/beastParts)
-  const runOf = (s?: Session): BeastRun => s?.beastRuns?.[blockId] ?? (!s?.beastRuns && (s?.beast?.id === beast.id || s?.beastParts?.length) ? { beast: s?.beast, parts: s?.beastParts } : {});
-  const run = runOf(session);
   const mutRun = (fn: (r: BeastRun) => BeastRun) => mut((s) => ({ ...s, beastRuns: { ...(s.beastRuns ?? {}), [blockId]: fn(runOf(s)) } }));
   const cur = run.beast?.id === beast.id ? run.beast : undefined;
   // Lastbestie: ohne eigene Eingabe gilt der Vorschlag
@@ -226,6 +238,18 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, eas
       </>
     );
   };
+  if (folded && done) {
+    const times = beast.parts
+      ? beast.parts.map((pt, u) => { const sec = run.parts?.[u]?.id === pt.id ? run.parts[u].seconds : null; return sec != null ? fmt(sec) : "–"; }).join(" · ")
+      : run.beast?.seconds != null ? fmt(run.beast.seconds) : "";
+    return (
+      <button className="slot slot-done" onClick={() => setFolded(false)} aria-label={`${beast.name} erledigt, aufklappen`}>
+        <span className="slot-done-check" aria-hidden>✓</span>
+        <span className="slot-name">{beast.name}</span>
+        <span className="muted small">{times}</span>
+      </button>
+    );
+  }
   return (
     <section className="card beast">
       <div className="block-label amber">{capOf(beast) != null ? `Lastbestie · Timecap ${capOf(beast)} Min` : `Bestie · ${measured ? "" : "~"}${Math.round(effMin)} Min`}</div>
