@@ -13,17 +13,17 @@ describe("Schwert-Lernweg", () => {
   });
   it("Stufen nur der Reihe nach: ein späterer Skill ohne den früheren öffnet nichts", () => {
     expect(swordLevel(["schwert_kombi"])).toBe(0);
-    expect(swordLevel(["schwert_hiebe", "schwert_kombi"])).toBe(2);
+    expect(swordLevel(["schwert_hiebe", "schwert_stiche", "schwert_kombi"])).toBe(3);
     expect(swordLevel(SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toBe(SWORD.levels.length - 1);
   });
   it("Lernweg: Inhalt der Stufe, danach freies Üben; feste Formate bleiben", () => {
-    expect(ids("lernweg", ["schwert_hiebe"])).toEqual([...SWORD.basics, ...DM_VARIANTS.kombiform, ...DM_VARIANTS.lernweg].map((d) => d.id));
+    expect(ids("lernweg", ["schwert_hiebe"])).toEqual([...SWORD.basics, ...DM_VARIANTS.stiche, ...DM_VARIANTS.lernweg].map((d) => d.id));
     expect(ids("bookend", ["schwert_hiebe"])).toEqual(DM_VARIANTS.bookend.map((d) => d.id));
-    expect(moduleDrills("einzelmesser", { ...emptyState().user, skills: ["schwert_hiebe"] }, 1).map((d) => d.id)).toEqual([...SWORD.basics, ...DM_VARIANTS.kombiform].map((d) => d.id));
+    expect(moduleDrills("einzelmesser", { ...emptyState().user, skills: ["schwert_hiebe"] }, 1).map((d) => d.id)).toEqual([...SWORD.basics, ...DM_VARIANTS.stiche].map((d) => d.id));
   });
   it("Klingentanz nach dem Drehhau, Heaven Six auf der letzten Stufe", () => {
-    expect(ids("lernweg", ["schwert_hiebe", "schwert_kombi", "schwert_wechsel"])).toEqual([...SWORD.basics, ...DM_VARIANTS.klingentanz, ...DM_VARIANTS.lernweg].map((d) => d.id));
-    expect(swordNext(["schwert_hiebe", "schwert_kombi", "schwert_wechsel"])?.level).toBe("Doppelmesser");
+    expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche", "schwert_kombi", "schwert_wechsel"])).toEqual([...SWORD.basics, ...DM_VARIANTS.klingentanz, ...DM_VARIANTS.lernweg].map((d) => d.id));
+    expect(swordNext(["schwert_hiebe", "schwert_stiche", "schwert_kombi", "schwert_wechsel"])?.level).toBe("Doppelmesser");
     expect(ids("lernweg", SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toContain("md-heaven6");
   });
   it("Stufe 1 nur Einzelhiebe, ohne Kombiform und ohne doppelte Basics", () => {
@@ -35,7 +35,7 @@ describe("Schwert-Lernweg", () => {
     expect(base).toBeGreaterThan(0);
   });
   it("nächster Schritt nennt Stufe und Test, auf der letzten Stufe nichts", () => {
-    expect(swordNext([])).toEqual({ level: "Kombiformen", test: expect.stringContaining("Zornhau") });
+    expect(swordNext([])).toEqual({ level: "Stiche", test: expect.stringContaining("Zornhau") });
     expect(swordNext(SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toBeNull();
   });
 });

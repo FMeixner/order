@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.74.0] – 2026-10-26
+
+### Neu
+- Schwert-Lernweg: neue Stufe 2 „Stiche“, zwischen den Hieben und den Kombiformen. Ober-, Mittel- und Unterstich je 12 pro Seite mit Ausfallschritt, dazu der Stichwechsel als Kette und fünf Minuten gerade Bahn in deinem Tempo. Der Test: gerade Linie, stabile Spitze, jeder Stich betont zurückgezogen.
+
+### Geändert
+- Die Kombiformen rücken auf Stufe 3 und brauchen jetzt den Stiche-Test. Wer schon bei ihnen oder weiter vorne war, hakt den Stiche-Test unter Setup › Können ab — dann läuft der Weg wie gewohnt weiter.
+
 ## [0.73.0] – 2026-10-26
 
 ### Neu
