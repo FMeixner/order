@@ -1,5 +1,5 @@
 /* Warm-up und Cool-down: Listen zum Abhaken, eigene Änderungen je Tag. */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Session } from "../../types";
 import { drillPool, type DrillView } from "../../engine/plan";
 import { fmt, useTimer } from "../Timer";
@@ -34,6 +34,16 @@ export function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" |
   const shown = new Set(drills.map((d) => d.id));
   const pool = drillPool(kind, ctx.profile).filter((d) => !shown.has(d.id));
   const title = kind === "wu" ? "Warm-up" : "Cool-down";
+  // Fertig: alles abgehakt — dann klappt die Karte nach kurzer Zeit ein wie eine Übungskarte
+  const allDone = drills.length > 0 && drills.every((d) => {
+    const n = d.groups.reduce((x, g) => x + g.sets, 0);
+    return (session?.drills[`${kind}:${d.id}`] ?? []).slice(0, n).every((x) => x === true);
+  });
+  useEffect(() => {
+    if (!allDone || edit) return;
+    const id = setTimeout(() => setOpen(false), 2500);
+    return () => clearTimeout(id);
+  }, [allDone, edit]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Collapse title={title} meta={`${drills.length} Übungen${changed ? " · angepasst" : ""}`} tone="amber" open={open} onOpenChange={setOpen}
       extra={<button className={`pen-btn ${edit ? "on" : ""}`} onClick={() => { setEdit((o) => !o); setOpen(true); }} aria-pressed={edit} aria-label={`${title} bearbeiten`} title="Bearbeiten">✎</button>}>

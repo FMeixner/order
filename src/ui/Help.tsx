@@ -19,7 +19,7 @@ export function Help() {
         <li>Die Vorgabe ist konkret, etwa „3 × 13 · 25 kg“. Gewicht einmal pro Übung eintragen (oder den Vorschlag lassen), nach jedem Satz den Kreis antippen: Das heißt „Ziel geschafft“, die Pause startet. Nur bei AMRAP trägst du die Zahl ein.</li>
         <li>Antippen der Vorgabe zeigt die Details: den Bereich dahinter (oben angekommen steigt das Gewicht), was du zuletzt geschafft hast und was als Nächstes kommt.</li>
         <li>Nach dem letzten Satz kurz Feedback geben:
-          <strong> Zu schwer</strong> = Ziel verfehlt (die App fragt, wie viele im letzten Satz gingen), <strong>Schwer</strong> = gerade so geschafft, <strong>OK</strong> = 1–2 Wiederholungen wären noch gegangen,
+          <strong> Zu schwer</strong> = Ziel verfehlt (die App fragt, wie viele im letzten Satz gingen), <strong>Schwer</strong> = gerade so geschafft, <strong>OK</strong> = letzte Runde mit einer Wiederholung Reserve geschafft,
           <strong> Leicht</strong> = 3 oder mehr, <strong>Sehr leicht</strong> = deutlich zu leicht (die App fragt, wie viele je Satz gingen).</li>
         <li>Fehlen 2 oder mehr Wiederholungen zum unteren Ende des Bereichs, geht das Gewicht eine Stufe runter.</li>
         <li>Am Ende „Einheit abschließen“. Erst dann rechnet die App die Vorschläge für das nächste Mal.</li>
@@ -29,9 +29,8 @@ export function Help() {
       <h3>So steigert die App</h3>
       <ul>
         <li>Bei einem Bereich wie 8–10 arbeitest du dich erst in den Wiederholungen hoch. Schaffst du in allen Sätzen 10, kommt die nächste Gewichtsstufe, die es in deinem Profil gibt.</li>
-        <li>„Leicht“ bringt eine Stufe mehr, „Sehr leicht“ zwei. Zweimal hintereinander „Schwer“ nimmt 5 % weg.</li>
+        <li>„OK“ und „Leicht“ bringen je eine Stufe mehr, „Sehr leicht“ zwei. „Schwer“ hält das Gewicht. Zweimal hintereinander „Schwer“ nimmt 5 % weg.</li>
         <li>Große Sprünge zwischen deinen Hanteln (etwa 10 auf 12 kg): Die App hebt die Obergrenze an, zum Beispiel auf 16 Wiederholungen, und springt erst dann. Danach startet sie mit einer geschätzten Zahl an Wiederholungen. Der Hinweis steht in Orange bei der Übung.</li>
-        <li>Dreimal „OK“ mit gleichem Gewicht, ohne mehr Wiederholungen: Beim nächsten Mal schlägt die App die nächste Stufe vor (bei großem Sprung zwei Wiederholungen mehr). Manchmal geht mehr, als man denkt. Wenn nicht, „Schwer“ geben.</li>
         <li>Anderer Ort: Gleiche Übung, gleiche Daten. Gibt es das Gewicht dort nicht, rechnet die App auf die Stufen des Profils um. War es zuletzt „leicht“, darf es die nächsthöhere Stufe sein (12 kg leicht im Studio → 13 kg zuhause), sonst die nächstniedrigere mit mehr Wiederholungen.</li>
         <li>Ohne Gewicht steigen Übungen über Wiederholungen oder über eine schwerere Variante (Stufe 1, 2, 3). Gezählt wird vom Geschafften: 2 × 20 bei Ziel 15 ergibt als nächstes Ziel 21.</li>
         <li>Zusatzlast: Nacken, Schienbein und Waden steigen bis 30 Wiederholungen, Rumpf und Beine bis 25, Oberkörper bis 20 (bei Leitern: die letzte Stufe zweimal am oberen Ende). Danach kommt dieselbe Übung mit Weste oder Gürtel, beides ist austauschbar, und es geht weiter wie bei Hanteln: erst Wiederholungen, dann Gewicht. Klimmzüge, Dips und andere Übungen, die der Orden von Anfang an schwer will, laufen gleich mit Zusatzlast.</li>

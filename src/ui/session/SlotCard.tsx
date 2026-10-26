@@ -179,7 +179,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
     : concrete ? `${r.sets} × ${sug.targetReps}${rp.suffix}${r.loadable && sug.weight != null ? ` · ${kg(sug.weight)}` : ""}`
     : `${r.sets} × ${sug.repsLabel}`;
   const showFb = r.prog !== "none" && (sets.some((x) => x.done) || !!entry.feedback || !!session?.done);
-  // Vorausschau („→ bis 3 × 12, dann 27,5 kg“) gehört in die Details; Hinweise zum Heute (Pause, Dreimal OK) bleiben sichtbar
+  // Vorausschau („→ bis 3 × 12, dann 27,5 kg“) gehört in die Details; Hinweise zum Heute (Pause) bleiben sichtbar
   const detailGap = sug.gap?.startsWith("→") ? sug.gap : undefined;
 
   // Fertig: alle Sätze abgehakt, Rückmeldung gegeben (bei „Zu schwer“ auch die Zahl). Dann klappt die Übung nach kurzer Zeit ein.

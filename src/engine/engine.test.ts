@@ -595,7 +595,7 @@ describe("Gleiche Übung, gleiche Gewichtsdaten", () => {
   });
 });
 
-describe("Ortswechsel und dreimal OK", () => {
+describe("Ortswechsel und OK-Steigerung", () => {
   const studio: EquipmentProfile = { ...gym, dumbbells: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20] };
   const homeP: EquipmentProfile = { ...home, dumbbells: [4, 5.5, 7, 8.5, 10, 11.5, 13, 14.5] };
   const slot = { id: "lr", name: "DB Lateral Raise", sets: 3, reps: "12-15", prog: "double" as const };
@@ -619,19 +619,16 @@ describe("Ortswechsel und dreimal OK", () => {
     expect(homeS.weight).toBe(11.5);
     expect(homeS.targetReps).toBeGreaterThanOrEqual(14);
   });
-  it("dreimal OK mit gleichem Gewicht und gleichen Wiederholungen: nächste Stufe", () => {
+  it("weight: erstes „OK“ steigert schon, „Schwer“ hält", () => {
     const r = resolveSlot({ id: "bp", name: "Bench Press", sets: 3, reps: "5", prog: "weight" }, gym)!;
-    const e = (w: number): SessionEntry => ({ key: r.key, slotId: "bp", name: r.name, prog: "weight", feedback: "ok", sets: [5, 5, 5].map((x) => ({ done: true, reps: x, weight: w })) });
-    let st = advance(r, undefined, e(80), gym, "d1");
-    st = advance(r, st, e(80), gym, "d2");
-    expect(st.weight).toBe(80);
-    st = advance(r, st, e(80), gym, "d3");
-    expect(st.nudge).toBe(true);
-    expect(st.weight! > 80 || st.target! > 5).toBe(true);
-    expect(suggest(r, st, 1, gym).gap).toMatch(/Dreimal OK/);
-    // danach wieder normal
-    st = advance(r, st, e(st.weight!), gym, "d4");
-    expect(st.nudge).toBe(false);
+    const e = (fb: "ok" | "schwer", w: number): SessionEntry =>
+      ({ key: r.key, slotId: "bp", name: r.name, prog: "weight", feedback: fb, sets: [5, 5, 5].map((x) => ({ done: true, reps: x, weight: w })) });
+    const st = advance(r, undefined, e("ok", 80), gym, "d1");
+    expect(st.weight! > 80).toBe(true);
+    expect(st.target).toBe(5);
+    const st2 = advance(r, st, e("schwer", st.weight!), gym, "d2");
+    expect(st2.weight).toBe(st.weight);
+    expect(st2.target).toBe(5);
   });
 });
 

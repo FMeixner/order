@@ -284,10 +284,6 @@ export interface SlotState {
   fb: Feedback[];
   topHits: number;
   updated: string;
-  /** Letzte Einheiten: Gewicht und schwächster Satz, für die „dreimal OK“-Regel */
-  hist?: { w: number | null; r: number }[];
-  /** Nächstes Mal mehr, weil dreimal OK mit gleichem Gewicht */
-  nudge?: boolean;
   /** Übung ohne Gewicht hat die Wiederholungsgrenze erreicht: weiter mit Zusatzlast */
   loaded?: boolean;
 }
