@@ -92,6 +92,8 @@
       "beast": "planche" },
     { "id": "schwert_hiebe", "group": "schwert", "name": "Hiebe", "test": "Zornhau, Zwerchhau und Scheitelhau je 15 pro Seite langsam: stabile Bahn, Rumpf dreht mit, sauber abgebremst",
       "exercises": [], "regress": {}, "beast": "" },
+    { "id": "schwert_stiche", "group": "schwert", "name": "Stiche", "test": "Ober-, Mittel- und Unterstich je 12 pro Seite mit Ausfallschritt: gerade Linie, stabile Spitze, jeder Stich betont zurückgezogen",
+      "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_kombi", "group": "schwert", "name": "Kombiformen", "test": "5 Kombiformen pro Seite (beide Reihenfolgen) ohne Stocken, Klinge eng am Körper",
       "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_wechsel", "group": "schwert", "name": "Drehhau", "test": "10 Drehhau pro Seite in normalem Tempo, saubere Unterarmdrehung, Handgelenk gerade",
