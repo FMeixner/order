@@ -32,7 +32,7 @@ Läuft im Browser und lässt sich auf dem Handy wie eine App installieren. Alle 
 | Huntsman | Parkour und wechselnde Circuits |
 | Pugilist | Rumpf, Nacken, Runden |
 | Assassin | Fett verlieren, Kraft halten |
-| Witcher | Muskelaufbau mit Kontrastpaaren |
+| Slayer | Muskelaufbau mit Kontrastpaaren |
 | Soldier | Entlasten, testen, Schwachstellen trainieren |
 | Gladiator | Physis mit Weste und Konditionsintervallen |
 | Conqueror | Unterwegs belastbar bleiben |

@@ -114,7 +114,7 @@ Eine Phase mit `focusId: "test"` ist eine eigene Testwoche. Folgt sie direkt auf
 
 ## Harlequin (medley)
 
-Ein Orden mit `"medley": ["witcher", "pugilist", …]` hat keine eigenen Rollen: In Woche n läuft der n-te Orden der Liste, danach von vorn.
+Ein Orden mit `"medley": ["slayer", "pugilist", …]` hat keine eigenen Rollen: In Woche n läuft der n-te Orden der Liste, danach von vorn.
 
 ## Pausen
 

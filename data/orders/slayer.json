@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "id": "witcher",
-  "name": "Witcher", "name_w": "Amazon",
+  "id": "slayer",
+  "name": "Slayer", "name_w": "Amazon",
   "tagline": "Masse oben, Athletik unten, Schwert in der Hand.",
   "description": "Muskelaufbau mit leichtem Überschuss für den Oberkörper: Brust, Rücken, Schultern und Arme mit etwa 11–14 harten Sätzen pro Woche, Übungen mit Betonung der Dehnposition. Die Beine laufen athletisch: Freitag schwer und explosiv mit Kontrastpaaren im A/B-Wechsel (30 s vom schweren zum explosiven Satz, 3 Min bis zum nächsten Paar), Kraftausdauer über die Bestien. Donnerstag 20 Minuten Schwert auf deiner Stufe im Lernweg.",
   "goals": {"primary": "hypertrophy", "secondary": ["strength", "power", "skill"]},

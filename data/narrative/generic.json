@@ -32,7 +32,7 @@
   "default": "stadt",
   "orders": {
     "assassin": "stadt",
-    "witcher": "wildnis",
+    "slayer": "wildnis",
     "huntsman": "wildnis",
     "gladiator": "arena",
     "pugilist": "arena",

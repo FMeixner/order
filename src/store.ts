@@ -1,6 +1,6 @@
 /* Zustand der App: im Browser gespeichert (localStorage), exportier- und importierbar als JSON. */
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { AppState, EquipmentProfile, Weekday } from "./types";
+import type { AppState, EquipmentProfile, Focus, PlanBlock, Weekday } from "./types";
 
 const KEY = "order:v1";
 
@@ -86,7 +86,28 @@ export function migrate(raw: unknown): AppState {
   quietDays(s);
   s.equipment = s.equipment.map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   renameExercises(s);
+  // 0.75: Orden „Witcher“ heißt jetzt „Slayer“ — Phasen, Einheiten und Drill-Änderungen heißen mit um
+  renameFocus(s);
   return s;
+}
+/** 0.75: Umbenennung Witcher → Slayer. Gleicher Orden, gleiche Rollen; Slot-Ids (w-*), Weibelform „Amazon“ und alle Daten bleiben. */
+function renameFocus(s: AppState): void {
+  s.plan = s.plan.map((b): PlanBlock => {
+    if (b.focusId !== "witcher") return b;
+    const fr = b.frozen;
+    const old = fr?.foci?.witcher;
+    if (!fr || !old) return { ...b, focusId: "slayer" };
+    const foci: Record<string, Focus> = { ...fr.foci };
+    delete foci.witcher;
+    foci.slayer = { ...old, id: "slayer", name: "Slayer" };
+    return { ...b, focusId: "slayer", frozen: { at: fr.at, foci } };
+  });
+  s.sessions = (s.sessions ?? []).map((se) => (se.focusId === "witcher" ? { ...se, focusId: "slayer" } : se));
+  if (s.drillEdits) {
+    const out: AppState["drillEdits"] = {};
+    for (const [k, v] of Object.entries(s.drillEdits)) out[k.startsWith("witcher:") ? `slayer:${k.slice(8)}` : k] = v;
+    s.drillEdits = out;
+  }
 }
 /** 0.46: Schweißfrei ist kein Ort mehr, sondern „Leise“ an den Wochentagen, an denen dieser Ort im Wochenplan steht */
 function quietDays(s: AppState): void {

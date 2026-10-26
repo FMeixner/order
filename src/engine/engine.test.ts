@@ -156,7 +156,7 @@ describe("Orden und Plan", () => {
     }
   });
   it("Rollen für 3, 4 und 5 Tage", () => {
-    const w = FOCUS_BY_ID.witcher;
+    const w = FOCUS_BY_ID.slayer;
     expect(defaultRoles(w, 3)).toEqual(w.week_3);
     expect(defaultRoles(w, 4)).toEqual(w.week_4);
     expect(defaultRoles(w, 5)).toContain("wochenende_kondition");
@@ -190,7 +190,7 @@ describe("Geführte Varianten bei hoher Last", () => {
   it("etwa die Hälfte der freien Übungen, erster Lift bleibt frei", async () => {
     const { FOCUS_BY_ID } = await import("../data");
     const { guidedKeys, resolveSlot, toGuided } = await import("./resolve");
-    const role = FOCUS_BY_ID.witcher.roles.kraft_a;
+    const role = FOCUS_BY_ID.slayer.roles.kraft_a;
     const list = role.blocks.flatMap((b, g) => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : []).map((s) => ({ s, group: b.type === "superset" ? g : undefined })))
       .map(({ s, group }) => ({ r: resolveSlot(s, gym)!, contrast: false, group }));
     const keys = guidedKeys(list, gym);
@@ -277,14 +277,14 @@ describe("Normen", () => {
 
 describe("Jahresbalance", () => {
   const blk = (id: string, focusId: string, start: string, end: string) => ({ id, focusId, start, end, label: "", load: "medium" as const, travel: false });
-  it("fünfmal Witcher ist spezialisiert, ein gemischtes Jahr breiter", async () => {
+  it("fünfmal Slayer ist spezialisiert, ein gemischtes Jahr breiter", async () => {
     const { balanceOf } = await import("./balance");
-    const witcher5 = ["2026-09-28", "2026-12-07", "2027-02-22", "2027-05-03", "2027-07-12"].map((s, i) => blk(`w${i}`, "witcher", s, i < 4 ? ["2026-12-06", "2027-02-21", "2027-05-02", "2027-07-11"][i] : "2027-09-26"));
-    const a = balanceOf(witcher5, "2026-09-28", "2027-09-27");
+    const slayer5 = ["2026-09-28", "2026-12-07", "2027-02-22", "2027-05-03", "2027-07-12"].map((s, i) => blk(`w${i}`, "slayer", s, i < 4 ? ["2026-12-06", "2027-02-21", "2027-05-02", "2027-07-11"][i] : "2027-09-26"));
+    const a = balanceOf(slayer5, "2026-09-28", "2027-09-27");
     expect(a.label).toBe("spezialisiert");
     expect(a.share.muskel).toBeGreaterThan(0.5);
     expect(a.share.beweglichkeit).toBeGreaterThan(0.05);
-    const mixed = [blk("1", "assassin", "2026-09-28", "2026-12-06"), blk("2", "witcher", "2026-12-07", "2027-02-23"), blk("3", "soldier", "2027-02-24", "2027-03-31"), blk("4", "gladiator", "2027-04-01", "2027-07-15"), blk("5", "conqueror", "2027-07-16", "2027-09-24")];
+    const mixed = [blk("1", "assassin", "2026-09-28", "2026-12-06"), blk("2", "slayer", "2026-12-07", "2027-02-23"), blk("3", "soldier", "2027-02-24", "2027-03-31"), blk("4", "gladiator", "2027-04-01", "2027-07-15"), blk("5", "conqueror", "2027-07-16", "2027-09-24")];
     const b = balanceOf(mixed, "2026-09-28", "2027-09-27");
     expect(b.score!).toBeGreaterThan(a.score!);
     // Soldier zählt seit 0.18 nicht mehr gleichmäßig für alle Bereiche, deshalb „mit Schwerpunkt“ statt „allround“
@@ -530,9 +530,9 @@ describe("Wochenform", () => {
     const { focusFor } = await import("./weekplan");
     const s = sample();
     const b = { ...s.plan[0], focusId: "harlequin" };
-    expect(focusFor(s, b, 1)!.id).toBe("witcher");
+    expect(focusFor(s, b, 1)!.id).toBe("slayer");
     expect(focusFor(s, b, 2)!.id).toBe("pugilist");
-    expect(focusFor(s, b, 13)!.id).toBe("witcher");
+    expect(focusFor(s, b, 13)!.id).toBe("slayer");
   });
 });
 
@@ -719,7 +719,7 @@ describe("Keine Bestie zweimal hintereinander", () => {
     const st = { ...s, plan };
     const opts = { blockId: "b-assassin", week: 1, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false };
     const w1 = pickBeast(b, opts)!;
-    const prev = { id: "x:9:a", date: "2026-10-02", blockId: "x", focusId: "witcher", week: 9, role: "a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true, beast: { id: w1.id, seconds: 900 } };
+    const prev = { id: "x:9:a", date: "2026-10-02", blockId: "x", focusId: "slayer", week: 9, role: "a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true, beast: { id: w1.id, seconds: 900 } };
     const w1b = pickBeast(b, { ...opts, state: { ...st, sessions: [prev] } })!;
     expect(w1b.id).not.toBe(w1.id);
   });
