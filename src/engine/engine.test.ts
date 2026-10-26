@@ -621,12 +621,12 @@ describe("Ortswechsel und OK-Steigerung", () => {
   });
   it("weight: erstes „OK“ steigert schon, „Schwer“ hält", () => {
     const r = resolveSlot({ id: "bp", name: "Bench Press", sets: 3, reps: "5", prog: "weight" }, gym)!;
-    const e = (fb: "ok" | "schwer"): SessionEntry =>
-      ({ key: r.key, slotId: "bp", name: r.name, prog: "weight", feedback: fb, sets: [5, 5, 5].map((x) => ({ done: true, reps: x, weight: 80 })) });
-    const st = advance(r, undefined, e("ok"), gym, "d1");
+    const e = (fb: "ok" | "schwer", w: number): SessionEntry =>
+      ({ key: r.key, slotId: "bp", name: r.name, prog: "weight", feedback: fb, sets: [5, 5, 5].map((x) => ({ done: true, reps: x, weight: w })) });
+    const st = advance(r, undefined, e("ok", 80), gym, "d1");
     expect(st.weight! > 80).toBe(true);
     expect(st.target).toBe(5);
-    const st2 = advance(r, st, e("schwer"), gym, "d2");
+    const st2 = advance(r, st, e("schwer", st.weight!), gym, "d2");
     expect(st2.weight).toBe(st.weight);
     expect(st2.target).toBe(5);
   });
