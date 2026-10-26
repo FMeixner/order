@@ -1,6 +1,6 @@
 /* Zustand der App: im Browser gespeichert (localStorage), exportier- und importierbar als JSON. */
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { AppState, EquipmentProfile, Weekday } from "./types";
+import type { AppState, EquipmentProfile, Focus, PlanBlock, Weekday } from "./types";
 
 const KEY = "order:v1";
 
@@ -92,13 +92,15 @@ export function migrate(raw: unknown): AppState {
 }
 /** 0.75: Umbenennung Witcher → Slayer. Gleicher Orden, gleiche Rollen; Slot-Ids (w-*), Weibelform „Amazon“ und alle Daten bleiben. */
 function renameFocus(s: AppState): void {
-  s.plan = (s.plan ?? []).map((b) => {
+  s.plan = s.plan.map((b): PlanBlock => {
     if (b.focusId !== "witcher") return b;
-    const old = b.frozen?.foci?.witcher;
-    if (!old) return { ...b, focusId: "slayer" };
-    const foci = { ...b.frozen!.foci, slayer: { ...old, id: "slayer", name: "Slayer" } };
+    const fr = b.frozen;
+    const old = fr?.foci?.witcher;
+    if (!fr || !old) return { ...b, focusId: "slayer" };
+    const foci: Record<string, Focus> = { ...fr.foci };
     delete foci.witcher;
-    return { ...b, focusId: "slayer", frozen: { ...b.frozen, foci } };
+    foci.slayer = { ...old, id: "slayer", name: "Slayer" };
+    return { ...b, focusId: "slayer", frozen: { at: fr.at, foci } };
   });
   s.sessions = (s.sessions ?? []).map((se) => (se.focusId === "witcher" ? { ...se, focusId: "slayer" } : se));
   if (s.drillEdits) {
