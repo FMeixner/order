@@ -5,7 +5,7 @@ import { addDays, blockWeeks, dayRoleMap } from "./plan";
 import { chapterOf, checkPack, deck, fill, foeGallery, GENERIC_PACK, tournamentOf } from "./saga";
 
 const g = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
-const A: PlanBlock = { id: "b1", focusId: "witcher", label: "", start: "2026-09-28", end: "2026-11-01", load: "medium", travel: false };
+const A: PlanBlock = { id: "b1", focusId: "slayer", label: "", start: "2026-09-28", end: "2026-11-01", load: "medium", travel: false };
 const B: PlanBlock = { id: "b2", focusId: "assassin", label: "", start: "2026-11-02", end: "2026-12-06", load: "medium", travel: false };
 const T: PlanBlock = { id: "t1", focusId: "test", label: "", start: "2026-12-07", end: "2026-12-13", load: "low", travel: false };
 

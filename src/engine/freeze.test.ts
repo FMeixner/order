@@ -10,7 +10,7 @@ const state = (): AppState => {
   return { ...s, equipment: [{ ...EQUIPMENT_PRESETS[0].make(), id: "g" }], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" },
     plan: [
       { id: "b1", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium", travel: false },
-      { id: "b2", focusId: "witcher", label: "", start: "2026-12-07", end: "2027-02-21", load: "medium", travel: false },
+      { id: "b2", focusId: "slayer", label: "", start: "2026-12-07", end: "2027-02-21", load: "medium", travel: false },
     ] };
 };
 
@@ -48,7 +48,7 @@ describe("Ordensnamen", () => {
   it("weiblich, wenn das Profil weiblich ist; Grundform wählbar", async () => {
     const { focusName, setOrderNames } = await import("./plan");
     setOrderNames({ sex: "w" });
-    expect([focusName("king"), focusName("witcher"), focusName("knight"), focusName("monk"), focusName("assassin")]).toEqual(["Queen", "Amazon", "Dame", "Monk", "Assassin"]);
+    expect([focusName("king"), focusName("slayer"), focusName("knight"), focusName("monk"), focusName("assassin")]).toEqual(["Queen", "Amazon", "Dame", "Monk", "Assassin"]);
     setOrderNames({ sex: "w", orderNames: "base" });
     expect(focusName("king")).toBe("King");
     setOrderNames({ sex: "m" });

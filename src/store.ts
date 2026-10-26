@@ -86,7 +86,26 @@ export function migrate(raw: unknown): AppState {
   quietDays(s);
   s.equipment = s.equipment.map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   renameExercises(s);
+  // 0.75: Orden „Witcher“ heißt jetzt „Slayer“ — Phasen, Einheiten und Drill-Änderungen heißen mit um
+  renameFocus(s);
   return s;
+}
+/** 0.75: Umbenennung Witcher → Slayer. Gleicher Orden, gleiche Rollen; Slot-Ids (w-*), Weibelform „Amazon“ und alle Daten bleiben. */
+function renameFocus(s: AppState): void {
+  s.plan = (s.plan ?? []).map((b) => {
+    if (b.focusId !== "witcher") return b;
+    const old = b.frozen?.foci?.witcher;
+    if (!old) return { ...b, focusId: "slayer" };
+    const foci = { ...b.frozen!.foci, slayer: { ...old, id: "slayer", name: "Slayer" } };
+    delete foci.witcher;
+    return { ...b, focusId: "slayer", frozen: { ...b.frozen, foci } };
+  });
+  s.sessions = (s.sessions ?? []).map((se) => (se.focusId === "witcher" ? { ...se, focusId: "slayer" } : se));
+  if (s.drillEdits) {
+    const out: AppState["drillEdits"] = {};
+    for (const [k, v] of Object.entries(s.drillEdits)) out[k.startsWith("witcher:") ? `slayer:${k.slice(8)}` : k] = v;
+    s.drillEdits = out;
+  }
 }
 /** 0.46: Schweißfrei ist kein Ort mehr, sondern „Leise“ an den Wochentagen, an denen dieser Ort im Wochenplan steht */
 function quietDays(s: AppState): void {

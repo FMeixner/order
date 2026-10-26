@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.75.0] – 2026-10-26
+
+### Geändert
+- Der Orden „Witcher“ heißt jetzt „Slayer“ — der Name passt zum Muster der Ordensnamen. Alles bleibt, wie es war: dieselben Rollen und Tage, dieselben Übungen, die Weibselform „Amazon“, alle Slot-Ids und damit Gewichte, Stufen und Bestzeiten.
+- Läuft gerade eine Slayer-Phase, wandert sie mit um; alte Einheiten im Log bleiben anzeigbar. Warm-up-Anpassungen des Ordens bleiben ebenfalls erhalten.
+
 ## [0.74.0] – 2026-10-26
 
 ### Neu

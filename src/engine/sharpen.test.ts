@@ -31,7 +31,7 @@ describe("Schwerpunkt-Slot", () => {
     expect(slotFor(s, s.plan[1]).domain).toBeNull();
   });
   it("Defizit 1, wenn der Orden es nicht selbst trainiert", () => {
-    const s = base(mobKe, [blk("witcher")]);
+    const s = base(mobKe, [blk("slayer")]);
     expect(slotFor(s, s.plan[1]).domain).toBe("mobility");
   });
   it("Defizit 2, wenn der Orden das Hauptdefizit selbst trainiert", () => {
@@ -41,24 +41,24 @@ describe("Schwerpunkt-Slot", () => {
     expect(p.reason).toMatch(/Pilgrim selbst/);
   });
   it("Ausdauer stört Muskelaufbau: geht in die Blockfolge statt in den Slot", () => {
-    const s = base(aerobKe, [blk("witcher")]);
+    const s = base(aerobKe, [blk("slayer")]);
     const p = slotFor(s, s.plan[1]);
     expect(p.domain).toBe("ke");
     expect(p.deferred.map((d) => d.id)).toContain("aerob");
   });
   it("Spezialist, Aus und eigene Wahl", () => {
-    const s = base(mobKe, [blk("witcher")]);
+    const s = base(mobKe, [blk("slayer")]);
     expect(slotFor({ ...s, user: { ...s.user, focusMode: "special" } }, s.plan[1]).domain).toBeNull();
     expect(slotFor(s, { ...s.plan[1], sharpen: "off" }).source).toBe("off");
     expect(slotFor(s, { ...s.plan[1], sharpen: "power" }).domain).toBe("power");
   });
   it("Kurzorden, Harlequin und Soldier haben keinen Slot", () => {
     for (const id of ["herald", "harlequin", "soldier", "initiate"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(false);
-    for (const id of ["witcher", "gladiator", "assassin", "smith", "knight", "olympian", "conqueror"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(true);
+    for (const id of ["slayer", "gladiator", "assassin", "smith", "knight", "olympian", "conqueror"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(true);
   });
   it("Beweglichkeit jeden Tag am Ende, Schnelligkeit zweimal am Anfang, höchstens etwa 15 % der Woche", () => {
-    const s = base(mobKe, [blk("witcher")]);
-    const f = FOCUS_BY_ID.witcher;
+    const s = base(mobKe, [blk("slayer")]);
+    const f = FOCUS_BY_ID.slayer;
     const roles = rolesFor(s, s.plan[1], f);
     const withMob = applySlot(f, s, s.plan[1]);
     expect(roles.every((rk) => withMob.roles[rk].blocks.at(-1)?.type === "module")).toBe(true);
@@ -85,7 +85,7 @@ describe("Schwerpunkt-Slot", () => {
     expect(suggestSequence(plan, "2026-12-10", "kraft").items[0].focusId).toBe("smith");
   });
   it("Blockfolge „Defizite zuerst“ bevorzugt Orden für die schwachen Bereiche", () => {
-    const plan: PlanBlock[] = [{ ...blk("witcher", "p1"), start: "2027-01-04", end: "2027-03-07" }];
+    const plan: PlanBlock[] = [{ ...blk("slayer", "p1"), start: "2027-01-04", end: "2027-03-07" }];
     const allround = suggestSequence(plan, "2026-12-10", "allround");
     const def = suggestSequence(plan, "2026-12-10", "deficits", [{ axis: "ausdauer", w: 1 }]);
     const ae = (id: string) => FOCUS_BY_ID[id].goals.primary === "endurance" || FOCUS_BY_ID[id].goals.secondary.includes("endurance");

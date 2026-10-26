@@ -9,7 +9,7 @@ const contiguous = (p: PlanBlock[]) => [...p].sort((a, b) => a.start.localeCompa
 
 describe("Lebensabschnitte", () => {
   it("aus dem Plan abgeleitet: Teil 1 und 2 sind ein Abschnitt, Testwoche gehört dazu", () => {
-    const plan = [blk("a", "assassin", "Wintersemester, Teil 1", "2026-09-28", "2026-12-06"), blk("w", "witcher", "Wintersemester, Teil 2", "2026-12-07", "2027-02-14"),
+    const plan = [blk("a", "assassin", "Wintersemester, Teil 1", "2026-09-28", "2026-12-06"), blk("w", "slayer", "Wintersemester, Teil 2", "2026-12-07", "2027-02-14"),
       blk("t", "test", "Testwoche", "2027-02-15", "2027-02-21"), blk("s", "soldier", "Semesterferien Winter", "2027-02-22", "2027-03-28", "low")];
     const s = sectionsFromPlan(plan);
     expect(s.map((x) => [x.name, x.start, x.end, x.load])).toEqual([["Wintersemester", "2026-09-28", "2027-02-21", "high"], ["Semesterferien Winter", "2027-02-22", "2027-03-28", "low"]]);

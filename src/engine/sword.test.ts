@@ -40,8 +40,8 @@ describe("Schwert-Lernweg", () => {
   });
 });
 
-describe("Witcher", () => {
-  const w = FOCUS_BY_ID.witcher;
+describe("Slayer", () => {
+  const w = FOCUS_BY_ID.slayer;
   const names = (role: string) => JSON.stringify(w.roles[role].blocks);
   it("Donnerstag: Schwert-Lernweg zuerst, keine Beinübungen (Freitag braucht frische Beine)", () => {
     const b = w.roles.home_hypertrophie.blocks;

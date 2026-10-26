@@ -20,7 +20,7 @@ const PATHS: Record<string, string> = {
   troubadour: "M17 41c-8-7-7-17 1-22s17-3 17 5c0 10-10 23-18 17zM31 19l9-12M36 4l6 6M27 30a3 3 0 1 1-6 0a3 3 0 1 1 6 0",
   /** Testwoche: Turnier der Klingen, gekreuzte Lanzen mit Schild */
   test: "M6 42L40 8M40 8l-1 5M40 8l-5 1M42 42L8 8M8 8l1 5M8 8l5 1M24 16l9 3v7c0 6-4 10-9 12-5-2-9-6-9-12v-7z",
-  witcher: "M9 41L37 11M37 11l4-6-6 4M13 31l5 5M39 41L11 11M11 11L7 5l6 4M35 31l-5 5",
+  slayer: "M9 41L37 11M37 11l4-6-6 4M13 31l5 5M39 41L11 11M11 11L7 5l6 4M35 31l-5 5",
 };
 
 /** Ordenssymbol als dezentes Wasserzeichen rechts in einer Karte (die Karte braucht position: relative) */
