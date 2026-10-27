@@ -5,6 +5,8 @@ import { swordSeconds } from "./duration";
 import { emptyState } from "../store";
 
 const ids = (v: string, skills: string[] | null) => swordList(v, skills).map((d) => d.id);
+/** Verdichtete Fassungen aller Stufen vor deiner (Einnorden), wie sie swordList vor den Stufen-Inhalt stellt */
+const echo = (lv: number) => SWORD.levels.slice(0, lv).flatMap((l) => l.echo ?? []);
 
 describe("Schwert-Lernweg", () => {
   it("ohne Skill: Stufe 1, auch wenn der Orden eine schwerere Variante nennt", () => {
@@ -17,12 +19,21 @@ describe("Schwert-Lernweg", () => {
     expect(swordLevel(SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toBe(SWORD.levels.length - 1);
   });
   it("Lernweg: Inhalt der Stufe, danach freies Üben; feste Formate bleiben", () => {
-    expect(ids("lernweg", ["schwert_hiebe"])).toEqual([...SWORD.basics, ...DM_VARIANTS.stiche, ...DM_VARIANTS.lernweg].map((d) => d.id));
+    expect(ids("lernweg", ["schwert_hiebe"])).toEqual([...echo(1), ...DM_VARIANTS.stiche, ...DM_VARIANTS.lernweg].map((d) => d.id));
     expect(ids("bookend", ["schwert_hiebe"])).toEqual(DM_VARIANTS.bookend.map((d) => d.id));
-    expect(moduleDrills("einzelmesser", { ...emptyState().user, skills: ["schwert_hiebe"] }, 1).map((d) => d.id)).toEqual([...SWORD.basics, ...DM_VARIANTS.stiche].map((d) => d.id));
+    expect(moduleDrills("einzelmesser", { ...emptyState().user, skills: ["schwert_hiebe"] }, 1).map((d) => d.id)).toEqual([...echo(1), ...DM_VARIANTS.stiche].map((d) => d.id));
+  });
+  it("höhere Stufen schließen tiefere ein: Stich-Basics ab der Kombiformen-Stufe, mit weniger Volumen", () => {
+    expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche"])).toEqual([...echo(2), ...DM_VARIANTS.kombiform, ...DM_VARIANTS.lernweg].map((d) => d.id));
+    expect(echo(2).map((d) => d.id)).toEqual(["md-b-zorn", "md-b-zwerch", "md-b-scheitel", "md-b-oberstich", "md-b-mittelstich", "md-b-unterstich"]);
+    expect(ids("lernweg", ["schwert_hiebe"])).not.toContain("md-b-oberstich"); // auf der Stufe selbst läuft der volle Stich, nicht das Echo
+    const b = echo(2).find((d) => d.id === "md-b-oberstich")!;
+    const full = DM_VARIANTS.stiche.find((d) => d.id === "md-oberstich")!;
+    expect(b.value).toBeLessThan(full.value);
+    expect(b.sets ?? 1).toBeLessThan(full.sets ?? 1);
   });
   it("Klingentanz nach dem Drehhau, Heaven Six auf der letzten Stufe", () => {
-    expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche", "schwert_kombi", "schwert_wechsel"])).toEqual([...SWORD.basics, ...DM_VARIANTS.klingentanz, ...DM_VARIANTS.lernweg].map((d) => d.id));
+    expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche", "schwert_kombi", "schwert_wechsel"])).toEqual([...echo(4), ...DM_VARIANTS.klingentanz, ...DM_VARIANTS.lernweg].map((d) => d.id));
     expect(swordNext(["schwert_hiebe", "schwert_stiche", "schwert_kombi", "schwert_wechsel"])?.level).toBe("Doppelmesser");
     expect(ids("lernweg", SWORD.levels.flatMap((l) => (l.skill ? [l.skill] : [])))).toContain("md-heaven6");
   });

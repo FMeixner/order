@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.76.0] – 2026-10-27
+
+### Geändert
+- Schwert-Lernweg: Höhere Stufen schließen die tieferen ein. Die Hiebe laufen als kurze Basics schon immer mit — jetzt folgen die Stiche derselben Logik: Ab der Kombiformen-Stufe stehen Ober-, Mittel- und Unterstich als kurzes Einnorden je 6 pro Seite mit im Block (ein Satz, mit Ausfallschritt und betonter Rückziehung). Wer eine Stufe erreicht hat, übt sie nicht ab, sondern hält sie warm. Der Donnerstagsblock wird dadurch auf höheren Stufen etwa zwei Minuten länger.
+
 ## [0.75.0] – 2026-10-26
 
 ### Geändert

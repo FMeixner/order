@@ -714,12 +714,13 @@ export function swordNext(skills: string[] | null | undefined): { level: string;
   const sk = next && SKILLS.skills.find((s) => s.id === next.skill);
   return sk ? { level: next.name, test: sk.test } : null;
 }
-/** Schwertübungen einer Variante: Varianten des Lernwegs zeigen den Inhalt deiner Stufe, ab Stufe 2 mit kurzen Basics davor */
+/** Schwertübungen einer Variante: Varianten des Lernwegs zeigen den Inhalt deiner Stufe, davor die verdichteten Echos aller Stufen davor (kurz, zum Einnorden) */
 export function swordList(variant: string, skills: string[] | null | undefined): Drill[] {
   if (!SWORD.leveled.includes(variant)) return DM_VARIANTS[variant] ?? [];
   const own = SWORD.levels.some((l) => l.variant === variant) ? [] : DM_VARIANTS[variant] ?? [];
   const lv = swordLevel(skills);
-  return [...(lv > 0 ? SWORD.basics : []), ...(DM_VARIANTS[SWORD.levels[lv].variant] ?? []), ...own];
+  const echo = SWORD.levels.slice(0, lv).flatMap((l) => l.echo ?? []);
+  return [...echo, ...(DM_VARIANTS[SWORD.levels[lv].variant] ?? []), ...own];
 }
 
 export function moduleDrills(variant: string, user: UserProfile, week: number, module: "sword" | "flow" | "sharpen" = "sword"): DrillView[] {
