@@ -49,6 +49,8 @@ for (const sk of skillsFile.skills) {
   sw.levels.forEach((l, i) => {
     if (!dm[l.variant]) err("sword.json levels", `Stufe ${l.name}: Variante ${l.variant} fehlt`);
     if (i > 0 && !skillIds.has(l.skill)) err("sword.json levels", `Stufe ${l.name}: Skill ${l.skill} fehlt in skills.json`);
+    for (const d of l.echo ?? [])
+      if (!d.id || !d.name || !["reps", "hold", "activity"].includes(d.mode) || !(d.value > 0)) err("sword.json levels", `Echo von ${l.name}: ${d.id || "ohne Id"} braucht id, name, mode (reps/hold/activity) und value`);
   });
   for (const v of sw.leveled) if (!dm[v]) err("sword.json leveled", `Variante ${v} fehlt`);
 }
