@@ -3,12 +3,14 @@
    Umbau zwischen den Übungen, Warm-up und Cool-down aus den Listen. */
 import { BEAST_BY_ID } from "../data";
 import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile } from "../types";
-import { CLASS_ORDER, moduleDrills, roleDrills, swordList } from "./plan";
+import { CLASS_ORDER, moduleDrills, roleDrills, shortDrills, swordList } from "./plan";
 
-/** Dauer eines Schwertblocks. Mit Skills (auch null): echte Dauer deiner Stufe, Wiederholungen je etwa 3 s. Ohne (undefined): Richtwert des Ordens wie bisher. */
-export function swordSeconds(variant: string, skills: string[] | null | undefined, boost = false): number {
-  if (skills === undefined) return swordList(variant, null).reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0);
-  return swordList(variant, skills).reduce((sum, d) => sum + drillSeconds(d, Array.from({ length: Array.isArray(d.sides) ? d.sides.length : d.sides ? 2 : 1 }, () => ({ value: d.value, sets: (d.sets ?? 1) + (boost ? 1 : 0) }))), 0);
+/** Dauer eines Schwertblocks. Mit Skills (auch null): echte Dauer deiner Stufe, Wiederholungen je etwa 3 s. Ohne (undefined): Richtwert des Ordens wie bisher.
+    Kurztag (`short`): Kurzfassung — die erste Hälfte der Übungen, mindestens eine. */
+export function swordSeconds(variant: string, skills: string[] | null | undefined, boost = false, short = false): number {
+  const list = short ? shortDrills(swordList(variant, skills)) : swordList(variant, skills);
+  if (skills === undefined) return list.reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0);
+  return list.reduce((sum, d) => sum + drillSeconds(d, Array.from({ length: Array.isArray(d.sides) ? d.sides.length : d.sides ? 2 : 1 }, () => ({ value: d.value, sets: (d.sets ?? 1) + (boost ? 1 : 0) }))), 0);
 }
 import { parseReps, resolveSlot, type Resolved } from "./resolve";
 import { WARM_SEC, warmupKeys } from "./warmup";
@@ -96,8 +98,8 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
     }
     case "module": {
       if (b.module === "flow" || b.module === "sharpen") return moduleDrills(b.variant, NEUTRAL_USER, 1, b.module).reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
-      if (p.has.sword) return swordSeconds(b.variant, skills, boost) + SETUP;
-      if (b.fallbackFlow) return moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow").reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
+      if (p.has.sword) return swordSeconds(b.variant, skills, boost, b.short) + SETUP;
+      if (b.fallbackFlow) { const ds = b.short ? shortDrills(moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow")) : moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow"); return ds.reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP; }
       return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p, red) : 0;
     }
     case "menu": {

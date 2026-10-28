@@ -286,7 +286,7 @@ export function chapterOf(state: AppState, b: PlanBlock, today: string, depth = 
       lines.push({ kind: "text", text: T(act(w) === 2 ? "act2" : "act3", 0).replace(/^(Zweiter|Dritter) Akt\.\s*/, "") });
     }
     const f = blockFocus(b);
-    const reduced = !!state.reduced[`${b.id}:${w}`] || (f ? isDeloadWeek(f, w) : false);
+    const reduced = f ? isDeloadWeek(f, w) : false;
     const schar = deck(scene.schar, `${seed}:schar`, w);
     const ratio = planned ? done / planned : 0;
     lines.push({ kind: "text", text: actT(done === 0 ? "week_rest" : ratio >= 1 ? "week_full" : ratio >= 0.5 ? "week_good" : "week_some", w, { n: done, von: planned, schar }) });

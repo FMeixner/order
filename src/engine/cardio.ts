@@ -54,6 +54,76 @@ export function swapRunBeast(b: Beast, to: CardioSub | undefined): Beast {
   return { ...b, work: swapRunText(b.work, to), parts: b.parts?.map((p) => ({ ...p, work: swapRunText(p.work, to) })) };
 }
 
+/* ---------- Cardio am Ort: was der Ort nicht hergibt, wird nur bei diesem Element ersetzt ----------
+   „Laufen möglich“ und „Sprints möglich“ sind Schalter am Equipment-Profil; Rudergerät und Rad stehen als Geräte drin.
+   Fehlt etwas, wird nur das betroffene Element umgerechnet (gleiche Belastungszeit wie bei „Laufen ersetzen“),
+   der Rest der Bestie bleibt — sie zählt als mutiert und teilt sich mit allen mutierten Varianten eine Bestzeit. */
+/** Row-Kalorien („50c Row“) ≈ 4,5 Sekunden je Kalorie bei zügigem Tempo */
+const ROW_S_PER_CAL = 4.5;
+const ROW_RX = /(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)*)\s?(m|c)\s+row\b/gi;
+const BIKE_RX = /(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)*)\s?(m|k)\s+bike\b/gi;
+/** Ziel eines ersetzten Elements: „run“ zählt dazu, denn auch eine Laufstrecke kann fehlen */
+export type LocSub = "run" | CardioSub;
+const subAvail = (p: EquipmentProfile, t: LocSub): boolean =>
+  t === "rope" ? true : t === "run" ? p.has.run : t === "row" ? p.has.rower : t === "bike" ? p.has.bike : false;
+/** Erstes verfügbares Ziel; Seilspringen geht fast immer (kein eigenes Equipment-Flag) */
+const subTarget = (p: EquipmentProfile, order: LocSub[]): CardioSub =>
+  (order.find((t) => subAvail(p, t)) ?? "rope") as CardioSub;
+
+/** Belastungszeit (Sekunden je Stufe) als Angabe für das Zielgerät */
+function secsToTarget(secs: number[], to: LocSub): string {
+  switch (to) {
+    case "run": return `${secs.map((s) => roundTo(s / RUN_S_PER_M, 50)).join("/")}m Run`;
+    case "row": return `${secs.map((s) => roundTo(s / ROW_S_PER_M, 50)).join("/")}m Row`;
+    case "bike": return `${secs.map((s) => roundTo(s / BIKE_S_PER_M, 100)).join("/")}m Bike`;
+    case "rope": return `${secs.map((s) => roundTo(s, 15)).join("/")}s Seilspringen`;
+    case "stair": return `${secs.map((s) => roundTo(s, 15)).join("/")}s Stepper`;
+  }
+}
+
+/** Cardiogerät am Ort ersetzen: Läufe, Sprints, Rudern und Rad nach verfügbarer Alternative, gleiche Belastungszeit */
+export function swapLocText(work: string, p: EquipmentProfile): string {
+  let out = work;
+  if (!p.has.sprint) {
+    const to = subTarget(p, ["row", "bike", "rope"]);
+    out = out.replace(SPRINT_RX, (_m, k: string, m: string) => `${k}x${Math.max(5, Math.round(Number(m) * SPRINT_S_PER_M))}s ${SPRINT_NAME[to]}`);
+  }
+  if (!p.has.run) {
+    const to = subTarget(p, ["row", "bike", "rope"]);
+    out = out.replace(RUN_RX, (_m, n: string, unit: string) => secsToTarget(n.split("/").map(Number).map((x) => meters(x, unit) * RUN_S_PER_M), to));
+  }
+  if (!p.has.rower) {
+    const to = subTarget(p, ["run", "bike", "rope"]);
+    out = out.replace(ROW_RX, (_m, n: string, unit: string) => secsToTarget(n.split("/").map(Number).map((x) => (unit.toLowerCase() === "c" ? x * ROW_S_PER_CAL : x * ROW_S_PER_M)), to));
+  }
+  if (!p.has.bike) {
+    const to = subTarget(p, ["run", "row", "rope"]);
+    out = out.replace(BIKE_RX, (_m, n: string, unit: string) => secsToTarget(n.split("/").map(Number).map((x) => meters(x, unit) * BIKE_S_PER_M), to));
+  }
+  return out;
+}
+/** Steht in der Bestie ein Cardio-Element, das der Ort nicht hergibt? */
+export const hasLocText = (work: string, p: EquipmentProfile): boolean =>
+  (!p.has.sprint && new RegExp(SPRINT_RX.source, "i").test(work)) ||
+  (!p.has.run && new RegExp(RUN_RX.source, "i").test(work)) ||
+  (!p.has.rower && new RegExp(ROW_RX.source, "i").test(work)) ||
+  (!p.has.bike && new RegExp(BIKE_RX.source, "i").test(work));
+
+/** Bestie am Ort: Was der Ort nicht hergibt (Strecke für Läufe und Sprints, Rudergerät, Rad), wird nur bei diesen Elementen
+    umgerechnet, der Rest bleibt. Die Bestie zählt als mutiert („X mutiert“, Id auf die hexed-Form) und teilt sich mit allen
+    mutierten Varianten eine Bestzeit — das entfesselte Original behält seine eigene. null, wenn nichts zu ersetzen ist. */
+export function beastLocSub(b: Beast, p: EquipmentProfile): Beast | null {
+  const works = [b.work, ...(b.parts?.map((x) => x.work) ?? [])];
+  if (!works.some((w) => hasLocText(w, p))) return null;
+  return {
+    ...b,
+    id: `${b.id.split("~")[0]}~hex`,
+    name: b.name.endsWith(" mutiert") ? b.name : `${b.name} mutiert`,
+    work: swapLocText(b.work, p),
+    parts: b.parts?.map((x) => ({ ...x, work: swapLocText(x.work, p) })),
+  };
+}
+
 /* ---------- Ortsregel ---------- */
 /** Stationen weit auseinander? Fehlt die Angabe: ja bei Profilen mit Maschinen (Studio) */
 export const spreadOut = (p: Pick<EquipmentProfile, "spread" | "has">) => p.spread ?? !!p.has.machines;

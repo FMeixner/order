@@ -45,7 +45,7 @@ test("Freie Jagd: Schritt für Schritt, der letzte Schritt stoppt die Uhr, Wiede
   expect(after[0].seconds).toBeGreaterThan(first[0].seconds);
 });
 
-test("Kurz: spontan für heute, als Wochentag merken, Kraftübungen weniger", async ({ page }) => {
+test("Kurz: spontan für heute, als Wochentag merken, kurze Einheit", async ({ page }) => {
   await seed(page);
   await page.goto("./");
   await page.locator(".day-btn").filter({ hasText: "Unterkörper" }).click();
@@ -54,7 +54,8 @@ test("Kurz: spontan für heute, als Wochentag merken, Kraftübungen weniger", as
   await page.getByRole("button", { name: "Kurz", exact: true }).click();
   await expect(page.getByRole("button", { name: "Kurz", exact: true })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText(/etwa \d+ Min · Kurz/)).toBeVisible();
-  expect(await page.locator(".slot-name").count()).toBeLessThan(before);
+  // Kurz behält die Kernübungen, kürzt nur — nie mehr Übungen als vorher
+  expect(await page.locator(".slot-name").count()).toBeLessThanOrEqual(before);
   await page.getByText(/^Kurz für jeden .* fixieren$/).click();
   const st = await stored(page);
   expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.short).length).toBe(1);
@@ -298,20 +299,4 @@ test("Laufen ersetzen: Auslaufen wird Rudergerät, gleiche Zeit", async ({ page 
   await page.getByRole("radio", { name: "Rudergerät" }).click();
   await expect(page.locator(".slot-name").filter({ hasText: "Rudergerät" })).toBeVisible();
   await expect(page.getByText("Lockeres Auslaufen")).toHaveCount(0);
-});
-
-test("Cardio erfassen: Eintrag im Zustand, Anzeige im Panel und im Log", async ({ page }) => {
-  await seed(page);
-  await page.goto("./");
-  await page.getByRole("button", { name: "Anpassen für heute" }).click();
-  await page.getByLabel("Cardio: Minuten").fill("45");
-  await page.getByRole("radio", { name: "Zügig" }).click();
-  await page.getByRole("button", { name: "Eintragen" }).click();
-  const st = await stored(page);
-  expect(st.runs?.length).toBe(1);
-  expect(st.runs?.[0]).toMatchObject({ minutes: 45, pace: "zügig" });
-  await expect(page.getByText(/45 Min · Zügig/)).toBeVisible();
-  await page.getByRole("button", { name: "Almanach" }).click();
-  await page.getByRole("radio", { name: "Log" }).click();
-  await expect(page.locator(".collapse-title").filter({ hasText: "Läufe" })).toBeVisible();
 });

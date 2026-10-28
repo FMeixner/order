@@ -1,16 +1,15 @@
-/* Tagesanpassung: Kurz · Leicht · Intensiv · Leise · Kein Platz.
-   - Kurz, Leicht, Leise und Kein Platz lassen sich kombinieren; Intensiv steht allein (mehr Zeit und Last widerspricht Kurz und Leicht).
+/* Tagesanpassung: Kurz · Intensiv · Leise · Kein Platz.
+   - Kurz, Leise und Kein Platz lassen sich kombinieren; Intensiv steht allein (mehr Zeit und Last widerspricht Kurz).
    - Kurz, Leise und Kein Platz lassen sich je Wochentag merken (gilt in allen Phasen). Ein gemerkter Kurztag gleicht über die ganze
      Woche aus; ein spontaner nur in den Tagen danach. Ist danach nichts mehr, entfällt der Ausgleich.
-   - Leicht: −1 Satz je Übung, Bestien nur Plagen. Gilt nur für diesen Tag.
    - Leise: leise Bestien, laute Übungen ersetzt (Sprünge, Langhantel vom Boden, Würfe), kein Laufen, keine Intervalle, kurzes Warm-up.
    - Kein Platz: Bestien und Übungen ohne Strecke (kein Lunge Walk, Crawl, Carry, Broad Jump, Sprint).
    Je Einheit überschreibt eine Wahl (true/false) das Gemerkte; ohne Wahl gilt das Gemerkte. */
 import type { AppState, EquipmentProfile, PlanBlock, Weekday } from "../types";
 
-export type DayKey = "short" | "light" | "quiet" | "tight";
+export type DayKey = "short" | "quiet" | "tight";
 export type FixKey = "short" | "quiet" | "tight";
-export interface DayMods { short: boolean; light: boolean; quiet: boolean; tight: boolean; intense: boolean }
+export interface DayMods { short: boolean; quiet: boolean; tight: boolean; intense: boolean }
 
 const sid = (b: PlanBlock, week: number, role: string) => `${b.id}:${week}:${role}`;
 
@@ -26,10 +25,9 @@ export function dayMods(state: AppState, b: PlanBlock, week: number, role: strin
   const own = state.dayAdj?.[id] ?? {};
   const mem = remembered(state, b, role, day);
   const intense = !!state.energy?.[id];
-  if (intense) return { short: false, light: false, quiet: false, tight: false, intense };
+  if (intense) return { short: false, quiet: false, tight: false, intense };
   return {
     short: own.short ?? mem.short,
-    light: own.light ?? !!state.reduced[`${b.id}:${week}`],
     quiet: own.quiet ?? mem.quiet,
     tight: own.tight ?? mem.tight,
     intense,
@@ -46,7 +44,6 @@ export function toggleMod(state: AppState, b: PlanBlock, week: number, role: str
   const cur = dayMods(state, b, week, role, day);
   const adj = { ...(state.dayAdj ?? {}) };
   const energy = { ...(state.energy ?? {}) };
-  const reduced = { ...state.reduced };
   if (key === "intense") {
     if (cur.intense) delete energy[id];
     else {
@@ -62,12 +59,10 @@ export function toggleMod(state: AppState, b: PlanBlock, week: number, role: str
   const on = !cur[key];
   const mem = remembered(state, b, role, day);
   const next = { ...(adj[id] ?? {}) };
-  const fallback = key === "light" ? false : mem[key];
+  const fallback = mem[key];
   if (on === fallback) delete next[key]; else next[key] = on;
-  // Leicht aus: auch das alte „Diese Woche −1 Satz“ dieser Woche
-  if (key === "light" && !on) delete reduced[`${b.id}:${week}`];
   if (Object.keys(next).length) adj[id] = next; else delete adj[id];
-  return { ...state, dayAdj: adj, energy, reduced };
+  return { ...state, dayAdj: adj, energy };
 }
 
 /** Kurz, Leise oder Kein Platz für diesen Wochentag merken (oder vergessen). Kurz lässt sich nur für einen Wochentag merken. */

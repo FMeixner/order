@@ -1,5 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
-import { mixesStations } from "./cardio";
+import { beastLocSub, mixesStations } from "./cardio";
 import { dayMods, withDay } from "./dayadj";
 import { allRuns } from "./runs";
 import { blockSeconds, boostClass, estimateRole, roleSlots, swordSeconds } from "./duration";
@@ -250,8 +250,8 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
       case "bar_or_rings": return p.has.bar || p.has.rings;
       case "band": return p.bands.length > 0;
       case "kb_db": return p.dumbbells.length > 0 || p.kettlebells.length > 0;
-      case "rower": return p.has.rower;
-      case "bike": return p.has.bike;
+      // Rudergerät und Rad schließen die Bestie nicht aus: Fehlt das Gerät, werden nur die Row-/Bike-Elemente ersetzt (Bestie zählt als mutiert)
+      case "rower": case "bike": return true;
       case "box": return p.has.box || true; // eine Bank oder Stufe tut es
       case "sandbag": return p.has.sandbag;
       default: return true;
@@ -269,8 +269,9 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
       : n === "barbell" ? !!p.barbell
       : n === "kb_db" ? p.dumbbells.length > 0 || p.kettlebells.length > 0
       : n === "sandbag" ? p.has.sandbag
-      : n === "rower" ? p.has.rower
-      : n === "bike" ? p.has.bike : true;
+      // Cardiogeräte (rower, bike) schließen nicht aus: fehlt das Gerät, werden nur diese Elemente am Ort ersetzt
+      : n === "rower" || n === "bike" ? true
+      : true;
     if (!ok) return false;
   }
   return true;
@@ -535,8 +536,13 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   if (budget < hi) { hi = Math.max(MIN_BEAST, budget); if (hi <= lo) lo = 0; }
   const inSlot = (m: number) => m > lo && m <= hi;
   const skills = state.user.skills ? new Set(state.user.skills) : null;
-  // Fehlt ein Skill, kommt die Bestie mutiert: die betroffenen Übungen durch ihren Ersatz getauscht
-  const serve = (b: Beast): Beast | null => (beastOk(b, skills) ? b : hexFor(b, skills));
+  // Fehlt ein Skill, kommt die Bestie mutiert: die betroffenen Übungen durch ihren Ersatz getauscht.
+  // Fehlt am Ort, was ein Cardio-Element braucht (Strecke für Läufe und Sprints, Rudergerät, Rad), wird nur dieses Element
+  // umgerechnet — ebenfalls mutiert; alle mutierten Varianten teilen sich eine Bestzeit, das Original behält seine eigene.
+  const serve = (b: Beast): Beast | null => {
+    const x = beastOk(b, skills) ? b : hexFor(b, skills);
+    return x ? beastLocSub(x, profile) ?? x : null;
+  };
   // Leise: nur Bestien ohne Sprünge, Burpees, Sprints und Co.
   // Leise: keine Sprünge, Burpees, Sprints und Co.; Kein Platz: nur Bestien auf der Stelle
   const ok = (b: Beast) => beastFits(b, profile) && serve(b) != null && beastForDay(serve(b)!, profile);
@@ -726,6 +732,11 @@ export function swordList(variant: string, skills: string[] | null | undefined):
 export function moduleDrills(variant: string, user: UserProfile, week: number, module: "sword" | "flow" | "sharpen" = "sword"): DrillView[] {
   const list = module === "flow" ? FLOWS[variant]?.drills ?? [] : module === "sharpen" ? SHARPEN[variant]?.drills ?? [] : swordList(variant, user.skills);
   return list.filter((d) => !d.rotation || d.rotation === (isAWeek(week) ? "A" : "B")).map((d) => drillView(d, week));
+}
+
+/** Kurzfassung einer Drill-Liste (Kurztag): die erste Hälfte, mindestens eine Übung */
+export function shortDrills<T>(list: T[]): T[] {
+  return list.length > 1 ? list.slice(0, Math.ceil(list.length / 2)) : list;
 }
 
 function drillView(d: Drill, week: number): DrillView {
