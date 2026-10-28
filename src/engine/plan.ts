@@ -1,5 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
-import { beastLocSub, mixesStations } from "./cardio";
+import { beastLocSub, hasLocText, mixesStations } from "./cardio";
 import { dayMods, withDay } from "./dayadj";
 import { allRuns } from "./runs";
 import { blockSeconds, boostClass, estimateRole, roleSlots, swordSeconds } from "./duration";
@@ -539,9 +539,12 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   // Fehlt ein Skill, kommt die Bestie mutiert: die betroffenen Übungen durch ihren Ersatz getauscht.
   // Fehlt am Ort, was ein Cardio-Element braucht (Strecke für Läufe und Sprints, Rudergerät, Rad), wird nur dieses Element
   // umgerechnet — ebenfalls mutiert; alle mutierten Varianten teilen sich eine Bestzeit, das Original behält seine eigene.
+  // Kann der Ort die Lücke durch kein Gerät füllen, wird die Bestie dort gar nicht gewählt.
   const serve = (b: Beast): Beast | null => {
     const x = beastOk(b, skills) ? b : hexFor(b, skills);
-    return x ? beastLocSub(x, profile) ?? x : null;
+    if (!x) return null;
+    const fits = ![x.work, ...(x.parts?.map((q) => q.work) ?? [])].some((w) => hasLocText(w, profile));
+    return fits ? x : beastLocSub(x, profile);
   };
   // Leise: nur Bestien ohne Sprünge, Burpees, Sprints und Co.
   // Leise: keine Sprünge, Burpees, Sprints und Co.; Kein Platz: nur Bestien auf der Stelle
@@ -734,9 +737,14 @@ export function moduleDrills(variant: string, user: UserProfile, week: number, m
   return list.filter((d) => !d.rotation || d.rotation === (isAWeek(week) ? "A" : "B")).map((d) => drillView(d, week));
 }
 
-/** Kurzfassung einer Drill-Liste (Kurztag): die erste Hälfte, mindestens eine Übung */
+/** Kurzfassung eines geführten Flows (Kurztag, Ersatz-Flow ohne Schwert): die erste Hälfte, mindestens eine Übung */
 export function shortDrills<T>(list: T[]): T[] {
   return list.length > 1 ? list.slice(0, Math.ceil(list.length / 2)) : list;
+}
+
+/** Kurzfassung des Schwerttrainings (Kurztag): jede Übung bleibt, ein Satz weniger, mindestens einer je Übung */
+export function shortSwordDrills<T extends { sets?: number; groups?: { sets: number }[] }>(list: T[]): T[] {
+  return list.map((d) => ({ ...d, sets: Math.max(1, (d.sets ?? 1) - 1), groups: d.groups?.map((g) => ({ ...g, sets: Math.max(1, g.sets - 1) })) }));
 }
 
 function drillView(d: Drill, week: number): DrillView {

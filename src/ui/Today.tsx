@@ -176,7 +176,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       {(hasRun || hasBeast) && (
         <div className="stack">
           <span className="field-label">Laufen ersetzen</span>
-          <Seg value={runSub ?? ""} options={[{ value: "", label: "Laufen" }, ...(["row", "bike", "rope", "stair"] as const).map((k) => ({ value: k, label: SUB_LABEL[k] })), ...(hasRun ? [{ value: "beast", label: "Bestie" }] : [])]}
+          <Seg value={runSub ?? ""} options={[{ value: "", label: "Laufen" }, ...(["row", "bike", "rope", "stair"] as const).filter((k) => k !== "rope" || profile0?.has.rope !== false).map((k) => ({ value: k, label: SUB_LABEL[k] })), ...(hasRun ? [{ value: "beast", label: "Bestie" }] : [])]}
             onChange={(v) => update((st) => {
               const rs = { ...(st.runSub ?? {}) };
               if (v) rs[sid] = v as NonNullable<typeof runSub>; else delete rs[sid];

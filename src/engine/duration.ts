@@ -3,12 +3,12 @@
    Umbau zwischen den Übungen, Warm-up und Cool-down aus den Listen. */
 import { BEAST_BY_ID } from "../data";
 import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile } from "../types";
-import { CLASS_ORDER, moduleDrills, roleDrills, shortDrills, swordList } from "./plan";
+import { CLASS_ORDER, moduleDrills, roleDrills, shortDrills, shortSwordDrills, swordList } from "./plan";
 
 /** Dauer eines Schwertblocks. Mit Skills (auch null): echte Dauer deiner Stufe, Wiederholungen je etwa 3 s. Ohne (undefined): Richtwert des Ordens wie bisher.
-    Kurztag (`short`): Kurzfassung — die erste Hälfte der Übungen, mindestens eine. */
+    Kurztag (`short`): Kurzfassung — jede Übung bleibt, ein Satz weniger (mindestens einer je Übung). */
 export function swordSeconds(variant: string, skills: string[] | null | undefined, boost = false, short = false): number {
-  const list = short ? shortDrills(swordList(variant, skills)) : swordList(variant, skills);
+  const list = short ? shortSwordDrills(swordList(variant, skills)) : swordList(variant, skills);
   if (skills === undefined) return list.reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0);
   return list.reduce((sum, d) => sum + drillSeconds(d, Array.from({ length: Array.isArray(d.sides) ? d.sides.length : d.sides ? 2 : 1 }, () => ({ value: d.value, sets: (d.sets ?? 1) + (boost ? 1 : 0) }))), 0);
 }

@@ -55,9 +55,10 @@ export function swapRunBeast(b: Beast, to: CardioSub | undefined): Beast {
 }
 
 /* ---------- Cardio am Ort: was der Ort nicht hergibt, wird nur bei diesem Element ersetzt ----------
-   „Laufen möglich“ und „Sprints möglich“ sind Schalter am Equipment-Profil; Rudergerät und Rad stehen als Geräte drin.
+   „Laufen möglich“, „Sprints möglich“ und „Springseil“ sind Schalter am Equipment-Profil; Rudergerät und Rad stehen als Geräte drin.
    Fehlt etwas, wird nur das betroffene Element umgerechnet (gleiche Belastungszeit wie bei „Laufen ersetzen“),
-   der Rest der Bestie bleibt — sie zählt als mutiert und teilt sich mit allen mutierten Varianten eine Bestzeit. */
+   der Rest der Bestie bleibt — sie zählt als mutiert und teilt sich mit allen mutierten Varianten eine Bestzeit.
+   Kann der Ort die Lücke durch kein Gerät füllen, passt die Bestie an diesen Ort nicht (der Bestienpool bleibt unangetastet). */
 /** Row-Kalorien („50c Row“) ≈ 4,5 Sekunden je Kalorie bei zügigem Tempo */
 const ROW_S_PER_CAL = 4.5;
 const ROW_RX = /(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)*)\s?(m|c)\s+row\b/gi;
@@ -65,10 +66,10 @@ const BIKE_RX = /(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)*)\s?(m|k)\s+bike\b/gi;
 /** Ziel eines ersetzten Elements: „run“ zählt dazu, denn auch eine Laufstrecke kann fehlen */
 export type LocSub = "run" | CardioSub;
 const subAvail = (p: EquipmentProfile, t: LocSub): boolean =>
-  t === "rope" ? true : t === "run" ? p.has.run : t === "row" ? p.has.rower : t === "bike" ? p.has.bike : false;
-/** Erstes verfügbares Ziel; Seilspringen geht fast immer (kein eigenes Equipment-Flag) */
-const subTarget = (p: EquipmentProfile, order: LocSub[]): CardioSub =>
-  (order.find((t) => subAvail(p, t)) ?? "rope") as CardioSub;
+  t === "rope" ? p.has.rope : t === "run" ? p.has.run : t === "row" ? p.has.rower : t === "bike" ? p.has.bike : false;
+/** Erstes verfügbares Ziel am Ort — keins: null, die Lücke lässt sich dann nicht füllen */
+const subTarget = (p: EquipmentProfile, order: LocSub[]): LocSub | null =>
+  order.find((t) => subAvail(p, t)) ?? null;
 
 /** Belastungszeit (Sekunden je Stufe) als Angabe für das Zielgerät */
 function secsToTarget(secs: number[], to: LocSub): string {
@@ -81,23 +82,28 @@ function secsToTarget(secs: number[], to: LocSub): string {
   }
 }
 
-/** Cardiogerät am Ort ersetzen: Läufe, Sprints, Rudern und Rad nach verfügbarer Alternative, gleiche Belastungszeit */
-export function swapLocText(work: string, p: EquipmentProfile): string {
+/** Cardiogerät am Ort ersetzen: Läufe, Sprints, Rudern und Rad nach verfügbarer Alternative, gleiche Belastungszeit.
+    null, wenn der Ort eine Lücke durch kein Gerät füllen kann — dann passt die Bestie an diesen Ort nicht. */
+export function swapLocText(work: string, p: EquipmentProfile): string | null {
   let out = work;
-  if (!p.has.sprint) {
+  if (!p.has.sprint && new RegExp(SPRINT_RX.source, "i").test(work)) {
     const to = subTarget(p, ["row", "bike", "rope"]);
-    out = out.replace(SPRINT_RX, (_m, k: string, m: string) => `${k}x${Math.max(5, Math.round(Number(m) * SPRINT_S_PER_M))}s ${SPRINT_NAME[to]}`);
+    if (!to) return null;
+    out = out.replace(SPRINT_RX, (_m, k: string, m: string) => `${k}x${Math.max(5, Math.round(Number(m) * SPRINT_S_PER_M))}s ${SPRINT_NAME[to as CardioSub]}`);
   }
-  if (!p.has.run) {
+  if (!p.has.run && new RegExp(RUN_RX.source, "i").test(work)) {
     const to = subTarget(p, ["row", "bike", "rope"]);
+    if (!to) return null;
     out = out.replace(RUN_RX, (_m, n: string, unit: string) => secsToTarget(n.split("/").map(Number).map((x) => meters(x, unit) * RUN_S_PER_M), to));
   }
-  if (!p.has.rower) {
+  if (!p.has.rower && new RegExp(ROW_RX.source, "i").test(work)) {
     const to = subTarget(p, ["run", "bike", "rope"]);
+    if (!to) return null;
     out = out.replace(ROW_RX, (_m, n: string, unit: string) => secsToTarget(n.split("/").map(Number).map((x) => (unit.toLowerCase() === "c" ? x * ROW_S_PER_CAL : x * ROW_S_PER_M)), to));
   }
-  if (!p.has.bike) {
+  if (!p.has.bike && new RegExp(BIKE_RX.source, "i").test(work)) {
     const to = subTarget(p, ["run", "row", "rope"]);
+    if (!to) return null;
     out = out.replace(BIKE_RX, (_m, n: string, unit: string) => secsToTarget(n.split("/").map(Number).map((x) => meters(x, unit) * BIKE_S_PER_M), to));
   }
   return out;
@@ -111,16 +117,20 @@ export const hasLocText = (work: string, p: EquipmentProfile): boolean =>
 
 /** Bestie am Ort: Was der Ort nicht hergibt (Strecke für Läufe und Sprints, Rudergerät, Rad), wird nur bei diesen Elementen
     umgerechnet, der Rest bleibt. Die Bestie zählt als mutiert („X mutiert“, Id auf die hexed-Form) und teilt sich mit allen
-    mutierten Varianten eine Bestzeit — das entfesselte Original behält seine eigene. null, wenn nichts zu ersetzen ist. */
+    mutierten Varianten eine Bestzeit — das entfesselte Original behält seine eigene. null, wenn nichts zu ersetzen ist
+    oder der Ort die Lücke durch kein Gerät füllen kann — dann passt die Bestie an diesen Ort nicht. */
 export function beastLocSub(b: Beast, p: EquipmentProfile): Beast | null {
   const works = [b.work, ...(b.parts?.map((x) => x.work) ?? [])];
   if (!works.some((w) => hasLocText(w, p))) return null;
+  const swapped = works.map((w) => swapLocText(w, p));
+  if (swapped.some((w) => w === null)) return null;
+  const [work, ...partWorks] = swapped as string[];
   return {
     ...b,
     id: `${b.id.split("~")[0]}~hex`,
     name: b.name.endsWith(" mutiert") ? b.name : `${b.name} mutiert`,
-    work: swapLocText(b.work, p),
-    parts: b.parts?.map((x) => ({ ...x, work: swapLocText(x.work, p) })),
+    work,
+    parts: b.parts?.map((x, i) => ({ ...x, work: partWorks[i] })),
   };
 }
 

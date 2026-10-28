@@ -4,7 +4,7 @@ import { FLOWS, SHARPEN, SWORD } from "../data";
 import type { BeastResult, Block, Session } from "../types";
 import { estimateRole } from "../engine/duration";
 import { swapRunBeast } from "../engine/cardio";
-import { moduleDrills, roleAt, roleDrills, shortDrills, swordLevel, swordNext } from "../engine/plan";
+import { moduleDrills, roleAt, roleDrills, shortSwordDrills, swordLevel, swordNext } from "../engine/plan";
 import { advance, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
@@ -229,7 +229,7 @@ export function SessionPreview(ctx: SessionCtx) {
             return (
               <div key={i} className="preview-group">
                 <div className="block-label amber">Schwert{lv ? ` · Stufe ${lv}` : ""}</div>
-                {(sw.short ? shortDrills(moduleDrills(sw.variant, ctx.state.user, ctx.week)) : moduleDrills(sw.variant, ctx.state.user, ctx.week)).map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.sets && d.sets > 1 ? `${d.sets} × ` : ""}${d.value}` : fmt(d.value * (d.sets ?? 1))}{d.sides ? " je Seite" : ""}</span></div>)}
+                {(sw.short ? shortSwordDrills(moduleDrills(sw.variant, ctx.state.user, ctx.week)) : moduleDrills(sw.variant, ctx.state.user, ctx.week)).map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.sets && d.sets > 1 ? `${d.sets} × ` : ""}${d.value}` : fmt(d.value * (d.sets ?? 1))}{d.sides ? " je Seite" : ""}</span></div>)}
                 <div className="preview-row muted"><span>Ohne Schwert („{ctx.profile.name}“): {alt || "entfällt"}</span></div>
               </div>
             );

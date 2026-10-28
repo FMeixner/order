@@ -7,7 +7,7 @@ import { Check, Field } from "./common";
 const HAS_LABEL: Record<keyof EquipmentProfile["has"], string> = {
   bar: "Klimmzugstange", rings: "Ringe", bench: "Bank", rower: "Rudergerät", bike: "Rad/Ergometer",
   box: "Box/Stufe", sandbag: "Sandsack", cable: "Kabelzug", machines: "Maschinen", medball: "Medizinball 2 kg", sword: "Schwert oder Stock", handles: "Liegestützgriffe oder Yoga-Blöcke", dip: "Dip-Barren", wheel: "Bauchroller",
-  run: "Laufen möglich", sprint: "Sprints möglich",
+  run: "Laufen möglich", sprint: "Sprints möglich", rope: "Springseil",
 };
 
 function ListInput({ value, onChange, placeholder }: { value: number[]; onChange: (v: number[]) => void; placeholder: string }) {

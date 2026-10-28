@@ -3,7 +3,7 @@ import { FOCUS_BY_ID } from "../data";
 import { emptyState, EQUIPMENT_PRESETS } from "../store";
 import type { Block, Slot } from "../types";
 import { estimateRole } from "./duration";
-import { CLASS_ORDER, defaultRoles } from "./plan";
+import { CLASS_ORDER, defaultRoles, moduleDrills, shortSwordDrills } from "./plan";
 import { equipOf } from "./resolve";
 import { isStrength } from "./slots";
 import { SHORT_KEEP, SHORT_LIMIT, shortDay, shortEligible } from "./shortday";
@@ -83,5 +83,15 @@ describe("Kurztag", () => {
     expect(estimateRole(r, P[r.location]).total).toBeLessThanOrEqual(SHORT_LIMIT + 0.6);
     expect(report.unresolved).toEqual([]);
     expect(report.changes).toEqual([]);
+  });
+  it("Schwerttraining: kurze Fassung behält jede Übung und zieht nur je einen Satz ab", () => {
+    const full = moduleDrills("einzelmesser", user, 1);
+    const short = shortSwordDrills(full);
+    expect(short.length).toBe(full.length);
+    for (let i = 0; i < full.length; i++) {
+      expect(short[i].id).toBe(full[i].id);
+      expect(short[i].sets).toBe(Math.max(1, (full[i].sets ?? 1) - 1));
+      expect(short[i].groups?.map((g) => g.sets)).toEqual(full[i].groups?.map((g) => Math.max(1, g.sets - 1)));
+    }
   });
 });

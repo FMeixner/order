@@ -182,7 +182,11 @@ describe("Orden und Plan", () => {
     const st = emptyState();
     const b = pickBeast({ type: "beast", id: "t", classes: ["bestie"], }, { blockId: "x", week: 1, profile: reise, state: st, reduced: false, downgrade: false });
     expect(b).not.toBeNull();
-    expect(b!.equipment.every((t) => ["bodyweight_only", "wall_or_open", "band"].includes(t))).toBe(true);
+    // Unterwegs gibt es keine Sprints und kein Springseil: Bestien mit Sprints werden gar nicht gewählt,
+    // Row- und Bike-Elemente sind auf die Laufstrecke umgerechnet (Bestie zählt als mutiert)
+    expect(b!.work).not.toMatch(/sprint/i);
+    expect(b!.work).not.toMatch(/\d\s?(m|c)\s+row\b/i);
+    expect(b!.work).not.toMatch(/\d\s?(m|k)\s+bike\b/i);
   });
 });
 
@@ -644,6 +648,21 @@ describe("Bestien: Ausrüstung und Wochenvolumen", () => {
     // Rudergerät schließt die Bestie nicht aus: fehlt es, werden nur die Row-Elemente am Ort ersetzt (Bestie zählt als mutiert)
     expect(beastFits(undine, { ...withRings, has: { ...withRings.has, rower: false } })).toBe(true);
     expect(beastFits(undine, { ...withRings, has: { ...withRings.has, rower: true } })).toBe(true);
+  });
+  it("Füllt der Ort eine Cardio-Lücke durch nichts, wird die Bestie dort nicht gewählt", async () => {
+    const { pickBeast } = await import("./plan");
+    const st = emptyState();
+    const nothing: EquipmentProfile = { ...home, has: { ...home.has, run: false, rope: false } };
+    // Undine braucht das Row-Element, Puck die Sprints: ohne Strecke, Geräte und Springseil passt keine von beiden
+    for (const id of ["ng-nanna", "ng-loki"]) {
+      const b = pickBeast({ type: "beast", id: "t", classes: ["bestie"], pool: [id], strict: true }, { blockId: "x", week: 1, profile: nothing, state: st, reduced: false, downgrade: false });
+      expect(b, id).toBeNull();
+    }
+    // Mit Springseil füllt das Seil die Lücke (mutiert)
+    const rope = { ...nothing, has: { ...nothing.has, rope: true } };
+    const undine = pickBeast({ type: "beast", id: "t", classes: ["bestie"], pool: ["ng-nanna"], strict: true }, { blockId: "x", week: 1, profile: rope, state: st, reduced: false, downgrade: false });
+    expect(undine!.id).toBe("ng-nanna~hex");
+    expect(undine!.work).toContain("Seilspringen");
   });
   it("Bestien zählen halb: Undine (1 Runde, 20 Muscle-Ups, 100 Squats) gibt je Übung einen halben Satz", async () => {
     const { beastSets } = await import("./volume");
