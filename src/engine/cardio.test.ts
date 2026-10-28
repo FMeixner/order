@@ -80,4 +80,14 @@ describe("Cardio am Ort: fehlt, was die Bestie bräuchte, wird nur dieses Elemen
     expect(beastFits(undine, withRings)).toBe(true);
     expect(beastFits(BEAST_BY_ID["ng-gefjun"], home)).toBe(true);
   });
+  it("Fehlt auch das Springseil, gibt es keine Ersetzung", () => {
+    const nothing = { ...home, has: { ...home.has, run: false, rope: false } };
+    expect(swapLocText("2x40m Sprints · 10 Pullups", nothing)).toBeNull();
+    expect(swapLocText("400m Run", nothing)).toBeNull();
+    expect(beastLocSub(BEAST_BY_ID["ng-loki"], nothing)).toBeNull();
+    // Springseil als letzter Ausweg: 10 Kalorien ≈ 45 s (4,5 s je Kalorie, auf 15 s gerundet)
+    const ropeOnly = { ...home, has: { ...home.has, run: false } };
+    expect(swapLocText("10c Row", ropeOnly)).toBe("45s Seilspringen");
+    expect(beastLocSub(BEAST_BY_ID["ng-nanna"], ropeOnly)!.work).toBe("10 Muscle-Ups · 100 Squats · 10 Muscle-Ups · 45s Seilspringen");
+  });
 });

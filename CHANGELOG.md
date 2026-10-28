@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.79.0] – 2026-10-28
+
+### Neu
+- „Springseil“ ist ein eigener Equipment-Schalter am Trainingsort (Setup › Equipment, Vorgabe: ja; das Preset „Unterwegs: nur Bänder“ startet ohne). Seilspringen ist damit nicht mehr der bedingungslose Ersatz: Kann der Ort eine Cardio-Lücke der Bestie durch kein Gerät füllen, passt die Bestie an diesem Ort nicht — aus dem Bestiarium genommen wird sie dafür nicht, sie läuft nur an anderen Orten.
+
+### Geändert
+- „Kurz“ kürzt das Schwerttraining über die Sätze, nicht über die Übungen: Jeder Hieb und jede Kombi bleibt drin, jede Schwertübung läuft mit einem Satz weniger (mindestens einem). Der Ersatz-Flow ohne Schwert läuft weiterhin in der Kurzfassung (erste Hälfte der Übungen).
+
 ## [0.78.0] – 2026-10-28
 
 ### Neu

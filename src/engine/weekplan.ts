@@ -165,7 +165,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   const f = base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base;
   const n = trainingDays(state, b).length;
   let shaped = shapeFocus(f, n);
-  // Kurz: gekürzte Rolle (die vier Kernübungen, Bestie und Schwert eine Stufe kürzer, Ziel 35 Minuten); an jedem Tag möglich.
+  // Kurz: gekürzte Rolle (die vier Kernübungen, Bestie eine Klasse kürzer, Schwertübungen einen Satz weniger, Ziel 35 Minuten); an jedem Tag möglich.
   // Die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet.
   // Gemerkter Kurztag: die ganze Woche gleicht aus. Spontan: nur die Tage danach.
   if (!base.medley?.length) {

@@ -1,5 +1,5 @@
 /* Kurztag: Wenig Zeit oder tiefe Tagesform — die Einheit bleibt, aber kurz: die vier Kernübungen,
-   Bestie und Schwerttraining eine Stufe kürzer, Ziel 35 Minuten (nötigenfalls weniger Sätze).
+   Bestie eine Klasse und jede Schwertübung einen Satz kürzer (keine fällt weg), Ziel 35 Minuten (nötigenfalls weniger Sätze).
    Das ist kein Deload: Zeit und Tagesform steuern, nicht Ermüdung — und eine kurze Einheit ist ein echter Erfolg.
    Grundlagen- und Skill-Tage (Lauf, Atem, Parkour) haben keine Kraftübungen: ihr Inhalt bleibt erhalten und wird
    über die Dauer Richtung 35 Minuten gekürzt, statt ihn wegzustreichen.
@@ -133,7 +133,7 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   };
   const keep = pick();
   const droppedBlocks = ranked.filter((x) => !keep.has(x.b)).map((x) => x.b);
-  // Bestie bleibt drin, aber eine Klasse kürzer (mindestens Plage); das Schwerttraining läuft in der Kurzfassung
+  // Bestie bleibt drin, aber eine Klasse kürzer (mindestens Plage); jede Schwertübung einen Satz weniger (short-Flag)
   const shorter = (b: Block): Block => {
     if (b.type === "beast") return { ...b, classes: (b.classes?.length ? b.classes : (["bestie", "ungeheuer"] as BeastClass[])).map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]) };
     if (b.type === "module" && b.module === "sword") return { ...b, short: true };
