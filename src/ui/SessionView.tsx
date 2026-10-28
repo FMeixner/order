@@ -128,9 +128,10 @@ function SwordLevel({ skills }: { skills: string[] | null | undefined }) {
 function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void }) {
   // Aufrufer (ItemCard) stellt module-Block mit drills sicher
   const b = it.block as Extract<Block, { type: "module" }>;
+  const drills = it.drills ?? [];
   const prefix = b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : "dm";
   const title = b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : "Schwert";
-  const allDone = allDrillsDone(it.drills, session?.drills ?? {}, prefix);
+  const allDone = allDrillsDone(drills, session?.drills ?? {}, prefix);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (!allDone) return;
@@ -138,12 +139,12 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
     return () => clearTimeout(id);
   }, [allDone]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <Collapse title={title} meta={`${it.drills.length} Übungen`} tone="amber" open={open} onOpenChange={setOpen}>
+    <Collapse title={title} meta={`${drills.length} Übungen`} tone="amber" open={open} onOpenChange={setOpen}>
       {it.sword && <div className="muted small">Statt Schwert: „{ctx.profile.name}“ hat kein Schwert. Mit Schwert kommt hier dein Schwertblock.</div>}
       {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
       {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
       {b.module === "sword" && SWORD.leveled.includes(b.variant) && <SwordLevel skills={ctx.state.user.skills} />}
-      <DrillList drills={it.drills} done={session?.drills ?? {}} prefix={prefix} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
+      <DrillList drills={drills} done={session?.drills ?? {}} prefix={prefix} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
     </Collapse>
   );
 }
