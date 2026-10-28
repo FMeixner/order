@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.80.0] – 2026-10-28
+
+### Neu
+- Zwei Stich-Übungen an Turnringen in der Stiche-Stufe: „Ringstich: Hoch und Tief“ (Ringe hoch auf der Oberstich- und niedrig auf der Unterstich-Linie) und „Ringstich: Tief und Mittel“ (niedrig und mittig). Die Spitze läuft auf gerader Linie durch die Ringöffnung, der Ring bleibt unberührt — berührt, pendelt er sichtbar; dann erst der nächste Stich, wenn er still hängt. Im Wechsel zwischen den Ringen, Rückzug auf derselben Linie; später freie Kombis statt strengem Wechsel.
+
 ## [0.79.1] – 2026-10-28
 
 ### Behoben
