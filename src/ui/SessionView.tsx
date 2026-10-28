@@ -1,5 +1,5 @@
 /* Eine Einheit: Ansicht der laufenden Woche und Vorschau künftiger Wochen. */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FLOWS, SHARPEN, SWORD } from "../data";
 import type { BeastResult, Block, Session } from "../types";
 import { estimateRole } from "../engine/duration";
@@ -11,8 +11,9 @@ import { allRuns } from "../engine/runs";
 import { menuDefault } from "../engine/sharpen";
 import { warmupKeys } from "../engine/warmup";
 import { fmt, useTimer } from "./Timer";
+import { Collapse } from "./common";
 import { BeastCard } from "./session/BeastCard";
-import { DrillList, DrillSection, toggleDrill } from "./session/Drills";
+import { allDrillsDone, DrillList, DrillSection, toggleDrill } from "./session/Drills";
 import { SlotCard, WarmCtx } from "./session/SlotCard";
 import { boostOf, type SessionCtx, sessionId } from "./session/ctx";
 import { collectItems, type Item, pinBeasts } from "./session/items";
@@ -122,22 +123,37 @@ function SwordLevel({ skills }: { skills: string[] | null | undefined }) {
   );
 }
 
+/** Schwert-, Flow- und Schwerpunkt-Block: aufklappbare Karte wie das Warm-up —
+    ist alles abgehakt, klappt sie nach kurzer Zeit ein wie eine Übungskarte */
+function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void }) {
+  // Aufrufer (ItemCard) stellt module-Block mit drills sicher
+  const b = it.block as Extract<Block, { type: "module" }>;
+  const drills = it.drills ?? [];
+  const prefix = b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : "dm";
+  const title = b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : "Schwert";
+  const allDone = allDrillsDone(drills, session?.drills ?? {}, prefix);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!allDone) return;
+    const id = setTimeout(() => setOpen(false), 2500);
+    return () => clearTimeout(id);
+  }, [allDone]); // eslint-disable-line react-hooks/exhaustive-deps
+  return (
+    <Collapse title={title} meta={`${drills.length} Übungen`} tone="amber" open={open} onOpenChange={setOpen}>
+      {it.sword && <div className="muted small">Statt Schwert: „{ctx.profile.name}“ hat kein Schwert. Mit Schwert kommt hier dein Schwertblock.</div>}
+      {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
+      {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
+      {b.module === "sword" && SWORD.leveled.includes(b.variant) && <SwordLevel skills={ctx.state.user.skills} />}
+      <DrillList drills={drills} done={session?.drills ?? {}} prefix={prefix} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
+    </Collapse>
+  );
+}
+
 function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
   if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} cardio={it.cardio} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
-  if (b.type === "module" && it.drills) {
-    return (
-      <section className="card">
-        <div className="block-label amber">{b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : "Schwert"}</div>
-        {it.sword && <div className="muted small">Statt Schwert: „{ctx.profile.name}“ hat kein Schwert. Mit Schwert kommt hier dein Schwertblock.</div>}
-        {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
-        {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
-        {b.module === "sword" && SWORD.leveled.includes(b.variant) && <SwordLevel skills={ctx.state.user.skills} />}
-        <DrillList drills={it.drills} done={session?.drills ?? {}} prefix={b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : "dm"} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
-      </section>
-    );
-  }
+  if (b.type === "module" && it.drills) return <ModuleCard it={it} ctx={ctx} session={session} mut={mut} />;
   if (b.type === "menu") {
     const key = `${ctx.block.id}:${b.id}`;
     const auto = menuDefault(ctx.state, ctx.block, b);

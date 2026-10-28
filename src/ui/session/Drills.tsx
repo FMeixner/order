@@ -12,6 +12,16 @@ export function toggleDrill(s: Session, key: string, i: number): Session {
   return { ...s, drills: { ...s.drills, [key]: arr } };
 }
 
+/** Fertig: alle Sätze aller Übungen abgehakt. Die Länge muss mitzählen —
+    ein kurzes oder leeres Häkchen-Array wäre sonst schon „fertig“ (slice .every über weniger Einträge ist true). */
+export function allDrillsDone(drills: DrillView[], done: Record<string, boolean[]>, prefix: string): boolean {
+  return drills.length > 0 && drills.every((d) => {
+    const n = d.groups.reduce((x, g) => x + g.sets, 0);
+    const arr = done[`${prefix}:${d.id}`] ?? [];
+    return arr.length >= n && arr.slice(0, n).every((x) => x === true);
+  });
+}
+
 /* ---------- Warm-up, Cool-down, Module ---------- */
 /** Warm-up oder Cool-down mit eigenen Änderungen: Übungen entfernen und aus dem Katalog hinzufügen, dauerhaft für diesen Tag des Ordens */
 export function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" | "cd"; drills: DrillView[]; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void }) {
@@ -35,10 +45,7 @@ export function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" |
   const pool = drillPool(kind, ctx.profile).filter((d) => !shown.has(d.id));
   const title = kind === "wu" ? "Warm-up" : "Cool-down";
   // Fertig: alles abgehakt — dann klappt die Karte nach kurzer Zeit ein wie eine Übungskarte
-  const allDone = drills.length > 0 && drills.every((d) => {
-    const n = d.groups.reduce((x, g) => x + g.sets, 0);
-    return (session?.drills[`${kind}:${d.id}`] ?? []).slice(0, n).every((x) => x === true);
-  });
+  const allDone = allDrillsDone(drills, session?.drills ?? {}, kind);
   useEffect(() => {
     if (!allDone || edit) return;
     const id = setTimeout(() => setOpen(false), 2500);

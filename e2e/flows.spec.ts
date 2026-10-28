@@ -206,6 +206,19 @@ test("Warm-up anpassen: entfernen und hinzufügen, dauerhaft für den Tag", asyn
   expect((await stored(page)).drillEdits?.["assassin:kraft_a"]).toBeUndefined();
 });
 
+test("Schwertblock: aufklappbare Karte, fällt ein, wenn alles abgehakt ist", async ({ page }) => {
+  const st = fixture();
+  st.equipment = st.equipment.map((e) => (e.id === "h" ? { ...e, has: { ...e.has, sword: true } } : e));
+  await seed(page, st);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Schwert und Bestie" }).click();
+  const head = page.locator(".collapse-head").filter({ hasText: "Schwert" }).first();
+  await head.click(); // aufklappen
+  const card = page.locator(".collapse").filter({ has: head });
+  for (const btn of await card.locator(".set-btn").all()) await btn.click(); // Hiebe der Stufe 1: Wiederholungen ohne Countdown
+  await expect(head).toHaveAttribute("aria-expanded", "false");
+});
+
 test("Intensiv: Schalter im Anpassen-Menü, löst Leise, Hinweis in der Einheit", async ({ page }) => {
   await seed(page);
   await page.goto("./");

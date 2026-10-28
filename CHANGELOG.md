@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.79.1] – 2026-10-28
+
+### Behoben
+- Das Auto-Einklappen von Warm-up und Cool-down hat nie gegriffen: „Fertig“ wurde auch bei einem leeren oder kürzeren Häkchen-Array gemeldet, der Zustandswechsel zum Einklappen trat beim Abhaken der letzten Übung daher nicht ein. Jetzt zählt die Länge mit — ist alles abgehakt, klappt die Karte nach kurzer Zeit ein wie eine Übungskarte.
+
+### Neu
+- Schwert-, Flow- und Schwerpunkt-Blöcke sind jetzt aufklappbare Karten wie das Warm-up (mit Übungsanzahl) und fallen nach dem Abhaken der letzten Übung ebenfalls ein.
+
 ## [0.79.0] – 2026-10-28
 
 ### Neu
