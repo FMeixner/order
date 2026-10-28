@@ -1,4 +1,5 @@
 import { allRuns, isHunt } from "../engine/runs";
+import { isHardRun, PACE_LABEL } from "../engine/runadj";
 import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import { beastById, fmtDate } from "../engine/plan";
@@ -29,8 +30,9 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
   const [copied, setCopied] = useState(false);
   const done = state.sessions.filter((s) => s.done).sort((a, b) => b.date.localeCompare(a.date));
   const allTests = TESTWEEK.cups.flatMap((c) => c.tests);
+  const runs = state.runs ?? [];
   const copy = async () => {
-    const text = `# Order-Log\n\n${done.map((s) => sessionText(s, state)).join("\n\n")}\n`;
+    const text = `# Order-Log\n\n${done.map((s) => sessionText(s, state)).join("\n\n")}\n${runs.length ? `\n## Läufe\n\n${[...runs].reverse().map((r) => `- ${fmtDate(r.date)}: ${r.minutes} min, ${PACE_LABEL[r.pace]}${isHardRun(r) ? " (hart gewertet)" : ""}`).join("\n")}\n` : ""}`;
     try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* ignorieren */ }
   };
   const lastTest = Object.values(state.tests).flat().sort((a, b) => b.date.localeCompare(a.date))[0];
@@ -44,6 +46,15 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
       {ravenOn(state) && <RavenChronicle state={state} today={today} />}
       <VolumeView state={state} today={today} />
       <ProgressView state={state} />
+      {runs.length > 0 && (
+        <Collapse title="Läufe" meta={`${runs.length} · außerhalb der Einheiten`}>
+          <ul className="slot-list">
+            {[...runs].reverse().map((r, i) => (
+              <li key={`${r.date}-${i}`}><strong>{fmtDate(r.date)}</strong>: {r.minutes} Min · {PACE_LABEL[r.pace]}{isHardRun(r) ? " · hart gewertet" : ""}</li>
+            ))}
+          </ul>
+        </Collapse>
+      )}
       {done.slice(0, 60).map((s) => {
         const f = FOCUS_BY_ID[s.focusId];
         const entries = Object.values(s.entries).filter((e) => e.sets.some((x) => x.done));

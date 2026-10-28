@@ -299,3 +299,19 @@ test("Laufen ersetzen: Auslaufen wird Rudergerät, gleiche Zeit", async ({ page 
   await expect(page.locator(".slot-name").filter({ hasText: "Rudergerät" })).toBeVisible();
   await expect(page.getByText("Lockeres Auslaufen")).toHaveCount(0);
 });
+
+test("Cardio erfassen: Eintrag im Zustand, Anzeige im Panel und im Log", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Anpassen für heute" }).click();
+  await page.getByLabel("Cardio: Minuten").fill("45");
+  await page.getByRole("radio", { name: "Zügig" }).click();
+  await page.getByRole("button", { name: "Eintragen" }).click();
+  const st = await stored(page);
+  expect(st.runs?.length).toBe(1);
+  expect(st.runs?.[0]).toMatchObject({ minutes: 45, pace: "zügig" });
+  await expect(page.getByText(/45 Min · Zügig/)).toBeVisible();
+  await page.getByRole("button", { name: "Almanach" }).click();
+  await page.getByRole("radio", { name: "Log" }).click();
+  await expect(page.locator(".collapse-title").filter({ hasText: "Läufe" })).toBeVisible();
+});

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import { TESTWEEK } from "../data";
-import type { AppState, PlanBlock, Weekday } from "../types";
+import type { AppState, PlanBlock, RunEntry, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { SessionPreview, SessionView } from "./SessionView";
 import { runSubOf, sessionId } from "./session/ctx";
@@ -10,6 +10,7 @@ import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
 import { dayMods, rememberMod, remembered, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
 import { deloadAdvice, isDeloaded, setDeload } from "../engine/deload";
+import { easeTargets, isHardRun, PACE_LABEL } from "../engine/runadj";
 
 const FIX_LABEL: Record<FixKey, string> = { short: "Kurz", quiet: "Leise", tight: "Kein Platz" };
 import { canShorten } from "../engine/shortday";
@@ -51,6 +52,10 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const [showTraining, setShowTraining] = useState(false);
   const [viewWeek, setViewWeek] = useState<number | null>(null);
   const [adjust, setAdjust] = useState(false);
+  // Cardio erfassen: heute oder gestern, Minuten, Pace-Empfindung
+  const [runDay, setRunDay] = useState<"heute" | "gestern">("heute");
+  const [runPace, setRunPace] = useState<RunEntry["pace"]>("locker");
+  const [runMin, setRunMin] = useState(30);
   if (!block) {
     const nb = nextBlock(state.plan, today);
     return (
@@ -146,6 +151,11 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const mem = sel ? remembered(state, block, sel.role, sel.day) : { short: false, quiet: false, tight: false };
   const activeAdj = sel ? [profile0 && profile0.id !== sel.profileId, mods?.short, mods?.light, mods?.intense, mods?.quiet, mods?.tight, (hasRun || hasBeast) && !!runSub].filter(Boolean).length : 0;
   const modsLabel = chips.filter((c) => c.on).map((c) => c.label).join(" · ");
+  // Cardio außerhalb der Einheiten: erfassen für heute oder gestern; ein harter oder langer Lauf entlastet den Beintag
+  const runs = state.runs ?? [];
+  const eased = isCur && !test ? easeTargets(state, block, week, focus) : [];
+  const addRun = () => update((st) => ({ ...st, runs: [...(st.runs ?? []), { date: runDay === "heute" ? today : addDays(today, -1), minutes: Math.max(1, Math.round(runMin)), pace: runPace }] }));
+  const delRun = (i: number) => update((st) => ({ ...st, runs: (st.runs ?? []).filter((_, k) => k !== i) }));
   const adjustButton = (
     <button className={`btn ghost small adjust-btn ${activeAdj ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
       <span aria-hidden>⚙</span> Anpassen{activeAdj ? ` · ${activeAdj}` : ""}
@@ -187,6 +197,37 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
             })} />
           {runSub && runSub !== "beast" && <span className="muted small">Umgerechnet nach Belastungszeit, nicht 1:1: 400 m Laufen ≈ 500 m Rudern ≈ 1000 m Rad ≈ 2 Min Seil oder Stepper. Dauerläufe: gleiche Zeit im gleichen Tempo.</span>}
           {runSub === "beast" && <span className="muted small">Laufblöcke werden zu einer Bestie ähnlicher Dauer.</span>}
+        </div>
+      )}
+      {isCur && !test && (
+        <div className="stack">
+          <span className="field-label">Cardio erfassen <span className="muted">außerhalb der Einheiten</span></span>
+          <div className="row wrap">
+            <Seg value={runDay} options={[{ value: "heute", label: "Heute" }, { value: "gestern", label: "Gestern" }]} onChange={setRunDay} />
+            <input aria-label="Cardio: Minuten" type="number" inputMode="numeric" min={5} step={5} className="kg-in" style={{ width: "4.5rem" }} value={runMin} onChange={(e) => setRunMin(Math.max(0, Number(e.target.value)))} />
+            <span className="muted small">Min</span>
+            <Seg value={runPace} options={(["locker", "zügig", "hart"] as const).map((p) => ({ value: p, label: PACE_LABEL[p] }))} onChange={setRunPace} />
+            <button className="btn small" onClick={addRun}>Eintragen</button>
+          </div>
+          <span className="muted small">Hart gewertet: Pace „Hart“ oder ab 60 Minuten. Ein solcher Lauf entlastet den Beintag am selben und am Folgetag — Waden und Beinbeuger einen Satz weniger. Alle Einträge stehen im Log.</span>
+          {runs.length > 0 && (
+            <div className="row wrap">
+              {[...runs].reverse().slice(0, 3).map((r, k) => {
+                const i = runs.length - 1 - k;
+                return (
+                  <span key={`${r.date}-${i}`} className="row small">
+                    <span>{fmtDate(r.date)} · {r.minutes} Min · {PACE_LABEL[r.pace]}{isHardRun(r) ? " · hart gewertet" : ""}</span>
+                    <button className="btn ghost small" aria-label={`Cardio vom ${fmtDate(r.date)} löschen`} onClick={() => delRun(i)}>✕</button>
+                  </span>
+                );
+              })}
+            </div>
+          )}
+          {eased.length > 0 && (
+            <div className="muted small">
+              Lauf eingerechnet: {eased.map((e) => DAY_NAME[e.day]).join(" und ")} läuft mit entlasteten Beinen — Waden und Beinbeuger einen Satz weniger, die frei werdende Zeit füllt eine leichte Bestie oder ein Mobility-Flow. Der Grund steht in den Details der Übung.
+            </div>
+          )}
         </div>
       )}
     </div>
