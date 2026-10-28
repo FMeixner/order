@@ -143,6 +143,14 @@ export function Help() {
         <li>Warum die leichte Woche besser ist als gar nicht trainieren: Beinkraft hält drei bis fünf Tage Pause aus, die Kraft oben war nach fünf Tagen schon messbar leichter (Travis et al., 2022). Weitertrainieren mit halber Last schlägt das Aussetzen.</li>
       </ul>
 
+      <h3>Cardio erfassen</h3>
+      <ul>
+        <li>Cardio außerhalb der Einheiten wird unter ⚙ Anpassen erfasst: heute oder gestern, Minuten und Pace-Empfindung (locker, zügig, hart). Hart gewertet wird ein Lauf mit „hart“ oder ab 60 Minuten — auch ein lockerer langer Lauf zählt. Die letzten Einträge stehen direkt darunter, alle im Log unter „Läufe“.</li>
+        <li>Kommt ein hart gewerteter Lauf auf einen Beintag oder in die 24 Stunden davor, entlastet die App den Beintag: Waden und Beinbeuger einen Satz weniger (mindestens einer), Oberschenkel erst ab vier Sätzen, Gesäß bleibt unangetastet. Die frei werdende Zeit füllt eine leichte Bestie (Plage) oder, am Tag ohne Bestie, ein Mobility-Flow. Der Grund steht in den Details der betroffenen Übung.</li>
+        <li>Warum die Beine: Ausdauerlauf stört Kraft- und Muskelaufbau vor allem, wenn er lang und häufig läuft und dieselben Muskeln trifft — Laufen beeinträchtigt die Beine mehr als Radfahren (Wilson et al., 2012). Ein Satz weniger hält die Gesamtlast unten, ohne den Reiz zu streichen.</li>
+        <li>Nicht zusätzlich zu Wochen, die ohnehin leichter laufen (−1 Satz, Entlastungswoche, Testwochen), nicht auf Intensiv-Tage und nicht auf bereits erledigte Einheiten.</li>
+      </ul>
+
       <h3>Alltagslast</h3>
       <ul>
         <li>Ist in einer Phase viel los, läuft etwa die Hälfte der Übungen eines Tages an Maschine oder Kabel, wenn das Studio sie hat. Was ohnehin an Maschine oder Kabel läuft, zählt mit: Ein Maschinentag bleibt unverändert. Der erste große Lift des Tages bleibt frei.</li>

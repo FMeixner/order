@@ -329,6 +329,9 @@ export interface Session {
   done: boolean;
 }
 
+/** Cardio außerhalb der Einheiten („Cardio erfassen“): Datum, Minuten und Pace-Empfindung */
+export interface RunEntry { date: string; minutes: number; pace: "locker" | "zügig" | "hart" }
+
 export interface AppState {
   version: 1;
   onboarded: boolean;
@@ -343,6 +346,8 @@ export interface AppState {
   /** 1RM je Übung, selbst eingetragen (sonst geschätzt aus dem Log) */
   oneRM?: Record<string, { kg: number; date: string }>;
   reduced: Record<string, boolean>; // "blockId:week" → −1 Satz
+  /** Cardio außerhalb der Einheiten. Ein hart gewerteter Lauf (Pace „hart“ oder ab 60 Minuten) entlastet den Beintag am selben und am Folgetag. */
+  runs?: RunEntry[];
   /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
   deload?: Record<string, "ja" | "nein">;
   menuChoice: Record<string, string>; // blockId:menuId → Option

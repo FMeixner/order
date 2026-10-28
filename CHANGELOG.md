@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.77.0] – 2026-10-28
+
+### Neu
+- Cardio erfassen: Läufe und anderes Cardio außerhalb der Einheiten unter ⚙ Anpassen eintragen — heute oder gestern, Minuten und Pace-Empfindung (locker, zügig, hart). Ein hart gewerteter Lauf („Hart“ oder ab 60 Minuten) entlastet den Beintag am selben und am Folgetag: Waden und Beinbeuger einen Satz weniger, Oberschenkel erst ab vier Sätzen, Gesäß bleibt unangetastet. Die frei werdende Zeit füllt eine leichte Bestie (Plage) oder, am Tag ohne Bestie, ein Mobility-Flow; der Grund steht in den Details der betroffenen Übung. Nicht zusätzlich zu Wochen, die ohnehin leichter laufen (−1 Satz, Entlastungswoche, Testwochen), nicht auf Intensiv-Tage und nicht auf erledigte Einheiten. Alle Einträge stehen im Log unter „Läufe“ und im Text-Export.
+
 ## [0.76.0] – 2026-10-27
 
 ### Geändert
