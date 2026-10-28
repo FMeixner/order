@@ -641,7 +641,9 @@ describe("Bestien: Ausrüstung und Wochenvolumen", () => {
     expect(beastFits(k, withRings)).toBe(true);
     expect(beastFits(k, { ...withRings, has: { ...withRings.has, rings: false } })).toBe(false);
     const undine = BEASTS.find((b) => b.name === "Undine")!;
-    expect(beastFits(undine, { ...withRings, has: { ...withRings.has, rower: false } })).toBe(false);
+    // Rudergerät schließt die Bestie nicht aus: fehlt es, werden nur die Row-Elemente am Ort ersetzt (Bestie zählt als mutiert)
+    expect(beastFits(undine, { ...withRings, has: { ...withRings.has, rower: false } })).toBe(true);
+    expect(beastFits(undine, { ...withRings, has: { ...withRings.has, rower: true } })).toBe(true);
   });
   it("Bestien zählen halb: Undine (1 Runde, 20 Muscle-Ups, 100 Squats) gibt je Übung einen halben Satz", async () => {
     const { beastSets } = await import("./volume");

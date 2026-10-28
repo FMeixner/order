@@ -81,7 +81,7 @@ export type Block =
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
     }
-  | { type: "module"; module: "sword" | "flow" | "sharpen"; variant: string; fallback?: Slot; /** Ohne Schwert: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B" }
+  | { type: "module"; module: "sword" | "flow" | "sharpen"; variant: string; fallback?: Slot; /** Ohne Schwert: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B"; /** Kurztag: nur die erste Hälfte der Übungen */ short?: true }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
 
 export interface Role {
@@ -214,7 +214,7 @@ export interface EquipmentProfile {
   machineStep: number;
   vest: number[];
   bands: string[];
-  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean };
+  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean; run: boolean; sprint: boolean };
   /** Alt (bis 0.45): Schweißfrei am Ort; wird beim Laden zu „Leise“ an den Wochentagen dieses Orts */
   sweatFree?: boolean;
   /** Stationen weit auseinander (Studio): keine Bestien, die Laufband/Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen. Fehlt: ja, wenn das Profil Maschinen hat. */
@@ -329,9 +329,6 @@ export interface Session {
   done: boolean;
 }
 
-/** Cardio außerhalb der Einheiten („Cardio erfassen“): Datum, Minuten und Pace-Empfindung */
-export interface RunEntry { date: string; minutes: number; pace: "locker" | "zügig" | "hart" }
-
 export interface AppState {
   version: 1;
   onboarded: boolean;
@@ -345,9 +342,6 @@ export interface AppState {
   beastTimes: Record<string, BeastTime[]>;
   /** 1RM je Übung, selbst eingetragen (sonst geschätzt aus dem Log) */
   oneRM?: Record<string, { kg: number; date: string }>;
-  reduced: Record<string, boolean>; // "blockId:week" → −1 Satz
-  /** Cardio außerhalb der Einheiten. Ein hart gewerteter Lauf (Pace „hart“ oder ab 60 Minuten) entlastet den Beintag am selben und am Folgetag. */
-  runs?: RunEntry[];
   /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
   deload?: Record<string, "ja" | "nein">;
   menuChoice: Record<string, string>; // blockId:menuId → Option
@@ -359,7 +353,7 @@ export interface AppState {
   /** Eigene Warm-up- und Cool-down-Listen je Tag: "focusId:rolle" → Änderungen. Gilt dauerhaft für diesen Tag des Ordens. */
   drillEdits?: Record<string, DrillEdits>;
   /** Tagesanpassung je Einheit (Session-Id): eigene Wahl für Kurz, Leicht, Leise; fehlt sie, gilt das Gemerkte */
-  dayAdj?: Record<string, { short?: boolean; light?: boolean; quiet?: boolean; tight?: boolean }>;
+  dayAdj?: Record<string, { short?: boolean; quiet?: boolean; tight?: boolean }>;
   /** Je Wochentag gemerkt, gilt in allen Phasen: Kurz (höchstens ein Tag) und Leise */
   dayFlags?: Partial<Record<Weekday, { short?: boolean; quiet?: boolean; tight?: boolean }>>;
   /** Lebensabschnitte des Jahres (Name frei, Zeitraum, Alltagslast): Grundlage für den Vorschlag der Phasen. Fehlt: aus den Phasen abgeleitet. */

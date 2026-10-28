@@ -10,8 +10,9 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 - `src/engine/` – Logik ohne UI:
   - `plan.ts` (Jahresplan, Bestienwahl, Warm-up-Listen)
   - `weekplan.ts` (`focusFor`: eingefrorene Fassung → 3-Tage-Form → Kurz (gemerkt: ganze Woche, spontan: Folgetage) → Schwerpunkt-Slot → eigene Warm-up-Änderungen)
-  - `shortday.ts` (Kurztag mit Ausgleich)
-  - `dayadj.ts` (Tagesanpassung Kurz · Leicht · Intensiv · Leise · Kein Platz; fixierbar je Wochentag in `dayFlags`). Leise/Kein Platz wirken über das Tagesprofil (`withDay`): Bestien per `beastForDay` in `plan.ts`, Übungen per `loud`/`space` in `exercises.json` mit `instead`-Ersatz; verschoben wird nur ohne passende Fassung (`quietMoves` in `weekplan.ts`)
+  - `shortday.ts` (Kurztag: vier Kernübungen, Bestie eine Klasse und Schwerttraining halbiert, Ziel 35 Minuten, sonst Sätze runter; Grundlagen-/Skill-Tage behalten ihren Inhalt und kürzen die Dauer; Ausgleich mit Deckel +15 Minuten je Tag)
+  - `dayadj.ts` (Tagesanpassung Kurz · Intensiv · Leise · Kein Platz; fixierbar je Wochentag in `dayFlags`). Leise/Kein Platz wirken über das Tagesprofil (`withDay`): Bestien per `beastForDay` in `plan.ts`, Übungen per `loud`/`space` in `exercises.json` mit `instead`-Ersatz; verschoben wird nur ohne passende Fassung (`quietMoves` in `weekplan.ts`)
+  - `cardio.ts` („Laufen ersetzen“ je Einheit; und Cardio am Ort: fehlt „Laufen möglich“/„Sprints möglich“/Rudergerät/Rad, werden nur diese Elemente in Bestien umgerechnet — die Bestie zählt als mutiert, `beastLocSub` greift in `serve` in `plan.ts`)
   - `deload.ts` (Entlastungswoche: Empfehlung nach Rhythmus oder Signalen in `deloadAdvice`, Wochenentscheid in `AppState.deload` („ja“/„nein“), Umformung `deloadShape` greift in `focusFor`: halbe Sätze, keine Bestien und Finisher)
   - `progression.ts` (`suggest`, `advance`)
   - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
@@ -33,7 +34,7 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 - Einseitige Übungen nach Ziel: Kraft und Hypertrophie erst eine Seite komplett, dann die andere (schwächere Seite zuerst, Wiederholungen angleichen); Power und Kondition im Wechsel (Jumping Lunges, Skater Jumps, Bestien).
 - Favoriten des Nutzers (`data/modules/favorites.json`, mit Einteilung erste Wahl / gut / Nische) nur als Entscheidung zwischen gleichwertigen Optionen, nicht als Vorgabe. Wird ein Favorit gesetzt, wo er nicht gleichwertig ist, den Grund dazuschreiben. Neue Favoriten dort ergänzen und einordnen.
 - Richtwert etwa 10 harte Sätze pro Muskel und Woche, mit möglichst wenigen Übungen; im Defizit eher am unteren Rand.
-- Ein Kurztag kann vier Kernübungen tragen (etwa 30 Minuten).
+- Ein Kurztag trägt die vier Kernübungen, Bestie eine Klasse kürzer und Schwerttraining halbiert, Ziel 35 Minuten (nötigenfalls weniger Sätze). An jedem Tag wählbar; kein Deload, sondern Zeit und Tagesform.
 - Jeder Trainingstag ist normal lang geplant, auch der Dienstag; gekürzt wird nur über „Anpassen › Kurz“. Kein Orden plant einen Kurztag ein (das alte `shortRole` der Phase wirkt nicht mehr).
 - Schwert hat eine Sonderrolle: Tagesknopf und Vorschau zeigen den Schwertblock auch für ein Profil ohne Schwert, darunter den Ersatz. Ersatz ohne Schwert: `fallbackFlow` (geführter Flow aus `flows.json`, z. B. `mobility`) oder `fallback` (eine Übung, z. B. Schattenboxen).
 - Aufwärmsätze nur nach Last und Verletzungsrisiko (`warmCount` in `warmup.ts`), nicht nach Wiederholungen oder Mehrgelenkigkeit.

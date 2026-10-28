@@ -3,7 +3,7 @@ import { EXERCISES } from "../../data";
 import type { AppState, Beast, BeastClass, BeastRun, Block, Session } from "../../types";
 import { dayMods, withDay } from "../../engine/dayadj";
 import { blockSeconds } from "../../engine/duration";
-import { affectDowngrade, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks } from "../../engine/plan";
+import { affectDowngrade, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks, shortDrills } from "../../engine/plan";
 import { loadPhase } from "../../engine/progression";
 import { guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../../engine/resolve";
 import { menuDefault } from "../../engine/sharpen";
@@ -97,13 +97,16 @@ export function collectItems(ctx: SessionCtx): Item[] {
   };
   const otherItem = (b: Block): Item => {
     if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) {
-      const drills = moduleDrills(b.variant, ctx.state.user, ctx.week, b.module);
+      const full = moduleDrills(b.variant, ctx.state.user, ctx.week, b.module);
+      // Kurztag: nur die erste Hälfte der Übungen
+      const drills = b.short ? shortDrills(full) : full;
       // Viel Energie: jede Schwertübung einen Satz mehr
       return { block: b, resolved: [], drills: b.module === "sword" && boostOf(ctx) ? drills.map((d) => ({ ...d, groups: d.groups.map((g) => ({ ...g, sets: g.sets + 1 })) })) : drills };
     }
     if (b.type === "module" && b.fallbackFlow) {
       const flow: Block = { type: "module", module: "flow", variant: b.fallbackFlow, rotation: b.rotation };
-      return { block: flow, resolved: [], drills: moduleDrills(b.fallbackFlow, ctx.state.user, ctx.week, "flow"), sword: b };
+      const full = moduleDrills(b.fallbackFlow, ctx.state.user, ctx.week, "flow");
+      return { block: flow, resolved: [], drills: b.short ? shortDrills(full) : full, sword: b };
     }
     return { block: b, resolved: slotsOf(b, ctx), ...(b.type === "module" && b.module === "sword" ? { sword: b } : {}) };
   };

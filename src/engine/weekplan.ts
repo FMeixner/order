@@ -8,11 +8,10 @@ import { SWAP_GROUPS } from "../data";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot, Weekday } from "../types";
 import { isHeavy, isStrength, planMinutes } from "./slots";
 import { applyDrillEdits, blockFocus, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
-import { canShorten, pairToFit, shortDay } from "./shortday";
+import { pairToFit, shortDay } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlot } from "./sharpen";
 import { deloadShape, isDeloaded } from "./deload";
-import { runEaseShape } from "./runadj";
 
 const est = planMinutes;
 
@@ -166,13 +165,14 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   const f = base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base;
   const n = trainingDays(state, b).length;
   let shaped = shapeFocus(f, n);
-  // Kurz: gekürzte Rolle; die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet.
+  // Kurz: gekürzte Rolle (die vier Kernübungen, Bestie und Schwert eine Stufe kürzer, Ziel 35 Minuten); an jedem Tag möglich.
+  // Die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet.
   // Gemerkter Kurztag: die ganze Woche gleicht aus. Spontan: nur die Tage danach.
   if (!base.medley?.length) {
     const weekRoles = defaultRoles(shaped, n);
     const days = dayRoleMap(state, b, shaped, week);
     const shorts = days.map((d, i) => ({ ...d, i, mods: dayMods(state, b, week, d.role, d.day) }))
-      .filter((d) => d.mods.short && shaped.roles[d.role] && canShorten(shaped.roles[d.role]))
+      .filter((d) => d.mods.short && shaped.roles[d.role])
       .map((d) => ({ ...d, planned: remembered(state, b, d.role, d.day).short && state.dayAdj?.[`${b.id}:${week}:${d.role}`]?.short === undefined }))
       .sort((x, y) => Number(y.planned) - Number(x.planned) || x.i - y.i);
     const shortened = new Set<string>();
@@ -184,9 +184,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
     shaped = quietMoves(state, b, week, shaped, days, shortened);
   }
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.
-  // Sonst: hart gewertetes Cardio (⚙ „Cardio erfassen“) entlastet den betroffenen Beintag — nie beides gleichzeitig.
   if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
-  else shaped = runEaseShape(state, b, week, shaped);
   return applyDrillEdits(applySlot(shaped, state, b), state.drillEdits);
 }
 

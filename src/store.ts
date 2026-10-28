@@ -15,7 +15,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Studio",
       dumbbells: range(2.5, 50, 2.5), kettlebells: [8, 12, 16, 20, 24, 28, 32],
       barbell: { bar: 20, smallestPlate: 1.25 }, cableStep: 2.5, machineStep: 5, vest: [], bands: [],
-      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false, handles: true, dip: true, wheel: true },
+      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false, handles: true, dip: true, wheel: true, run: true, sprint: false },
     }),
   },
   {
@@ -24,7 +24,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Zuhause",
       dumbbells: range(2, 24, 2), kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: true },
+      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: true, run: true, sprint: false },
     }),
   },
   {
@@ -33,7 +33,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Unterwegs",
       dumbbells: [], kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: false },
+      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: false, run: true, sprint: false },
     }),
   },
 ];
@@ -49,7 +49,7 @@ export function emptyState(): AppState {
     version: 1, onboarded: false,
     user: { name: "", birthYear: null, sex: null, skills: null },
     equipment: [], schedule: {}, roleOrder: {}, plan: [], slots: {}, sessions: [], beastTimes: {},
-    reduced: {}, menuChoice: {}, tests: {}, who5: [], feeling: [], swaps: {},
+    menuChoice: {}, tests: {}, who5: [], feeling: [], swaps: {},
   };
 }
 
@@ -88,6 +88,13 @@ export function migrate(raw: unknown): AppState {
   renameExercises(s);
   // 0.75: Orden „Witcher“ heißt jetzt „Slayer“ — Phasen, Einheiten und Drill-Änderungen heißen mit um
   renameFocus(s);
+  // 0.78: Der Schalter „Leicht“ ist weg; der alte „Diese Woche −1 Satz“-Stand wird beim Laden entfernt
+  delete (s as { reduced?: Record<string, boolean> }).reduced;
+  if (s.dayAdj) {
+    const out: NonNullable<AppState["dayAdj"]> = {};
+    for (const [k, v] of Object.entries(s.dayAdj)) { const { light: _l, ...rest } = v as Record<string, unknown>; if (Object.keys(rest).length) out[k] = rest as never; }
+    s.dayAdj = out;
+  }
   return s;
 }
 /** 0.75: Umbenennung Witcher → Slayer. Gleicher Orden, gleiche Rollen; Slot-Ids (w-*), Weibelform „Amazon“ und alle Daten bleiben. */
@@ -172,8 +179,9 @@ function renameExercises(s: AppState): void {
   });
   if (s.oneRM) s.oneRM = Object.fromEntries(Object.entries(s.oneRM).map(([k, v]) => [RENAMED[k] ?? k, v]));
 }
+/** Vorgabe für Felder, die ein alter Stand nicht kennt: alles aus, außer Laufen (0.78: „Laufen möglich“/„Sprints möglich“) */
 function base_has(): EquipmentProfile["has"] {
-  return { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: false };
+  return { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: false, run: true, sprint: false };
 }
 
 function load(): AppState {

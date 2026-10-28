@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.78.0] – 2026-10-28
+
+### Neu
+- Bestien passen sich ans Equipment des Trainingsorts an: Gibt der Ort nicht her, was ein Cardio-Element der Bestie braucht — keine Strecke für Sprints (Laufband), kein Rudergerät im Park, kein Rad —, wird nur dieses Element nach Belastungszeit umgerechnet und ersetzt (400 m Laufen ≈ 500 m Rudern ≈ 1000 m Rad ≈ 2 Min Seilspringen; Row-Kalorien ≈ 4,5 s je Kalorie), der Rest der Bestie bleibt. Sie zählt als „mutiert“ und teilt sich mit allen mutierten Fassungen eine Bestzeit; das entfesselte Original behält seine eigene. Der Bestienpool selbst ändert sich nicht.
+- Zwei neue Equipment-Schalter: „Laufen möglich“ und „Sprints möglich“ (Setup › Equipment, je Ort). Vorgabe: Laufen ja, Sprints nein — im Park oder Stadion also selbst „Sprints möglich“ ankreuzen. Fehlen Rudergerät und Rad, wird auf die Laufstrecke umgerechnet, fehlt die auch, bleibt Seilspringen. Rudergerät und Rad schließen eine Bestie nicht mehr aus, sondern lösen die Ersetzung aus.
+
+### Geändert
+- „Kurz“ ersetzt „Leicht“ und gilt an jedem Tag: die vier Kernübungen, Bestie eine Klasse kürzer, Schwerttraining in der Kurzfassung, Ziel 35 Minuten — wird die Einheit damit länger, gehen die Sätze runter (mindestens einer, Kernübungen zuletzt). Grundlagen- und Ausdauertage ohne Kraftübungen behalten ihren Inhalt und laufen kürzer, Richtung 35 Minuten. Kein Deload, sondern Zeit und Tagesform; eine kurze Einheit ist ein echter Erfolg. Das eingesparte Volumen wird wie bisher in den übrigen Tagen der Woche verankert, wenn das Ziel des Ordens es braucht — am letzten Tag der Woche entfällt der Ausgleich, und kein Ausgleichstag wächst mehr als 15 Minuten über seine normale Dauer: Drei kurze Tage machen also keinen langen vierten.
+- Der Schalter „Leicht“ (−1 Satz je Übung, Bestien nur als Plage) ist entfallen. Entlastungswochen, Testwochen und Rückkehr nach Pause laufen unverändert mit −1 Satz.
+
+### Entfernt
+- „Cardio erfassen“ (0.77.0) ist zurückgebaut: Erfassung außerhalb der Einheiten, Entlastung des Beintags, Läufe-Sektion im Log und der zugehörige Hilfe-Abschnitt entfallen wieder. Läufe außerhalb der Einheiten laufen unverändert über die Laufblöcke der Orden.
+
 ## [0.77.0] – 2026-10-28
 
 ### Neu

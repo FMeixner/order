@@ -18,16 +18,14 @@ const sets = (s: AppState, role: string) => focusFor(s, s.plan[0], 2)!.roles[rol
 const days = (s: AppState) => dayRoleMap(s, s.plan[0], focusFor(s, s.plan[0], 2)!, 2);
 
 describe("Tagesanpassung", () => {
-  it("Intensiv steht allein, Kurz/Leicht/Leise lassen sich kombinieren", () => {
+  it("Intensiv steht allein, Kurz und Leise lassen sich kombinieren", () => {
     const s0 = st();
     const [d] = days(s0);
     let s = toggleMod(s0, s0.plan[0], 2, d.role, d.day, "short");
     s = toggleMod(s, s.plan[0], 2, d.role, d.day, "quiet");
     expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toMatchObject({ short: true, quiet: true, intense: false });
     s = toggleMod(s, s.plan[0], 2, d.role, d.day, "intense");
-    expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toEqual({ short: false, light: false, quiet: false, tight: false, intense: true });
-    s = toggleMod(s, s.plan[0], 2, d.role, d.day, "light");
-    expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toMatchObject({ light: true, intense: false });
+    expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toEqual({ short: false, quiet: false, tight: false, intense: true });
   });
   it("Spontan Kurz am letzten Tag: kein Ausgleich; am ersten Tag gleichen nur die Tage danach aus", () => {
     const s0 = st();
@@ -35,10 +33,11 @@ describe("Tagesanpassung", () => {
     const last = ds[ds.length - 1];
     const sLast = toggleMod(s0, s0.plan[0], 2, last.role, last.day, "short");
     for (const d of ds.slice(0, -1)) expect(sets(sLast, d.role)).toBe(sets(s0, d.role));
-    expect(sets(sLast, last.role)).toBeLessThan(sets(s0, last.role));
+    expect(focusFor(sLast, sLast.plan[0], 2)!.roles[last.role].name).toContain("(Kurztag)");
+    expect(sets(sLast, last.role)).toBeLessThanOrEqual(sets(s0, last.role));
     const first = ds[0];
     const sFirst = toggleMod(s0, s0.plan[0], 2, first.role, first.day, "short");
-    expect(sets(sFirst, first.role)).toBeLessThan(sets(s0, first.role));
+    expect(sets(sFirst, first.role)).toBeLessThanOrEqual(sets(s0, first.role));
   });
   it("Alter Kurztag der Phase wirkt nicht mehr; gemerktes Kurz je Wochentag räumt ihn weg", () => {
     const s0 = st();

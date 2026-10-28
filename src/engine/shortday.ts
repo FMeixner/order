@@ -1,4 +1,8 @@
-/* Kurztag: Ein Tag der Woche fällt kürzer aus, nur drei Kernübungen (vier, wenn der Orden vier als Kern markiert und es bei etwa 30–35 Minuten bleibt).
+/* Kurztag: Wenig Zeit oder tiefe Tagesform — die Einheit bleibt, aber kurz: die vier Kernübungen,
+   Bestie und Schwerttraining eine Stufe kürzer, Ziel 35 Minuten (nötigenfalls weniger Sätze).
+   Das ist kein Deload: Zeit und Tagesform steuern, nicht Ermüdung — und eine kurze Einheit ist ein echter Erfolg.
+   Grundlagen- und Skill-Tage (Lauf, Atem, Parkour) haben keine Kraftübungen: ihr Inhalt bleibt erhalten und wird
+   über die Dauer Richtung 35 Minuten gekürzt, statt ihn wegzustreichen.
    Danach wird geprüft, ob das Ziel des Ordens leidet (Sätze je Muskel und Woche):
    - Aufbau-Muskeln (im Orden schon im Zielbereich) bleiben mindestens an der unteren Grenze des Volumenbereichs,
    - alle anderen mindestens bei der Erhaltung (4 Sätze, etwa ein Drittel).
@@ -6,17 +10,19 @@
    1. +1 Satz auf eine Übung, die den Muskel an einem anderen Tag trainiert (höchstens 5 Sätze, +2 je Tag),
    2. weggefallene Kernübungen (oder die einzige Übung für einen Muskel) wandern auf einen anderen Tag derselben Körperhälfte,
    3. passt es nicht in die Zeit: Supersets aus Übungen, die sich nicht in die Quere kommen.
-   Kein Tag überschreitet dabei sein Zeitlimit. Was nicht reicht, wird offen gemeldet. */
-import type { Block, Focus, Role, Slot, UserProfile } from "../types";
+   Kein Ausgleichstag überschreitet dabei sein Zeitlimit und wächst höchstens 15 Minuten über seine normale Dauer —
+   drei kurze Tage machen also keinen langen vierten. Was nicht reicht, wird offen gemeldet. */
+import type { BeastClass, Block, Focus, Role, Slot, UserProfile } from "../types";
+import { CLASS_ORDER } from "./plan";
 import { isHeavy, isStrength, planMinutes } from "./slots";
 import { equipOf } from "./resolve";
 import { musclesOf, volumeRange } from "./volume";
 import { halfOf } from "./warmup";
 
-export const SHORT_KEEP = 3;
-/** Vier Kernübungen, wenn der Orden vier markiert und der Kurztag dabei bei etwa 30–35 Minuten bleibt */
-export const SHORT_MAX = 4;
-const SHORT_LIMIT = 38;
+/** Die vier Kernübungen des Tages (Kern zuerst, dann schwer, dann Mehrgelenk) */
+export const SHORT_KEEP = 4;
+/** Zielzeit der kurzen Einheit in Minuten */
+export const SHORT_LIMIT = 35;
 /** Supersets aus Übungen, die sich nicht in die Quere kommen, bis die Rolle ins Zeitlimit (Minuten) passt.
     Nie die erste Kraftübung, nie große Grundübungen oder Kernübungen, nie zwei Übungen für denselben Hauptmuskel,
     im Studio nie zwei Maschinen oder Kabel. Ändert die Rolle direkt; true, wenn sie danach passt. */
@@ -43,10 +49,8 @@ export function pairToFit(r: Role, limit: number, onPair?: (a: Slot, c: Slot) =>
   return est(r) <= limit + 0.5;
 }
 
-/** Lässt sich kürzen: mindestens eine Kraftübung (sonst bliebe nichts übrig) */
-export const canShorten = (r: Role) => r.blocks.some(strengthBlock);
-/** Taugt als Kurztag: mehr als drei Kraftübungen */
-export const shortEligible = (r: Role) => r.blocks.flatMap((b) => slotsOf(b)).filter((s) => (s.kind ?? "strength") === "strength").length > SHORT_KEEP;
+/** Taugt als Kurztag: jeder Tag mit Inhalt — Kraft, Bestie, Schwert, aber auch Grundlagen- und Ausdauertage */
+export const shortEligible = (r: Role) => r.blocks.length > 0;
 const MUSCLES = ["Brust", "Rücken", "Schultern", "Quadrizeps", "Gesäß", "Beinbeuger", "Bizeps", "Trizeps"];
 const MAINTAIN = 4;
 const MAX_SETS = 5;
@@ -113,31 +117,60 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   const others = (targets ?? weekRoles).filter((k) => k !== roleKey && roles[k]);
   const before = weekVolume(weekRoles.map((k) => f.roles[k]).filter(Boolean));
 
-  // 1. Kurztag: die drei Kernübungen, sonst nichts (keine Bestie, kein Modul), kurzes Warm-up
-  const ranked = short.blocks.map((b, i) => ({ b, i, r: strengthBlock(b) ? rank(b) : -1 })).filter((x) => x.r >= 0);
-  // A- und B-Woche getrennt: je drei Kernübungen; markiert der Orden vier, bleiben vier, solange es bei etwa 30–35 Minuten bleibt
+  // 1. Kurztag: die vier Kernübungen, Bestie und Schwerttraining eine Stufe kürzer, kurzes Warm-up.
+  //    Auch Grundlagen- und Skill-Tage: Ihr Inhalt ist das Ziel des Tages, er bleibt (gefüllt wird mit dem Besten zuerst,
+  //    bis vier Blöcke zusammen sind — ist weniger Kraft da, rücken Timer und Flows nach).
+  const ranked = short.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && b.module === "sword") ? -1 : rank(b) })).filter((x) => x.r >= 0);
+  // A- und B-Woche getrennt: je die vier besten Übungen (Kern zuerst, dann schwer, dann Mehrgelenk)
   const shortWarm = ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
-  const pick = (n: number) => {
+  const pick = () => {
     const k = new Set<Block>();
     for (const ab of ["A", "B"]) {
       const wk = ranked.filter((x) => !x.b.rotation || x.b.rotation === ab).sort((a, c) => c.r - a.r || a.i - c.i);
-      const m = n > SHORT_KEEP && wk.filter((x) => x.r >= 100).length >= n ? n : SHORT_KEEP;
-      wk.slice(0, m).forEach((x) => k.add(x.b));
+      wk.slice(0, SHORT_KEEP).forEach((x) => k.add(x.b));
     }
     return k;
   };
-  let keep = pick(SHORT_MAX);
-  if (keep.size > SHORT_KEEP && est({ ...short, warmup: shortWarm, cooldown: (short.cooldown ?? []).slice(0, 1), blocks: short.blocks.filter((b) => keep.has(b)) }) > SHORT_LIMIT) keep = pick(SHORT_KEEP);
+  const keep = pick();
   const droppedBlocks = ranked.filter((x) => !keep.has(x.b)).map((x) => x.b);
-  short.blocks = short.blocks.filter((b) => keep.has(b));
+  // Bestie bleibt drin, aber eine Klasse kürzer (mindestens Plage); das Schwerttraining läuft in der Kurzfassung
+  const shorter = (b: Block): Block => {
+    if (b.type === "beast") return { ...b, classes: (b.classes?.length ? b.classes : (["bestie", "ungeheuer"] as BeastClass[])).map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]) };
+    if (b.type === "module" && b.module === "sword") return { ...b, short: true };
+    return b;
+  };
+  short.blocks = short.blocks.map(shorter).filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && b.module === "sword"));
   short.warmup = shortWarm;
   short.cooldown = (short.cooldown ?? []).slice(0, 1);
   short.name = `${short.name} (Kurztag)`;
+  // Länger als 35 Minuten? Sätze runter, bis die Einheit passt (mindestens 1 Satz je Übung, Kernübungen zuletzt).
+  // Reichen die Sätze nicht (oder gibt es keine, etwa am Grundlagentag), werden Timer-Inhalte gekürzt:
+  // bis zur Hälfte ihrer Dauer, mindestens 10 Minuten.
+  const timerBase = new Map(short.blocks.flatMap(slotsOf).filter((s) => s.kind === "timer").map((s) => [s, s.minutes ?? 0]));
+  const whyOnce = (s: Slot, text: string) => { if (!(s.why ?? []).includes(text)) s.why = [...(s.why ?? []), text]; };
+  let shrinkGuard = 40;
+  while (est(short) > SHORT_LIMIT + 0.5 && shrinkGuard--) {
+    const cand = ranked.filter((x) => keep.has(x.b)).sort((a, c) => a.r - c.r).find((x) => slotsOf(x.b).some((s) => isStrength(s) && (s.sets ?? 3) > 1));
+    if (cand) {
+      for (const s of slotsOf(cand.b)) {
+        if (!isStrength(s) || (s.sets ?? 3) <= 1) continue;
+        s.sets = (s.sets ?? 3) - 1;
+        whyOnce(s, "Weniger Sätze, damit die kurze Einheit bei 35 Minuten bleibt.");
+        break;
+      }
+      continue;
+    }
+    const t = short.blocks.flatMap(slotsOf).find((s) => s.kind === "timer" && (s.minutes ?? 0) > Math.max(10, Math.ceil((timerBase.get(s) ?? 0) / 2 / (s.step ?? 5)) * (s.step ?? 5)));
+    if (!t) break;
+    t.minutes = Math.max(10, (t.minutes ?? 10) - (t.step ?? 5));
+    whyOnce(t, "Kürzer, damit die kurze Einheit bei 35 Minuten bleibt.");
+  }
   short.minutes = Math.max(15, Math.round(est(short) / 5) * 5);
 
   const changes: string[] = [];
   const unresolved: string[] = [];
-  const limit = (k: string) => Math.max(f.roles[k].cap ?? Math.max(f.roles[k].minutes, f.session_min), est(f.roles[k]));
+  /** Zeitlimit eines Ausgleichstags: seine normale Obergrenze, aber höchstens 15 Minuten über seiner normalen Dauer */
+  const limit = (k: string) => Math.min(Math.max(f.roles[k].cap ?? Math.max(f.roles[k].minutes, f.session_min), est(f.roles[k])), est(f.roles[k]) + 15);
   const adds: Record<string, number> = {};
   const noteFor: Record<string, string[]> = {};
   const note = (k: string, t: string) => { (noteFor[k] ??= []).push(t); changes.push(`${roles[k].name.replace(/ \(Kurztag\)$/, "")}: ${t}`); };
