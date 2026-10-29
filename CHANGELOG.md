@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.81.0] – 2026-10-29
+
+### Neu
+- „Kombiformen: freie Bahn“ (3 Minuten zügige Kombis am Stück) gibt der Kombiformen-Stufe ihr Dauerelement — bisher war die Stichbahn das einzige Conditioning im Lernweg.
+
+### Geändert
+- Die Ringstiche laufen ab der Kombiformen-Stufe als verdichtete Basics im Einnorden mit (je 6 Wiederholungen, Ring unberührt): Die volle Fassung zeigt sich nur auf der Stich-Stufe selbst — wer den Stich-Skill abgehakt hat, verlor die Ringstiche bisher ganz aus dem Blick.
+
 ## [0.80.0] – 2026-10-28
 
 ### Neu

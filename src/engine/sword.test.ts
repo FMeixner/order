@@ -25,12 +25,25 @@ describe("Schwert-Lernweg", () => {
   });
   it("höhere Stufen schließen tiefere ein: Stich-Basics ab der Kombiformen-Stufe, mit weniger Volumen", () => {
     expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche"])).toEqual([...echo(2), ...DM_VARIANTS.kombiform, ...DM_VARIANTS.lernweg].map((d) => d.id));
-    expect(echo(2).map((d) => d.id)).toEqual(["md-b-zorn", "md-b-zwerch", "md-b-scheitel", "md-b-oberstich", "md-b-mittelstich", "md-b-unterstich"]);
+    expect(echo(2).map((d) => d.id)).toEqual(["md-b-zorn", "md-b-zwerch", "md-b-scheitel", "md-b-oberstich", "md-b-mittelstich", "md-b-unterstich", "md-b-ring-hochtief", "md-b-ring-tiefmittel"]);
     expect(ids("lernweg", ["schwert_hiebe"])).not.toContain("md-b-oberstich"); // auf der Stufe selbst läuft der volle Stich, nicht das Echo
     const b = echo(2).find((d) => d.id === "md-b-oberstich")!;
     const full = DM_VARIANTS.stiche.find((d) => d.id === "md-oberstich")!;
     expect(b.value).toBeLessThan(full.value);
     expect(b.sets ?? 1).toBeLessThan(full.sets ?? 1);
+  });
+  it("Ringstiche: volle Fassung auf der Stich-Stufe, verdichtet im Einnorden aller höheren Stufen", () => {
+    // Stich-Stufe: die vollen Ringstiche (10 × 2) laufen mit dem Stufeninhalt
+    const stiche = ids("einzelmesser", ["schwert_hiebe"]);
+    expect(stiche).toContain("md-ring-hochtief");
+    expect(stiche).toContain("md-ring-tiefmittel");
+    // Kombiformen-Stufe: die Ringstiche bleiben als Basics im Einnorden, die volle Fassung läuft nicht mehr
+    const kombi = ids("einzelmesser", ["schwert_hiebe", "schwert_stiche"]);
+    expect(kombi).toContain("md-b-ring-hochtief");
+    expect(kombi).toContain("md-b-ring-tiefmittel");
+    expect(kombi).not.toContain("md-ring-hochtief");
+    // und die Kombiform-Stufe hat ihr Dauerelement (Conditioning)
+    expect(kombi).toContain("md-kombibahn");
   });
   it("Klingentanz nach dem Drehhau, Heaven Six auf der letzten Stufe", () => {
     expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche", "schwert_kombi", "schwert_wechsel"])).toEqual([...echo(4), ...DM_VARIANTS.klingentanz, ...DM_VARIANTS.lernweg].map((d) => d.id));
