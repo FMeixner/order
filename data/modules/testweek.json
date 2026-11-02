@@ -1,11 +1,10 @@
 {
-  "_info": "Testwoche: fünf Cups, fokusübergreifend. Gleiche Tests bei jedem Durchgang, damit Werte vergleichbar sind. unit: s, cm, m, reps, kg, mmss (m:ss.z), bpm, ml. better: higher oder lower. swc: kleinste Veränderung, die über dem Messfehler liegt (Schätzung aus typischen Messfehlern, Hopkins 2000); kleinere Unterschiede zeigt die App als „gleich“.",
+  "_info": "Testwoche: vier Cups, fokusübergreifend, je ein Tag: Park (Schnelligkeit), Zuhause, Studio (Geräte nur hier), Park (Ausdauer) — Outdoor und Studio werden nicht gemischt. Gleiche Tests bei jedem Durchgang, damit Werte vergleichbar sind. unit: s, cm, m, reps, kg, mmss (m:ss.z), bpm, ml. better: higher oder lower. swc: kleinste Veränderung, die über dem Messfehler liegt (Schätzung aus typischen Messfehlern, Hopkins 2000); kleinere Unterschiede zeigt die App als „gleich“.",
   "cups": [
     {
       "id": "excalibur", "name": "Excalibur-Cup", "place": "Park", "focus": "Schnelligkeit und Sprungkraft",
       "warmup": ["base", "run_prep", "jump_prep"],
       "tests": [
-        {"id": "t-bodyweight", "name": "Körpergewicht", "unit": "kg", "attempts": 1, "better": "lower", "swc": 1, "desc": "Morgens nüchtern, gleiche Waage."},
         {"id": "t-agility", "name": "5-10-5 Pro Agility", "unit": "s", "attempts": 3, "better": "lower", "swc": 0.1, "desc": "Drei Linien im Abstand von 5 m. Start auf der Mittellinie, 5 m zur einen Seite, Linie berühren, 10 m zur anderen, Linie berühren, 5 m zurück durch die Mitte. 3 Min Pause."},
         {"id": "t-sprint10", "name": "Sprint 10 m", "unit": "s", "attempts": 3, "better": "lower", "swc": 0.05, "desc": "Stehstart, Zeit per Slow-Motion-Video oder Helfer. 3 Min Pause."},
         {"id": "t-sprint30", "name": "Sprint 30 m", "unit": "s", "attempts": 3, "better": "lower", "swc": 0.1, "desc": "Eigene Läufe, 3–4 Min Pause. Strecke einmal genau abmessen und markieren."},
@@ -14,37 +13,32 @@
       ]
     },
     {
-      "id": "durendal", "name": "Durendal-Cup", "place": "Zuhause", "focus": "Beweglichkeit und Kraftausdauer",
+      "id": "durendal", "name": "Durendal-Cup", "place": "Zuhause", "focus": "Beweglichkeit, Kraftausdauer, Koordination",
       "warmup": ["base"],
+      "benchmark": {"label": "Bestie auf Zeit (Kraftausdauer)", "pool": ["ng-garm", "ng-ubba", "ng-orvar"]},
       "tests": [
+        {"id": "t-bodyweight", "name": "Körpergewicht", "unit": "kg", "attempts": 1, "better": "lower", "swc": 1, "desc": "Morgens nüchtern, gleiche Waage."},
         {"id": "t-sitreach", "name": "Sit and Reach", "unit": "cm", "attempts": 3, "better": "higher", "swc": 2, "desc": "Beine gestreckt, Fußsohlen an einer Kiste. Hände langsam nach vorn schieben, 2 s halten. Fingerspitzen relativ zu den Sohlen, davor negativ."},
         {"id": "t-dislocate", "name": "Schulter: Stock-Durchführen", "unit": "cm", "attempts": 3, "better": "lower", "swc": 3, "desc": "Engster Griff, mit dem der Stock mit gestreckten Armen über den Kopf nach hinten geht. Abstand zwischen den Zeigefingern."},
         {"id": "t-pullups", "name": "Klimmzüge", "unit": "reps", "attempts": 1, "better": "higher", "swc": 1, "desc": "Aus dem gestreckten Hang, Kinn über die Stange, kein Schwung. Maximale saubere Wiederholungen."},
         {"id": "t-pushups", "name": "Liegestütze", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "desc": "Körper in einer Linie, bis die Nase fast den Boden berührt, je 1 s runter und hoch."},
-        {"id": "t-crunches", "name": "Crunches, Takt 40 BPM", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Rückenlage, Knie 90°, Fingerspitzen wandern 12 cm nach vorn. Ein Schlag hoch, einer runter."}
+        {"id": "t-crunches", "name": "Crunches, Takt 40 BPM", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Rückenlage, Knie 90°, Fingerspitzen wandern 12 cm nach vorn. Ein Schlag hoch, einer runter."},
+        {"id": "t-skill", "name": "Skill: 2 Min saubere Wiederholungen", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "desc": "Mit Schwert: Kombiform Zorn → Zwerch → Scheitel, gültige Kombis in 2 Minuten. Ohne: Burpee-Box-Step-Overs oder eine andere feste Koordinationsaufgabe, immer dieselbe."}
       ]
     },
     {
-      "id": "arondight", "name": "Arondight-Cup", "place": "Zuhause", "focus": "Koordination, Kraftausdauer, anaerob",
-      "warmup": ["base"],
-      "benchmark": {"label": "Bestie auf Zeit (Kraftausdauer)", "pool": ["ng-garm", "ng-ubba", "ng-orvar"]},
-      "tests": [
-        {"id": "t-skill", "name": "Skill: 2 Min saubere Wiederholungen", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "desc": "Mit Schwert: Kombiform Zorn → Zwerch → Scheitel, gültige Kombis in 2 Minuten. Ohne: Burpee-Box-Step-Overs oder eine andere feste Koordinationsaufgabe, immer dieselbe."},
-        {"id": "t-row500", "name": "500 m Rudern, all-out", "unit": "mmss", "attempts": 1, "better": "lower", "swc": 3, "desc": "Start aus dem Stillstand. Gleiche Einstellung wie beim letzten Test. Eingabe m:ss.z, z. B. 1:42.5."}
-      ]
-    },
-    {
-      "id": "balmung", "name": "Balmung-Cup", "place": "Studio", "focus": "Maximalkraft",
+      "id": "balmung", "name": "Balmung-Cup", "place": "Studio", "focus": "Maximalkraft, anaerob",
       "warmup": ["base", "lower_prep"],
       "tests": [
         {"id": "t-5rm-squat", "name": "5RM Beinpresse oder Kniebeuge", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "desc": "2–3 Steigerungssätze, dann höchstens 4 Versuche bis zum 5RM, 3–5 Min Pause. Abbruch bei Technikverlust. Immer dieselbe Übung wie beim letzten Mal.", "variants": [{"id": "legpress", "name": "Beinpresse"}, {"id": "squat", "name": "Kniebeuge"}]},
         {"id": "t-5rm-push", "name": "5RM Brustpresse oder Bankdrücken", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "desc": "Wie oben. Übung und Einstellung notieren.", "variants": [{"id": "machine", "name": "Brustpresse"}, {"id": "bench", "name": "Bankdrücken"}]},
         {"id": "t-5rm-pull", "name": "5RM Latziehen oder Klimmzug mit Gewicht", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "desc": "Wie oben. Bei Klimmzug: Zusatzgewicht eintragen.", "variants": [{"id": "pulldown", "name": "Latziehen"}, {"id": "pullup", "name": "Klimmzug mit Gewicht"}]},
-        {"id": "t-burpees", "name": "Burpees 1 Min", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "desc": "Brust am Boden, oben Strecksprung mit Klatschen. Nur saubere Wiederholungen."}
+        {"id": "t-burpees", "name": "Burpees 1 Min", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "desc": "Brust am Boden, oben Strecksprung mit Klatschen. Nur saubere Wiederholungen."},
+        {"id": "t-row500", "name": "500 m Rudern, all-out", "unit": "mmss", "attempts": 1, "better": "lower", "swc": 3, "desc": "Start aus dem Stillstand. Gleiche Einstellung wie beim letzten Test. Eingabe m:ss.z, z. B. 1:42.5."}
       ]
     },
     {
-      "id": "joyeuse", "name": "Joyeuse-Cup", "place": "Zuhause oder Park", "focus": "Wohlbefinden, Belastbarkeit, Ausdauer",
+      "id": "joyeuse", "name": "Joyeuse-Cup", "place": "Park", "focus": "Wohlbefinden, Belastbarkeit, Ausdauer",
       "warmup": ["run_prep"],
       "who5": true,
       "benchmark": {"label": "Bestie auf Zeit (Belastbarkeit)", "pool": ["ng-hel", "ng-saga", "ng-odin"]},
