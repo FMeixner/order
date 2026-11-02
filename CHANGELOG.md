@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.82.0] – 2026-11-02
+
+### Geändert
+- Die Testwoche läuft auf vier statt fünf Tagen: Der Arondight-Cup ist aufgelöst, seine zwei Tests sind dorthin gezogen, wo das Material steht. Das Körpergewicht (morgens nüchtern, gleiche Waage) ist an den Durendal-Cup gewandert, ebenso der Skill-Test (2 Min Kombiformen) und die Kraftausdauer-Bestie als Finale — Durendal misst jetzt Beweglichkeit, Kraftausdauer und Koordination. Die 500 m Ruderung schließen den Balmung-Cup im Studio ab (all-out nach der Maximalkraft-Reihe); zuhause war sie ohne Rudergerät nicht durchführbar. Joyeuse ist auf „Park“ festgezogen. Vier Cups, vier Tage: Park, Zuhause, Studio, Park — Outdoor und Studio werden nicht gemischt. Gespeicherte Werte bleiben vergleichbar: Die Tests behalten ihre Kennungen, sie ziehen nur um.
+
 ## [0.81.0] – 2026-10-29
 
 ### Neu

@@ -115,7 +115,7 @@ export function TestWeek({ state, update, block, today }: { state: AppState; upd
     <div className="stack">
       {ravenOn(state) && <RavenTournament state={state} block={block} today={today} />}
       <div className="card note">
-        <strong>Testwoche.</strong> Fünf Cups, verteilt auf die Woche, jeder frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.
+        <strong>Testwoche.</strong> Vier Cups, je ein Tag: Park, Zuhause, Studio, Park. Jeder frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.
       </div>
       {TESTWEEK.cups.map((cup) => (
         <Collapse key={cup.id} title={cup.name} meta={`${cup.place} · ${cup.focus}`} tone="teal">

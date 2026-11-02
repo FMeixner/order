@@ -721,11 +721,11 @@
       "Korrektur: In der letzten Ausgabe stand, niemand sei jede Woche perfekt. Das stimmt. Wir bleiben dabei."
     ],
     "cup_intro": [
-      "Nach {vorsieg} {vorfeind_akk} ruft das Turnier der Klingen: fünf Cups, fünf legendäre Klingen, und keine bleibt bei jemandem, der sich ausruht. Klingen haben ein Gedächtnis wie Glocken — sie erinnern sich an jede Hand und an jede Zögerung.",
+      "Nach {vorsieg} {vorfeind_akk} ruft das Turnier der Klingen: vier Cups, vier legendäre Klingen, und keine bleibt bei jemandem, der sich ausruht. Klingen haben ein Gedächtnis wie Glocken — sie erinnern sich an jede Hand und an jede Zögerung.",
       "„{Beiname}“ ist gemeldet. Den Klingen sind Beinamen gleichgültig, sie fragen nur: Noch würdig? Und sie fragen es in der Sprache des Stahls, die keine Höflichkeit kennt."
     ],
     "cup_intro_first": [
-      "Fünf Cups, fünf legendäre Klingen. {Held} tritt zum ersten Mal an, ohne Ruf und ohne Beinamen. Die Klingen merken sich jeden Namen, der sie einmal gehalten hat — und sei es nur, um später zu prüfen, ob er es noch ist."
+      "Vier Cups, vier legendäre Klingen. {Held} tritt zum ersten Mal an, ohne Ruf und ohne Beinamen. Die Klingen merken sich jeden Namen, der sie einmal gehalten hat — und sei es nur, um später zu prüfen, ob er es noch ist."
     ],
     "cup_first": [
       "Neu im Klingenregister: {Klinge} gehört jetzt {ihm}. Ab heute wird verteidigt, und die Verteidigung beginnt mit dem nächsten Sonnenaufgang.",
