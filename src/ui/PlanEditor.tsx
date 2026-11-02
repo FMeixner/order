@@ -103,7 +103,7 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
   const day = today ?? isoDate(new Date());
   if (isTestBlock(b)) return (
     <div className="stack">
-      <p className="muted">Eine eigene Woche nur für Tests: fünf Cups, jeder frisch. Die Woche davor läuft mit −1 Satz. Die Auswertung schlägt danach einen Schwerpunkt vor.</p>
+      <p className="muted">Eine eigene Woche nur für Tests: vier Cups, je ein Tag, jeder frisch. Die Woche davor läuft mit −1 Satz. Die Auswertung schlägt danach einen Schwerpunkt vor.</p>
       <div className="row two">
         <Field label="Beginn"><input type="date" value={b.start} onChange={(e) => setB({ ...b, start: e.target.value, end: addDays(e.target.value, 6) })} /></Field>
         <Field label="Ende"><input type="date" value={b.end} onChange={(e) => setB({ ...b, end: e.target.value })} /></Field>

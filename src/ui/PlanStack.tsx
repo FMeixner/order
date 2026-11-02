@@ -69,7 +69,7 @@ export function PlanStack({ plan, today, aim, deficits, onChange, onView, onEdit
         <Modal title="Testwoche" onClose={() => setTestView(null)}>
           <div className="stack">
             <div className="block-dates">{fmtDate(testView.start)} – {fmtDate(testView.end)}</div>
-            <p className="muted small">Fünf Cups, jeder frisch. Die Woche davor läuft mit −1 Satz, danach schlägt die Auswertung einen Schwerpunkt vor.</p>
+            <p className="muted small">Vier Cups, je ein Tag, jeder frisch. Die Woche davor läuft mit −1 Satz, danach schlägt die Auswertung einen Schwerpunkt vor.</p>
             <ul className="slot-list">{TESTWEEK.cups.map((c) => <li key={c.id}><strong>{c.name}</strong> <span className="muted">· {c.focus}</span></li>)}</ul>
             <button className="btn ghost small" onClick={() => { onEdit(testView); setTestView(null); }}>Zeitraum ändern oder löschen</button>
           </div>

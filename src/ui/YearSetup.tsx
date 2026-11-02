@@ -62,7 +62,7 @@ export function YearSetup({ state, update, today }: { state: AppState; update: U
 
       <div className="field-label">3 · Testwochen</div>
       <Seg value={policy} options={POLICY} onChange={(testPolicy) => update((st) => ({ ...st, testPolicy, sectionsChanged: st.plan.length > 0 }))} />
-      <p className="muted small">Eine Testwoche ist die letzte Woche einer Phase: fünf Tests statt Training.</p>
+      <p className="muted small">Eine Testwoche ist die letzte Woche einer Phase: vier Tage Tests statt Training.</p>
 
       <button className={`btn ${!proposed || state.sectionsChanged ? "primary" : "ghost"}`} disabled={!sections.length} onClick={() => { if (!proposed || confirm("Phasen neu vorschlagen? Deine Änderungen im Plan gehen verloren.")) propose(); }}>
         {proposed ? "Neu vorschlagen" : "Vorschlag erstellen"}
