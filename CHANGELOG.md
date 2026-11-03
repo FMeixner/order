@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.86.0] – 2026-11-03
+
+### Neu
+- Vorschau bis zur Testwoche: Der Wochen-Pfeil auf „Heute" führt in der letzten Ordenswoche einen Klick weiter — direkt in die Testwoche, die danach folgt. Dort stehen die Cups mit Warm-ups, Testprotokollen und Turnier-Einleitung zum Ansehen: ob das Update sitzt, welche Tests kommen, gegen welche Bestie das Finale läuft. Eine Vorschau: Werte eintragen kann man erst, sobald die Woche läuft. Gilt genauso für Testwochen, die im Orden liegen (statt der bisherigen reinen Cup-Liste).
+
 ## [0.85.0] – 2026-11-03
 
 ### Geändert

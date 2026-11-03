@@ -24,7 +24,7 @@ function show(v: number, unit: string): string {
   return `${String(v).replace(".", ",")} ${u[unit] ?? ""}`;
 }
 
-function TestRow({ t, state, block, onSave }: { t: TestDef; state: AppState; block: PlanBlock; onSave: (value: number, raw: string, variant?: string) => void }) {
+function TestRow({ t, state, block, onSave, preview = false }: { t: TestDef; state: AppState; block: PlanBlock; onSave: (value: number, raw: string, variant?: string) => void; preview?: boolean }) {
   const [vals, setVals] = useState<string[]>(Array(t.attempts).fill(""));
   const all = state.tests[t.id] ?? [];
   const [variant, setVariant] = useState<string>(all[all.length - 1]?.variant ?? t.variants?.[0]?.id ?? "");
@@ -39,19 +39,22 @@ function TestRow({ t, state, block, onSave }: { t: TestDef; state: AppState; blo
     <div className="test-row">
       <div className="slot-title"><span className="slot-name">{t.name}</span><Desc text={t.desc} /></div>
       {t.variants && (
-        <select value={variant} onChange={(e) => setVariant(e.target.value)} aria-label="Variante">
+        <select value={variant} onChange={preview ? undefined : (e) => setVariant(e.target.value)} disabled={preview} aria-label="Variante">
           {t.variants.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
         </select>
       )}
       {t.variants && <div className="muted small">{variantHint(state, block, t.id)}</div>}
-      <div className="row wrap">
-        {vals.map((v, i) => (
-          <input key={i} type="text" inputMode="decimal" className="test-in" placeholder={t.attempts > 1 ? `Versuch ${i + 1}` : t.unit === "mmss" ? "m.ss.z" : "Wert"}
-            value={v} onChange={(e) => setVals(vals.map((x, k) => (k === i ? e.target.value : x)))} />
-        ))}
-        <button className="btn small" disabled={bestNow == null} onClick={() => { onSave(bestNow!, vals.filter(Boolean).join(" / "), t.variants ? variant : undefined); setVals(Array(t.attempts).fill("")); }}>Speichern</button>
-      </div>
+      {!preview && (
+        <div className="row wrap">
+          {vals.map((v, i) => (
+            <input key={i} type="text" inputMode="decimal" className="test-in" placeholder={t.attempts > 1 ? `Versuch ${i + 1}` : t.unit === "mmss" ? "m.ss.z" : "Wert"}
+              value={v} onChange={(e) => setVals(vals.map((x, k) => (k === i ? e.target.value : x)))} />
+          ))}
+          <button className="btn small" disabled={bestNow == null} onClick={() => { onSave(bestNow!, vals.filter(Boolean).join(" / "), t.variants ? variant : undefined); setVals(Array(t.attempts).fill("")); }}>Speichern</button>
+        </div>
+      )}
       <div className="muted small">
+        {preview && t.attempts > 1 ? `${t.attempts} Versuche. ` : ""}
         {thisBlock.length ? <>Gespeichert: <strong>{show(best(thisBlock)!, t.unit)}</strong></> : "Noch kein Wert"}
         {prevBest != null && <> · vorheriger Bestwert {show(prevBest, t.unit)}</>}
       </div>
@@ -83,7 +86,7 @@ function Who5({ state, update, block }: { state: AppState; update: Update; block
   );
 }
 
-function Benchmark({ cup, state, update }: { cup: Cup; state: AppState; update: Update }) {
+function Benchmark({ cup, state, update, preview = false }: { cup: Cup; state: AppState; update: Update; preview?: boolean }) {
   const [manual, setManual] = useState("");
   if (!cup.benchmark) return null;
   const withHist = cup.benchmark.pool.filter((id) => (state.beastTimes[id] ?? []).length);
@@ -95,43 +98,45 @@ function Benchmark({ cup, state, update }: { cup: Cup; state: AppState; update: 
     <div className="test-row">
       <div className="slot-name">{cup.benchmark.label}: {b.name}</div>
       <div className="muted small">{b.rounds} Runden · {b.work}</div>
-      <div className="row">
-        <input type="text" inputMode="decimal" className="time-in" placeholder="mm.ss" value={manual} onChange={(e) => setManual(e.target.value)} />
-        <button className="btn small" onClick={() => {
-          const p = parseClock(manual);
-          if (p == null) { alert(`„${manual}“ verstehe ich nicht. Bitte so: 12.34 oder 12:34.`); return; }
-          const sec = Math.round(p);
-          update((st) => ({ ...st, beastTimes: { ...st.beastTimes, [id]: [...(st.beastTimes[id] ?? []), { date: new Date().toISOString().slice(0, 10), seconds: sec }] } }));
-          setManual("");
-        }}>Speichern</button>
-      </div>
+      {!preview && (
+        <div className="row">
+          <input type="text" inputMode="decimal" className="time-in" placeholder="mm.ss" value={manual} onChange={(e) => setManual(e.target.value)} />
+          <button className="btn small" onClick={() => {
+            const p = parseClock(manual);
+            if (p == null) { alert(`„${manual}“ verstehe ich nicht. Bitte so: 12.34 oder 12:34.`); return; }
+            const sec = Math.round(p);
+            update((st) => ({ ...st, beastTimes: { ...st.beastTimes, [id]: [...(st.beastTimes[id] ?? []), { date: new Date().toISOString().slice(0, 10), seconds: sec }] } }));
+            setManual("");
+          }}>Speichern</button>
+        </div>
+      )}
       <div className="muted small">{pr ? `Bestzeit ${fmt(pr)}` : "Noch keine Zeit"}</div>
     </div>
   );
 }
 
-export function TestWeek({ state, update, block, today }: { state: AppState; update: Update; block: PlanBlock; today: string }) {
+export function TestWeek({ state, update, block, today, preview = false }: { state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean }) {
   const saveTest = (t: TestDef, value: number, raw: string, variant?: string) =>
     update((st) => ({ ...st, tests: { ...st.tests, [t.id]: [...(st.tests[t.id] ?? []), { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } }));
   return (
     <div className="stack">
       {ravenOn(state) && <RavenTournament state={state} block={block} today={today} />}
       <div className="card note">
-        <strong>Testwoche.</strong> Fünf Cups an drei Tagen: Studio, Zuhause ×2 im Anschluss, Park ×2 im Anschluss. Jeder Tag frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.
+        <strong>Testwoche.</strong> Fünf Cups an drei Tagen: Studio, Zuhause ×2 im Anschluss, Park ×2 im Anschluss. Jeder Tag frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.{preview ? " Vorschau: erst ansehen — eintragen kannst du, sobald die Woche läuft." : ""}
       </div>
       {TESTWEEK.cups.map((cup) => (
         <Collapse key={cup.id} title={cup.name} meta={`${cup.place} · ${cup.focus}`} tone="teal">
           <Collapse title="Warm-up" meta={`${expandDrills(cup.warmup, state.user, 1).length} Übungen`}>
             <ul className="slot-list">{expandDrills(cup.warmup, state.user, 1).map((d) => <li key={d.id}>{d.name} · {d.groups.map((g) => `${g.label ? g.label + " " : ""}${d.mode === "reps" ? g.value + "×" : fmt(g.value)}`).join(", ")}</li>)}</ul>
           </Collapse>
-          {cup.who5 && <Who5 state={state} update={update} block={block} />}
-          {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} />)}
-          <Benchmark cup={cup} state={state} update={update} />
+          {cup.who5 && !preview && <Who5 state={state} update={update} block={block} />}
+          {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} preview={preview} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} />)}
+          <Benchmark cup={cup} state={state} update={update} preview={preview} />
           {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
         </Collapse>
       ))}
       <Evaluation state={state} blockId={block.id} />
-      <div className="muted small">Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
+      <div className="muted small">{preview ? "Vorschau der Testwoche. " : "Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. "}Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
     </div>
   );
 }
