@@ -12,7 +12,7 @@
   "weeks": {"min": 8, "max": 12},
   "travel": true,
   "modules": ["correctives"],
-  "successors": ["smith", "troubadour", "gladiator"],
+  "successors": ["paladin", "smith", "troubadour", "gladiator"],
   "sources": ["Schoenfeld, Ogborn & Krieger (2016)"],
   "week_4": ["upper_a", "lower_a", "upper_b", "lower_b"],
   "week_3": ["upper_a", "lower_a", "upper_b"],

@@ -12,7 +12,7 @@
   "weeks": {"min": 12, "max": 12},
   "travel": true,
   "modules": ["correctives"],
-  "successors": ["troubadour", "alchemist", "knight"],
+  "successors": ["paladin", "troubadour", "alchemist", "knight"],
   "sources": ["Noetel et al. (2024)"],
   "week_4": ["kraft_a", "yoga_flow", "kraft_b", "yoga_ruhe"],
   "week_3": ["kraft_a", "yoga_flow", "kraft_b"],

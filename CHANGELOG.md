@@ -2,6 +2,20 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.90.0] – 2026-11-03
+
+### Neu
+- Zwei neue Orden: Paladin („Aegis") und Dancer („Tänzerin"). Ein Orden zieht erst ein, wenn eine Testwoche zeigt, dass er eine Schwachstelle schließt — beide stehen damit zur Auswahl.
+- Paladin: Belastbarkeit für Knie, Hüfte, Schulter und Nacken neben Schwert und Schreibtisch. Montag Knie und Hüfte (ATG Split Squat, Sissy Squat, Nordic Negative, Tibialis, Copenhagen, Rückwärtsgehen), Dienstag Schulter und Ellbogen (DB Pullover, Deficit Push-Up, Face Pull, Außenrotation, Unterarme, Dead Hang), Donnerstag Schwert und Sehnen (Einzelmesser, dazu Wall Sit, Spanish Squat, Halt in der Dehnung, KB Halo — mit Bestie), Freitag Rücken (KB Rumpfbeuge & Aufrichten, Jefferson-Curl-Leiter, Suitcase Side Bend, Suitcase Carry, KB Windmill, Plage).
+- Dancer: Belastbare Endpositionen für die Schwertformen. Montag Hüfte (KB Cossack Squat, Pancake mit Last, Jefferson-Curl-Leiter, Hüftbeuger-Halt, Spagat-Übergang), Dienstag Schulter und Brustwirbelsäule (DB Pullover, Deficit Push-Up, Brücken-Leiter, German Hang, KB Windmill, KB Halo), Donnerstag Stab und Flow (Stab-Lernweg, Mobility-Nachlauf, Bestie — ohne Stock ein Tai-Chi-Flow), Freitag Beine in der Dehnung (ATG, Sissy, Bodyweight Leg Extension, Nordic Negative, Plage).
+- KB Windmill in beiden Orden (3×6/Seite): Der Rumpf trägt die Last schräg über dem Kopf — dasselbe Muster, das die Schwertform stabil hält, wenn die Klinge oben kreist.
+- Zwei Verlaufstests im Durendal-Cup: Dead Hang und Wall Sit, je zwei Versuche, der bessere zählt. Sekunden statt Selbst-Rating — die Bestie wird messbar, ob der Griff oder die Hüfte zuerst aufgibt.
+- Neue Erzählszenen: der Paladin kämpft auf der Wehr (Mauerbrecher, Meisterin der Sturmleitern, Rostkönig), die Tänzerin im Tanzsaal des abgebrannten Opernhauses (Choreografin, Spiegelmann, Taktgeberin).
+
+### Geändert
+- Nachfolger-Netz: Paladin schließt nach Knight und Monk, Dancer nach Initiate, Alchemist und Acrobat.
+- 15 neue Übungen (u. a. KB Windmill, Spanish Squat, KB Rumpfbeuge & Aufrichten, Suitcase Side Bend, German Hang, Pancake mit Last) und drei Muskel-Zuordnungen in `muscles.json`.
+
 ## [0.89.0] – 2026-11-03
 
 ### Neu

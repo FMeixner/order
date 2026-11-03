@@ -1216,5 +1216,68 @@
     "equip": "cardio",
     "space": true,
     "desc": "Rückwärts gehen oder locker rückwärts laufen: draußen auf freier Strecke, Bergauf oder auf dem Laufband langsam mit Händen am Geländer. Kurze Schritte, über den Ballen abrollen. Schont das Knie und kräftigt den vorderen Oberschenkel."
+  },
+  "Bodyweight Leg Extension": {
+    "equip": "bodyweight",
+    "desc": "Sitzen auf einer Kante, Fersen auf dem Boden, Kniekehlen umfassen und die Beine gegen den Widerstand der eigenen Hände strecken. Kontrollierte Endposition halten."
+  },
+  "Brücken-Leiter": {
+    "equip": "bodyweight",
+    "desc": "Schulterbrücke halten, über die Hände höher in die Brücke wandern, Stufe für Stufe. Kopf neutral, Nacken nie verdrehen."
+  },
+  "German Hang": {
+    "equip": "bodyweight",
+    "needs": [
+      "rings"
+    ],
+    "desc": "In den Ringen hängen, tief in die Schulterstreckung sinken, Handgelenke aktiv. Dehnt Brust und Latissimus in der Über-Kopf-Position — die Schulter-Öffnung für den Langen Tanz."
+  },
+  "Hüftbeuger-Halt mit KB": {
+    "equip": "kettlebell",
+    "desc": "Tiefer Ausfallschritt, Kettlebell vor der Brust, Hüftbeuger der hinteren Seite lang und unter Last halten. Rumpf bleibt aufrecht."
+  },
+  "KB Rumpfbeuge & Aufrichten": {
+    "equip": "kettlebell",
+    "desc": "Im Stand oder auf der Bank sitzend mit der Kettlebell vor der Brust: Wirbel für Wirbel beugen, dann aus der Hüfte gerade aufrichten. Langsam in beide Richtungen."
+  },
+  "KB Windmill": {
+    "equip": "kettlebell",
+    "desc": "Kettlebell mit einer Hand über Kopf drücken, Blick auf die Glocke. Aus der Hüfte seitlich beugen, freie Hand am Bein entlang Richtung Boden, kontrolliert zurück. Hüfte schiebt zur Seite, Overhead-Arm bleibt stabil."
+  },
+  "Pancake mit Last": {
+    "equip": "kettlebell",
+    "desc": "Im Grätschsitz, Beine gestreckt, Kettlebell vor dem Körper. Oberkörper nach vorunten schieben, Last nah am Boden halten — die Hüftbeuge unter Spannung öffnen."
+  },
+  "Plage": {
+    "equip": "bodyweight",
+    "desc": "Frontstütz, Ellbogen senkrecht unter den Schultern, Rumpf fest wie ein Brett. Rippen unten, Gesäß leicht angespannt."
+  },
+  "Spanish Squat": {
+    "equip": "band",
+    "desc": "Band hinter den Kniekehlen, gegen eine Wand oder einen Pfosten gespannt. Knie leicht gebeugt, Oberkörper aufrecht — die Quadrizeps-Endposition halten."
+  },
+  "Spagat-Übergang": {
+    "equip": "bodyweight",
+    "desc": "Zwischen halbem Vorwärts- und Seitenspagat pendeln, Spannweite langsam vergrößern. Nie ins Ziehen fallen, die Position muss Atmung zulassen."
+  },
+  "Suitcase Side Bend": {
+    "equip": "kettlebell",
+    "desc": "Kettlebell in einer Hand wie ein Reisekoffer, kontrolliert zur Lastseite neigen und aufrichten. Seitliche Rumpfmuskulatur arbeitet gegen das Kippen."
+  },
+  "Tiefer Ausfallschritt-Halt": {
+    "equip": "bodyweight",
+    "desc": "Hinteres Bein weit zurück, vorderes Knie über der Ferse, hintere Hüfte ganz gestreckt und gesenkt. Dehnung aushalten, Rumpf aufrecht."
+  },
+  "Mobility-Nachlauf": {
+    "equip": "bodyweight",
+    "desc": "Was die Einheit geöffnet hat, halten: Hüftöffner, Schulter-Dislocates, Positionen langsam atmen lassen."
+  },
+  "Mobility-Runde": {
+    "equip": "bodyweight",
+    "desc": "Schultern, Hüften, Nacken — eine ruhige Runde durch alles, was heute eng ist."
+  },
+  "Freier Mobility-Flow": {
+    "equip": "bodyweight",
+    "desc": "Wohin der Körper heute will: fließend durch Positionen wandern, ohne Plan und ohne Zwang."
   }
 }

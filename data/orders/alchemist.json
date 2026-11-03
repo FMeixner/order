@@ -12,7 +12,7 @@
   "weeks": {"min": 8, "max": 12},
   "travel": true,
   "modules": ["correctives", "beast"],
-  "successors": ["king", "monk", "troubadour"],
+  "successors": ["dancer", "king", "monk", "troubadour"],
   "sources": ["Rimmele et al. (2007)", "Zaccaro et al. (2018)", "Nair et al. (2015)", "Swain et al. (2020)"],
   "week_4": ["stab_atem", "haltung_kraft", "grundlage", "stab_tanz"],
   "week_3": ["stab_atem", "haltung_kraft", "grundlage"],

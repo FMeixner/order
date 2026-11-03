@@ -14,12 +14,13 @@ Läuft im Browser und lässt sich auf dem Handy wie eine App installieren. Alle 
 4. **Trainieren**: Unter *Heute* steht die Einheit. Nach jedem Satz Wiederholungen und Gewicht eintragen, nach der Übung kurz Feedback geben (Schwer, OK, Leicht, Sehr leicht). Daraus kommt der Vorschlag fürs nächste Mal.
 5. **Erzähler** (optional): Ein Rabe erzählt jeden Orden als Geschichte, mit Wochenbericht, Saga und der Testwoche als Turnier. Welt austauschbar.
 
-## Die 19 Orden
+## Die 21 Orden
 
 | Orden | Schwerpunkt |
 |---|---|
 | Initiate | Einstieg und Wiedereinstieg, Variantenleitern statt Gewicht |
 | Knight | Muskelaufbau, Oberkörper/Unterkörper, jeder Muskel 2× pro Woche |
+| Paladin | Sehnen, Gelenke und Belastbarkeit neben Schwert und Schreibtisch |
 | Smith | Maximalkraft mit Top-Satz und Back-off |
 | Olympian | Schnelligkeit und Sprungkraft |
 | Pilgrim | Herz-Kreislauf und Ausdauer |
@@ -29,6 +30,7 @@ Läuft im Browser und lässt sich auf dem Handy wie eine App installieren. Alle 
 | King | Harte Tage und bewusste Erholung, gesteuert über das Erleben |
 | Alchemist | Statische Kraft, Beweglichkeit, Ruhe |
 | Acrobat | Körpergewichts-Skills und Flow |
+| Dancer | Belastbare Endpositionen, Beweglichkeit unter Last |
 | Huntsman | Parkour und wechselnde Circuits |
 | Pugilist | Rumpf, Nacken, Runden |
 | Assassin | Fett verlieren, Kraft halten |

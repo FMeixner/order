@@ -32,6 +32,9 @@
   "exercises": {
     "Jackknives": {"Rumpf": 1},
     "Weightless Windmill": {"Rumpf": 0.5, "Schultern": 0.5},
+    "KB Windmill": {"Rumpf": 0.5, "Schultern": 0.5, "Gesäß": 0.5},
+    "KB Rumpfbeuge & Aufrichten": {"Rumpf": 1, "Gesäß": 0.5, "Beinbeuger": 0.5},
+    "Bodyweight Leg Extension": {"Quadrizeps": 1},
     "Band Skis": {"Rücken": 0.5, "Trizeps": 0.5, "Rumpf": 0.5},
     "Skull Crushers": {"Trizeps": 1},
     "Pull Press": {"Schultern": 1, "Nacken": 0.5},
