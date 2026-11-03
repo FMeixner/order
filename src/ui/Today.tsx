@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
-import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { SessionPreview, SessionView } from "./SessionView";
@@ -48,7 +47,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const block = blockAt(state.plan, anchor);
   const [pick, setPick] = useState<Weekday | null>(null);
   const [showTraining, setShowTraining] = useState(false);
-  const [viewWeek, setViewWeek] = useState<number | null>(null);
+  const [view, setView] = useState<{ id: string; w: number } | null>(null);
   const [adjust, setAdjust] = useState(false);
   if (!block) {
     const nb = nextBlock(state.plan, today);
@@ -74,18 +73,42 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   if (!baseFocus) return <div className="card">Der Orden dieser Phase fehlt. <button className="btn small" onClick={goPlan}>Plan öffnen</button></div>;
   const curWeek = weekInBlock(block, anchor);
   const total = blockWeeks(block);
-  const week = viewWeek ?? curWeek;
+  const extTest = followedByTest(state.plan, block);
+  // Folgt auf diesen Orden direkt eine Testwoche, öffnet der Pfeil in der letzten Woche die Vorschau
+  const testBlock = extTest ? state.plan.find((x) => isTestBlock(x) && x.start === addDays(block.end, 1)) ?? null : null;
+  const week = view?.id === block.id ? view.w : curWeek;
   const isCur = week === curWeek;
   const future = week > curWeek;
   const weekStart = addDays(mondayOf(block.start), (week - 1) * 7);
-  const go = (w: number) => { setViewWeek(w === curWeek ? null : w); setPick(null); setShowTraining(false); };
+  const go = (w: number) => { setView(w === curWeek ? null : { id: block.id, w }); setPick(null); setShowTraining(false); };
   // Orden dieser Woche: Harlequin wechselt wöchentlich, bei drei Tagen die verdichtete Form
   const focus = focusFor(state, block, week) ?? baseFocus;
-  const extTest = followedByTest(state.plan, block);
   const test = !extTest && isTestWeek(baseFocus, block, week);
   const deload = isDeloadWeek(baseFocus, week);
   const entlastet = isDeloaded(state, block, week);
   const beforeTest = extTest ? week === total : isTestWeek(baseFocus, block, week + 1);
+  // Vorschau der folgenden Testwoche: Cups, Turnier und Protokolle ansehen, noch keine Eingaben
+  if (testBlock && week > total) return (
+    <div className="stack">
+      <div className="card hero">
+        <div className="hero-top">
+          <div>
+            <div className="hero-focus">Testwoche</div>
+            <div className="muted small">{fmtDate(testBlock.start)} – {fmtDate(testBlock.end)} · folgt auf diesen Orden</div>
+          </div>
+          <div className="week-nav">
+            <button onClick={() => go(total)} aria-label="Vorige Woche">‹</button>
+            <div className="hero-week">Vorschau</div>
+            <button disabled aria-label="Nächste Woche">›</button>
+          </div>
+        </div>
+        <div className="progress"><div style={{ width: "100%" }} /></div>
+        <div className="tags"><span className="tag amber">Vorschau · eintragen, sobald die Woche läuft</span></div>
+        {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
+      </div>
+      <TestWeek state={state} update={update} block={testBlock} today={today} preview />
+    </div>
+  );
   // Wiedereinstieg: letzte abgeschlossene Einheit liegt 10 Tage oder mehr zurück
   // gilt für die ganze Woche: Abstand zwischen der letzten Einheit vor dieser Woche und der ersten in dieser Woche (oder heute)
   const lastBefore = state.sessions.filter((s) => s.done && s.date < weekStart).map((s) => s.date).sort().pop();
@@ -239,7 +262,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           <div className="week-nav">
             <button onClick={() => go(week - 1)} disabled={week <= 1} aria-label="Vorige Woche">‹</button>
             <div className="hero-week" aria-label={`Woche ${Math.min(week, total)} von ${total}`}><span className="wk-word">Woche </span>{Math.min(week, total)}<span className="muted">/{total}</span></div>
-            <button onClick={() => go(week + 1)} disabled={week >= total} aria-label="Nächste Woche">›</button>
+            <button onClick={() => go(week + 1)} disabled={week >= (testBlock ? total + 1 : total)} aria-label="Nächste Woche">›</button>
           </div>
         </div>
         <div className="progress"><div style={{ width: `${Math.min(100, (100 * week) / total)}%` }} /></div>
@@ -256,14 +279,12 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       </div>
 
 
-      {test && future ? (
-        <div className="card stack">
-          <strong>Testwoche</strong>
-          <ul className="slot-list">{TESTWEEK.cups.map((c) => <li key={c.id}><strong>{c.name}</strong> · {c.place}: {c.tests.map((t) => t.name).join(", ")}</li>)}</ul>
+      {test && future && !showTraining ? (
+        <>
+          <TestWeek state={state} update={update} block={block} today={today} preview />
           <button className="btn ghost small" onClick={() => setShowTraining(true)}>Trainingswoche stattdessen ansehen</button>
-        </div>
-      ) : null}
-      {test && future && !showTraining ? null : test && !showTraining ? (
+        </>
+      ) : test && !showTraining ? (
         <>
           <TestWeek state={state} update={update} block={block} today={today} />
           <button className="btn ghost" onClick={() => setShowTraining(true)}>Stattdessen normal trainieren</button>
