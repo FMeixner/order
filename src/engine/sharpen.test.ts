@@ -17,7 +17,7 @@ function base(tests: Record<string, TestResult[]>, extra: PlanBlock[] = []): App
   return { ...s, onboarded: true, user: { ...s.user, sex: "m", birthYear: 1988 }, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" }, plan: [T, ...extra], tests };
 }
 const mobKe = { "t-sitreach": r(-20), "t-pushups": r(10), "t-pullups": r(2), "t-crunches": r(20) };
-const aerobKe = { "t-cooper": r(1400), "t-vo2": r(30), "t-pushups": r(10), "t-pullups": r(2), "t-crunches": r(20) };
+const aerobKe = { "t-cooper": r(1400), "t-pushups": r(10), "t-pullups": r(2), "t-crunches": r(20) };
 
 describe("Schwerpunkt-Slot", () => {
   it("findet Defizite nur deutlich unter der Norm, schwächstes zuerst", () => {

@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.83.0] – 2026-11-03
+
+### Geändert
+- Die Testwoche misst sauberer getrennt: Der Uhr-VO2max-Test ist raus — er duplizierte den Cooper-Test als Konstrukt, und die Auswertung ließ ihn doppelt von drei Stimmen in die Domäne Ausdauer zählen. Der Cooper-Test bleibt die eine aktive VO2max-Referenz, der Ruhepuls den Alltagskontext. Damit wiegt die Ausdauer gleich, ohne dass dieselbe Messung zweimal zählt.
+- Das Körpergewicht ist in den Balmung-Cup gezogen, direkt vor die 5RM-Reihe — dorthin, wo es gebraucht wird: Die Maximalkraft-Norm rechnet relativ zum Körpergewicht. Der Durendal-Cup misst dafür jetzt nur noch Beweglichkeit, Kraftausdauer und Koordination. Der Hinweis „Körpergewicht fehlt“ nennt jetzt den richtigen Cup.
+
 ## [0.82.0] – 2026-11-02
 
 ### Geändert
