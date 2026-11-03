@@ -106,7 +106,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
     if (b.type === "module" && b.fallbackFlow) {
       const flow: Block = { type: "module", module: "flow", variant: b.fallbackFlow, rotation: b.rotation };
       const full = moduleDrills(b.fallbackFlow, ctx.state.user, ctx.week, "flow");
-      return { block: flow, resolved: [], drills: b.short ? shortDrills(full) : full, sword: b };
+      return { block: flow, resolved: [], drills: b.short ? shortDrills(full) : full, sword: asWeaponBlock(b) };
     }
     if (b.type === "module" && isWeaponModule(b.module)) return { block: b, resolved: slotsOf(b, ctx), sword: asWeaponBlock(b) };
     return { block: b, resolved: slotsOf(b, ctx) };
