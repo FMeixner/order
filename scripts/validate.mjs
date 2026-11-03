@@ -16,6 +16,10 @@ const exercises = read("exercises.json");
 const beasts = read("beasts.json");
 const correctives = read("modules/correctives.json").lists;
 const dm = read("modules/sword.json").variants;
+const lsv = read("modules/longsword.json").variants;
+const sbv = read("modules/staff.json").variants;
+/** Waffen-Module mit Lernweg: Modulkennung → Varianten */
+const WEAPONS = { sword: dm, longsword: lsv, stab: sbv };
 const flows = read("modules/flows.json").variants;
 const sharpen = read("modules/sharpen.json").domains;
 for (const [k, d] of Object.entries(sharpen)) {
@@ -42,17 +46,18 @@ for (const sk of skillsFile.skills) {
   }
   try { new RegExp(sk.beast, "i"); } catch { err(w, "beast ist kein gültiger Suchausdruck"); }
 }
-// Schwert-Lernweg: Stufen mit Variante und Skill (außer der ersten), Varianten des Lernwegs vorhanden
+// Waffen-Lernwege (Messer, Langschwert, Stab): Stufen mit Variante und Skill (außer der ersten), Varianten des Lernwegs vorhanden
 {
-  const sw = read("modules/sword.json");
   const skillIds = new Set(skillsFile.skills.map((s) => s.id));
-  sw.levels.forEach((l, i) => {
-    if (!dm[l.variant]) err("sword.json levels", `Stufe ${l.name}: Variante ${l.variant} fehlt`);
-    if (i > 0 && !skillIds.has(l.skill)) err("sword.json levels", `Stufe ${l.name}: Skill ${l.skill} fehlt in skills.json`);
-    for (const d of l.echo ?? [])
-      if (!d.id || !d.name || !["reps", "hold", "activity"].includes(d.mode) || !(d.value > 0)) err("sword.json levels", `Echo von ${l.name}: ${d.id || "ohne Id"} braucht id, name, mode (reps/hold/activity) und value`);
-  });
-  for (const v of sw.leveled) if (!dm[v]) err("sword.json leveled", `Variante ${v} fehlt`);
+  for (const [file, mod, variants] of [["modules/sword.json", read("modules/sword.json"), dm], ["modules/longsword.json", read("modules/longsword.json"), lsv], ["modules/staff.json", read("modules/staff.json"), sbv]]) {
+    mod.levels.forEach((l, i) => {
+      if (!variants[l.variant]) err(`${file} levels`, `Stufe ${l.name}: Variante ${l.variant} fehlt`);
+      if (i > 0 && !skillIds.has(l.skill)) err(`${file} levels`, `Stufe ${l.name}: Skill ${l.skill} fehlt in skills.json`);
+      for (const d of l.echo ?? [])
+        if (!d.id || !d.name || !["reps", "hold", "activity"].includes(d.mode) || !(d.value > 0)) err(`${file} levels`, `Echo von ${l.name}: ${d.id || "ohne Id"} braucht id, name, mode (reps/hold/activity) und value`);
+    });
+    for (const v of mod.leveled) if (!variants[v]) err(`${file} leveled`, `Variante ${v} fehlt`);
+  }
 }
 const swaps = read("modules/swaps.json").groups;
 for (const [g, members] of Object.entries(swaps)) {
@@ -165,7 +170,7 @@ for (const [f, d] of allFoci) {
         case "contrast": checkSlot(b.heavy, ctx); checkSlot(b.explosive, ctx); break;
         case "menu": Object.values(b.options).forEach((s) => checkSlot(s, `${ctx}/${b.id}`)); break;
         case "module":
-          if (b.module === "flow" ? !flows[b.variant] : b.module === "sharpen" ? !sharpen[b.variant] : b.module !== "sword" || !dm[b.variant]) err(f, `${ctx}: Modul-Variante ${b.variant} unbekannt`);
+          if (b.module === "flow" ? !flows[b.variant] : b.module === "sharpen" ? !sharpen[b.variant] : !WEAPONS[b.module] || !WEAPONS[b.module][b.variant]) err(f, `${ctx}: Modul-Variante ${b.module}/${b.variant} unbekannt`);
           if (b.fallback) checkSlot(b.fallback, ctx);
           if (b.fallbackFlow && !flows[b.fallbackFlow]) err(f, `${ctx}: Ersatz-Flow ${b.fallbackFlow} unbekannt`);
           break;
