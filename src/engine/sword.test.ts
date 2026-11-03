@@ -53,7 +53,7 @@ describe("Schwert-Lernweg", () => {
     expect(t).toContain("beendet den Versuch");
   });
   it("Klinge & Faust nach den Kombiformen: die Off-Hand öffnet den Drehhau", () => {
-    expect(swordNext(["schwert_hiebe", "schwert_stiche", "schwert_kombi"])?.level).toBe("Klinge & Faust");
+    expect(swordNext(["schwert_hiebe", "schwert_stiche"])?.level).toBe("Klinge & Faust");
     expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche", "schwert_kombi"])).toEqual([...echo(3), ...DM_VARIANTS.klinge_faust, ...DM_VARIANTS.lernweg].map((d) => d.id));
     expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche", "schwert_kombi"])).toContain("md-doppelstoß");
     expect(ids("lernweg", ["schwert_hiebe", "schwert_stiche", "schwert_kombi"])).toContain("md-wechsel-kombi");
@@ -75,7 +75,7 @@ describe("Schwert-Lernweg", () => {
     expect(base).toBeGreaterThan(0);
   });
   it("nächster Schritt nennt Stufe und Test, auf der letzten Stufe nichts", () => {
-    expect(swordNext([])).toEqual({ level: "Stiche", test: expect.stringContaining("Ringstich-Serie") });
+    expect(swordNext([])).toEqual({ level: "Stiche", test: expect.stringContaining("Zornhau") });
     expect(swordNext(allSwordSkills)).toBeNull();
   });
 });

@@ -52,7 +52,7 @@
       ]
     },
     "stab_tanz": {
-      "name": "Stabtanz und Stille", "location": "home", "minutes": 40,
+      "name": "Stabtanz und Stille", "location": "home", "minutes": 45,
       "warmup": ["short_base", "shake_out"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "stabtanz"},
