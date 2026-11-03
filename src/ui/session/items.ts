@@ -3,7 +3,7 @@ import { EXERCISES } from "../../data";
 import type { AppState, Beast, BeastClass, BeastRun, Block, Session, WeaponModule } from "../../types";
 import { dayMods, withDay } from "../../engine/dayadj";
 import { blockSeconds } from "../../engine/duration";
-import { affectDowngrade, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, isWeaponModule, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks, shortDrills, shortSwordDrills } from "../../engine/plan";
+import { affectDowngrade, asWeaponBlock, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, isWeaponModule, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks, shortDrills, shortSwordDrills } from "../../engine/plan";
 import { loadPhase } from "../../engine/progression";
 import { guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../../engine/resolve";
 import { menuDefault } from "../../engine/sharpen";
@@ -108,7 +108,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
       const full = moduleDrills(b.fallbackFlow, ctx.state.user, ctx.week, "flow");
       return { block: flow, resolved: [], drills: b.short ? shortDrills(full) : full, sword: b };
     }
-    if (b.type === "module" && isWeaponModule(b.module)) return { block: b, resolved: slotsOf(b, ctx), sword: b };
+    if (b.type === "module" && isWeaponModule(b.module)) return { block: b, resolved: slotsOf(b, ctx), sword: asWeaponBlock(b) };
     return { block: b, resolved: slotsOf(b, ctx) };
   };
   const all: Item[] = role.blocks

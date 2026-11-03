@@ -730,6 +730,10 @@ export function weaponTag(blocks: Block[]): string | null {
   const b = blocks.find((x): x is Extract<Block, { type: "module" }> & { module: WeaponModule } => x.type === "module" && isWeaponModule(x.module));
   return b ? MODULE_LABEL[b.module] : null;
 }
+/** Nach isWeaponModule(b.module): den Block als Waffenblock getippt (TS trägt Property-Guards nicht auf den Blocktyp) */
+export function asWeaponBlock(b: Extract<Block, { type: "module" }>): Extract<Block, { type: "module" }> & { module: WeaponModule } {
+  return b as Extract<Block, { type: "module" }> & { module: WeaponModule };
+}
 
 /** Stufe im Lernweg (0 = erste): so weit, wie die Skills der Reihe nach abgehakt sind */
 export function pathLevel(m: WeaponModule, skills: string[] | null | undefined): number {

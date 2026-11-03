@@ -4,7 +4,7 @@ import { FLOWS, SHARPEN } from "../data";
 import type { BeastResult, Block, Session, WeaponModule } from "../types";
 import { estimateRole } from "../engine/duration";
 import { swapRunBeast } from "../engine/cardio";
-import { isWeaponModule, MODULE_LABEL, moduleDrills, pathLevel, pathNext, PATHS, roleAt, roleDrills, shortSwordDrills } from "../engine/plan";
+import { asWeaponBlock, isWeaponModule, MODULE_LABEL, moduleDrills, pathLevel, pathNext, PATHS, roleAt, roleDrills, shortSwordDrills } from "../engine/plan";
 import { advance, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
@@ -258,7 +258,7 @@ export function SessionPreview(ctx: SessionCtx) {
               </div>
             );
             let w: (Extract<Block, { type: "module" }> & { module: WeaponModule }) | null = null;
-            if (it.block.type === "module" && isWeaponModule(it.block.module)) w = it.block;
+            if (it.block.type === "module" && isWeaponModule(it.block.module)) w = asWeaponBlock(it.block);
             const lv = w && PATHS[w.module].leveled.includes(w.variant) ? PATHS[w.module].levels[pathLevel(w.module, ctx.state.user.skills)].name : null;
             return (
               <div key={i} className="preview-group">
