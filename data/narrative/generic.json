@@ -49,7 +49,9 @@
     "acrobat": "hoehen",
     "olympian": "hoehen",
     "pilgrim": "strasse",
-    "harlequin": "jahrmarkt"
+    "harlequin": "jahrmarkt",
+    "paladin": "wehr",
+    "dancer": "tanzsaal"
   },
   "scenes": {
     "stadt": {
@@ -589,6 +591,104 @@
         "Liebling des Jahrmarkts",
         "{Die} Wandelbare",
         "Maskenbrecher{in}"
+      ]
+    },
+    "wehr": {
+      "name": "Die Wehr",
+      "ort": "auf der Wehr",
+      "setting": [
+        "Die alte Wehr trägt die Stadt seit dreihundert Jahren. Unter den Zinnen sammelt sich der Ruß, und die Sturmglocken zählen jede Wache mit.",
+        "Von der Mauer sieht man die Glutöfen am Horizont. Wer hier Wache schiebt, hat nichts festzuhalten außer Stein, Stahl und den eigenen Atem."
+      ],
+      "foes": [
+        {
+          "nom": "der Mauerbrecher",
+          "dat": "dem Mauerbrecher",
+          "akk": "den Mauerbrecher",
+          "pro": "er",
+          "weak": "bestie",
+          "desc": "Er höhlt die Fundamente mit bloßen Händen, und nachts flüstert der Mörtel seinen Namen.",
+          "gen": "des Mauerbrechers"
+        },
+        {
+          "nom": "die Meisterin der Sturmleitern",
+          "dat": "der Meisterin der Sturmleitern",
+          "akk": "die Meisterin der Sturmleitern",
+          "pro": "sie",
+          "weak": "treue",
+          "desc": "Sie klettert jede Mauer, die je gehalten hat. Ihre Söldner folgen ihr, solange sie vorangeht — und keinen Schritt länger.",
+          "gen": "der Meisterin der Sturmleitern"
+        },
+        {
+          "nom": "der Rostkönig",
+          "dat": "dem Rostkönig",
+          "akk": "den Rostkönig",
+          "pro": "er",
+          "weak": "stahl",
+          "desc": "Was er berührt, fällt in sich zusammen. Selbst die Kette am Wehrtor hat schon begonnen, ihm zu gehorchen.",
+          "gen": "des Rostkönigs"
+        }
+      ],
+      "schar": [
+        "Sappeure",
+        "Rußgeier",
+        "lose Zinnensteine",
+        "Nachtwachen"
+      ],
+      "epithets": [
+        "{Die} Unbeirrliche",
+        "Mauerschild",
+        "{Die} von der Wehr",
+        "Sturmhüter{in}"
+      ]
+    },
+    "tanzsaal": {
+      "name": "Der Tanzsaal",
+      "ort": "im Tanzsaal",
+      "setting": [
+        "Der Spiegelsaal des abgebrannten Opernhauses ist der letzte Raum, der noch steht. Der Lack des Bodens ist verbeult, aber wer hier auftritt, verlangt trotzdem die Welt.",
+        "Über den Trümmern hängt ein Kronleuchter, den niemand mehr abhängen wollte. Nachts wirft er das Mondkohlelicht in tausend zerbrochene Spiegel."
+      ],
+      "foes": [
+        {
+          "nom": "die Choreografin",
+          "dat": "der Choreografin",
+          "akk": "die Choreografin",
+          "pro": "sie",
+          "weak": "bestie",
+          "desc": "Sie weiß, welche Figur Dir fehlt, und sie zeigt sie Dir, bevor sie zuschlägt.",
+          "gen": "der Choreografin"
+        },
+        {
+          "nom": "der Spiegelmann",
+          "dat": "dem Spiegelmann",
+          "akk": "den Spiegelmann",
+          "pro": "er",
+          "weak": "treue",
+          "desc": "Er tritt nur in den Rissen der Spiegel auf und wiederholt jede Bewegung, die man ihm zeigt — auch die, die ihn zu Boden bringt.",
+          "gen": "des Spiegelmanns"
+        },
+        {
+          "nom": "die Taktgeberin",
+          "dat": "der Taktgeberin",
+          "akk": "die Taktgeberin",
+          "pro": "sie",
+          "weak": "stahl",
+          "desc": "Sie schlägt den Takt mit einem Stahlstab, und wer aus dem Rhythmus fällt, fällt ganz.",
+          "gen": "der Taktgeberin"
+        }
+      ],
+      "schar": [
+        "Kerzenschemen",
+        "schräge Melodien",
+        "Zedernholzscherben",
+        "verstimmte Uhren"
+      ],
+      "epithets": [
+        "{Die} Grazie der Asche",
+        "Klingenflügel",
+        "{Die} im zerbrochenen Spiegel",
+        "Takt{in}"
       ]
     }
   },

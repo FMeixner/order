@@ -21,7 +21,9 @@
         {"id": "t-dislocate", "name": "Schulter: Stock-Durchführen", "unit": "cm", "attempts": 3, "better": "lower", "swc": 3, "desc": "Engster Griff, mit dem der Stock mit gestreckten Armen über den Kopf nach hinten geht. Abstand zwischen den Zeigefingern."},
         {"id": "t-pullups", "name": "Klimmzüge", "unit": "reps", "attempts": 1, "better": "higher", "swc": 1, "desc": "Aus dem gestreckten Hang, Kinn über die Stange, kein Schwung. Maximale saubere Wiederholungen."},
         {"id": "t-pushups", "name": "Liegestütze", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "desc": "Körper in einer Linie, bis die Nase fast den Boden berührt, je 1 s runter und hoch."},
-        {"id": "t-crunches", "name": "Crunches, Takt 40 BPM", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Rückenlage, Knie 90°, Fingerspitzen wandern 12 cm nach vorn. Ein Schlag hoch, einer runter."}
+        {"id": "t-crunches", "name": "Crunches, Takt 40 BPM", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Rückenlage, Knie 90°, Fingerspitzen wandern 12 cm nach vorn. Ein Schlag hoch, einer runter."},
+        {"id": "t-deadhang", "name": "Dead Hang", "unit": "s", "attempts": 2, "better": "higher", "swc": 10, "desc": "Aktiver Hang an der Stange, gestreckte Arme, Schultern unten. Stopp, wenn die Hand öffnet oder der Griff nachlässt. 2 Versuche mit 3 Min Pause, der bessere zählt. Stoppuhr bereitlegen."},
+        {"id": "t-wallsit", "name": "Wall Sit", "unit": "s", "attempts": 2, "better": "higher", "swc": 10, "desc": "Rücken an der Wand, Oberschenkel waagerecht, Knie 90°, Hände frei. Stoppuhr starten, sobald die Haltung sitzt. Stopp, wenn die Hüfte abkippt oder die Hände das Bein stützen. 2 Versuche mit 3 Min Pause, der bessere zählt."}
       ]
     },
     {

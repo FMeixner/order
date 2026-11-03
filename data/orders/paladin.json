@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "id": "paladin",
+  "name": "Paladin",
+  "name_w": "Aegis",
+  "tagline": "Sehnen stählen, Gelenke wappnen, Klinge führen.",
+  "description": "Der Orden der Belastbarkeit: Sehnen, Gelenke, Nacken und Handgelenke — die Strukturen, die Schwert und Schreibtisch gemeinsam belasten. Kein Leistungs-Orden: Die Progression misst sich an Haltedauern und belastbaren Positionen, nicht an Sätzen auf der Langhantel. Vier Tage zu Hause: Knie und Hüfte, Schulter und Ellbogen, Schwert mit isometrischen Halten, Rücken mit langsamer Wirbelsäulenarbeit. Donnerstags trägt das Messer die Handgelenksarbeit (Lecküchner: die linke Hand gehört zum Messer).",
+  "goals": { "primary": "conditioning", "secondary": ["strength", "mobility"] },
+  "nutrition": "maintenance",
+  "load_fit": "medium",
+  "level": "beginner–intermediate",
+  "session_min": 40,
+  "weeks": { "min": 8, "max": 10 },
+  "travel": true,
+  "modules": ["correctives", "sword", "beast"],
+  "successors": ["alchemist", "king"],
+  "week_4": ["knie_huefte", "schulter_ellbogen", "schwert_sehnen", "ruecken"],
+  "week_3": ["knie_huefte", "schwert_sehnen", "ruecken"],
+  "roles": {
+    "knie_huefte": {
+      "name": "Knie und Hüfte",
+      "location": "home",
+      "minutes": 40,
+      "warmup": ["lower_prep", "hip9090"],
+      "cooldown": ["cd_lower"],
+      "blocks": [
+        { "type": "single", "slot": { "id": "pal-k-1", "name": "ATG Split Squat", "sets": 3, "reps": "8/Seite", "prog": "reps", "rest": 90 } },
+        { "type": "single", "slot": { "id": "pal-k-2", "name": "Sissy Squat", "sets": 3, "reps": "8", "prog": "reps", "rest": 90 } },
+        { "type": "single", "slot": { "id": "pal-k-3", "name": "Nordic Curl Negative", "sets": 3, "reps": "4", "prog": "reps", "rest": 150, "note": "So langsam wie möglich abfangen." } },
+        { "type": "single", "slot": { "id": "pal-k-4", "name": "Tibialis Raise", "sets": 3, "reps": "20", "prog": "none", "rest": 60 } },
+        { "type": "single", "slot": { "id": "pal-k-5", "name": "Copenhagen Plank", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "max": 45, "step": 5, "rest": 60, "note": "pro Seite" } },
+        { "type": "single", "slot": { "id": "pal-k-6", "name": "Rückwärtsgehen", "kind": "timer", "minutes": 3, "max": 6, "step": 1, "prog": "minutes", "note": "Draußen oder auf dem Laufband." } }
+      ]
+    },
+    "schulter_ellbogen": {
+      "name": "Schulter und Ellbogen",
+      "location": "home",
+      "minutes": 40,
+      "warmup": ["shoulder_prep", "dislocate"],
+      "cooldown": ["cd_general"],
+      "blocks": [
+        { "type": "single", "slot": { "id": "pal-s-1", "name": "DB Pullover", "sets": 3, "reps": "10", "prog": "weight", "rest": 90 } },
+        { "type": "single", "slot": { "id": "pal-s-2", "name": "Deficit Push-Up", "sets": 3, "reps": "8", "prog": "reps", "rest": 90 } },
+        { "type": "single", "slot": { "id": "pal-s-3", "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "none", "rest": 60 } },
+        { "type": "single", "slot": { "id": "pal-s-4", "name": "Band External Rotation", "sets": 3, "reps": "15/Seite", "prog": "none", "rest": 45 } },
+        { "type": "superset", "id": "pal-s-5", "rest": 60, "slots": [
+          { "id": "pal-s-5a", "name": "DB Reverse Curl", "sets": 2, "reps": "15", "prog": "none", "rest": 60 },
+          { "id": "pal-s-5b", "name": "Wrist Curl", "sets": 2, "reps": "15", "prog": "none", "rest": 60 }
+        ] },
+        { "type": "single", "slot": { "id": "pal-s-6", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "max": 90, "step": 10, "rest": 90, "note": "Schultern bleiben unten." } }
+      ]
+    },
+    "schwert_sehnen": {
+      "name": "Schwert und Sehnen",
+      "location": "home",
+      "minutes": 50,
+      "cap": 65,
+      "warmup": ["short_base", "neck_complex", "thoracic_roller", "sword_prep"],
+      "cooldown": ["cd_mdf"],
+      "blocks": [
+        { "type": "module", "module": "sword", "variant": "einzelmesser", "fallbackFlow": "mobility" },
+        { "type": "beast", "id": "pal-w-beast", "classes": ["plage"] },
+        { "type": "single", "slot": { "id": "pal-w-1", "name": "Wall Sit", "kind": "hold", "hold": 60, "sets": 3, "prog": "hold", "max": 120, "step": 10, "rest": 60 } },
+        { "type": "single", "slot": { "id": "pal-w-2", "name": "Spanish Squat", "kind": "hold", "hold": 45, "sets": 3, "prog": "hold", "max": 90, "step": 5, "rest": 60 } },
+        { "type": "single", "slot": { "id": "pal-w-3", "name": "Tiefer Ausfallschritt-Halt", "kind": "hold", "hold": 45, "sets": 2, "prog": "hold", "max": 90, "step": 10, "rest": 45, "note": "pro Seite — tief in der Dehnung sitzen bleiben." } },
+        { "type": "single", "slot": { "id": "pal-w-4", "name": "KB Halo", "sets": 2, "reps": "8/Seite", "prog": "none", "rest": 60 } }
+      ]
+    },
+    "ruecken": {
+      "name": "Rücken",
+      "location": "home",
+      "minutes": 40,
+      "warmup": ["base", "thoracic_standing"],
+      "cooldown": ["cd_lower"],
+      "blocks": [
+        { "type": "single", "slot": { "id": "pal-r-1", "name": "KB Rumpfbeuge & Aufrichten", "sets": 3, "reps": "8", "prog": "weight", "rest": 90 } },
+        { "type": "single", "slot": { "id": "pal-r-2", "name": "Jefferson Curl (ohne Last)", "sets": 3, "reps": "8", "prog": "ladder", "ladder": ["Jefferson Curl (ohne Last)", "Jefferson Curl"], "rest": 90 } },
+        { "type": "single", "slot": { "id": "pal-r-3", "name": "Suitcase Side Bend", "sets": 3, "reps": "10/Seite", "prog": "weight", "rest": 60 } },
+        { "type": "single", "slot": { "id": "pal-r-4", "name": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60 } },
+        { "type": "single", "slot": { "id": "pal-r-5", "name": "KB Windmill", "sets": 3, "reps": "6/Seite", "prog": "weight", "rest": 90 } },
+        { "type": "single", "slot": { "id": "pal-r-6", "name": "Plage", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "max": 60, "step": 5, "rest": 60 } }
+      ]
+    },
+    "bonus": {
+      "name": "Bonus: Gelenke pflegen",
+      "location": "home",
+      "minutes": 25,
+      "warmup": ["gentle"],
+      "cooldown": ["cd_calm"],
+      "blocks": [
+        { "type": "single", "slot": { "id": "pal-b-1", "name": "Mobility-Runde", "kind": "timer", "minutes": 8, "max": 15, "step": 1, "prog": "minutes", "note": "Schultern, Hüften, Nacken — was heute eng ist." } },
+        { "type": "beast", "id": "pal-b-2", "classes": ["plage"] }
+      ]
+    }
+  }
+}

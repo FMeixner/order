@@ -12,7 +12,7 @@
   "weeks": {"min": 6, "max": 9},
   "travel": true,
   "modules": ["correctives"],
-  "successors": ["assassin", "knight", "troubadour"],
+  "successors": ["dancer", "assassin", "knight", "troubadour"],
   "week_4": ["ganzkoerper_a", "bewegung_leicht", "ganzkoerper_b", "ausdauer_ruhig"],
   "week_3": ["ganzkoerper_a", "ausdauer_ruhig", "ganzkoerper_b"],
   "roles": {
