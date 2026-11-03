@@ -21,7 +21,7 @@
         {"id": "t-dislocate", "name": "Schulter: Stock-Durchführen", "unit": "cm", "attempts": 3, "better": "lower", "swc": 3, "desc": "Engster Griff, mit dem der Stock mit gestreckten Armen über den Kopf nach hinten geht. Abstand zwischen den Zeigefingern."},
         {"id": "t-pullups", "name": "Klimmzüge", "unit": "reps", "attempts": 1, "better": "higher", "swc": 1, "desc": "Aus dem gestreckten Hang, Kinn über die Stange, kein Schwung. Maximale saubere Wiederholungen."},
         {"id": "t-pushups", "name": "Liegestütze", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "desc": "Körper in einer Linie, bis die Nase fast den Boden berührt, je 1 s runter und hoch."},
-        {"id": "t-crunches", "name": "Crunches", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Rückenlage, Knie 90°, Fingerspitzen wandern 12 cm nach vorn. So viele saubere Wiederholungen wie möglich — kein Takt, das Tempo ergibt sich."}
+        {"id": "t-crunches", "name": "Crunches, Takt 40 BPM", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Rückenlage, Knie 90°, Fingerspitzen wandern 12 cm nach vorn. Ein Schlag hoch, einer runter."}
       ]
     },
     {
@@ -29,7 +29,7 @@
       "warmup": ["base"],
       "benchmark": {"label": "Bestie auf Zeit", "pool": ["ng-garm", "ng-ubba", "ng-orvar", "ng-hel", "ng-saga", "ng-odin"]},
       "tests": [
-        {"id": "t-skill20", "name": "Stichtest: 20 gültige Treffer", "unit": "s", "attempts": 2, "better": "lower", "swc": 3, "desc": "20 Stiche durch die Ringöffnung, Ring unberührt. Zeit läuft durch, ungültige Stiche zählen nicht — weiterstechen, bis 20 gültige erreicht sind. 2 Versuche, 2–3 Min Pause, der bessere zählt. Ohne Ringe: immer dieselbe feste Aufgabe, z. B. Burpee-Box-Step-Overs."}
+        {"id": "t-stichserie", "name": "Stichtest: Serie bis zum ersten Fehler", "unit": "reps", "attempts": 2, "better": "higher", "swc": 3, "desc": "Stiche durch die Ringöffnung, Ring unberührt — jeder gültige Treffer zählt. Der erste ungültige Stich (Ring berührt oder in Bewegung) beendet die Serie. 2 Versuche, 2–3 Min Pause, der bessere zählt. Ohne Ringe: immer dieselbe feste Aufgabe, z. B. Burpee-Box-Step-Overs."}
       ]
     },
     {

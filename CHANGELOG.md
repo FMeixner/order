@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.85.0] – 2026-11-03
+
+### Geändert
+- Der Stichtest misst die Serie, nicht die Stoppuhr: „Stichtest: Serie bis zum ersten Fehler" — gültige Stiche durch die Ringöffnung in Folge, der erste ungültige (Ring berührt oder in Bewegung) beendet die Serie. Eine feste Anzahl hätte eine Decke: Wer 20 schafft, schafft sie wieder — ohne messbaren Progress. Die offene Serie hat keine (19 → 38 ist eine echte Steigerung). Zwei Versuche, der bessere zählt. Neue Kennung (t-stichserie, Wiederholungen statt Zeit).
+- Die Crunches sind zurück im 40-BPM-Takt — mit den DOSB-Normbändern aus dem erweiterten Leistungskatalog Kraft (32/43/57 Männer, 27/37/48 Frauen, jeweils 35–39). Das freie Tempo von 0.84.0 hätte die Normmessung entwertet; der Takt ist das Protokoll.
+
+### Neu
+- Normen für den Hochsprung: Hochsprung ist eine offizielle Disziplin des Deutschen Sportabzeichens (Kategorie Koordination, Erwachsene). Bronze/Silber/Gold für 35–39: 1,25/1,35/1,45 m (Männer), 0,95/1,05/1,15 m (Frauen). Der Test zählt damit nicht mehr nur über den Verlauf.
+
 ## [0.84.0] – 2026-11-03
 
 ### Geändert
