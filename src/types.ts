@@ -81,8 +81,11 @@ export type Block =
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
     }
-  | { type: "module"; module: "sword" | "flow" | "sharpen"; variant: string; fallback?: Slot; /** Ohne Schwert: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B"; /** Kurztag: nur die erste Hälfte der Übungen */ short?: true }
+  | { type: "module"; module: WeaponModule | "flow" | "sharpen"; variant: string; fallback?: Slot; /** Ohne Schwert und Stock: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B"; /** Kurztag: nur die erste Hälfte der Übungen */ short?: true }
   | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
+
+/** Die drei Waffen-Module mit Lernweg: Messer, Langschwert, Stab (Stock reicht). */
+export type WeaponModule = "sword" | "longsword" | "stab";
 
 export interface Role {
   name: string;

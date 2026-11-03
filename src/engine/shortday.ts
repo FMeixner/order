@@ -13,7 +13,7 @@
    Kein Ausgleichstag überschreitet dabei sein Zeitlimit und wächst höchstens 15 Minuten über seine normale Dauer —
    drei kurze Tage machen also keinen langen vierten. Was nicht reicht, wird offen gemeldet. */
 import type { BeastClass, Block, Focus, Role, Slot, UserProfile } from "../types";
-import { CLASS_ORDER } from "./plan";
+import { CLASS_ORDER, isWeaponModule } from "./plan";
 import { isHeavy, isStrength, planMinutes } from "./slots";
 import { equipOf } from "./resolve";
 import { musclesOf, volumeRange } from "./volume";
@@ -120,7 +120,7 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   // 1. Kurztag: die vier Kernübungen, Bestie und Schwerttraining eine Stufe kürzer, kurzes Warm-up.
   //    Auch Grundlagen- und Skill-Tage: Ihr Inhalt ist das Ziel des Tages, er bleibt (gefüllt wird mit dem Besten zuerst,
   //    bis vier Blöcke zusammen sind — ist weniger Kraft da, rücken Timer und Flows nach).
-  const ranked = short.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && b.module === "sword") ? -1 : rank(b) })).filter((x) => x.r >= 0);
+  const ranked = short.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && isWeaponModule(b.module)) ? -1 : rank(b) })).filter((x) => x.r >= 0);
   // A- und B-Woche getrennt: je die vier besten Übungen (Kern zuerst, dann schwer, dann Mehrgelenk)
   const shortWarm = ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
   const pick = () => {
@@ -136,10 +136,10 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   // Bestie bleibt drin, aber eine Klasse kürzer (mindestens Plage); jede Schwertübung einen Satz weniger (short-Flag)
   const shorter = (b: Block): Block => {
     if (b.type === "beast") return { ...b, classes: (b.classes?.length ? b.classes : (["bestie", "ungeheuer"] as BeastClass[])).map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]) };
-    if (b.type === "module" && b.module === "sword") return { ...b, short: true };
+    if (b.type === "module" && isWeaponModule(b.module)) return { ...b, short: true };
     return b;
   };
-  short.blocks = short.blocks.map(shorter).filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && b.module === "sword"));
+  short.blocks = short.blocks.map(shorter).filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && isWeaponModule(b.module)));
   short.warmup = shortWarm;
   short.cooldown = (short.cooldown ?? []).slice(0, 1);
   short.name = `${short.name} (Kurztag)`;

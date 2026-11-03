@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
-import { FLOWS, FOCI, FOCUS_BY_ID, SWORD } from "../data";
-import { CLASS_LABEL, defaultRoles, focusName, swordLevel, swordList, trainingDays } from "../engine/plan";
+import { FLOWS, FOCI, FOCUS_BY_ID } from "../data";
+import { CLASS_LABEL, defaultRoles, focusName, isWeaponModule, MODULE_LABEL, pathLevel, pathList, PATHS, trainingDays } from "../engine/plan";
 import { shapeFocus } from "../engine/weekplan";
 import { resolveSlot } from "../engine/resolve";
 import { ladderStart } from "../engine/skills";
@@ -34,11 +34,12 @@ function BlockLines({ b, c }: { b: Block; c: Ctx }) {
     case "module":
       if (b.module === "flow") return <li>{FLOWS[b.variant]?.name ?? b.variant}{rot}: <ul>{(FLOWS[b.variant]?.drills ?? []).map((d) => <li key={d.id}>{d.name} · {d.mode === "reps" ? `${d.value}×` : `${d.value} s`}{d.sides ? " je Seite" : ""}</li>)}</ul></li>;
     {
-      // Sonderrolle: Schwert immer zeigen, auch wenn das Profil keins hat; der Ersatz steht dahinter
+      // Sonderrolle: Waffen-Module immer zeigen, auch wenn das Profil keins hat; der Ersatz steht dahinter
+      if (!isWeaponModule(b.module)) return null;
       const sk = c.skills ? [...c.skills] : null;
-      const lv = SWORD.leveled.includes(b.variant) ? ` · Stufe ${SWORD.levels[swordLevel(sk)].name}` : "";
+      const lv = PATHS[b.module].leveled.includes(b.variant) ? ` · Stufe ${PATHS[b.module].levels[pathLevel(b.module, sk)].name}` : "";
       const alt = b.fallbackFlow ? FLOWS[b.fallbackFlow]?.name : b.fallback ? slotLine(b.fallback, c) : null;
-      return <li><strong>Schwert{lv}</strong>{rot}: {swordList(b.variant, sk).map((d) => d.name).join(", ")}{alt ? <span className="muted"> · ohne Schwert: {alt}</span> : null}</li>;
+      return <li><strong>{MODULE_LABEL[b.module]}{lv}</strong>{rot}: {pathList(b.module, b.variant, sk).map((d) => d.name).join(", ")}{alt ? <span className="muted"> · ohne Schwert und Stock: {alt}</span> : null}</li>;
     }
     case "menu": return <li>{b.label}: nach Wahl aus {Object.keys(b.options).join(", ")}</li>;
   }
@@ -52,7 +53,7 @@ function blockNames(b: Block, c: Ctx): string[] {
     case "superset": return b.slots.map(nm).filter(Boolean) as string[];
     case "contrast": return [nm(b.heavy), b.explosive.name].filter(Boolean) as string[];
     case "beast": return ["Bestie"];
-    case "module": return [b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sword" ? "Schwert" : "Schwerpunkt"];
+    case "module": return [b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? "Schwerpunkt" : MODULE_LABEL[b.module]];
     case "menu": return [b.label];
   }
 }

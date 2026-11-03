@@ -2,16 +2,18 @@
    Arbeitszeit je Wiederholung, Pausen aus der Orden-Datei, Aufwärmsätze vor schweren Grundübungen,
    Umbau zwischen den Übungen, Warm-up und Cool-down aus den Listen. */
 import { BEAST_BY_ID } from "../data";
-import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile } from "../types";
-import { CLASS_ORDER, moduleDrills, roleDrills, shortDrills, shortSwordDrills, swordList } from "./plan";
+import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile, WeaponModule } from "../types";
+import { CLASS_ORDER, isWeaponModule, moduleDrills, pathList, roleDrills, shortDrills, shortSwordDrills } from "./plan";
 
-/** Dauer eines Schwertblocks. Mit Skills (auch null): echte Dauer deiner Stufe, Wiederholungen je etwa 3 s. Ohne (undefined): Richtwert des Ordens wie bisher.
+/** Dauer eines Waffen-Blocks (Messer, Langschwert, Stab). Mit Skills (auch null): echte Dauer deiner Stufe, Wiederholungen je etwa 3 s. Ohne (undefined): Richtwert des Ordens wie bisher.
     Kurztag (`short`): Kurzfassung — jede Übung bleibt, ein Satz weniger (mindestens einer je Übung). */
-export function swordSeconds(variant: string, skills: string[] | null | undefined, boost = false, short = false): number {
-  const list = short ? shortSwordDrills(swordList(variant, skills)) : swordList(variant, skills);
+export function weaponSeconds(m: WeaponModule, variant: string, skills: string[] | null | undefined, boost = false, short = false): number {
+  const list = short ? shortSwordDrills(pathList(m, variant, skills)) : pathList(m, variant, skills);
   if (skills === undefined) return list.reduce((sum, d) => sum + d.value * ((d.sets ?? 1) + (boost ? 1 : 0)) * (d.sides ? 2 : 1), 0);
   return list.reduce((sum, d) => sum + drillSeconds(d, Array.from({ length: Array.isArray(d.sides) ? d.sides.length : d.sides ? 2 : 1 }, () => ({ value: d.value, sets: (d.sets ?? 1) + (boost ? 1 : 0) }))), 0);
 }
+/** Schwert-Kern: wie weaponSeconds, Messer-Modul */
+export const swordSeconds = (variant: string, skills: string[] | null | undefined, boost = false, short = false): number => weaponSeconds("sword", variant, skills, boost, short);
 import { parseReps, resolveSlot, type Resolved } from "./resolve";
 import { WARM_SEC, warmupKeys } from "./warmup";
 
@@ -57,7 +59,7 @@ function blockSlots(b: Block): Slot[] {
 }
 /** Übungen einer Einheit in Reihenfolge (aufgelöst für dieses Profil) */
 export function roleSlots(blocks: Block[], p: EquipmentProfile): Resolved[] {
-  return blocks.flatMap((b) => (b.type === "module" && p.has.sword && b.module === "sword" ? [] : blockSlots(b))).map((s) => resolveSlot(s, p)).filter((r): r is Resolved => !!r);
+  return blocks.flatMap((b) => (b.type === "module" && p.has.sword && isWeaponModule(b.module) ? [] : blockSlots(b))).map((s) => resolveSlot(s, p)).filter((r): r is Resolved => !!r);
 }
 
 export function drillSeconds(d: Drill, groups: { value: number; sets: number }[]): number {
@@ -98,7 +100,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
     }
     case "module": {
       if (b.module === "flow" || b.module === "sharpen") return moduleDrills(b.variant, NEUTRAL_USER, 1, b.module).reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
-      if (p.has.sword) return swordSeconds(b.variant, skills, boost, b.short) + SETUP;
+      if (p.has.sword) return weaponSeconds(b.module, b.variant, skills, boost, b.short) + SETUP;
       if (b.fallbackFlow) { const ds = b.short ? shortDrills(moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow")) : moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow"); return ds.reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP; }
       return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p, red) : 0;
     }

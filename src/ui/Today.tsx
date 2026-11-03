@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
+import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, isWeaponModule, weaponTag, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { SessionPreview, SessionView } from "./SessionView";
@@ -153,7 +153,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   // Intensiv: nur mit Bestie oder Schwert am Tag und nicht in Wochen, die ohnehin leichter laufen
   const canBoost = canAdjust && !sysReduced && !entlastet
     // Der Tag, wie der Orden ihn vorsieht (Leise kann eine Bestie verschieben, Intensiv soll trotzdem wählbar bleiben)
-    && ((baseFocus.medley ? undefined : baseFocus.roles[sel!.role]) ?? role0!).blocks.some((b) => b.type === "beast" || (b.type === "module" && b.module === "sword" && !!profile0?.has.sword));
+    && ((baseFocus.medley ? undefined : baseFocus.roles[sel!.role]) ?? role0!).blocks.some((b) => b.type === "beast" || (b.type === "module" && isWeaponModule(b.module) && !!profile0?.has.sword));
   const chips: { k: DayKey | "intense"; label: string; on: boolean; disabled?: boolean; info: string }[] = mods ? [
     { k: "short", label: "Kurz", on: mods.short, disabled: !role0, info: remembered(state, block, sel!.role, sel!.day).short ? "Die vier Kernübungen, Bestie und Schwerttraining kürzer, Ziel 35 Minuten. Fixiert: Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Die vier Kernübungen, Bestie und Schwerttraining kürzer, Ziel 35 Minuten. Letzter Tag der Woche, daher kein Ausgleich." : "Die vier Kernübungen, Bestie und Schwerttraining kürzer, Ziel 35 Minuten. Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
     { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben." },
@@ -300,7 +300,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
                 <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${isCur && inWeek && d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
                   <span className="day">{d.day}</span>
                   <span className="day-role">{r?.name ?? d.role}</span>
-                  <span className="muted small">{p?.name ?? "?"}{r?.blocks.some((b) => b.type === "module" && b.module === "sword") ? " · Schwert" : ""}{done ? " · ✓" : ""}</span>
+                  <span className="muted small">{p?.name ?? "?"}{r && weaponTag(r.blocks) ? ` · ${weaponTag(r.blocks)}` : ""}{done ? " · ✓" : ""}</span>
                 </button>
               );
             })}

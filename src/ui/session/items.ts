@@ -1,9 +1,9 @@
 /* Inhalte einer Einheit sammeln (Übungen, Bestien, Module) und Bestien festhalten. */
 import { EXERCISES } from "../../data";
-import type { AppState, Beast, BeastClass, BeastRun, Block, Session } from "../../types";
+import type { AppState, Beast, BeastClass, BeastRun, Block, Session, WeaponModule } from "../../types";
 import { dayMods, withDay } from "../../engine/dayadj";
 import { blockSeconds } from "../../engine/duration";
-import { affectDowngrade, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks, shortDrills, shortSwordDrills } from "../../engine/plan";
+import { affectDowngrade, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, isWeaponModule, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks, shortDrills, shortSwordDrills } from "../../engine/plan";
 import { loadPhase } from "../../engine/progression";
 import { guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../../engine/resolve";
 import { menuDefault } from "../../engine/sharpen";
@@ -12,7 +12,7 @@ import { boostOf, runSubOf, type SessionCtx, sessionId, skillSet } from "./ctx";
 import { type CardioSub, SUB_EXERCISE } from "../../engine/cardio";
 
 /* ---------- Slots dieser Einheit sammeln ---------- */
-export interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Schwertblock, der hier mangels Schwert ersetzt ist (Vorschau zeigt trotzdem das Schwert) */ sword?: Extract<Block, { type: "module" }> }
+export interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule } }
 
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
@@ -30,7 +30,7 @@ function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
       const s = choice ? b.options[choice] : null;
       return s ? ([r(s)].filter(Boolean) as Resolved[]) : [];
     }
-    case "module": return b.module === "sword" && !ctx.profile.has.sword && b.fallback ? ([r(b.fallback)].filter(Boolean) as Resolved[]) : [];
+    case "module": return isWeaponModule(b.module) && !ctx.profile.has.sword && b.fallback ? ([r(b.fallback)].filter(Boolean) as Resolved[]) : [];
     default: return [];
   }
 }
@@ -96,19 +96,19 @@ export function collectItems(ctx: SessionCtx): Item[] {
     return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state), boost: boostOf(ctx) }) };
   };
   const otherItem = (b: Block): Item => {
-    if (b.type === "module" && (b.module !== "sword" || ctx.profile.has.sword)) {
+    if (b.type === "module" && (b.module === "flow" || b.module === "sharpen" || ctx.profile.has.sword)) {
       const full = moduleDrills(b.variant, ctx.state.user, ctx.week, b.module);
       // Kurztag: beim Schwert bleibt jede Übung, ein Satz weniger (der Ersatz-Flow ohne Schwert läuft in der Kurzfassung)
       const drills = b.short ? shortSwordDrills(full) : full;
       // Viel Energie: jede Schwertübung einen Satz mehr
-      return { block: b, resolved: [], drills: b.module === "sword" && boostOf(ctx) ? drills.map((d) => ({ ...d, groups: d.groups.map((g) => ({ ...g, sets: g.sets + 1 })) })) : drills };
+      return { block: b, resolved: [], drills: isWeaponModule(b.module) && boostOf(ctx) ? drills.map((d) => ({ ...d, groups: d.groups.map((g) => ({ ...g, sets: g.sets + 1 })) })) : drills };
     }
     if (b.type === "module" && b.fallbackFlow) {
       const flow: Block = { type: "module", module: "flow", variant: b.fallbackFlow, rotation: b.rotation };
       const full = moduleDrills(b.fallbackFlow, ctx.state.user, ctx.week, "flow");
       return { block: flow, resolved: [], drills: b.short ? shortDrills(full) : full, sword: b };
     }
-    return { block: b, resolved: slotsOf(b, ctx), ...(b.type === "module" && b.module === "sword" ? { sword: b } : {}) };
+    return { block: b, resolved: slotsOf(b, ctx), ...(b.type === "module" && isWeaponModule(b.module) ? { sword: b } : {}) };
   };
   const all: Item[] = role.blocks
     .filter((b) => !b.rotation || b.rotation === ab)
