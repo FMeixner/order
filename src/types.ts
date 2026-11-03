@@ -288,7 +288,7 @@ export interface SlotState {
   loaded?: boolean;
 }
 
-export interface SetEntry { done: boolean; reps?: number; weight?: number | null; seconds?: number }
+export interface SetEntry { done: boolean; reps?: number; weight?: number | null; seconds?: number; /** Wann der Satz abgehakt wurde (ISO mit Uhrzeit) — Voraussetzung fürs Zuordnen von Herzraten */ doneAt?: string }
 
 export interface SessionEntry {
   key: string; // Slot-Schlüssel slotId|Übungsname

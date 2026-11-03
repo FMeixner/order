@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.87.0] – 2026-11-03
+
+### Neu
+- Satz-Zeitstempel: Jedes Abhaken eines Satzes schreibt die Uhrzeit mit. Erst das macht die Sätze später Herzraten zuordenbar (Welcher Wert gehörte zur Beinpresse? Wie fiel die Herzrate in der Pause danach?) — und macht das Log auch ohne Herzrate exakter. Abwählen nimmt den Stempel wieder weg; Zeitblöcke bekommen ihn genauso.
+- Pilot unter Setup › Herzrate: Verbindungstest über Web Bluetooth. Die App sucht ein Gerät mit dem Bluetooth-Standard-Heart-Rate-Service und zeigt live Herzrate, Paketanzahl, Min/Max und den Empfangszeitpunkt des letzten Pakets. Nur ein Test — gespeichert wird nichts. Zeigt, ob die Uhr mitspielt (dafür vorher vom Telefon trennen); eine Brustgurte sendet garantiert über diesen Service.
+
 ## [0.86.0] – 2026-11-03
 
 ### Neu

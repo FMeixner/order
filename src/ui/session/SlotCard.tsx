@@ -96,7 +96,11 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
     mut((s) => {
       const e: SessionEntry = s.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
       const arr = Array.from({ length: sets.length }, (_, k) => e.sets[k] ?? { done: false });
-      arr[i] = { ...arr[i], ...patch };
+      const merged = { ...arr[i], ...patch };
+      // Zeitstempel des Abhakens: Uhrzeit dazu, damit sich später Herzraten Sätzen und Pausen zuordnen lassen
+      if (patch.done === true) merged.doneAt = new Date().toISOString();
+      else if (patch.done === false) delete merged.doneAt;
+      arr[i] = merged;
       return { ...s, entries: { ...s.entries, [r.key]: { ...e, name: sug.name, stage: sug.stage, sets: arr } } };
     });
 
