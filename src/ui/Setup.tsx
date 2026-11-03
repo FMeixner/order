@@ -6,7 +6,6 @@ import type { AppState, UserProfile } from "../types";
 import { Collapse, Field, Seg } from "./common";
 import { NarrativeSettings } from "./Raven";
 import { EquipmentEditor } from "./EquipmentEditor";
-import { HrPilot } from "./HrPilot";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -114,9 +113,6 @@ export function Setup({ state, update, replace, restartOnboarding }: { state: Ap
       <SwapList state={state} update={update} />
       <Collapse title="Equipment-Profile" meta={`${state.equipment.length}`}>
         <EquipmentEditor list={state.equipment} onChange={(equipment) => update((st) => ({ ...st, equipment }))} />
-      </Collapse>
-      <Collapse title="Herzrate (Pilot)" meta="Web Bluetooth">
-        <HrPilot />
       </Collapse>
       <Collapse title="Sichern und Wiederherstellen">
         <p className="muted small">Alle Daten liegen nur auf diesem Gerät, im Browser. Sichere regelmäßig, vor allem vor einem Gerätewechsel.</p>

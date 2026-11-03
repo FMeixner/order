@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.88.0] – 2026-11-03
+
+### Entfernt
+- Der Herzrate-Pilot (Web Bluetooth) ist wieder draußen. Der Test hat sein Ergebnis geliefert: Die Gear Sport bewirbt den Standard-Heart-Rate-Service nicht, Chrome zeigt sie im Auswahldialog gar nicht erst — der Pilot ist damit gegen eine Samsung-Uhr blind, und eine Erweiterung hätte nur bestätigt, was das proprietarye Ökosystem ohnehin verschließt. Die Satz-Zeitstempel (doneAt) bleiben: Sie machen das Log exakter und sind die Grundlage, falls die Herzrate später über eine Quelle mit offenem Standard (etwa eine Brustgurt) an Bord kommt.
+
 ## [0.87.0] – 2026-11-03
 
 ### Neu
