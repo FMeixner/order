@@ -108,7 +108,8 @@ export function collectItems(ctx: SessionCtx): Item[] {
       const full = moduleDrills(b.fallbackFlow, ctx.state.user, ctx.week, "flow");
       return { block: flow, resolved: [], drills: b.short ? shortDrills(full) : full, sword: b };
     }
-    return { block: b, resolved: slotsOf(b, ctx), ...(b.type === "module" && isWeaponModule(b.module) ? { sword: b } : {}) };
+    if (b.type === "module" && isWeaponModule(b.module)) return { block: b, resolved: slotsOf(b, ctx), sword: b };
+    return { block: b, resolved: slotsOf(b, ctx) };
   };
   const all: Item[] = role.blocks
     .filter((b) => !b.rotation || b.rotation === ab)

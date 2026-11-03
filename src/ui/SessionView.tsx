@@ -257,7 +257,8 @@ export function SessionPreview(ctx: SessionCtx) {
                 {it.drills.map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.value}×` : fmt(d.value)}{d.sides ? " je Seite" : ""}</span></div>)}
               </div>
             );
-            const w = it.block.type === "module" && isWeaponModule(it.block.module) ? it.block : null;
+            let w: (Extract<Block, { type: "module" }> & { module: WeaponModule }) | null = null;
+            if (it.block.type === "module" && isWeaponModule(it.block.module)) w = it.block;
             const lv = w && PATHS[w.module].leveled.includes(w.variant) ? PATHS[w.module].levels[pathLevel(w.module, ctx.state.user.skills)].name : null;
             return (
               <div key={i} className="preview-group">
