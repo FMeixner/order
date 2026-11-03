@@ -4,6 +4,8 @@ import exercisesJson from "../data/exercises.json";
 import beastsJson from "../data/beasts.json";
 import correctivesJson from "../data/modules/correctives.json";
 import swordJson from "../data/modules/sword.json";
+import longswordJson from "../data/modules/longsword.json";
+import staffJson from "../data/modules/staff.json";
 import testweekJson from "../data/modules/testweek.json";
 import guidedJson from "../data/modules/guided.json";
 import swapsJson from "../data/modules/swaps.json";
@@ -30,6 +32,12 @@ export const DRILL_LISTS = (correctivesJson as unknown as { lists: Record<string
 export const DM_VARIANTS = (swordJson as unknown as { variants: Record<string, Drill[]> }).variants;
 /** Schwert-Lernweg: Stufen (je mit dem Skill der Stufe davor und optionaler verdichteter Fassung „echo“ für spätere Stufen) und Varianten, die den Inhalt der Stufe zeigen */
 export const SWORD = swordJson as unknown as { levels: { name: string; variant: string; skill?: string; echo?: Drill[] }[]; leveled: string[] };
+/** Langschwert-Lernweg: derselbe Aufbau wie das Schwert-Modul, eigener Weg ab null (Liechtenauer-Kanon) */
+export const LONGSWORD = longswordJson as unknown as { levels: { name: string; variant: string; skill?: string; echo?: Drill[] }[]; leveled: string[] };
+export const LS_VARIANTS = (longswordJson as unknown as { variants: Record<string, Drill[]> }).variants;
+/** Stab-Lernweg: derselbe Aufbau, atemgetaktet (Haltung & Atem → Hiebe in Zeitlupe → Zeptertanz) */
+export const STAB = staffJson as unknown as { levels: { name: string; variant: string; skill?: string; echo?: Drill[] }[]; leveled: string[] };
+export const SB_VARIANTS = (staffJson as unknown as { variants: Record<string, Drill[]> }).variants;
 /** Freie Übung → geführte Variante (Maschine/Kabel) für Phasen mit hoher Last */
 export const GUIDED = (guidedJson as unknown as { map: Record<string, string> }).map;
 export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; who5: string[]; who5_intro: string; who5_scale: string[] };

@@ -1,0 +1,36 @@
+{
+  "_info": "Stab-Modul (Modulkennung stab): langsames, atemgetaktetes Führen des Stabs — Besenstiel, Stock, Wanderstab oder Zepter. Die Hiebe sind an den Langschwertformen orientiert, in Zeitlupe und mit dem Atem getaktet: Tai-Chi-artig fließend, Feldenkrais-genau. Läuft mit demselben Equipment-Profil wie das Schwert (Stock reicht). Lernweg wie beim Messer und Langschwert: levels sind die Stufen, jede braucht den Skill der Stufe davor aus skills.json (Gruppe stab); die erste ist offen. echo gibt jeder Stufe eine verdichtete Fassung für das Einnorden der späteren Stufen. Varianten in leveled zeigen den Inhalt deiner Stufe; ist die Variante selbst keine Stufe (z. B. lernweg), kommt ihr eigener Inhalt danach.",
+  "levels": [
+    {"name": "Haltung & Atem", "variant": "haltung", "echo": [
+      {"id": "sb-b-kreise", "name": "Basics: Stabkreise vor dem Körper", "mode": "reps", "value": 6, "sides": true, "note": "ruhig · einnorden", "desc": "Kurz und sauber: Der Stab zeichnet langsame Kreise vor dem Körper, das Gewicht wandert mit, die Knie bleiben weich."}
+    ]},
+    {"name": "Hiebe in Zeitlupe", "variant": "zeitlupe", "skill": "stab_haltung", "echo": [
+      {"id": "sb-b-zorn", "name": "Basics: Zornhau in Zeitlupe", "mode": "reps", "value": 4, "sides": true, "note": "ruhig · einnorden", "desc": "Kurz und sauber: Diagonale von der Schulter zur gegenüberliegenden Hüfte, so langsam, dass die Bahn gleichmäßig bleibt."}
+    ]},
+    {"name": "Zeptertanz", "variant": "zeptertanz", "skill": "stab_zeitlupe", "echo": [
+      {"id": "sb-b-acht", "name": "Basics: Acht am Stab", "mode": "reps", "value": 6, "sides": true, "note": "ruhig · einnorden", "desc": "Kurz und sauber: Der Stab zeichnet die liegende Acht vor dem Körper, eine Hand führt, die andere folgt."}
+    ]}
+  ],
+  "leveled": ["lernweg"],
+  "variants": {
+    "haltung": [
+      {"id": "sb-langort", "name": "Zepterhaltung: Langort", "mode": "hold", "value": 30, "sets": 3, "note": "Atem zählt den Takt · Spitze still", "desc": "Die Königshaltung: Stab senkrecht, eine Hand an der Mitte, die andere am oberen Drittel — oder beide Hände am unteren Ende, der Stab steht frei vor dem Herzen. Die Spitze bewegt sich nicht; der Atem geht durch den ganzen Körper bis in die Fingerspitzen. Wer zittert: Griff lockerer, Ellbogen tiefer."},
+      {"id": "sb-führen", "name": "Stabkreise vor dem Körper", "mode": "reps", "value": 8, "sets": 2, "sides": true, "note": "langsam · das Gewicht wandert mit", "desc": "Der Stab zeichnet langsame, große Kreise vor dem Körper, wie im Tai Chi das Halten der Kugel: Der Kreis führt die Hände, nicht umgekehrt. Das Gewicht wandert von einem Bein ins andere, die Knie bleiben weich, die Schultern unten. Der Atem gibt das Tempo — kein Ruck, kein Reißen."},
+      {"id": "sb-schwingen", "name": "Stab heben und senken mit dem Atem", "mode": "reps", "value": 6, "sets": 2, "note": "Einatmen hebt · Ausatmen senkt", "desc": "Der Stab liegt waagerecht in beiden Händen vor der Hüfte. Mit dem Einatmen steigt er langsam über den Kopf, mit dem Ausatmen sinkt er. Der Atem führt vollständig — die Bewegung endet mit dem Atem, nie davor. Rücken lang, Kinn leicht eingezogen."}
+    ],
+    "zeitlupe": [
+      {"id": "sb-zorn", "name": "Zornhau in Zeitlupe", "mode": "reps", "value": 6, "sets": 2, "sides": true, "note": "Atem gibt das Tempo · kein Ruck im Bahnende", "desc": "Die Diagonale des Zornhau am Stab: von der Schulter zur gegenüberliegenden Hüfte — aber so langsam, dass die ganze Bahn gleichmäßig bleibt. Der Atem taktet: ein Hieb pro zwei Atemzüge. Am Ende der Bahn kein Abbremsen-Ruck, sondern ein sanftes Auslaufen. Feldenkrais-Genauigkeit: spüre, welcher Körperteil die Bewegung anführt."},
+      {"id": "sb-zwerch", "name": "Zwerchhau in Zeitlupe", "mode": "reps", "value": 6, "sets": 2, "sides": true, "note": "waagerecht auf Kopfhöhe · Atem taktet", "desc": "Die waagerechte Bahn auf Kopfhöhe: Der Stab wandert mit beiden Händen von einer Seite zur anderen, Ellbogen locker auf Schulterhöhe. Langsam genug, dass der Stab nicht zu pendeln beginnt — die Bahn bleibt eine Linie, keine Welle."},
+      {"id": "sb-scheitel", "name": "Scheitelhau in Zeitlupe", "mode": "reps", "value": 6, "sets": 2, "sides": true, "note": "senkrecht · weiches Bahnende", "desc": "Die senkrechte Bahn: Der Stab steigt über die Schulter und sinkt senkrecht vor dem Körper nach unten. Mit dem Ausatmen fallen, mit dem Einatmen heben. Das Bahnende ist weich — der Stab versinkt, er schlägt nicht auf."},
+      {"id": "sb-wechsel", "name": "Steigender Wechselhau", "mode": "reps", "value": 5, "sets": 2, "sides": true, "note": "Handfläche oben · Stab steigt am Körper entlang", "desc": "Der Wechselhau aus der freien Form, am Stab: Aus der tiefen Haltung die Handfläche nach oben drehen, der Stab steigt dicht am Körper diagonal nach oben — so langsam, dass du jede Faser der Bewegung spürst. Oben sanft auslaufen, zurück sinken. Atem und Stab steigen zusammen."}
+    ],
+    "zeptertanz": [
+      {"id": "sb-acht", "name": "Acht am Stab, beidhändig", "mode": "reps", "value": 10, "sides": true, "note": "eine Hand führt · die andere folgt", "desc": "Der Stab zeichnet die liegende Acht vor dem Körper: Eine Hand führt die Bahn, die andere folgt nach — beide Hände arbeiten, aber nie gleichzeitig hart. Wie beim Kali mit dem Stock, nur in halbem Tempo. Der Blick bleibt nach vorn, die Bahn bleibt gleichmäßig."},
+      {"id": "sb-form", "name": "Zeptertanz: Form am Stück", "mode": "activity", "value": 60, "sets": 2, "weekly_step": 20, "max": 180, "note": "am Stück · +20 s pro Woche bis 3 Min", "desc": "Die Form des Moduls: Zepterhaltung, Stabkreise, Zornhau in Zeitlupe, steigender Wechselhau, Scheitelhau, zurück in die Langort-Wache — eine Kette ohne Pause, mit dem Atem getaktet. Fließend wie eine Tai-Chi-Form. Wird die Bahn unsauber, nicht abbrechen: Tempo halbieren und weiterfließen."},
+      {"id": "sb-meditation", "name": "Stabmeditation: freies Fließen", "mode": "activity", "value": 300, "note": "5 Min · mit dem Atem", "desc": "Fünf Minuten freies Fließen mit dem Stab: alles aus deiner Stufe, ohne Plan, ohne Zählen — der Atem führt, der Stab folgt. Das ist die Zeptermeditation in Bewegung: Wer den Takt verliert, steht still und atmet, bis der Stab von selbst weitergeht."}
+    ],
+    "lernweg": [
+      {"id": "sb-frei", "name": "Freies Üben auf deiner Stufe", "mode": "activity", "value": 600, "note": "10 Minuten · mit dem Atem", "desc": "Alles aus deiner Stufe frei verbinden, beide Seiten, mit dem Atem getaktet. Ruhiges Tempo; wird die Bahn unsauber, kurz stehen, atmen, neu ansetzen."}
+    ]
+  }
+}

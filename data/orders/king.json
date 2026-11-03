@@ -35,7 +35,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "ki-r-1", "name": "Lockere Grundlage", "kind": "timer", "minutes": 15, "max": 30, "step": 5, "prog": "minutes", "note": "Sprechtempo: ganze Sätze gehen noch."}},
         {"type": "single", "slot": {"id": "ki-r-2", "name": "Resonanzatmung (6 pro Minute)", "kind": "timer", "minutes": 6, "max": 12, "step": 1, "prog": "minutes"}},
-        {"type": "single", "slot": {"id": "ki-e-1", "name": "Meditation, offenes Gewahrsein", "kind": "timer", "minutes": 8, "max": 15, "step": 1, "prog": "minutes"}},
+        {"type": "module", "module": "stab", "variant": "lernweg", "fallback": {"id": "ki-e-1", "name": "Meditation, offenes Gewahrsein", "kind": "timer", "minutes": 8, "max": 15, "step": 1, "prog": "minutes", "note": "ohne Stab und Zepter"}},
         {"type": "single", "slot": {"id": "ki-r-0", "name": "Rückwärtsgehen", "kind": "timer", "minutes": 5, "max": 10, "step": 1, "prog": "minutes", "note": "am Ende der Grundlage; wer sicher ist, läuft locker rückwärts"}}
       ]
     },

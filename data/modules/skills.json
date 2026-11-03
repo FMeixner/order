@@ -4,7 +4,9 @@
     { "id": "basis", "name": "Grundlagen" },
     { "id": "fortgeschritten", "name": "Fortgeschritten" },
     { "id": "meister", "name": "Meisterstücke" },
-    { "id": "schwert", "name": "Schwert" }
+    { "id": "schwert", "name": "Schwert" },
+    { "id": "langschwert", "name": "Langschwert" },
+    { "id": "stab", "name": "Stab" }
   ],
   "skills": [
     { "id": "pullup", "group": "basis", "name": "Klimmzug", "test": "5 saubere Klimmzüge aus dem gestreckten Hang",
@@ -92,15 +94,31 @@
       "beast": "planche" },
     { "id": "schwert_hiebe", "group": "schwert", "name": "Hiebe", "test": "Zornhau, Zwerchhau und Scheitelhau je 15 pro Seite langsam: stabile Bahn, Rumpf dreht mit, sauber abgebremst",
       "exercises": [], "regress": {}, "beast": "" },
-    { "id": "schwert_stiche", "group": "schwert", "name": "Stiche", "test": "Ober-, Mittel- und Unterstich je 12 pro Seite mit Ausfallschritt: gerade Linie, stabile Spitze, jeder Stich betont zurückgezogen",
+    { "id": "schwert_stiche", "group": "schwert", "name": "Stiche", "test": "Ringstich-Serie: 15 gültige Stiche am Stück durch die Ringöffnung, Ring unberührt und still — der erste ungültige Stich (Ring berührt oder Ring pendelt beim Einstechen) beendet den Versuch. Zwei Versuche, der bessere zählt",
       "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_kombi", "group": "schwert", "name": "Kombiformen", "test": "5 Kombiformen pro Seite (beide Reihenfolgen) ohne Stocken, Klinge eng am Körper",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "schwert_faust", "group": "schwert", "name": "Klinge & Faust", "test": "Wechselhau-Kombination (Steigen → Kopfwechsel → Zornhau) 5-mal je Seite am Stück ohne Stocken; Doppelstoß und Hieb mit Fauststoß je 8-mal je Seite sauber im Takt",
       "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_wechsel", "group": "schwert", "name": "Drehhau", "test": "10 Drehhau pro Seite in normalem Tempo, saubere Unterarmdrehung, Handgelenk gerade",
       "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_tanz", "group": "schwert", "name": "Klingentanz", "test": "Wendehieb in beide Richtungen 5-mal stabil gelandet und 1 Minute Form am Stück ohne Stocken",
       "exercises": [], "regress": {}, "beast": "" },
     { "id": "schwert_flechte", "group": "schwert", "name": "Grundflechte", "test": "1 Minute Grundflechte mit zwei Klingen ohne Taktfehler",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "langschwert_hiebe", "group": "langschwert", "name": "Grundhiebe", "test": "Zornhau, Zwerchhau und Scheitelhau beidhändig je 12 pro Führungsseite langsam: stabile Bahn, beide Hände arbeiten, sauber abgebremst",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "langschwert_meister", "group": "langschwert", "name": "Meisterhiebe", "test": "Krumphau und Schielhau je 12 pro Führungsseite langsam: gebogene Handgelenklinie im Krumphau, im Schielhau die Spitze auf die Mitte gerichtet",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "langschwert_ort", "group": "langschwert", "name": "Zorn-Ort", "test": "10-mal Zorn-Ort je Führungsseite: der Hieb geht in den Langort-Stich über, Spitze still und gerade, Abzug betont",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "langschwert_tanz", "group": "langschwert", "name": "Langer Tanz", "test": "1 Minute Form am Stück ohne Stocken: Schritte, Wende und Hiebe im Fluss, jeder Hieb abgebremst",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "stab_haltung", "group": "stab", "name": "Haltung & Atem", "test": "Zepterhaltung 2 × 45 Sekunden still, Atem ruhig; Stabkreise je 8 pro Seite langsam, das Gewicht wandert mit",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "stab_zeitlupe", "group": "stab", "name": "Hiebe in Zeitlupe", "test": "Zornhau, Zwerchhau und Scheitelhau am Stab je 6 pro Seite im Atemtakt, ohne Ruck, die Bahn bleibt gleichmäßig",
+      "exercises": [], "regress": {}, "beast": "" },
+    { "id": "stab_form", "group": "stab", "name": "Zeptertanz", "test": "1 Minute Form am Stück fließend, Stab und Atem bleiben im Takt",
       "exercises": [], "regress": {}, "beast": "" }
   ]
 }

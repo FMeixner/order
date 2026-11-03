@@ -1,0 +1,52 @@
+{
+  "_info": "Langschwert-Modul: eigener Lernweg ab null, nach dem Liechtenauer-Kanon der fünf Meisterhiebe. Beidhändig geführt; jede Übung läuft je Führungsseite (welcher Fuß vorne steht — rechts vor oder links vor). Läuft mit demselben Equipment-Profil wie das Schwert: Übungsschwert, Holzschwert oder ein langer Stock reicht. Lernweg wie beim Messer: levels sind die Stufen, jede braucht den Skill der Stufe davor aus skills.json (Gruppe langschwert); die erste ist offen. echo gibt jeder Stufe eine verdichtete Fassung für das Einnorden der späteren Stufen. Varianten in leveled zeigen den Inhalt deiner Stufe; ist die Variante selbst keine Stufe (z. B. lernweg), kommt ihr eigener Inhalt danach.",
+  "levels": [
+    {"name": "Grundhiebe", "variant": "grundhiebe", "echo": [
+      {"id": "ls-b-zorn", "name": "Basics: Zornhau", "mode": "reps", "value": 8, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Vom Tag ausholen, diagonaler Hieb von der Schulter zur gegenüberliegenden Hüfte, abbremsen. Beide Hände bleiben am Griff."},
+      {"id": "ls-b-zwerch", "name": "Basics: Zwerchhau", "mode": "reps", "value": 8, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Aus dem Ochs, Klinge waagerecht auf Kopfhöhe zur anderen Seite, abbremsen."},
+      {"id": "ls-b-scheitel", "name": "Basics: Scheitelhau", "mode": "reps", "value": 8, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Klinge über der Schulter, senkrecht nach unten vor dem Körper, am unteren Punkt abbremsen."}
+    ]},
+    {"name": "Meisterhiebe", "variant": "meisterhiebe", "skill": "langschwert_hiebe", "echo": [
+      {"id": "ls-b-krumphau", "name": "Basics: Krumphau", "mode": "reps", "value": 8, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Hieb mit gebogenem Handgelenk übers Kreuz, die Klinge schneidet schräg über die eigene Mitte."},
+      {"id": "ls-b-schielhau", "name": "Basics: Schielhau", "mode": "reps", "value": 8, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Kurzer Schnitt aus der Pflug-Wache über den eigenen Vorderarm, die Spitze bleibt auf die Mitte gerichtet."}
+    ]},
+    {"name": "Zorn-Ort", "variant": "zornort", "skill": "langschwert_meister", "echo": [
+      {"id": "ls-b-zorn-ort", "name": "Basics: Zorn-Ort", "mode": "reps", "value": 6, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Zornhau, der oben in den Langort-Stich übergeht — Hieb und Stich eine Bewegung."}
+    ]},
+    {"name": "Langer Tanz", "variant": "langertanz", "skill": "langschwert_ort", "echo": [
+      {"id": "ls-b-wechsel", "name": "Basics: Wechselhau, beidhändig", "mode": "reps", "value": 5, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Die Klinge steigt von unten am Körper entlang auf, oben kurz halten. Beide Hände führen."}
+    ]}
+  ],
+  "leveled": ["grundhiebe", "lernweg"],
+  "variants": {
+    "grundhiebe": [
+      {"id": "ls-zornhau", "name": "Zornhau, beidhändig", "mode": "reps", "value": 12, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "aus der Auslage · bewusst langsam", "desc": "Der stärkste Hieb des Kanons: Aus dem Vom Tag ausholen, diagonal von der Schulter zur gegenüberliegenden Hüfte schneiden. Die Kraft kommt aus der Hüftdrehung, die hintere Hand zieht, die vordere führt. Kontrolliert abbremsen, zurück in die Auslage."},
+      {"id": "ls-zwerchhau", "name": "Zwerchhau, beidhändig", "mode": "reps", "value": 12, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "aus dem Ochs · bewusst langsam", "desc": "Aus dem Ochs (Klinge an der Schläfe, Spitze auf die hohe Linie): Ellbogen heben, Klinge waagerecht auf Kopfhöhe zur anderen Seite schneiden, abbremsen. Der klassische Gegenhieb gegen Oberhiebe."},
+      {"id": "ls-scheitelhau", "name": "Scheitelhau, beidhändig", "mode": "reps", "value": 12, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "senkrecht · bewusst langsam", "desc": "Klinge über die Schulter, senkrecht von oben nach unten vor dem Körper führen, am unteren Punkt abbremsen, nicht durchschlagen. Der direkte Weg nach unten — kurz und gefährlich, wenn die Hände hoch bleiben."},
+      {"id": "ls-schritt", "name": "Zornhau mit Gleitschritt", "mode": "reps", "value": 10, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "Zufechten · Schritt und Hieb zusammen", "desc": "Der Zornhau mit dem Schritt: Ein Gleitschritt vor (Zufechten), der Hieb beginnt mit dem Abdruck und endet mit dem Fuß. Schritt und Klinge treffen zusammen — erst langsam, bis Schritt und Hieb ein Ereignis sind."}
+    ],
+    "meisterhiebe": [
+      {"id": "ls-krumphau", "name": "Krumphau", "mode": "reps", "value": 12, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "gekrümmt · übers Kreuz", "desc": "Der versetzende Hieb: Aus dem Vom Tag das vordere Handgelenk zur anderen Seite beugen, die Klinge schneidet schräg übers Kreuz von oben auf die andere Seite. Kurz und knapp, die Spitze zeigt während der ganzen Bahn auf die Mitte des Gegners."},
+      {"id": "ls-schielhau", "name": "Schielhau", "mode": "reps", "value": 12, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "geschaut · aus dem Pflug", "desc": "Der schneidende Stich: Aus der Pflug-Wache die Klinge über den eigenen Vorderarm schieben, Handrücken zeigt nach oben, die lange Schneide schneidet schräg abwärts, während die Spitze auf die Mitte gerichtet bleibt. Ruckfrei — der Schnitt schneidet, er hackt nicht."},
+      {"id": "ls-kombi-meister", "name": "Kombiform: Zorn → Krumphau → Schielhau", "mode": "reps", "value": 5, "sets": 3, "sides": ["rechts vor", "links vor"], "note": "fließende Übergänge", "desc": "Die drei Bahnen ohne Rückkehr in die Auslage verbinden: Zornhau endet unten-innen, die Klinge steigt übers Kreuz direkt in die Krumphau-Ausholung, Krumphau endet in der Pflug-Wache, daraus der Schielhau. Erst jetzt zurück in die Auslage."},
+      {"id": "ls-bahn", "name": "Meisterhieb-Bahn", "mode": "activity", "value": 240, "note": "4 Min · ruhig wechseln", "desc": "Vier Minuten alle Meisterhiebe in deinem Tempo: Zorn, Zwerch, Scheitel frei wechseln, Krumphau und Schielhau dazwischen. Nicht zählen — jeder Hieb sauber abgebremst, jeder Übergang über die klare Wache. Wird die Bahn unsauber, Tempo runter."}
+    ],
+    "zornort": [
+      {"id": "ls-zorn-ort", "name": "Zorn-Ort: Hieb in den Stich", "mode": "reps", "value": 10, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "Hieb und Stich eine Bewegung", "desc": "Das Herz des Zornhau: Der Hieb versetzt, der Ort bleibt dran. Zornhau — und statt abzubremsen schiebt sich die Klinge in der gleichen Bewegung in den Langort-Stich nach vorne, Spitze auf die Mitte. Wer das Zornhau versetzt, der bleibt mit dem Ort daran. Zurück in die Auslage, Schritt zurück."},
+      {"id": "ls-langort", "name": "Langort: spitze Wache halten", "mode": "hold", "value": 30, "sets": 3, "note": "still stehen · Spitze ruhig", "desc": "Die Wache, in die jeder Hieb mündet: Beide Hände am Griff, die Spitze auf Augenhöhe des Gegners, Ellbogen tief, Schultern locker. 30 Sekunden ohne Zucken — die Spitze darf nicht pendeln. Das ist Kraftausdauer und Genauigkeit zugleich."},
+      {"id": "ls-abzug", "name": "Zorn-Ort mit Abzug", "mode": "reps", "value": 6, "sets": 3, "sides": ["rechts vor", "links vor"], "note": "treffen · ziehen · zurück", "desc": "Die vollständige Figur: Gleitschritt, Zornhau in den Stich, und aus dem Treffer sofort der Abzug — ein bis zwei Schritte zurück, die Spitze bleibt in der Langort-Wache auf die Mitte. Ansetzen, treffen, verschwinden. Der Abzug ist Teil der Übung, nicht das Ende."},
+      {"id": "ls-stichbahn", "name": "Hieb-Stich-Bahn", "mode": "activity", "value": 240, "note": "4 Min · Hiebe und Stiche im Wechsel", "desc": "Vier Minuten Zornhau und Zorn-Ort im Wechsel am Stück: ein Hieb frei, ein Hieb in den Stich, dazwischen Schritte vor und zurück. Nicht zählen — die Übergänge laufen sauber über die Langort-Wache, die Spitze pendelt nie."}
+    ],
+    "langertanz": [
+      {"id": "ls-wechselhau", "name": "Wechselhau, beidhändig", "mode": "reps", "value": 5, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "steigen → Kopfwechsel → fallen · ohne anzuhalten", "desc": "Der Wechselhau am langen Schwert: Aus der tiefen Wache steigt die Klinge mit beiden Händen diagonal von unten am Körper entlang nach oben, oben schwingt sie über den Kopf und fällt mit einem Schritt auf die andere Seite. Steigen, wechseln, fallen — eine Kette, kein Anhalten."},
+      {"id": "ls-wendehieb", "name": "Wendehieb mit Langschwert", "mode": "reps", "value": 5, "sets": 2, "sides": ["links herum", "rechts herum"], "note": "180° · Blick an einem Punkt", "desc": "Drehschritt um 180° auf dem Fußballen, das lange Schwert eng über den Kopf geführt, Knie über dem Fuß. Der Blick bleibt so lange wie möglich an einem Punkt (Spotting). In der Landung sofort Zornhau, sauber abgebremst, dann Auslage."},
+      {"id": "ls-form", "name": "Form: Schritte, Wende, Hiebe", "mode": "activity", "value": 60, "sets": 2, "weekly_step": 20, "max": 180, "note": "am Stück · +20 s pro Woche bis 3 Min", "desc": "Eine eigene Kette ohne Pause: Zufechten, Zornhau in den Zorn-Ort, Abzug, Wechselhau über den Kopf, Wendehieb, Krumphau, zurück in die Langort-Wache. Fließend wie ein Tanz, jeder Hieb abgebremst. Wird die Technik unsauber, Kette kürzer machen. Braucht etwa 3 m Platz in jede Richtung."}
+    ],
+    "lernweg": [
+      {"id": "ls-frei", "name": "Freies Üben auf deiner Stufe", "mode": "activity", "value": 600, "note": "10 Minuten · ruhig, sauber", "desc": "Alles aus deiner Stufe frei verbinden, beide Führungsseiten, mit Schritten. Ruhiges Tempo; wird die Technik unsauber, kurz Pause und neu ansetzen."}
+    ],
+    "bookend": [
+      {"id": "ls-bookend", "name": "Langschwert: Hiebe fließend", "mode": "activity", "value": 300, "note": "5 Minuten · locker, sauber", "desc": "Zornhau, Zwerchhau und Scheitelhau im Wechsel, beide Führungsseiten, ruhiges Tempo. Als Einstieg und als Ausklang des Tages."}
+    ]
+  }
+}

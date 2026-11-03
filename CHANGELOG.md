@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.89.0] – 2026-11-03
+
+### Neu
+- Drei Waffenstile: Das Schwert-Modul bekommt Gesellschaft. Das Langschwert ist ein eigener Lernweg ab null (nicht abgekürzt aus dem Messer): Grundhiebe je Führungsseite (rechts vor, links vor), dann die Meisterhiebe Krumphau und Schielhau, der Zorn-Ort — der Hieb, der in den Langort-Stich übergeht — und als Formstufe der Lange Tanz. Slayer und Conqueror fechten künftig Langschwert.
+- Stab-Modul: Haltung & Atem, Hiebe in Zeitlupe (an den Langschwertformen orientiert, mit dem Atem getaktet), Zeptertanz. Der Alchemist übt auf dem Stabtanz-Tag den Lernweg — die geführte Stabmeditation bleibt im Atem-Tag —, der King trägt die Zeptermeditation im Redner-Tag als Stab-Lernweg. Ohne Stock greift der Ersatz: beim Alchemist ein Tai-Chi-Flow, beim King das offene Gewahrsein.
+- Klinge & Faust: Neue Messer-Stufe nach den Kombiformen, vor dem Drehhau. Der Block (Oberblock), der steigende Wechselhau (Handfläche oben, Klinge am Körper entlang — der historische Wechselhau, hier früher einsortiert) und seine Kombination (Steigen → Kopfwechsel → Zornhau) kommen aus der freien Form zurück in den Kanon; dazu die Off-Hand: Kreuzblock, Doppelstoß, Hieb mit Fauststoß — nach Lecküchner, wo die linke Hand das Ringen vorbereitet. Der Drehhau liegt jetzt hinter dem Klinge-&-Faust-Gate.
+- Stich-Check objektiviert: Der Stiche-Skill wird über eine zählbare Ringstich-Serie geprüft — 15 gültige am Stück, der erste ungültige beendet den Versuch, zwei Versuche, der bessere zählt — statt über ein Selbst-Rating. Eine Serie ist ein Messinstrument; „fühlt sich sauber an" ist keins.
+
+### Geändert
+- Die Lernweg-Logik (Stufen, Echos, freies Üben, Zeitschätzung, Kurztag) gilt einheitlich für alle drei Waffen; die Ordens-Anzeigen nennen Messer, Langschwert und Stab beim Namen.
+
 ## [0.88.0] – 2026-11-03
 
 ### Entfernt

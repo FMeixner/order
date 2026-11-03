@@ -1,10 +1,10 @@
 /* Eine Einheit: Ansicht der laufenden Woche und Vorschau künftiger Wochen. */
 import { useEffect, useMemo, useState } from "react";
-import { FLOWS, SHARPEN, SWORD } from "../data";
-import type { BeastResult, Block, Session } from "../types";
+import { FLOWS, SHARPEN } from "../data";
+import type { BeastResult, Block, Session, WeaponModule } from "../types";
 import { estimateRole } from "../engine/duration";
 import { swapRunBeast } from "../engine/cardio";
-import { moduleDrills, roleAt, roleDrills, shortSwordDrills, swordLevel, swordNext } from "../engine/plan";
+import { asWeaponBlock, isWeaponModule, MODULE_LABEL, moduleDrills, pathLevel, pathNext, PATHS, roleAt, roleDrills, shortSwordDrills } from "../engine/plan";
 import { advance, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
@@ -111,13 +111,13 @@ export function SessionView(ctx: SessionCtx) {
 }
 
 
-/** Stufe im Schwert-Lernweg; der nächste Test öffnet die nächste Stufe (abhaken unter Setup › Können) */
-function SwordLevel({ skills }: { skills: string[] | null | undefined }) {
-  const i = swordLevel(skills);
-  const next = swordNext(skills);
+/** Stufe im Lernweg eines Waffen-Moduls; der nächste Test öffnet die nächste Stufe (abhaken unter Setup › Können) */
+function PathLevel({ module, skills }: { module: WeaponModule; skills: string[] | null | undefined }) {
+  const i = pathLevel(module, skills);
+  const next = pathNext(module, skills);
   return (
     <div className="muted small">
-      Stufe {i + 1} von {SWORD.levels.length}: {SWORD.levels[i].name}
+      Stufe {i + 1} von {PATHS[module].levels.length}: {PATHS[module].levels[i].name}
       {next && <> · Weiter zu {next.level}, wenn das sitzt: {next.test}. Abhaken unter Setup › Können.</>}
     </div>
   );
@@ -129,8 +129,8 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
   // Aufrufer (ItemCard) stellt module-Block mit drills sicher
   const b = it.block as Extract<Block, { type: "module" }>;
   const drills = it.drills ?? [];
-  const prefix = b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : "dm";
-  const title = b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : "Schwert";
+  const prefix = b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : b.module === "longsword" ? "ls" : b.module === "stab" ? "sb" : "dm";
+  const title = b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : MODULE_LABEL[b.module];
   const allDone = allDrillsDone(drills, session?.drills ?? {}, prefix);
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -140,10 +140,10 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
   }, [allDone]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Collapse title={title} meta={`${drills.length} Übungen`} tone="amber" open={open} onOpenChange={setOpen}>
-      {it.sword && <div className="muted small">Statt Schwert: „{ctx.profile.name}“ hat kein Schwert. Mit Schwert kommt hier dein Schwertblock.</div>}
+      {it.sword && <div className="muted small">Statt {MODULE_LABEL[it.sword.module]}: „{ctx.profile.name}“ hat kein Schwert und keinen Stock. Mit Stock kommt hier dein {MODULE_LABEL[it.sword.module]}-Block.</div>}
       {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
       {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
-      {b.module === "sword" && SWORD.leveled.includes(b.variant) && <SwordLevel skills={ctx.state.user.skills} />}
+      {isWeaponModule(b.module) && PATHS[b.module].leveled.includes(b.variant) && <PathLevel module={b.module} skills={ctx.state.user.skills} />}
       <DrillList drills={drills} done={session?.drills ?? {}} prefix={prefix} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
     </Collapse>
   );
@@ -238,29 +238,31 @@ export function SessionPreview(ctx: SessionCtx) {
             );
           }
           if (it.sword && !ctx.profile.has.sword) {
-            // Sonderrolle Schwert: die Vorschau zeigt den Schwertblock auch für ein Profil ohne Schwert, darunter den Ersatz
+            // Sonderrolle Waffe: die Vorschau zeigt den Waffenblock auch für ein Profil ohne Schwert und Stock, darunter den Ersatz
             const sw = it.sword;
-            const lv = SWORD.leveled.includes(sw.variant) ? SWORD.levels[swordLevel(ctx.state.user.skills)].name : null;
+            const lv = PATHS[sw.module].leveled.includes(sw.variant) ? PATHS[sw.module].levels[pathLevel(sw.module, ctx.state.user.skills)].name : null;
             const alt = it.block.type === "module" && it.block.module === "flow" ? FLOWS[it.block.variant]?.name : it.resolved.map((r) => `${r.name} · ${previewDose(r)}`).join(", ");
             return (
               <div key={i} className="preview-group">
-                <div className="block-label amber">Schwert{lv ? ` · Stufe ${lv}` : ""}</div>
-                {(sw.short ? shortSwordDrills(moduleDrills(sw.variant, ctx.state.user, ctx.week)) : moduleDrills(sw.variant, ctx.state.user, ctx.week)).map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.sets && d.sets > 1 ? `${d.sets} × ` : ""}${d.value}` : fmt(d.value * (d.sets ?? 1))}{d.sides ? " je Seite" : ""}</span></div>)}
-                <div className="preview-row muted"><span>Ohne Schwert („{ctx.profile.name}“): {alt || "entfällt"}</span></div>
+                <div className="block-label amber">{MODULE_LABEL[sw.module]}{lv ? ` · Stufe ${lv}` : ""}</div>
+                {(sw.short ? shortSwordDrills(moduleDrills(sw.variant, ctx.state.user, ctx.week, sw.module)) : moduleDrills(sw.variant, ctx.state.user, ctx.week, sw.module)).map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.sets && d.sets > 1 ? `${d.sets} × ` : ""}${d.value}` : fmt(d.value * (d.sets ?? 1))}{d.sides ? " je Seite" : ""}</span></div>)}
+                <div className="preview-row muted"><span>Ohne Schwert und Stock („{ctx.profile.name}“): {alt || "entfällt"}</span></div>
               </div>
             );
           }
           if (it.drills) {
-            if (it.block.type === "module" && it.block.module !== "sword") return (
+            if (it.block.type === "module" && !isWeaponModule(it.block.module)) return (
               <div key={i} className="preview-group">
                 <div className="block-label amber">{it.block.module === "flow" ? FLOWS[it.block.variant]?.name : `Schwerpunkt: ${SHARPEN[it.block.variant]?.name} · Erhaltung`}</div>
                 {it.drills.map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.value}×` : fmt(d.value)}{d.sides ? " je Seite" : ""}</span></div>)}
               </div>
             );
-            const lv = it.block.type === "module" && SWORD.leveled.includes(it.block.variant) ? SWORD.levels[swordLevel(ctx.state.user.skills)].name : null;
+            let w: (Extract<Block, { type: "module" }> & { module: WeaponModule }) | null = null;
+            if (it.block.type === "module" && isWeaponModule(it.block.module)) w = asWeaponBlock(it.block);
+            const lv = w && PATHS[w.module].leveled.includes(w.variant) ? PATHS[w.module].levels[pathLevel(w.module, ctx.state.user.skills)].name : null;
             return (
               <div key={i} className="preview-group">
-                <div className="block-label amber">Schwert{lv ? ` · Stufe ${lv}` : ""}</div>
+                <div className="block-label amber">{w ? MODULE_LABEL[w.module] : ""}{lv ? ` · Stufe ${lv}` : ""}</div>
                 {it.drills.map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.sets && d.sets > 1 ? `${d.sets} × ` : ""}${d.value}` : fmt(d.value * (d.sets ?? 1))}{d.sides ? " je Seite" : ""}</span></div>)}
               </div>
             );
