@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BEAST_BY_ID, TESTWEEK } from "../data";
 import { expandDrills, fmtDate } from "../engine/plan";
+import { variantHint } from "../engine/norms";
 import { parseClock } from "../engine/clock";
 import type { AppState, Cup, PlanBlock, TestDef } from "../types";
 import { Collapse, Desc } from "./common";
@@ -42,6 +43,7 @@ function TestRow({ t, state, block, onSave }: { t: TestDef; state: AppState; blo
           {t.variants.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
         </select>
       )}
+      {t.variants && <div className="muted small">{variantHint(state, block, t.id)}</div>}
       <div className="row wrap">
         {vals.map((v, i) => (
           <input key={i} type="text" inputMode="decimal" className="test-in" placeholder={t.attempts > 1 ? `Versuch ${i + 1}` : t.unit === "mmss" ? "m.ss.z" : "Wert"}
@@ -115,7 +117,7 @@ export function TestWeek({ state, update, block, today }: { state: AppState; upd
     <div className="stack">
       {ravenOn(state) && <RavenTournament state={state} block={block} today={today} />}
       <div className="card note">
-        <strong>Testwoche.</strong> Vier Cups, je ein Tag: Park, Zuhause, Studio, Park. Jeder frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.
+        <strong>Testwoche.</strong> Fünf Cups an drei Tagen: Studio, Zuhause ×2 im Anschluss, Park ×2 im Anschluss. Jeder Tag frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.
       </div>
       {TESTWEEK.cups.map((cup) => (
         <Collapse key={cup.id} title={cup.name} meta={`${cup.place} · ${cup.focus}`} tone="teal">

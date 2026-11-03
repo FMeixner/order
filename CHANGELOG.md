@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.84.0] – 2026-11-03
+
+### Geändert
+- Die Testwoche läuft an drei Tagen statt fünf: Studio, Zuhause, Park. Der Parktag vereint Excalibur und Joyeuse (der Cooper-Lauf läuft direkt hinterher), der Zuhausetag Durendal und Arondight, der Studiotag bleibt Balmung. Fünf Cups, drei Tage — die Cups bleiben domänengebunden, zwei am selben Tag laufen einfach im Anschluss.
+- Sprint 10 m ist gestrichen: Der 5-10-5 streift die Beschleunigungsqualität bereits, der 30-m-Sprint bleibt als einziger Zeuge der Maximalgeschwindigkeit. Neu im Park: Hochsprung (beste übersprungene Lattenhöhe, 5-cm-Schritte, drei Fehlversuche beenden) — zählt über den Verlauf, Normen gibt es dafür keine.
+- Der Skill-Test misst jetzt Präzision statt Dauerleistung: „Stichtest: 20 gültige Treffer" — die Zeit für 20 Stiche durch die Ringöffnung, Ring unberührt, ungültige zählen nicht, zwei Versuche, der bessere zählt. Neue Kennung (t-skill20, Zeitmessung); die alten Skill-Wiederholungen bleiben unangetastet in den Altdaten.
+- Eine Bestie statt zwei: „Kraftausdauer" und „Belastbarkeit" waren dieselbe Messung — Zeit auf einem Bodyweight-Metcon. Das Arondight-Finale wählt jetzt aus allen sechs Zeit-Bestien die mit Bestzeiten-Historie (eine, die man kennt, damit Verbesserung erfassbar ist); der Joyeuse-Benchmark entfällt.
+- Crunches ohne 40-BPM-Takt: so viele saubere Wiederholungen wie möglich, das Tempo ergibt sich. Die DOSB-Normbänder gelten für das Takt-Protokoll und sind deshalb raus — Crunches zählen jetzt nur noch über den Verlauf.
+- Rudern und Burpees im Balmung-Cup getauscht: Die 500 m folgen direkt auf die 5RM-Reihe, die Burpees stehen ganz am Ende, wenn alles andere im Kasten ist.
+
+### Neu
+- Empfehlung der 5RM-Variante aus dem letzten Orden: Die App sagt je Test, welche Variante im vorangegangenen Orden trainiert wurde — dieselbe Variante testen, sonst ist der Wert nicht vergleichbar. Wurde keine der Übungen trainiert, empfiehlt sie die geführte Variante mit Sicherheitshinweis: Nach Wochen ohne die Übung ist ein 5RM an der freien Variante riskant. Den Klimmzug mit Gewicht zählt sie nur, wenn Zusatzgewicht eingetragen war. Eine Empfehlung, keine Sperre.
+
 ## [0.83.0] – 2026-11-03
 
 ### Geändert
