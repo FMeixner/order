@@ -2,7 +2,6 @@
   "_info": "Normen für die Testwoche. Jede Norm gilt für ein Geschlecht (m/w) und eine Altersspanne. Fehlt für jemanden eine passende Norm, zeigt die App nur den Verlauf. tier A: Bevölkerungs- oder Altersnorm. tier B: Orientierung an einer ausgewählten Stichprobe. type pct: Perzentil-Stützstellen [Perzentil, Wert]. bands: Sportabzeichen Bronze, Silber, Gold. cat: Kategorien [Obergrenze oder null, Name, Punkte]. ms: Mittelwert und Standardabweichung. conv: cm2m (cm in m), sr26 (Sit and Reach, Nullpunkt an den Sohlen, Norm mit 26 cm Versatz), rel1rm (5RM in geschätztes 1RM ÷ Körpergewicht). Neue Normen, etwa für Frauen oder andere Altersgruppen, einfach als weitere Einträge ergänzen.",
   "norms": [
     {"test": "t-cooper", "sex": "m", "age": [30, 39], "tier": "A", "type": "cat", "src": "Cooper (1968), Männer 30–39", "cats": [[1500, "schwach", 10], [1900, "unterdurchschnittlich", 30], [2300, "durchschnittlich", 50], [2700, "überdurchschnittlich", 70], [null, "exzellent", 90]]},
-    {"test": "t-vo2", "sex": "m", "age": [30, 39], "tier": "A", "type": "pct", "src": "FRIEND-Register (Kaminsky et al., 2022), Männer 30–39 (Uhrwert ist eine Schätzung)", "anchors": [[40, 37.0], [50, 39.7], [60, 43.4], [70, 46.4], [80, 50.0], [90, 55.5]]},
     {"test": "t-broad", "sex": "m", "age": [35, 39], "tier": "A", "type": "bands", "conv": "cm2m", "src": "DOSB Sportabzeichen, Leistungskatalog 2024, Männer 35–39", "bands": [1.65, 1.95, 2.25]},
     {"test": "t-medball", "sex": "m", "age": [35, 39], "tier": "A", "type": "bands", "src": "DOSB Sportabzeichen, Leistungskatalog 2024, Männer 35–39", "bands": [9.5, 12.5, 14.0]},
     {"test": "t-pushups", "sex": "m", "age": [35, 39], "tier": "A", "type": "bands", "src": "DOSB Sportabzeichen, Erweiterter Leistungskatalog Kraft (TU München, 2022), Männer 35–39", "bands": [19, 29, 42]},
@@ -17,8 +16,6 @@
     {"test": "t-cooper", "sex": "w", "age": [20, 29], "tier": "B", "type": "cat", "src": "Cooper-Tabelle nach Mackenzie (Sekundärquelle), Frauen 20–29", "cats": [[1500, "schwach", 10], [1800, "unterdurchschnittlich", 30], [2200, "durchschnittlich", 50], [2700, "überdurchschnittlich", 70], [null, "exzellent", 90]]},
     {"test": "t-cooper", "sex": "w", "age": [30, 39], "tier": "B", "type": "cat", "src": "Cooper-Tabelle nach Mackenzie (Sekundärquelle), Frauen 30–39", "cats": [[1400, "schwach", 10], [1700, "unterdurchschnittlich", 30], [2000, "durchschnittlich", 50], [2500, "überdurchschnittlich", 70], [null, "exzellent", 90]]},
     {"test": "t-cooper", "sex": "w", "age": [40, 49], "tier": "B", "type": "cat", "src": "Cooper-Tabelle nach Mackenzie (Sekundärquelle), Frauen 40–49", "cats": [[1200, "schwach", 10], [1500, "unterdurchschnittlich", 30], [1900, "durchschnittlich", 50], [2300, "überdurchschnittlich", 70], [null, "exzellent", 90]]},
-    {"test": "t-vo2", "sex": "w", "age": [30, 39], "tier": "A", "type": "pct", "src": "FRIEND-Register (Kaminsky et al., 2022), Frauen 30–39 (Uhrwert ist eine Schätzung)", "anchors": [[40, 26.4], [50, 28.3], [60, 31.0], [70, 33.6], [80, 37.0], [90, 42.1]]},
-    {"test": "t-vo2", "sex": "w", "age": [40, 49], "tier": "A", "type": "pct", "src": "FRIEND-Register (Kaminsky et al., 2022), Frauen 40–49 (Uhrwert ist eine Schätzung)", "anchors": [[40, 23.9], [50, 25.7], [60, 27.7], [70, 30.0], [80, 33.0], [90, 37.8]]},
     {"test": "t-broad", "sex": "w", "age": [35, 39], "tier": "A", "type": "bands", "conv": "cm2m", "src": "DOSB Sportabzeichen, Leistungskatalog 2024, Frauen 35–39", "bands": [1.25, 1.5, 1.8]},
     {"test": "t-medball", "sex": "w", "age": [35, 39], "tier": "A", "type": "bands", "src": "DOSB Sportabzeichen, Leistungskatalog 2024, Frauen 35–39 (2 kg)", "bands": [7.0, 8.5, 9.5]},
     {"test": "t-pushups", "sex": "w", "age": [35, 39], "tier": "A", "type": "bands", "src": "DOSB Sportabzeichen, Erweiterter Leistungskatalog Kraft (TU München, 2022), Frauen 35–39", "bands": [7, 10, 15]},
@@ -40,7 +37,7 @@
     {"id": "strength", "name": "Maximalkraft", "goal": "strength", "tests": ["t-5rm-squat", "t-5rm-push", "t-5rm-pull"]},
     {"id": "ke", "name": "Kraftausdauer", "goal": "conditioning", "tests": ["t-pushups", "t-pullups", "t-crunches"]},
     {"id": "anaerob", "name": "Anaerob", "goal": "conditioning", "tests": ["t-row500", "t-burpees"]},
-    {"id": "aerob", "name": "Ausdauer", "goal": "endurance", "tests": ["t-cooper", "t-vo2", "t-rhr"]},
+    {"id": "aerob", "name": "Ausdauer", "goal": "endurance", "tests": ["t-cooper", "t-rhr"]},
     {"id": "skill", "name": "Skill", "goal": "skill", "tests": ["t-skill"]},
     {"id": "mobility", "name": "Beweglichkeit", "goal": "mobility", "tests": ["t-sitreach", "t-dislocate"]}
   ]

@@ -125,7 +125,7 @@ export function evaluateBlock(state: AppState, blockId: string): Evaluation {
       let why: string | undefined;
       if (n) {
         norm = normScore(n, result.value, bodyweight);
-        if (!norm && n.conv === "rel1rm") why = "Körpergewicht fehlt (Excalibur-Cup)";
+        if (!norm && n.conv === "rel1rm") why = "Körpergewicht fehlt (Balmung-Cup)";
       } else if (beginner) why = undefined;
       else if (missingProfile) why = "Geburtsjahr und Geschlecht fehlen (Setup)";
       else if (t.variants && !result.variant) why = "Variante nicht angegeben";

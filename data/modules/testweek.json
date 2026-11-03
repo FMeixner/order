@@ -17,7 +17,6 @@
       "warmup": ["base"],
       "benchmark": {"label": "Bestie auf Zeit (Kraftausdauer)", "pool": ["ng-garm", "ng-ubba", "ng-orvar"]},
       "tests": [
-        {"id": "t-bodyweight", "name": "Körpergewicht", "unit": "kg", "attempts": 1, "better": "lower", "swc": 1, "desc": "Morgens nüchtern, gleiche Waage."},
         {"id": "t-sitreach", "name": "Sit and Reach", "unit": "cm", "attempts": 3, "better": "higher", "swc": 2, "desc": "Beine gestreckt, Fußsohlen an einer Kiste. Hände langsam nach vorn schieben, 2 s halten. Fingerspitzen relativ zu den Sohlen, davor negativ."},
         {"id": "t-dislocate", "name": "Schulter: Stock-Durchführen", "unit": "cm", "attempts": 3, "better": "lower", "swc": 3, "desc": "Engster Griff, mit dem der Stock mit gestreckten Armen über den Kopf nach hinten geht. Abstand zwischen den Zeigefingern."},
         {"id": "t-pullups", "name": "Klimmzüge", "unit": "reps", "attempts": 1, "better": "higher", "swc": 1, "desc": "Aus dem gestreckten Hang, Kinn über die Stange, kein Schwung. Maximale saubere Wiederholungen."},
@@ -30,6 +29,7 @@
       "id": "balmung", "name": "Balmung-Cup", "place": "Studio", "focus": "Maximalkraft, anaerob",
       "warmup": ["base", "lower_prep"],
       "tests": [
+        {"id": "t-bodyweight", "name": "Körpergewicht", "unit": "kg", "attempts": 1, "better": "lower", "swc": 1, "desc": "Morgens nüchtern, gleiche Waage — die 5RM-Norm rechnet relativ dazu."},
         {"id": "t-5rm-squat", "name": "5RM Beinpresse oder Kniebeuge", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "desc": "2–3 Steigerungssätze, dann höchstens 4 Versuche bis zum 5RM, 3–5 Min Pause. Abbruch bei Technikverlust. Immer dieselbe Übung wie beim letzten Mal.", "variants": [{"id": "legpress", "name": "Beinpresse"}, {"id": "squat", "name": "Kniebeuge"}]},
         {"id": "t-5rm-push", "name": "5RM Brustpresse oder Bankdrücken", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "desc": "Wie oben. Übung und Einstellung notieren.", "variants": [{"id": "machine", "name": "Brustpresse"}, {"id": "bench", "name": "Bankdrücken"}]},
         {"id": "t-5rm-pull", "name": "5RM Latziehen oder Klimmzug mit Gewicht", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "desc": "Wie oben. Bei Klimmzug: Zusatzgewicht eintragen.", "variants": [{"id": "pulldown", "name": "Latziehen"}, {"id": "pullup", "name": "Klimmzug mit Gewicht"}]},
@@ -44,7 +44,6 @@
       "benchmark": {"label": "Bestie auf Zeit (Belastbarkeit)", "pool": ["ng-hel", "ng-saga", "ng-odin"]},
       "tests": [
         {"id": "t-cooper", "name": "Cooper-Test: 12 Min Lauf", "unit": "m", "attempts": 1, "better": "higher", "swc": 100, "desc": "Ebene Strecke, 12 Minuten so weit wie möglich. Immer dieselbe Runde."},
-        {"id": "t-vo2", "name": "Uhr: VO2max-Schätzung", "unit": "ml", "attempts": 1, "better": "higher", "swc": 2, "desc": "Aktuellen Wert der Uhr ablesen, falls vorhanden."},
         {"id": "t-rhr", "name": "Ruhepuls, Wochenmittel", "unit": "bpm", "attempts": 1, "better": "lower", "swc": 3, "desc": "Mittelwert der Woche, falls die Uhr ihn misst."}
       ]
     }

@@ -259,8 +259,6 @@ describe("Normen", () => {
     const lp = findNorm("t-5rm-squat", "legpress", "m", 37)!;
     // 5RM 125 kg bei 84 kg: 1RM ≈ 145,8 → 1,74 × KG ≈ Mittelwert → P50
     expect(Math.abs(normScore(lp, 125, 84)!.score - 50)).toBeLessThanOrEqual(1);
-    const vo2 = findNorm("t-vo2", undefined, "m", 35)!;
-    expect(normScore(vo2, 46.4, null)!.score).toBe(70);
     const coop = findNorm("t-cooper", undefined, "m", 35)!;
     expect(normScore(coop, 3000, null)!.label).toBe("exzellent");
   });
