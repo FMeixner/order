@@ -92,9 +92,10 @@ export function weekInBlock(b: PlanBlock, date: string): number {
 export function isAWeek(week: number): boolean {
   return week % 2 === 1;
 }
+/** Testwoche im Orden: feste Verlaufstests immer; die letzte Phase-Woche entfällt bei einer Mesozyklus-Hälfte — die Messung kommt ans Ende des Paares */
 export function isTestWeek(f: Focus, b: PlanBlock, week: number): boolean {
   if (f.test_weeks?.includes(week)) return true;
-  return !!f.test_week && week === blockWeeks(b) && blockWeeks(b) >= 4;
+  return !!f.test_week && !b.meso && week === blockWeeks(b) && blockWeeks(b) >= 4;
 }
 export function isDeloadWeek(f: Focus, week: number): boolean {
   return !!f.deload_weeks?.includes(week);

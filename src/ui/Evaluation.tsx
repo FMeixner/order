@@ -1,8 +1,8 @@
 import { evaluateBlock } from "../engine/norms";
 import { focusName, isTestBlock } from "../engine/plan";
-import { deficitsOf, domainName, slotsFor } from "../engine/sharpen";
+import { deficitsOf, domainName, slotsFor, type SlotsPlan } from "../engine/sharpen";
 import { FOCUS_BY_ID, SHARPEN } from "../data";
-import type { AppState } from "../types";
+import type { AppState, PlanBlock } from "../types";
 import { Collapse } from "./common";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -22,9 +22,23 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
   const defs = deficitsOf(state, blockId);
   const lastDate = Object.values(state.tests).flat().filter((r) => r.blockId === blockId).map((r) => r.date).sort().pop() ?? "";
   const nextB = [...state.plan].filter((b) => !isTestBlock(b) && b.start > lastDate && FOCUS_BY_ID[b.focusId]).sort((a, b) => a.start.localeCompare(b.start))[0];
+  // Mesozyklus: beide Hälften bekommen ihre Vorschläge aus derselben Testwoche (die Daten sind bei Hälfte 2 zwölf Wochen alt)
+  const partner = nextB?.meso ? state.plan.find((x) => x.meso === nextB.meso && x.id !== nextB.id && !isTestBlock(x) && FOCUS_BY_ID[x.focusId]) : undefined;
   const slots = nextB ? slotsFor(state, nextB) : null;
+  const slotsP = partner ? slotsFor(state, partner) : null;
   const dayText = (dom: string): string => SHARPEN[dom].days === "all" ? "jeden Trainingstag" : SHARPEN[dom].days === 2 ? "zweimal pro Woche" : "einmal pro Woche";
-  const canApply = !!(update && nextB && slots && ((slots.s1.source === "auto" && slots.s1.domain && !nextB.sharpen) || (slots.s2.source === "auto" && slots.s2.domain && !nextB.sharpen2)));
+  const wants = (x: PlanBlock, s: SlotsPlan) => (s.s1.source === "auto" && s.s1.domain && !x.sharpen) || (s.s2.source === "auto" && s.s2.domain && !x.sharpen2);
+  const canApply = !!(update && ((nextB && slots && wants(nextB, slots)) || (partner && slotsP && wants(partner, slotsP))));
+  const slotItems = (s: SlotsPlan) => (
+    <ul>
+      <li>Schwerpunkt 1 (Schwachstelle): {s.s1.domain
+        ? <><strong>{domainName(s.s1.domain)}</strong>, {dayText(s.s1.domain)}. {s.s1.reason}</>
+        : s.s1.source === "off" ? "ausgeschaltet." : s.s1.reason}</li>
+      <li>Schwerpunkt 2 (Vertiefung): {s.s2.domain
+        ? <><strong>{domainName(s.s2.domain)}</strong>, {dayText(s.s2.domain)}. {s.s2.reason}</>
+        : s.s2.source === "off" ? "ausgeschaltet." : s.s2.reason}</li>
+    </ul>
+  );
   const sources = [...new Map(withData.flatMap((d) => d.tests).filter((t) => t.norm).map((t) => [t.norm!.src, t.norm!.tier])).entries()];
   return (
     <Collapse title="Auswertung" meta={ev.weakest ? `Baustelle: ${ev.weakest.name}` : `${withData.length} Bereiche`} tone="teal" defaultOpen={defaultOpen}>
@@ -64,28 +78,30 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
           <div className="card note">
             <strong>Defizite:</strong> {defs.map((d) => `${d.name}${d.kind === "norm" ? ` (${d.score})` : " (Rückgang)"}`).join(", ")}.
             <ul className="slot-list small">
-              {slots && nextB && (
-                <li>Nächste Phase, {focusName(nextB.focusId)}:
-                  <ul>
-                    <li>Schwerpunkt 1 (Schwachstelle): {slots.s1.domain
-                      ? <><strong>{domainName(slots.s1.domain)}</strong>, {dayText(slots.s1.domain)}. {slots.s1.reason}</>
-                      : slots.s1.source === "off" ? "ausgeschaltet." : slots.s1.reason}</li>
-                    <li>Schwerpunkt 2 (Vertiefung): {slots.s2.domain
-                      ? <><strong>{domainName(slots.s2.domain)}</strong>, {dayText(slots.s2.domain)}. {slots.s2.reason}</>
-                      : slots.s2.source === "off" ? "ausgeschaltet." : slots.s2.reason}</li>
-                  </ul>
-                </li>
-              )}
-              {slots && slots.deferred.length > 0 && <li>{slots.deferred.map((d) => d.name).join(" und ")} {slots.deferred.length > 1 ? "passen" : "passt"} nicht in {focusName(nextB!.focusId)}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>}
+              {slots && nextB && (partner && slotsP ? (
+                <li>Nächster Mesozyklus, {focusName(nextB.focusId)} dann {focusName(partner.focusId)}:{slotItems(slots)} Hälfte 2, {focusName(partner.focusId)}:{slotItems(slotsP)}</li>
+              ) : (
+                <li>Nächste Phase, {focusName(nextB.focusId)}:{slotItems(slots)}</li>
+              ))}
+              {(() => {
+                const seen = new Set<string>();
+                for (const s of [slots, slotsP]) if (s) for (const d of s.deferred) seen.add(d.name);
+                if (!seen.size) return null;
+                const names = [...seen];
+                return <li>{names.join(" und ")} {names.length > 1 ? "passen" : "passt"} {partner && slotsP ? "in keine der beiden Mesozyklus-Hälften" : `nicht in ${focusName(nextB!.focusId)}`}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>;
+              })()}
               {ev.suggestions.length > 0 && <li>{ev.who5 != null && ev.who5 < 52 ? "Wohlbefinden ist eingeschränkt, Orden für Erholung" : `Orden, die ${ev.weakest?.name ?? defs[0].name} direkt trainieren`}: {ev.suggestions.map((f) => focusName(f.id)).join(", ")}.</li>}
             </ul>
             {canApply && (
               <div className="row wrap">
-                <button className="btn small" onClick={() => update!((st) => ({ ...st, plan: st.plan.map((x) => x.id !== nextB!.id ? x : {
-                  ...x,
-                  ...(slots!.s1.source === "auto" && slots!.s1.domain && !x.sharpen ? { sharpen: slots!.s1.domain } : {}),
-                  ...(slots!.s2.source === "auto" && slots!.s2.domain && !x.sharpen2 ? { sharpen2: slots!.s2.domain } : {}),
-                }) }))}>Für die nächste Phase übernehmen</button>
+                <button className="btn small" onClick={() => update!((st) => ({ ...st, plan: st.plan.map((x) => {
+                  const s = x.id === nextB!.id ? slots : x.id === partner?.id ? slotsP : null;
+                  if (!s) return x;
+                  return { ...x,
+                    ...(s.s1.source === "auto" && s.s1.domain && !x.sharpen ? { sharpen: s.s1.domain } : {}),
+                    ...(s.s2.source === "auto" && s.s2.domain && !x.sharpen2 ? { sharpen2: s.s2.domain } : {}),
+                  };
+                }) }))}>{partner ? "Für die nächsten 12 Wochen übernehmen" : "Für die nächste Phase übernehmen"}</button>
               </div>
             )}
             <div className="small muted">Nur Vorschläge. Beide Schwerpunkte änderst du je Phase im Plan.</div>

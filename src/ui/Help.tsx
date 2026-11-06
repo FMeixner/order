@@ -81,6 +81,14 @@ export function Help() {
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem Balmung-Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
+      <h3>Mesozyklen</h3>
+      <ul>
+        <li>„+ Mesozyklus anhängen“ legt zwei kurze Phasen von je sechs Wochen an, die zusammengehören, plus eine Testwoche am Ende (12+1). Kein Messen dazwischen: Die Testwoche ist die Klammer, die den Mesozyklus abschließt.</li>
+        <li>Die zweite Hälfte folgt aus den Successors der ersten — Orden, die gut aufeinander folgen, mit naheliegenden oder überlappenden Zielen (etwa Masse auf Sprungkraft, Fett verlieren auf Aufbau). Ein solcher Akzentwechsel in halber Ordenslänge ist für Erfahrene eine volle Dosis: Wer die Übungen schon sitzt hat, profitiert ab Woche 1.</li>
+        <li>Die Blockfolge plant Mesozyklen paareweise: Wählt sie den Orden der ersten Hälfte, kommt die zweite aus deren Successors. Einzelformen bleiben erlaubt und alleinstehend funktionsfähig — ein natürlicher Sechs-Wochen-Abschnitt im Jahr braucht keinen Partner.</li>
+        <li>Nach der Testwoche schlägt die Auswertung die Schwerpunkte für beide Hälften gleichzeitig vor („Für die nächsten 12 Wochen übernehmen“); für die zweite Hälfte aus denselben Testwerten. Änderst du eine Phase in zwei Teile oder verbindest zwei, löst sich das Paar auf.</li>
+      </ul>
+
       <h3>Allrounder oder Spezialist</h3>
       <ul>
         <li>Jede Phase hat zwei Schwerpunkte: Schwerpunkt 1 heilt die Schwachstelle aus der letzten Testwoche, Schwerpunkt 2 vertieft das Sekundärziel des Ordens. Beim Allrounder nimmt Schwerpunkt 2 stattdessen das zweite Defizit, wenn die Testwoche eines zeigt. Beide zusammen dürfen höchstens ein Viertel der geschätzten Wochenzeit; bei Überschreitung kürzt zuerst Schwerpunkt 2 seine Tage.</li>
