@@ -4,7 +4,7 @@ import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState, PlanBlock, TestResult } from "../types";
 import { estimateRole } from "./duration";
 import { rolesFor } from "./plan";
-import { applySlot, deficitsBefore, menuDefault, slotEligible, slotFor } from "./sharpen";
+import { applySlot, deficitsBefore, slotEligible, slotFor } from "./sharpen";
 import { suggestSequence } from "./sequence";
 
 const g = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
@@ -52,9 +52,9 @@ describe("Schwerpunkt-Slot", () => {
     expect(slotFor(s, { ...s.plan[1], sharpen: "off" }).source).toBe("off");
     expect(slotFor(s, { ...s.plan[1], sharpen: "power" }).domain).toBe("power");
   });
-  it("Kurzorden, Harlequin und Soldier haben keinen Slot", () => {
-    for (const id of ["herald", "harlequin", "soldier", "initiate"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(false);
-    for (const id of ["slayer", "gladiator", "assassin", "smith", "knight", "olympian", "conqueror"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(true);
+  it("Kurzorden und Harlequin haben keinen Slot", () => {
+    for (const id of ["herald", "harlequin", "initiate"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(false);
+    for (const id of ["slayer", "assassin", "smith", "knight", "olympian", "conqueror"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(true);
   });
   it("Beweglichkeit jeden Tag am Ende, Schnelligkeit zweimal am Anfang, höchstens etwa 15 % der Woche", () => {
     const s = base(mobKe, [blk("slayer")]);
@@ -71,14 +71,6 @@ describe("Schwerpunkt-Slot", () => {
       const extra = (week(x) - week(f)) / week(x);
       expect(extra, dom).toBeLessThan(0.16);
     }
-  });
-  it("Soldier: Schwerpunkt-Plätze nach den Defiziten vorbelegt", () => {
-    const s = base(mobKe, [blk("soldier")]);
-    const f = FOCUS_BY_ID.soldier;
-    const menus = Object.values(f.roles).flatMap((ro) => ro.blocks).filter((b) => b.type === "menu");
-    const picks = menus.map((m) => (m.type === "menu" ? menuDefault(s, s.plan[1], m) : null));
-    expect(picks[0]).toBe("Mobility");
-    expect(picks).toContain("Kraftausdauer");
   });
   it("Kraft-Ziel: Smith schlägt Herald bei 12 Wochen und mittlerer Alltagslast", () => {
     const plan: PlanBlock[] = [{ id: "p", focusId: "", label: "", start: "2027-04-05", end: "2027-06-27", load: "medium", travel: false }];

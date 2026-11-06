@@ -8,7 +8,6 @@ import { asWeaponBlock, isWeaponModule, MODULE_LABEL, moduleDrills, pathLevel, p
 import { advance, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
-import { menuDefault } from "../engine/sharpen";
 import { warmupKeys } from "../engine/warmup";
 import { fmt, useTimer } from "./Timer";
 import { Collapse } from "./common";
@@ -39,7 +38,7 @@ export function SessionView(ctx: SessionCtx) {
     update((st) => {
       const cur = st.sessions.find((s) => s.id === id) ?? {
         id, date: ctx.date, blockId: block.id, focusId: focus.id, week, role: roleKey, profileId: ctx.profile.id,
-        entries: {}, drills: {}, menu: {}, done: false,
+        entries: {}, drills: {}, done: false,
       };
       const next = pinBeasts(fn({ ...cur, date: cur.done ? cur.date : ctx.date, profileId: cur.done ? cur.profileId : ctx.profile.id }), items);
       return { ...st, sessions: [...st.sessions.filter((s) => s.id !== id), next] };
@@ -154,21 +153,6 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
   const t = useTimer();
   if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} cardio={it.cardio} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
   if (b.type === "module" && it.drills) return <ModuleCard it={it} ctx={ctx} session={session} mut={mut} />;
-  if (b.type === "menu") {
-    const key = `${ctx.block.id}:${b.id}`;
-    const auto = menuDefault(ctx.state, ctx.block, b);
-    const choice = ctx.state.menuChoice[key] ?? auto ?? "";
-    return (
-      <section className="card">
-        <div className="block-label teal">{b.label}{!ctx.state.menuChoice[key] && auto ? <span className="muted small"> · nach deiner Testwoche vorbelegt</span> : null}</div>
-        <select value={choice} onChange={(e) => ctx.update((st) => ({ ...st, menuChoice: { ...st.menuChoice, [key]: e.target.value } }))}>
-          <option value="">Schwerpunkt wählen …</option>
-          {Object.keys(b.options).map((o) => <option key={o} value={o}>{o}</option>)}
-        </select>
-        {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}
-      </section>
-    );
-  }
   if (b.type === "contrast") {
     const [heavy, expl] = it.resolved;
     const transfer = b.transfer ?? 30, rest = b.rest ?? 180;
@@ -204,7 +188,7 @@ function previewDose(r: Resolved): string {
   if (r.kind === "hold") return `${r.sets} × ${r.hold ?? 20} s`;
   return `${r.sets} × ${r.reps}`;
 }
-const BLOCK_TITLE: Partial<Record<Block["type"], string>> = { superset: "Superset", contrast: "Kontrastpaar", menu: "Wahl" };
+const BLOCK_TITLE: Partial<Record<Block["type"], string>> = { superset: "Superset", contrast: "Kontrastpaar" };
 
 export function SessionPreview(ctx: SessionCtx) {
   const role = roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile);
@@ -267,7 +251,6 @@ export function SessionPreview(ctx: SessionCtx) {
               </div>
             );
           }
-          if (it.block.type === "menu" && !it.resolved.length) return <div key={i} className="preview-row"><span>{it.block.label}</span><span className="muted">Wahl am Tag</span></div>;
           return (
             <div key={i} className={title ? "preview-group" : ""}>
               {title && <div className="block-label teal">{title}</div>}

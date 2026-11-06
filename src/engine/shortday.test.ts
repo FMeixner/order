@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { FOCUS_BY_ID } from "../data";
 import { emptyState, EQUIPMENT_PRESETS } from "../store";
-import type { Block, Slot } from "../types";
+import type { Block, Focus, Slot } from "../types";
 import { estimateRole } from "./duration";
 import { CLASS_ORDER, defaultRoles, moduleDrills, shortSwordDrills } from "./plan";
 import { equipOf } from "./resolve";
@@ -10,8 +10,8 @@ import { SHORT_KEEP, SHORT_LIMIT, shortDay, shortEligible } from "./shortday";
 
 const P = { gym: EQUIPMENT_PRESETS[0].make(), home: EQUIPMENT_PRESETS[1].make(), reise: EQUIPMENT_PRESETS[2].make() };
 const user = emptyState().user;
-const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : b.type === "menu" ? Object.values(b.options).slice(0, 1) : []);
-const strengthBlocks = (bs: Block[], ab: "A" | "B") => bs.filter((b) => (b.type === "single" || b.type === "superset" || b.type === "contrast" || b.type === "menu") && (!b.rotation || b.rotation === ab));
+const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : []);
+const strengthBlocks = (bs: Block[], ab: "A" | "B") => bs.filter((b) => (b.type === "single" || b.type === "superset" || b.type === "contrast") && (!b.rotation || b.rotation === ab));
 
 describe("Kurztag", () => {
   for (const f of Object.values(FOCUS_BY_ID)) {
@@ -93,5 +93,44 @@ describe("Kurztag", () => {
       expect(short[i].sets).toBe(Math.max(1, (full[i].sets ?? 1) - 1));
       expect(short[i].groups?.map((g) => g.sets)).toEqual(full[i].groups?.map((g) => Math.max(1, g.sets - 1)));
     }
+  });
+  it("Kürzung verteilt gleich: auch Kernübungen geben einen Satz ab, Supersets behalten gleiche Sätze", () => {
+    const mk = (id: string, name: string, sets: number, extra?: Partial<Slot>): Slot => ({ id, name, sets, reps: "8-10", prog: "none", rest: 180, kind: "strength", ...extra });
+    const f: Focus = {
+      ...FOCUS_BY_ID.smith, id: "kurztest",
+      roles: { k: { name: "Gleichmäßig", location: "gym", minutes: 60, warmup: ["short_base"], cooldown: [],
+        blocks: [
+          { type: "single", slot: mk("k1", "Back Squat", 4, { core: true }) },
+          { type: "single", slot: mk("k2", "Barbell Row", 4, { core: true }) },
+          { type: "superset", rest: 60, slots: [mk("k3", "Band Face Pull", 4), mk("k4", "Wrist Curl", 4)] },
+          { type: "superset", rest: 60, slots: [mk("k5", "DB Lateral Raise", 4), mk("k6", "DB Rear Delt Fly", 4)] },
+        ] } },
+    };
+    const { focus } = shortDay(f, "k", user, ["k"]);
+    const r = focus.roles.k;
+    const sets = (id: string) => r.blocks.flatMap(slotsOf).find((s) => s.id === id)!.sets!;
+    // Die Kürzung rotiert über alle Übungen: auch die beiden Kernübungen geben Sätze ab
+    expect(sets("k1")).toBeLessThan(4);
+    expect(sets("k2")).toBeLessThan(4);
+    // Supersets bleiben Supersets: beide Teile immer mit derselben Satzanzahl
+    expect(sets("k3")).toBe(sets("k4"));
+    expect(sets("k5")).toBe(sets("k6"));
+    expect(estimateRole(r, P.gym).total).toBeLessThanOrEqual(SHORT_LIMIT + 0.6);
+  });
+  it("ungleiche Supersets werden erst angeglichen: nach der Kürzung haben beide Teile gleich viele Sätze", () => {
+    const mk = (id: string, name: string, sets: number, extra?: Partial<Slot>): Slot => ({ id, name, sets, reps: "8-10", prog: "none", rest: 180, kind: "strength", ...extra });
+    const f: Focus = {
+      ...FOCUS_BY_ID.smith, id: "angleich",
+      roles: { k: { name: "Angleich", location: "gym", minutes: 60, warmup: ["short_base"], cooldown: [],
+        blocks: [
+          { type: "superset", rest: 60, slots: [mk("a1", "Band Face Pull", 3), mk("a2", "Wrist Curl", 2)] },
+          { type: "single", slot: mk("a3", "Back Squat", 4, { core: true }) },
+          { type: "single", slot: mk("a4", "Barbell Row", 4, { core: true }) },
+        ] } },
+    };
+    const { focus } = shortDay(f, "k", user, ["k"]);
+    const sets = (id: string) => focus.roles.k.blocks.flatMap(slotsOf).find((s) => s.id === id)!.sets!;
+    expect(sets("a1")).toBe(sets("a2"));
+    expect(estimateRole(focus.roles.k, P.gym).total).toBeLessThanOrEqual(SHORT_LIMIT + 0.6);
   });
 });

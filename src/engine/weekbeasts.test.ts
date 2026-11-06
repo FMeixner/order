@@ -65,7 +65,7 @@ describe("Zwei Bestien an einem Tag", () => {
     expect(before.length).toBe(2);
     const sid = sessionId("b1", 1, "bonus");
     const [a, b] = before as (typeof before[number] & { block: { id: string } })[];
-    const sess = { id: sid, date: "2026-10-03", blockId: "b1", focusId: "assassin", week: 1, role: "bonus", profileId: profile.id, entries: {}, drills: {}, menu: {}, done: false,
+    const sess = { id: sid, date: "2026-10-03", blockId: "b1", focusId: "assassin", week: 1, role: "bonus", profileId: profile.id, entries: {}, drills: {}, done: false,
       beastRuns: { [a.block.id]: { beast: { id: a.beast!.id, seconds: 300 } }, [b.block.id]: { beast: { id: b.beast!.id, seconds: 400 } } } };
     const after = items({ ...st, sessions: [sess] });
     expect(after.map((i) => i.beast!.id)).toEqual(before.map((i) => i.beast!.id));

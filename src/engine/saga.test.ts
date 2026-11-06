@@ -19,7 +19,7 @@ function train(s: AppState, b: PlanBlock, share: number): AppState {
   for (let w = 1; w <= blockWeeks(b); w++) {
     const days = dayRoleMap(s, b);
     const n = Math.round(days.length * share);
-    days.slice(0, n).forEach((d, i) => sessions.push({ id: `${b.id}-${w}-${d.role}`, date: addDays(b.start, (w - 1) * 7 + i * 2), blockId: b.id, focusId: b.focusId, week: w, role: d.role, profileId: "g", entries: {}, drills: {}, menu: {}, done: true }));
+    days.slice(0, n).forEach((d, i) => sessions.push({ id: `${b.id}-${w}-${d.role}`, date: addDays(b.start, (w - 1) * 7 + i * 2), blockId: b.id, focusId: b.focusId, week: w, role: d.role, profileId: "g", entries: {}, drills: {}, done: true }));
   }
   return { ...s, sessions };
 }
@@ -99,7 +99,7 @@ describe("Lebenspunkte pro Einheit", () => {
     const s = { ...s0, onboarded: true, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as typeof s0.schedule, plan: [b], narrative: { on: true } };
     const c0 = chapterOf(s, b, "2026-09-29");
     expect(c0.liveHp).toBe(c0.hp);
-    const done = (role: string, date: string) => ({ id: `b1:1:${role}`, date, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, menu: {}, done: true });
+    const done = (role: string, date: string) => ({ id: `b1:1:${role}`, date, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, done: true });
     const c1 = chapterOf({ ...s, sessions: [done("kraft_a", "2026-09-28")] }, b, "2026-09-29");
     expect(c1.liveHp).toBeLessThan(c0.hp);
     const c2 = chapterOf({ ...s, sessions: [done("kraft_a", "2026-09-28"), done("arme_schultern", "2026-09-29")] }, b, "2026-09-30");
@@ -116,7 +116,7 @@ describe("Bestien im Blatt", () => {
     const base = { ...s0, onboarded: true, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as typeof s0.schedule, plan: [b], narrative: { on: true } };
     const roles = ["kraft_a", "arme_schultern", "skill_kondition", "kraft_b"];
     for (const [id, word] of [["ng-nanna~hex", /mutiert/i], ["ng-nanna", /entfesselt/i]] as const) {
-      const sessions = roles.map((role, i) => ({ id: `b1:1:${role}`, date: `2026-09-${28 + i}`, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, menu: {}, done: true, ...(role === "skill_kondition" ? { beast: { id, seconds: 900 } } : {}) }));
+      const sessions = roles.map((role, i) => ({ id: `b1:1:${role}`, date: `2026-09-${28 + i}`, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, done: true, ...(role === "skill_kondition" ? { beast: { id, seconds: 900 } } : {}) }));
       const ch = chapterOf({ ...base, sessions }, b, "2026-10-05");
       const text = ch.weeks[0].lines.map((l) => l.text).join(" ");
       expect(text).toMatch(/Undine/);
@@ -131,8 +131,8 @@ describe("Bestien im Blatt", () => {
     const b = { id: "b1", focusId: "assassin", label: "", start: "2026-09-28", end: "2026-12-06", load: "medium" as const, travel: false };
     const base = { ...s0, onboarded: true, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as typeof s0.schedule, plan: [b], narrative: { on: true } };
     const roles = ["kraft_a", "arme_schultern", "kraft_b"];
-    const sessions = roles.map((role, i) => ({ id: `b1:1:${role}`, date: `2026-09-${28 + i}`, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, menu: {}, done: true }));
-    const hunt = { id: "jagd:1", date: "2026-10-02", blockId: "jagd", focusId: "", week: 0, role: "jagd", profileId: "g", entries: {}, drills: {}, menu: {}, done: true, beastRuns: { jagd: { beast: { id: "ng-nanna", seconds: 900 } } } };
+    const sessions = roles.map((role, i) => ({ id: `b1:1:${role}`, date: `2026-09-${28 + i}`, blockId: "b1", focusId: "assassin", week: 1, role, profileId: "g", entries: {}, drills: {}, done: true }));
+    const hunt = { id: "jagd:1", date: "2026-10-02", blockId: "jagd", focusId: "", week: 0, role: "jagd", profileId: "g", entries: {}, drills: {}, done: true, beastRuns: { jagd: { beast: { id: "ng-nanna", seconds: 900 } } } };
     const without = chapterOf({ ...base, sessions }, b, "2026-10-05");
     const withHunt = chapterOf({ ...base, sessions: [...sessions, hunt] }, b, "2026-10-05");
     expect(without.weeks[0].lines.map((l) => l.text).join(" ")).not.toMatch(/Undine/);

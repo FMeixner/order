@@ -84,7 +84,7 @@ describe("Entlastungswoche", () => {
   it("Signale: dreimal „zu schwer“ in zwei Wochen, sonst nicht", () => {
     const s = st();
     const fb = (date: string, n: number): Session[] =>
-      Array.from({ length: n }, (_, i) => ({ id: `s${date}-${i}`, date, blockId: "b1", focusId: "knight", week: 3, role: "mo", profileId: "g", entries: { [`e${i}`]: { key: `k${i}`, slotId: `sl${i}`, name: "Übung", prog: "none", sets: [], feedback: "zuschwer" } }, drills: {}, menu: {}, done: true }));
+      Array.from({ length: n }, (_, i) => ({ id: `s${date}-${i}`, date, blockId: "b1", focusId: "knight", week: 3, role: "mo", profileId: "g", entries: { [`e${i}`]: { key: `k${i}`, slotId: `sl${i}`, name: "Übung", prog: "none", sets: [], feedback: "zuschwer" } }, drills: {}, done: true }));
     const heute = "2026-11-09"; // Woche 4 läuft, Rhythmus greift nicht
     const sTooHard = { ...s, sessions: [...fb(addDays(heute, -7), 3)] };
     expect(deloadAdvice(sTooHard, KNIGHT, 4, heute)).toEqual({ why: "signale", count: 3 });
@@ -101,7 +101,7 @@ describe("Entlastungswoche", () => {
     const s0 = st();
     const f = focusFor(s0, KNIGHT, 1)!;
     const days = dayRoleMap(s0, KNIGHT, f, 1);
-    const sessions: Session[] = days.map((d, i) => ({ id: `w1-${d.role}`, date: addDays(KNIGHT.start, i * 2), blockId: KNIGHT.id, focusId: KNIGHT.focusId, week: 1, role: d.role, profileId: "g", entries: {}, drills: {}, menu: {}, done: true }));
+    const sessions: Session[] = days.map((d, i) => ({ id: `w1-${d.role}`, date: addDays(KNIGHT.start, i * 2), blockId: KNIGHT.id, focusId: KNIGHT.focusId, week: 1, role: d.role, profileId: "g", entries: {}, drills: {}, done: true }));
     const heute = addDays(KNIGHT.start, 8); // zweite Woche: Woche 1 ist abgeschlossen
     const c0 = chapterOf({ ...s0, sessions }, KNIGHT, heute);
     expect(c0.weeks[0].lines.some((l) => /ENTLASTUNGSWOCHE|HALBTAKT|KLEINE ANKÜNDIGUNG|VERMERK DER REDAKTION/.test(l.text))).toBe(false);

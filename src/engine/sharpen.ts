@@ -30,10 +30,9 @@ export const DOMAIN_AXIS: Record<DomainId, AxisId> = {
 const INTERFERE_GOALS: Goal[] = ["hypertrophy", "strength", "power", "speed"];
 const domainName = (id: string) => SHARPEN[id]?.name ?? DOMAINS.find((d) => d.id === id)?.name ?? id;
 
-/** Orden mit Slot: mindestens 45 Min., keine wöchentlich wechselnden Orden, keine eigenen Schwerpunkt-Menüs (Soldier) */
+/** Orden mit Slot: mindestens 45 Min., keine wöchentlich wechselnden Orden */
 export function slotEligible(f: Focus): boolean {
-  if (f.session_min < 45 || f.medley?.length) return false;
-  return !Object.values(f.roles).some((r) => r.blocks.some((b) => b.type === "menu"));
+  return f.session_min >= 45 && !f.medley?.length;
 }
 export const interferes = (f: Focus, d: DomainId) => (d === "aerob" || d === "anaerob") && INTERFERE_GOALS.includes(f.goals.primary);
 
@@ -127,18 +126,6 @@ export function applySlot(f: Focus, state: AppState, b: PlanBlock): Focus {
     out[rk] = { ...r, blocks: mod.place === "start" ? [blk, ...r.blocks] : [...r.blocks, blk] };
   }
   return { ...f, roles: out };
-}
-
-/* ---------- Soldier: Schwerpunkt-Menüs nach den Defiziten vorbelegen ---------- */
-const MENU_KEY: Partial<Record<DomainId, string>> = { speed: "Speed", power: "Power", strength: "Strength", ke: "Kraftausdauer", anaerob: "Anaerob", aerob: "Aerob", mobility: "Mobility" };
-export function menuDefault(state: AppState, b: PlanBlock, menu: Extract<Block, { type: "menu" }>): string | null {
-  const k = parseInt(menu.label.match(/Schwerpunkt (\d)/)?.[1] ?? "");
-  if (!k) return null;
-  const src = deficitsBefore(state, b.start);
-  if (!src || state.user.focusMode === "special") return null;
-  const keys = src.list.map((d) => MENU_KEY[d.id]).filter((x): x is string => !!x);
-  const avail = keys.filter((x) => menu.options[x]);
-  return avail[k - 1] ?? avail[0] ?? null;
 }
 
 /** Defizite als Gewichte für die Blockfolge: schwächster Bereich zählt am meisten */

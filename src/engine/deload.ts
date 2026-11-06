@@ -32,11 +32,6 @@ function halfBlock(b: Block): Block | null {
     case "single": return { ...b, slot: halfSlot(b.slot) };
     case "superset": return { ...b, slots: b.slots.map(halfSlot), finisher: undefined };
     case "contrast": return { ...b, heavy: halfSlot(b.heavy), explosive: halfSlot(b.explosive) };
-    case "menu": {
-      const options: Record<string, Slot> = {};
-      for (const [k, s] of Object.entries(b.options)) options[k] = halfSlot(s);
-      return { ...b, options };
-    }
     default: return b;
   }
 }
