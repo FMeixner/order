@@ -124,13 +124,15 @@ describe("Kurztag", () => {
       roles: { k: { name: "Angleich", location: "gym", minutes: 60, warmup: ["short_base"], cooldown: [],
         blocks: [
           { type: "superset", rest: 60, slots: [mk("a1", "Band Face Pull", 3), mk("a2", "Wrist Curl", 2)] },
-          { type: "single", slot: mk("a3", "Back Squat", 4, { core: true }) },
-          { type: "single", slot: mk("a4", "Barbell Row", 4, { core: true }) },
+          { type: "superset", rest: 60, slots: [mk("b1", "DB Lateral Raise", 3), mk("b2", "DB Rear Delt Fly", 2)] },
+          { type: "single", slot: mk("a3", "Back Squat", 5, { core: true }) },
+          { type: "single", slot: mk("a4", "Barbell Row", 5, { core: true }) },
         ] } },
     };
     const { focus } = shortDay(f, "k", user, ["k"]);
     const sets = (id: string) => focus.roles.k.blocks.flatMap(slotsOf).find((s) => s.id === id)!.sets!;
     expect(sets("a1")).toBe(sets("a2"));
+    expect(sets("b1")).toBe(sets("b2"));
     expect(estimateRole(focus.roles.k, P.gym).total).toBeLessThanOrEqual(SHORT_LIMIT + 0.6);
   });
 });
