@@ -101,8 +101,8 @@ export function Setup({ state, update, replace, restartOnboarding }: { state: Ap
       <Collapse title="Allrounder oder Spezialist" meta={state.user.focusMode === "special" ? "Spezialist" : "Allrounder"}>
         <Seg value={state.user.focusMode ?? "allround"} options={[{ value: "allround", label: "Allrounder" }, { value: "special", label: "Spezialist" }]} onChange={(focusMode) => update((st) => ({ ...st, user: { ...st.user, focusMode } }))} />
         <p className="muted small">{state.user.focusMode === "special"
-          ? "Spezialist: Die Orden bekommen ihre volle Zeit, kein Schwerpunkt-Slot. Die Blockfolge bleibt, wie du sie planst."
-          : "Allrounder: Nach jeder Testwoche bekommt die nächste Phase einen kleinen Schwerpunkt-Slot für deinen schwächsten Bereich (etwa 10–15 Min. pro Woche, zum Erhalten). Die Blockfolge schlägt schwache Bereiche zuerst vor. Du kannst beides je Phase im Plan ändern."}</p>
+          ? "Spezialist: Schwerpunkt 2 bleibt fest auf der Vertiefung des Ordensziels — kein zweites Defizit. Am Schwachstellen-Slot (Schwerpunkt 1) nimmt der Spezialist seit 0.93 genauso teil: Heilen ist kein Verzicht-Posten."
+          : "Allrounder: Nach jeder Testwoche bekommt die nächste Phase zwei kleine Schwerpunkte — die Schwachstelle und, falls es noch eines gibt, das zweite Defizit, sonst die Vertiefung des Ordensziels. Beide zusammen höchstens ein Viertel der Wochenzeit, je Phase im Plan änderbar."}</p>
       </Collapse>
       <NarrativeSettings state={state} update={update} />
       <Collapse title="Können" meta={state.user.skills == null ? "kein Skillcheck" : `${state.user.skills.length} von ${SKILLS.skills.length}`}>

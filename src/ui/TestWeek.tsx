@@ -135,7 +135,7 @@ export function TestWeek({ state, update, block, today, preview = false }: { sta
           {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
         </Collapse>
       ))}
-      <Evaluation state={state} blockId={block.id} />
+      <Evaluation state={state} blockId={block.id} update={preview ? undefined : update} />
       <div className="muted small">{preview ? "Vorschau der Testwoche. " : "Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. "}Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
     </div>
   );

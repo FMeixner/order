@@ -1,17 +1,23 @@
-/* Schwerpunkt-Slot: eine kleine Erhaltungsdosis für den Bereich, der nach der letzten Testwoche am meisten fehlt.
-   Regeln:
-   1. Klein: ein Bereich pro Phase, Dosis aus data/modules/sharpen.json (etwa 10–15 Min. pro Woche).
-   2. Passend: Bereiche, die der Orden selbst trainiert, überspringt der Slot (dann Defizit 2).
-      Bereiche, die das Ziel des Ordens stören (aerob/anaerob neben Kraft, Muskel, Schnellkraft) oder in einen Slot
-      nicht passen (Maximalkraft, Skill), kommen in den Vorschlag für die Blockfolge statt in den Slot.
-   3. Kein Nachlaufen: Defizit nur deutlich unter der Norm (≤ 40 Punkte bei mehreren Tests, ≤ 30 bei einem)
+/* Zwei Schwerpunkt-Slots: Slot 1 (Schwachstelle) heilt den Bereich, der nach der letzten Testwoche am
+   meisten fehlt; Slot 2 (Vertiefung) vertieft das Sekundärziel des Ordens — beim Allrounder stattdessen
+   das zweite slotfähige Defizit, beim Spezialisten immer die Vertiefung. Regeln:
+   1. Klein: die Dosis kommt aus data/modules/sharpen.json; beide Slots zusammen höchstens SLOT_BUDGET
+      (25 %) der geschätzten Wochenzeit. Bei Überschreitung kürzt zuerst Slot 2 seine Tage (auf einen,
+      dann ganz), erst danach Slot 1 — die Schwachstelle ist messungsgetrieben und fällt nie zuerst.
+   2. Ein Slot pro Tag: Slot 1 belegt seine Tage zuerst, Slot 2 füllt die übrigen (nie am selben Tag).
+   3. Passend: Bereiche, die der Orden selbst trainiert, überspringt der Slot. Bereiche, die das Ziel
+      stören (Interferenz) oder einen eigenen Block brauchen (Maximalkraft, Skill), kommen in den
+      Vorschlag für die Blockfolge. Slot 1 und Slot 2 liegen nie auf derselben Achse der Jahresbalance.
+   4. Kein Nachlaufen: Defizit nur deutlich unter der Norm (≤ 40 Punkte bei mehreren Tests, ≤ 30 bei einem)
       oder, ohne Norm, wenn Tests jenseits des Messfehlers schlechter wurden und keiner besser.
-   Spezialisten bekommen keinen Slot. Laufende Phasen bekommen nur einen, wenn vor ihrem Start getestet wurde. */
+   Seit 0.93 heilt auch der Spezialist mit (Slot 1); die Allrounder/Spezialist-Wahl steuert nur Slot 2.
+   Laufende Phasen bekommen Slot 1 nur, wenn vor ihrem Start getestet wurde; Slot 2 läuft auch ohne Testwoche. */
 import { DOMAINS, SHARPEN } from "../data";
 import type { AppState, Block, Focus, Goal, PlanBlock } from "../types";
 import type { AxisId } from "./balance";
-import { evaluateBlock } from "./norms";
+import { estimateRole } from "./duration";
 import { blockFocus, focusName, rolesFor } from "./plan";
+import { evaluateBlock } from "./norms";
 
 export type DomainId = "speed" | "power" | "strength" | "ke" | "anaerob" | "aerob" | "skill" | "mobility";
 export interface Deficit { id: DomainId; name: string; score: number | null; kind: "norm" | "trend" }
@@ -30,7 +36,10 @@ export const DOMAIN_AXIS: Record<DomainId, AxisId> = {
 const INTERFERE_GOALS: Goal[] = ["hypertrophy", "strength", "power", "speed"];
 const domainName = (id: string) => SHARPEN[id]?.name ?? DOMAINS.find((d) => d.id === id)?.name ?? id;
 
-/** Orden mit Slot: mindestens 45 Min., keine wöchentlich wechselnden Orden */
+/** Anteil der geschätzten Wochenzeit, den beide Slots zusammen höchstens einnehmen dürfen */
+export const SLOT_BUDGET = 0.25;
+
+/** Orden mit Slots: mindestens 45 Min., keine wöchentlich wechselnden Orden */
 export function slotEligible(f: Focus): boolean {
   return f.session_min >= 45 && !f.medley?.length;
 }
@@ -70,62 +79,121 @@ export interface SlotPlan {
   source: "auto" | "manual" | "off" | "none";
   /** Klartext, warum dieser Bereich (oder keiner) */
   reason: string;
-  /** Defizite, die nicht in den Slot passen: Kandidaten für die Blockfolge */
+}
+export interface SlotsPlan {
+  /** Slot 1: Schwachstelle aus der letzten Testwoche */
+  s1: SlotPlan;
+  /** Slot 2: Vertiefung des Sekundärziels — beim Allrounder stattdessen das zweite Defizit */
+  s2: SlotPlan;
+  /** Defizite, die in keinen Slot passen: Kandidaten für die Blockfolge */
   deferred: Deficit[];
 }
 
-export function slotFor(state: AppState, b: PlanBlock): SlotPlan {
+/** Vertiefung: erste Domäne aus den Sekundärzielen des Ordens, die ein Slot-Modul hat, das Primat nicht stört
+    und weder Slot 1 selbst noch dessen Achse doppelt */
+function deepening(f: Focus, s1: DomainId | null): SlotPlan {
+  const s1Axis = s1 ? DOMAIN_AXIS[s1] : null;
+  for (const goal of f.goals.secondary) for (const d of GOAL_DOMAINS[goal]) {
+    if (!SHARPEN[d] || interferes(f, d)) continue;
+    if (s1 && (d === s1 || DOMAIN_AXIS[d] === s1Axis)) continue;
+    return { domain: d, source: "auto", reason: `Vertiefung: ${domainName(d)} trägt das Sekundärziel neben dem Primat des Ordens.` };
+  }
+  return { domain: null, source: "none", reason: "Das Sekundärziel braucht eigene Blöcke oder stört das Ordensziel — kein zweiter Slot." };
+}
+
+export function slotsFor(state: AppState, b: PlanBlock): SlotsPlan {
   const f = blockFocus(b);
-  const none = (reason: string, deferred: Deficit[] = []): SlotPlan => ({ domain: null, source: "none", reason, deferred });
-  if (!f) return none("");
-  if (!slotEligible(f)) return none(`${focusName(f.id)} hat keinen Schwerpunkt-Slot.`);
-  if (b.sharpen === "off") return { domain: null, source: "off", reason: "Für diese Phase ausgeschaltet.", deferred: [] };
-  if (b.sharpen && SHARPEN[b.sharpen]) return { domain: b.sharpen as DomainId, source: "manual", reason: "Selbst gewählt.", deferred: [] };
-  if (state.user.focusMode === "special") return none("Spezialist: kein Slot, der Orden bekommt die volle Zeit.");
+  const none = (reason: string): SlotPlan => ({ domain: null, source: "none", reason });
+  if (!f) return { s1: none(""), s2: none(""), deferred: [] };
+  if (!slotEligible(f)) return { s1: none(`${focusName(f.id)} hat keinen Schwerpunkt-Slot.`), s2: none(""), deferred: [] };
+  const deferred: Deficit[] = [];
   const src = deficitsBefore(state, b.start);
-  if (!src) return none("Noch keine Testwoche vor dieser Phase.");
-  if (!src.list.length) return none("Keine klaren Defizite in der letzten Testwoche.");
+  const list = src?.list ?? [];
   const own = new Set(GOAL_DOMAINS[f.goals.primary]);
-  // Nicht slotfähig oder störend: Kandidaten für die Blockfolge, unabhängig davon, was der Slot nimmt
-  const deferred = src.list.filter((d) => !own.has(d.id) && (!SHARPEN[d.id] || interferes(f, d.id)));
-  const skipped: string[] = [];
-  for (const d of src.list) {
-    if (own.has(d.id)) { skipped.push(`${d.name} trainiert ${focusName(f.id)} selbst`); continue; }
-    if (deferred.includes(d)) continue;
-    const basis = d.kind === "norm" ? `${d.score} Punkte in der letzten Testwoche` : "schlechter als beim letzten Test";
-    return { domain: d.id, source: "auto", reason: `${basis[0].toUpperCase()}${basis.slice(1)}.${skipped.length ? ` ${skipped.join(", ")}, deshalb der nächste Bereich.` : ""}`, deferred };
-  }
-  return none(skipped.length ? `${skipped.join(", ")}. Die übrigen Defizite passen nicht in einen Slot.` : "Die Defizite passen nicht in einen Slot, sie gehen in den Vorschlag für die Blockfolge.", deferred);
+  for (const d of list) if (!own.has(d.id) && (!SHARPEN[d.id] || interferes(f, d.id)) && !deferred.includes(d)) deferred.push(d);
+
+  // --- Slot 1: Schwachstelle (auch für Spezialisten), manuell übersteuerbar, abschaltbar
+  const s1: SlotPlan = (() => {
+    if (b.sharpen === "off") return { domain: null, source: "off", reason: "Für diese Phase ausgeschaltet." };
+    if (b.sharpen && SHARPEN[b.sharpen]) return { domain: b.sharpen as DomainId, source: "manual", reason: "Selbst gewählt." };
+    if (!src) return none("Noch keine Testwoche vor dieser Phase.");
+    if (!list.length) return none("Keine klaren Defizite in der letzten Testwoche.");
+    const skipped: string[] = [];
+    for (const d of list) {
+      if (own.has(d.id)) { skipped.push(`${d.name} trainiert ${focusName(f.id)} selbst`); continue; }
+      if (deferred.includes(d)) continue;
+      const basis = d.kind === "norm" ? `${d.score} Punkte in der letzten Testwoche` : "schlechter als beim letzten Test";
+      return { domain: d.id, source: "auto", reason: `${basis[0].toUpperCase()}${basis.slice(1)}.${skipped.length ? ` ${skipped.join(", ")}, deshalb der nächste Bereich.` : ""}` };
+    }
+    return none(skipped.length ? `${skipped.join(", ")}. Die übrigen Defizite passen nicht in einen Slot.` : "Die Defizite passen nicht in einen Slot, sie gehen in den Vorschlag für die Blockfolge.");
+  })();
+
+  // --- Slot 2: Vertiefung — beim Allrounder stattdessen das stärkste verbleibende Defizit
+  let s2: SlotPlan;
+  if (b.sharpen2 === "off") s2 = { domain: null, source: "off", reason: "Für diese Phase ausgeschaltet." };
+  else if (b.sharpen2 && SHARPEN[b.sharpen2]) s2 = { domain: b.sharpen2 as DomainId, source: "manual", reason: "Selbst gewählt." };
+  else if (state.user.focusMode !== "special") {
+    const s1Axis = s1.domain ? DOMAIN_AXIS[s1.domain] : null;
+    let cand: Deficit | undefined;
+    for (const d of list) {
+      if (d.id === s1.domain || own.has(d.id) || deferred.includes(d)) continue;
+      if (s1Axis && DOMAIN_AXIS[d.id] === s1Axis) continue; // nie zwei Slots auf derselben Achse
+      cand = d; break;
+    }
+    if (cand) s2 = { domain: cand.id, source: "auto", reason: `Zweites Defizit: ${cand.name} ${cand.kind === "norm" ? `(${cand.score} Punkte)` : "(Rückgang)"} aus der letzten Testwoche.` };
+    else s2 = deepening(f, s1.domain);
+  } else s2 = deepening(f, s1.domain);
+  return { s1, s2, deferred };
 }
 
-/** Welche Tage (Index in der Rollenfolge) den Slot bekommen */
-export function slotDays(f: Focus, roles: string[], days: "all" | 1 | 2): number[] {
-  const n = roles.length;
-  if (!n) return [];
-  if (days === "all") return roles.map((_, i) => i);
-  if (days === 2) return [...new Set([0, Math.floor(n / 2)])];
-  // einmal pro Woche: am kürzesten Tag
-  let best = 0;
-  roles.forEach((rk, i) => { if ((f.roles[rk]?.minutes ?? 99) < (f.roles[roles[best]]?.minutes ?? 99)) best = i; });
-  return [best];
-}
-
-/** Orden dieser Phase mit eingebautem Slot. Ändert nichts, wenn kein Slot aktiv ist. */
-export function applySlot(f: Focus, state: AppState, b: PlanBlock): Focus {
-  const plan = slotFor(state, b);
-  if (!plan.domain) return f;
-  const mod = SHARPEN[plan.domain];
+/** Orden dieser Phase mit eingebauten Slots. Ändert nichts, wenn kein Slot aktiv ist.
+    Slot 1 belegt seine Tage zuerst, Slot 2 füllt die übrigen (nie am selben Tag).
+    Beide Slots zusammen dürfen SLOT_BUDGET der geschätzten Wochenzeit nicht übersteigen;
+    sonst kürzt die Leiter erst die Tage von Slot 2, dann Slot 2 selbst, dann die Tage von Slot 1. */
+export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
+  const plan = slotsFor(state, b);
+  if (!plan.s1.domain && !plan.s2.domain) return f;
   const roles = rolesFor(state, b, f);
-  const idx = slotDays(f, roles, mod.days);
-  const blk: Block = { type: "module", module: "sharpen", variant: plan.domain };
-  const out = { ...f.roles };
-  for (const i of idx) {
-    const rk = roles[i];
-    const r = out[rk];
-    if (!r || r.blocks.some((x) => x.type === "module" && x.module === "sharpen")) continue;
-    out[rk] = { ...r, blocks: mod.place === "start" ? [blk, ...r.blocks] : [...r.blocks, blk] };
-  }
-  return { ...f, roles: out };
+  const p = state.equipment[0];
+  const weekOf = (ff: Focus): number =>
+    p ? roles.reduce((sum, rk) => sum + estimateRole(ff.roles[rk], p, state.user).total, 0) : 0;
+  const w0 = weekOf(f);
+
+  const build = (d1: "full" | 1 | 0, d2: "full" | 1 | 0): Focus => {
+    const out = { ...f.roles };
+    const place = (slot: SlotPlan, mode: "full" | 1 | 0): void => {
+      if (!slot.domain || mode === 0) return;
+      const mod = SHARPEN[slot.domain];
+      const free = roles.filter((rk) => out[rk] && !out[rk].blocks.some((x) => x.type === "module" && x.module === "sharpen"));
+      if (!free.length) return;
+      let idx: number[];
+      if (mode === "full" && mod.days === "all") idx = free.map((_, i) => i);
+      else if (mode === "full" && mod.days === 2) idx = [...new Set([0, Math.floor(free.length / 2)])];
+      else { // ein Tag: am kürzesten
+        let best = 0;
+        free.forEach((rk, i) => { if ((f.roles[rk]?.minutes ?? 99) < (f.roles[free[best]]?.minutes ?? 99)) best = i; });
+        idx = [best];
+      }
+      for (const i of idx) {
+        const rk = free[i];
+        const r = out[rk];
+        if (!r) continue;
+        const blk: Block = { type: "module", module: "sharpen", variant: slot.domain };
+        out[rk] = { ...r, blocks: mod.place === "start" ? [blk, ...r.blocks] : [...r.blocks, blk] };
+      }
+    };
+    place(plan.s1, d1);
+    place(plan.s2, d2);
+    return { ...f, roles: out };
+  };
+  if (!p || w0 <= 0) return build("full", "full");
+  const over = (ff: Focus): boolean => { const w1 = weekOf(ff); return w1 > 0 && (w1 - w0) / w1 > SLOT_BUDGET; };
+  let out = build("full", "full");
+  if (over(out)) out = build("full", 1);
+  if (over(out)) out = build("full", 0);
+  if (over(out)) out = build(1, 0);
+  if (over(out)) out = build(0, 0);
+  return out;
 }
 
 /** Defizite als Gewichte für die Blockfolge: schwächster Bereich zählt am meisten */
