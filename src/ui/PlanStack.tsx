@@ -55,7 +55,7 @@ export function PlanStack({ plan, today, aim, deficits, onChange, onView, onEdit
         <div className="year-band-wrap" aria-label="Jahr im Überblick">
           <div className="year-band">
             {sorted.map((b) => (
-              <div key={b.id} className={`yb-seg ${isTestBlock(b) ? "test" : ""}`} style={{ flex: blockWeeks(b), ["--c" as string]: isTestBlock(b) ? "var(--amber)" : goalColor(b.focusId) }} title={`${focusName(b.focusId)} · ${blockWeeks(b)} Wochen`}>
+              <div key={b.id} className={`yb-seg ${isTestBlock(b) ? "test" : ""}`} style={{ flex: blockWeeks(b), ["--c" as string]: isTestBlock(b) ? "var(--amber)" : goalColor(b.focusId) }} title={`${focusName(b.focusId)} · ${blockWeeks(b)} Wochen${b.meso ? " · Mesozyklus" : ""}`}>
                 {!isTestBlock(b) && blockWeeks(b) >= 4 && <OrderMark id={b.focusId} />}
               </div>
             ))}

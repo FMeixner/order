@@ -38,25 +38,38 @@ export function setTestWeek(plan: PlanBlock[], id: string, on: boolean, newId: s
   return [...plan.map((x) => (x.id === id ? { ...x, end: addDays(start, -1) } : x)), { id: newId, focusId: TEST_BLOCK, label: "Testwoche", start, end: b.end, load: b.load, travel: false }];
 }
 
-/** Phase in zwei teilen (erste Hälfte aufgerundet); die zweite bekommt denselben Orden, ohne eingefrorenen Stand */
+/** Mesozyklus anlegen: zwei 6-Wochen-Hälften mit gemeinsamer Meso-Id und eine Testwoche dahinter (12+1). Orden wählt die UI (Hälfte 2 aus den Successors von Hälfte 1). */
+export function newMeso(plan: PlanBlock[], today: string, newId: () => string): PlanBlock[] {
+  const last = [...plan].sort((a, c) => a.end.localeCompare(c.end)).pop();
+  const start = last ? addDays(last.end, 1) : mondayOf(today);
+  const bStart = addDays(start, 7 * 6), tStart = addDays(start, 7 * 12);
+  const meso = newId();
+  return [...plan,
+    { id: newId(), focusId: "", label: "", start, end: addDays(start, 7 * 6 - 1), load: "medium", travel: false, meso },
+    { id: newId(), focusId: "", label: "", start: bStart, end: addDays(bStart, 7 * 6 - 1), load: "medium", travel: false, meso },
+    { id: newId(), focusId: TEST_BLOCK, label: "Testwoche", start: tStart, end: addDays(tStart, 6), load: "medium", travel: false },
+  ];
+}
+
+/** Phase in zwei teilen (erste Hälfte aufgerundet); die zweite bekommt denselben Orden, ohne eingefrorenen Stand. Teilen löst einen Mesozyklus komplett auf: Auch der Partner verliert die Meso-Id, sonst bliebe ihm die interne Testwoche für immer unterdrückt. */
 export function splitBlock(plan: PlanBlock[], id: string, newId: string, today: string): PlanBlock[] {
   const b = plan.find((x) => x.id === id);
   if (!b || isPast(b, today) || blockWeeks(b) < 2) return plan;
   const first = Math.ceil(blockWeeks(b) / 2);
   const mid = addDays(mondayOf(b.start), 7 * first);
   if (mid <= today) return plan;
-  const { frozen: _f, shortRole: _s, ...rest } = b; void _f; void _s;
-  return [...plan.map((x) => (x.id === id ? { ...x, end: addDays(mid, -1) } : x)), { ...rest, id: newId, start: mid }];
+  const { frozen: _f, shortRole: _s, meso: _m, ...rest } = b; void _f; void _s; void _m;
+  return [...plan.map((x) => x.id === id ? { ...x, end: addDays(mid, -1), meso: undefined } : b.meso && x.meso === b.meso ? { ...x, meso: undefined } : x), { ...rest, id: newId, start: mid }];
 }
 
 /** Nächste Phase direkt dahinter (keine Testwoche dazwischen) */
 export function nextOf(plan: PlanBlock[], b: PlanBlock): PlanBlock | undefined {
   return byStart(plan).find((x) => x.start === addDays(b.end, 1) && !isTestBlock(x));
 }
-/** Mit der nächsten Phase verbinden: diese läuft bis zu deren Ende weiter, mit ihrem Orden */
+/** Mit der nächsten Phase verbinden: diese läuft bis zu deren Ende weiter, mit ihrem Orden. Verbinden löst einen Mesozyklus komplett auf — auch der Partner verliert die Meso-Id. */
 export function mergeNext(plan: PlanBlock[], id: string, today: string): PlanBlock[] {
   const b = plan.find((x) => x.id === id);
   const n = b && nextOf(plan, b);
   if (!b || !n || isPast(b, today) || n.start <= today) return plan;
-  return plan.filter((x) => x.id !== n.id).map((x) => (x.id === id ? { ...x, end: n.end } : x));
+  return plan.filter((x) => x.id !== n.id).map((x) => x.id === id ? { ...x, end: n.end, meso: undefined } : b!.meso && x.meso === b!.meso ? { ...x, meso: undefined } : x);
 }

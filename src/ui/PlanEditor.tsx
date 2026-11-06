@@ -11,8 +11,8 @@ import { Check, Collapse, Field, Modal, Seg } from "./common";
 import { FocusDetail } from "./FociBrowser";
 import { SequenceDialog } from "./SequenceDialog";
 import { PlanStack } from "./PlanStack";
-import { rankFor, type Aim } from "../engine/sequence";
-import { mergeNext, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
+import { rankFor, fillMeso, type Aim } from "../engine/sequence";
+import { mergeNext, newMeso, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
 /** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
@@ -54,13 +54,13 @@ const GOAL_GROUPS: { label: string; goals: string[] }[] = [
   { label: "Skill", goals: ["skill"] },
 ];
 
-export function FocusPicker({ load, value, onPick, profile, days }: { load: Load; value?: string; onPick: (id: string) => void; profile?: EquipmentProfile; days?: number }) {
+export function FocusPicker({ load, value, onPick, profile, days, restrict }: { load: Load; value?: string; onPick: (id: string) => void; profile?: EquipmentProfile; days?: number; restrict?: string[] }) {
   const [detail, setDetail] = useState<Focus | null>(null);
   const [group, setGroup] = useState(0);
   const goals = GOAL_GROUPS[group].goals;
   const ranked = [...FOCI]
     .map((f) => ({ f, ...fitScore(f, load) }))
-    .filter(({ f }) => !goals.length || goals.includes(f.goals.primary) || f.id === value)
+    .filter(({ f }) => (!goals.length || goals.includes(f.goals.primary) || f.id === value) && (!restrict || restrict.includes(f.id) || f.id === value))
     .sort((a, b) => (b.score >= 0 ? 1 : 0) - (a.score >= 0 ? 1 : 0));
   return (
     <div className="stack">
@@ -117,7 +117,14 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
   );
   // Empfehlung mit den Einstellungen dieser Seite (Last), Rest des Plans wie er ist
   const draftPlan = plan ? (plan.some((x) => x.id === b.id) ? plan.map((x) => (x.id === b.id ? b : x)) : [...plan, b]) : [b];
-  const ranked = rankFor(draftPlan, b.id, aim, deficits).slice(0, 5);
+  // Mesozyklus: Partner-Hälfte; die zweite folgt aus den Successors der ersten
+  const partner = b.meso && plan ? plan.find((x) => x.meso === b.meso && x.id !== b.id) : undefined;
+  const partnerF = partner ? blockFocus(partner) : undefined;
+  const succIds = partner && partner.start < b.start && partnerF?.successors ? partnerF.successors : undefined;
+  const mesoFirst = !!(b.meso && partner && partner.start > b.start);
+  const allRanked = rankFor(draftPlan, b.id, aim, deficits);
+  const boundRanked = succIds ? allRanked.filter((r) => succIds.includes(r.f.id) || r.f.id === b.focusId) : allRanked;
+  const ranked = (boundRanked.length ? boundRanked : allRanked).slice(0, 5);
   const locked = b.start <= day; // laufende Phase: Orden nicht hier wechseln (eingefroren)
   const inPlan = !!plan?.some((x) => x.id === b.id);
   const nx = plan && inPlan ? nextOf(plan, b) : undefined;
@@ -130,15 +137,18 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
       <Field label="Alltagslast" hint="Hoch = wenig Energie und Zeit fürs Training übrig.">
         <Seg value={b.load} options={[{ value: "low", label: "niedrig" }, { value: "medium", label: "mittel" }, { value: "high", label: "hoch" }]} onChange={(load) => setB({ ...b, load })} />
       </Field>
-      {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && (
+      {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && !mesoFirst && (
         <Check checked={test} onChange={setTest} label="Testwoche am Ende (die letzte Woche wird zur Testwoche)" />
       )}
+      {mesoFirst && b.end >= day && <p className="muted small">Dieser Mesozyklus bekommt seine Testwoche am Ende der zweiten Hälfte.</p>}
 
-      <div className="label teal"><span className="bar" />Orden · {weeks} Wochen{f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (passt für ${f.weeks.min}–${f.weeks.max})` : ""}</div>
+      <div className="label teal"><span className="bar" />Orden · {weeks} Wochen{f && weeks < f.weeks.min && b.meso ? " · Akzent im Mesozyklus" : f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (passt für ${f.weeks.min}–${f.weeks.max})` : ""}</div>
       {locked ? (
         <p className="muted small">{f ? focusName(f.id) : "–"} läuft schon. Einen anderen Orden wählst du für die nächste Phase.</p>
       ) : (
         <div className="sc-alts">
+          {succIds && partnerF && <p className="muted small">Zweite Mesozyklus-Hälfte: folgt aus den Successors von {focusName(partnerF.id)}.</p>}
+          {succIds && b.focusId && !succIds.includes(b.focusId) && partnerF && <p className="note warn small">{focusName(b.focusId)} folgt nicht auf {focusName(partnerF.id)} — bewusst so lassen oder einen Successor wählen.</p>}
           {ranked.map((r, i) => (
             <button key={r.f.id} className={`sc-alt ${r.f.id === b.focusId ? "on" : ""}`} aria-pressed={r.f.id === b.focusId} onClick={() => setB({ ...b, focusId: r.f.id })}>
               <span><strong>{focusName(r.f.id)}</strong>{i === 0 && <span className="tag rec">empfohlen</span>}{r.f.id === b.focusId && <span className="tag">gewählt</span>}</span>
@@ -146,7 +156,7 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
             </button>
           ))}
           <button className="sc-alt muted" aria-expanded={all} onClick={() => setAll((x) => !x)}>{all ? "Weniger" : "Alle Orden …"}</button>
-          {all && <FocusPicker load={b.load} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} />}
+          {all && <FocusPicker load={b.load} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} restrict={succIds} />}
         </div>
       )}
 
@@ -222,6 +232,7 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">
         <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [])[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
+        <button className="btn ghost" onClick={() => onChange(fillMeso(newMeso(plan, today, () => uid("b")), aim, deficits ?? []))}>+ Mesozyklus anhängen (2 × 6 Wochen)</button>
         {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
       </div>
       {view && blockFocus(view) && (

@@ -20,7 +20,11 @@ export function stepScore(f: Focus, b: PlanBlock, prev: Focus | null, used: stri
   let score = fit.score;
   const reasons = fit.reasons.filter((r) => /Reise/.test(r));
   const w = blockWeeks(b);
-  if (w < f.weeks.min) { score -= (f.weeks.min - w) * 0.6; reasons.push(`eigentlich ab ${f.weeks.min} Wochen`); }
+  if (w < f.weeks.min) {
+    // Mesozyklus-Hälfte: 6 Wochen sind ein bewusster Akzent, kein Verstoß gegen die Empfehlung (die Einarbeitungswochen stecken in weeks.min)
+    if (b.meso) reasons.push("Akzent im Mesozyklus");
+    else { score -= (f.weeks.min - w) * 0.6; reasons.push(`eigentlich ab ${f.weeks.min} Wochen`); }
+  }
   else if (w > f.weeks.max) { score -= (w - f.weeks.max) * 0.4; reasons.push(`eigentlich bis ${f.weeks.max} Wochen`); }
   if (prev) {
     if (prev.id === f.id) score -= 3;
@@ -39,10 +43,17 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
     if (isTestBlock(b)) { beams = beams.map((bm) => ({ ...bm, seq: [...bm.seq, TEST_BLOCK], reasons: [...bm.reasons, ["eigene Testwoche"]] })); continue; }
     const locked = b.start <= today && !!FOCUS_BY_ID[b.focusId];
     const next: Beam[] = [];
+    // Mesozyklus-Hälfte 2: nur Successors des gewählten Ordens der ersten Hälfte (ausgewählter Orden bleibt erlaubt; ohne tragbare Successors alle)
+    const partnerIdx = !locked && b.meso ? sorted.findIndex((x) => x.meso === b.meso && x.id !== b.id && x.end < b.start) : -1;
     for (const bm of beams) {
       const lastReal = [...bm.seq].reverse().find((x) => x !== TEST_BLOCK);
       const prev = lastReal ? FOCUS_BY_ID[lastReal] ?? null : null;
-      const options = locked ? [FOCUS_BY_ID[b.focusId]] : FOCI.filter((f) => fitScore(f, b.load).score >= 0);
+      let options = locked ? [FOCUS_BY_ID[b.focusId]] : FOCI.filter((f) => fitScore(f, b.load).score >= 0);
+      const succ = partnerIdx >= 0 && bm.seq[partnerIdx] !== TEST_BLOCK ? FOCUS_BY_ID[bm.seq[partnerIdx]] : undefined;
+      if (!locked && succ) {
+        const bound = options.filter((f) => succ.successors?.includes(f.id) || f.id === b.focusId);
+        if (bound.length) options = bound;
+      }
       for (const f of options) {
         const st = stepScore(f, b, prev, bm.seq);
         next.push({ seq: [...bm.seq, f.id], score: bm.score + (locked ? 0 : st.score), reasons: [...bm.reasons, locked ? ["läuft oder ist vorbei"] : st.reasons] });
@@ -100,4 +111,17 @@ export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: Defic
       return { f, score, reasons };
     })
     .sort((x, y) => y.score - x.score);
+}
+
+/** Frisch angelegter Mesozyklus (newMeso in stack.ts): Hälfte 1 nach Empfehlung, Hälfte 2 aus deren Successors — bester zuerst, sonst die beste Alternative. */
+export function fillMeso(p: PlanBlock[], aim: Aim, deficits: DeficitWeights = []): PlanBlock[] {
+  const halves = p.filter((x) => x.meso).sort((a, b) => a.start.localeCompare(b.start));
+  const [a, b] = halves;
+  if (!a || !b) return p;
+  const topA = rankFor(p, a.id, aim, deficits)[0];
+  if (!topA) return p;
+  const withA = p.map((x) => (x.id === a.id ? { ...x, focusId: topA.f.id } : x));
+  const rankedB = rankFor(withA, b.id, aim, deficits);
+  const topB = rankedB.find((r) => topA.f.successors?.includes(r.f.id)) ?? rankedB[0];
+  return topB ? withA.map((x) => (x.id === b.id ? { ...x, focusId: topB.f.id } : x)) : withA;
 }

@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.94.0] – 2026-11-06
+
+### Neu
+- Mesozyklen: „+ Mesozyklus anhängen“ legt zwei kurze Phasen von je sechs Wochen an, die zusammengehören, plus eine Testwoche am Ende (12+1). Kein Messen dazwischen — die Testwoche ist die Klammer, die den Mesozyklus abschließt. Wer die Übungen schon sitzt hat, profitiert ab Woche 1; die sechs Wochen sind dann ein bewusster Akzent, kein Verstoß gegen die Ordenslänge (die App straft sie im Paar nicht ab, alleinstehend bleibt die Empfehlung bestehen).
+- Die zweite Hälfte folgt aus den Successors der ersten — Orden, die gut aufeinander folgen, mit naheliegenden oder überlappenden Zielen. Die Wahl ist im Plan auf diese Nachfolger beschränkt, und die Blockfolge plant Mesozyklen paareweise. Slayer → Olympian ist neu eine empfohlene Nachfolge: Masse oben, dann Sprungkraft und Schnelligkeit.
+- Die Auswertung der Testwoche schlägt die Schwerpunkte für beide Hälften gleichzeitig vor („Für die nächsten 12 Wochen übernehmen“) und schreibt sie in beide Blöcke — die zweite Hälfte rechnet mit denselben Testwerten. Einzelne Phasen bleiben erlaubt und funktionieren alleinstehend; wer eine Phase teilt oder zwei verbindet, löst das Paar auf.
+
 ## [0.93.0] – 2026-11-06
 
 ### Geändert
