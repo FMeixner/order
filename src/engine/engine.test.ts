@@ -104,7 +104,7 @@ describe("Progression", () => {
     expect(advance(lr, st, e([12, 12, 12], "schwer"), studio, "x").target).toBe(12);
     st = advance(lr, st, e([15, 15, 15]), studio, "d2");
     expect(st.weight).toBe(12);
-    expect(st.target).toBe(8);
+    expect(st.target).toBe(7);
     expect(landingReps(10, 12, "ok", 12, 8)).toBe(5);
     const home2: EquipmentProfile = { ...home, dumbbells: parseWeightList("4-41,5/1,5") };
     expect(gapCeiling(home2, "dumbbell", 4, 8, 10)).toBe(15);
@@ -602,12 +602,12 @@ describe("Ortswechsel und OK-Steigerung", () => {
   const slot = { id: "lr", name: "DB Lateral Raise", sets: 3, reps: "12-15", prog: "double" as const };
   const entry = (r: ReturnType<typeof resolveSlot>, w: number, reps: number[], fb: "ok" | "leicht"): SessionEntry =>
     ({ key: r!.key, slotId: "lr", name: r!.name, prog: "double", feedback: fb, sets: reps.map((x) => ({ done: true, reps: x, weight: w })) });
-  it("12 kg im Studio leicht: zuhause 13 kg, im Studio mehr Wiederholungen", () => {
+  it("12 kg im Studio leicht: Sprung auf 14 kg (Lückenende 15), zuhause 13 kg mit mehr Wiederholungen", () => {
     const rs = resolveSlot(slot, studio)!;
     const st = advance(rs, undefined, entry(rs, 12, [12, 12, 12], "leicht"), studio, "2026-10-01");
     const gymS = suggest(rs, st, 1, studio);
-    expect(gymS.weight).toBe(12);
-    expect(gymS.targetReps).toBeGreaterThan(12);
+    expect(gymS.weight).toBe(14);
+    expect(gymS.targetReps).toBe(9);
     const rh = resolveSlot(slot, homeP)!;
     const homeS = suggest(rh, st, 1, homeP);
     expect(homeS.weight).toBe(13);
