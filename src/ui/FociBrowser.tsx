@@ -41,7 +41,6 @@ function BlockLines({ b, c }: { b: Block; c: Ctx }) {
       const alt = b.fallbackFlow ? FLOWS[b.fallbackFlow]?.name : b.fallback ? slotLine(b.fallback, c) : null;
       return <li><strong>{MODULE_LABEL[b.module]}{lv}</strong>{rot}: {pathList(b.module, b.variant, sk).map((d) => d.name).join(", ")}{alt ? <span className="muted"> · ohne Schwert und Stock: {alt}</span> : null}</li>;
     }
-    case "menu": return <li>{b.label}: nach Wahl aus {Object.keys(b.options).join(", ")}</li>;
   }
 }
 
@@ -54,7 +53,6 @@ function blockNames(b: Block, c: Ctx): string[] {
     case "contrast": return [nm(b.heavy), b.explosive.name].filter(Boolean) as string[];
     case "beast": return ["Bestie"];
     case "module": return [b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? "Schwerpunkt" : MODULE_LABEL[b.module]];
-    case "menu": return [b.label];
   }
 }
 

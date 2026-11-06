@@ -4,7 +4,7 @@ import { blockWeeks, isTestBlock } from "./plan";
 import { mergeNext, resizeBlock, setTestWeek, splitBlock } from "./stack";
 
 const blk = (id: string, focusId: string, start: string, end: string): PlanBlock => ({ id, focusId, label: "", start, end, load: "medium", travel: false });
-const plan = [blk("a", "assassin", "2026-09-28", "2026-12-06"), blk("w", "slayer", "2026-12-07", "2027-02-21"), blk("s", "soldier", "2027-02-22", "2027-03-28")];
+const plan = [blk("a", "assassin", "2026-09-28", "2026-12-06"), blk("w", "slayer", "2026-12-07", "2027-02-21"), blk("s", "troubadour", "2027-02-22", "2027-03-28")];
 const T = "2026-10-14";
 const contiguous = (p: PlanBlock[]) => [...p].sort((x, y) => x.start.localeCompare(y.start)).every((b, i, a) => i === 0 || a[i - 1].end < b.start && new Date(a[i - 1].end + "T12:00").getTime() + 864e5 === new Date(b.start + "T12:00").getTime());
 

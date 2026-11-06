@@ -21,7 +21,7 @@ export function startHunt(update: Update, today: string, beastId: string): strin
   update((st) => {
     const s: Session = {
       id, date: today, blockId: HUNT, focusId: "", week: 0, role: HUNT, profileId: defaultProfile(st, today),
-      entries: {}, drills: {}, menu: {}, beastRuns: { [RUN]: { beast: { id: beastId, seconds: null } } }, done: false,
+      entries: {}, drills: {}, beastRuns: { [RUN]: { beast: { id: beastId, seconds: null } } }, done: false,
     };
     return { ...st, sessions: [...st.sessions.filter((x) => !(isHunt(x) && !x.done)), s] };
   });

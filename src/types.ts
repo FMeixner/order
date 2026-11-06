@@ -82,7 +82,6 @@ export type Block =
       pace?: "easy";
     }
   | { type: "module"; module: WeaponModule | "flow" | "sharpen"; variant: string; fallback?: Slot; /** Ohne Schwert und Stock: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B"; /** Kurztag: nur die erste Hälfte der Übungen */ short?: true }
-  | { type: "menu"; id: string; label: string; options: Record<string, Slot>; rotation?: "A" | "B" };
 
 /** Die drei Waffen-Module mit Lernweg: Messer, Langschwert, Stab (Stock reicht). */
 export type WeaponModule = "sword" | "longsword" | "stab";
@@ -327,7 +326,6 @@ export interface Session {
   beastParts?: BeastResult[];
   /** Ergebnisse je Bestien-Block (Block-Id): Einzelbestie oder Teile einer Serie */
   beastRuns?: Record<string, BeastRun>;
-  menu: Record<string, string>;
   note?: string;
   done: boolean;
 }
@@ -347,7 +345,6 @@ export interface AppState {
   oneRM?: Record<string, { kg: number; date: string }>;
   /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
   deload?: Record<string, "ja" | "nein">;
-  menuChoice: Record<string, string>; // blockId:menuId → Option
   tests: Record<string, TestResult[]>;
   who5: { date: string; blockId: string; score: number }[];
   feeling: { date: string; sessionId: string; value: number }[];

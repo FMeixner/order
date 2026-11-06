@@ -42,7 +42,6 @@ Hat jemand mehr Trainingstage als `week_4` Rollen, kommen weitere Rollen aus `ro
 | `contrast` | `heavy`, `explosive`, `transfer` (Standard 30 s), `rest` (Standard 180 s) |
 | `beast` | `pool` (feste Liste) oder `classes` (plage, bestie, ungeheuer, uralte, verfluchte), `draw` rotate oder random, `benchmark_every` |
 | `module` | `"module": "sword"`: Schwert-Variante aus `data/modules/sword.json`, nur wenn das Profil ein Schwert hat; sonst `fallback`-Slot |
-| `menu` | `options`: Name → Slot; der Nutzer wählt |
 
 Jeder Block kann `rotation: "A"` (ungerade Blockwoche) oder `"B"` tragen.
 
@@ -132,7 +131,6 @@ Die App kürzt `rest` aus den Orden um 15 s: ab 150 s nie unter 120 s, ab 75 s n
 
 `data/modules/sharpen.json` enthält je Bereich (`speed`, `power`, `mobility`, `ke`, `anaerob`, `aerob`) eine kleine Erhaltungsdosis: `place` (`start` nach dem Warm-up oder `end` vor dem Cool-down), `days` (`all`, `1` am kürzesten Tag, `2` am ersten und mittleren Tag), `why` als Begründung und `drills` wie bei den Flows. Die App baut den Slot selbst ein, in Orden-Dateien steht nichts davon. Einen Slot bekommen Orden ab 45 Minuten ohne `medley` und ohne eigene Schwerpunkt-Menüs. Welcher Bereich es wird, entscheidet die letzte Testwoche (siehe `src/engine/sharpen.ts`). Eine Phase kann ihn mit `"sharpen": "mobility"` festlegen oder mit `"sharpen": "off"` abschalten.
 
-Menüs mit dem Label „Schwerpunkt 1“, „Schwerpunkt 2“ … (Soldier) werden nach den Defiziten vorbelegt. Die Optionen heißen dafür `Speed`, `Power`, `Strength`, `Kraftausdauer`, `Anaerob`, `Aerob`, `Mobility`.
 
 ## Start-Bestie
 

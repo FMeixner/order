@@ -23,7 +23,7 @@ function sample(): AppState {
     schedule: { Mo: "g", Di: "g", Do: "h", Fr: "g" },
     plan: [
       { id: "b1", focusId: "assassin", label: "Herbst", start: "2026-09-22", end: "2026-11-30", load: "high", travel: false },
-      { id: "b2", focusId: "soldier", label: "Ferien", start: "2027-02-24", end: "2027-03-31", load: "low", travel: false, schedule: { Mo: "g", Mi: "h", Fr: "g", Sa: "h" } },
+      { id: "b2", focusId: "troubadour", label: "Ferien", start: "2027-02-24", end: "2027-03-31", load: "low", travel: false, schedule: { Mo: "g", Mi: "h", Fr: "g", Sa: "h" } },
     ],
   };
 }
@@ -146,8 +146,8 @@ describe("Progression", () => {
 });
 
 describe("Orden und Plan", () => {
-  it("lädt alle 21 Orden", () => {
-    expect(FOCI.length).toBe(21);
+  it("lädt alle 19 Orden", () => {
+    expect(FOCI.length).toBe(19);
   });
   it("jede Rolle ist mit jedem Standardprofil auflösbar", () => {
     for (const f of FOCI) for (const role of Object.values(f.roles)) for (const b of role.blocks) {
@@ -168,8 +168,8 @@ describe("Orden und Plan", () => {
     expect(weekInBlock(b, "2026-09-28")).toBe(2);
     expect(dayRoleMap(s, b).map((x) => x.day)).toEqual(["Mo", "Di", "Do", "Fr"]);
     expect(isTestWeek(FOCUS_BY_ID.assassin, b, 10)).toBe(true);
-    const soldier = s.plan.find((x) => x.focusId === "soldier")!;
-    expect(dayRoleMap(s, soldier).map((x) => x.day)).toEqual(["Mo", "Mi", "Fr", "Sa"]);
+    const tb = s.plan.find((x) => x.focusId === "troubadour")!;
+    expect(dayRoleMap(s, tb).map((x) => x.day)).toEqual(["Mo", "Mi", "Fr", "Sa"]);
   });
   it("beide Seiten gleich, alte Asymmetrie-Angaben werden beim Laden entfernt", () => {
     const s = migrate(sample());
@@ -286,10 +286,9 @@ describe("Jahresbalance", () => {
     expect(a.label).toBe("spezialisiert");
     expect(a.share.muskel).toBeGreaterThan(0.5);
     expect(a.share.beweglichkeit).toBeGreaterThan(0.05);
-    const mixed = [blk("1", "assassin", "2026-09-28", "2026-12-06"), blk("2", "slayer", "2026-12-07", "2027-02-23"), blk("3", "soldier", "2027-02-24", "2027-03-31"), blk("4", "gladiator", "2027-04-01", "2027-07-15"), blk("5", "conqueror", "2027-07-16", "2027-09-24")];
+    const mixed = [blk("1", "assassin", "2026-09-28", "2026-12-06"), blk("2", "slayer", "2026-12-07", "2027-02-23"), blk("3", "troubadour", "2027-02-24", "2027-03-31"), blk("4", "knight", "2027-04-01", "2027-07-15"), blk("5", "conqueror", "2027-07-16", "2027-09-24")];
     const b = balanceOf(mixed, "2026-09-28", "2027-09-27");
     expect(b.score!).toBeGreaterThan(a.score!);
-    // Soldier zählt seit 0.18 nicht mehr gleichmäßig für alle Bereiche, deshalb „mit Schwerpunkt“ statt „allround“
     expect(b.label).not.toBe("spezialisiert");
   });
 });
@@ -466,7 +465,7 @@ describe("hexed und Grundlagentempo", () => {
     const f = FOCUS_BY_ID.assassin;
     const planned4 = dayRoleMap(four, b, f, 1);
     const dates: Record<string, string> = { Mo: "2026-09-28", Di: "2026-09-29", Do: "2026-10-01", Fr: "2026-10-02" };
-    const sessions = planned4.map((d) => ({ id: `bz:1:${d.role}`, date: dates[d.day], blockId: "bz", focusId: "assassin", week: 1, role: d.role, profileId: d.profileId, entries: {}, drills: {}, menu: {}, done: true }));
+    const sessions = planned4.map((d) => ({ id: `bz:1:${d.role}`, date: dates[d.day], blockId: "bz", focusId: "assassin", week: 1, role: d.role, profileId: d.profileId, entries: {}, drills: {}, done: true }));
     const five = { ...four, schedule: { ...four.schedule, So: "h" } as AppState["schedule"], sessions };
     const m = dayRoleMap(five, b, f, 1);
     expect(m.find((d) => d.day === "So")?.role).toBe("bonus");
@@ -558,7 +557,7 @@ describe("Wochenvolumen", () => {
     const { weeklyVolume, volumeRange } = await import("./volume");
     const s = sample();
     const e = (name: string, n: number): SessionEntry => ({ key: `x|${name}`, slotId: "x", name, prog: "double", sets: Array.from({ length: n }, () => ({ done: true, reps: 8, weight: 20 })) });
-    s.sessions = [{ id: "s1", date: "2026-09-29", blockId: "b1", focusId: "knight", week: 2, role: "upper_a", profileId: "g", entries: { a: e("Bench Press", 4), b: e("Lat Pulldown", 3) }, drills: {}, menu: {}, done: true }];
+    s.sessions = [{ id: "s1", date: "2026-09-29", blockId: "b1", focusId: "knight", week: 2, role: "upper_a", profileId: "g", entries: { a: e("Bench Press", 4), b: e("Lat Pulldown", 3) }, drills: {}, done: true }];
     const [w] = weeklyVolume(s, "2026-10-10");
     expect(w.sets.Brust).toBe(4);
     expect(w.sets.Trizeps).toBe(2);
@@ -689,7 +688,7 @@ describe("Lastbestien", () => {
     expect(suggestLoad(s, lam, gym)).toBeNull(); // 1RM unbekannt: selbst festlegen
     const withRM = { ...s, oneRM: { "Bench Press": { kg: 100, date: "2026-10-01" } } };
     expect(suggestLoad(withRM, lam, gym)?.kg).toBe(50);
-    const logged = { ...s, sessions: [{ id: "x", date: "2026-10-01", blockId: "b1", focusId: "knight", week: 1, role: "a", profileId: "g", drills: {}, menu: {}, done: true,
+    const logged = { ...s, sessions: [{ id: "x", date: "2026-10-01", blockId: "b1", focusId: "knight", week: 1, role: "a", profileId: "g", drills: {}, done: true,
       entries: { k: { key: "k", slotId: "k", name: "Bench Press", prog: "double" as const, sets: [{ done: true, reps: 5, weight: 90 }] } } }] };
     expect(oneRM(logged, "Bench Press")?.kg).toBe(105);
     const rec = loadRecord(lam, [{ date: "a", seconds: 900, kg: 50 }, { date: "b", seconds: 1200, kg: 60 }, { date: "c", seconds: 1000, kg: 55 }]);
@@ -738,7 +737,7 @@ describe("Keine Bestie zweimal hintereinander", () => {
     const st = { ...s, plan };
     const opts = { blockId: "b-assassin", week: 1, profile: { ...gym, id: "g" }, state: st, reduced: false, downgrade: false };
     const w1 = pickBeast(b, opts)!;
-    const prev = { id: "x:9:a", date: "2026-10-02", blockId: "x", focusId: "slayer", week: 9, role: "a", profileId: "g", entries: {}, drills: {}, menu: {}, done: true, beast: { id: w1.id, seconds: 900 } };
+    const prev = { id: "x:9:a", date: "2026-10-02", blockId: "x", focusId: "slayer", week: 9, role: "a", profileId: "g", entries: {}, drills: {}, done: true, beast: { id: w1.id, seconds: 900 } };
     const w1b = pickBeast(b, { ...opts, state: { ...st, sessions: [prev] } })!;
     expect(w1b.id).not.toBe(w1.id);
   });
@@ -834,7 +833,7 @@ describe("5RM-Variantenempfehlung aus dem letzten Orden", () => {
     expect(variantHint(s, T, "t-agility")).toBeNull();
     expect(variantHint(s, T, "t-5rm-squat")).toMatch(/keine der Übungen/);
     expect(variantHint(s, T, "t-5rm-push")).toMatch(/geführte Variante/);
-    s = { ...s, sessions: [{ id: "s1", date: "2026-11-02", blockId: "b1", focusId: "knight", week: 2, role: "upper_a", profileId: "g", entries: { a: e("Back Squat"), b: e("Lat Pulldown") }, drills: {}, menu: {}, done: true }] };
+    s = { ...s, sessions: [{ id: "s1", date: "2026-11-02", blockId: "b1", focusId: "knight", week: 2, role: "upper_a", profileId: "g", entries: { a: e("Back Squat"), b: e("Lat Pulldown") }, drills: {}, done: true }] };
     expect(variantHint(s, T, "t-5rm-squat")).toMatch(/Back Squat.*dieselbe Variante/);
     expect(variantHint(s, T, "t-5rm-pull")).toMatch(/Lat Pulldown.*geführte Variante/);
     expect(variantHint(s, T, "t-5rm-push")).toMatch(/keine der Übungen/);

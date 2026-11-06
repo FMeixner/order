@@ -76,7 +76,7 @@ export function NormFields({ user, onChange }: { user: UserProfile; onChange: (u
           onChange={(v) => onChange({ ...user, sex: v === "-" ? null : v })} />
       </Field>
       {user.sex === "w" && (
-        <Field label="Ordensnamen" hint="Weibliche Fassung: Queen, Huntress, Gladiatrix, Trobairitz, Dame, Conqueress, Arlecchina, Amazon">
+        <Field label="Ordensnamen" hint="Weibliche Fassung: Queen, Huntress, Trobairitz, Dame, Conqueress, Arlecchina, Amazon">
           <Seg value={user.orderNames ?? "auto"} options={[{ value: "auto", label: "weiblich" }, { value: "base", label: "Grundform" }]} onChange={(orderNames) => onChange({ ...user, orderNames })} />
         </Field>
       )}

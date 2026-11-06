@@ -61,8 +61,8 @@ const STATION = new Set(["machine", "cable"]);
 const est = planMinutes;
 
 type Share = Record<string, number>;
-const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : b.type === "menu" ? Object.values(b.options).slice(0, 1) : []);
-const strengthBlock = (b: Block) => (b.type === "single" && (isStrength(b.slot) || b.slot.kind === "hold")) || b.type === "superset" || b.type === "contrast" || b.type === "menu";
+const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : []);
+const strengthBlock = (b: Block) => (b.type === "single" && (isStrength(b.slot) || b.slot.kind === "hold")) || b.type === "superset" || b.type === "contrast";
 const primary = (s: Slot) => Object.entries(musclesOf(s.name)).sort((a, c) => c[1] - a[1])[0]?.[0];
 
 /** Rang einer Übung für den Kurztag: im Orden als Kern markiert, dann schwer, dann Mehrgelenk, dann der Rest */
@@ -143,21 +143,29 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   short.warmup = shortWarm;
   short.cooldown = (short.cooldown ?? []).slice(0, 1);
   short.name = `${short.name} (Kurztag)`;
-  // Länger als 35 Minuten? Sätze runter, bis die Einheit passt (mindestens 1 Satz je Übung, Kernübungen zuletzt).
+  // Länger als 35 Minuten? Sätze runter, bis die Einheit passt — gleichmäßig über alle behaltenen Übungen
+  // verteilt (Round-Robin, die leichten zuerst): auch schwere Grundübungen geben einen Satz ab, statt dass
+  // die leichten zuerst auf einen Satz plattgedrückt werden. Supersets und Kontrastpaare nur im Ganzen:
+  // beide Teile behalten immer dieselbe Satzanzahl, ungleiche Stände werden erst angeglichen.
   // Reichen die Sätze nicht (oder gibt es keine, etwa am Grundlagentag), werden Timer-Inhalte gekürzt:
   // bis zur Hälfte ihrer Dauer, mindestens 10 Minuten.
   const timerBase = new Map(short.blocks.flatMap(slotsOf).filter((s) => s.kind === "timer").map((s) => [s, s.minutes ?? 0]));
   const whyOnce = (s: Slot, text: string) => { if (!(s.why ?? []).includes(text)) s.why = [...(s.why ?? []), text]; };
+  const cutRound = ranked.filter((x) => keep.has(x.b)).sort((a, c) => a.r - c.r);
+  let cursor = 0;
   let shrinkGuard = 40;
   while (est(short) > SHORT_LIMIT + 0.5 && shrinkGuard--) {
-    const cand = ranked.filter((x) => keep.has(x.b)).sort((a, c) => a.r - c.r).find((x) => slotsOf(x.b).some((s) => isStrength(s) && (s.sets ?? 3) > 1));
-    if (cand) {
-      for (const s of slotsOf(cand.b)) {
-        if (!isStrength(s) || (s.sets ?? 3) <= 1) continue;
-        s.sets = (s.sets ?? 3) - 1;
-        whyOnce(s, "Weniger Sätze, damit die kurze Einheit bei 35 Minuten bleibt.");
-        break;
-      }
+    let cut = -1;
+    for (let j = 0; j < cutRound.length; j++) {
+      const at = (cursor + j) % cutRound.length;
+      const ss = slotsOf(cutRound[at].b).filter(isStrength);
+      if (ss.length && Math.max(...ss.map((s) => s.sets ?? 3)) > 1) { cut = at; break; }
+    }
+    if (cut >= 0) {
+      const ss = slotsOf(cutRound[cut].b).filter(isStrength);
+      const hi = Math.max(...ss.map((s) => s.sets ?? 3));
+      for (const s of ss) if ((s.sets ?? 3) === hi) { s.sets = hi - 1; whyOnce(s, "Weniger Sätze, damit die kurze Einheit bei 35 Minuten bleibt."); }
+      cursor = cut + 1;
       continue;
     }
     const t = short.blocks.flatMap(slotsOf).find((s) => s.kind === "timer" && (s.minutes ?? 0) > Math.max(10, Math.ceil((timerBase.get(s) ?? 0) / 2 / (s.step ?? 5)) * (s.step ?? 5)));

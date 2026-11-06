@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.91.0] – 2026-11-06
+
+### Behoben
+- Kurztag kürzt gleichmäßig: Bisher wurden die leichten Übungen zuerst auf einen Satz plattgedrückt, bevor die schweren Grundübungen dran waren. Jetzt rotiert die Kürzung über alle Übungen des Tages, auch ein Satz einer schweren Kernübung darf fallen. Supersets und Kontrastpaare werden nur noch im Ganzen gekürzt: Beide Teile behalten immer dieselbe Satzanzahl, ungleiche Stände werden vorher angeglichen — ein Superset mit einem Satz im ersten und zwei im zweiten Teil ist kein durchführbares Superset.
+
+### Entfernt
+- Zwei Orden ziehen ein: Soldier (Entlasten, testen, Schwachstellen trainieren) und Gladiator (Physis mit Weste und Konditionsintervallen). Soldier spielte eine Rolle, die die ganze App spielt — Schwachstellen ausgleichen ist die Aufgabe der Testwoche mit dem Schwerpunkt-Slot, nicht eines eigenen Ordens; sechs bis acht Wochen Allgemeinvorbereitung tragen zudem nichts, was nicht Troubadour und Harlequin schon tragen. Gladiator wiederholte Slayers Aufbau mit anderem Namen und anderen Geräten. Laufende Phasen laufen mit ihrem eingefrorenen Inhalt zu Ende (Soldier → Troubadour, Gladiator → Slayer).
+- Mit Soldier entfällt der Blocktyp „menu“ (Schwerpunkt-Wahl am Tag) aus App, Datenprüfung und Erzähler.
+
+### Geändert
+- Slayer trägt Gladiators Erbe: zehn bis fünfzehn Wochen, und läuft eine Körpergewichts-Übung aus (etwa 20+ saubere Liegestütze in der Tiefe), wechselt sie zur Gewichtsweste und progressiert mit ihr weiter — Weste, Gürtel oder Rucksack mit Scheiben, je nachdem, was das Profil hergibt.
+- Nachfolger neu verteilt: Assassin → Slayer, Troubadour; Knight → Paladin, Smith, Troubadour, Slayer; Olympian → Smith, Huntsman, Troubadour; Smith → Knight, Olympian, Troubadour; Slayer → Conqueror, Troubadour.
+
 ## [0.90.0] – 2026-11-03
 
 ### Neu

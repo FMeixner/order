@@ -13,7 +13,7 @@
   "test_week": true,
   "travel": true,
   "modules": ["correctives", "beast"],
-  "successors": ["smith", "huntsman", "soldier"],
+  "successors": ["smith", "huntsman", "troubadour"],
   "sources": ["Seitz & Haff (2016)", "van Dyk et al. (2019)"],
   "week_4": ["power_unten", "kraft_oben", "sprint", "power_hinge"],
   "week_3": ["power_unten", "kraft_oben", "sprint"],

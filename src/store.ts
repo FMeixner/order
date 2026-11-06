@@ -49,7 +49,7 @@ export function emptyState(): AppState {
     version: 1, onboarded: false,
     user: { name: "", birthYear: null, sex: null, skills: null },
     equipment: [], schedule: {}, roleOrder: {}, plan: [], slots: {}, sessions: [], beastTimes: {},
-    menuChoice: {}, tests: {}, who5: [], feeling: [], swaps: {},
+    tests: {}, who5: [], feeling: [], swaps: {},
   };
 }
 
@@ -86,7 +86,7 @@ export function migrate(raw: unknown): AppState {
   quietDays(s);
   s.equipment = s.equipment.map((e) => ({ ...e, has: { ...base_has(), ...(e.has ?? {}) } }));
   renameExercises(s);
-  // 0.75: Orden „Witcher“ heißt jetzt „Slayer“ — Phasen, Einheiten und Drill-Änderungen heißen mit um
+  // 0.75: Umbenennung Witcher → Slayer. 0.91: Soldier und Gladiator ziehen ein, ihre Phasen laufen auf dem Erben weiter
   renameFocus(s);
   // 0.78: Der Schalter „Leicht“ ist weg; der alte „Diese Woche −1 Satz“-Stand wird beim Laden entfernt
   delete (s as { reduced?: Record<string, boolean> }).reduced;
@@ -97,22 +97,34 @@ export function migrate(raw: unknown): AppState {
   }
   return s;
 }
-/** 0.75: Umbenennung Witcher → Slayer. Gleicher Orden, gleiche Rollen; Slot-Ids (w-*), Weibelform „Amazon“ und alle Daten bleiben. */
+/** 0.75: Umbenennung Witcher → Slayer — gleicher Orden, gleiche Rollen; Slot-Ids (w-*), Weibelform „Amazon“ und alle Daten bleiben.
+    0.91: Soldier und Gladiator ziehen ein: Phasen und Einheiten laufen auf den Erben weiter
+    (Soldier → Troubadour, Gladiator → Slayer). Laufende Blöcke behalten ihren eingefrorenen Inhalt bis zum Ende. */
+const RETIRED_FOCUS: Record<string, { id: string; name?: string }> = {
+  witcher: { id: "slayer", name: "Slayer" },
+  gladiator: { id: "slayer" },
+  soldier: { id: "troubadour" },
+};
 function renameFocus(s: AppState): void {
   s.plan = s.plan.map((b): PlanBlock => {
-    if (b.focusId !== "witcher") return b;
+    const retired = RETIRED_FOCUS[b.focusId];
+    if (!retired) return b;
     const fr = b.frozen;
-    const old = fr?.foci?.witcher;
-    if (!fr || !old) return { ...b, focusId: "slayer" };
+    const old = fr?.foci?.[b.focusId];
+    if (!fr || !old) return { ...b, focusId: retired.id };
     const foci: Record<string, Focus> = { ...fr.foci };
-    delete foci.witcher;
-    foci.slayer = { ...old, id: "slayer", name: "Slayer" };
-    return { ...b, focusId: "slayer", frozen: { at: fr.at, foci } };
+    delete foci[b.focusId];
+    foci[retired.id] = { ...old, id: retired.id, ...(retired.name ? { name: retired.name } : {}) };
+    return { ...b, focusId: retired.id, frozen: { at: fr.at, foci } };
   });
-  s.sessions = (s.sessions ?? []).map((se) => (se.focusId === "witcher" ? { ...se, focusId: "slayer" } : se));
+  s.sessions = (s.sessions ?? []).map((se) => (RETIRED_FOCUS[se.focusId] ? { ...se, focusId: RETIRED_FOCUS[se.focusId].id } : se));
   if (s.drillEdits) {
     const out: AppState["drillEdits"] = {};
-    for (const [k, v] of Object.entries(s.drillEdits)) out[k.startsWith("witcher:") ? `slayer:${k.slice(8)}` : k] = v;
+    for (const [k, v] of Object.entries(s.drillEdits)) {
+      // Witcher heißt nur um (gleiche Rollen), Soldier und Gladiator führen ihre Rollen nicht weiter: deren Änderungen entfallen.
+      if (k.startsWith("witcher:")) out[`slayer:${k.slice(8)}`] = v;
+      else if (!k.startsWith("soldier:") && !k.startsWith("gladiator:")) out[k] = v;
+    }
     s.drillEdits = out;
   }
 }

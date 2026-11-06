@@ -57,7 +57,7 @@ function compress(f: Focus): Focus {
         }
         continue;
       }
-      if (b.type === "module" || b.type === "menu") continue;
+      if (b.type === "module") continue;
       for (const s of slotsOf(b)) {
         if (!isStrength(s) && s.kind !== "hold") continue;
         const g = groupOf(s.name);

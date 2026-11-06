@@ -168,7 +168,6 @@ for (const [f, d] of allFoci) {
           if (r.location === "gym" && !b.sameStation && b.slots.filter((s) => ["machine", "cable"].includes(exercises[s.name]?.equip)).length > 1) err(f, `${ctx}: Superset aus zwei Maschinen/Kabeln (${b.slots.map((s) => s.name).join(" + ")})`);
           break;
         case "contrast": checkSlot(b.heavy, ctx); checkSlot(b.explosive, ctx); break;
-        case "menu": Object.values(b.options).forEach((s) => checkSlot(s, `${ctx}/${b.id}`)); break;
         case "module":
           if (b.module === "flow" ? !flows[b.variant] : b.module === "sharpen" ? !sharpen[b.variant] : !WEAPONS[b.module] || !WEAPONS[b.module][b.variant]) err(f, `${ctx}: Modul-Variante ${b.module}/${b.variant} unbekannt`);
           if (b.fallback) checkSlot(b.fallback, ctx);

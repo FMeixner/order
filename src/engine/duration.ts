@@ -52,7 +52,6 @@ function blockSlots(b: Block): Slot[] {
     case "single": return [b.slot];
     case "superset": return b.slots;
     case "contrast": return [b.heavy, b.explosive];
-    case "menu": { const f = Object.values(b.options)[0]; return f ? [f] : []; }
     case "module": return b.fallback ? [b.fallback] : [];
     default: return [];
   }
@@ -103,10 +102,6 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
       if (p.has.sword) return weaponSeconds(b.module, b.variant, skills, boost, b.short) + SETUP;
       if (b.fallbackFlow) { const ds = b.short ? shortDrills(moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow")) : moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow"); return ds.reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP; }
       return b.fallback ? blockSeconds({ type: "single", slot: b.fallback }, p, red) : 0;
-    }
-    case "menu": {
-      const first = Object.values(b.options)[0];
-      return first ? blockSeconds({ type: "single", slot: first }, p, red) : 0;
     }
   }
 }
