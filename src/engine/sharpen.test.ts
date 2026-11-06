@@ -53,7 +53,7 @@ describe("Schwerpunkt-Slot", () => {
     expect(slotFor(s, { ...s.plan[1], sharpen: "power" }).domain).toBe("power");
   });
   it("Kurzorden und Harlequin haben keinen Slot", () => {
-    for (const id of ["herald", "harlequin", "initiate"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(false);
+    for (const id of ["herald", "harlequin"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(false);
     for (const id of ["slayer", "assassin", "smith", "knight", "olympian", "conqueror"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(true);
   });
   it("Beweglichkeit jeden Tag am Ende, Schnelligkeit zweimal am Anfang, höchstens etwa 15 % der Woche", () => {

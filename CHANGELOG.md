@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.92.0] – 2026-11-06
+
+### Geändert
+- Lückenregel gedeckelt: Leichte Übungen mit großen Gewichtssprüngen — Face Pulls, Laterale Raises — liefen bisher bis zu 20 Wiederholungen hoch, bevor das nächste Gewicht kam, und landeten danach wieder bei zehn. Zwanzig Wiederholungen sind Kraftausdauerarbeit außerhalb des wirksamen Bereichs; die Aufwärtsphase endet jetzt bei 15. Die Landung nach dem Sprung bleibt der Epley-Schätzung überlassen und liegt weiter um zehn.
+
+### Entfernt
+- Initiate zieht ein: Der ehrliche Wiedereinstieg war ein Orden ohne eigene Domäne — Allgemeinvorbereitung, Erhalt und sanfter Einstieg tragen Troubadour und Harlequin bereits, und als Neuorientierung nach einer langen Phase und der Testwoche taugt jeder andere Orden. Laufende Initiate-Phasen laufen mit ihrem eingefrorenen Inhalt zu Ende und wandern danach auf Troubadour.
+
 ## [0.91.0] – 2026-11-06
 
 ### Behoben

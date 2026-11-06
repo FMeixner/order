@@ -99,11 +99,13 @@ export function migrate(raw: unknown): AppState {
 }
 /** 0.75: Umbenennung Witcher → Slayer — gleicher Orden, gleiche Rollen; Slot-Ids (w-*), Weibelform „Amazon“ und alle Daten bleiben.
     0.91: Soldier und Gladiator ziehen ein: Phasen und Einheiten laufen auf den Erben weiter
-    (Soldier → Troubadour, Gladiator → Slayer). Laufende Blöcke behalten ihren eingefrorenen Inhalt bis zum Ende. */
+    (Soldier → Troubadour, Gladiator → Slayer). Laufende Blöcke behalten ihren eingefrorenen Inhalt bis zum Ende.
+    0.92: Initiate zieht ebenfalls ein (→ Troubadour). */
 const RETIRED_FOCUS: Record<string, { id: string; name?: string }> = {
   witcher: { id: "slayer", name: "Slayer" },
   gladiator: { id: "slayer" },
   soldier: { id: "troubadour" },
+  initiate: { id: "troubadour" },
 };
 function renameFocus(s: AppState): void {
   s.plan = s.plan.map((b): PlanBlock => {
@@ -121,9 +123,9 @@ function renameFocus(s: AppState): void {
   if (s.drillEdits) {
     const out: AppState["drillEdits"] = {};
     for (const [k, v] of Object.entries(s.drillEdits)) {
-      // Witcher heißt nur um (gleiche Rollen), Soldier und Gladiator führen ihre Rollen nicht weiter: deren Änderungen entfallen.
+      // Witcher heißt nur um (gleiche Rollen), Soldier, Gladiator und Initiate führen ihre Rollen nicht weiter: deren Änderungen entfallen.
       if (k.startsWith("witcher:")) out[`slayer:${k.slice(8)}`] = v;
-      else if (!k.startsWith("soldier:") && !k.startsWith("gladiator:")) out[k] = v;
+      else if (!k.startsWith("soldier:") && !k.startsWith("gladiator:") && !k.startsWith("initiate:")) out[k] = v;
     }
     s.drillEdits = out;
   }

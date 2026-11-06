@@ -37,7 +37,7 @@ export interface Suggestion {
 }
 
 /** Größte Zahl an Wiederholungen, auf die der Bereich bei großen Sprüngen angehoben wird */
-export const GAP_CAP = 20;
+export const GAP_CAP = 15;
 /** Ortswechsel auf leichtere Last: höchstens so viele Wiederholungen */
 export const MOVE_CAP = 30;
 /** Ab diesem Sprung gilt die Lückenregel bei festen Wiederholungen */
