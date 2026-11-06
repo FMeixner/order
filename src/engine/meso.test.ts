@@ -34,7 +34,7 @@ describe("Mesozyklen", () => {
     const [a, b] = filled;
     expect(FOCUS_BY_ID[a.focusId]).toBeTruthy();
     expect(FOCUS_BY_ID[b.focusId]).toBeTruthy();
-    expect(FOCUS_BY_ID[a.focusId].successors).toContain(b.focusId);
+    expect(FOCUS_BY_ID[a.focusId].successors ?? []).toContain(b.focusId);
   });
 
   it("Interne Testwoche entfällt auf einer Meso-Hälfte, Verlaufstests bleiben", () => {
@@ -55,7 +55,7 @@ describe("Mesozyklen", () => {
     const inMeso = stepScore(assassin, mesoHalf, null, []);
     const alone = stepScore(assassin, solo, null, []);
     expect(inMeso.reasons).toContain("Akzent im Mesozyklus");
-    expect(inMeso.score).toBe(alone.score + (assassin.weeks.min - 6) * 0.6);
+    expect(inMeso.score).toBeCloseTo(alone.score + (assassin.weeks.min - 6) * 0.6, 10);
     expect(alone.reasons).toContain(`eigentlich ab ${assassin.weeks.min} Wochen`);
   });
 

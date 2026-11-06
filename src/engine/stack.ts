@@ -51,7 +51,7 @@ export function newMeso(plan: PlanBlock[], today: string, newId: () => string): 
   ];
 }
 
-/** Phase in zwei teilen (erste Hälfte aufgerundet); die zweite bekommt denselben Orden, ohne eingefrorenen Stand. Ein Mesozyklus löst sich dabei auf. */
+/** Phase in zwei teilen (erste Hälfte aufgerundet); die zweite bekommt denselben Orden, ohne eingefrorenen Stand. Teilen löst einen Mesozyklus komplett auf: Auch der Partner verliert die Meso-Id, sonst bliebe ihm die interne Testwoche für immer unterdrückt. */
 export function splitBlock(plan: PlanBlock[], id: string, newId: string, today: string): PlanBlock[] {
   const b = plan.find((x) => x.id === id);
   if (!b || isPast(b, today) || blockWeeks(b) < 2) return plan;
@@ -59,17 +59,17 @@ export function splitBlock(plan: PlanBlock[], id: string, newId: string, today: 
   const mid = addDays(mondayOf(b.start), 7 * first);
   if (mid <= today) return plan;
   const { frozen: _f, shortRole: _s, meso: _m, ...rest } = b; void _f; void _s; void _m;
-  return [...plan.map((x) => (x.id === id ? { ...x, end: addDays(mid, -1), meso: undefined } : x)), { ...rest, id: newId, start: mid }];
+  return [...plan.map((x) => x.id === id ? { ...x, end: addDays(mid, -1), meso: undefined } : b.meso && x.meso === b.meso ? { ...x, meso: undefined } : x), { ...rest, id: newId, start: mid }];
 }
 
 /** Nächste Phase direkt dahinter (keine Testwoche dazwischen) */
 export function nextOf(plan: PlanBlock[], b: PlanBlock): PlanBlock | undefined {
   return byStart(plan).find((x) => x.start === addDays(b.end, 1) && !isTestBlock(x));
 }
-/** Mit der nächsten Phase verbinden: diese läuft bis zu deren Ende weiter, mit ihrem Orden. Ein Mesozyklus hat danach keine zweite Hälfte mehr und löst sich auf. */
+/** Mit der nächsten Phase verbinden: diese läuft bis zu deren Ende weiter, mit ihrem Orden. Verbinden löst einen Mesozyklus komplett auf — auch der Partner verliert die Meso-Id. */
 export function mergeNext(plan: PlanBlock[], id: string, today: string): PlanBlock[] {
   const b = plan.find((x) => x.id === id);
   const n = b && nextOf(plan, b);
   if (!b || !n || isPast(b, today) || n.start <= today) return plan;
-  return plan.filter((x) => x.id !== n.id).map((x) => (x.id === id ? { ...x, end: n.end, meso: undefined } : x));
+  return plan.filter((x) => x.id !== n.id).map((x) => x.id === id ? { ...x, end: n.end, meso: undefined } : b!.meso && x.meso === b!.meso ? { ...x, meso: undefined } : x);
 }
