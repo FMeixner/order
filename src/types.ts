@@ -243,8 +243,10 @@ export interface PlanBlock {
   shortRole?: string;
   /** Abweichender Wochenplan für diesen Block (z. B. Semesterferien). Fehlt: globaler Wochenplan. */
   schedule?: Partial<Record<Weekday, string | null>>;
-  /** Schwerpunkt-Slot: Bereich (speed, power, mobility, ke, anaerob, aerob) oder "off". Fehlt: automatisch nach der letzten Testwoche. */
+  /** Schwerpunkt-Slot 1 (Schwachstelle): Bereich (speed, power, mobility, ke, anaerob, aerob) oder "off". Fehlt: automatisch nach der letzten Testwoche. */
   sharpen?: string;
+  /** Schwerpunkt-Slot 2 (Vertiefung): Bereich oder "off". Fehlt: automatisch — Vertiefung des Sekundärziels, beim Allrounder stattdessen das zweite Defizit. */
+  sharpen2?: string;
 }
 
 export type Weekday = "Mo" | "Di" | "Mi" | "Do" | "Fr" | "Sa" | "So";

@@ -83,8 +83,10 @@ export function Help() {
 
       <h3>Allrounder oder Spezialist</h3>
       <ul>
-        <li>Allrounder (Standard): Nach einer Testwoche bekommt die nächste Phase einen kleinen Schwerpunkt-Slot für deinen schwächsten Bereich. Das hält, was der Orden sonst liegen lässt. Aufbauen kann ein Slot nicht, dafür ist er zu klein (etwa 10–15 Min. pro Woche).</li>
+        <li>Jede Phase hat zwei Schwerpunkte: Schwerpunkt 1 heilt die Schwachstelle aus der letzten Testwoche, Schwerpunkt 2 vertieft das Sekundärziel des Ordens. Beim Allrounder nimmt Schwerpunkt 2 stattdessen das zweite Defizit, wenn die Testwoche eines zeigt. Beide zusammen dürfen höchstens ein Viertel der geschätzten Wochenzeit; bei Überschreitung kürzt zuerst Schwerpunkt 2 seine Tage.</li>
+        <li>Spezialisten heilen mit (Schwerpunkt 1 wie beim Allrounder), ihr Schwerpunkt 2 bleibt fest auf der Vertiefung — kein zweites Defizit, keine Ablenkung vom Ordensziel.</li>
         <li>Beweglichkeit kommt jeden Trainingstag kurz ins Cool-down, Schnelligkeit und Sprungkraft zweimal pro Woche frisch an den Anfang, Kraftausdauer und Anaerob einmal pro Woche an den kürzesten Tag.</li>
+        <li>Nie zwei Slots am selben Tag: Schwerpunkt 1 belegt seine Tage zuerst, Schwerpunkt 2 füllt die übrigen. Ein Bereich, der alle Tage braucht (etwa Beweglichkeit jeden Tag), lässt für den zweiten dann keinen Raum — das zweite Defizit läuft dann über die Blockfolge.</li>
         <li>Trainiert der Orden deinen schwächsten Bereich selbst, nimmt der Slot den zweitschwächsten. Würde der Bereich das Ziel des Ordens stören (Ausdauer neben Muskelaufbau) oder passt er nicht in einen Slot (Maximalkraft, Skill), schlägt die App ihn für die Blockfolge vor: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>
         <li>Als Defizit zählt nur, was deutlich unter der Norm liegt (bei mehreren Tests höchstens 40 Punkte, bei einem höchstens 30) oder jenseits des Messfehlers schlechter wurde. So läuft die App nicht jedem Zufall hinterher.</li>
         <li>Spezialist (Setup): kein Slot, die Blockfolge bleibt, wie du sie planst. Je Phase kannst du den Slot im Plan auch fest wählen oder ausschalten.</li>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
 import { FOCI, SHARPEN } from "../data";
-import { domainName, interferes, slotEligible, type DomainId, type SlotPlan } from "../engine/sharpen";
+import { domainName, interferes, slotEligible, type DomainId, type SlotPlan, type SlotsPlan } from "../engine/sharpen";
 import type { DeficitWeights } from "../engine/sequence";
 import { addDays, blockFocus, blockWeeks, fitScore, fmtDate, focusName, isoDate, isTestBlock, mondayOf } from "../engine/plan";
 import { uid } from "../store";
@@ -88,7 +88,7 @@ export function FocusPicker({ load, value, onPick, profile, days }: { load: Load
 /** Bearbeitungsseite einer Phase: erst die Phase (Name, Last), dann der Orden (Empfehlung zuerst),
     dann Aufteilen (Teilen, Verbinden), zuletzt Feinheiten (Zeitraum, eigener Wochenplan, Schwerpunkt-Slot). */
 export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], onStructure, today }: {
-  block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotPlan;
+  block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotsPlan;
   onSave: (b: PlanBlock, opts?: { test?: boolean }) => void; onCancel: () => void; onDelete?: () => void;
   plan?: PlanBlock[]; aim?: Aim; deficits?: DeficitWeights; onStructure?: (p: PlanBlock[]) => void; today?: string;
 }) {
@@ -169,7 +169,12 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
           </div>
           <Check checked={ownWeek} onChange={(v) => { setOwnWeek(v); if (!v) setB({ ...b, schedule: undefined }); }} label="Eigener Wochenplan für diese Phase" />
           {ownWeek && <WeekEditor schedule={b.schedule ?? {}} profiles={profiles} onChange={(schedule) => setB({ ...b, schedule })} allowEmpty />}
-          {f && slotEligible(f) && <SlotField f={f} b={b} auto={slotInfo?.({ ...b, sharpen: undefined })} onChange={(sharpen) => setB({ ...b, sharpen })} />}
+          {f && slotEligible(f) && (
+            <>
+              <SlotField f={f} label="Schwerpunkt 1 — Schwachstelle" value={b.sharpen} auto={slotInfo?.({ ...b, sharpen: undefined }).s1} hint="Kleine Erhaltungsdosis für den schwächsten Bereich aus der letzten Testwoche." onChange={(sharpen) => setB({ ...b, sharpen })} />
+              <SlotField f={f} label="Schwerpunkt 2 — Vertiefung" value={b.sharpen2} auto={slotInfo?.({ ...b, sharpen2: undefined }).s2} hint="Vertieft das Sekundärziel des Ordens; beim Allrounder stattdessen das zweite Defizit aus der Testwoche." onChange={(sharpen2) => setB({ ...b, sharpen2 })} />
+            </>
+          )}
         </div>
       </Collapse>
       <div className="sticky-actions">
@@ -181,11 +186,11 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
   );
 }
 
-/** Schwerpunkt-Slot einer Phase: automatisch nach der letzten Testwoche, fester Bereich oder aus */
-function SlotField({ f, b, auto, onChange }: { f: Focus; b: PlanBlock; auto?: SlotPlan; onChange: (v: string | undefined) => void }) {
+/** Schwerpunkt-Slot einer Phase: automatisch (Testwoche bzw. Sekundärziel), fester Bereich oder aus */
+function SlotField({ f, label, hint, value, auto, onChange }: { f: Focus; label: string; hint: string; value?: string; auto?: SlotPlan; onChange: (v: string | undefined) => void }) {
   return (
-    <Field label="Schwerpunkt-Slot" hint={b.sharpen ? (b.sharpen === "off" ? "Kein Slot, der Orden bekommt die volle Zeit." : SHARPEN[b.sharpen]?.why) : auto?.reason || "Kleine Erhaltungsdosis für den schwächsten Bereich aus der letzten Testwoche."}>
-      <select value={b.sharpen ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
+    <Field label={label} hint={value ? (value === "off" ? "Kein Slot, der Orden bekommt die volle Zeit." : SHARPEN[value]?.why) : auto?.reason || hint}>
+      <select value={value ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
         <option value="">Automatisch{auto?.domain ? `: ${domainName(auto.domain)}` : " (derzeit keiner)"}</option>
         {Object.entries(SHARPEN).map(([id, d]) => <option key={id} value={id} disabled={interferes(f, id as DomainId)}>{d.name}{interferes(f, id as DomainId) ? " (stört das Ziel dieses Ordens)" : ""}</option>)}
         <option value="off">Aus</option>
@@ -200,7 +205,7 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim }) {
+export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt

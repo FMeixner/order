@@ -1,9 +1,11 @@
 import { evaluateBlock } from "../engine/norms";
 import { focusName, isTestBlock } from "../engine/plan";
-import { deficitsOf, domainName, slotFor } from "../engine/sharpen";
+import { deficitsOf, domainName, slotsFor } from "../engine/sharpen";
 import { FOCUS_BY_ID, SHARPEN } from "../data";
 import type { AppState } from "../types";
 import { Collapse } from "./common";
+
+type Update = (fn: (s: AppState) => AppState) => void;
 
 function show(v: number, unit: string): string {
   if (unit === "mmss") return `${Math.floor(v / 60)}:${(v % 60).toFixed(1).padStart(4, "0")}`;
@@ -12,15 +14,17 @@ function show(v: number, unit: string): string {
 }
 
 /** Auswertung eines Blocks: je Bereich Punkte gegen Normen, Verlauf zum letzten Test, Vorschlag für den nächsten Orden. */
-export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; blockId: string; defaultOpen?: boolean }) {
+export function Evaluation({ state, blockId, defaultOpen, update }: { state: AppState; blockId: string; defaultOpen?: boolean; update?: Update }) {
   const ev = evaluateBlock(state, blockId);
   const withData = ev.domains.filter((d) => d.tests.length);
   if (!withData.length && ev.who5 == null) return null;
-  // Allrounder: Defizite und Schwerpunkt-Slot der nächsten Phase
-  const defs = state.user.focusMode === "special" ? [] : deficitsOf(state, blockId);
+  // Defizite und beide Schwerpunkte der nächsten Phase — auch für Spezialisten (die heilen seit 0.93 mit)
+  const defs = deficitsOf(state, blockId);
   const lastDate = Object.values(state.tests).flat().filter((r) => r.blockId === blockId).map((r) => r.date).sort().pop() ?? "";
   const nextB = [...state.plan].filter((b) => !isTestBlock(b) && b.start > lastDate && FOCUS_BY_ID[b.focusId]).sort((a, b) => a.start.localeCompare(b.start))[0];
-  const slot = nextB && defs.length ? slotFor(state, nextB) : null;
+  const slots = nextB ? slotsFor(state, nextB) : null;
+  const dayText = (dom: string): string => SHARPEN[dom].days === "all" ? "jeden Trainingstag" : SHARPEN[dom].days === 2 ? "zweimal pro Woche" : "einmal pro Woche";
+  const canApply = !!(update && nextB && slots && ((slots.s1.source === "auto" && slots.s1.domain && !nextB.sharpen) || (slots.s2.source === "auto" && slots.s2.domain && !nextB.sharpen2)));
   const sources = [...new Map(withData.flatMap((d) => d.tests).filter((t) => t.norm).map((t) => [t.norm!.src, t.norm!.tier])).entries()];
   return (
     <Collapse title="Auswertung" meta={ev.weakest ? `Baustelle: ${ev.weakest.name}` : `${withData.length} Bereiche`} tone="teal" defaultOpen={defaultOpen}>
@@ -60,15 +64,31 @@ export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; b
           <div className="card note">
             <strong>Defizite:</strong> {defs.map((d) => `${d.name}${d.kind === "norm" ? ` (${d.score})` : " (Rückgang)"}`).join(", ")}.
             <ul className="slot-list small">
-              {slot && nextB && (
-                <li>Nächste Phase, {focusName(nextB.focusId)}: {slot.domain
-                  ? <>Schwerpunkt-Slot <strong>{domainName(slot.domain)}</strong>, {SHARPEN[slot.domain].days === "all" ? "jeden Trainingstag" : SHARPEN[slot.domain].days === 2 ? "zweimal pro Woche" : "einmal pro Woche"}. {slot.reason}</>
-                  : slot.reason}</li>
+              {slots && nextB && (
+                <li>Nächste Phase, {focusName(nextB.focusId)}:
+                  <ul>
+                    <li>Schwerpunkt 1 (Schwachstelle): {slots.s1.domain
+                      ? <><strong>{domainName(slots.s1.domain)}</strong>, {dayText(slots.s1.domain)}. {slots.s1.reason}</>
+                      : slots.s1.source === "off" ? "ausgeschaltet." : slots.s1.reason}</li>
+                    <li>Schwerpunkt 2 (Vertiefung): {slots.s2.domain
+                      ? <><strong>{domainName(slots.s2.domain)}</strong>, {dayText(slots.s2.domain)}. {slots.s2.reason}</>
+                      : slots.s2.source === "off" ? "ausgeschaltet." : slots.s2.reason}</li>
+                  </ul>
+                </li>
               )}
-              {slot && slot.deferred.length > 0 && <li>{slot.deferred.map((d) => d.name).join(" und ")} {slot.deferred.length > 1 ? "passen" : "passt"} nicht in {focusName(nextB!.focusId)}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>}
+              {slots && slots.deferred.length > 0 && <li>{slots.deferred.map((d) => d.name).join(" und ")} {slots.deferred.length > 1 ? "passen" : "passt"} nicht in {focusName(nextB!.focusId)}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>}
               {ev.suggestions.length > 0 && <li>{ev.who5 != null && ev.who5 < 52 ? "Wohlbefinden ist eingeschränkt, Orden für Erholung" : `Orden, die ${ev.weakest?.name ?? defs[0].name} direkt trainieren`}: {ev.suggestions.map((f) => focusName(f.id)).join(", ")}.</li>}
             </ul>
-            <div className="small muted">Nur Vorschläge. Slot und Blockfolge änderst du im Plan.</div>
+            {canApply && (
+              <div className="row wrap">
+                <button className="btn small" onClick={() => update!((st) => ({ ...st, plan: st.plan.map((x) => x.id !== nextB!.id ? x : {
+                  ...x,
+                  ...(slots!.s1.source === "auto" && slots!.s1.domain && !x.sharpen ? { sharpen: slots!.s1.domain } : {}),
+                  ...(slots!.s2.source === "auto" && slots!.s2.domain && !x.sharpen2 ? { sharpen2: slots!.s2.domain } : {}),
+                }) }))}>Für die nächste Phase übernehmen</button>
+              </div>
+            )}
+            <div className="small muted">Nur Vorschläge. Beide Schwerpunkte änderst du je Phase im Plan.</div>
           </div>
         )}
         {sources.length > 0 && (

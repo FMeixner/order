@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.93.0] – 2026-11-06
+
+### Geändert
+- Jede Phase hat jetzt zwei Schwerpunkte statt eines. Schwerpunkt 1 heilt die Schwachstelle aus der letzten Testwoche (bisher: der Schwerpunkt-Slot), Schwerpunkt 2 vertieft das Sekundärziel des Ordens — beim Allrounder stattdessen das zweite Defizit aus der Testwoche, wenn es eines zeigt. Beide zusammen dürfen höchstens ein Viertel der geschätzten Wochenzeit; bei Überschreitung kürzt zuerst Schwerpunkt 2 seine Tagesverteilung. Nie zwei Slots am selben Tag, nie zwei auf derselben Achse der Jahresbalance: Ein Bereich, der jeden Trainingstag braucht (Beweglichkeit), lässt dem zweiten keinen Raum — das zweite Defizit läuft dann über die Blockfolge.
+- Spezialisten heilen jetzt mit. Bisher bekamen sie gar keinen Slot („die volle Zeit dem Orden"), jetzt nehmen sie am Schwachstellen-Slot genauso teil; die Allrounder/Spezialist-Wahl steuert nur noch Schwerpunkt 2 — beim Spezialisten bleibt er fest auf der Vertiefung des Ordensziels.
+- Die Auswertung der Testwoche zeigt beide Schwerpunkte der nächsten Phase mit Begründung und hat einen Knopf „Für die nächste Phase übernehmen", der die Vorschläge als feste Wahl in den nächsten Block schreibt. Defizite stehen jetzt auch für Spezialisten da.
+
 ## [0.92.0] – 2026-11-06
 
 ### Geändert

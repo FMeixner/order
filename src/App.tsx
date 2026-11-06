@@ -8,7 +8,7 @@ import { PlanList } from "./ui/PlanEditor";
 import { WeekCard } from "./ui/WeekCard";
 import { SectionsCard, yearAimOf } from "./ui/SectionsCard";
 import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan";
-import { deficitsBefore, deficitWeights, slotFor } from "./engine/sharpen";
+import { deficitsBefore, deficitWeights, slotsFor } from "./engine/sharpen";
 import { YearBalance } from "./ui/YearBalance";
 import { Setup } from "./ui/Setup";
 import { TimerBar, TimerProvider } from "./ui/Timer";
@@ -76,7 +76,7 @@ export default function App() {
               <SectionsCard state={state} update={update} today={today} deficits={deficits} />
               {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}
-                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotFor(state, b)} aim={yearAimOf(state, deficits)}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}

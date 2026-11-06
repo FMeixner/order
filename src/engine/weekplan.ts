@@ -10,7 +10,7 @@ import { isHeavy, isStrength, planMinutes } from "./slots";
 import { applyDrillEdits, blockFocus, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { pairToFit, shortDay } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
-import { applySlot } from "./sharpen";
+import { applySlots } from "./sharpen";
 import { deloadShape, isDeloaded } from "./deload";
 
 const est = planMinutes;
@@ -185,7 +185,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   }
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.
   if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
-  return applyDrillEdits(applySlot(shaped, state, b), state.drillEdits);
+  return applyDrillEdits(applySlots(shaped, state, b), state.drillEdits);
 }
 
 setWeekFocus(focusFor);
