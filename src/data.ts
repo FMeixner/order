@@ -17,7 +17,7 @@ import bandsJson from "../data/modules/bands.json";
 
 const fociModules = import.meta.glob("../data/orders/*.json", { eager: true, import: "default" }) as Record<string, Focus>;
 
-const ORDER = ["initiate", "knight", "paladin", "smith", "olympian", "pilgrim", "troubadour", "herald", "monk", "king", "alchemist", "acrobat", "dancer", "huntsman", "pugilist", "assassin", "slayer", "conqueror", "harlequin"];
+const ORDER = ["knight", "paladin", "smith", "olympian", "pilgrim", "troubadour", "herald", "monk", "king", "alchemist", "acrobat", "dancer", "huntsman", "pugilist", "assassin", "slayer", "conqueror", "harlequin"];
 
 export const FOCI: Focus[] = Object.values(fociModules).sort((a, b) => {
   const ia = ORDER.indexOf(a.id), ib = ORDER.indexOf(b.id);
