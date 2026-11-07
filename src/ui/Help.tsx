@@ -89,7 +89,7 @@ export function Help() {
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab. Plant du sie in den letzten Teil, misst die Testwoche dahinter sie nicht mehr im Vollbesitz — die App weist darauf hin, sperrt aber nicht.</li>
         <li>Nach der Testwoche schlägt die Auswertung die Schwerpunkte für alle Teile gleichzeitig vor („Für den Mesozyklus übernehmen“); jedes Teil rechnet mit denselben Testwerten. Änderst du eine Phase in zwei Teile oder verbindest zwei, löst sich der Mesozyklus komplett auf.</li>
         <li>Deine Lebensabschnitte ordnen die Form mit: Hohe Alltagslast empfiehlt kürzere Teile (6+4) und kürzere Orden, ruhige Abschnitte das Triple mit zeithungrigeren Orden. Die Teile übernehmen die Last der Abschnitte.</li>
-        <li>Mit „Akzent halten“ bleibt eine Ziel-Domäne Hauptziel in jedem Teil, und die Orden rotieren zwischen denen, die sie trainieren — etwa Slayer und Knight für Muskelaufbau. Zeitoptimierte Orden bleiben draußen; Teilen oder Verbinden löst den Akzent mit auf.</li>
+        <li>Mit „Akzent halten“ bleibt eine Ziel-Domäne Hauptziel in jedem Teil, und die Orden rotieren zwischen denen, die sie trainieren — etwa Slayer und Knight für Muskelaufbau. Zeitoptimierte Orden bleiben draußen; beim Jahresziel zählen sie nur gedimpt (unter 35 Minuten halten eine Domäne nicht allein). Teilen oder Verbinden löst den Akzent mit auf.</li>
       </ul>
 
       <h3>Residual-Uhren</h3>

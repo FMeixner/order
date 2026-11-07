@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.99.3] – 2026-11-07
+
+### Behoben
+- Herald-Regel gilt jetzt auch fürs Jahresziel: Zeit-Orden unter 35 Minuten zählten beim Ziel „Kraft“ oder „Muskelaufbau“ voll wie jeder andere (primary strength plus secondary hypertrophy) — die Volumen-Grenze steckte nur im Akzent-Modus. Ihr Zielanteil zählt jetzt halbiert (gedimmt wie ein Nebenziel), mit Begründung in der Empfehlung; Testwochen bleiben neutral. Der 25-Minuten-Herald rutscht damit hinter die Träger (Smith, Troubadour) statt auf Platz drei zu landen — wählbar bleibt er, für Jahre mit wenig Zeit ist er die richtige Wahl.
+
 ## [0.99.2] – 2026-11-07
 
 ### Neu

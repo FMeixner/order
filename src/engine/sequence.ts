@@ -4,7 +4,7 @@
    (allround) oder der Anteil eines gewählten Schwerpunkts. Vergangene und laufende Phasen bleiben. */
 import { FOCI, FOCUS_BY_ID } from "../data";
 import type { Focus, PlanBlock } from "../types";
-import { AXES, balanceOf, goalVector, type AxisId, type Balance } from "./balance";
+import { AXES, balanceOf, focusVector, goalVector, type AxisId, type Balance } from "./balance";
 import { carriesAccent } from "./kcal";
 import { blockWeeks, fitScore, isTestBlock, TEST_BLOCK } from "./plan";
 
@@ -82,6 +82,26 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
   };
 }
 
+/** Anteil einer Achse am Zeitraum für Schwerpunkt-Ziele, mit Volumen gerechnet: Zeit-Orden (unter 35 Minuten)
+    halten eine Domäne nicht allein aufrecht — dieselbe Herald-Regel wie im Akzent-Modus, hier fürs Jahresziel.
+    Ihr Zielanteil zählt halbiert. Testwochen zählen neutral, Harlequin wie gehabt als Mischung. */
+function axisShare(plan: PlanBlock[], from: string, to: string, axis: AxisId): number {
+  let sum = 0, total = 0;
+  for (const b of plan) {
+    const f = FOCUS_BY_ID[b.focusId];
+    if (!f) continue;
+    const s = b.start > from ? b.start : from, e = b.end < to ? b.end : to;
+    if (s > e) continue;
+    const d = Math.round((Date.parse(e) - Date.parse(s)) / 864e5) + 1;
+    total += d;
+    const v = isTestBlock(b) ? 1 / AXES.length
+      : f.medley?.length ? focusVector(f)[axis]
+      : goalVector(f)[axis] * (carriesAccent(f, axis) ? 1 : 0.5);
+    sum += v * d;
+  }
+  return total ? sum / total : 0;
+}
+
 export function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim, deficits: DeficitWeights, steer: DeficitWeights = []): number {
   const main = balanceOf(plan, from, to, true);
   // Rote Uhren lenken immer mit, egal welche Richtung sonst gilt: Anteil auf ihren Achsen zahlt (Stufe 1 der Eskalationsleiter)
@@ -97,7 +117,7 @@ export function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim, 
     const bal = balanceOf(plan, from, to);
     return 20 * deficits.reduce((s, d) => s + d.w * main.share[d.axis], 0) + 4 * (bal.score ?? 0) + steerScore;
   }
-  return 30 * main.share[aim] + steerScore;
+  return 30 * axisShare(plan, from, to, aim) + steerScore;
 }
 
 export const AIM_OPTIONS: { value: Aim; label: string }[] = [{ value: "deficits", label: "Defizite zuerst" }, { value: "allround", label: "Allround" }, ...AXES.map((a) => ({ value: a.id as Aim, label: a.name }))];
@@ -123,6 +143,8 @@ export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: Defic
         if (hit.length) reasons.unshift(`hält rote Uhren: ${hit.join(", ")}`);
       }
       if (fitScore(f, b.load).score >= 0) reasons.unshift("passt zur Alltagslast");
+      if (aim !== "allround" && aim !== "deficits" && goalVector(f)[aim] > 0 && !carriesAccent(f, aim))
+        reasons.push(`trägt ${AXES.find((a) => a.id === aim)?.name} nur gedimpt — zu kurze Einheiten`);
       const score = st.score + aimScore(sorted.map((x) => (x.id === id ? { ...x, focusId: f.id } : x)), from, to, aim, deficits, steer);
       return { f, score, reasons };
     })
