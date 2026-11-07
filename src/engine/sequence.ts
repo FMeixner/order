@@ -21,7 +21,7 @@ export function stepScore(f: Focus, b: PlanBlock, prev: Focus | null, used: stri
   const reasons = fit.reasons.filter((r) => /Reise/.test(r));
   const w = blockWeeks(b);
   if (w < f.weeks.min) {
-    // Mesozyklus-Hälfte: 6 Wochen sind ein bewusster Akzent, kein Verstoß gegen die Empfehlung (die Einarbeitungswochen stecken in weeks.min)
+    // Mesozyklus-Teil: vier bis sechs Wochen sind ein bewusster Akzent, kein Verstoß gegen die Empfehlung (die Einarbeitungswochen stecken in weeks.min)
     if (b.meso) reasons.push("Akzent im Mesozyklus");
     else { score -= (f.weeks.min - w) * 0.6; reasons.push(`eigentlich ab ${f.weeks.min} Wochen`); }
   }
@@ -43,12 +43,14 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
     if (isTestBlock(b)) { beams = beams.map((bm) => ({ ...bm, seq: [...bm.seq, TEST_BLOCK], reasons: [...bm.reasons, ["eigene Testwoche"]] })); continue; }
     const locked = b.start <= today && !!FOCUS_BY_ID[b.focusId];
     const next: Beam[] = [];
-    // Mesozyklus-Hälfte 2: nur Successors des gewählten Ordens der ersten Hälfte (ausgewählter Orden bleibt erlaubt; ohne tragbare Successors alle)
-    const partnerIdx = !locked && b.meso ? sorted.findIndex((x) => x.meso === b.meso && x.id !== b.id && x.end < b.start) : -1;
+    // Mesozyklus-Kette: jeder Teil folgt aus den Successors des vorherigen (letzter Teil vor b.start; ausgewählter Orden bleibt erlaubt; ohne tragbare Successors alle)
+    let partnerIdx = -1;
+    if (!locked && b.meso) sorted.forEach((x, i) => { if (x.meso === b.meso && x.id !== b.id && x.end < b.start) partnerIdx = i; });
     for (const bm of beams) {
       const lastReal = [...bm.seq].reverse().find((x) => x !== TEST_BLOCK);
       const prev = lastReal ? FOCUS_BY_ID[lastReal] ?? null : null;
       let options = locked ? [FOCUS_BY_ID[b.focusId]] : FOCI.filter((f) => fitScore(f, b.load).score >= 0);
+      if (!locked && b.meso) options = options.filter((f) => mesoPartFit(f) || f.id === b.focusId);
       const succ = partnerIdx >= 0 && bm.seq[partnerIdx] !== TEST_BLOCK ? FOCUS_BY_ID[bm.seq[partnerIdx]] : undefined;
       if (!locked && succ) {
         const bound = options.filter((f) => succ.successors?.includes(f.id) || f.id === b.focusId);
@@ -113,15 +115,19 @@ export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: Defic
     .sort((x, y) => y.score - x.score);
 }
 
-/** Frisch angelegter Mesozyklus (newMeso in stack.ts): Hälfte 1 nach Empfehlung, Hälfte 2 aus deren Successors — bester zuerst, sonst die beste Alternative. */
+/** Passt ein Orden in einen Mesozyklus-Teil? Fixe Längen über sechs Wochen (Monk: 12/12) lassen sich nicht als Akzent verkürzen — die Dosis bricht. Ordensreihen mit Spiel (etwa Slayer, 10–15) bleiben bewusste Akzente. */
+export const mesoPartFit = (f: Focus) => !(f.weeks.min === f.weeks.max && f.weeks.min > 6);
+
+/** Frisch angelegter Mesozyklus (newMeso in stack.ts): Teil 1 nach Empfehlung, jeder weitere aus den Successors des vorherigen — bester zuerst, sonst die beste Alternative. */
 export function fillMeso(p: PlanBlock[], aim: Aim, deficits: DeficitWeights = []): PlanBlock[] {
-  const halves = p.filter((x) => x.meso).sort((a, b) => a.start.localeCompare(b.start));
-  const [a, b] = halves;
-  if (!a || !b) return p;
-  const topA = rankFor(p, a.id, aim, deficits)[0];
-  if (!topA) return p;
-  const withA = p.map((x) => (x.id === a.id ? { ...x, focusId: topA.f.id } : x));
-  const rankedB = rankFor(withA, b.id, aim, deficits);
-  const topB = rankedB.find((r) => topA.f.successors?.includes(r.f.id)) ?? rankedB[0];
-  return topB ? withA.map((x) => (x.id === b.id ? { ...x, focusId: topB.f.id } : x)) : withA;
+  const parts = p.filter((x) => x.meso).sort((a, b) => a.start.localeCompare(b.start));
+  let out = p, prev: Focus | undefined;
+  for (const part of parts) {
+    const ranked = rankFor(out, part.id, aim, deficits).filter((r) => mesoPartFit(r.f));
+    const top = prev ? ranked.find((r) => prev!.successors?.includes(r.f.id)) ?? ranked[0] : ranked[0];
+    if (!top) break;
+    out = out.map((x) => (x.id === part.id ? { ...x, focusId: top.f.id } : x));
+    prev = top.f;
+  }
+  return out;
 }

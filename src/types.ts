@@ -247,7 +247,7 @@ export interface PlanBlock {
   sharpen?: string;
   /** Schwerpunkt-Slot 2 (Vertiefung): Bereich oder "off". Fehlt: automatisch — Vertiefung des Sekundärziels, beim Allrounder stattdessen das zweite Defizit. */
   sharpen2?: string;
-  /** Mesozyklus: gleiche Id = zwei Hälften eines Paares (je 6 Wochen). Testwoche am Paar-Ende, die zweite Hälfte folgt aus den Successors der ersten. */
+  /** Mesozyklus: gleiche Id = Teile eines Mesozyklus (zwei à 4–6 Wochen oder drei à 5). Testwoche am Meso-Ende, jeder Teil folgt aus den Successors des vorherigen. */
   meso?: string;
 }
 

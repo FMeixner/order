@@ -38,17 +38,23 @@ export function setTestWeek(plan: PlanBlock[], id: string, on: boolean, newId: s
   return [...plan.map((x) => (x.id === id ? { ...x, end: addDays(start, -1) } : x)), { id: newId, focusId: TEST_BLOCK, label: "Testwoche", start, end: b.end, load: b.load, travel: false }];
 }
 
-/** Mesozyklus anlegen: zwei 6-Wochen-Hälften mit gemeinsamer Meso-Id und eine Testwoche dahinter (12+1). Orden wählt die UI (Hälfte 2 aus den Successors von Hälfte 1). */
-export function newMeso(plan: PlanBlock[], today: string, newId: () => string): PlanBlock[] {
+/** Mesozyklus-Formen: zwei Teile à vier bis sechs Wochen oder drei Teile à fünf Wochen (z. B. 16-Wochen-Fenster: 5+5+5 + Testwoche). */
+export const MESO_FORMS: number[][] = [[4, 4], [5, 5], [6, 4], [4, 6], [6, 5], [6, 6], [5, 5, 5]];
+/** Standardform wie seit 0.94: zwei Teile à sechs Wochen */
+export const MESO_DEFAULT: number[] = [6, 6];
+/** Mesozyklus anlegen: Teile nach der Form mit gemeinsamer Meso-Id und eine Testwoche dahinter. Orden wählt die UI (jeder Teil aus den Successors des vorherigen). */
+export function newMeso(plan: PlanBlock[], today: string, newId: () => string, form: number[] = MESO_DEFAULT): PlanBlock[] {
   const last = [...plan].sort((a, c) => a.end.localeCompare(c.end)).pop();
   const start = last ? addDays(last.end, 1) : mondayOf(today);
-  const bStart = addDays(start, 7 * 6), tStart = addDays(start, 7 * 12);
   const meso = newId();
-  return [...plan,
-    { id: newId(), focusId: "", label: "", start, end: addDays(start, 7 * 6 - 1), load: "medium", travel: false, meso },
-    { id: newId(), focusId: "", label: "", start: bStart, end: addDays(bStart, 7 * 6 - 1), load: "medium", travel: false, meso },
-    { id: newId(), focusId: TEST_BLOCK, label: "Testwoche", start: tStart, end: addDays(tStart, 6), load: "medium", travel: false },
-  ];
+  const out = [...plan];
+  let at = start;
+  for (const w of form) {
+    out.push({ id: newId(), focusId: "", label: "", start: at, end: addDays(at, 7 * w - 1), load: "medium", travel: false, meso });
+    at = addDays(at, 7 * w);
+  }
+  out.push({ id: newId(), focusId: TEST_BLOCK, label: "Testwoche", start: at, end: addDays(at, 6), load: "medium", travel: false });
+  return out;
 }
 
 /** Phase in zwei teilen (erste Hälfte aufgerundet); die zweite bekommt denselben Orden, ohne eingefrorenen Stand. Teilen löst einen Mesozyklus komplett auf: Auch der Partner verliert die Meso-Id, sonst bliebe ihm die interne Testwoche für immer unterdrückt. */
