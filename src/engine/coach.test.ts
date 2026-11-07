@@ -95,7 +95,7 @@ describe("Coach: Jahr füllen", () => {
     expect(ps).toHaveLength(3);
     expect(blockWeeks(ps[0])).toBe(5);
     expect(blockWeeks(ps[1])).toBe(5);
-    expect(blockWeeks(ps[2])).toBe(8); // 5 Wochen plus 3 Rest
+    expect(blockWeeks(ps[2])).toBe(9); // 5 Wochen plus 4 Rest
     expect(contiguous(out)).toBe(true);
   });
 
