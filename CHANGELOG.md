@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.99.4] – 2026-11-07
+
+### Neu
+- Coach-Jahres-Füllung: „Jahr füllen“ füllt alles hinter der laufenden Phase in einem Zug mit Mesozyklen — das Ziel sagen, die Marken in den Lebensabschnitten setzen, ein Klick, der Rahmen steht. Die Form jedes Mesozyklus folgt der Alltagslast der Abschnitte (hohe Last: 6+4, ruhige: das Triple), die Orden folgen der Empfehlung als Kette — mit Jahresziel, roten Uhren und Bilanz —, und ein Rest von unter neun Wochen verlängert den letzten Teil statt ein Loch zu lassen.
+- Die Testwochen folgen der eingestellten Regel (nach jedem Mesozyklus, zweimal im Jahr, keine), und jeder Teil bekommt einen Kalorien-Vorschlag aus der bestehenden Empfehlung (Aufbau: Überschuss, niedrige Last: Defizit-Fenster, hohe Last: Erhaltung).
+- Vergangenes und die laufende Phase bleiben unberührt; die Meso-Id eines laufenden Blocks löst sich, wenn seine zukünftigen Partner ersetzt werden (gleiche Grammatik wie Teilen und Verbinden). Alles ist Vorschlag: Jede Phase lässt sich danach ändern wie immer. Ohne Abschnitte füllt der Coach 52 Wochen Standardform.
+
 ## [0.99.3] – 2026-11-07
 
 ### Behoben

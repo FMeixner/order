@@ -16,6 +16,7 @@ import { FocusDetail } from "./FociBrowser";
 import { SequenceDialog } from "./SequenceDialog";
 import { PlanStack } from "./PlanStack";
 import { rankFor, fillMeso, type Aim } from "../engine/sequence";
+import { fillYear } from "../engine/coach";
 import type { ResidualClock } from "../engine/residual";
 import type { MesoBalance } from "../engine/bilanz";
 import { loadOfWindow, mergeNext, newMeso, MESO_DEFAULT, MESO_FORMS, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
@@ -255,7 +256,7 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, sections, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks, balance, steer }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[]; balance?: MesoBalance; steer?: DeficitWeights }) {
+export function PlanList({ plan, profiles, days, user, sections, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks, balance, steer, testPolicy }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[]; balance?: MesoBalance; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none" }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
@@ -283,6 +284,9 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, defic
         onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} />
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">
+        {sections?.length ? (
+          <button className="btn primary" onClick={() => { if (confirm("Jahr füllen? Alles hinter der laufenden Phase wird durch Mesozyklen mit Ordensketten ersetzt — alles bleibt änderbar.")) onChange(fillYear(plan, sections, today, () => uid("b"), aim, deficits ?? [], steer ?? [], testPolicy ?? "each", bySignal)); }}>Jahr füllen</button>
+        ) : null}
         <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [], steer)[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
         <button className="btn ghost" onClick={() => setMesoOpen(true)}>+ Mesozyklus anhängen</button>
         {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
