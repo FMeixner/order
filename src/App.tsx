@@ -9,7 +9,9 @@ import { WeekCard } from "./ui/WeekCard";
 import { SectionsCard, yearAimOf } from "./ui/SectionsCard";
 import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan";
 import { deficitsBefore, deficitWeights, slotsFor } from "./engine/sharpen";
+import { residualClocks } from "./engine/residual";
 import { YearBalance } from "./ui/YearBalance";
+import { ResidualClocks } from "./ui/ResidualClocks";
 import { Setup } from "./ui/Setup";
 import { TimerBar, TimerProvider } from "./ui/Timer";
 import { Today } from "./ui/Today";
@@ -53,6 +55,8 @@ export default function App() {
   const src = state.user.focusMode === "special" ? null : deficitsBefore(state, addDays(today, 1));
   const deficits = src ? deficitWeights(src.list) : [];
   const deficitNames = src?.list.map((d) => d.name) ?? [];
+  // Residual-Uhren: Tage seit dem letzten wirksamen Reiz je Bereich, für Karte und Plan-Stapel
+  const clocks = residualClocks(state, today);
 
   if (!state.onboarded) {
     return <div className="app" onPointerDown={unlockAudio}><Onboarding state={state} update={update} replace={replace} today={today} /></div>;
@@ -74,9 +78,14 @@ export default function App() {
               <p className="muted">Deine Woche und dein Jahr. Mit − / + passt du Phasen wochenweise an, der Stift öffnet Ordenswahl, Last und Aufteilen.</p>
               <WeekCard state={state} update={update} today={today} />
               <SectionsCard state={state} update={update} today={today} deficits={deficits} />
-              {state.user.level !== "einsteiger" && <YearBalance plan={state.plan} />}
+              {state.user.level !== "einsteiger" && (
+                <>
+                  <ResidualClocks state={state} today={today} />
+                  <YearBalance plan={state.plan} />
+                </>
+              )}
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}
-                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}

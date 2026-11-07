@@ -90,6 +90,14 @@ export function Help() {
         <li>Nach der Testwoche schlägt die Auswertung die Schwerpunkte für alle Teile gleichzeitig vor („Für den Mesozyklus übernehmen“); jedes Teil rechnet mit denselben Testwerten. Änderst du eine Phase in zwei Teile oder verbindest zwei, löst sich der Mesozyklus komplett auf.</li>
       </ul>
 
+      <h3>Residual-Uhren</h3>
+      <ul>
+        <li>Im Plan zählt jede Uhr die Tage, seit ein Bereich seinen letzten wirksamen Reiz bekommen hat — abgeleitet aus deinen erledigten Einheiten, ganz ohne neue Eingaben. Die Budgets sind die Haltefenster: Sprungkraft und Schnelligkeit klingen in einer Woche ab, Kraftausdauer und Anaerob in zwei, Ausdauer, Beweglichkeit und Sehnen in drei, Kraft und Masse tragen einen Monat.</li>
+        <li>Rot heißt: Der Bereich ist über sein Haltefenster. Halten ist alles, was die Budgets garantieren — besser wirst du nur durch Akzente (einen Orden mit dem Bereich als Ziel, Mesozyklus-Teile, Schwerpunkt-Slots), und gemessen wird das in der Testwoche. Eine Uhr, die noch nie einen Reiz gesehen hat, ist rot, sobald überhaupt Einheiten im Log stehen.</li>
+        <li>Was eine Uhr zurücksetzt: Bestien zählen für Kraftausdauer und Anaerob, ihre Sprint- und Sprunganteile für Sprungkraft und Schnelligkeit; beim Kontrastpaar zählt der Explosivteil für Sprungkraft. Kraft-Sätze setzen die Kraft-Uhr (Masse läuft mit), Halteübungen die Sehnen-Uhr, Lauf- und Ruderblöcke die Ausdauer, Intervalle die anaerobe. Schwerpunkt-Module setzen die Uhr ihres Bereichs, Flows die der Beweglichkeit. Warm-up und Cool-down sind Vorbereitung und zählen nicht; die freie Jagd zählt wie jede Bestie.</li>
+        <li>Die Uhren sind bewusst Messung, kein Planer: Nichts wird automatisch eingeplant, rote Bereiche sperren nichts. Sie sind die Lenkhilfe für deine nächste Wahl — Orden, Schwerpunkt oder Mesozyklus-Form.</li>
+      </ul>
+
       <h3>Allrounder oder Spezialist</h3>
       <ul>
         <li>Jede Phase hat zwei Schwerpunkte: Schwerpunkt 1 heilt die Schwachstelle aus der letzten Testwoche, Schwerpunkt 2 vertieft das Sekundärziel des Ordens. Beim Allrounder nimmt Schwerpunkt 2 stattdessen das zweite Defizit, wenn die Testwoche eines zeigt. Beide zusammen dürfen höchstens ein Viertel der geschätzten Wochenzeit; bei Überschreitung kürzt zuerst Schwerpunkt 2 seine Tage.</li>

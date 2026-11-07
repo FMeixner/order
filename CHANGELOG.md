@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.96.0] – 2026-11-07
+
+### Neu
+- Residual-Uhren im Plan: Jeder Bereich bekommt eine Uhr, die zählt, wie viele Tage seit seinem letzten wirksamen Reiz vergangen sind — abgeleitet aus den erledigten Einheiten, ohne neue Eingaben. Die Budgets sind die Haltefenster: Sprungkraft & Schnelligkeit 7 Tage, Kraftausdauer und Anaerob 14, Ausdauer, Beweglichkeit und Sehnen 21, Kraft & Masse 30. Über dem Jahresstapel steht eine Warnung, wenn Uhren über Budget sind.
+- Halten ist nicht Besserwerden: Die Budgets garantieren nur, dass ein Bereich nicht verfällt. Besser wird ein Bereich durch Akzente — Orden mit dem Ziel, Mesozyklus-Teile, Schwerpunkte —, gemessen in der Testwoche. Rote Uhren sperren nichts und planen nichts: Sie sind die Lenkhilfe für die nächste Wahl.
+- Zuordnung ohne neue Eingaben: Bestien zählen für Kraftausdauer und Anaerob (ihre Sprint- und Sprunganteile für Sprungkraft), Kontrast-Explosivteile für Sprungkraft, Kraft-Sätze für Kraft (Masse läuft mit), Halteübungen für Sehnen & Bindegewebe, Lauf- und Ruderblöcke für Ausdauer, Intervalle für Anaerob, Schwerpunkt-Module für die Uhr ihres Bereichs, Flows für Beweglichkeit. Warm-up und Cool-down zählen nicht, die freie Jagd zählt wie jede Bestie.
+- Einsteiger sehen die Uhren nicht — wie die Jahresbalance sind sie ein Werkzeug für Fortgeschrittene.
+
 ## [0.95.0] – 2026-11-07
 
 ### Geändert
