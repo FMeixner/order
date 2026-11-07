@@ -91,7 +91,7 @@ export default function App() {
               <WeekCard state={state} update={update} today={today} />
               <SectionsCard state={state} update={update} today={today} deficits={deficits} />
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} sections={state.sections} today={today}
-                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks} balance={balance} steer={steer}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks} balance={balance} steer={steer} testPolicy={state.testPolicy ?? "each"}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
               {state.user.level !== "einsteiger" && (
                 <Collapse title="Jahresblick" meta={yearMeta} tone="teal">
