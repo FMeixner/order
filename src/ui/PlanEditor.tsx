@@ -13,6 +13,7 @@ import { SequenceDialog } from "./SequenceDialog";
 import { PlanStack } from "./PlanStack";
 import { rankFor, fillMeso, type Aim } from "../engine/sequence";
 import type { ResidualClock } from "../engine/residual";
+import type { MesoBalance } from "../engine/bilanz";
 import { mergeNext, newMeso, MESO_FORMS, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
@@ -220,7 +221,7 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[] }) {
+export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks, balance }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[]; balance?: MesoBalance }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
@@ -233,7 +234,7 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
   for (let i = 1; i < sorted.length; i++) if (sorted[i].start <= sorted[i - 1].end) gaps.push(`Überschneidung bei ${fmtDate(sorted[i].start)}`);
   return (
     <div className="stack">
-      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} clocks={clocks} onChange={onChange}
+      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} clocks={clocks} balance={balance} onChange={onChange}
         onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} />
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">

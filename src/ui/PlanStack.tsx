@@ -5,6 +5,7 @@ import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import { blockWeeks, fmtDate, focusName, isTestBlock, newerFocus, refreeze } from "../engine/plan";
 import { rankFor, type Aim, type DeficitWeights } from "../engine/sequence";
 import type { ResidualClock } from "../engine/residual";
+import { HALF_MIN, type MesoBalance } from "../engine/bilanz";
 import { canShrink, isPast, resizeBlock, testAfter } from "../engine/stack";
 import type { Load, PlanBlock } from "../types";
 import { OrderMark } from "./OrderIcon";
@@ -38,8 +39,8 @@ function LoadIcon({ load }: { load: Load }) {
 /** Farbe je Hauptziel (Band und Kartenrand) */
 const goalColor = (id: string) => `var(--goal-${FOCUS_BY_ID[id]?.goals.primary ?? "none"}, var(--border-lit))`;
 
-export function PlanStack({ plan, today, aim, deficits, clocks, onChange, onView, onEdit }: {
-  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; clocks?: ResidualClock[];
+export function PlanStack({ plan, today, aim, deficits, clocks, balance, onChange, onView, onEdit }: {
+  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; clocks?: ResidualClock[]; balance?: MesoBalance;
   onChange: (p: PlanBlock[]) => void; onView: (b: PlanBlock) => void; onEdit: (b: PlanBlock) => void;
 }) {
   const [testView, setTestView] = useState<PlanBlock | null>(null);
@@ -72,6 +73,13 @@ export function PlanStack({ plan, today, aim, deficits, clocks, onChange, onView
           Die Residual-Uhren oben im Plan zeigen die Tage — ein Orden mit dem Bereich als Ziel oder ein Schwerpunkt-Slot holt sie zurück.
         </div>
       )}
+
+      {balance?.gaps.length ? (
+        <div className="note warn">
+          Bilanz: {balance.gaps.map((g) => `${g.half}: ${g.name} nur ${g.weeks === 0 ? "gar keine" : `${String(g.weeks).replace(".", ",")}`} von ${HALF_MIN} effektiven Wochen`).join("; ")}.
+          Details oben bei der Domänen-Bilanz — die nächste Meso-Wahl kann die Lücke schließen.
+        </div>
+      ) : null}
 
       {testView && (
         <Modal title="Testwoche" onClose={() => setTestView(null)}>

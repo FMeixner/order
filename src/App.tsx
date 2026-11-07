@@ -10,8 +10,10 @@ import { SectionsCard, yearAimOf } from "./ui/SectionsCard";
 import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan";
 import { deficitsBefore, deficitWeights, slotsFor } from "./engine/sharpen";
 import { residualClocks } from "./engine/residual";
+import { mesoBalance } from "./engine/bilanz";
 import { YearBalance } from "./ui/YearBalance";
 import { ResidualClocks } from "./ui/ResidualClocks";
+import { DomainBalance } from "./ui/DomainBalance";
 import { Setup } from "./ui/Setup";
 import { TimerBar, TimerProvider } from "./ui/Timer";
 import { Today } from "./ui/Today";
@@ -57,6 +59,8 @@ export default function App() {
   const deficitNames = src?.list.map((d) => d.name) ?? [];
   // Residual-Uhren: Tage seit dem letzten wirksamen Reiz je Bereich, für Karte und Plan-Stapel
   const clocks = residualClocks(state, today);
+  // Domänen-Bilanz: effektive Wochen je Bereich, für Karte und Plan-Stapel
+  const balance = mesoBalance(state.plan);
 
   if (!state.onboarded) {
     return <div className="app" onPointerDown={unlockAudio}><Onboarding state={state} update={update} replace={replace} today={today} /></div>;
@@ -81,11 +85,12 @@ export default function App() {
               {state.user.level !== "einsteiger" && (
                 <>
                   <ResidualClocks state={state} today={today} />
+                  <DomainBalance plan={state.plan} />
                   <YearBalance plan={state.plan} />
                 </>
               )}
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}
-                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks} balance={balance}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
