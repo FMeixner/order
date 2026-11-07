@@ -98,6 +98,14 @@ export function Help() {
         <li>Die Uhren sind bewusst Messung, kein Planer: Nichts wird automatisch eingeplant, rote Bereiche sperren nichts. Sie sind die Lenkhilfe für deine nächste Wahl — Orden, Schwerpunkt oder Mesozyklus-Form.</li>
       </ul>
 
+      <h3>Domänen-Bilanz</h3>
+      <ul>
+        <li>Im Plan steht eine Matrix: Bereich × Mesozyklus (einzelne Phasen als eigene Spalte). Jede Zelle zählt effektive Wochen: Das Hauptziel eines Ordens zählt voll, jedes Nebenziel halb; Kondition zählt für Kraftausdauer und Anaerob. Testwochen füllen das Halbjahr, geben aber keine effektiven Wochen. Rechts stehen die Summen je Halbjahr.</li>
+        <li>Allround-Regel: Jeder Bereich, den die Testwoche misst, braucht mindestens 4 effektive Wochen je Halbjahr (4 von 26). Ein Halbjahr wird erst geprüft, wenn mindestens die Hälfte geplant ist — halb gefüllte Halbjahre sagen noch nichts. Rot heißt: Lücke. Fett verlieren und Wohlbefinden sind Wunschziele ohne Pflicht; Masse läuft über die Kraft mit und wird nie als Lücke gemeldet.</li>
+        <li>Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge — drei Slayer nacheinander sind drei Phasen Muskelaufbau, die Bilanz weist darauf hin. Harlequin ist der Joker: Er unterbricht jede Reihe.</li>
+        <li>Die Bilanz warnt, bevor die Testwoche enttäuscht — mehr tut sie nicht. Nichts wird gesperrt oder eingeplant; die Vorschläge für den nächsten Mesozyklus, die unterversorgte Bereiche vorziehen, sind ein späterer Schritt.</li>
+      </ul>
+
       <h3>Allrounder oder Spezialist</h3>
       <ul>
         <li>Jede Phase hat zwei Schwerpunkte: Schwerpunkt 1 heilt die Schwachstelle aus der letzten Testwoche, Schwerpunkt 2 vertieft das Sekundärziel des Ordens. Beim Allrounder nimmt Schwerpunkt 2 stattdessen das zweite Defizit, wenn die Testwoche eines zeigt. Beide zusammen dürfen höchstens ein Viertel der geschätzten Wochenzeit; bei Überschreitung kürzt zuerst Schwerpunkt 2 seine Tage.</li>

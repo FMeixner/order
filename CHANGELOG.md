@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.97.0] – 2026-11-07
+
+### Neu
+- Domänen-Bilanz im Plan: Eine Matrix Bereich × Mesozyklus zeigt effektive Wochen — das Hauptziel eines Ordens zählt voll, jedes Nebenziel halb, Kondition zählt für Kraftausdauer und Anaerob. Einzelne Phasen ohne Mesozyklus stehen als eigene Spalte, rechts die Summen je Halbjahr. Masse läuft als eigene Zeile über die Kraft mit; Fett verlieren und Wohlbefinden bleiben Wunschziele ohne Pflicht.
+- Allround-Regel: Jeder Bereich, den die Testwoche misst, braucht mindestens 4 effektive Wochen je Halbjahr (4 von 26). Geprüft wird ein Halbjahr erst, wenn mindestens die Hälfte geplant ist. Eine Lücke steht als Hinweis unter dem Jahresband und in der Karte — die Bilanz warnt, bevor die Testwoche enttäuscht.
+- Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge; drei gleiche Hauptziele hintereinander sind ein Hinweis. Harlequin bleibt der Joker und unterbricht jede Reihe.
+- Wie die Uhren ist die Bilanz Bewertung, kein Planer: Nichts wird gesperrt oder eingeplant. Vorschläge für den nächsten Mesozyklus, die unterversorgte Bereiche vorziehen, sind ein späterer Schritt.
+
 ## [0.96.0] – 2026-11-07
 
 ### Neu
