@@ -20,9 +20,9 @@ function summary(before: Balance, after: Balance, changes: number): string {
 }
 
 /** Vorschlag einer Blockfolge für alle künftigen Phasen, mit Ziel Allround oder einem Schwerpunkt. */
-export function SequenceDialog({ plan, today, deficits = [], deficitNames = [], onApply, onClose, initialAim }: { plan: PlanBlock[]; today: string; deficits?: DeficitWeights; deficitNames?: string[]; onApply: (p: PlanBlock[]) => void; onClose: () => void; initialAim?: Aim }) {
+export function SequenceDialog({ plan, today, deficits = [], deficitNames = [], steer = [], onApply, onClose, initialAim }: { plan: PlanBlock[]; today: string; deficits?: DeficitWeights; deficitNames?: string[]; steer?: DeficitWeights; onApply: (p: PlanBlock[]) => void; onClose: () => void; initialAim?: Aim }) {
   const [aim, setAim] = useState<Aim>(initialAim ?? (deficits.length ? "deficits" : "allround"));
-  const res = useMemo(() => suggestSequence(plan, today, aim, deficits), [plan, today, aim, deficits]);
+  const res = useMemo(() => suggestSequence(plan, today, aim, deficits, steer), [plan, today, aim, deficits, steer]);
   const byId = Object.fromEntries(plan.map((b) => [b.id, b]));
   const changes = res.items.filter((x) => !x.locked && x.focusId !== byId[x.id].focusId).length;
   return (
@@ -34,6 +34,7 @@ export function SequenceDialog({ plan, today, deficits = [], deficitNames = [], 
           {AIM_OPTIONS.filter((o) => o.value !== "deficits" || deficits.length).map((o) => <button key={o.value} className={aim === o.value ? "on" : ""} onClick={() => setAim(o.value)}>{o.label}</button>)}
         </div>
         {aim === "deficits" && <p className="muted small">Schwache Bereiche aus der letzten Testwoche zuerst: {deficitNames.join(", ")}. Die Breite übers Jahr zählt weiter mit.</p>}
+        {steer.length > 0 && <p className="muted small">Rote Residual-Uhren lenken die Wahl mit: Der Vorschlag zieht Orden vor, die diese Bereiche halten.</p>}
         <div className="seq-list">
           {res.items.map((x) => {
             const b = byId[x.id];

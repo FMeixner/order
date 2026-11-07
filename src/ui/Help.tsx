@@ -103,7 +103,14 @@ export function Help() {
         <li>Im Plan steht eine Matrix: Bereich × Mesozyklus (einzelne Phasen als eigene Spalte). Jede Zelle zählt effektive Wochen: Das Hauptziel eines Ordens zählt voll, jedes Nebenziel halb; Kondition zählt für Kraftausdauer und Anaerob. Testwochen füllen das Halbjahr, geben aber keine effektiven Wochen. Rechts stehen die Summen je Halbjahr.</li>
         <li>Allround-Regel: Jeder Bereich, den die Testwoche misst, braucht mindestens 4 effektive Wochen je Halbjahr (4 von 26). Ein Halbjahr wird erst geprüft, wenn mindestens die Hälfte geplant ist — halb gefüllte Halbjahre sagen noch nichts. Rot heißt: Lücke. Fett verlieren und Wohlbefinden sind Wunschziele ohne Pflicht; Masse läuft über die Kraft mit und wird nie als Lücke gemeldet.</li>
         <li>Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge — drei Slayer nacheinander sind drei Phasen Muskelaufbau, die Bilanz weist darauf hin. Harlequin ist der Joker: Er unterbricht jede Reihe.</li>
-        <li>Die Bilanz warnt, bevor die Testwoche enttäuscht — mehr tut sie nicht. Nichts wird gesperrt oder eingeplant; die Vorschläge für den nächsten Mesozyklus, die unterversorgte Bereiche vorziehen, sind ein späterer Schritt.</li>
+        <li>Die Bilanz warnt, bevor die Testwoche enttäuscht — mehr tut sie nicht. Nichts wird gesperrt oder eingeplant; die Vorschläge für den nächsten Mesozyklus, die unterversorgte Bereiche vorziehen, greifen die Lücken jetzt auf (siehe Lenkung).</li>
+      </ul>
+
+      <h3>Lenkung: Wie die Vorschläge rote Uhren aufgreifen</h3>
+      <ul>
+        <li>Rote Uhren fließen in drei Stufen in die Vorschläge ein. Erstens: Blockfolge und Mesozyklus-Vorschlag ziehen Orden vor, deren Bereiche die roten Uhren halten — die Begründung („hält rote Uhren: …“) steht bei jedem Kandidaten. Zweitens: Schwerpunkt 2 priorisiert die rote Domäne als Vertiefung, wenn sie ein Slot-Modul hat und der Orden sie nicht selbst trainiert. Als letzte Stufe empfiehlt die Uhr-Karte eine Gelegenheit aus dem Bestand, etwa eine Bestie mit Sprintanteil.</li>
+        <li>Nach jeder Testwoche fasst die Auswertung zusammen, welche Uhren rot sind und welche Bereiche im Halbjahr unterversorgt sind — dieselbe Stelle, an der „Für den Mesozyklus übernehmen“ die Schwerpunkte vorschlägt. Der nächste Mesozyklus wird damit residual- und bilanzgeführt: „+ Mesozyklus anhängen“ empfiehlt bei Lücken oder mehreren roten Uhren die Form 5+5+5 (drei Orden decken mehr Bereiche ab), sonst die Standardform 6+6.</li>
+        <li>Alles bleibt Vorschlag: Die App plant nichts automatisch ein, sperrt nichts und zwingt keine Form. Die Uhr zeigt, der Wizard schlägt vor, du entscheidest.</li>
       </ul>
 
       <h3>Allrounder oder Spezialist</h3>

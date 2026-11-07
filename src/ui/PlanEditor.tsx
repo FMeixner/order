@@ -14,7 +14,7 @@ import { PlanStack } from "./PlanStack";
 import { rankFor, fillMeso, type Aim } from "../engine/sequence";
 import type { ResidualClock } from "../engine/residual";
 import type { MesoBalance } from "../engine/bilanz";
-import { mergeNext, newMeso, MESO_FORMS, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
+import { mergeNext, newMeso, MESO_DEFAULT, MESO_FORMS, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
 /** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
@@ -89,10 +89,10 @@ export function FocusPicker({ load, value, onPick, profile, days, restrict }: { 
 
 /** Bearbeitungsseite einer Phase: erst die Phase (Name, Last), dann der Orden (Empfehlung zuerst),
     dann Aufteilen (Teilen, Verbinden), zuletzt Feinheiten (Zeitraum, eigener Wochenplan, Schwerpunkt-Slot). */
-export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], onStructure, today }: {
+export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], steer = [], onStructure, today }: {
   block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotsPlan;
   onSave: (b: PlanBlock, opts?: { test?: boolean }) => void; onCancel: () => void; onDelete?: () => void;
-  plan?: PlanBlock[]; aim?: Aim; deficits?: DeficitWeights; onStructure?: (p: PlanBlock[]) => void; today?: string;
+  plan?: PlanBlock[]; aim?: Aim; deficits?: DeficitWeights; steer?: DeficitWeights; onStructure?: (p: PlanBlock[]) => void; today?: string;
 }) {
   const [b, setB] = useState<PlanBlock>(block);
   const [ownWeek, setOwnWeek] = useState(!!block.schedule && Object.values(block.schedule).some(Boolean));
@@ -125,7 +125,7 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
   const prevPart = [...mesoParts].reverse().find((x) => x.end < b.start);
   const prevF = prevPart ? blockFocus(prevPart) : undefined;
   const succIds = prevPart && prevF?.successors ? prevF.successors : undefined;
-  const allRanked = rankFor(draftPlan, b.id, aim, deficits);
+  const allRanked = rankFor(draftPlan, b.id, aim, deficits, steer);
   const boundRanked = succIds ? allRanked.filter((r) => succIds.includes(r.f.id) || r.f.id === b.focusId) : allRanked;
   const ranked = (boundRanked.length ? boundRanked : allRanked).slice(0, 5);
   const locked = b.start <= day; // laufende Phase: Orden nicht hier wechseln (eingefroren)
@@ -221,7 +221,7 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks, balance }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[]; balance?: MesoBalance }) {
+export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks, balance, steer }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[]; balance?: MesoBalance; steer?: DeficitWeights }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
@@ -232,13 +232,17 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
   const gaps: string[] = [];
   for (let i = 1; i < sorted.length; i++) if (addDays(sorted[i - 1].end, 1) < sorted[i].start) gaps.push(`${fmtDate(addDays(sorted[i - 1].end, 1))}–${fmtDate(addDays(sorted[i].start, -1))}`);
   for (let i = 1; i < sorted.length; i++) if (sorted[i].start <= sorted[i - 1].end) gaps.push(`Überschneidung bei ${fmtDate(sorted[i].start)}`);
+  // Form-Empfehlung für den nächsten Mesozyklus: Lücken in der Bilanz oder mehrere rote Uhren
+  // sprechen für drei Teile (mehr Orden, mehr Bereiche), sonst bleibt es bei der Standardform
+  const hot = clocks?.filter((c) => c.over) ?? [];
+  const recForm: number[] = (balance?.gaps.length ?? 0) > 0 || hot.length >= 2 ? [5, 5, 5] : MESO_DEFAULT;
   return (
     <div className="stack">
-      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} clocks={clocks} balance={balance} onChange={onChange}
+      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer} clocks={clocks} balance={balance} onChange={onChange}
         onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} />
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">
-        <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [])[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
+        <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [], steer)[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
         <button className="btn ghost" onClick={() => setMesoOpen(true)}>+ Mesozyklus anhängen</button>
         {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
       </div>
@@ -253,24 +257,32 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
           </div>
         </Modal>
       )}
-      {seq && <SequenceDialog plan={plan} today={today} initialAim={aim} deficits={deficits} deficitNames={deficitNames} onApply={onChange} onClose={() => setSeq(false)} />}
+      {seq && <SequenceDialog plan={plan} today={today} initialAim={aim} deficits={deficits} deficitNames={deficitNames} steer={steer} onApply={onChange} onClose={() => setSeq(false)} />}
       {mesoOpen && (
         <Modal title="Mesozyklus anhängen" onClose={() => setMesoOpen(false)}>
           <div className="stack">
             <p className="muted small">Kurze Phasen, die zusammengehören: Jeder Teil folgt aus den Successors des vorherigen, die Testwoche steht am Ende des Mesozyklus. Wähle die Form, die in dein Jahr passt — dahinter gleich mit Vorschlägen für alle Teile.</p>
             <div className="chips" role="radiogroup" aria-label="Form des Mesozyklus">
               {MESO_FORMS.map((f) => (
-                <button key={f.join("+")} onClick={() => { onChange(fillMeso(newMeso(plan, today, () => uid("b"), f), aim, deficits ?? [])); setMesoOpen(false); }}>{f.join("+")}<span className="muted"> + Testwoche</span></button>
+                <button key={f.join("+")} onClick={() => { onChange(fillMeso(newMeso(plan, today, () => uid("b"), f), aim, deficits ?? [], steer ?? [])); setMesoOpen(false); }}>{f.join("+")}{f.join("+") === recForm.join("+") && <span className="tag rec">empfohlen</span>}<span className="muted"> + Testwoche</span></button>
               ))}
             </div>
             <p className="muted small">6+6 ist die Standardform. 5+5+5 füllt ein 16-Wochen-Fenster (15 Wochen plus Testwoche), 4+4 passt, wenn das Jahr eng wird.</p>
+            {(balance?.gaps.length ?? 0) > 0 || hot.length >= 2 ? (
+              <p className="note small">
+                Empfohlen: {recForm.join("+")}. {(balance?.gaps.length ?? 0) > 0
+                  ? `Die Domänen-Bilanz zeigt Lücken (${[...new Set((balance?.gaps ?? []).map((g) => g.name))].join(", ")}) — drei Orden decken mehr Bereiche ab.`
+                  : `${hot.length} Uhren sind über Budget — drei kürzere Teile verteilen die Bereiche auf mehr Orden.`}
+                Die Lenkung fließt auch in die Ordensvorschläge für alle Teile.
+              </p>
+            ) : null}
           </div>
         </Modal>
       )}
       {edit && (
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>
           <BlockForm block={edit} profiles={profiles} days={days} user={user} slotInfo={slotInfo} plan={plan} today={today}
-            aim={aim} deficits={deficits ?? []} onStructure={(p) => { onChange(p); setEdit(null); }}
+            aim={aim} deficits={deficits ?? []} steer={steer} onStructure={(p) => { onChange(p); setEdit(null); }}
             onCancel={() => setEdit(null)}
             onDelete={plan.some((x) => x.id === edit.id) ? () => { if (!confirm(`Phase ${fmtDate(edit.start)}–${fmtDate(edit.end)} löschen? Einträge im Log bleiben erhalten.`)) return; onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
             onSave={(nb, o) => {

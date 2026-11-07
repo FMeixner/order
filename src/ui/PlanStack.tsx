@@ -39,8 +39,8 @@ function LoadIcon({ load }: { load: Load }) {
 /** Farbe je Hauptziel (Band und Kartenrand) */
 const goalColor = (id: string) => `var(--goal-${FOCUS_BY_ID[id]?.goals.primary ?? "none"}, var(--border-lit))`;
 
-export function PlanStack({ plan, today, aim, deficits, clocks, balance, onChange, onView, onEdit }: {
-  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; clocks?: ResidualClock[]; balance?: MesoBalance;
+export function PlanStack({ plan, today, aim, deficits, steer, clocks, balance, onChange, onView, onEdit }: {
+  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; steer?: DeficitWeights; clocks?: ResidualClock[]; balance?: MesoBalance;
   onChange: (p: PlanBlock[]) => void; onView: (b: PlanBlock) => void; onEdit: (b: PlanBlock) => void;
 }) {
   const [testView, setTestView] = useState<PlanBlock | null>(null);
@@ -104,7 +104,7 @@ export function PlanStack({ plan, today, aim, deficits, clocks, balance, onChang
         );
         n++;
         const t = testAfter(sorted, b);
-        const top = future ? rankFor(plan, b.id, aim, deficits)[0]?.f.id : undefined;
+        const top = future ? rankFor(plan, b.id, aim, deficits, steer)[0]?.f.id : undefined;
         const tag = now ? "läuft" : past ? null : top === b.focusId ? "empfohlen" : "gewählt";
         return (
           <div key={b.id} className={`stack-card ${now ? "now" : ""} ${past ? "past" : ""}`} style={{ ["--c" as string]: goalColor(b.focusId) }}>
