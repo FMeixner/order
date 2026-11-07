@@ -11,6 +11,7 @@ import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan"
 import { deficitsBefore, deficitWeights, slotsFor } from "./engine/sharpen";
 import { residualClocks } from "./engine/residual";
 import { mesoBalance } from "./engine/bilanz";
+import { steerWeights } from "./engine/steer";
 import { YearBalance } from "./ui/YearBalance";
 import { ResidualClocks } from "./ui/ResidualClocks";
 import { DomainBalance } from "./ui/DomainBalance";
@@ -61,6 +62,8 @@ export default function App() {
   const clocks = residualClocks(state, today);
   // Domänen-Bilanz: effektive Wochen je Bereich, für Karte und Plan-Stapel
   const balance = mesoBalance(state.plan);
+  // Lenkung: rote Uhren als Gewichte für Blockfolge und Meso-Wizard (Vorschlag, nie Einplanung)
+  const steer = steerWeights(clocks);
 
   if (!state.onboarded) {
     return <div className="app" onPointerDown={unlockAudio}><Onboarding state={state} update={update} replace={replace} today={today} /></div>;
@@ -90,7 +93,7 @@ export default function App() {
                 </>
               )}
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}
-                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks} balance={balance}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks} balance={balance} steer={steer}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}

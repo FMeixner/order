@@ -1,7 +1,9 @@
 import { Fragment } from "react";
 import { evaluateBlock } from "../engine/norms";
-import { focusName, isTestBlock } from "../engine/plan";
+import { focusName, isTestBlock, isoDate } from "../engine/plan";
 import { deficitsOf, domainName, slotsFor, type SlotsPlan } from "../engine/sharpen";
+import { residualClocks } from "../engine/residual";
+import { mesoBalance } from "../engine/bilanz";
 import { FOCUS_BY_ID, SHARPEN } from "../data";
 import type { AppState, PlanBlock } from "../types";
 import { Collapse } from "./common";
@@ -106,6 +108,22 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
                 }) }))}>{slotsParts.length ? "Für den Mesozyklus übernehmen" : "Für die nächste Phase übernehmen"}</button>
               </div>
             )}
+            {(() => {
+              // Lenkung für den nächsten Mesozyklus: rote Uhren und Bilanz-Lücken laufen ab hier
+              // in die Vorschläge mit ein — gleiche Anlaufstelle wie die Schwerpunkte darüber
+              const hot = residualClocks(state, isoDate(new Date())).filter((c) => c.over);
+              const gaps = mesoBalance(state.plan).gaps;
+              if (!hot.length && !gaps.length) return null;
+              const parts: string[] = [];
+              if (hot.length) parts.push(`rote Uhren (${hot.map((c) => `${c.name} ${c.days === null ? "noch nie" : `${c.days}/${c.budget}`}`).join(", ")})`);
+              if (gaps.length) parts.push(`Lücken der Domänen-Bilanz (${[...new Set(gaps.map((g) => g.name))].join(", ")})`);
+              return (
+                <div className="small muted">
+                  <strong>Lenkung für den nächsten Mesozyklus:</strong> {parts.join(" und ")} fließen ab jetzt in die Vorschläge ein —
+                  „+ Mesozyklus anhängen“ und die Blockfolge ziehen diese Bereiche vor, die Schwerpunkt-Auswahl priorisiert rote Uhren als Vertiefung.
+                </div>
+              );
+            })()}
             <div className="small muted">Nur Vorschläge. Beide Schwerpunkte änderst du je Phase im Plan.</div>
           </div>
         )}

@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.98.0] – 2026-11-07
+
+### Neu
+- Lenkung: Rote Residual-Uhren fließen jetzt in die Vorschläge ein — als Empfehlung, nie als Einplanung. Die Eskalationsleiter hat drei Stufen: Blockfolge und Meso-Wizard ziehen Orden vor, deren Bereiche die roten Uhren halten („hält rote Uhren: …“ steht als Begründung am Kandidaten); Schwerpunkt 2 priorisiert die rote Domäne als Vertiefung, wenn sie ein Slot-Modul hat und der Orden sie nicht selbst trainiert; als letzte Stufe empfiehlt die Uhr-Karte eine Gelegenheit aus dem Bestand, etwa eine Bestie mit Sprintanteil. Uhren ohne Slot-Modul (Kraft, Sehnen) und störende Bereiche (Ausdauer neben Muskelaufbau) bleiben dem Orden überlassen.
+- „+ Mesozyklus anhängen“ empfiehlt eine Form: Bei Lücken der Domänen-Bilanz oder mehreren roten Uhren rät die App zu 5+5+5 — drei Orden decken mehr Bereiche ab —, sonst zur Standardform 6+6. Die Empfehlung begründet sich selbst, die Form bleibt frei wählbar.
+- Die Auswertung der Testwoche fasst am Ende des Mesozyklus zusammen, welche Uhren rot sind und welche Bereiche im Halbjahr unterversorgt sind — gleiche Anlaufstelle wie „Für den Mesozyklus übernehmen“, jetzt residual- und bilanzgeführt.
+- Wie Uhren und Bilanz bleibt die Lenkung Bewertung: Nichts wird gesperrt, nichts automatisch eingeplant. Die Uhr zeigt, der Wizard schlägt vor, du entscheidest.
+
 ## [0.97.0] – 2026-11-07
 
 ### Neu

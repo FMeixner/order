@@ -4,7 +4,7 @@
    (allround) oder der Anteil eines gewählten Schwerpunkts. Vergangene und laufende Phasen bleiben. */
 import { FOCI, FOCUS_BY_ID } from "../data";
 import type { Focus, PlanBlock } from "../types";
-import { AXES, balanceOf, type AxisId, type Balance } from "./balance";
+import { AXES, balanceOf, goalVector, type AxisId, type Balance } from "./balance";
 import { blockWeeks, fitScore, isTestBlock, TEST_BLOCK } from "./plan";
 
 export type Aim = "allround" | "deficits" | AxisId;
@@ -34,7 +34,7 @@ export function stepScore(f: Focus, b: PlanBlock, prev: Focus | null, used: stri
   return { score, reasons };
 }
 
-export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, deficits: DeficitWeights = []): SeqResult {
+export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, deficits: DeficitWeights = [], steer: DeficitWeights = []): SeqResult {
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const from = sorted[0]?.start ?? today, to = sorted[sorted.length - 1]?.end ?? today;
   type Beam = { seq: string[]; score: number; reasons: string[][] };
@@ -64,7 +64,7 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
     // Zwischenstand mit Balance-Anteil bewerten, damit die Suche das Ziel früh berücksichtigt
     // Ziel-Punkte einmal je Variante rechnen, nicht bei jedem Vergleich im Sortieren
     const head = sorted.slice(0, next[0]?.seq.length ?? 0);
-    beams = next.map((bm) => ({ bm, v: bm.score + aimScore(head.map((x, i) => ({ ...x, focusId: bm.seq[i] })), from, to, aim, deficits) }))
+    beams = next.map((bm) => ({ bm, v: bm.score + aimScore(head.map((x, i) => ({ ...x, focusId: bm.seq[i] })), from, to, aim, deficits, steer) }))
       .sort((a, c) => c.v - a.v).slice(0, BEAM).map((x) => x.bm);
   }
   const best = beams[0];
@@ -76,27 +76,29 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
   };
 }
 
-export function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim, deficits: DeficitWeights): number {
+export function aimScore(plan: PlanBlock[], from: string, to: string, aim: Aim, deficits: DeficitWeights, steer: DeficitWeights = []): number {
+  const main = balanceOf(plan, from, to, true);
+  // Rote Uhren lenken immer mit, egal welche Richtung sonst gilt: Anteil auf ihren Achsen zahlt (Stufe 1 der Eskalationsleiter)
+  const steerScore = 12 * steer.reduce((s, d) => s + d.w * main.share[d.axis], 0);
   if (aim === "allround" || (aim === "deficits" && !deficits.length)) {
     const bal = balanceOf(plan, from, to);
-    return bal.score == null ? 0 : 8 * bal.score;
+    return (bal.score == null ? 0 : 8 * bal.score) + steerScore;
   }
   // Schwerpunkte zählen nur den Hauptteil, sonst gewinnt, wer kaum Warm-up und Cool-down hat
-  const main = balanceOf(plan, from, to, true);
-  if (main.score == null) return 0;
+  if (main.score == null) return steerScore;
   if (aim === "deficits") {
     // Allrounder: schwache Bereiche zuerst, aber die Breite bleibt im Blick
     const bal = balanceOf(plan, from, to);
-    return 20 * deficits.reduce((s, d) => s + d.w * main.share[d.axis], 0) + 4 * (bal.score ?? 0);
+    return 20 * deficits.reduce((s, d) => s + d.w * main.share[d.axis], 0) + 4 * (bal.score ?? 0) + steerScore;
   }
-  return 30 * main.share[aim];
+  return 30 * main.share[aim] + steerScore;
 }
 
 export const AIM_OPTIONS: { value: Aim; label: string }[] = [{ value: "deficits", label: "Defizite zuerst" }, { value: "allround", label: "Allround" }, ...AXES.map((a) => ({ value: a.id as Aim, label: a.name }))];
 
 /** Orden für eine Phase, beste zuerst: dieselbe Bewertung wie die Blockfolge (Last, Länge, Übergang, Wiederholung)
     plus Beitrag zur Richtung des Jahres, mit dem Rest des Plans, wie er ist. */
-export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: DeficitWeights = []): { f: Focus; score: number; reasons: string[] }[] {
+export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: DeficitWeights = [], steer: DeficitWeights = []): { f: Focus; score: number; reasons: string[] }[] {
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const b = sorted.find((x) => x.id === id);
   if (!b || isTestBlock(b)) return [];
@@ -108,8 +110,14 @@ export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: Defic
     .map((f) => {
       const st = stepScore(f, b, prev, used);
       const reasons = [...st.reasons];
+      if (steer.length) {
+        // Begründung der Lenkung (Stufe 1): welche roten Achsen dieser Orden bedient
+        const v = goalVector(f);
+        const hit = [...new Set(steer.filter((d) => (v[d.axis] ?? 0) > 0).map((d) => AXES.find((a) => a.id === d.axis)?.name ?? d.axis))];
+        if (hit.length) reasons.unshift(`hält rote Uhren: ${hit.join(", ")}`);
+      }
       if (fitScore(f, b.load).score >= 0) reasons.unshift("passt zur Alltagslast");
-      const score = st.score + aimScore(sorted.map((x) => (x.id === id ? { ...x, focusId: f.id } : x)), from, to, aim, deficits);
+      const score = st.score + aimScore(sorted.map((x) => (x.id === id ? { ...x, focusId: f.id } : x)), from, to, aim, deficits, steer);
       return { f, score, reasons };
     })
     .sort((x, y) => y.score - x.score);
@@ -118,12 +126,12 @@ export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: Defic
 /** Passt ein Orden in einen Mesozyklus-Teil? Fixe Längen über sechs Wochen (Monk: 12/12) lassen sich nicht als Akzent verkürzen — die Dosis bricht. Ordensreihen mit Spiel (etwa Slayer, 10–15) bleiben bewusste Akzente. */
 export const mesoPartFit = (f: Focus) => !(f.weeks.min === f.weeks.max && f.weeks.min > 6);
 
-/** Frisch angelegter Mesozyklus (newMeso in stack.ts): Teil 1 nach Empfehlung, jeder weitere aus den Successors des vorherigen — bester zuerst, sonst die beste Alternative. */
-export function fillMeso(p: PlanBlock[], aim: Aim, deficits: DeficitWeights = []): PlanBlock[] {
+/** Frisch angelegter Mesozyklus (newMeso in stack.ts): Teil 1 nach Empfehlung, jeder weitere aus den Successors des vorherigen — bester zuerst, sonst die beste Alternative. Rote Uhren (steer) ordnen die Kandidaten, die Ketten-Bindung bleibt. */
+export function fillMeso(p: PlanBlock[], aim: Aim, deficits: DeficitWeights = [], steer: DeficitWeights = []): PlanBlock[] {
   const parts = p.filter((x) => x.meso).sort((a, b) => a.start.localeCompare(b.start));
   let out = p, prev: Focus | undefined;
   for (const part of parts) {
-    const ranked = rankFor(out, part.id, aim, deficits).filter((r) => mesoPartFit(r.f));
+    const ranked = rankFor(out, part.id, aim, deficits, steer).filter((r) => mesoPartFit(r.f));
     const top = prev ? ranked.find((r) => prev!.successors?.includes(r.f.id)) ?? ranked[0] : ranked[0];
     if (!top) break;
     out = out.map((x) => (x.id === part.id ? { ...x, focusId: top.f.id } : x));

@@ -18,6 +18,8 @@ import type { AxisId } from "./balance";
 import { estimateRole } from "./duration";
 import { blockFocus, focusName, rolesFor } from "./plan";
 import { evaluateBlock } from "./norms";
+import { residualClocks } from "./residual";
+import { CLOCK_SHARPEN, hotClocks } from "./steer";
 
 export type DomainId = "speed" | "power" | "strength" | "ke" | "anaerob" | "aerob" | "skill" | "mobility";
 export interface Deficit { id: DomainId; name: string; score: number | null; kind: "norm" | "trend" }
@@ -128,21 +130,37 @@ export function slotsFor(state: AppState, b: PlanBlock): SlotsPlan {
     return none(skipped.length ? `${skipped.join(", ")}. Die übrigen Defizite passen nicht in einen Slot.` : "Die Defizite passen nicht in einen Slot, sie gehen in den Vorschlag für die Blockfolge.");
   })();
 
-  // --- Slot 2: Vertiefung — beim Allrounder stattdessen das stärkste verbleibende Defizit
+  // --- Slot 2: Vertiefung — die rote Uhr kommt zuerst (Eskalationsleiter Stufe 2: Messung vor
+  //     Test und Sekundärziel), sonst beim Allrounder das stärkste verbleibende Defizit,
+  //     sonst die Vertiefung des Sekundärziels. Uhren, die der Orden selbst trainiert (own)
+  //     oder die das Ordensziel stören (interferes), kriegen keinen Slot — sie brauchen einen Orden.
   let s2: SlotPlan;
   if (b.sharpen2 === "off") s2 = { domain: null, source: "off", reason: "Für diese Phase ausgeschaltet." };
   else if (b.sharpen2 && SHARPEN[b.sharpen2]) s2 = { domain: b.sharpen2 as DomainId, source: "manual", reason: "Selbst gewählt." };
-  else if (state.user.focusMode !== "special") {
+  else {
     const s1Axis = s1.domain ? DOMAIN_AXIS[s1.domain] : null;
-    let cand: Deficit | undefined;
-    for (const d of list) {
-      if (d.id === s1.domain || own.has(d.id) || deferred.includes(d)) continue;
-      if (s1Axis && DOMAIN_AXIS[d.id] === s1Axis) continue; // nie zwei Slots auf derselben Achse
-      cand = d; break;
+    let s2hot: SlotPlan | null = null;
+    for (const c of hotClocks(residualClocks(state, b.start))) {
+      for (const d of CLOCK_SHARPEN[c.id] as DomainId[]) {
+        if (!SHARPEN[d] || own.has(d) || interferes(f, d)) continue;
+        if (s1.domain && (d === s1.domain || DOMAIN_AXIS[d] === s1Axis)) continue; // nie zwei Slots auf derselben Achse
+        s2hot = { domain: d, source: "auto", reason: `Rote Uhr: ${c.name} ${c.days === null ? "noch nie" : `${c.days}/${c.budget}`} Tage über Budget — die Vertiefung hält den Bereich frisch.` };
+        break;
+      }
+      if (s2hot) break;
     }
-    if (cand) s2 = { domain: cand.id, source: "auto", reason: `Zweites Defizit: ${cand.name} ${cand.kind === "norm" ? `(${cand.score} Punkte)` : "(Rückgang)"} aus der letzten Testwoche.` };
-    else s2 = deepening(f, s1.domain);
-  } else s2 = deepening(f, s1.domain);
+    if (s2hot) s2 = s2hot;
+    else if (state.user.focusMode !== "special") {
+      let cand: Deficit | undefined;
+      for (const d of list) {
+        if (d.id === s1.domain || own.has(d.id) || deferred.includes(d)) continue;
+        if (s1Axis && DOMAIN_AXIS[d.id] === s1Axis) continue; // nie zwei Slots auf derselben Achse
+        cand = d; break;
+      }
+      if (cand) s2 = { domain: cand.id, source: "auto", reason: `Zweites Defizit: ${cand.name} ${cand.kind === "norm" ? `(${cand.score} Punkte)` : "(Rückgang)"} aus der letzten Testwoche.` };
+      else s2 = deepening(f, s1.domain);
+    } else s2 = deepening(f, s1.domain);
+  }
   return { s1, s2, deferred };
 }
 

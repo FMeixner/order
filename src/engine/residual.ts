@@ -45,7 +45,7 @@ export interface ResidualClock {
 const POWER_PART = /\b(sprints?|(box|squat|tuck|high|standup|broad|lateral)\s+jumps?|speed skaters?|skater jumps?)\b/i;
 
 /** Hat die Bestie einen Sprint- oder Sprunganteil? (Serienteile zählen mit) */
-function beastPowers(b: Beast): boolean {
+export function beastPowers(b: Beast): boolean {
   const names = [b.work, ...(b.parts?.map((p) => p.work) ?? [])]
     .flatMap((w) => w.split(" · "))
     .map(beastPartName);

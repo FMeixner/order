@@ -4,6 +4,7 @@
 import { useMemo } from "react";
 import { fmtDate } from "../engine/plan";
 import { residualClocks } from "../engine/residual";
+import { opportunities } from "../engine/steer";
 import type { AppState } from "../types";
 import { Collapse } from "./common";
 
@@ -23,6 +24,12 @@ export function ResidualClocks({ state, today }: { state: AppState; today: strin
             {over.map((c) => c.name).join(", ")} {over.length === 1 ? "ist" : "sind"} über Budget — ein Orden mit diesem Bereich als Ziel,
             ein Schwerpunkt-Slot oder eine passende Bestie hält {over.length === 1 ? "ihn" : "sie"} frisch.
           </div>
+        )}
+        {over.length > 0 && (
+          <ul className="slot-list small">
+            <li><strong>Gelegenheiten aus dem Bestand:</strong></li>
+            {opportunities(clocks).map((o) => <li key={o.clock}>{o.text}</li>)}
+          </ul>
         )}
         <div className="balance-bars">
           {sorted.map((c) => (
