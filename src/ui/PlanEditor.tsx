@@ -3,6 +3,10 @@ import { OrderMark } from "./OrderIcon";
 import { FOCI, SHARPEN } from "../data";
 import { domainName, interferes, slotEligible, type DomainId, type SlotPlan, type SlotsPlan } from "../engine/sharpen";
 import type { DeficitWeights } from "../engine/sequence";
+import { timeBias } from "../engine/sequence";
+import { AXES, type AxisId } from "../engine/balance";
+import { KCAL_LABEL, axisName, carriesAccent, kcalCheck, recKcalOf } from "../engine/kcal";
+import type { Kcal, Section } from "../types";
 import { addDays, blockFocus, blockWeeks, fitScore, fmtDate, focusName, isoDate, isTestBlock, mondayOf } from "../engine/plan";
 import { uid } from "../store";
 import type { EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
@@ -14,7 +18,7 @@ import { PlanStack } from "./PlanStack";
 import { rankFor, fillMeso, type Aim } from "../engine/sequence";
 import type { ResidualClock } from "../engine/residual";
 import type { MesoBalance } from "../engine/bilanz";
-import { mergeNext, newMeso, MESO_DEFAULT, MESO_FORMS, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
+import { loadOfWindow, mergeNext, newMeso, MESO_DEFAULT, MESO_FORMS, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
 /** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
@@ -89,7 +93,7 @@ export function FocusPicker({ load, value, onPick, profile, days, restrict }: { 
 
 /** Bearbeitungsseite einer Phase: erst die Phase (Name, Last), dann der Orden (Empfehlung zuerst),
     dann Aufteilen (Teilen, Verbinden), zuletzt Feinheiten (Zeitraum, eigener Wochenplan, Schwerpunkt-Slot). */
-export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], steer = [], onStructure, today }: {
+export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], steer = [], onStructure, today }: {
   block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotsPlan;
   onSave: (b: PlanBlock, opts?: { test?: boolean }) => void; onCancel: () => void; onDelete?: () => void;
   plan?: PlanBlock[]; aim?: Aim; deficits?: DeficitWeights; steer?: DeficitWeights; onStructure?: (p: PlanBlock[]) => void; today?: string;
@@ -127,7 +131,13 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
   const succIds = prevPart && prevF?.successors ? prevF.successors : undefined;
   const allRanked = rankFor(draftPlan, b.id, aim, deficits, steer);
   const boundRanked = succIds ? allRanked.filter((r) => succIds.includes(r.f.id) || r.f.id === b.focusId) : allRanked;
-  const ranked = (boundRanked.length ? boundRanked : allRanked).slice(0, 5);
+  // Akzent-Modus: nur Orden, die die Ziel-Domäne als Hauptziel tragen (genug Volumen, keine zeitoptimierten)
+  let pool = boundRanked.length ? boundRanked : allRanked;
+  const accPool = b.accent ? pool.filter((r) => carriesAccent(r.f, b.accent!)) : pool;
+  const accMissing = !!b.accent && accPool.length === 0;
+  if (b.accent && accPool.length) pool = accPool;
+  // Alltagslast ordnet mit: kurze Orden bei hoher Last, zeithungrige bei niedriger (Zusatzpunkte, kein Filter)
+  const ranked = [...pool].sort((x, y) => y.score + timeBias(b, y.f) - (x.score + timeBias(b, x.f))).slice(0, 5);
   const locked = b.start <= day; // laufende Phase: Orden nicht hier wechseln (eingefroren)
   const inPlan = !!plan?.some((x) => x.id === b.id);
   const nx = plan && inPlan ? nextOf(plan, b) : undefined;
@@ -146,6 +156,12 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
       {b.meso && !mesoLast && b.end >= day && <p className="muted small">Dieser Mesozyklus-Teil misst nicht selbst: Die Testwoche steht am Ende des Mesozyklus, hinter dem letzten Teil.</p>}
 
       <div className="label teal"><span className="bar" />Orden · {weeks} Wochen{f && weeks < f.weeks.min && b.meso ? " · Akzent im Mesozyklus" : f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (passt für ${f.weeks.min}–${f.weeks.max})` : ""}</div>
+      {b.accent && (
+        <p className="muted small">Akzent-Modus: {axisName(b.accent)} bleibt Hauptziel in allen Teilen dieses Mesozyklus — die Orden rotieren, die Domäne nicht.</p>
+      )}
+      {accMissing && (
+        <p className="note warn small">Kein Orden trägt {axisName(b.accent!)} als Hauptziel mit genug Volumen für einen Akzent. Wähle frei — oder löse den Akzent über Teilen auf.</p>
+      )}
       {mesoLast && f && (f.goals.primary === "power" || f.goals.primary === "speed") && (
         <p className="note warn small">Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Teil des Mesozyklus misst die Testwoche dahinter sie nicht mehr im Vollbesitz. Lieber in einen früheren Teil einplanen (oder bewusst so lassen).</p>
       )}
@@ -164,6 +180,24 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
           <button className="sc-alt muted" aria-expanded={all} onClick={() => setAll((x) => !x)}>{all ? "Weniger" : "Alle Orden …"}</button>
           {all && <FocusPicker load={b.load} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} restrict={succIds} />}
         </div>
+      )}
+
+      {user?.level !== "einsteiger" && (
+        <>
+          <div className="label teal"><span className="bar" />Kalorien</div>
+          {(() => {
+            const rec = recKcalOf(b, f ?? null);
+            const warns = kcalCheck(b, f ?? null);
+            return (
+              <div className="stack">
+                <Field label={<>Kalorien-Modus für diesen Teil{rec && <span className="tag rec">{KCAL_LABEL[rec.mode]} empfohlen</span>}</>} hint={rec?.why ?? "Defizit, Erhaltung oder Überschuss — die App warnt, wenn die Kombination mit Last und Orden nicht trägt."}>
+                  <Seg<"" | Kcal> value={b.kcal ?? ""} options={[{ value: "", label: "nicht festgelegt" }, { value: "deficit", label: KCAL_LABEL.deficit }, { value: "maintenance", label: KCAL_LABEL.maintenance }, { value: "surplus", label: KCAL_LABEL.surplus }]} onChange={(kcal) => setB({ ...b, kcal: kcal || undefined })} />
+                </Field>
+                {b.kcal && warns.map((w) => <p key={w} className="note warn small">{w}</p>)}
+              </div>
+            );
+          })()}
+        </>
       )}
 
       {onStructure && inPlan && b.end >= day && (weeks >= 2 || nx) && (
@@ -221,21 +255,28 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks, balance, steer }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[]; balance?: MesoBalance; steer?: DeficitWeights }) {
+export function PlanList({ plan, profiles, days, user, sections, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks, balance, steer }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[]; balance?: MesoBalance; steer?: DeficitWeights }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
   const [view, setView] = useState<PlanBlock | null>(null);
   const [seq, setSeq] = useState(false);
   const [mesoOpen, setMesoOpen] = useState(false);
+  const [accentOn, setAccentOn] = useState(false);
+  const [accent, setAccent] = useState<AxisId>("muskel");
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const gaps: string[] = [];
   for (let i = 1; i < sorted.length; i++) if (addDays(sorted[i - 1].end, 1) < sorted[i].start) gaps.push(`${fmtDate(addDays(sorted[i - 1].end, 1))}–${fmtDate(addDays(sorted[i].start, -1))}`);
   for (let i = 1; i < sorted.length; i++) if (sorted[i].start <= sorted[i - 1].end) gaps.push(`Überschneidung bei ${fmtDate(sorted[i].start)}`);
-  // Form-Empfehlung für den nächsten Mesozyklus: Lücken in der Bilanz oder mehrere rote Uhren
-  // sprechen für drei Teile (mehr Orden, mehr Bereiche), sonst bleibt es bei der Standardform
+  // Alltagslast des Zeitraums hinter dem Plan (aus den Lebensabschnitten): empfiehlt die Form des nächsten Mesozyklus
+  const lastEnd = sorted.length ? sorted[sorted.length - 1].end : today;
+  const nextLoad = loadOfWindow(sections, addDays(lastEnd, 1), addDays(lastEnd, 7 * 16));
+  // Form-Empfehlung: Lücken in der Bilanz oder mehrere rote Uhren sprechen für drei Teile (mehr Orden, mehr Bereiche),
+  // sonst folgt die Form der Alltagslast: kurze Teile bei hoher Last, das Triple in ruhigen Abschnitten
   const hot = clocks?.filter((c) => c.over) ?? [];
-  const recForm: number[] = (balance?.gaps.length ?? 0) > 0 || hot.length >= 2 ? [5, 5, 5] : MESO_DEFAULT;
+  const bySignal = (balance?.gaps.length ?? 0) > 0 || hot.length >= 2;
+  const recForm: number[] = bySignal ? [5, 5, 5] : nextLoad === "high" ? [6, 4] : nextLoad === "low" ? [5, 5, 5] : MESO_DEFAULT;
+  const erf = user?.level !== "einsteiger";
   return (
     <div className="stack">
       <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer} clocks={clocks} balance={balance} onChange={onChange}
@@ -262,19 +303,33 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
         <Modal title="Mesozyklus anhängen" onClose={() => setMesoOpen(false)}>
           <div className="stack">
             <p className="muted small">Kurze Phasen, die zusammengehören: Jeder Teil folgt aus den Successors des vorherigen, die Testwoche steht am Ende des Mesozyklus. Wähle die Form, die in dein Jahr passt — dahinter gleich mit Vorschlägen für alle Teile.</p>
+            {sections?.length ? (
+              <p className="muted small">Deine Lebensabschnitte geben dem Zeitraum dahinter {LOAD_LABEL[nextLoad]}e Alltagslast — {nextLoad === "high" ? "kurze Teile und kürzere Orden passen gut, die Teile übernehmen die Last der Abschnitte." : nextLoad === "low" ? "Raum für drei Teile und zeithungrige Orden, die Teile übernehmen die Last der Abschnitte." : "die Standardform passt, die Teile übernehmen die Last der Abschnitte."}</p>
+            ) : null}
+            {erf && (
+              <Check checked={accentOn} onChange={(v) => { setAccentOn(v); if (!v) setAccent("muskel"); }} label="Akzent halten — eine Ziel-Domäne bleibt Hauptziel in jedem Teil, die Orden rotieren" />
+            )}
+            {accentOn && (
+              <div className="chips" role="radiogroup" aria-label="Ziel-Domäne des Akzents">
+                {AXES.map((a) => <button key={a.id} role="radio" aria-checked={accent === a.id} className={accent === a.id ? "on" : ""} onClick={() => setAccent(a.id)}>{a.name}</button>)}
+              </div>
+            )}
+            {accentOn && <p className="muted small">Akzent auf {axisName(accent)}: Jeder Teil trägt die Domäne als Hauptziel, und die Orden wechseln zwischen denen, die sie trainieren — zeitoptimierte Orden bleiben draußen, sie tragen die Dosis nicht.</p>}
             <div className="chips" role="radiogroup" aria-label="Form des Mesozyklus">
               {MESO_FORMS.map((f) => (
-                <button key={f.join("+")} onClick={() => { onChange(fillMeso(newMeso(plan, today, () => uid("b"), f), aim, deficits ?? [], steer ?? [])); setMesoOpen(false); }}>{f.join("+")}{f.join("+") === recForm.join("+") && <span className="tag rec">empfohlen</span>}<span className="muted"> + Testwoche</span></button>
+                <button key={f.join("+")} onClick={() => { onChange(fillMeso(newMeso(plan, today, () => uid("b"), f, sections, accentOn ? accent : undefined), aim, deficits ?? [], steer ?? [])); setMesoOpen(false); }}>{f.join("+")}{f.join("+") === recForm.join("+") && <span className="tag rec">empfohlen</span>}<span className="muted"> + Testwoche</span></button>
               ))}
             </div>
             <p className="muted small">6+6 ist die Standardform. 5+5+5 füllt ein 16-Wochen-Fenster (15 Wochen plus Testwoche), 4+4 passt, wenn das Jahr eng wird.</p>
-            {(balance?.gaps.length ?? 0) > 0 || hot.length >= 2 ? (
+            {bySignal ? (
               <p className="note small">
                 Empfohlen: {recForm.join("+")}. {(balance?.gaps.length ?? 0) > 0
                   ? `Die Domänen-Bilanz zeigt Lücken (${[...new Set((balance?.gaps ?? []).map((g) => g.name))].join(", ")}) — drei Orden decken mehr Bereiche ab.`
                   : `${hot.length} Uhren sind über Budget — drei kürzere Teile verteilen die Bereiche auf mehr Orden.`}
                 Die Lenkung fließt auch in die Ordensvorschläge für alle Teile.
               </p>
+            ) : sections?.length && nextLoad !== "medium" ? (
+              <p className="note small">Empfohlen: {recForm.join("+")} — {nextLoad === "high" ? "die hohe Alltagslast im Zeitraum verträgt kürzere Teile besser, und die Ordensvorschläge ziehen kürzere Orden vor." : "die niedrige Alltagslast gibt Raum für das Triple mit zeithungrigeren Orden."}</p>
             ) : null}
           </div>
         </Modal>
