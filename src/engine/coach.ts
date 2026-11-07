@@ -11,7 +11,7 @@ import { mesoPartFit, rankFor, timeBias, type Aim, type DeficitWeights } from ".
 import { recKcalOf } from "./kcal";
 
 const weeksBetween = (a: string, b: string) => Math.round((new Date(`${b}T12:00`).getTime() - new Date(`${a}T12:00`).getTime()) / (7 * 864e5));
-const byStart = (p: PlanBlock[]) => [...p].sort((a, b) => a.start.localeCompare(b.start));
+const byStart = <T extends { start: string }>(x: T[]): T[] => [...x].sort((a, b) => a.start.localeCompare(b.start));
 /** Ganze Wochen im Fenster [from, to] */
 const weeksLeft = (a: string, b: string) => Math.floor(((new Date(`${b}T12:00`).getTime() - new Date(`${a}T12:00`).getTime()) / 864e5 + 1) / 7);
 
