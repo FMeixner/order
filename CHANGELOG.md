@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.99.0] – 2026-11-07
+
+### Neu
+- Akzent-Modus: „+ Mesozyklus anhängen“ kann eine Ziel-Domäne festhalten („Akzent halten“). Jeder Teil des Mesozyklus trägt sie als Hauptziel, und die Orden rotieren zwischen denen, die sie trainieren — etwa Slayer und Knight für Muskelaufbau, Smith und Troubadour für Kraft. Zeitoptimierte Orden bleiben draußen, sie tragen die Dosis eines Akzents nicht. Die Abwechslungs-Regel der Bilanz weist die Folge bewusst als Warnung hin; Teilen oder Verbinden löst den Akzent mit dem Mesozyklus auf.
+- Kalorien-Layer: Jeder Mesozyklus-Teil kann einen Kalorien-Modus tragen — Defizit, Erhaltung oder Überschuss. Die App schätzt den Burn des Ordens nach seinen Übungen (Bestien zählen am meisten, Intervalle und Timer liegen dahinter, reine Kraftsätze wenig) und warnt bei Kombinationen, die nicht tragen: Defizit auf einem Orden für Überschuss, Defizit auf hohem Burn bei hoher Alltagslast, Defizit auf einem Aufbau-Akzent. Die Warnung steht an der Phase und im Plan-Stapel (amberfarben) — nichts wird gesperrt. Bei hoher Alltagslast sinkt die Burn-Schätzung, weil ohnehin etwa die Hälfte der Kraftübungen geführt läuft.
+- Kalorien-Empfehlung: Bei niedriger Alltagslast und einem Orden, der verträgt, schlägt die App das Defizit vor — Defizit-Fenster gehören in niedriglastige Phasen. Bei Aufbau-Akzenten empfiehlt sie Überschuss, bei hoher Alltagslast Erhaltung. Wie immer: Vorschlag, du entscheidest.
+- Alltags-Anbindung: Beim Anlegen eines Mesozyklus lesen die Teile die Alltagslast aus deinen Lebensabschnitten (statt pauschal mittel), und die Form-Empfehlung folgt dem Zeitraum dahinter — hohe Last rät zu kürzeren Teilen (6+4) und kürzeren Ordnern, niedrige Last zum Triple mit zeithungrigeren Orden. Die Ordensvorschläge ziehen bei hoher Last kürzere Orden vor, bei niedriger zeithungrige. Lücken der Bilanz und rote Uhren haben weiter Vorrang vor der Last-Empfehlung.
+- Neue Hilfe-Abschnitte „Kalorien“ und Nachträge zu Mesozyklen (Akzent-Modus, Alltagslast); Einsteiger sehen Kalorien-Modus und Akzent nicht.
+
 ## [0.98.0] – 2026-11-07
 
 ### Neu

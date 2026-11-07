@@ -92,7 +92,7 @@ export default function App() {
                   <YearBalance plan={state.plan} />
                 </>
               )}
-              <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} today={today}
+              <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} sections={state.sections} today={today}
                 deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks} balance={balance} steer={steer}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>

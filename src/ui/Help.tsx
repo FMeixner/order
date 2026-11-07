@@ -88,6 +88,8 @@ export function Help() {
         <li>Die Blockfolge plant Mesozyklen als Kette: Wählt sie den Orden eines Teils, kommt der nächste aus deren Successors. Einzeln geplante Phasen bleiben erlaubt und alleinstehend funktionsfähig. Monk (zwölf feste Wochen Wohlbefinden) passt in keinen Teil und bleibt ein ganzer Block.</li>
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab. Plant du sie in den letzten Teil, misst die Testwoche dahinter sie nicht mehr im Vollbesitz — die App weist darauf hin, sperrt aber nicht.</li>
         <li>Nach der Testwoche schlägt die Auswertung die Schwerpunkte für alle Teile gleichzeitig vor („Für den Mesozyklus übernehmen“); jedes Teil rechnet mit denselben Testwerten. Änderst du eine Phase in zwei Teile oder verbindest zwei, löst sich der Mesozyklus komplett auf.</li>
+        <li>Deine Lebensabschnitte ordnen die Form mit: Liegt der Zeitraum dahinter mit hoher Alltagslast, empfiehlt die App kürzere Teile (6+4) und zieht bei der Ordenswahl kürzere Orden vor; in ruhigen Abschnitten passt das Triple mit zeithungrigeren Orden. Die Teile übernehmen die Last der Abschnitte, und die Alltagslast senkt ohnehin den Burn: Ab hoher Last läuft etwa die Hälfte der Kraftübungen geführt an Maschine oder Kabel.</li>
+        <li>Mit „Akzent halten“ bleibt eine Ziel-Domäne Hauptziel in jedem Teil, und die Orden rotieren zwischen denen, die sie trainieren — etwa Slayer und Knight für Muskelaufbau, Smith und Troubadour für Kraft. Zeitoptimierte Orden bleiben draußen, sie tragen die Dosis eines Akzents nicht. Die Abwechslungs-Regel der Bilanz weist die Folge bewusst als Warnung hin; Teilen oder Verbinden löst den Akzent mit dem Mesozyklus auf.</li>
       </ul>
 
       <h3>Residual-Uhren</h3>
@@ -111,6 +113,13 @@ export function Help() {
         <li>Rote Uhren fließen in drei Stufen in die Vorschläge ein. Erstens: Blockfolge und Mesozyklus-Vorschlag ziehen Orden vor, deren Bereiche die roten Uhren halten — die Begründung („hält rote Uhren: …“) steht bei jedem Kandidaten. Zweitens: Schwerpunkt 2 priorisiert die rote Domäne als Vertiefung, wenn sie ein Slot-Modul hat und der Orden sie nicht selbst trainiert. Als letzte Stufe empfiehlt die Uhr-Karte eine Gelegenheit aus dem Bestand, etwa eine Bestie mit Sprintanteil.</li>
         <li>Nach jeder Testwoche fasst die Auswertung zusammen, welche Uhren rot sind und welche Bereiche im Halbjahr unterversorgt sind — dieselbe Stelle, an der „Für den Mesozyklus übernehmen“ die Schwerpunkte vorschlägt. Der nächste Mesozyklus wird damit residual- und bilanzgeführt: „+ Mesozyklus anhängen“ empfiehlt bei Lücken oder mehreren roten Uhren die Form 5+5+5 (drei Orden decken mehr Bereiche ab), sonst die Standardform 6+6.</li>
         <li>Alles bleibt Vorschlag: Die App plant nichts automatisch ein, sperrt nichts und zwingt keine Form. Die Uhr zeigt, der Wizard schlägt vor, du entscheidest.</li>
+      </ul>
+
+      <h3>Kalorien: Energie zur Last passen</h3>
+      <ul>
+        <li>Jeder Mesozyklus-Teil kann einen Kalorien-Modus tragen: Defizit, Erhaltung oder Überschuss — deine Angabe, die App prüft nur, ob die Kombination trägt. Die Regeln dahinter: Aufbau (Masse, Kraft) braucht Überschuss oder mindestens Erhaltung; ein anstrengender Orden mit hohem Burn läuft höchstens über einige Wochen im Defizit — und dann lieber gar nicht bei hoher Alltagslast; Defizit-Fenster gehören in niedrig belastete Phasen mit Ordnern, die im Defizit arbeiten können.</li>
+        <li>Den Burn schätzt die App nach den Übungen des Ordens: Bestien zählen am meisten, Intervalle und Timer liegen dahinter, reine Kraftsätze mit Pausen wenig. Bei hoher Alltagslast sinkt die Schätzung — ab dann läuft etwa die Hälfte der Kraftübungen geführt an Maschine oder Kabel, und das verbrennt weniger.</li>
+        <li>Die Empfehlung „Defizit“ erscheint bei niedriger Alltagslast mit einem Orden, der verträgt; bei Aufbau-Akzenten empfiehlt die App Überschuss, bei hoher Alltagslast Erhaltung. Konflikte — etwa Defizit auf einem Orden, der auf Überschuss ausgelegt ist — zeigt die App als Warnung an der Phase und im Stapel (am amberfarbenen Modus), sperrt aber nichts.</li>
       </ul>
 
       <h3>Allrounder oder Spezialist</h3>

@@ -5,6 +5,7 @@
 import { FOCI, FOCUS_BY_ID } from "../data";
 import type { Focus, PlanBlock } from "../types";
 import { AXES, balanceOf, goalVector, type AxisId, type Balance } from "./balance";
+import { carriesAccent } from "./kcal";
 import { blockWeeks, fitScore, isTestBlock, TEST_BLOCK } from "./plan";
 
 export type Aim = "allround" | "deficits" | AxisId;
@@ -51,6 +52,11 @@ export function suggestSequence(plan: PlanBlock[], today: string, aim: Aim, defi
       const prev = lastReal ? FOCUS_BY_ID[lastReal] ?? null : null;
       let options = locked ? [FOCUS_BY_ID[b.focusId]] : FOCI.filter((f) => fitScore(f, b.load).score >= 0);
       if (!locked && b.meso) options = options.filter((f) => mesoPartFit(f) || f.id === b.focusId);
+      // Akzent-Modus: Jeder Teil des Mesozyklus trägt die Ziel-Domäne als Hauptziel (Fallback: alle, wenn keiner passt)
+      if (!locked && b.meso && b.accent) {
+        const acc = options.filter((f) => carriesAccent(f, b.accent!) || f.id === b.focusId);
+        if (acc.length) options = acc;
+      }
       const succ = partnerIdx >= 0 && bm.seq[partnerIdx] !== TEST_BLOCK ? FOCUS_BY_ID[bm.seq[partnerIdx]] : undefined;
       if (!locked && succ) {
         const bound = options.filter((f) => succ.successors?.includes(f.id) || f.id === b.focusId);
@@ -126,12 +132,31 @@ export function rankFor(plan: PlanBlock[], id: string, aim: Aim, deficits: Defic
 /** Passt ein Orden in einen Mesozyklus-Teil? Fixe Längen über sechs Wochen (Monk: 12/12) lassen sich nicht als Akzent verkürzen — die Dosis bricht. Ordensreihen mit Spiel (etwa Slayer, 10–15) bleiben bewusste Akzente. */
 export const mesoPartFit = (f: Focus) => !(f.weeks.min === f.weeks.max && f.weeks.min > 6);
 
-/** Frisch angelegter Mesozyklus (newMeso in stack.ts): Teil 1 nach Empfehlung, jeder weitere aus den Successors des vorherigen — bester zuerst, sonst die beste Alternative. Rote Uhren (steer) ordnen die Kandidaten, die Ketten-Bindung bleibt. */
+/** Alltags-Anbindung (Baustein „Alltags“): Bei hoher Alltagslast passen kürzere Orden besser in die Woche,
+    bei niedriger Last darf es der zeithungrige sein (Slayer 60, Smith 60). Zusatzpunkte, kein Filter —
+    fitScore (load_fit) prüft ohnehin, ob der Orden die Last aushält. */
+export function timeBias(b: PlanBlock, f: Focus): number {
+  if (b.load === "high" && f.session_min <= 45) return 1;
+  if (b.load === "low" && f.session_min >= 50) return 1;
+  return 0;
+}
+
+/** Frisch angelegter Mesozyklus (newMeso in stack.ts): Teil 1 nach Empfehlung, jeder weitere aus den Successors
+    des vorherigen — bester zuerst, sonst die beste Alternative. Rote Uhren (steer) ordnen die Kandidaten,
+    die Ketten-Bindung bleibt. Akzent-Modus (accent je Teil): Jeder Teil trägt die Ziel-Domäne als Hauptziel,
+    die Orden rotieren (carriesAccent; ohne tragbare Kandidaten gilt die beste Alternative — Warnung statt Sperre).
+    Die Alltagslast ordnet mit: kurze Orden bei hoher Last, zeithungrige bei niedriger. */
 export function fillMeso(p: PlanBlock[], aim: Aim, deficits: DeficitWeights = [], steer: DeficitWeights = []): PlanBlock[] {
   const parts = p.filter((x) => x.meso).sort((a, b) => a.start.localeCompare(b.start));
   let out = p, prev: Focus | undefined;
   for (const part of parts) {
-    const ranked = rankFor(out, part.id, aim, deficits, steer).filter((r) => mesoPartFit(r.f));
+    let ranked = rankFor(out, part.id, aim, deficits, steer)
+      .filter((r) => mesoPartFit(r.f))
+      .map((r) => ({ ...r, score: r.score + timeBias(part, r.f) }));
+    if (part.accent) {
+      const acc = ranked.filter((r) => carriesAccent(r.f, part.accent!));
+      if (acc.length) ranked = acc;
+    }
     const top = prev ? ranked.find((r) => prev!.successors?.includes(r.f.id)) ?? ranked[0] : ranked[0];
     if (!top) break;
     out = out.map((x) => (x.id === part.id ? { ...x, focusId: top.f.id } : x));

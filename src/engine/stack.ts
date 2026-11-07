@@ -1,6 +1,6 @@
 /* Jahresplan als Stapel: Phasen wochenweise verlängern oder kürzen (alles danach rückt mit),
    Testwoche am Ende an- und abschalten, Phasen teilen und verbinden. Vergangenes bleibt unverändert. */
-import type { PlanBlock } from "../types";
+import type { AxisId, Load, PlanBlock, Section } from "../types";
 import { addDays, blockWeeks, isTestBlock, mondayOf, TEST_BLOCK } from "./plan";
 
 const byStart = (p: PlanBlock[]) => [...p].sort((a, b) => a.start.localeCompare(b.start));
@@ -42,15 +42,47 @@ export function setTestWeek(plan: PlanBlock[], id: string, on: boolean, newId: s
 export const MESO_FORMS: number[][] = [[4, 4], [5, 5], [6, 4], [4, 6], [6, 5], [6, 6], [5, 5, 5]];
 /** Standardform wie seit 0.94: zwei Teile à sechs Wochen */
 export const MESO_DEFAULT: number[] = [6, 6];
-/** Mesozyklus anlegen: Teile nach der Form mit gemeinsamer Meso-Id und eine Testwoche dahinter. Orden wählt die UI (jeder Teil aus den Successors des vorherigen). */
-export function newMeso(plan: PlanBlock[], today: string, newId: () => string, form: number[] = MESO_DEFAULT): PlanBlock[] {
+
+/** Alltagslast eines Zeitraums aus den Lebensabschnitten: die Last der meisten Wochen gewinnt,
+    Gleichstand geht an die höhere Last. Ohne Abschnitte: medium. (Baustein „Alltags“: die Form-
+    und Ordensvorschläge folgen dem Alltag, die Last steht schon auf den Teilen.) */
+export function loadOfWindow(sections: Section[] | undefined, start: string, end: string): Load {
+  if (!sections?.length) return "medium";
+  const rank: Record<Load, number> = { low: 0, medium: 1, high: 2 };
+  const count: Record<Load, number> = { low: 0, medium: 0, high: 0 };
+  for (const s of sections) {
+    if (s.end < start || s.start > end) continue;
+    let d = mondayOf(s.start < start ? start : s.start);
+    for (; d <= s.end && d <= end; d = addDays(d, 7)) count[s.load]++;
+  }
+  const loads = (Object.keys(count) as Load[]).filter((l) => count[l] > 0);
+  if (!loads.length) return "medium";
+  return loads.reduce((a, c) => (count[c] > count[a] || (count[c] === count[a] && rank[c] > rank[a]) ? c : a), loads[0]);
+}
+
+/** Unterwegs in einem Zeitraum: gilt, wenn die Mehrheit der Abschnittswochen unterwegs ist */
+export function travelOfWindow(sections: Section[] | undefined, start: string, end: string): boolean {
+  if (!sections?.length) return false;
+  let w = 0, t = 0;
+  for (const s of sections) {
+    if (s.end < start || s.start > end) continue;
+    for (let d = mondayOf(s.start < start ? start : s.start); d <= s.end && d <= end; d = addDays(d, 7)) { w++; if (s.travel) t++; }
+  }
+  return w > 0 && t > w / 2;
+}
+
+/** Mesozyklus anlegen: Teile nach der Form mit gemeinsamer Meso-Id und eine Testwoche dahinter.
+    Alltagslast und Unterwegs je Teil aus den Lebensabschnitten (sonst medium),
+    Akzent-Modus: Ziel-Domäne, die in jedem Teil Hauptziel bleibt. Orden wählt die UI (jeder Teil aus den Successors des vorherigen). */
+export function newMeso(plan: PlanBlock[], today: string, newId: () => string, form: number[] = MESO_DEFAULT, sections?: Section[], accent?: AxisId): PlanBlock[] {
   const last = [...plan].sort((a, c) => a.end.localeCompare(c.end)).pop();
   const start = last ? addDays(last.end, 1) : mondayOf(today);
   const meso = newId();
   const out = [...plan];
   let at = start;
   for (const w of form) {
-    out.push({ id: newId(), focusId: "", label: "", start: at, end: addDays(at, 7 * w - 1), load: "medium", travel: false, meso });
+    const end = addDays(at, 7 * w - 1);
+    out.push({ id: newId(), focusId: "", label: "", start: at, end, load: sections ? loadOfWindow(sections, at, end) : "medium", travel: sections ? travelOfWindow(sections, at, end) : false, meso, ...(accent ? { accent } : {}) });
     at = addDays(at, 7 * w);
   }
   out.push({ id: newId(), focusId: TEST_BLOCK, label: "Testwoche", start: at, end: addDays(at, 6), load: "medium", travel: false });
@@ -64,8 +96,8 @@ export function splitBlock(plan: PlanBlock[], id: string, newId: string, today: 
   const first = Math.ceil(blockWeeks(b) / 2);
   const mid = addDays(mondayOf(b.start), 7 * first);
   if (mid <= today) return plan;
-  const { frozen: _f, shortRole: _s, meso: _m, ...rest } = b; void _f; void _s; void _m;
-  return [...plan.map((x) => x.id === id ? { ...x, end: addDays(mid, -1), meso: undefined } : b.meso && x.meso === b.meso ? { ...x, meso: undefined } : x), { ...rest, id: newId, start: mid }];
+  const { frozen: _f, shortRole: _s, meso: _m, accent: _a, ...rest } = b; void _f; void _s; void _m; void _a;
+  return [...plan.map((x) => x.id === id ? { ...x, end: addDays(mid, -1), meso: undefined, accent: undefined } : b.meso && x.meso === b.meso ? { ...x, meso: undefined, accent: undefined } : x), { ...rest, id: newId, start: mid }];
 }
 
 /** Nächste Phase direkt dahinter (keine Testwoche dazwischen) */
@@ -77,5 +109,5 @@ export function mergeNext(plan: PlanBlock[], id: string, today: string): PlanBlo
   const b = plan.find((x) => x.id === id);
   const n = b && nextOf(plan, b);
   if (!b || !n || isPast(b, today) || n.start <= today) return plan;
-  return plan.filter((x) => x.id !== n.id).map((x) => x.id === id ? { ...x, end: n.end, meso: undefined } : b!.meso && x.meso === b!.meso ? { ...x, meso: undefined } : x);
+  return plan.filter((x) => x.id !== n.id).map((x) => x.id === id ? { ...x, end: n.end, meso: undefined, accent: undefined } : b!.meso && x.meso === b!.meso ? { ...x, meso: undefined, accent: undefined } : x);
 }

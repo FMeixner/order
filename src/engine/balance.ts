@@ -5,7 +5,7 @@
    Die Phasen werden nach Tagen im gewählten Zeitraum gewichtet.
    Balance = normierte Shannon-Entropie der Verteilung: 0 = nur ein Bereich, 1 = alle gleich. */
 import { FOCUS_BY_ID } from "../data";
-import type { Focus, Goal, PlanBlock } from "../types";
+import type { AxisId, Focus, Goal, PlanBlock } from "../types";
 import { EQUIPMENT_PRESETS } from "../store";
 import { estimateRole } from "./duration";
 import { addDays } from "./plan";
@@ -19,8 +19,10 @@ export const AXES = [
   { id: "skill", name: "Skill", goals: ["skill"] },
   { id: "beweglichkeit", name: "Beweglichkeit", goals: ["mobility"] },
   { id: "ruhe", name: "Erholung", goals: ["wellbeing"] },
-] as const;
-export type AxisId = (typeof AXES)[number]["id"];
+] as const satisfies readonly { id: AxisId; name: string; goals: readonly string[] }[];
+/* Die Ids der Achsen sind derselbe Wertebereich wie AxisId in types.ts (oben per satisfies geprüft);
+   der Typ selbst kommt aus types.ts, damit auch Nutzerdaten (etwa der Akzent einer Phase) typsicher sind. */
+export type { AxisId };
 
 const PRIMARY = 0.7;
 const axisOf = (g: Goal): AxisId | null => AXES.find((a) => (a.goals as readonly string[]).includes(g))?.id ?? null;

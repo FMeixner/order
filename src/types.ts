@@ -9,6 +9,8 @@ export type Goal =
   | "fatloss" | "skill" | "mobility" | "wellbeing" | "test";
 export type Load = "high" | "medium" | "low";
 export type BeastClass = "plage" | "bestie" | "ungeheuer" | "uralte" | "verfluchte";
+/** Kalorien-Modus eines Mesozyklus-Teils (Baustein „Kalorien-Layer“): Nutzerangabe, die App prüft nur die Verträglichkeit */
+export type Kcal = "deficit" | "maintenance" | "surplus";
 
 /** Ersatz-Übung für eine Equipment-Stufe. Als Text nur der Name, als Objekt mit abweichender Dosis. */
 export interface Choice {
@@ -249,7 +251,14 @@ export interface PlanBlock {
   sharpen2?: string;
   /** Mesozyklus: gleiche Id = Teile eines Mesozyklus (zwei à 4–6 Wochen oder drei à 5). Testwoche am Meso-Ende, jeder Teil folgt aus den Successors des vorherigen. */
   meso?: string;
+  /** Akzent-Modus (Baustein 5): Ziel-Domäne, die in jedem Teil dieses Mesozyklus primär bleibt — die Orden rotieren, die Domäne nicht. */
+  accent?: AxisId;
+  /** Kalorien-Modus für diesen Teil (Baustein „Kalorien-Layer“). Fehlt: nicht festgelegt, die App empfiehlt nur. */
+  kcal?: Kcal;
 }
+
+/** Achsen der Jahresbalance; als Typ hier, damit PlanBlock ihn ohne Engine-Import nutzen kann (Wertebereich identisch mit AxisId aus balance.ts). */
+export type AxisId = "muskel" | "kraft" | "schnellkraft" | "kondition" | "ausdauer" | "skill" | "beweglichkeit" | "ruhe";
 
 export type Weekday = "Mo" | "Di" | "Mi" | "Do" | "Fr" | "Sa" | "So";
 export const WEEKDAYS: Weekday[] = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];

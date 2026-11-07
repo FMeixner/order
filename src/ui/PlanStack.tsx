@@ -7,6 +7,7 @@ import { rankFor, type Aim, type DeficitWeights } from "../engine/sequence";
 import type { ResidualClock } from "../engine/residual";
 import { HALF_MIN, type MesoBalance } from "../engine/bilanz";
 import { canShrink, isPast, resizeBlock, testAfter } from "../engine/stack";
+import { KCAL_LABEL, kcalCheck } from "../engine/kcal";
 import type { Load, PlanBlock } from "../types";
 import { OrderMark } from "./OrderIcon";
 import { Modal } from "./common";
@@ -110,7 +111,7 @@ export function PlanStack({ plan, today, aim, deficits, steer, clocks, balance, 
           <div key={b.id} className={`stack-card ${now ? "now" : ""} ${past ? "past" : ""}`} style={{ ["--c" as string]: goalColor(b.focusId) }}>
             <OrderMark id={b.focusId} />
             <div className="sc-text">
-              <div className="sc-phase">{b.label || `Phase ${n}`}<LoadIcon load={b.load} /></div>
+              <div className="sc-phase">{b.label || `Phase ${n}`}<LoadIcon load={b.load} />{b.kcal && <span className="tag" style={kcalCheck(b, FOCUS_BY_ID[b.focusId] ?? null).length ? { color: "var(--amber)", borderColor: "var(--amber)" } : undefined}>{KCAL_LABEL[b.kcal]}</span>}</div>
               <div className="sc-order">
                 <button className="sc-name" onClick={() => onView(b)}>{focusName(b.focusId)}</button>
                 {tag && <StatusIcon kind={tag} />}
