@@ -64,7 +64,7 @@ export function kcalCheck(b: PlanBlock, f: Focus | null): string[] {
   const out: string[] = [];
   if (b.kcal === "deficit") {
     if (f.nutrition === "surplus") out.push(`${f.name} ist auf Kalorienüberschuss ausgelegt — im Defizit leidet, was der Orden aufbauen soll.`);
-    if (f.nutrition !== "deficit" && burnOf(f, b.load) >= HIGH_BURN) out.push(`${f.name} verbrennt viel (${burnLabel(burnOf(f, b.load))}) — ein anstrengender Orden läuft höchstens über einige Wochen, und dann im Maintenance oder Überschuss.`);
+    if (f.nutrition !== "deficit" && burnOf(f) >= HIGH_BURN) out.push(`${f.name} verbrennt viel (${burnLabel(burnOf(f))}) — ein anstrengender Orden läuft höchstens über einige Wochen, und dann im Maintenance oder Überschuss. Bei hoher Alltagslast mildert die geführte Ersetzung das etwas, hebt es aber nicht auf.`);
     if (b.accent === "muskel" || b.accent === "kraft") out.push(`Der Akzent auf ${axisName(b.accent)} baut auf — im Defizit läuft er ins Leere.`);
   }
   if (b.kcal === "surplus" && f.nutrition === "deficit") out.push(`${f.name} ist auf Abnehmen ausgelegt — im Überschuss läuft er nicht besser.`);
