@@ -4,8 +4,6 @@ import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import { blockWeeks, fmtDate, focusName, isTestBlock, newerFocus, refreeze } from "../engine/plan";
 import { rankFor, type Aim, type DeficitWeights } from "../engine/sequence";
-import type { ResidualClock } from "../engine/residual";
-import { HALF_MIN, type MesoBalance } from "../engine/bilanz";
 import { canShrink, isPast, resizeBlock, testAfter } from "../engine/stack";
 import { KCAL_LABEL, kcalCheck } from "../engine/kcal";
 import type { Load, PlanBlock } from "../types";
@@ -40,8 +38,8 @@ function LoadIcon({ load }: { load: Load }) {
 /** Farbe je Hauptziel (Band und Kartenrand) */
 const goalColor = (id: string) => `var(--goal-${FOCUS_BY_ID[id]?.goals.primary ?? "none"}, var(--border-lit))`;
 
-export function PlanStack({ plan, today, aim, deficits, steer, clocks, balance, onChange, onView, onEdit }: {
-  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; steer?: DeficitWeights; clocks?: ResidualClock[]; balance?: MesoBalance;
+export function PlanStack({ plan, today, aim, deficits, steer, onChange, onView, onEdit }: {
+  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; steer?: DeficitWeights;
   onChange: (p: PlanBlock[]) => void; onView: (b: PlanBlock) => void; onEdit: (b: PlanBlock) => void;
 }) {
   const [testView, setTestView] = useState<PlanBlock | null>(null);
@@ -67,20 +65,6 @@ export function PlanStack({ plan, today, aim, deficits, steer, clocks, balance, 
           <div className="muted small">{fmtDate(first!)} – {fmtDate(last!)} · {total} Wochen · {((k) => (k === 1 ? "1 Testwoche" : `${k} Testwochen`))(sorted.filter(isTestBlock).length)}</div>
         </div>
       )}
-
-      {clocks?.some((c) => c.over) && (
-        <div className="note warn">
-          Uhren über Budget: {clocks.filter((c) => c.over).map((c) => `${c.name} (${c.days === null ? "noch nie" : `${c.days}/${c.budget}`})`).join(", ")}.
-          Die Residual-Uhren oben im Plan zeigen die Tage — ein Orden mit dem Bereich als Ziel oder ein Schwerpunkt-Slot holt sie zurück.
-        </div>
-      )}
-
-      {balance?.gaps.length ? (
-        <div className="note warn">
-          Bilanz: {balance.gaps.map((g) => `${g.half}: ${g.name} nur ${g.weeks === 0 ? "gar keine" : `${String(g.weeks).replace(".", ",")}`} von ${HALF_MIN} effektiven Wochen`).join("; ")}.
-          Details oben bei der Domänen-Bilanz — die nächste Meso-Wahl kann die Lücke schließen.
-        </div>
-      ) : null}
 
       {testView && (
         <Modal title="Testwoche" onClose={() => setTestView(null)}>

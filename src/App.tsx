@@ -20,7 +20,7 @@ import { TimerBar, TimerProvider } from "./ui/Timer";
 import { Today } from "./ui/Today";
 import { unlockAudio } from "./audio";
 import { Help } from "./ui/Help";
-import { Modal } from "./ui/common";
+import { Modal, Collapse } from "./ui/common";
 
 type Tab = "heute" | "plan" | "almanach" | "setup";
 const TABS: { k: Tab; l: string }[] = [
@@ -64,6 +64,11 @@ export default function App() {
   const balance = mesoBalance(state.plan);
   // Lenkung: rote Uhren als Gewichte für Blockfolge und Meso-Wizard (Vorschlag, nie Einplanung)
   const steer = steerWeights(clocks);
+  // Jahresblick: eine Statuszeile statt dreier Karten — die Mechanik läuft im Hintergrund weiter
+  const overClocks = clocks.filter((c) => c.over);
+  const gapNames = [...new Set(balance.gaps.map((g) => g.name))];
+  const yearMeta = [overClocks.length ? `${overClocks.length} ${overClocks.length === 1 ? "Uhr rot" : "Uhren rot"}` : null, gapNames.length ? `Lücken: ${gapNames.join(", ")}` : null]
+    .filter(Boolean).join(" · ") || "alles im Lot";
 
   if (!state.onboarded) {
     return <div className="app" onPointerDown={unlockAudio}><Onboarding state={state} update={update} replace={replace} today={today} /></div>;
@@ -82,19 +87,21 @@ export default function App() {
           {tab === "heute" && <Today state={state} update={update} today={today} goPlan={() => setTab("plan")} />}
           {tab === "plan" && (
             <div className="stack">
-              <p className="muted">Deine Woche und dein Jahr. Mit − / + passt du Phasen wochenweise an, der Stift öffnet Ordenswahl, Last und Aufteilen.</p>
+              <p className="muted">Deine Woche und dein Jahr: Setz die Marken in den Lebensabschnitten, die Vorschläge füllen die Phasen. Mit − / + passt du wochenweise an, der Stift öffnet Ordenswahl, Last und Aufteilen.</p>
               <WeekCard state={state} update={update} today={today} />
               <SectionsCard state={state} update={update} today={today} deficits={deficits} />
-              {state.user.level !== "einsteiger" && (
-                <>
-                  <ResidualClocks state={state} today={today} />
-                  <DomainBalance plan={state.plan} />
-                  <YearBalance plan={state.plan} />
-                </>
-              )}
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} sections={state.sections} today={today}
                 deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks} balance={balance} steer={steer}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
+              {state.user.level !== "einsteiger" && (
+                <Collapse title="Jahresblick" meta={yearMeta} tone="teal">
+                  <div className="stack">
+                    <ResidualClocks state={state} today={today} />
+                    <DomainBalance plan={state.plan} />
+                    <YearBalance plan={state.plan} />
+                  </div>
+                </Collapse>
+              )}
             </div>
           )}
           {tab === "almanach" && <Almanac state={state} update={update} today={today} />}

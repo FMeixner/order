@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.99.1] – 2026-11-07
+
+### Geändert
+- Feilen an Usability und Einfachheit: Der Plan-Tab gehört wieder dem Jahr. Die Blockfolge steht jetzt direkt unter Woche und Lebensabschnitten; die drei Analyse-Karten (Residual-Uhren, Domänen-Bilanz, Jahresbalance) sind zu einem zusammengeklappten „Jahresblick“ am Tab-Ende geworden, mit einer Statuszeile („2 Uhren rot · Lücken: …“ oder „alles im Lot“). Die Mechanik läuft im Hintergrund unverändert weiter: Uhren, Bilanz und Lenkung fließen weiter in alle Vorschläge ein.
+- Die beiden Warn-Tafeln über der Blockfolge (Uhren über Budget, Bilanz-Lücken) sind entfallen — dieselbe Information steht komprimiert in der Jahresblick-Zeile, und die Vorschläge begründen sich ohnehin am Kandidaten.
+- Domänen-Bilanz kompakt: Statt der vollen Matrix steht die Tabelle Bereich × Halbjahr; Lücken und Abwechslungs-Verstöße als eine Zeile. Die Zählregeln (Hauptziel voll, Nebenziel halb) stehen nur noch in der Anleitung.
+- Anleitung stark gekürzt: Residual-Uhren, Domänen-Bilanz, Lenkung und Kalorien von je drei bis vier Absätzen auf je zwei kurze Punkte; Mesozyklen- und Plan-Absätze entsprechend gestrafft. Kernaussagen unverändert, Formulierungen auf das Wesentliche.
+
 ## [0.99.0] – 2026-11-07
 
 ### Neu

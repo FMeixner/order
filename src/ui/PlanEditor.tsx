@@ -163,7 +163,7 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
         <p className="note warn small">Kein Orden trägt {axisName(b.accent!)} als Hauptziel mit genug Volumen für einen Akzent. Wähle frei — oder löse den Akzent über Teilen auf.</p>
       )}
       {mesoLast && f && (f.goals.primary === "power" || f.goals.primary === "speed") && (
-        <p className="note warn small">Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Teil des Mesozyklus misst die Testwoche dahinter sie nicht mehr im Vollbesitz. Lieber in einen früheren Teil einplanen (oder bewusst so lassen).</p>
+        <p className="note warn small">Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Teil misst die Testwoche dahinter sie nicht mehr im Vollbesitz. Lieber früher einplanen (oder bewusst so lassen).</p>
       )}
       {locked ? (
         <p className="muted small">{f ? focusName(f.id) : "–"} läuft schon. Einen anderen Orden wählst du für die nächste Phase.</p>
@@ -207,7 +207,7 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
             {weeks >= 2 && <button className="btn ghost small" onClick={() => onStructure(splitBlock(plan!, b.id, uid("b"), day))}>In zwei Phasen teilen</button>}
             {nx && nx.start > day && <button className="btn ghost small" onClick={() => onStructure(mergeNext(plan!, b.id, day))}>Mit {focusName(nx.focusId)} verbinden</button>}
           </div>
-          <p className="muted small">Teilen: zwei Phasen mit demselben Orden, danach wählst du für die zweite einen anderen. Verbinden: diese Phase läuft bis zum Ende der nächsten weiter. Gilt sofort.</p>
+          <p className="muted small">Teilen: zwei Phasen mit demselben Orden — für die zweite wählst du danach neu. Verbinden: diese Phase läuft bis zum Ende der nächsten weiter.</p>
         </>
       )}
 
@@ -279,7 +279,7 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, defic
   const erf = user?.level !== "einsteiger";
   return (
     <div className="stack">
-      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer} clocks={clocks} balance={balance} onChange={onChange}
+      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer}
         onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} />
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">
@@ -302,9 +302,9 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, defic
       {mesoOpen && (
         <Modal title="Mesozyklus anhängen" onClose={() => setMesoOpen(false)}>
           <div className="stack">
-            <p className="muted small">Kurze Phasen, die zusammengehören: Jeder Teil folgt aus den Successors des vorherigen, die Testwoche steht am Ende des Mesozyklus. Wähle die Form, die in dein Jahr passt — dahinter gleich mit Vorschlägen für alle Teile.</p>
+            <p className="muted small">Kurze Phasen, die zusammengehören, mit Testwoche am Ende. Wähle die Form — Vorschläge für alle Teile kommen gleich dahinter.</p>
             {sections?.length ? (
-              <p className="muted small">Deine Lebensabschnitte geben dem Zeitraum dahinter {LOAD_LABEL[nextLoad]}e Alltagslast — {nextLoad === "high" ? "kurze Teile und kürzere Orden passen gut, die Teile übernehmen die Last der Abschnitte." : nextLoad === "low" ? "Raum für drei Teile und zeithungrige Orden, die Teile übernehmen die Last der Abschnitte." : "die Standardform passt, die Teile übernehmen die Last der Abschnitte."}</p>
+              <p className="muted small">Der Zeitraum dahinter: {LOAD_LABEL[nextLoad]}e Alltagslast — {nextLoad === "high" ? "kurze Teile passen gut." : nextLoad === "low" ? "Raum für drei Teile und zeithungrige Orden." : "die Standardform passt."}</p>
             ) : null}
             {erf && (
               <Check checked={accentOn} onChange={(v) => { setAccentOn(v); if (!v) setAccent("muskel"); }} label="Akzent halten — eine Ziel-Domäne bleibt Hauptziel in jedem Teil, die Orden rotieren" />
@@ -314,22 +314,21 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, defic
                 {AXES.map((a) => <button key={a.id} role="radio" aria-checked={accent === a.id} className={accent === a.id ? "on" : ""} onClick={() => setAccent(a.id)}>{a.name}</button>)}
               </div>
             )}
-            {accentOn && <p className="muted small">Akzent auf {axisName(accent)}: Jeder Teil trägt die Domäne als Hauptziel, und die Orden wechseln zwischen denen, die sie trainieren — zeitoptimierte Orden bleiben draußen, sie tragen die Dosis nicht.</p>}
+            {accentOn && <p className="muted small">Akzent auf {axisName(accent)}: Die Orden rotieren, die Domäne bleibt Hauptziel in jedem Teil — zeitoptimierte Orden bleiben draußen.</p>}
             <div className="chips" role="radiogroup" aria-label="Form des Mesozyklus">
               {MESO_FORMS.map((f) => (
                 <button key={f.join("+")} onClick={() => { onChange(fillMeso(newMeso(plan, today, () => uid("b"), f, sections, accentOn ? accent : undefined), aim, deficits ?? [], steer ?? [])); setMesoOpen(false); }}>{f.join("+")}{f.join("+") === recForm.join("+") && <span className="tag rec">empfohlen</span>}<span className="muted"> + Testwoche</span></button>
               ))}
             </div>
-            <p className="muted small">6+6 ist die Standardform. 5+5+5 füllt ein 16-Wochen-Fenster (15 Wochen plus Testwoche), 4+4 passt, wenn das Jahr eng wird.</p>
+            <p className="muted small">6+6 ist die Standardform; 5+5+5 füllt ein 16-Wochen-Fenster, 4+4 passt, wenn das Jahr eng wird.</p>
             {bySignal ? (
               <p className="note small">
                 Empfohlen: {recForm.join("+")}. {(balance?.gaps.length ?? 0) > 0
-                  ? `Die Domänen-Bilanz zeigt Lücken (${[...new Set((balance?.gaps ?? []).map((g) => g.name))].join(", ")}) — drei Orden decken mehr Bereiche ab.`
-                  : `${hot.length} Uhren sind über Budget — drei kürzere Teile verteilen die Bereiche auf mehr Orden.`}
-                Die Lenkung fließt auch in die Ordensvorschläge für alle Teile.
+                  ? `Lücken in der Bilanz (${[...new Set((balance?.gaps ?? []).map((g) => g.name))].join(", ")}) — drei Teile decken mehr Bereiche ab.`
+                  : `${hot.length} Uhren über Budget — drei kürzere Teile verteilen die Bereiche auf mehr Orden.`}
               </p>
             ) : sections?.length && nextLoad !== "medium" ? (
-              <p className="note small">Empfohlen: {recForm.join("+")} — {nextLoad === "high" ? "die hohe Alltagslast im Zeitraum verträgt kürzere Teile besser, und die Ordensvorschläge ziehen kürzere Orden vor." : "die niedrige Alltagslast gibt Raum für das Triple mit zeithungrigeren Orden."}</p>
+              <p className="note small">Empfohlen: {recForm.join("+")} — {nextLoad === "high" ? "hohe Alltagslast verträgt kürzere Teile besser." : "niedrige Alltagslast gibt Raum für das Triple."}</p>
             ) : null}
           </div>
         </Modal>
