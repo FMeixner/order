@@ -13,7 +13,7 @@
   "test_week": false,
   "travel": true,
   "modules": ["correctives", "sword", "beast"],
-  "successors": ["conqueror", "olympian", "troubadour"],
+  "successors": ["conqueror", "olympian", "smith", "troubadour"],
   "week_4": ["kraft_a", "arme_kurz", "home_hypertrophie", "kraft_contrast"],
   "week_3": ["kraft_a", "home_hypertrophie", "kraft_contrast"],
   "roles": {
@@ -103,3 +103,4 @@
     }
   }
 }
+

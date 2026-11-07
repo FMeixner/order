@@ -12,7 +12,7 @@ import { FocusDetail } from "./FociBrowser";
 import { SequenceDialog } from "./SequenceDialog";
 import { PlanStack } from "./PlanStack";
 import { rankFor, fillMeso, type Aim } from "../engine/sequence";
-import { mergeNext, newMeso, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
+import { mergeNext, newMeso, MESO_FORMS, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
 /** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
@@ -117,11 +117,12 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
   );
   // Empfehlung mit den Einstellungen dieser Seite (Last), Rest des Plans wie er ist
   const draftPlan = plan ? (plan.some((x) => x.id === b.id) ? plan.map((x) => (x.id === b.id ? b : x)) : [...plan, b]) : [b];
-  // Mesozyklus: Partner-Hälfte; die zweite folgt aus den Successors der ersten
-  const partner = b.meso && plan ? plan.find((x) => x.meso === b.meso && x.id !== b.id) : undefined;
-  const partnerF = partner ? blockFocus(partner) : undefined;
-  const succIds = partner && partner.start < b.start && partnerF?.successors ? partnerF.successors : undefined;
-  const mesoFirst = !!(b.meso && partner && partner.start > b.start);
+  // Mesozyklus: Teile der Kette; jeder Teil folgt aus den Successors des vorherigen
+  const mesoParts = b.meso && plan ? plan.filter((x) => x.meso === b.meso).sort((x, y) => x.start.localeCompare(y.start)) : [];
+  const mesoLast = mesoParts.length > 0 && mesoParts[mesoParts.length - 1].id === b.id;
+  const prevPart = [...mesoParts].reverse().find((x) => x.end < b.start);
+  const prevF = prevPart ? blockFocus(prevPart) : undefined;
+  const succIds = prevPart && prevF?.successors ? prevF.successors : undefined;
   const allRanked = rankFor(draftPlan, b.id, aim, deficits);
   const boundRanked = succIds ? allRanked.filter((r) => succIds.includes(r.f.id) || r.f.id === b.focusId) : allRanked;
   const ranked = (boundRanked.length ? boundRanked : allRanked).slice(0, 5);
@@ -137,18 +138,21 @@ export function BlockForm({ block, profiles, days, slotInfo, onSave, onCancel, o
       <Field label="Alltagslast" hint="Hoch = wenig Energie und Zeit fürs Training übrig.">
         <Seg value={b.load} options={[{ value: "low", label: "niedrig" }, { value: "medium", label: "mittel" }, { value: "high", label: "hoch" }]} onChange={(load) => setB({ ...b, load })} />
       </Field>
-      {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && !mesoFirst && (
+      {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && (!b.meso || mesoLast) && (
         <Check checked={test} onChange={setTest} label="Testwoche am Ende (die letzte Woche wird zur Testwoche)" />
       )}
-      {mesoFirst && b.end >= day && <p className="muted small">Dieser Mesozyklus bekommt seine Testwoche am Ende der zweiten Hälfte.</p>}
+      {b.meso && !mesoLast && b.end >= day && <p className="muted small">Dieser Mesozyklus-Teil misst nicht selbst: Die Testwoche steht am Ende des Mesozyklus, hinter dem letzten Teil.</p>}
 
       <div className="label teal"><span className="bar" />Orden · {weeks} Wochen{f && weeks < f.weeks.min && b.meso ? " · Akzent im Mesozyklus" : f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (passt für ${f.weeks.min}–${f.weeks.max})` : ""}</div>
+      {mesoLast && f && (f.goals.primary === "power" || f.goals.primary === "speed") && (
+        <p className="note warn small">Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Teil des Mesozyklus misst die Testwoche dahinter sie nicht mehr im Vollbesitz. Lieber in einen früheren Teil einplanen (oder bewusst so lassen).</p>
+      )}
       {locked ? (
         <p className="muted small">{f ? focusName(f.id) : "–"} läuft schon. Einen anderen Orden wählst du für die nächste Phase.</p>
       ) : (
         <div className="sc-alts">
-          {succIds && partnerF && <p className="muted small">Zweite Mesozyklus-Hälfte: folgt aus den Successors von {focusName(partnerF.id)}.</p>}
-          {succIds && b.focusId && !succIds.includes(b.focusId) && partnerF && <p className="note warn small">{focusName(b.focusId)} folgt nicht auf {focusName(partnerF.id)} — bewusst so lassen oder einen Successor wählen.</p>}
+          {succIds && prevF && <p className="muted small">Dieser Mesozyklus-Teil: folgt aus den Successors von {focusName(prevF.id)}.</p>}
+          {succIds && b.focusId && !succIds.includes(b.focusId) && prevF && <p className="note warn small">{focusName(b.focusId)} folgt nicht auf {focusName(prevF.id)} — bewusst so lassen oder einen Successor wählen.</p>}
           {ranked.map((r, i) => (
             <button key={r.f.id} className={`sc-alt ${r.f.id === b.focusId ? "on" : ""}`} aria-pressed={r.f.id === b.focusId} onClick={() => setB({ ...b, focusId: r.f.id })}>
               <span><strong>{focusName(r.f.id)}</strong>{i === 0 && <span className="tag rec">empfohlen</span>}{r.f.id === b.focusId && <span className="tag">gewählt</span>}</span>
@@ -221,6 +225,7 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
   const [view, setView] = useState<PlanBlock | null>(null);
   const [seq, setSeq] = useState(false);
+  const [mesoOpen, setMesoOpen] = useState(false);
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const gaps: string[] = [];
   for (let i = 1; i < sorted.length; i++) if (addDays(sorted[i - 1].end, 1) < sorted[i].start) gaps.push(`${fmtDate(addDays(sorted[i - 1].end, 1))}–${fmtDate(addDays(sorted[i].start, -1))}`);
@@ -232,7 +237,7 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">
         <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [])[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
-        <button className="btn ghost" onClick={() => onChange(fillMeso(newMeso(plan, today, () => uid("b")), aim, deficits ?? []))}>+ Mesozyklus anhängen (2 × 6 Wochen)</button>
+        <button className="btn ghost" onClick={() => setMesoOpen(true)}>+ Mesozyklus anhängen</button>
         {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
       </div>
       {view && blockFocus(view) && (
@@ -247,6 +252,19 @@ export function PlanList({ plan, profiles, days, user, deficits, deficitNames, s
         </Modal>
       )}
       {seq && <SequenceDialog plan={plan} today={today} initialAim={aim} deficits={deficits} deficitNames={deficitNames} onApply={onChange} onClose={() => setSeq(false)} />}
+      {mesoOpen && (
+        <Modal title="Mesozyklus anhängen" onClose={() => setMesoOpen(false)}>
+          <div className="stack">
+            <p className="muted small">Kurze Phasen, die zusammengehören: Jeder Teil folgt aus den Successors des vorherigen, die Testwoche steht am Ende des Mesozyklus. Wähle die Form, die in dein Jahr passt — dahinter gleich mit Vorschlägen für alle Teile.</p>
+            <div className="chips" role="radiogroup" aria-label="Form des Mesozyklus">
+              {MESO_FORMS.map((f) => (
+                <button key={f.join("+")} onClick={() => { onChange(fillMeso(newMeso(plan, today, () => uid("b"), f), aim, deficits ?? [])); setMesoOpen(false); }}>{f.join("+")}<span className="muted"> + Testwoche</span></button>
+              ))}
+            </div>
+            <p className="muted small">6+6 ist die Standardform. 5+5+5 füllt ein 16-Wochen-Fenster (15 Wochen plus Testwoche), 4+4 passt, wenn das Jahr eng wird.</p>
+          </div>
+        </Modal>
+      )}
       {edit && (
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>
           <BlockForm block={edit} profiles={profiles} days={days} user={user} slotInfo={slotInfo} plan={plan} today={today}

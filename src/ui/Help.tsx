@@ -83,10 +83,11 @@ export function Help() {
 
       <h3>Mesozyklen</h3>
       <ul>
-        <li>„+ Mesozyklus anhängen“ legt zwei kurze Phasen von je sechs Wochen an, die zusammengehören, plus eine Testwoche am Ende (12+1). Kein Messen dazwischen: Die Testwoche ist die Klammer, die den Mesozyklus abschließt.</li>
-        <li>Die zweite Hälfte folgt aus den Successors der ersten — Orden, die gut aufeinander folgen, mit naheliegenden oder überlappenden Zielen (etwa Masse auf Sprungkraft, Fett verlieren auf Aufbau). Ein solcher Akzentwechsel in halber Ordenslänge ist für Erfahrene eine volle Dosis: Wer die Übungen schon sitzt hat, profitiert ab Woche 1.</li>
-        <li>Die Blockfolge plant Mesozyklen paareweise: Wählt sie den Orden der ersten Hälfte, kommt die zweite aus deren Successors. Einzelformen bleiben erlaubt und alleinstehend funktionsfähig — ein natürlicher Sechs-Wochen-Abschnitt im Jahr braucht keinen Partner.</li>
-        <li>Nach der Testwoche schlägt die Auswertung die Schwerpunkte für beide Hälften gleichzeitig vor („Für die nächsten 12 Wochen übernehmen“); für die zweite Hälfte aus denselben Testwerten. Änderst du eine Phase in zwei Teile oder verbindest zwei, löst sich das Paar auf.</li>
+        <li>„+ Mesozyklus anhängen“ legt zwei oder drei kurze Phasen an, die zusammengehören, plus eine Testwoche am Ende. Die Form — 4+4, 5+5, 6+4, 4+6, 6+5, 6+6 oder 5+5+5 — passt den Mesozyklus in die Lücke des Jahres: Ein 16-Wochen-Fenster trägt 5+5+5 plus Testwoche. Kein Messen dazwischen: Die Testwoche ist die Klammer, die den Mesozyklus abschließt.</li>
+        <li>Jeder Teil folgt aus den Successors des vorherigen — Orden, die gut aufeinander folgen, mit naheliegenden oder überlappenden Zielen (etwa Masse auf Sprungkraft, Fett verlieren auf Aufbau, Slayer auf Olympian oder Smith). Ein solcher Akzentwechsel in halber Ordenslänge ist für Erfahrene eine volle Dosis: Wer die Übungen schon sitzt hat, profitiert ab Woche 1.</li>
+        <li>Die Blockfolge plant Mesozyklen als Kette: Wählt sie den Orden eines Teils, kommt der nächste aus deren Successors. Einzeln geplante Phasen bleiben erlaubt und alleinstehend funktionsfähig. Monk (zwölf feste Wochen Wohlbefinden) passt in keinen Teil und bleibt ein ganzer Block.</li>
+        <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab. Plant du sie in den letzten Teil, misst die Testwoche dahinter sie nicht mehr im Vollbesitz — die App weist darauf hin, sperrt aber nicht.</li>
+        <li>Nach der Testwoche schlägt die Auswertung die Schwerpunkte für alle Teile gleichzeitig vor („Für den Mesozyklus übernehmen“); jedes Teil rechnet mit denselben Testwerten. Änderst du eine Phase in zwei Teile oder verbindest zwei, löst sich der Mesozyklus komplett auf.</li>
       </ul>
 
       <h3>Allrounder oder Spezialist</h3>
@@ -184,3 +185,4 @@ export function Help() {
     </div>
   );
 }
+

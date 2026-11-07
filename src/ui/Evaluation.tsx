@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { evaluateBlock } from "../engine/norms";
 import { focusName, isTestBlock } from "../engine/plan";
 import { deficitsOf, domainName, slotsFor, type SlotsPlan } from "../engine/sharpen";
@@ -22,13 +23,13 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
   const defs = deficitsOf(state, blockId);
   const lastDate = Object.values(state.tests).flat().filter((r) => r.blockId === blockId).map((r) => r.date).sort().pop() ?? "";
   const nextB = [...state.plan].filter((b) => !isTestBlock(b) && b.start > lastDate && FOCUS_BY_ID[b.focusId]).sort((a, b) => a.start.localeCompare(b.start))[0];
-  // Mesozyklus: beide Hälften bekommen ihre Vorschläge aus derselben Testwoche (die Daten sind bei Hälfte 2 zwölf Wochen alt)
-  const partner = nextB?.meso ? state.plan.find((x) => x.meso === nextB.meso && x.id !== nextB.id && !isTestBlock(x) && FOCUS_BY_ID[x.focusId]) : undefined;
+  // Mesozyklus: alle Teile bekommen ihre Vorschläge aus derselben Testwoche (die Daten sind beim letzten Teil am ältesten)
+  const parts = nextB?.meso ? state.plan.filter((x) => x.meso === nextB.meso && x.id !== nextB.id && !isTestBlock(x) && FOCUS_BY_ID[x.focusId]).sort((a, b) => a.start.localeCompare(b.start)) : [];
   const slots = nextB ? slotsFor(state, nextB) : null;
-  const slotsP = partner ? slotsFor(state, partner) : null;
+  const slotsParts = parts.map((p) => ({ p, s: slotsFor(state, p) }));
   const dayText = (dom: string): string => SHARPEN[dom].days === "all" ? "jeden Trainingstag" : SHARPEN[dom].days === 2 ? "zweimal pro Woche" : "einmal pro Woche";
   const wants = (x: PlanBlock, s: SlotsPlan) => (s.s1.source === "auto" && s.s1.domain && !x.sharpen) || (s.s2.source === "auto" && s.s2.domain && !x.sharpen2);
-  const canApply = !!(update && ((nextB && slots && wants(nextB, slots)) || (partner && slotsP && wants(partner, slotsP))));
+  const canApply = !!(update && ((nextB && slots && wants(nextB, slots)) || slotsParts.some((x) => wants(x.p, x.s))));
   const slotItems = (s: SlotsPlan) => (
     <ul>
       <li>Schwerpunkt 1 (Schwachstelle): {s.s1.domain
@@ -78,30 +79,31 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
           <div className="card note">
             <strong>Defizite:</strong> {defs.map((d) => `${d.name}${d.kind === "norm" ? ` (${d.score})` : " (Rückgang)"}`).join(", ")}.
             <ul className="slot-list small">
-              {slots && nextB && (partner && slotsP ? (
-                <li>Nächster Mesozyklus, {focusName(nextB.focusId)} dann {focusName(partner.focusId)}:{slotItems(slots)} Hälfte 2, {focusName(partner.focusId)}:{slotItems(slotsP)}</li>
-              ) : (
-                <li>Nächste Phase, {focusName(nextB.focusId)}:{slotItems(slots)}</li>
-              ))}
+              {slots && nextB && (
+                <li>
+                  {slotsParts.length ? `Nächster Mesozyklus — ${focusName(nextB.focusId)}` : `Nächste Phase, ${focusName(nextB.focusId)}`}:{slotItems(slots)}
+                  {slotsParts.map((x, i) => <Fragment key={x.p.id}>Teil {i + 2}, {focusName(x.p.focusId)}:{slotItems(x.s)}</Fragment>)}
+                </li>
+              )}
               {(() => {
                 const seen = new Set<string>();
-                for (const s of [slots, slotsP]) if (s) for (const d of s.deferred) seen.add(d.name);
+                for (const s of [slots, ...slotsParts.map((x) => x.s)]) if (s) for (const d of s.deferred) seen.add(d.name);
                 if (!seen.size) return null;
                 const names = [...seen];
-                return <li>{names.join(" und ")} {names.length > 1 ? "passen" : "passt"} {partner && slotsP ? "in keine der beiden Mesozyklus-Hälften" : `nicht in ${focusName(nextB!.focusId)}`}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>;
+                return <li>{names.join(" und ")} {names.length > 1 ? "passen" : "passt"} {slotsParts.length ? "in keinen Teil des Mesozyklus" : `nicht in ${focusName(nextB!.focusId)}`}. Das übernimmt die Blockfolge: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>;
               })()}
               {ev.suggestions.length > 0 && <li>{ev.who5 != null && ev.who5 < 52 ? "Wohlbefinden ist eingeschränkt, Orden für Erholung" : `Orden, die ${ev.weakest?.name ?? defs[0].name} direkt trainieren`}: {ev.suggestions.map((f) => focusName(f.id)).join(", ")}.</li>}
             </ul>
             {canApply && (
               <div className="row wrap">
                 <button className="btn small" onClick={() => update!((st) => ({ ...st, plan: st.plan.map((x) => {
-                  const s = x.id === nextB!.id ? slots : x.id === partner?.id ? slotsP : null;
+                  const s = x.id === nextB!.id ? slots : slotsParts.find((y) => y.p.id === x.id)?.s ?? null;
                   if (!s) return x;
                   return { ...x,
                     ...(s.s1.source === "auto" && s.s1.domain && !x.sharpen ? { sharpen: s.s1.domain } : {}),
                     ...(s.s2.source === "auto" && s.s2.domain && !x.sharpen2 ? { sharpen2: s.s2.domain } : {}),
                   };
-                }) }))}>{partner ? "Für die nächsten 12 Wochen übernehmen" : "Für die nächste Phase übernehmen"}</button>
+                }) }))}>{slotsParts.length ? "Für den Mesozyklus übernehmen" : "Für die nächste Phase übernehmen"}</button>
               </div>
             )}
             <div className="small muted">Nur Vorschläge. Beide Schwerpunkte änderst du je Phase im Plan.</div>

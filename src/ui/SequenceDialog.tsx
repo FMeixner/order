@@ -28,7 +28,7 @@ export function SequenceDialog({ plan, today, deficits = [], deficitNames = [], 
   return (
     <Modal title="Blockfolge vorschlagen" onClose={onClose} wide>
       <div className="stack">
-        <p className="muted small">Die App wählt für jede künftige Phase einen Orden: passend zur Alltagslast und Länge, mit guten Übergängen und ohne denselben Orden zweimal hintereinander. Mesozyklus-Paare bleiben gebunden: Die zweite Hälfte folgt aus den Successors der ersten. Laufende und vergangene Phasen bleiben.</p>
+        <p className="muted small">Die App wählt für jede künftige Phase einen Orden: passend zur Alltagslast und Länge, mit guten Übergängen und ohne denselben Orden zweimal hintereinander. Mesozyklus-Teile bleiben gebunden: Jeder Teil folgt aus den Successors des vorherigen. Laufende und vergangene Phasen bleiben.</p>
         <div className="small muted">Richtung für das Jahr</div>
         <div className="chips">
           {AIM_OPTIONS.filter((o) => o.value !== "deficits" || deficits.length).map((o) => <button key={o.value} className={aim === o.value ? "on" : ""} onClick={() => setAim(o.value)}>{o.label}</button>)}
