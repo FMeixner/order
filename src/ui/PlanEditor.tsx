@@ -279,7 +279,7 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, defic
   const erf = user?.level !== "einsteiger";
   return (
     <div className="stack">
-      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer}
+      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer} onChange={onChange}
         onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} />
       {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
       <div className="row wrap">
