@@ -45,13 +45,13 @@ describe("Stapel", () => {
   it("Teilen und Verbinden lösen den Akzent mit dem Mesozyklus auf", () => {
     const acc = [
       blk("a", "assassin", "2026-09-28", "2026-12-06"),
-      { ...blk("w", "slayer", "2026-12-07", "2027-02-21"), meso: "m", accent: "muskel" },
-      { ...blk("w2", "knight", "2027-02-22", "2027-04-05"), meso: "m", accent: "muskel" },
+      { ...blk("w", "slayer", "2026-12-07", "2027-02-21"), meso: "m", accent: "muskel" as const },
+      { ...blk("w2", "knight", "2027-02-22", "2027-04-05"), meso: "m", accent: "muskel" as const },
     ];
     const sp = splitBlock(acc, "w", "w3", T);
     expect(sp.every((x) => x.accent === undefined)).toBe(true);
     expect(sp.every((x) => x.meso === undefined)).toBe(true);
-    const mg = mergeNext([{ ...blk("w", "slayer", "2026-12-07", "2027-02-21"), meso: "m", accent: "kraft" }, blk("w2", "knight", "2027-02-22", "2027-04-05")], "w", T);
+    const mg = mergeNext([{ ...blk("w", "slayer", "2026-12-07", "2027-02-21"), meso: "m", accent: "kraft" as const }, blk("w2", "knight", "2027-02-22", "2027-04-05")], "w", T);
     expect(mg.every((x) => x.accent === undefined)).toBe(true);
   });
   it("newMeso übernimmt Alltagslast und Reisen aus den Lebensabschnitten je Teil", () => {

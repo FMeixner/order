@@ -5,8 +5,8 @@ import { domainName, interferes, slotEligible, type DomainId, type SlotPlan, typ
 import type { DeficitWeights } from "../engine/sequence";
 import { timeBias } from "../engine/sequence";
 import { AXES, type AxisId } from "../engine/balance";
-import { KCAL_LABEL, axisName, carriesAccent, kcalCheck, recKcalOf, type Kcal } from "../engine/kcal";
-import type { Section } from "../types";
+import { KCAL_LABEL, axisName, carriesAccent, kcalCheck, recKcalOf } from "../engine/kcal";
+import type { Kcal, Section } from "../types";
 import { addDays, blockFocus, blockWeeks, fitScore, fmtDate, focusName, isoDate, isTestBlock, mondayOf } from "../engine/plan";
 import { uid } from "../store";
 import type { EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
@@ -186,8 +186,8 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
         <>
           <div className="label teal"><span className="bar" />Kalorien</div>
           {(() => {
-            const rec = recKcalOf(b, f);
-            const warns = kcalCheck(b, f);
+            const rec = recKcalOf(b, f ?? null);
+            const warns = kcalCheck(b, f ?? null);
             return (
               <div className="stack">
                 <Field label={<>Kalorien-Modus für diesen Teil{rec && <span className="tag rec">{KCAL_LABEL[rec.mode]} empfohlen</span>}</>} hint={rec?.why ?? "Defizit, Erhaltung oder Überschuss — die App warnt, wenn die Kombination mit Last und Orden nicht trägt."}>
