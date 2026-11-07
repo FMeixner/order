@@ -84,6 +84,17 @@ describe("Lenkung: Blockfolge", () => {
     expect(diff).toBeCloseTo(12 * 0.5 * main.share.kraft, 5);
   });
 
+  it("Zeit-Orden zählen beim Jahresziel gedimpt: Smith vor Herald bei Ziel Kraft (Herald-Regel gilt auch fürs Ziel)", () => {
+    const p: PlanBlock[] = [{ id: "w1", focusId: "", start: "2026-11-16", end: "2026-12-27", label: "", load: "medium", travel: false }];
+    const r = rankFor(p, "w1", "kraft");
+    const si = r.findIndex((x) => x.f.id === "smith");
+    const hi = r.findIndex((x) => x.f.id === "herald");
+    expect(si).toBeGreaterThanOrEqual(0);
+    expect(hi).toBeGreaterThanOrEqual(0);
+    expect(si).toBeLessThan(hi);
+    expect(r[hi].reasons.some((x) => /gedimpt/.test(x))).toBe(true);
+  });
+
   it("begründet Kandidaten, die rote Uhren halten, und hebt sie im Ranking", () => {
     const steer: DeficitWeights = [{ axis: "kondition", w: 1 }];
     const r0 = rankFor(mesoParts(), "m1", "allround");
