@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.96.0] – 2026-11-07
+
+### Neu
+- Residual-Uhren im Plan: Jeder Bereich bekommt eine Uhr, die zählt, wie viele Tage seit seinem letzten wirksamen Reiz vergangen sind — abgeleitet aus den erledigten Einheiten, ohne neue Eingaben. Die Budgets sind die Haltefenster: Sprungkraft & Schnelligkeit 7 Tage, Kraftausdauer und Anaerob 14, Ausdauer, Beweglichkeit und Sehnen 21, Kraft & Masse 30. Über dem Jahresstapel steht eine Warnung, wenn Uhren über Budget sind.
+- Halten ist nicht Besserwerden: Die Budgets garantieren nur, dass ein Bereich nicht verfällt. Besser wird ein Bereich durch Akzente — Orden mit dem Ziel, Mesozyklus-Teile, Schwerpunkte —, gemessen in der Testwoche. Rote Uhren sperren nichts und planen nichts: Sie sind die Lenkhilfe für die nächste Wahl.
+- Zuordnung ohne neue Eingaben: Bestien zählen für Kraftausdauer und Anaerob (ihre Sprint- und Sprunganteile für Sprungkraft), Kontrast-Explosivteile für Sprungkraft, Kraft-Sätze für Kraft (Masse läuft mit), Halteübungen für Sehnen & Bindegewebe, Lauf- und Ruderblöcke für Ausdauer, Intervalle für Anaerob, Schwerpunkt-Module für die Uhr ihres Bereichs, Flows für Beweglichkeit. Warm-up und Cool-down zählen nicht, die freie Jagd zählt wie jede Bestie.
+- Einsteiger sehen die Uhren nicht — wie die Jahresbalance sind sie ein Werkzeug für Fortgeschrittene.
+
 ## [0.95.0] – 2026-11-07
 
 ### Geändert
@@ -701,19 +709,3 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ## [0.36.0] – 2026-10-07
 
 ### Geändert
-- Bestien nach Kuratierung: neue Übungen, Runden und Startwerte bei Aufhocker, Fliegender Holländer (ohne Handstand), Golem, Huldra, Klabautermann, Kobold, Krampus, Mittagsfrau, Nachtkrapp, Sylphe, Waldschrat, Wechselbalg, Wila, Huma, Humbaba, Kusarikku, Peri, Qarin, Roch (Band), Sirrusch (Langhantel) und Zahhak. Zwerg braucht die Stange.
-- Tiamat ist jetzt reines Körpergewicht und heißt als Nordbestie Fafnir.
-- Kurzformen: Leitern behalten die ersten Stufen (16/12/8/4 → 16/12), Buy-in und Buy-out bleiben, gekürzt wird der Innenteil. Bestien mit zwei Runden lassen sich auf eine kürzen. Einzelne Bestien sind als nicht kürzbar markiert.
-
-## [0.35.0] – 2026-10-07
-
-### Neu
-- Kurztag (Plan › Phase bearbeiten): Ein Tag läuft nur mit drei Kernübungen. Die App prüft das Wochenvolumen je Muskel: Aufbau-Muskeln bleiben an der unteren Grenze des Volumenbereichs, alle anderen bei der Erhaltung (4 Sätze). Leidet nichts, bleiben die anderen Tage unverändert. Sonst gleichen sie aus: +1 Satz an passenden Übungen, weggefallene Kernübungen wandern auf einen anderen Tag, Supersets halten das Zeitlimit. Was nicht ganz reicht, steht offen da.
-- Kernübungen sind in allen Orden markiert.
-
-### Geändert
-- Standardlänge statt fester Kurztage: Assassin Dienstag ist jetzt „Oberkörper und Gesäß“ (45 Min, mit Schrägbank-Brustpresse, Pushdown und Hip Thrust Maschine), Gladiator Dienstag „Arme und Schultern“ (40 Min), Witcher Dienstag heißt „Arme und Schultern“. Der bisherige kurze Dienstag entsteht über den Kurztag.
-
-## [0.34.0] – 2026-10-07
-
-### Neu

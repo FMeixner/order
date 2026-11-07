@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
 import { blockWeeks, fmtDate, focusName, isTestBlock, newerFocus, refreeze } from "../engine/plan";
 import { rankFor, type Aim, type DeficitWeights } from "../engine/sequence";
+import type { ResidualClock } from "../engine/residual";
 import { canShrink, isPast, resizeBlock, testAfter } from "../engine/stack";
 import type { Load, PlanBlock } from "../types";
 import { OrderMark } from "./OrderIcon";
@@ -37,8 +38,8 @@ function LoadIcon({ load }: { load: Load }) {
 /** Farbe je Hauptziel (Band und Kartenrand) */
 const goalColor = (id: string) => `var(--goal-${FOCUS_BY_ID[id]?.goals.primary ?? "none"}, var(--border-lit))`;
 
-export function PlanStack({ plan, today, aim, deficits, onChange, onView, onEdit }: {
-  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights;
+export function PlanStack({ plan, today, aim, deficits, clocks, onChange, onView, onEdit }: {
+  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; clocks?: ResidualClock[];
   onChange: (p: PlanBlock[]) => void; onView: (b: PlanBlock) => void; onEdit: (b: PlanBlock) => void;
 }) {
   const [testView, setTestView] = useState<PlanBlock | null>(null);
@@ -62,6 +63,13 @@ export function PlanStack({ plan, today, aim, deficits, onChange, onView, onEdit
             <span className="yb-now" style={{ left: `${nowPct}%` }} aria-hidden />
           </div>
           <div className="muted small">{fmtDate(first!)} – {fmtDate(last!)} · {total} Wochen · {((k) => (k === 1 ? "1 Testwoche" : `${k} Testwochen`))(sorted.filter(isTestBlock).length)}</div>
+        </div>
+      )}
+
+      {clocks?.some((c) => c.over) && (
+        <div className="note warn">
+          Uhren über Budget: {clocks.filter((c) => c.over).map((c) => `${c.name} (${c.days === null ? "noch nie" : `${c.days}/${c.budget}`})`).join(", ")}.
+          Die Residual-Uhren oben im Plan zeigen die Tage — ein Orden mit dem Bereich als Ziel oder ein Schwerpunkt-Slot holt sie zurück.
         </div>
       )}
 
