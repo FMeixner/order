@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.99.2] – 2026-11-07
+
+### Neu
+- Neuer Orden Scout (jetzt 19 Orden): Reaktivität und Drehgeschwindigkeit — Reaktion auf Ansage (Richtung rufen, sofort hinein), Seilsprints, Schwert-Intervalle mit Drehhau-Serien und ein Krafttag mit Hang Power Cleans, Back Squat und Nordic Curls. Vier kurze Einheiten, jeder Reiz frisch und mit voller Qualität: Reaktivität klingt ohne frischen Nervenzustand am schnellsten ab. Olympian behält Beschleunigung und Sprints, der Scout dreht und antwortet. Neue Übungen im Katalog: Hang Power Clean, Seilsprints, Skater Jumps, Reaktion auf Ansage. Nach Olympian führt der Weg jetzt auch zum Scout.
+
 ## [0.99.1] – 2026-11-07
 
 ### Geändert

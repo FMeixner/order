@@ -15,6 +15,7 @@ const PATHS: Record<string, string> = {
   olympian: "M17 40C7 32 6 18 14 8M31 40c10-8 11-22 3-32M12 33l-5 1M10 25l-5-1M11 17l-4-3M36 33l5 1M38 25l5-1M37 17l4-3M17 40h14",
   pilgrim: "M24 40L10 23a16 16 0 0 1 28 0zM24 40l-8-18M24 40V19M24 40l8-18M20 44h8",
   pugilist: "M13 21c0-8 6-13 13-13h3c6 0 9 6 9 13v7c0 7-5 11-11 11h-5c-6 0-9-4-9-9zM13 25c5 0 9 2 9 7M17 39v5h16v-5",
+  scout: "M6 24C13 14 35 14 42 24C35 34 13 34 6 24zM27 24a3 3 0 1 1-6 0a3 3 0 1 1 6 0M38 8l6 6M44 14l-7 1M44 14l-1-7",
   smith: "M5 13h31v3c0 5-4 8-9 8h-1v7h5v5H17v-5h5v-7h-3c-7 0-11-4-14-11zM36 13h7M14 42h20",
   troubadour: "M17 41c-8-7-7-17 1-22s17-3 17 5c0 10-10 23-18 17zM31 19l9-12M36 4l6 6M27 30a3 3 0 1 1-6 0a3 3 0 1 1 6 0",
   /** Testwoche: Turnier der Klingen, gekreuzte Lanzen mit Schild */

@@ -493,6 +493,10 @@
   "Hammer Curl": {
     "equip": "dumbbell"
   },
+  "Hang Power Clean": {
+    "equip": "barbell",
+    "desc": "Hantel in der Hüftkehle, Hüfte explosiv strecken, Ellbogen schnell unter die Stange, sanft auf die Schultern fangen. Kein Beinbeugen unterm Gewicht — die Stange fängt die Hüfte."
+  },
   "Hanging Leg Raise": {
     "equip": "bodyweight",
     "weighted": true,
@@ -820,6 +824,10 @@
   "Quadrupedal Movement auf Linien und Geländern": {
     "equip": "skill"
   },
+  "Reaktion auf Ansage": {
+    "equip": "skill",
+    "desc": "Partner ruft eine Richtung — links, rechts, vor, zurück, unten: sofort hineindrehen, zwei schnelle Schritte, stabil stehen. Ohne Partner: Richtungsfolge vorher aufschreiben oder zufällig wählen."
+  },
   "Reverse Crunch": {
     "equip": "bodyweight"
   },
@@ -967,6 +975,10 @@
   "Shadow Boxing": {
     "equip": "skill"
   },
+  "Seilsprints": {
+    "equip": "cardio",
+    "desc": "20 Sekunden maximale Drehzahl auf dem Platz, 40 Sekunden locker weiterhüpfen. Der Antritt kommt aus den Sprunggelenken, nicht aus den Knien."
+  },
   "Shoulder Press Machine": {
     "equip": "machine"
   },
@@ -976,6 +988,10 @@
   },
   "Side Plank": {
     "equip": "bodyweight"
+  },
+  "Skater Jumps": {
+    "equip": "bodyweight",
+    "desc": "Seitliche Sprünge von Bein zu Bein, jedes Mal sicher und leise landen. Schnell statt hoch, reaktiv aus dem Fußgelenk."
   },
   "Side Plank (Knie)": {
     "equip": "bodyweight"
