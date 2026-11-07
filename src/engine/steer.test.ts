@@ -5,7 +5,7 @@ import type { AppState, Block, Focus, PlanBlock, Session, SessionEntry } from ".
 import { balanceOf, goalVector } from "./balance";
 import { beastPowers, CLOCKS, residualClocks, type ClockId, type ResidualClock } from "./residual";
 import { slotsFor } from "./sharpen";
-import { aimScore, fillMeso, rankFor } from "./sequence";
+import { aimScore, fillMeso, rankFor, type DeficitWeights } from "./sequence";
 import { CLOCK_AXES, hotClocks, opportunities, steerWeights } from "./steer";
 
 const T = "2026-11-04"; // Mittwoch
@@ -78,14 +78,14 @@ describe("Lenkung: Blockfolge", () => {
   it("zahlt den Anteil auf den Achsen roter Uhren exakt dazu", () => {
     const plan: PlanBlock[] = [{ id: "b1", focusId: "slayer", start: "2026-09-07", end: "2026-10-18", label: "", load: "medium", travel: false }];
     const from = "2026-09-07", to = "2026-10-18";
-    const steer = [{ axis: "kraft", w: 0.5 }];
+    const steer: DeficitWeights = [{ axis: "kraft", w: 0.5 }];
     const diff = aimScore(plan, from, to, "allround", [], steer) - aimScore(plan, from, to, "allround", [], []);
     const main = balanceOf(plan, from, to, true);
     expect(diff).toBeCloseTo(12 * 0.5 * main.share.kraft, 5);
   });
 
   it("begründet Kandidaten, die rote Uhren halten, und hebt sie im Ranking", () => {
-    const steer = [{ axis: "kondition", w: 1 }];
+    const steer: DeficitWeights = [{ axis: "kondition", w: 1 }];
     const r0 = rankFor(mesoParts(), "m1", "allround");
     const r1 = rankFor(mesoParts(), "m1", "allround", [], steer);
     expect(r1.find((x) => x.f.id === "paladin")!.score).toBeGreaterThan(r0.find((x) => x.f.id === "paladin")!.score);
