@@ -7,7 +7,7 @@
   "description": "Der Beweglichkeits-Orden der belastbaren Endpositionen: Hüfte in der Dehnung unter Last, Schulter über Kopf mit Kontrolle, tiefe Beuge ohne Einbruch — die Voraussetzung für tiefe Ausfallschritte, lange Stiche und den Overhead des Langen Tanzes. Vier Tage zu Hause: Hüfte, Schulter und Brustwirbelsäule, Stab mit Fluss, Beine in der Dehnung. Donnerstags trägt der Stab die Tanzarbeit — der Zeptertanz ist der Tanz des Ordens, der Klingentanz bleibt der Lohn des Messerwegs.",
   "goals": { "primary": "mobility", "secondary": ["strength", "skill"] },
   "nutrition": "maintenance",
-  "load_fit": "medium",
+  "load_fit": "high",
   "level": "intermediate–advanced",
   "session_min": 35,
   "weeks": { "min": 8, "max": 10 },

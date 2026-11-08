@@ -6,7 +6,7 @@
   "description": "Für Reisephasen: einmal pro Woche Studio, sonst Körpergewicht und Bänder. Belastbarkeit und Ausdauer haben Vorrang. Ist in einer Woche kein Studio da, läuft der Studiotag mit den Reise-Übungen. Jede dritte Woche wiederholt die Belastbarkeitseinheit die Bestie aus Woche 1 als Zwischenwert. Kraft überwiegend mit Körpergewicht in Stufen (Liegestütz, Klimmzug, Pike), nur Kniebeuge und Kreuzheben mit Langhantel: Das läuft an jedem Ort gleich.",
   "goals": {"primary": "conditioning", "secondary": ["strength", "endurance"]},
   "nutrition": "maintenance",
-  "load_fit": "medium",
+  "load_fit": "high",
   "level": "intermediate",
   "session_min": 45,
   "weeks": {"min": 8, "max": 10},
