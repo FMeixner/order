@@ -6,6 +6,8 @@ import type { AppState, UserProfile } from "../types";
 import { Collapse, Field, Seg } from "./common";
 import { NarrativeSettings } from "./Raven";
 import { EquipmentEditor } from "./EquipmentEditor";
+import { WeekCard } from "./WeekCard";
+import { isoDate } from "../engine/plan";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -94,6 +96,7 @@ export function Setup({ state, update, replace, restartOnboarding }: { state: Ap
         <LevelFields user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} withRange />
         <NormFields user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} />
       </Collapse>
+      <WeekCard state={state} update={update} today={isoDate(new Date())} />
       <Collapse title="Darstellung" meta={{ auto: "automatisch", light: "hell", dark: "dunkel" }[state.theme ?? "auto"]}>
         <Seg value={state.theme ?? "auto"} options={[{ value: "auto", label: "automatisch" }, { value: "light", label: "hell" }, { value: "dark", label: "dunkel" }]} onChange={(theme) => update((st) => ({ ...st, theme }))} />
         <p className="muted small">Hell ist draußen in der Sonne besser lesbar. Automatisch folgt der Einstellung des Handys.</p>

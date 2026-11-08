@@ -3,7 +3,7 @@
    oder nach Signalen (dreimal „zu schwer“ in vierzehn Tagen) — nie in eine Testwoche hinein und nie dicht
    nach einer Test-, Entlastungs- oder Deload-Woche. Angenommen wird sie als Wochenzustand, widerrufbar. */
 import type { AppState, Block, Choice, Focus, PlanBlock, Role, Slot } from "../types";
-import { addDays, blockFocus, blockWeeks, isDeloadWeek, isTestWeek } from "./plan";
+import { addDays, blockFocus, blockWeeks, isDeloadWeek, isTestBlock, isTestWeek } from "./plan";
 
 export const deloadKey = (b: PlanBlock, week: number) => `${b.id}:${week}`;
 
@@ -58,8 +58,11 @@ export function deloadAdvice(state: AppState, b: PlanBlock, week: number, today:
   for (let w = Math.max(1, week - 3); w < week; w++) {
     if (state.deload?.[deloadKey(b, w)] === "ja" || isDeloadWeek(f, w) || isTestWeek(f, b, w)) return null;
   }
-  // Rhythmus: ab der fünften Woche alle vier Wochen (5, 9, 13 …), in Phasen ab acht Wochen
-  if (total >= 8 && week >= 5 && (week - 1) % 4 === 0) return { why: "rhythmus", count: 0 };
+  // Rhythmus: ab der fünften Woche alle vier Wochen (5, 9, 13 …), in Phasen ab acht Wochen.
+  // In einer Klammer zählt die Klammer, nicht der Teil: Teile von vier bis sechs Wochen bekämen sonst nie Entlastung.
+  const k = klammerWeek(state.plan, b, week);
+  const kTotal = k?.total ?? total, kWeek = k?.week ?? week;
+  if (kTotal >= 8 && kWeek >= 5 && (kWeek - 1) % 4 === 0) return { why: "rhythmus", count: 0 };
   // Signale: dreimal „zu schwer“ in den letzten vierzehn Tagen
   const cutoff = addDays(today, -14);
   const count = state.sessions
@@ -67,4 +70,13 @@ export function deloadAdvice(state: AppState, b: PlanBlock, week: number, today:
     .reduce((n, s) => n + Object.values(s.entries ?? {}).filter((e) => e.feedback === "zuschwer").length, 0);
   if (week >= 3 && count >= 3) return { why: "signale", count };
   return null;
+}
+
+/** Woche innerhalb der Klammer und deren Trainingswochen (ohne Testwoche); null außerhalb einer Klammer */
+export function klammerWeek(plan: PlanBlock[], b: PlanBlock, week: number): { week: number; total: number } | null {
+  if (!b.meso || !b.klammer) return null;
+  const parts = plan.filter((x) => x.meso === b.meso && !isTestBlock(x)).sort((x, y) => x.start.localeCompare(y.start));
+  if (!parts.length) return null;
+  const before = parts.filter((x) => x.end < b.start).reduce((s, x) => s + blockWeeks(x), 0);
+  return { week: before + week, total: parts.reduce((s, x) => s + blockWeeks(x), 0) };
 }

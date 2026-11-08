@@ -20,6 +20,8 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
   - `cardio.ts` (Laufen ersetzen nach Belastungszeit, `swapRunBeast`; Ortsregel `mixesStations`/`spreadOut`, wirkt in `beastFits`), `beaststeps.ts` (Bestie als Schrittfolge für den Ablauf in `BeastCard.tsx`)
   - Schwert-Lernweg in `plan.ts` (`swordLevel`, `swordList`): Stufen in `data/modules/sword.json` (`levels`, `leveled`), Skills der Gruppe `schwert` in `skills.json`. Varianten in `leveled` zeigen den Inhalt der Stufe; der Orden bestimmt nur das Format. Gewichtsfrei.
 - `src/ui/` – React-Ansichten. Die Einheit: `SessionView.tsx` (Ansicht, Vorschau) mit `session/` (`ctx.ts` Kontext, `items.ts` Inhalte sammeln und Bestien festhalten, `SlotCard.tsx`, `BeastCard.tsx`, `Drills.tsx`).
+- `src/engine/klammer.ts` (seit 1.0: Klammern — `planYear` ist der einzige Generator für künftige Phasen: Fenster an Abschnittsgrenzen (`placeWindows`), Klammer-Art (`kindScore`), Orden (`orderScore`: Zielbindung, Variation, Verlauf), Kalorien (`kcalOfKlammer`: Last → Kalender → Reise → Grundmodus), Pins (`PlanBlock.pin`) bleiben stehen). Klammer = Phasen mit gemeinsamer `meso`-Id und `klammer`-Art; Inhalte in `data/modules/klammern.json`. Warnungen als Codes (`flagsOf`), das UI zeigt Zeichen (`src/ui/Signs.tsx`).
+- `src/ui/YearWizard.tsx` (Jahr planen: Ziel → Klammern → Schwachstellen → Orden), `src/ui/YearPicture.tsx` (Jahresbild in drei Ebenen).
 - `src/ui/PlanStack.tsx` (Plan als Stapel, Logik in `src/engine/stack.ts`: Länge ±1 Woche, Testwoche am Ende, Teilen, Verbinden; Empfehlung je Phase per `rankFor` in `sequence.ts`)
 - `src/ui/SectionsCard.tsx` (Plan › Lebensabschnitte; `SectionList`, `AimPicker` auch fürs Onboarding). Logik in `src/engine/sections.ts`: Abschnitte gehören dem Nutzer, `proposePhases` schlägt künftige Phasen vor (Zonen gleicher Last, kurze Abschnitte < 3 Wochen gehen auf, Teilung nach Zielerreichung über `aimScore` + `stepScore`, Testwochen nach `testPolicy`); Laufendes bleibt.
 - `src/ui/YearSetup.tsx` (Onboarding-Schritt „Dein Jahr“: Abschnitte → Richtung → Testwochen → Vorschlag als Stapel; „Lieber Phasen selbst anlegen“ zeigt die Phasenliste direkt).
@@ -54,5 +56,6 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 - Typprüfung mit `npx tsc -b`; `tsc --noEmit -p .` prüft hier nichts.
 - Bestien einer Einheit werden beim ersten Eintrag festgehalten (`beastRuns`); nur bewusste Anpassungen geben sie frei.
 - Jede zitierte Studie steht mit vollständiger Angabe und Link in `data/modules/references.json` (Kurzform wie im Text; `src/engine/references.test.ts` prüft Orden-Quellen, Hilfe und Normen). Zitate vor dem Eintragen gegen Titel, Autoren, Jahr und Aussage prüfen.
+- Warnungen und Status im Plan als Zeichen (`Sign`, `FlagSign`) mit Text im title, nicht als Sätze; der ausführliche Satz gehört ins Phasenblatt.
 - Die Heute-Ansicht bleibt aufgeräumt: keine neuen Funktionsblöcke oben auf der Tageskarte; Erfassungs- und Tagesform-Funktionen gehören ins „Anpassen“-Menü.
 - UI-Texte auf Deutsch, Du-Form, knapp.

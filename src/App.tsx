@@ -5,22 +5,20 @@ import { useAppState } from "./store";
 import { Almanac } from "./ui/Almanac";
 import { Onboarding } from "./ui/Onboarding";
 import { PlanList } from "./ui/PlanEditor";
-import { WeekCard } from "./ui/WeekCard";
-import { SectionsCard, yearAimOf } from "./ui/SectionsCard";
+import { yearAimOf } from "./ui/SectionsCard";
+import { YearWizard } from "./ui/YearWizard";
+import { Sign } from "./ui/Signs";
 import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan";
 import { deficitsBefore, deficitWeights, slotsFor } from "./engine/sharpen";
 import { residualClocks } from "./engine/residual";
 import { mesoBalance } from "./engine/bilanz";
 import { steerWeights } from "./engine/steer";
-import { YearBalance } from "./ui/YearBalance";
-import { ResidualClocks } from "./ui/ResidualClocks";
-import { DomainBalance } from "./ui/DomainBalance";
 import { Setup } from "./ui/Setup";
 import { TimerBar, TimerProvider } from "./ui/Timer";
 import { Today } from "./ui/Today";
 import { unlockAudio } from "./audio";
 import { Help } from "./ui/Help";
-import { Modal, Collapse } from "./ui/common";
+import { Modal } from "./ui/common";
 
 type Tab = "heute" | "plan" | "almanach" | "setup";
 const TABS: { k: Tab; l: string }[] = [
@@ -53,6 +51,7 @@ export default function App() {
   }, [state.plan, todayIso, update]);
   const [tab, setTab] = useState<Tab>("heute");
   const [help, setHelp] = useState(false);
+  const [wizard, setWizard] = useState<number | null>(null);
   const today = isoDate(new Date());
   // Allrounder: Defizite der letzten Testwoche für Blockfolge und Schwerpunkt-Slot
   const src = state.user.focusMode === "special" ? null : deficitsBefore(state, addDays(today, 1));
@@ -87,22 +86,24 @@ export default function App() {
           {tab === "heute" && <Today state={state} update={update} today={today} goPlan={() => setTab("plan")} />}
           {tab === "plan" && (
             <div className="stack">
-              <p className="muted">Deine Woche und dein Jahr: Setz die Marken in den Lebensabschnitten, die Vorschläge füllen die Phasen. Mit − / + passt du wochenweise an, der Stift öffnet Ordenswahl, Last und Aufteilen.</p>
-              <WeekCard state={state} update={update} today={today} />
-              <SectionsCard state={state} update={update} today={today} deficits={deficits} />
+              <div className="plan-head">
+                {state.user.level !== "einsteiger" && (
+                  <button className="status-chip" onClick={() => setWizard(2)} aria-label={`Jahresblick: ${yearMeta}`} title={yearMeta}>
+                    {overClocks.length === 0 && gapNames.length === 0 ? <Sign kind="ok" /> : null}
+                    {overClocks.length > 0 && <><Sign kind="clock" />{overClocks.length}</>}
+                    {gapNames.length > 0 && <><Sign kind="gap" />{gapNames.length}</>}
+                  </button>
+                )}
+                <button className="btn primary" onClick={() => setWizard(0)}>Jahr planen</button>
+              </div>
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} sections={state.sections} today={today}
-                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} clocks={clocks} balance={balance} steer={steer} testPolicy={state.testPolicy ?? "each"}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} steer={steer}
+                onKlammer={() => setWizard(3)}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
-              {state.user.level !== "einsteiger" && (
-                <Collapse title="Jahresblick" meta={yearMeta} tone="teal">
-                  <div className="stack">
-                    <ResidualClocks state={state} today={today} />
-                    <DomainBalance plan={state.plan} />
-                    <YearBalance plan={state.plan} />
-                  </div>
-                </Collapse>
-              )}
             </div>
+          )}
+          {wizard !== null && (
+            <YearWizard state={state} update={update} today={today} aim={yearAimOf(state, deficits)} deficits={deficits} steer={steer} clocks={clocks} balance={balance} startAt={wizard} onClose={() => setWizard(null)} />
           )}
           {tab === "almanach" && <Almanac state={state} update={update} today={today} />}
           {tab === "setup" && <Setup state={state} update={update} replace={replace} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}

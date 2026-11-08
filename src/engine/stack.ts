@@ -97,6 +97,8 @@ export function splitBlock(plan: PlanBlock[], id: string, newId: string, today: 
   const mid = addDays(mondayOf(b.start), 7 * first);
   if (mid <= today) return plan;
   const { frozen: _f, shortRole: _s, meso: _m, accent: _a, ...rest } = b; void _f; void _s; void _m; void _a;
+  // In einer Klammer bleiben beide Hälften in der Klammer: ein Orden mehr ist dort gewollt, die Klammer hält das Ziel
+  if (b.klammer && b.meso) return [...plan.map((x) => (x.id === id ? { ...x, end: addDays(mid, -1) } : x)), { ...rest, id: newId, start: mid, meso: b.meso, accent: b.accent, pin: undefined }];
   return [...plan.map((x) => x.id === id ? { ...x, end: addDays(mid, -1), meso: undefined, accent: undefined } : b.meso && x.meso === b.meso ? { ...x, meso: undefined, accent: undefined } : x), { ...rest, id: newId, start: mid }];
 }
 
@@ -109,5 +111,7 @@ export function mergeNext(plan: PlanBlock[], id: string, today: string): PlanBlo
   const b = plan.find((x) => x.id === id);
   const n = b && nextOf(plan, b);
   if (!b || !n || isPast(b, today) || n.start <= today) return plan;
+  // In einer Klammer: Verbinden zweier Teile derselben Klammer lässt die Klammer stehen
+  if (b.klammer && b.meso && n.meso === b.meso) return plan.filter((x) => x.id !== n.id).map((x) => (x.id === id ? { ...x, end: n.end } : x));
   return plan.filter((x) => x.id !== n.id).map((x) => x.id === id ? { ...x, end: n.end, meso: undefined, accent: undefined } : b!.meso && x.meso === b!.meso ? { ...x, meso: undefined, accent: undefined } : x);
 }

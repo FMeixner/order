@@ -1,16 +1,13 @@
-/* Lebensabschnitte im Plan: Name frei, − / + Wochen, Alltagslast; dazu Richtung des Jahres und Testwochen.
-   „Künftige Phasen neu vorschlagen“ baut die Phasen ab heute aus den Abschnitten; Laufendes bleibt. */
+/* Lebensabschnitte (Name frei, − / + Wochen, Alltagslast) und Richtung des Jahres — Bausteine für den
+   Jahres-Assistenten und das Onboarding. Geplant wird über planYear (engine/klammer.ts). */
 import { AXES } from "../engine/balance";
 import { fmtDate } from "../engine/plan";
-import { addSection, proposePhases, removeSection, resizeSection, sectionsFromPlan, sectionWeeks, semesterTemplate } from "../engine/sections";
+import { addSection, removeSection, resizeSection, sectionWeeks, semesterTemplate } from "../engine/sections";
 import type { Aim, DeficitWeights } from "../engine/sequence";
 import type { AppState, Load, Section } from "../types";
-import { Collapse, Seg } from "./common";
-import { unpinBeasts } from "./session/items";
+import { Seg } from "./common";
 
-type Update = (fn: (s: AppState) => AppState) => void;
 const LOADS: { value: Load; label: string }[] = [{ value: "low", label: "niedrig" }, { value: "medium", label: "mittel" }, { value: "high", label: "hoch" }];
-const POLICY: { value: "each" | "twice" | "none"; label: string }[] = [{ value: "each", label: "nach jeder Phase" }, { value: "twice", label: "zweimal im Jahr" }, { value: "none", label: "keine" }];
 
 export const yearAimOf = (state: AppState, deficits: DeficitWeights): Aim => (state.yearAim as Aim | undefined) ?? (deficits.length ? "deficits" : "allround");
 
@@ -55,30 +52,5 @@ export function SectionList({ sections, onChange, start }: { sections: Section[]
         </div>
       </div>
     </div>
-  );
-}
-
-export function SectionsCard({ state, update, today, deficits }: { state: AppState; update: Update; today: string; deficits: DeficitWeights }) {
-  const sections = state.sections ?? sectionsFromPlan(state.plan);
-  const aim = yearAimOf(state, deficits);
-  const policy = state.testPolicy ?? "none";
-  const set = (s: Section[]) => update((st) => ({ ...st, sections: s, sectionsChanged: true }));
-  const propose = () => {
-    if (!confirm("Künftige Phasen aus den Abschnitten neu vorschlagen? Laufende und vergangene Phasen bleiben, alles danach wird ersetzt.")) return;
-    update((st) => unpinBeasts({ ...st, sections, sectionsChanged: false, plan: proposePhases(st.plan, sections, today, aim, deficits, policy) }, (s) => s.date >= today));
-  };
-  return (
-    <Collapse title="Lebensabschnitte" meta={`${sections.length} · ${AXES.find((a) => a.id === aim)?.name ?? (aim === "deficits" ? "Defizite zuerst" : "Allround")}`} open={state.sectionsChanged || undefined}>
-      <div className="stack">
-        <p className="muted small">Beschreibe dein Jahr: Abschnitte mit eigenem Namen und Alltagslast. Daraus schlägt die App Phasen und Orden vor; kurze Abschnitte gehen in der Nachbarphase auf.</p>
-        <SectionList sections={sections} onChange={set} start={today} />
-        <div className="field-label">Richtung des Jahres</div>
-        <AimPicker value={aim} deficits={deficits} onChange={(a) => update((st) => ({ ...st, yearAim: a, sectionsChanged: true }))} />
-        <div className="field-label">Testwochen</div>
-        <Seg value={policy} options={POLICY} onChange={(testPolicy) => update((st) => ({ ...st, testPolicy, sectionsChanged: true }))} />
-        <button className={`btn ${state.sectionsChanged ? "primary" : "ghost"}`} onClick={propose}>Künftige Phasen neu vorschlagen</button>
-        {state.sectionsChanged && <p className="muted small">Geändert: Die Phasen folgen den Abschnitten erst, wenn du neu vorschlagen lässt.</p>}
-      </div>
-    </Collapse>
   );
 }

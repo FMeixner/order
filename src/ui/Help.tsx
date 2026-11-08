@@ -7,9 +7,9 @@ export function Help() {
       <h3>Der Ablauf</h3>
       <ul>
         <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche. Mit ‹ › neben der Wochenzahl blätterst du: künftige Wochen als Vorschau, vergangene zum Nachtragen. Tage mit Schwert tragen „Schwert“ im Tagesknopf. Die Vorschau zeigt den Schwertblock auch, wenn das Profil des Tages kein Schwert hat, darunter den Ersatz (meist der Mobility-Flow für Hüfte und Schulter). So siehst du, welchen Tag du auf zuhause legen solltest.</li>
-        <li><strong>Plan</strong>: oben „Deine Woche“ (Ort je Wochentag und welche Einheit an welchem Tag), darunter „Lebensabschnitte“ — deine Marken und die Richtung des Jahres — und dein Jahr als Stapel. Das Band zeigt das Jahr auf einen Blick. Jede Karte: Phase, Orden, Zeitraum; Symbole: Balken = Alltagslast (1 bis 3), ▶ = läuft, ☆ = empfohlen, ✓ = selbst gewählt, Lanzen = Testwoche am Ende. − / + ändert die Länge wochenweise, alles danach rückt mit; der Ordensname öffnet die Details, der Stift die Bearbeitung: Ordenswahl mit Empfehlung, Last, Teilen und Verbinden, unter „Mehr“ Zeitraum, eigener Wochenplan und Schwerpunkt. Ganz unten fasst der „Jahresblick“ Uhren und Bilanzen zusammen — Hintergrund, den die Vorschläge still mitlesen.</li>
+        <li><strong>Plan</strong>: oben das Jahresbild in drei Ebenen — Lebensabschnitte (Balken = Alltagslast), Klammern (Ziel und Kalorien) und Orden (Variation), dazu der Strich für heute. Antippen öffnet Orden, Klammer oder Testwoche. Darunter der Stapel: − / + ändert die Länge wochenweise, der Stift öffnet das Phasenblatt. „Jahr planen“ führt durch den Assistenten, das Zeichen links daneben zeigt rote Uhren und Lücken. Zeichen: ▲ Hinweis, ⦸ passt nicht, Schloss = von Hand gesetzt, ↑ = ↓ Überschuss, Erhaltung, Defizit, ● ◐ ○ trägt das Ziel der Klammer ganz, teilweise, nicht. Text steht im Tooltip und im Phasenblatt.</li>
         <li><strong>Almanach</strong>: Orden (alle Programme), Bestien (mit Bestzeiten, zum freien Jagen), Übungen (Arbeitsgewicht, 1RM, Verlauf) und das Log.</li>
-        <li>Lebensabschnitte: Beschreibe dein Jahr in Abschnitten mit eigenem Namen, Länge und Alltagslast (oder nimm die Vorlage Semester-Rhythmus), dazu die Richtung des Jahres und wie oft du testen willst. „Künftige Phasen neu vorschlagen“ baut daraus Phasen und Orden; ob ein Abschnitt einen langen Orden oder mehrere kürzere bekommt, entscheidet, was deine Richtung am besten voranbringt. Kurze Abschnitte (unter 3 Wochen) gehen in der Nachbarphase auf, Phasen dürfen über Abschnittsgrenzen laufen. Laufende und vergangene Phasen bleiben.</li>
+        <li>Jahr planen (Assistent): 1 Ziel — Richtung, Testwochen, Hausorden (aus diesen schlägt die App vor). 2 Klammern — deine Lebensabschnitte, darüber die Klammern; die Art jeder Klammer lässt sich antippen und ändern. 3 Schwachstellen — rote Uhren und Lücken, die Vorschläge greifen sie auf. 4 Orden — je Klammer die Orden mit Zielbindung, antippen zeigt Alternativen; dazu die Kalorien je Klammer. Was du von Hand wählst, wird gepinnt und bleibt beim nächsten Planen stehen. Laufende Klammern und Vergangenes bleiben unberührt.</li>
         <li>Eine Phase behält den Stand ihres Ordens ab ihrem Start. Ändert sich ein Orden durch ein Update, steht im Plan „Neue Fassung verfügbar“; erst mit „Übernehmen“ gilt sie für die laufende Phase.</li>
         <li><strong>Setup</strong>: Profil, Equipment, Können, Sicherung.</li>
       </ul>
@@ -81,16 +81,13 @@ export function Help() {
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem Balmung-Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
-      <h3>Mesozyklen</h3>
+      <h3>Klammern</h3>
       <ul>
-        <li>„+ Mesozyklus anhängen“ legt zwei oder drei kurze Phasen an, die zusammengehören, plus eine Testwoche am Ende. Die Form — 4+4, 5+5, 6+4, 4+6, 6+5, 6+6 oder 5+5+5 — passt den Mesozyklus in die Lücke des Jahres: Ein 16-Wochen-Fenster trägt 5+5+5 plus Testwoche. Kein Messen dazwischen: Die Testwoche ist die Klammer, die den Mesozyklus abschließt.</li>
-        <li>Jeder Teil folgt aus den Successors des vorherigen — Orden, die gut aufeinander folgen, mit naheliegenden oder überlappenden Zielen (etwa Masse auf Sprungkraft, Fett verlieren auf Aufbau, Slayer auf Olympian oder Smith). Ein solcher Akzentwechsel in halber Ordenslänge ist für Erfahrene eine volle Dosis: Wer die Übungen schon sitzt hat, profitiert ab Woche 1.</li>
-        <li>Die Blockfolge plant Mesozyklen als Kette: Wählt sie den Orden eines Teils, kommt der nächste aus deren Successors. Einzeln geplante Phasen bleiben erlaubt und alleinstehend funktionsfähig. Monk (zwölf feste Wochen Wohlbefinden) passt in keinen Teil und bleibt ein ganzer Block.</li>
-        <li>„Jahr füllen“ füllt alles hinter der laufenden Phase in einem Zug: Die Form folgt der Alltagslast deiner Abschnitte, die Orden der Empfehlung als Kette — mit Ziel, Uhren und Bilanz —, die Testwochen deiner eingestellten Regel, und jeder Teil bekommt einen Kalorien-Vorschlag. Ein Klick für den Rahmen, danach fein wie immer.</li>
-        <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab. Plant du sie in den letzten Teil, misst die Testwoche dahinter sie nicht mehr im Vollbesitz — die App weist darauf hin, sperrt aber nicht.</li>
-        <li>Nach der Testwoche schlägt die Auswertung die Schwerpunkte für alle Teile gleichzeitig vor („Für den Mesozyklus übernehmen“); jedes Teil rechnet mit denselben Testwerten. Änderst du eine Phase in zwei Teile oder verbindest zwei, löst sich der Mesozyklus komplett auf.</li>
-        <li>Deine Lebensabschnitte ordnen die Form mit: Hohe Alltagslast empfiehlt kürzere Teile (6+4) und kürzere Orden, ruhige Abschnitte das Triple mit zeithungrigeren Orden. Die Teile übernehmen die Last der Abschnitte.</li>
-        <li>Mit „Akzent halten“ bleibt eine Ziel-Domäne Hauptziel in jedem Teil, und die Orden rotieren zwischen denen, die sie trainieren — etwa Slayer und Knight für Muskelaufbau. Zeitoptimierte Orden bleiben draußen; beim Jahresziel zählen sie nur gedimpt (unter 35 Minuten halten eine Domäne nicht allein). Teilen oder Verbinden löst den Akzent mit auf.</li>
+        <li>Eine Klammer hält ein Ziel über 8–16 Wochen und endet mit der Testwoche: Muskelzuwachs, Kraft, Athletik, GPP / Allround oder Regeneration. Darin laufen ein bis drei Orden — bis 8 Wochen einer, bis 12 zwei, darüber drei. Die Klammer bindet das Ziel, die Orden bringen die Variation.</li>
+        <li>Klammern rasten an den Grenzen deiner Lebensabschnitte ein, mit ein bis zwei Wochen Spielraum; sie dürfen Abschnitte überspannen, ein langer Abschnitt trägt zwei.</li>
+        <li>Die Orden wählt die App nach Zielbindung (trägt der Orden das Ziel), Variation (nicht zweimal derselbe) und Verlauf (Aufbau früh, Umwandlung und Zuspitzung spät). Zeit-Orden unter 35 Minuten tragen ein Ziel nur teilweise.</li>
+        <li>Die Entlastung zählt über die ganze Klammer: ab der fünften Woche alle vier Wochen, auch wenn ein Orden darin kürzer läuft.</li>
+        <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Orden vor der Testwoche misst sie die Testwoche nicht mehr im Vollbesitz.</li>
       </ul>
 
       <h3>Residual-Uhren</h3>
@@ -101,21 +98,20 @@ export function Help() {
 
       <h3>Domänen-Bilanz</h3>
       <ul>
-        <li>Effektive Wochen je Bereich und Halbjahr: Das Hauptziel eines Ordens zählt voll, jedes Nebenziel halb; Kondition trägt Kraftausdauer und Anaerob, Masse läuft mit der Kraft mit. Jeder getestete Bereich braucht mindestens 4 effektive Wochen je Halbjahr, sonst meldet die Bilanz eine Lücke.</li>
-        <li>Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge — Harlequin ist der Joker und unterbricht die Reihe. Die Bilanz warnt nur, nichts wird gesperrt oder eingeplant.</li>
+        <li>Effektive Wochen je Bereich und Halbjahr: Das Hauptziel eines Ordens zählt voll, jedes Nebenziel halb; Kondition trägt Kraftausdauer und Anaerob, Masse läuft mit der Kraft mit, Sehnen nach dem Anteil an Halteübungen (beide ohne Pflicht). Jeder getestete Bereich braucht mindestens 4 effektive Wochen je Halbjahr, sonst meldet die Bilanz eine Lücke.</li>
+        <li>Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge (eine Klammer zählt als eine Phase) — Harlequin ist der Joker und unterbricht die Reihe. Die Bilanz warnt nur, nichts wird gesperrt oder eingeplant.</li>
       </ul>
 
       <h3>Lenkung: Wie die Vorschläge rote Uhren aufgreifen</h3>
       <ul>
-        <li>Rote Uhren und Bilanz-Lücken fließen in die Vorschläge ein: Blockfolge und Mesozyklus-Wizard ziehen Orden vor, die die Bereiche halten (steht als Begründung am Kandidaten), Schwerpunkt 2 priorisiert rote Domänen als Vertiefung, und der Jahresblick nennt eine Gelegenheit aus dem Bestand. Nach jeder Testwoche fasst die Auswertung zusammen, was rot ist — gleiche Stelle wie „Für den Mesozyklus übernehmen“.</li>
-        <li>Alles bleibt Vorschlag: Die App plant nichts ein und sperrt nichts. Die Uhr zeigt, der Wizard schlägt vor, du entscheidest.</li>
+        <li>Rote Uhren und Bilanz-Lücken fließen in die Vorschläge ein: Der Assistent zieht Klammern und Orden vor, die die Bereiche halten (steht als Begründung am Kandidaten), Schwerpunkt 2 priorisiert rote Domänen als Vertiefung, und der Jahresblick nennt eine Gelegenheit aus dem Bestand. Nach jeder Testwoche fasst die Auswertung zusammen, was rot ist — und der Assistent zeigt sie in Schritt 3.</li>
+        <li>Alles bleibt Vorschlag: Die App plant nichts ein und sperrt nichts. Die Uhr zeigt, der Assistent schlägt vor, du entscheidest.</li>
       </ul>
 
       <h3>Kalorien: Energie zur Last passen</h3>
       <ul>
-        <li>Jeder Mesozyklus-Teil trägt einen Kalorien-Modus — Defizit, Erhaltung oder Überschuss —, deine Angabe, die App prüft nur, ob die Kombination trägt, und warnt sonst. Aufbau (Masse, Kraft) braucht Überschuss oder Erhaltung, Defizit-Fenster gehören in niedrig belastete Phasen.</li>
-        <li>Den Burn schätzt die App nach den Übungen des Ordens: Bestien zählen am meisten, Intervalle und Timer dahinter, reine Kraftsätze wenig. Bei hoher Alltagslast sinkt die Schätzung, weil etwa die Hälfte der Kraftübungen geführt läuft.</li>
-        <li>Empfohlen wird Defizit bei niedriger Alltagslast, Erhaltung bei hoher, Überschuss bei Aufbau-Akzenten.</li>
+        <li>Jede Klammer trägt einen Kalorien-Modus. Die Rangfolge: Last zuerst — kein Defizit bei hoher Last, und mittlere Last zählt nach acht Wochen ohne ruhigen Abschnitt als hohe (Dauerlast). Dann der Kalender: im Winter Überschuss für Aufbau, im Sommer Defizit-Fenster. Auf Reisen Erhaltung, kohlenhydratbetont — dazu passt Athletik. Zuletzt der Grundmodus der Klammer.</li>
+        <li>Du kannst den Modus je Klammer im Assistenten oder je Phase im Phasenblatt ändern; die App zeigt Konflikte als Zeichen, sie sperrt nichts.</li>
       </ul>
 
       <h3>Allrounder oder Spezialist</h3>
@@ -171,7 +167,7 @@ export function Help() {
         <li><strong>Intensiv:</strong> Bestien kommen eine Klasse länger (der Tag darf bis zu 15 Minuten länger werden), jede Schwertübung bekommt einen Satz mehr. Kraft, Hypertrophie und Ausdauer bleiben, wie geplant. Nur an Tagen mit Bestie oder Schwert.</li>
         <li><strong>Leise:</strong> die Bestie kommt als leise Bestie, ohne Sprünge, Burpees, Split Lunges, Sprints, Läufe oder Langhantel vom Boden; Mountain Climbers und Swings bleiben. Laute Übungen im Training werden ersetzt: Deadlift durch Romanian Deadlift, Sprünge durch KB Swings oder Goblet Squats, Medizinballwürfe durch Woodchopper oder Push-Ups. Kein Laufen, keine Intervalle, Finisher bleiben Superset, kurzes Warm-up. Nur wenn es für eine Bestie keine leise Fassung gibt, wandert sie auf einen anderen Tag dieser Woche (notfalls kürzer oder mit Supersets, höchstens 5 Minuten mehr). Etwa für die Wohnung oder den Arbeitsplatz; mit Kurz zusammen wird es noch ruhiger.</li>
         <li><strong>Kein Platz:</strong> alles auf der Stelle. Farmer's Carry wird zum Marschieren auf der Stelle (40 Schritte), Walking Lunges zu Reverse Lunges, Crawls zu Mountain Climbers; Bestien ohne Lunge Walk, Crawl, Weitsprung oder Sprint.</li>
-        <li>Kurz, Leise und Kein Platz lassen sich im Anpassen-Menü für einen Wochentag fixieren („Für jeden Freitag fixieren“), über alle Phasen; Plan › Deine Woche zeigt, was fixiert ist. Dann plant die App die Woche schon darauf hin: Ein gemerkter Kurztag gleicht über die ganze Woche aus. Kurz geht nur für einen Wochentag.</li>
+        <li>Kurz, Leise und Kein Platz lassen sich im Anpassen-Menü für einen Wochentag fixieren („Für jeden Freitag fixieren“), über alle Phasen; Setup › Deine Woche zeigt, was fixiert ist. Dann plant die App die Woche schon darauf hin: Ein gemerkter Kurztag gleicht über die ganze Woche aus. Kurz geht nur für einen Wochentag.</li>
         <li>Deficit Push-Ups brauchen Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln (Setup › Equipment). Fehlt das am Ort, kommen Banded Push-Ups, ohne Band normale Push-Ups mit einem Satz mehr.</li>
       </ul>
 
