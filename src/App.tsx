@@ -67,7 +67,7 @@ export default function App() {
   const ber = bereicheSummary(bereiche(state, today, state.plan, clocks));
   const overClocks = ber.due;
   const gapNames = ber.gaps.map((r) => r.def.name);
-  const yearMeta = [overClocks.length ? `Fällig: ${overClocks.map((r) => r.def.name).join(", ")}` : null, gapNames.length ? `Im Plan knapp: ${gapNames.join(", ")}` : null]
+  const yearMeta = [overClocks.length ? `Bald: ${overClocks.map((r) => r.def.name).join(", ")}` : null, gapNames.length ? `Fehlt: ${gapNames.join(", ")}` : null]
     .filter(Boolean).join(" · ") || "alles im Lot";
 
   if (!state.onboarded) {

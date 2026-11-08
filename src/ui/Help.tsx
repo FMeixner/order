@@ -90,13 +90,13 @@ export function Help() {
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Orden vor der Testwoche misst sie die Testwoche nicht mehr im Vollbesitz.</li>
       </ul>
 
-      <h3>Bereiche: Frische und Plan</h3>
+      <h3>Bereiche: im Blick</h3>
       <ul>
-        <li>Neun Bereiche — Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill — mit je zwei Punkten. Zu finden in „Jahr planen“, Schritt 3; das Symbol links neben „Jahr planen“ zählt Fälliges und Lücken.</li>
-        <li><strong>Frische</strong> (Rückblick): Wie lange der letzte wirksame Reiz her ist, aus deinen erledigten Einheiten. Jeder Bereich hält eine Weile: Spritzigkeit etwa eine Woche, Kraftausdauer und Intervalle zwei, Grundausdauer, Beweglichkeit und Sehnen drei, Kraft und Muskel einen Monat. Grün frisch, gelb bald fällig (ab 70 %), rot fällig. Warm-up und Cool-down zählen nicht; Bestien und die freie Jagd wie jede Einheit.</li>
-        <li><strong>Im Plan</strong> (Vorschau): Wie viele Wochen das nächste halbe Jahr den Bereich trägt — Hauptziel eines Ordens voll, Nebenziel halb. Richtwert: vier Wochen; darunter „knapp“, ohne Woche „fehlt“. Muskel und Sehnen werden nur angezeigt.</li>
-        <li>Fällige Bereiche und Lücken ziehen die Vorschläge: Der Assistent bevorzugt Zeichen und Orden, die sie halten; der Schwerpunkt-Slot hält fällige Bereiche (Erhalt); unter der Liste steht, womit du einen fälligen Bereich ohne Umplanen bedienst.</li>
-        <li>Abwechslung: Kein Hauptziel mehr als zweimal in Folge (ein Zeichen zählt als eins) — Harlequin unterbricht die Reihe. Die Waage darunter zeigt, ob das nächste halbe Jahr eher Spezialist oder Allrounder ist. Alles bleibt Hinweis, nichts wird gesperrt.</li>
+        <li>Neun Bereiche — Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill — mit einem Zustand: <strong>gut</strong>, <strong>bald</strong> oder <strong>fehlt</strong>. Zu finden in „Jahr planen“, Schritt 3; das Symbol links neben „Jahr planen“ zählt „bald“ und „fehlt“.</li>
+        <li>Dahinter stehen zwei Messungen (Antippen zeigt beide): wie lange der letzte Reiz her ist (Spritzigkeit hält etwa eine Woche, Kraftausdauer und Intervalle zwei, Grundausdauer, Beweglichkeit und Sehnen drei, Kraft und Muskel einen Monat) und wie viele Wochen das nächste halbe Jahr den Bereich trägt (Hauptziel voll, Nebenziel halb, Schwerpunkt-Slot halb; Richtwert vier).</li>
+        <li>„fehlt“: keine Woche im Plan. „bald“: fällig, noch nie trainiert, knapp im Plan oder bald fällig. Muskel und Sehnen haben keinen Richtwert.</li>
+        <li>Was „bald“ oder „fehlt“ ist, ziehen die Vorschläge: Zeichen, Orden und der Schwerpunkt-Slot (Erhalt) bevorzugen, was es hält. Darunter steht, womit du einen Bereich ohne Umplanen bedienst.</li>
+        <li>Abwechslung: Kein Hauptziel mehr als zweimal in Folge (ein Zeichen zählt als eins) — Harlequin unterbricht die Reihe. Die Waage zeigt, ob das nächste halbe Jahr eher Spezialist oder Allrounder ist. Alles bleibt Hinweis, nichts wird gesperrt.</li>
       </ul>
 
       <h3>Kalorien: Energie zur Last passen</h3>
@@ -112,7 +112,7 @@ export function Help() {
         <li>Nie gegen den Orden: Ausdauer und Intervalle bekommen neben Muskel-, Kraft- und Schnellkraft-Orden keinen Slot (Interferenz) — sie gehen in die Wahl der Zeichen. Derselbe Bereich zweimal in Folge wird vermieden, außer bei einem Testdefizit.</li>
         <li>Beweglichkeit kommt jeden Trainingstag kurz ins Cool-down, Schnelligkeit und Sprungkraft zweimal pro Woche frisch an den Anfang, Kraftausdauer und Anaerob einmal pro Woche an den kürzesten Tag.</li>
         <li>Als Defizit zählt nur, was deutlich unter der Norm liegt (bei mehreren Tests höchstens 40 Punkte, bei einem höchstens 30) oder jenseits des Messfehlers schlechter wurde. So läuft die App nicht jedem Zufall hinterher.</li>
-        <li>Im Phasenblatt steht der Schwerpunkt mit Zweck; „Automatisch“, eine eigene Wahl oder „Aus“. Im Assistenten (Schritt 4) steht er unter jedem Orden, in Schritt 3 zählt er halb für „Im Plan“.</li>
+        <li>Im Phasenblatt steht der Schwerpunkt mit Zweck; „Automatisch“, eine eigene Wahl oder „Aus“. Im Assistenten (Schritt 4) steht er unter jedem Orden, in Schritt 3 zählt er halb für die Wochen im Plan.</li>
       </ul>
 
       <h3>Orte</h3>
