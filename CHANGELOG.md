@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.1] – 2026-11-08
+
+### Geändert
+- Paladin wechselt vom Wolf zum Hirsch: Hauptziel Beweglichkeit und Belastbarkeit (Sehnen, Gelenke), Nebenziele Kraft und Kondition. Er passt jetzt auch zu hoher Alltagslast, weil er über Halten und Positionen arbeitet, nicht über schwere Sätze. Der Hirsch braucht dort keine Lückenfüller mehr.
+
 ## [1.4.0] – 2026-11-08
 
 ### Neu

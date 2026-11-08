@@ -207,3 +207,10 @@ describe("Klammern: Fuchs (Skill)", () => {
     expect(has(withMob)).toBe(true);
   });
 });
+
+describe("Klammern: Heimat", () => {
+  it("Paladin hat den Hirsch als Heimat und passt zu hoher Last", () => {
+    expect(bindOf(FOCUS_BY_ID.paladin, KLAMMER_BY_ID.regeneration)).toBe("lead");
+    expect(FOCUS_BY_ID.paladin.load_fit).toBe("high");
+  });
+});
