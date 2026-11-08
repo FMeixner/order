@@ -262,7 +262,7 @@ export interface PlanBlock {
 }
 
 /** Die übergeordneten Klammern (data/modules/klammern.json) */
-export type KlammerId = "muskel" | "kraft" | "athletik" | "gpp" | "regeneration";
+export type KlammerId = "muskel" | "kraft" | "athletik" | "skill" | "gpp" | "regeneration";
 export interface KlammerDef {
   id: KlammerId;
   name: string;

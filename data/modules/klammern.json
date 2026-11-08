@@ -70,12 +70,11 @@
       ],
       "early": [
         "olympian",
-        "acrobat",
         "huntsman"
       ],
       "late": [
         "scout",
-        "huntsman"
+        "acrobat"
       ],
       "kcal": "maintenance",
       "deficitOk": false,
@@ -88,6 +87,37 @@
       ],
       "travel": true,
       "tag": "Explosiv"
+    },
+    {
+      "id": "skill",
+      "name": "Fuchs",
+      "axes": [
+        "skill"
+      ],
+      "accept": [
+        "beweglichkeit",
+        "schnellkraft",
+        "kondition"
+      ],
+      "early": [
+        "acrobat",
+        "pugilist"
+      ],
+      "late": [
+        "huntsman",
+        "dancer"
+      ],
+      "kcal": "maintenance",
+      "deficitOk": false,
+      "months": [
+        3,
+        4,
+        5,
+        9,
+        10
+      ],
+      "travel": true,
+      "tag": "Skill"
     },
     {
       "id": "gpp",

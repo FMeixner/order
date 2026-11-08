@@ -3,7 +3,7 @@
    und bleibt beim nächsten Neuplanen stehen. Ein Generator (planYear) statt vier Knöpfen. */
 import { useMemo, useState } from "react";
 import { FOCI, FOCUS_BY_ID, KLAMMERN, KLAMMER_BY_ID } from "../data";
-import { type AimPrio, whyCut, bindOf, klammerName, klammernOf, kcalOfKlammer, effectiveLoads, planYear, rankInKlammer } from "../engine/klammer";
+import { type AimPrio, aimsOf, whyCut, bindOf, klammerName, klammernOf, kcalOfKlammer, effectiveLoads, planYear, rankInKlammer } from "../engine/klammer";
 import { fmtDate, focusName, isTestBlock } from "../engine/plan";
 import type { ResidualClock } from "../engine/residual";
 import { loadOfWindow, travelOfWindow } from "../engine/stack";
@@ -133,7 +133,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
                   {KCAL_OPTS.map((m) => <button key={m} role="radio" aria-checked={k.kcal === m} className={`kl-${k.kind} ${k.kcal === m ? "on" : ""}`} onClick={() => setKcals((x) => ({ ...x, [k.start]: m }))}><Sign kind={m} /></button>)}
                   {k.parts[0].pin?.kcal && <Sign kind="pin" />}
                 </div>
-                {k.parts.map((p) => <PartRow key={p.id} slot={slots.get(p.id)} plan={draft} p={p} pool={pool} steer={steer} open={open === p.start} onToggle={() => setOpen((o) => (o === p.start ? null : p.start))} onPick={(id) => { setOrders((x) => ({ ...x, [p.start]: id })); setOpen(null); }} />)}
+                {k.parts.map((p) => <PartRow key={p.id} slot={slots.get(p.id)} plan={draft} p={p} pool={pool} steer={steer} aims={aimsOf(aim, aims)} open={open === p.start} onToggle={() => setOpen((o) => (o === p.start ? null : p.start))} onPick={(id) => { setOrders((x) => ({ ...x, [p.start]: id })); setOpen(null); }} />)}
               </div>
             ))}
           </div>
@@ -148,10 +148,10 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
   );
 }
 
-function PartRow({ plan, p, pool, steer, open, onToggle, onPick, slot }: { plan: PlanBlock[]; p: PlanBlock; pool: string[]; steer: DeficitWeights; open: boolean; onToggle: () => void; onPick: (id: string) => void; slot?: YearSlot }) {
+function PartRow({ plan, p, pool, steer, aims, open, onToggle, onPick, slot }: { plan: PlanBlock[]; p: PlanBlock; pool: string[]; steer: DeficitWeights; aims: AimPrio[]; open: boolean; onToggle: () => void; onPick: (id: string) => void; slot?: YearSlot }) {
   const f = FOCUS_BY_ID[p.focusId];
   const k = KLAMMER_BY_ID[p.klammer!];
-  const alts = open ? rankInKlammer(plan, p.id, pool, steer).filter((r) => r.f.id !== p.focusId).slice(0, 4) : [];
+  const alts = open ? rankInKlammer(plan, p.id, pool, steer, aims).filter((r) => r.f.id !== p.focusId).slice(0, 4) : [];
   return (
     <>
       <button className="kl-part btn ghost small" onClick={onToggle} aria-expanded={open}>

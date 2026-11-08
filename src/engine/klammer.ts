@@ -151,11 +151,14 @@ export function bindOf(f: Focus, k: KlammerDef): Bind {
   return k.axes.some((a) => (v[a] ?? 0) > 0) ? "accept" : "none";
 }
 
+/** Jahresziele als Liste: mehrere mit Priorität, sonst das eine Ziel als Priorität 1 */
+export const aimsOf = (aim: Aim, aims?: AimPrio[]): AimPrio[] => aims?.length ? aims : aim !== "allround" && aim !== "deficits" ? [{ aim, prio: 1 }] : [];
+
 /** Stelle im Verlauf: erster Teil früh, letzter spät, dazwischen mittig */
 export const posOf = (i: number, n: number): "early" | "mid" | "late" | "single" => (n === 1 ? "single" : i === 0 ? "early" : i === n - 1 ? "late" : "mid");
 
 /** Punkte eines Ordens für einen Teil der Klammer */
-export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnType<typeof posOf>, prev: Focus | undefined, usedInK: string[], usedBefore: string[], steer: DeficitWeights): number {
+export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnType<typeof posOf>, prev: Focus | undefined, usedInK: string[], usedBefore: string[], steer: DeficitWeights, aims: AimPrio[] = []): number {
   const bind = bindOf(f, k);
   let s = bind === "lead" ? 3 : bind === "accept" ? 1.2 : 0;
   if ((pos === "early" || pos === "single") && k.early.includes(f.id)) s += 1.5;
@@ -169,6 +172,11 @@ export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnTyp
   s += 0.5 * timeBias(b, f);
   const v = goalVector(f);
   if (steer.some((d) => (v[d.axis] ?? 0) > 0)) s += 0.4;
+  // Mitläufer eines Zeichens (early/late) rücken vor, wenn ihr Hauptziel ein Jahresziel ist (Dancer im Fuchs bei Ziel Beweglichkeit).
+  // Nur kuratierte Mitläufer: Fremde Orden verwässern das Zeichen nicht.
+  const p = primaryAxis(f);
+  const aimHit = aims.find((a) => a.aim === p && !k.axes.includes(a.aim));
+  if (aimHit && f.session_min >= 35 && (k.early.includes(f.id) || k.late.includes(f.id))) s += 4 - aimHit.prio;
   return s;
 }
 
@@ -180,7 +188,7 @@ export function orderFits(f: Focus, b: PlanBlock, weeks: number): boolean {
 }
 
 /** Kandidaten für einen Teil, beste zuerst (für Assistent und Phasenblatt) */
-export function rankInKlammer(plan: PlanBlock[], id: string, pool?: string[], steer: DeficitWeights = []): { f: Focus; score: number; bind: Bind }[] {
+export function rankInKlammer(plan: PlanBlock[], id: string, pool?: string[], steer: DeficitWeights = [], aims: AimPrio[] = []): { f: Focus; score: number; bind: Bind }[] {
   const b = plan.find((x) => x.id === id);
   if (!b?.klammer || !b.meso) return [];
   const k = KLAMMER_BY_ID[b.klammer];
@@ -196,7 +204,7 @@ export function rankInKlammer(plan: PlanBlock[], id: string, pool?: string[], st
   const weeks = weeksLeft(b.start, b.end);
   return candidates(pool)
     .filter((f) => orderFits(f, b, weeks) || f.id === b.focusId)
-    .map((f) => ({ f, bind: bindOf(f, k), score: orderScore(f, k, b, posOf(i, parts.length), prev, usedInK, usedBefore, steer) }))
+    .map((f) => ({ f, bind: bindOf(f, k), score: orderScore(f, k, b, posOf(i, parts.length), prev, usedInK, usedBefore, steer, aims) }))
     .sort((x, y) => y.score - x.score);
 }
 
@@ -238,6 +246,7 @@ export interface PlanYearOpts {
     die zeitlich an ihrer Stelle liegen. */
 export function planYear(plan: PlanBlock[], sections: Section[], today: string, newId: () => string, opts: PlanYearOpts): PlanBlock[] {
   const { aim, deficits = [], steer = [], testPolicy = DEFAULT_TEST_POLICY, pool } = opts;
+  const aimList = aimsOf(aim, opts.aims);
   const sorted = byStart(plan);
   // Eine laufende Klammer bleibt ganz (alle Teile und ihre Testwoche); alles danach wird neu geplant
   const running = new Set(sorted.filter((b) => b.start <= today && b.meso).map((b) => b.meso!));
@@ -288,7 +297,7 @@ export function planYear(plan: PlanBlock[], sections: Section[], today: string, 
       if (!b.focusId) {
         const best = candidates(pool)
           .filter((f) => orderFits(f, b, weeks))
-          .map((f) => ({ f, s: orderScore(f, k, b, posOf(i, n), prevF, usedInK, usedBefore, steer) }))
+          .map((f) => ({ f, s: orderScore(f, k, b, posOf(i, n), prevF, usedInK, usedBefore, steer, aimList) }))
           .sort((x, y) => y.s - x.s)[0];
         if (best) b.focusId = best.f.id;
       }
