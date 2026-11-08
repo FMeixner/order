@@ -83,7 +83,7 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
             <ul className="slot-list small">
               {slots && nextB && (
                 <li>
-                  {slotsParts.length ? `Nächste Klammer — ${focusName(nextB.focusId)}` : `Nächste Phase, ${focusName(nextB.focusId)}`}:{slotItems(slots)}
+                  {slotsParts.length ? `Nächstes Zeichen — ${focusName(nextB.focusId)}` : `Nächste Phase, ${focusName(nextB.focusId)}`}:{slotItems(slots)}
                   {slotsParts.map((x, i) => <Fragment key={x.p.id}>Teil {i + 2}, {focusName(x.p.focusId)}:{slotItems(x.s)}</Fragment>)}
                 </li>
               )}
@@ -92,7 +92,7 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
                 for (const s of [slots, ...slotsParts.map((x) => x.s)]) if (s) for (const d of s.deferred) seen.add(d.name);
                 if (!seen.size) return null;
                 const names = [...seen];
-                return <li>{names.join(" und ")} {names.length > 1 ? "passen" : "passt"} {slotsParts.length ? "in keinen Orden der Klammer" : `nicht in ${focusName(nextB!.focusId)}`}. Das übernimmt die Klammer-Wahl: Plan › Jahr planen, Richtung „Defizite zuerst“.</li>;
+                return <li>{names.join(" und ")} {names.length > 1 ? "passen" : "passt"} {slotsParts.length ? "in keinen Orden des Zeichens" : `nicht in ${focusName(nextB!.focusId)}`}. Das übernimmt die Wahl der Zeichen: Plan › Jahr planen, Richtung „Defizite zuerst“.</li>;
               })()}
               {ev.suggestions.length > 0 && <li>{ev.who5 != null && ev.who5 < 52 ? "Wohlbefinden ist eingeschränkt, Orden für Erholung" : `Orden, die ${ev.weakest?.name ?? defs[0].name} direkt trainieren`}: {ev.suggestions.map((f) => focusName(f.id)).join(", ")}.</li>}
             </ul>
@@ -105,11 +105,11 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
                     ...(s.s1.source === "auto" && s.s1.domain && !x.sharpen ? { sharpen: s.s1.domain } : {}),
                     ...(s.s2.source === "auto" && s.s2.domain && !x.sharpen2 ? { sharpen2: s.s2.domain } : {}),
                   };
-                }) }))}>{slotsParts.length ? "Für die Klammer übernehmen" : "Für die nächste Phase übernehmen"}</button>
+                }) }))}>{slotsParts.length ? "Für das Zeichen übernehmen" : "Für die nächste Phase übernehmen"}</button>
               </div>
             )}
             {(() => {
-              // Lenkung für die nächste Klammer: rote Uhren und Bilanz-Lücken laufen ab hier
+              // Lenkung für das nächste Zeichen: rote Uhren und Bilanz-Lücken laufen ab hier
               // in die Vorschläge mit ein — gleiche Anlaufstelle wie die Schwerpunkte darüber
               const hot = residualClocks(state, isoDate(new Date())).filter((c) => c.over);
               const gaps = mesoBalance(state.plan).gaps;
@@ -119,7 +119,7 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
               if (gaps.length) parts.push(`Lücken der Domänen-Bilanz (${[...new Set(gaps.map((g) => g.name))].join(", ")})`);
               return (
                 <div className="small muted">
-                  <strong>Lenkung für die nächste Klammer:</strong> {parts.join(" und ")} fließen ab jetzt in die Vorschläge ein —
+                  <strong>Lenkung für das nächste Zeichen:</strong> {parts.join(" und ")} fließen ab jetzt in die Vorschläge ein —
                   „Jahr planen“ zieht diese Bereiche vor, die Schwerpunkt-Auswahl priorisiert rote Uhren als Vertiefung.
                 </div>
               );

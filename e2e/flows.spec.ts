@@ -122,7 +122,7 @@ test("Plan als Stapel: Woche länger, Testwoche am Ende, Phase anhängen mit Emp
   expect(st.plan.some((b) => b.focusId === "test")).toBe(true);
 });
 
-test("Jahr planen: Vorlage, Richtung, Klammern, Orden, Übernehmen", async ({ page }) => {
+test("Jahr planen: Vorlage, Richtung, Zeichen, Orden, Übernehmen", async ({ page }) => {
   await seed(page);
   await page.goto("./");
   await page.getByRole("button", { name: "Plan" }).click();
@@ -130,13 +130,13 @@ test("Jahr planen: Vorlage, Richtung, Klammern, Orden, Übernehmen", async ({ pa
   await page.getByRole("button", { name: "Jahr planen" }).click();
   const dlg = page.getByRole("dialog");
   await dlg.getByRole("radio", { name: "Ausdauer" }).click();
-  await dlg.getByRole("radio", { name: "nach jeder Klammer" }).click();
+  await dlg.getByRole("radio", { name: "nach jedem Zeichen" }).click();
   await dlg.getByRole("button", { name: "Weiter" }).click();
   await dlg.getByRole("button", { name: "Vorlage Semester-Rhythmus" }).click();
   await expect(dlg.locator(".sec-row").nth(3)).toBeVisible();
   await expect(dlg.locator(".kl-card").first()).toBeVisible();
   // Art der ersten künftigen Klammer von Hand: Regeneration (wird gepinnt)
-  await dlg.locator(".kl-card").first().getByRole("radio", { name: "Regeneration" }).click();
+  await dlg.locator(".kl-card").first().getByRole("radio", { name: "Hirsch" }).click();
   await dlg.getByRole("button", { name: "Weiter" }).click();
   await dlg.getByRole("button", { name: "Weiter" }).click();
   await expect(dlg.locator(".kl-part").first()).toBeVisible();

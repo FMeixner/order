@@ -266,6 +266,8 @@ export type KlammerId = "muskel" | "kraft" | "athletik" | "gpp" | "regeneration"
 export interface KlammerDef {
   id: KlammerId;
   name: string;
+  /** Stichwort hinter dem Namen, z. B. „Masse“ → „Bär · Masse“ */
+  tag: string;
   axes: AxisId[];
   accept: AxisId[];
   early: string[];
