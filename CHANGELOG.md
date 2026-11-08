@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.3.2] – 2026-11-08
+
+### Geändert
+- Bereiche: eine Spalte „im Blick“ statt zwei Punkten. Jeder Bereich zeigt „gut“ oder den Grund („fehlt im Plan“, „fällig“, „noch nie trainiert“, „knapp im Plan“, „bald fällig“). Beide Messungen stehen beim Antippen.
+- Status-Symbol im Plan zählt „bald“ und „fehlt“ wie die Liste.
+
 ## [1.3.1] – 2026-11-08
 
 ### Geändert

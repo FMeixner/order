@@ -30,8 +30,15 @@ export const BEREICHE: BereichDef[] = [
   { id: "skill", name: "Skill", hint: "Bewegungskönnen", domains: ["skill"], required: true },
 ];
 
+/** Im Blick (1.3.2): ein Zustand aus Frische und Plan — gut, bald, fehlt */
+export type Watch = "gut" | "bald" | "fehlt";
+
 export interface BereichRow {
   def: BereichDef;
+  /** Zusammengefasst: fehlt (Pflichtbereich ohne Woche im Plan), bald (fällig, noch nie, knapp im Plan oder bald fällig), sonst gut */
+  watch: Watch;
+  /** Kurzer Grund für bald und fehlt */
+  why: string;
   fresh: Fresh;
   /** Tage seit dem letzten Reiz; null = noch nie oder ohne Uhr */
   days: number | null;
@@ -77,12 +84,23 @@ export function bereiche(state: AppState, today: string, plan: PlanBlock[] = sta
     const c = def.clock ? clocks.find((x) => x.id === def.clock) : undefined;
     const weeks = round1(def.domains.reduce((s, d) => s + (cov[d] ?? 0), 0));
     const cover: Cover = !def.required ? "free" : weeks >= HALF_MIN ? "ok" : weeks > 0 ? "thin" : "missing";
-    return { def, fresh: freshOf(c, anyData), days: c?.days ?? null, budget: c?.budget ?? null, weeks, cover };
+    const fresh = freshOf(c, anyData);
+    const { watch, why } = watchOf(fresh, cover);
+    return { def, watch, why, fresh, days: c?.days ?? null, budget: c?.budget ?? null, weeks, cover };
   });
+}
+
+/** Ein Zustand aus zwei: Plan-Lücke wiegt am schwersten, dann alles, was bald nachlässt */
+export function watchOf(fresh: Fresh, cover: Cover): { watch: Watch; why: string } {
+  if (cover === "missing") return { watch: "fehlt", why: "fehlt im Plan" };
+  if (fresh === "due" || fresh === "never") return { watch: "bald", why: fresh === "never" ? "noch nie trainiert" : "fällig" };
+  if (cover === "thin") return { watch: "bald", why: "knapp im Plan" };
+  if (fresh === "soon") return { watch: "bald", why: "bald fällig" };
+  return { watch: "gut", why: "" };
 }
 
 /** Kurzbilanz für das Status-Symbol im Plan: fällige Bereiche und Lücken im Plan */
 export function bereicheSummary(rows: BereichRow[]): { due: BereichRow[]; gaps: BereichRow[] } {
-  return { due: rows.filter((r) => r.fresh === "due" || r.fresh === "never"), gaps: rows.filter((r) => r.cover === "missing" || r.cover === "thin") };
+  return { due: rows.filter((r) => r.watch === "bald"), gaps: rows.filter((r) => r.watch === "fehlt") };
 }
 

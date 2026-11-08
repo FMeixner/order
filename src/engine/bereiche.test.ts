@@ -31,6 +31,7 @@ describe("Bereiche", () => {
     const sum = bereicheSummary(rows);
     expect(rows.find((r) => r.def.id === "kraft")?.cover).toBe("ok");
     expect(sum.gaps.map((r) => r.def.id)).toContain("aerob");
+    expect(rows.find((r) => r.def.id === "aerob")?.watch).toBe("fehlt");
     expect(sum.gaps.map((r) => r.def.id)).not.toContain("masse");
     expect(sum.gaps.map((r) => r.def.id)).not.toContain("sehnen");
   });
