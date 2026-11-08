@@ -17,12 +17,12 @@ const row = (b: ReturnType<typeof mesoBalance>, id: string) => b.rows.find((r) =
 
 describe("Domänen-Bilanz", () => {
   it("trägt Kondition auf Kraftausdauer und Anaerob, Nebenziele halb", () => {
-    const b = mesoBalance([blk(6, { focusId: "paladin" })]); // primary conditioning, secondary [strength, mobility]
+    const b = mesoBalance([blk(6, { focusId: "king" })]); // primary conditioning, secondary [wellbeing, strength]
     expect(b.columns).toHaveLength(1);
     expect(row(b, "ke").cells).toEqual([6]);
     expect(row(b, "anaerob").cells).toEqual([6]);
     expect(row(b, "strength").cells).toEqual([3]);
-    expect(row(b, "mobility").cells).toEqual([3]);
+    expect(row(b, "mobility").cells).toEqual([0]);
     expect(row(b, "aerob").cells).toEqual([0]);
   });
 
@@ -86,16 +86,16 @@ describe("Domänen-Bilanz", () => {
 
   it("warnt bei drei Phasen in Folge mit demselben Hauptziel; Harlequin unterbricht", () => {
     const three = mesoBalance([
-      blk(4, { focusId: "paladin" }), blk(4, { focusId: "paladin", start: "2027-02-01", end: endOf2("2027-02-01", 4) }),
-      blk(4, { focusId: "paladin", start: "2027-03-01", end: endOf2("2027-03-01", 4) }),
+      blk(4, { focusId: "king" }), blk(4, { focusId: "king", start: "2027-02-01", end: endOf2("2027-02-01", 4) }),
+      blk(4, { focusId: "king", start: "2027-03-01", end: endOf2("2027-03-01", 4) }),
     ]);
     expect(three.streaks).toHaveLength(1);
     expect(three.streaks[0].goal).toBe("conditioning");
     expect(three.streaks[0].labels).toHaveLength(3);
     const joker = mesoBalance([
-      blk(4, { focusId: "paladin" }), blk(4, { focusId: "paladin", start: "2027-02-01", end: endOf2("2027-02-01", 4) }),
+      blk(4, { focusId: "king" }), blk(4, { focusId: "king", start: "2027-02-01", end: endOf2("2027-02-01", 4) }),
       blk(4, { focusId: "harlequin", start: "2027-03-01", end: endOf2("2027-03-01", 4) }),
-      blk(4, { focusId: "paladin", start: "2027-03-29", end: endOf2("2027-03-29", 4) }),
+      blk(4, { focusId: "king", start: "2027-03-29", end: endOf2("2027-03-29", 4) }),
     ]);
     expect(joker.streaks).toHaveLength(0);
   });
