@@ -539,3 +539,11 @@ button.yp-seg { cursor: pointer; text-align: left; }
 .yp-scroll .yp-lanes { padding: 0 12px 0 4px; }
 .yp-months { position: relative; height: 14px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
 .yp-months span { position: absolute; top: 0; padding-left: 3px; border-left: 1px solid var(--border-lit); line-height: 14px; white-space: nowrap; }
+
+/* 1.2: Stapel nach Zeichen gruppiert — Kopf einmal je Zeichen, Testwoche als Symbol am Orden */
+.sc-group { display: flex; align-items: center; gap: 6px; margin-top: 6px; padding: 2px 2px; background: transparent; border: 0; color: var(--text); font-family: var(--body); font-weight: 600; font-size: 13.5px; cursor: pointer; text-align: left; }
+.sc-group .klammer-icon { color: var(--k); }
+.sc-group .block-dates { margin-left: auto; font-weight: 400; }
+.stack-card.in-kl { margin-left: 10px; border-left-width: 3px; }
+.sc-order .sc-ico.test { background: transparent; border: 0; padding: 0; cursor: pointer; display: inline-flex; width: 20px; height: 20px; color: var(--amber); }
+.sc-order .sc-ico.test .order-mark { position: static; transform: none; width: 18px; height: 18px; opacity: 1; stroke: var(--amber); }

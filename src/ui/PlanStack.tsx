@@ -1,16 +1,15 @@
 /* Jahresplan als Stapel: Band als Überblick, darunter je Phase eine Karte mit − / + (wochenweise, alles danach rückt mit),
    Testwoche am Ende als Schalter, Orden mit Empfehlung und zwei Alternativen. Feinheiten hinter „Phase bearbeiten“. */
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
-import { flagsOf, klammerName } from "../engine/klammer";
+import { Fragment, useState } from "react";
+import { flagsOf, klammerName, klammernOf, type KlammerView } from "../engine/klammer";
 import { FlagSign, KlammerIcon, Sign } from "./Signs";
 import { blockWeeks, fmtDate, focusName, isTestBlock, newerFocus, refreeze } from "../engine/plan";
-import { rankFor, type Aim, type DeficitWeights } from "../engine/sequence";
 import { canShrink, isPast, resizeBlock, testAfter } from "../engine/stack";
-import type { Load, PlanBlock, Section } from "../types";
+import type { PlanBlock, Section } from "../types";
 import { OrderMark } from "./OrderIcon";
 import { Modal } from "./common";
 
-const LOAD_TXT: Record<Load, string> = { low: "Last niedrig", medium: "Last mittel", high: "Last hoch" };
 /** Kleine Symbole statt Text: Status der Phase und Alltagslast */
 function StatusIcon({ kind }: { kind: "läuft" | "empfohlen" | "gewählt" }) {
   const label = { läuft: "läuft gerade", empfohlen: "empfohlen", gewählt: "selbst gewählt" }[kind];
@@ -24,27 +23,20 @@ function StatusIcon({ kind }: { kind: "läuft" | "empfohlen" | "gewählt" }) {
     </span>
   );
 }
-function LoadIcon({ load }: { load: Load }) {
-  const n = { low: 1, medium: 2, high: 3 }[load];
-  const label = LOAD_TXT[load];
-  return (
-    <span className="sc-ico load" role="img" aria-label={label} title={label}>
-      <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden>
-        {[0, 1, 2].map((i) => <rect key={i} x={2 + i * 4.5} y={11 - i * 3.5} width="3" height={3 + i * 3.5} rx="0.8" fill="currentColor" opacity={i < n ? 1 : 0.25} />)}
-      </svg>
-    </span>
-  );
-}
 /** Farbe je Hauptziel (Band und Kartenrand) */
 const goalColor = (id: string) => `var(--goal-${FOCUS_BY_ID[id]?.goals.primary ?? "none"}, var(--border-lit))`;
 
-export function PlanStack({ plan, today, aim, deficits, steer, sections, onChange, onView, onEdit, testView, setTestView }: {
-  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; steer?: DeficitWeights; sections?: Section[];
+export function PlanStack({ plan, today, sections, onChange, onView, onEdit, onKlammer, testView, setTestView }: {
+  plan: PlanBlock[]; today: string; sections?: Section[];
   onChange: (p: PlanBlock[]) => void; onView: (b: PlanBlock) => void; onEdit: (b: PlanBlock) => void;
-  testView: PlanBlock | null; setTestView: (b: PlanBlock | null) => void;
+  onKlammer?: (k: KlammerView) => void; testView: PlanBlock | null; setTestView: (b: PlanBlock | null) => void;
 }) {
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
-  let n = 0;
+  // Weit weg Liegendes klappt ein: sichtbar bis zum Ende des übernächsten Zeichens, den Rest zeigt das Jahresbild
+  const [all, setAll] = useState(false);
+  const ahead = klammernOf(plan).filter((k) => k.end >= today);
+  const cutoff = ahead.length > 2 ? ahead[1].end : null;
+  const later = cutoff ? sorted.filter((b) => b.start > cutoff && !isTestBlock(b)).length : 0;
 
   return (
     <div className="stack plan-stack">
@@ -59,52 +51,60 @@ export function PlanStack({ plan, today, aim, deficits, steer, sections, onChang
         </Modal>
       )}
       {sorted.map((b) => {
-        const past = isPast(b, today), now = b.start <= today && today <= b.end, future = b.start > today;
-        if (isTestBlock(b)) return (
-          <button key={b.id} className={`stack-card test ${past ? "past" : ""}`} style={{ ["--c" as string]: "var(--amber)" }} onClick={() => setTestView(b)}>
-            <OrderMark id="test" />
-            <div className="sc-text">
-              <div className="sc-name">Testwoche</div>
-              <div className="block-dates">{fmtDate(b.start)} – {fmtDate(b.end)}</div>
-            </div>
-          </button>
-        );
-        n++;
+        const past = isPast(b, today), now = b.start <= today && today <= b.end;
+        // Testwochen stehen nicht als eigene Karte im Stapel: das Testwochen-Symbol am Orden davor öffnet sie
+        if (isTestBlock(b)) return null;
+        if (!all && cutoff && b.start > cutoff) return null;
         const t = testAfter(sorted, b);
-        const top = future ? rankFor(plan, b.id, aim, deficits, steer)[0]?.f.id : undefined;
-        const tag = now ? "läuft" : past ? null : top === b.focusId ? "empfohlen" : "gewählt";
+        // Zeichen-Kopf vor dem ersten Orden eines Zeichens: Tier, Stichwort, Kalorien, Zeitraum — einmal statt je Orden
+        const k = b.klammer && b.meso ? klammernOf(plan).find((x) => x.meso === b.meso) : undefined;
+        const head = k && k.parts[0].id === b.id ? k : undefined;
+        const flags = flagsOf(b, sections);
         return (
-          <div key={b.id} className={`stack-card ${now ? "now" : ""} ${past ? "past" : ""}`} style={{ ["--c" as string]: goalColor(b.focusId) }}>
-            <OrderMark id={b.focusId} />
-            <div className="sc-text">
-              <div className="sc-phase row">{b.klammer && <span className={`kl-${b.klammer}`} style={{ color: "var(--k)", display: "inline-flex" }} title={klammerName(b.klammer)}><KlammerIcon id={b.klammer} size={14} /></span>}{b.label || (b.klammer ? klammerName(b.klammer) : `Phase ${n}`)}<LoadIcon load={b.load} />{b.kcal && <Sign kind={b.kcal} />}<FlagSign flags={flagsOf(b, sections)} /></div>
-              <div className="sc-order">
-                <button className="sc-name" onClick={() => onView(b)}>{focusName(b.focusId)}</button>
-                {tag && <StatusIcon kind={tag} />}
-                {b.pin?.focus && <Sign kind="pin" />}
-              </div>
-              <div className="block-dates">{fmtDate(b.start)} – {fmtDate(t?.end ?? b.end)}</div>
-            </div>
-            {!past && (
-              <div className="sc-actions">
-                <div className="sc-step">
-                  <button className="btn ghost small" disabled={!canShrink(b, today)} onClick={() => onChange(resizeBlock(plan, b.id, -1, today))} aria-label="Eine Woche kürzer">−</button>
-                  <span className="sc-weeks">{blockWeeks(b) + (t ? 1 : 0)} Wo.</span>
-                  <button className="btn ghost small" onClick={() => onChange(resizeBlock(plan, b.id, 1, today))} aria-label="Eine Woche länger">+</button>
+          <Fragment key={b.id}>
+            {head && (
+              <button className={`sc-group kl-${head.kind}`} onClick={() => onKlammer?.(head)} aria-label={`Zeichen ${klammerName(head.kind)} bearbeiten`}>
+                <KlammerIcon id={head.kind} size={15} /><span>{klammerName(head.kind)}</span>
+                {head.kcal && <Sign kind={head.kcal} />}
+                {head.parts[0].pin?.klammer && <Sign kind="pin" />}
+                <span className="block-dates">{fmtDate(head.start)} – {fmtDate(head.end)}</span>
+              </button>
+            )}
+            <div className={`stack-card ${now ? "now" : ""} ${past ? "past" : ""} ${k ? "in-kl" : ""}`} style={{ ["--c" as string]: goalColor(b.focusId) }}>
+              <OrderMark id={b.focusId} />
+              <div className="sc-text">
+                {(b.label || (!k && b.kcal) || flags.length > 0) && (
+                  <div className="sc-phase row">{b.label}{!k && b.kcal && <Sign kind={b.kcal} />}<FlagSign flags={flags} /></div>
+                )}
+                <div className="sc-order">
+                  <button className="sc-name" onClick={() => onView(b)}>{focusName(b.focusId)}</button>
+                  {now && <StatusIcon kind="läuft" />}
+                  {b.pin?.focus && <Sign kind="pin" />}
+                  {t && <button className="sc-ico test" onClick={() => setTestView(t)} aria-label={`Testwoche ${fmtDate(t.start)}`} title={`Testwoche ab ${fmtDate(t.start)}`}><OrderMark id="test" /></button>}
                 </div>
-                {t && <span className="sc-ico test" role="img" aria-label="mit Testwoche am Ende" title="mit Testwoche am Ende"><OrderMark id="test" /></span>}
-                <button className="pen-btn sc-edit" onClick={() => onEdit(b)} aria-label="Phase bearbeiten" title="Phase bearbeiten">✎</button>
+                <div className="block-dates">{fmtDate(b.start)} – {fmtDate(t?.end ?? b.end)}</div>
               </div>
-            )}
-            {newerFocus(b) && (
-              <div className="row wrap small">
-                <span className="muted">Neue Fassung des Ordens verfügbar. Diese Phase läuft mit dem Stand vom {fmtDate(b.frozen!.at)}.</span>
-                <button className="btn ghost small" onClick={() => { if (confirm("Neue Fassung des Ordens für diese Phase übernehmen? Übungen und Tage können sich ändern, Einträge im Log bleiben.")) onChange(plan.map((x) => (x.id === b.id ? refreeze(x, today) : x))); }}>Übernehmen</button>
-              </div>
-            )}
-          </div>
+              {!past && (
+                <div className="sc-actions">
+                  <div className="sc-step">
+                    <button className="btn ghost small" disabled={!canShrink(b, today)} onClick={() => onChange(resizeBlock(plan, b.id, -1, today))} aria-label="Eine Woche kürzer">−</button>
+                    <span className="sc-weeks">{blockWeeks(b) + (t ? 1 : 0)} Wo.</span>
+                    <button className="btn ghost small" onClick={() => onChange(resizeBlock(plan, b.id, 1, today))} aria-label="Eine Woche länger">+</button>
+                  </div>
+                  <button className="pen-btn sc-edit" onClick={() => onEdit(b)} aria-label="Phase bearbeiten" title="Phase bearbeiten">✎</button>
+                </div>
+              )}
+              {newerFocus(b) && (
+                <div className="row wrap small">
+                  <span className="muted">Neue Fassung des Ordens verfügbar. Diese Phase läuft mit dem Stand vom {fmtDate(b.frozen!.at)}.</span>
+                  <button className="btn ghost small" onClick={() => { if (confirm("Neue Fassung des Ordens für diese Phase übernehmen? Übungen und Tage können sich ändern, Einträge im Log bleiben.")) onChange(plan.map((x) => (x.id === b.id ? refreeze(x, today) : x))); }}>Übernehmen</button>
+                </div>
+              )}
+            </div>
+          </Fragment>
         );
       })}
+      {later > 0 && <button className="btn ghost small" onClick={() => setAll((x) => !x)} aria-expanded={all}>{all ? "Weniger" : `Später · ${later} Orden`}</button>}
     </div>
   );
 }

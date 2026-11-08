@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.0] – 2026-11-08
+
+### Geändert
+- Stapel nach Zeichen gruppiert: Ein Kopf je Zeichen (Tier, Stichwort, Kalorien, Zeitraum; antippen öffnet den Assistenten bei den Orden), darunter nur noch die Orden. Zeichenname und Kalorien stehen nicht mehr an jedem Orden, das Lastsymbol fällt weg (die Last zeigt das Jahresbild).
+- Testwoche im Stapel nur noch als Symbol am Orden davor — antippen zeigt die Cups. Die eigene Testwochen-Karte entfällt; im Jahresbild bleibt der Streifen, weil er dort die Zeit zeigt.
+- Weit Voraus klappt ein: Der Stapel zeigt bis zum Ende des übernächsten Zeichens, der Rest liegt hinter „Später · n Orden“; das ganze Jahr zeigt das Jahresbild.
+- Status „empfohlen“/„gewählt“ an künftigen Orden entfällt; nur „läuft“ bleibt.
+- Almanach: keine vorgesehene Dauer mehr (das Zeichen bestimmt, wie lange ein Orden läuft) — außer bei fester Länge („fest 12 Wochen“, Monk). Alltagslast und „unterwegs“ als Symbole, dazu das Zeichen, dessen Ziel der Orden trägt. Der Einleitungssatz entfällt.
+
+### Entfernt
+- Warnung „kürzer, als der Orden gedacht ist“: Orden laufen flexibel, die Länge regelt das Zeichen.
+
 ## [1.1.0] – 2026-11-08
 
 ### Geändert
