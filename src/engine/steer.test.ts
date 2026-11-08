@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { BEASTS, FOCUS_BY_ID } from "../data";
 import { emptyState } from "../store";
-import type { AppState, Block, Focus, PlanBlock, Session, SessionEntry } from "../types";
+import type { AppState, Focus, PlanBlock, Session } from "../types";
 import { balanceOf, goalVector } from "./balance";
 import { beastPowers, CLOCKS, residualClocks, type ClockId, type ResidualClock } from "./residual";
-import { slotsFor } from "./sharpen";
+import { yearSlots } from "./sharpen";
 import { aimScore, fillMeso, rankFor, type DeficitWeights } from "./sequence";
 import { CLOCK_AXES, hotClocks, opportunities, steerWeights } from "./steer";
 
@@ -21,13 +21,6 @@ const sess = (over: Partial<Session>): Session => ({
   id: "s1", date: T, blockId: "b1", focusId: "slayer", week: 1, role: "kraft_a", profileId: "g",
   entries: {}, drills: {}, done: true, ...over,
 });
-
-/** Erster Einzel-Slot der Slayer-Kraft-Rolle, als abgehakter Satz */
-const slayerEntry = (): SessionEntry => {
-  const f = FOCUS_BY_ID.slayer;
-  const b = f.roles.kraft_a.blocks.find((x): x is Extract<Block, { type: "single" }> => x.type === "single")!;
-  return { key: `${b.slot.id}|${b.slot.name}`, slotId: b.slot.id, name: b.slot.name, prog: "none", sets: [{ done: true, reps: 1 }] };
-};
 
 /** Slayer (eingefroren für die Phase) mit Schwerpunkt-Modulen in der Kraft-Rolle,
     damit Sessions über die Drill-Ids die Uhren füttern können */
@@ -112,33 +105,33 @@ describe("Lenkung: Blockfolge", () => {
   });
 });
 
-describe("Lenkung: Schwerpunkt 2 priorisiert die rote Uhr", () => {
-  it("setzt die Vertiefung auf eine rote Uhr statt auf das Sekundärziel", () => {
+describe("Lenkung: Der Schwerpunkt hält, was sonst verfällt (Jahresplan)", () => {
+  it("rote Beweglichkeits-Uhr: Slot Beweglichkeit zum Erhalt", () => {
     const { plan, drillId } = slayerWithModules(["mobility"]);
     const sMob = sess({ id: "a", date: "2026-09-01", drills: { [drillId("mobility")]: [true] } }); // 34/21 Tage: rot
     const sBeast = sess({ id: "b", date: "2026-10-01", beast: { id: "ng-vidar", seconds: 600 } }); // Sprints: Sprungkraft, KE, Anaerob grün
     const state = base([sMob, sBeast], plan);
     expect(residualClocks(state, plan[0].start).find((c) => c.id === "mobility")!.over).toBe(true);
-    const p = slotsFor(state, plan[0]);
-    expect(p.s2.domain).toBe("mobility");
-    expect(p.s2.reason).toMatch(/Rote Uhr: Beweglichkeit/);
+    const y = yearSlots(state, plan[0].start).get(plan[0].id)!;
+    expect(y.domain).toBe("mobility");
+    expect(y.purpose).toBe("erhalt");
   });
 
-  it("ohne erledigte Einheiten bleibt die Vertiefung beim Sekundärziel", () => {
+  it("ohne erledigte Einheiten: Erhalt eines Bereichs, nie einer, der den Orden stört", () => {
     const { plan } = slayerWithModules(["mobility"]);
-    expect(slotsFor(base([], plan), plan[0]).s2.domain).toBe("power");
+    const y = yearSlots(base([], plan), plan[0].start).get(plan[0].id)!;
+    expect(y.purpose).toBe("erhalt");
+    expect(y.domain).not.toBe("aerob");
   });
 
-  it("überspringt Uhren ohne Slot-Modul (Kraft) und störende Bereiche (Ausdauer neben Muskelaufbau)", () => {
+  it("alles Slot-fähige frisch: Sekundärziel; rote Ausdauer stört Muskelaufbau und bekommt keinen Slot", () => {
     const { plan, drillId } = slayerWithModules(["mobility", "aerob"]);
-    // Kraft-Uhr rot (65/30), alle Slot-fähigen Uhren grün: Die Vertiefung bleibt beim Sekundärziel
-    const sKraft = sess({ id: "a", date: "2026-08-01", entries: { x: slayerEntry() } });
     const sMob = sess({ id: "b", date: "2026-10-01", drills: { [drillId("mobility")]: [true] } });
     const sBeast = sess({ id: "c", date: "2026-10-01", beast: { id: "ng-vidar", seconds: 600 } });
-    expect(slotsFor(base([sKraft, sMob, sBeast], plan), plan[0]).s2.domain).toBe("power");
-    // Ausdauer-Uhr rot (65/21): stört Muskelaufbau — auch sie kriegt keinen Slot
     const sAerob = sess({ id: "d", date: "2026-08-01", drills: { [drillId("aerob")]: [true] } });
-    expect(slotsFor(base([sAerob, sMob, sBeast], plan), plan[0]).s2.domain).toBe("power");
+    const y = yearSlots(base([sAerob, sMob, sBeast], plan), plan[0].start).get(plan[0].id)!;
+    expect(y.domain).not.toBe("aerob");
+    expect(["sekundaer", "erhalt"]).toContain(y.purpose);
   });
 });
 

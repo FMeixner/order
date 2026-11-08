@@ -37,12 +37,19 @@ export function tendonWeight(f: Focus): number {
   return share >= 0.3 ? 1 : share >= 0.15 ? 0.5 : 0;
 }
 
+/** Gewicht der Bestien für Kraftausdauer und Intervalle je Woche (Erhaltungsdosis, kein Aufbau) */
+export const BEAST_WEIGHT = 0.25;
+/** Hat der Orden einen Bestien-Block? */
+export function hasBeast(f: Focus): boolean {
+  return Object.values(f.roles).some((r) => !r.optional && r.blocks.some((b) => b.type === "beast"));
+}
+
 /** Goal → Testwochen-Domänen; Kondition trägt Kraftausdauer und Anaerob */
 const DOMAINS_OF_GOAL: Partial<Record<Goal, string[]>> = {};
 for (const d of DOMAINS) DOMAINS_OF_GOAL[d.goal] = [...(DOMAINS_OF_GOAL[d.goal] ?? []), d.id];
 
 /** Effektives Gewicht je Woche eines Blocks: Hauptziel 1.0, jedes Nebenziel 0.5 (Masse läuft extra mit) */
-function blockWeights(b: PlanBlock): Map<string, number> {
+export function blockWeights(b: PlanBlock): Map<string, number> {
   const f = blockFocus(b);
   const m = new Map<string, number>();
   if (!f) return m;
@@ -54,6 +61,8 @@ function blockWeights(b: PlanBlock): Map<string, number> {
   for (const g of f.goals.secondary) add(g, 0.5);
   const t = tendonWeight(f);
   if (t) m.set(TENDON, t);
+  // Bestien (Metcon) laufen in fast jedem Orden mit und halten Kraftausdauer und Intervalle: je ein Viertel pro Woche
+  if (hasBeast(f)) for (const d of ["ke", "anaerob"]) m.set(d, Math.min(1, (m.get(d) ?? 0) + BEAST_WEIGHT));
   return m;
 }
 

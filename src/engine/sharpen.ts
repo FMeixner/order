@@ -16,10 +16,9 @@ import { DOMAINS, SHARPEN } from "../data";
 import type { AppState, Block, Focus, Goal, PlanBlock } from "../types";
 import type { AxisId } from "./balance";
 import { estimateRole } from "./duration";
-import { blockFocus, focusName, rolesFor } from "./plan";
+import { addDays, blockFocus, daysBetween, focusName, isTestBlock, isoDate, rolesFor } from "./plan";
 import { evaluateBlock } from "./norms";
-import { residualClocks } from "./residual";
-import { CLOCK_SHARPEN, hotClocks } from "./steer";
+import { CLOCKS, residualClocks, type ClockId } from "./residual";
 
 export type DomainId = "speed" | "power" | "strength" | "ke" | "anaerob" | "aerob" | "skill" | "mobility";
 export interface Deficit { id: DomainId; name: string; score: number | null; kind: "norm" | "trend" }
@@ -66,7 +65,7 @@ export function deficitsOf(state: AppState, blockId: string): Deficit[] {
 /** Letzte Testwoche vor einem Datum (Block der jüngsten Testergebnisse) */
 export function latestTest(state: AppState, before: string): { blockId: string; date: string } | null {
   let best: { blockId: string; date: string } | null = null;
-  for (const list of Object.values(state.tests)) for (const r of list) {
+  for (const list of Object.values(state.tests ?? {})) for (const r of list) {
     if (r.date < before && (!best || r.date > best.date)) best = { blockId: r.blockId, date: r.date };
   }
   return best;
@@ -78,6 +77,8 @@ export function deficitsBefore(state: AppState, date: string): { blockId: string
 
 export interface SlotPlan {
   domain: DomainId | null;
+  /** Zweck aus dem Jahresplan (1.3) */
+  purpose?: SlotPurpose;
   source: "auto" | "manual" | "off" | "none";
   /** Klartext, warum dieser Bereich (oder keiner) */
   reason: string;
@@ -91,16 +92,77 @@ export interface SlotsPlan {
   deferred: Deficit[];
 }
 
-/** Vertiefung: erste Domäne aus den Sekundärzielen des Ordens, die ein Slot-Modul hat, das Primat nicht stört
-    und weder Slot 1 selbst noch dessen Achse doppelt */
-function deepening(f: Focus, s1: DomainId | null): SlotPlan {
-  const s1Axis = s1 ? DOMAIN_AXIS[s1] : null;
-  for (const goal of f.goals.secondary) for (const d of GOAL_DOMAINS[goal]) {
-    if (!SHARPEN[d] || interferes(f, d)) continue;
-    if (s1 && (d === s1 || DOMAIN_AXIS[d] === s1Axis)) continue;
-    return { domain: d, source: "auto", reason: `Vertiefung: ${domainName(d)} trägt das Sekundärziel neben dem Primat des Ordens.` };
+/* ---------- Jahresplan der Schwerpunkte (1.3) ----------
+   Jeder Orden hat einen Schwerpunkt-Slot. Befüllt wird er in der Jahresgesamtschau, Phase für Phase in Zeitfolge,
+   mit genau einem von vier Zwecken — nicht jede Phase muss alles schaffen, das Jahr muss stimmen:
+   - Testdefizit: Bereich deutlich unter der Norm (oder schlechter geworden) in der letzten Testwoche.
+   - Erhalt: Bereich, den der Plan sonst verfallen ließe — die Hochrechnung der Uhren (letzter Reiz durch Orden,
+     Bestien oder einen früheren Slot) liegt zur Phasenmitte über 70 % seines Haltefensters.
+   - Double down: der Orden trainiert den Bereich selbst und hat ein Modul dafür — der Slot legt nach.
+   - Sekundärziel: ein Nebenziel des Ordens mit Modul.
+   Nie gegen den Orden: Bereiche, die das Ordensziel stören (Interferenz), bekommen keinen Slot. Derselbe Bereich
+   zweimal in Folge kostet (außer bei einem Testdefizit). Eigene Wahl und „aus“ im Phasenblatt gehen immer vor. */
+export type SlotPurpose = "defizit" | "erhalt" | "double" | "sekundaer";
+export const PURPOSE_LABEL: Record<SlotPurpose, string> = { defizit: "Testdefizit", erhalt: "Erhalt", double: "Double down", sekundaer: "Sekundärziel" };
+export interface YearSlot { domain: DomainId | null; purpose?: SlotPurpose; reason: string }
+
+const clockOfDomain = (d: DomainId): ClockId | null => (d === "speed" || d === "power" ? "schnellkraft" : (["ke", "anaerob", "aerob", "mobility"] as string[]).includes(d) ? (d as ClockId) : null);
+const budgetOf = (c: ClockId) => CLOCKS.find((x) => x.id === c)?.budget ?? 21;
+/** Bereiche, die ein Orden ohne Slot reizt: Haupt- und Nebenziele, Bestien halten Kraftausdauer und Intervalle */
+function orderTouches(f: Focus): Set<DomainId> {
+  const out = new Set<DomainId>([...GOAL_DOMAINS[f.goals.primary], ...f.goals.secondary.flatMap((g) => GOAL_DOMAINS[g])]);
+  if (Object.values(f.roles).some((r) => r.blocks.some((x) => x.type === "beast"))) { out.add("ke"); out.add("anaerob"); }
+  return out;
+}
+
+const yearCache = new WeakMap<AppState, Map<string, YearSlot>>();
+/** Schwerpunkte aller laufenden und künftigen Phasen, in der Jahresgesamtschau befüllt */
+export function yearSlots(state: AppState, today: string = isoDate(new Date())): Map<string, YearSlot> {
+  const hit = yearCache.get(state);
+  if (hit) return hit;
+  const out = new Map<string, YearSlot>();
+  const blocks = [...state.plan].filter((b) => !isTestBlock(b)).sort((a, b) => a.start.localeCompare(b.start));
+  const first = blocks.find((b) => b.end >= today);
+  // Hochrechnung startet mit den echten Uhren zum Beginn der laufenden Phase — so bleibt deren Slot stabil
+  const last = new Map<ClockId, string | null>();
+  if (first) for (const c of residualClocks(state, first.start)) last.set(c.id, c.last);
+  const aim1 = state.yearAims?.find((a) => a.prio === 1)?.aim;
+  let prev: DomainId | null = null;
+  for (const b of blocks) {
+    if (b.end < today) continue;
+    const f = blockFocus(b);
+    if (!f || !slotEligible(f)) { out.set(b.id, { domain: null, reason: f ? `${focusName(f.id)} hat keinen Schwerpunkt-Slot.` : "" }); continue; }
+    const mid = addDays(b.start, Math.floor(daysBetween(b.start, b.end) / 2));
+    const own = new Set(GOAL_DOMAINS[f.goals.primary]);
+    const sec = new Set(f.goals.secondary.flatMap((g) => GOAL_DOMAINS[g]));
+    const touches = orderTouches(f);
+    const defs = deficitsBefore(state, b.start)?.list ?? [];
+    let best: { d: DomainId; s: number; purpose: SlotPurpose; reason: string } | null = null;
+    for (const d of Object.keys(SHARPEN) as DomainId[]) {
+      if (interferes(f, d)) continue;
+      let sc = 0, purpose: SlotPurpose = "sekundaer", reason = "";
+      const def = defs.find((x) => x.id === d);
+      const c = clockOfDomain(d);
+      const ago = c ? (last.get(c) ? daysBetween(last.get(c)!, mid) : Infinity) : 0;
+      if (def && !own.has(d)) { sc = def.kind === "norm" ? 5 : 4; purpose = "defizit"; reason = `Testdefizit: ${def.kind === "norm" ? `${def.score} Punkte` : "schlechter als beim letzten Test"}.`; }
+      // Erhalt: länger vernachlässigt zählt mehr — absolut, sonst gewinnt das kürzeste Haltefenster immer
+      else if (c && !touches.has(d) && ago >= 0.7 * budgetOf(c)) { sc = 3 + Math.min(0.5, Math.max(0, ago - budgetOf(c)) / 60); purpose = "erhalt";  reason = `Erhalt: ohne Slot läge der letzte Reiz zur Phasenmitte ${ago === Infinity ? "nie" : `${ago} Tage`} zurück (hält etwa ${budgetOf(c)}).`; }
+      // Hauptziel des Jahres (oder Spezialist): Double down vor Erhalt
+      if (own.has(d)) { const x = (aim1 && DOMAIN_AXIS[d] === aim1) || state.user.focusMode === "special" ? 3.6 : 2.2; if (x > sc) { sc = x; purpose = "double"; reason = `Double down: ${focusName(f.id)} trainiert ${domainName(d)} selbst, der Slot legt nach.`; } }
+      if (sec.has(d) && !own.has(d) && 1.8 > sc) { sc = 1.8; purpose = "sekundaer"; reason = `Sekundärziel: ${domainName(d)} vertieft das Nebenziel von ${focusName(f.id)}.`; }
+      if (sc > 0 && prev === d && purpose !== "defizit") sc -= 0.8;
+      if (sc > 0 && (!best || sc > best.s)) best = { d, s: sc, purpose, reason };
+    }
+    let chosen: DomainId | null = best?.d ?? null;
+    if (b.sharpen === "off") { chosen = null; out.set(b.id, { domain: null, reason: "Für diese Phase ausgeschaltet." }); }
+    else if (b.sharpen && SHARPEN[b.sharpen]) { chosen = b.sharpen as DomainId; out.set(b.id, { domain: chosen, reason: "Selbst gewählt." }); }
+    else out.set(b.id, best ? { domain: best.d, purpose: best.purpose, reason: best.reason } : { domain: null, reason: "Kein Bereich braucht hier einen Slot." });
+    // Hochrechnung fortschreiben: Was Orden und Slot in dieser Phase reizen, ist zum Phasenende frisch
+    for (const d of [...touches, ...(chosen ? [chosen] : [])]) { const c = clockOfDomain(d); if (c) last.set(c, b.end); }
+    prev = chosen;
   }
-  return { domain: null, source: "none", reason: "Das Sekundärziel braucht eigene Blöcke oder stört das Ordensziel — kein zweiter Slot." };
+  yearCache.set(state, out);
+  return out;
 }
 
 export function slotsFor(state: AppState, b: PlanBlock): SlotsPlan {
@@ -130,38 +192,15 @@ export function slotsFor(state: AppState, b: PlanBlock): SlotsPlan {
     return none(skipped.length ? `${skipped.join(", ")}. Die übrigen Defizite passen nicht in einen Slot.` : "Die Defizite passen nicht in einen Slot, sie gehen in den Vorschlag für die Blockfolge.");
   })();
 
-  // --- Slot 2: Vertiefung — die rote Uhr kommt zuerst (Eskalationsleiter Stufe 2: Messung vor
-  //     Test und Sekundärziel), sonst beim Allrounder das stärkste verbleibende Defizit,
-  //     sonst die Vertiefung des Sekundärziels. Uhren, die der Orden selbst trainiert (own)
-  //     oder die das Ordensziel stören (interferes), kriegen keinen Slot — sie brauchen einen Orden.
-  let s2: SlotPlan;
-  if (b.sharpen2 === "off") s2 = { domain: null, source: "off", reason: "Für diese Phase ausgeschaltet." };
-  else if (b.sharpen2 && SHARPEN[b.sharpen2]) s2 = { domain: b.sharpen2 as DomainId, source: "manual", reason: "Selbst gewählt." };
-  else {
-    const s1Axis = s1.domain ? DOMAIN_AXIS[s1.domain] : null;
-    let s2hot: SlotPlan | null = null;
-    for (const c of hotClocks(residualClocks(state, b.start))) {
-      for (const d of CLOCK_SHARPEN[c.id] as DomainId[]) {
-        if (!SHARPEN[d] || own.has(d) || interferes(f, d)) continue;
-        if (s1.domain && (d === s1.domain || DOMAIN_AXIS[d] === s1Axis)) continue; // nie zwei Slots auf derselben Achse
-        s2hot = { domain: d, source: "auto", reason: `Rote Uhr: ${c.name} ${c.days === null ? "noch nie" : `${c.days}/${c.budget}`} Tage über Budget — die Vertiefung hält den Bereich frisch.` };
-        break;
-      }
-      if (s2hot) break;
-    }
-    if (s2hot) s2 = s2hot;
-    else if (state.user.focusMode !== "special") {
-      let cand: Deficit | undefined;
-      for (const d of list) {
-        if (d.id === s1.domain || own.has(d.id) || deferred.includes(d)) continue;
-        if (s1Axis && DOMAIN_AXIS[d.id] === s1Axis) continue; // nie zwei Slots auf derselben Achse
-        cand = d; break;
-      }
-      if (cand) s2 = { domain: cand.id, source: "auto", reason: `Zweites Defizit: ${cand.name} ${cand.kind === "norm" ? `(${cand.score} Punkte)` : "(Rückgang)"} aus der letzten Testwoche.` };
-      else s2 = deepening(f, s1.domain);
-    } else s2 = deepening(f, s1.domain);
-  }
-  return { s1, s2, deferred };
+  // --- Seit 1.3 ein Schwerpunkt je Orden: Laufende und künftige Phasen befüllt der Jahresplan (yearSlots),
+  //     vergangene behalten die alte Regel (Schwachstelle aus der Testwoche). Slot 2 gibt es nicht mehr.
+  const ys = yearSlots(state).get(b.id);
+  // Eigene Wahl und „aus“ der übergebenen Phase gehen vor (auch wenn sie noch nicht im Plan gespeichert ist)
+  const s1y: SlotPlan = b.sharpen === "off" || (b.sharpen && SHARPEN[b.sharpen]) ? s1
+    : ys ? { domain: ys.domain, source: ys.domain ? "auto" : "none", reason: ys.reason, purpose: ys.purpose } : s1;
+  const s2: SlotPlan = { domain: null, source: "none", reason: "Ein Schwerpunkt je Orden." };
+  return { s1: s1y, s2, deferred };
+
 }
 
 /** Orden dieser Phase mit eingebauten Slots. Ändert nichts, wenn kein Slot aktiv ist.

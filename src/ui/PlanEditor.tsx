@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
 import { FOCI, FOCUS_BY_ID, SHARPEN } from "../data";
-import { domainName, interferes, slotEligible, type DomainId, type SlotPlan, type SlotsPlan } from "../engine/sharpen";
+import { domainName, interferes, PURPOSE_LABEL, slotEligible, type DomainId, type SlotPlan, type SlotsPlan } from "../engine/sharpen";
 import type { DeficitWeights } from "../engine/sequence";
 import { timeBias } from "../engine/sequence";
 import { KCAL_LABEL } from "../engine/kcal";
@@ -179,6 +179,10 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
         </Field>
       )}
 
+      {f && slotEligible(f) && b.end >= day && (
+        <SlotField f={f} label="Schwerpunkt" value={b.sharpen} auto={slotInfo?.({ ...b, sharpen: undefined }).s1} hint="Ein Slot je Orden, im Jahr verteilt: Testdefizit, Erhalt, Double down oder Sekundärziel." onChange={(sharpen) => setB({ ...b, sharpen })} />
+      )}
+
       {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && (!b.meso || lastPart) && (
         <Check checked={test} onChange={setTest} label="Testwoche am Ende (die letzte Woche wird zur Testwoche)" />
       )}
@@ -190,7 +194,7 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
         </div>
       )}
 
-      <Collapse title="Mehr" meta="Name, Last, Zeitraum, Wochenplan, Schwerpunkt">
+      <Collapse title="Mehr" meta="Name, Last, Zeitraum, Wochenplan">
         <div className="stack">
           <Field label="Name" hint="z. B. Wintersemester, Ferien, Projektphase">
             <input type="text" value={b.label} onChange={(e) => setB({ ...b, label: e.target.value })} />
@@ -204,12 +208,6 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
           </div>
           <Check checked={ownWeek} onChange={(v) => { setOwnWeek(v); if (!v) setB({ ...b, schedule: undefined }); }} label="Eigener Wochenplan für diese Phase" />
           {ownWeek && <WeekEditor schedule={b.schedule ?? {}} profiles={profiles} onChange={(schedule) => setB({ ...b, schedule })} allowEmpty />}
-          {f && slotEligible(f) && (
-            <>
-              <SlotField f={f} label="Schwerpunkt 1 — Schwachstelle" value={b.sharpen} auto={slotInfo?.({ ...b, sharpen: undefined }).s1} hint="Kleine Erhaltungsdosis für den schwächsten Bereich aus der letzten Testwoche." onChange={(sharpen) => setB({ ...b, sharpen })} />
-              <SlotField f={f} label="Schwerpunkt 2 — Vertiefung" value={b.sharpen2} auto={slotInfo?.({ ...b, sharpen2: undefined }).s2} hint="Vertieft das Sekundärziel des Ordens; beim Allrounder stattdessen das zweite Defizit aus der Testwoche." onChange={(sharpen2) => setB({ ...b, sharpen2 })} />
-            </>
-          )}
         </div>
       </Collapse>
       <div className="sticky-actions">
@@ -226,7 +224,7 @@ function SlotField({ f, label, hint, value, auto, onChange }: { f: Focus; label:
   return (
     <Field label={label} hint={value ? (value === "off" ? "Kein Slot, der Orden bekommt die volle Zeit." : SHARPEN[value]?.why) : auto?.reason || hint}>
       <select value={value ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
-        <option value="">Automatisch{auto?.domain ? `: ${domainName(auto.domain)}` : " (derzeit keiner)"}</option>
+        <option value="">Automatisch{auto?.domain ? `: ${domainName(auto.domain)}${auto.purpose ? ` · ${PURPOSE_LABEL[auto.purpose]}` : ""}` : " (derzeit keiner)"}</option>
         {Object.entries(SHARPEN).map(([id, d]) => <option key={id} value={id} disabled={interferes(f, id as DomainId)}>{d.name}{interferes(f, id as DomainId) ? " (stört das Ziel dieses Ordens)" : ""}</option>)}
         <option value="off">Aus</option>
       </select>

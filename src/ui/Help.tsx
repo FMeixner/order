@@ -90,22 +90,13 @@ export function Help() {
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Orden vor der Testwoche misst sie die Testwoche nicht mehr im Vollbesitz.</li>
       </ul>
 
-      <h3>Residual-Uhren</h3>
+      <h3>Bereiche: Frische und Plan</h3>
       <ul>
-        <li>Jede Uhr zählt die Tage seit dem letzten wirksamen Reiz eines Bereichs — abgeleitet aus deinen erledigten Einheiten, ohne neue Eingaben. Rot heißt über Haltefenster: Dann hält ein Orden mit dem Bereich als Ziel, ein Schwerpunkt-Slot oder eine passende Bestie ihn frisch.</li>
-        <li>Haltefenster: Sprungkraft und Schnelligkeit etwa eine Woche, Kraftausdauer und Anaerob zwei, Ausdauer, Beweglichkeit und Sehnen drei, Kraft und Masse einen Monat. Warm-up und Cool-down zählen nicht, Bestien und die freie Jagd wie jede Einheit. Die Uhren sind Messung, kein Planer: Rot sperrt nichts, es lenkt die Vorschläge.</li>
-      </ul>
-
-      <h3>Domänen-Bilanz</h3>
-      <ul>
-        <li>Effektive Wochen je Bereich und Halbjahr: Das Hauptziel eines Ordens zählt voll, jedes Nebenziel halb; Kondition trägt Kraftausdauer und Anaerob, Masse läuft mit der Kraft mit, Sehnen nach dem Anteil an Halteübungen (beide ohne Pflicht). Jeder getestete Bereich braucht mindestens 4 effektive Wochen je Halbjahr, sonst meldet die Bilanz eine Lücke.</li>
-        <li>Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge (ein Zeichen zählt als eine Phase) — Harlequin ist der Joker und unterbricht die Reihe. Die Bilanz warnt nur, nichts wird gesperrt oder eingeplant.</li>
-      </ul>
-
-      <h3>Lenkung: Wie die Vorschläge rote Uhren aufgreifen</h3>
-      <ul>
-        <li>Rote Uhren und Bilanz-Lücken fließen in die Vorschläge ein: Der Assistent zieht Zeichen und Orden vor, die die Bereiche halten (steht als Begründung am Kandidaten), Schwerpunkt 2 priorisiert rote Domänen als Vertiefung, und der Jahresblick nennt eine Gelegenheit aus dem Bestand. Nach jeder Testwoche fasst die Auswertung zusammen, was rot ist — und der Assistent zeigt sie in Schritt 3.</li>
-        <li>Alles bleibt Vorschlag: Die App plant nichts ein und sperrt nichts. Die Uhr zeigt, der Assistent schlägt vor, du entscheidest.</li>
+        <li>Neun Bereiche — Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill — mit je zwei Punkten. Zu finden in „Jahr planen“, Schritt 3; das Symbol links neben „Jahr planen“ zählt Fälliges und Lücken.</li>
+        <li><strong>Frische</strong> (Rückblick): Wie lange der letzte wirksame Reiz her ist, aus deinen erledigten Einheiten. Jeder Bereich hält eine Weile: Spritzigkeit etwa eine Woche, Kraftausdauer und Intervalle zwei, Grundausdauer, Beweglichkeit und Sehnen drei, Kraft und Muskel einen Monat. Grün frisch, gelb bald fällig (ab 70 %), rot fällig. Warm-up und Cool-down zählen nicht; Bestien und die freie Jagd wie jede Einheit.</li>
+        <li><strong>Im Plan</strong> (Vorschau): Wie viele Wochen das nächste halbe Jahr den Bereich trägt — Hauptziel eines Ordens voll, Nebenziel halb. Richtwert: vier Wochen; darunter „knapp“, ohne Woche „fehlt“. Muskel und Sehnen werden nur angezeigt.</li>
+        <li>Fällige Bereiche und Lücken ziehen die Vorschläge: Der Assistent bevorzugt Zeichen und Orden, die sie halten; der Schwerpunkt-Slot hält fällige Bereiche (Erhalt); unter der Liste steht, womit du einen fälligen Bereich ohne Umplanen bedienst.</li>
+        <li>Abwechslung: Kein Hauptziel mehr als zweimal in Folge (ein Zeichen zählt als eins) — Harlequin unterbricht die Reihe. Die Waage darunter zeigt, ob das nächste halbe Jahr eher Spezialist oder Allrounder ist. Alles bleibt Hinweis, nichts wird gesperrt.</li>
       </ul>
 
       <h3>Kalorien: Energie zur Last passen</h3>
@@ -114,15 +105,14 @@ export function Help() {
         <li>Du kannst den Modus je Zeichen im Assistenten oder je Phase im Phasenblatt ändern; die App zeigt Konflikte als Symbol, sie sperrt nichts.</li>
       </ul>
 
-      <h3>Allrounder oder Spezialist</h3>
+      <h3>Schwerpunkt: ein Slot je Orden, im Jahr verteilt</h3>
       <ul>
-        <li>Jede Phase hat zwei Schwerpunkte: Schwerpunkt 1 heilt die Schwachstelle aus der letzten Testwoche, Schwerpunkt 2 vertieft das Sekundärziel des Ordens. Beim Allrounder nimmt Schwerpunkt 2 stattdessen das zweite Defizit, wenn die Testwoche eines zeigt. Beide zusammen dürfen höchstens ein Viertel der geschätzten Wochenzeit; bei Überschreitung kürzt zuerst Schwerpunkt 2 seine Tage.</li>
-        <li>Spezialisten heilen mit (Schwerpunkt 1 wie beim Allrounder), ihr Schwerpunkt 2 bleibt fest auf der Vertiefung — kein zweites Defizit, keine Ablenkung vom Ordensziel.</li>
+        <li>Jeder Orden (ab 45 Minuten) hat einen Schwerpunkt-Slot — eine kleine Zusatzdosis, höchstens ein Viertel der Wochenzeit. Befüllt wird er in der Jahresgesamtschau: Nicht jede Phase muss alles schaffen, das Jahr muss stimmen.</li>
+        <li>Vier Zwecke, in dieser Rangfolge: <strong>Testdefizit</strong> (deutlich unter der Norm oder schlechter geworden, und der Orden trainiert es nicht selbst) · <strong>Double down</strong> im Zeichen deines wichtigsten Ziels (der Orden trainiert den Bereich selbst, der Slot legt nach) · <strong>Erhalt</strong> (der Plan ließe den Bereich sonst verfallen — je länger vernachlässigt, desto eher) · <strong>Sekundärziel</strong> des Ordens.</li>
+        <li>Nie gegen den Orden: Ausdauer und Intervalle bekommen neben Muskel-, Kraft- und Schnellkraft-Orden keinen Slot (Interferenz) — sie gehen in die Wahl der Zeichen. Derselbe Bereich zweimal in Folge wird vermieden, außer bei einem Testdefizit.</li>
         <li>Beweglichkeit kommt jeden Trainingstag kurz ins Cool-down, Schnelligkeit und Sprungkraft zweimal pro Woche frisch an den Anfang, Kraftausdauer und Anaerob einmal pro Woche an den kürzesten Tag.</li>
-        <li>Nie zwei Slots am selben Tag: Schwerpunkt 1 belegt seine Tage zuerst, Schwerpunkt 2 füllt die übrigen. Ein Bereich, der alle Tage braucht (etwa Beweglichkeit jeden Tag), lässt für den zweiten dann keinen Raum — das zweite Defizit läuft dann über die Blockfolge.</li>
-        <li>Trainiert der Orden deinen schwächsten Bereich selbst, nimmt der Slot den zweitschwächsten. Würde der Bereich das Ziel des Ordens stören (Ausdauer neben Muskelaufbau) oder passt er nicht in einen Slot (Maximalkraft, Skill), schlägt die App ihn für die Blockfolge vor: Plan › Blockfolge vorschlagen, „Defizite zuerst“.</li>
         <li>Als Defizit zählt nur, was deutlich unter der Norm liegt (bei mehreren Tests höchstens 40 Punkte, bei einem höchstens 30) oder jenseits des Messfehlers schlechter wurde. So läuft die App nicht jedem Zufall hinterher.</li>
-        <li>Spezialist (Setup): kein Slot, die Blockfolge bleibt, wie du sie planst. Je Phase kannst du den Slot im Plan auch fest wählen oder ausschalten.</li>
+        <li>Im Phasenblatt steht der Schwerpunkt mit Zweck; „Automatisch“, eine eigene Wahl oder „Aus“. Im Assistenten (Schritt 4) steht er unter jedem Orden, in Schritt 3 zählt er halb für „Im Plan“.</li>
       </ul>
 
       <h3>Orte</h3>

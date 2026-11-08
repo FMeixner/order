@@ -8,10 +8,10 @@ import { PlanList } from "./ui/PlanEditor";
 import { yearAimOf } from "./ui/SectionsCard";
 import { YearWizard } from "./ui/YearWizard";
 import { Sign } from "./ui/Signs";
+import { bereiche, bereicheSummary } from "./engine/bereiche";
 import { addDays, freezePlan, setOrderNames, trainingDays } from "./engine/plan";
 import { deficitsBefore, deficitWeights, slotsFor } from "./engine/sharpen";
 import { residualClocks } from "./engine/residual";
-import { mesoBalance } from "./engine/bilanz";
 import { steerWeights } from "./engine/steer";
 import { Setup } from "./ui/Setup";
 import { TimerBar, TimerProvider } from "./ui/Timer";
@@ -60,13 +60,14 @@ export default function App() {
   // Residual-Uhren: Tage seit dem letzten wirksamen Reiz je Bereich, für Karte und Plan-Stapel
   const clocks = residualClocks(state, today);
   // Domänen-Bilanz: effektive Wochen je Bereich, für Karte und Plan-Stapel
-  const balance = mesoBalance(state.plan);
   // Lenkung: rote Uhren als Gewichte für Blockfolge und Meso-Wizard (Vorschlag, nie Einplanung)
   const steer = steerWeights(clocks);
   // Jahresblick: eine Statuszeile statt dreier Karten — die Mechanik läuft im Hintergrund weiter
-  const overClocks = clocks.filter((c) => c.over);
-  const gapNames = [...new Set(balance.gaps.map((g) => g.name))];
-  const yearMeta = [overClocks.length ? `${overClocks.length} ${overClocks.length === 1 ? "Uhr rot" : "Uhren rot"}` : null, gapNames.length ? `Lücken: ${gapNames.join(", ")}` : null]
+  // Status-Symbol im Plan: fällige Bereiche (Frische) und Lücken im Plan (nächstes halbes Jahr)
+  const ber = bereicheSummary(bereiche(state, today, state.plan, clocks));
+  const overClocks = ber.due;
+  const gapNames = ber.gaps.map((r) => r.def.name);
+  const yearMeta = [overClocks.length ? `Fällig: ${overClocks.map((r) => r.def.name).join(", ")}` : null, gapNames.length ? `Im Plan knapp: ${gapNames.join(", ")}` : null]
     .filter(Boolean).join(" · ") || "alles im Lot";
 
   if (!state.onboarded) {
@@ -103,7 +104,7 @@ export default function App() {
             </div>
           )}
           {wizard !== null && (
-            <YearWizard state={state} update={update} today={today} aim={yearAimOf(state, deficits)} deficits={deficits} steer={steer} clocks={clocks} balance={balance} startAt={wizard} onClose={() => setWizard(null)} />
+            <YearWizard state={state} update={update} today={today} aim={yearAimOf(state, deficits)} deficits={deficits} steer={steer} clocks={clocks} startAt={wizard} onClose={() => setWizard(null)} />
           )}
           {tab === "almanach" && <Almanac state={state} update={update} today={today} />}
           {tab === "setup" && <Setup state={state} update={update} replace={replace} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}

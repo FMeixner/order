@@ -4,6 +4,7 @@ import type { AppState, Load, PlanBlock, Section } from "../types";
 import { addDays, blockWeeks, isTestBlock } from "./plan";
 import { bindOf, effectiveLoads, flagsOf, klammernOf, placeWindows, planYear, rankInKlammer } from "./klammer";
 import { klammerWeek } from "./deload";
+import { semesterTemplate } from "./sections";
 
 const T = "2026-11-09"; // Montag
 const sec = (start: string, weeks: number, load: Load, name = "Abschnitt", travel = false): Section => ({ id: `${name}-${start}`, name, start, end: addDays(start, 7 * weeks - 1), load, travel });
@@ -157,5 +158,30 @@ describe("Klammern: Athletik", () => {
     const k = klammernOf(out)[0];
     expect(k.kind).toBe("athletik");
     for (const p of k.parts) expect(FOCUS_BY_ID[p.focusId].goals.primary).not.toBe("strength");
+  });
+});
+
+describe("Klammern: mehrere Ziele mit Priorität", () => {
+  it("Priorität 1 bekommt die meisten Zeichen, Priorität 2 kommt auch vor", () => {
+    const p = planYear([], YEAR, T, ids(), { aim: "muskel", aims: [{ aim: "muskel", prio: 1 }, { aim: "ausdauer", prio: 2 }] });
+    const kinds = klammernOf(p).map((k) => k.kind);
+    expect(kinds).toContain("muskel");
+    expect(kinds).toContain("gpp");
+    expect(kinds.filter((k) => k === "muskel").length).toBeGreaterThanOrEqual(kinds.filter((k) => k === "gpp").length);
+  });
+
+  it("höchstens zwei Überschuss-Zeichen im Jahr", () => {
+    const long = [sec(T, 70, "medium", "lang")];
+    const p = planYear([], long, T, ids(), { aim: "muskel" });
+    expect(klammernOf(p).filter((k) => k.kind === "muskel").length).toBeLessThanOrEqual(2);
+  });
+
+  it("Sommer ohne hohe Last trägt ein Defizit; Teile mit hoher Last bleiben auf Erhaltung", () => {
+    const yr = semesterTemplate(T); // Modelljahr: WS hoch, Ferien niedrig, SS hoch, Sommerpause mittel
+    const p = planYear([], yr, T, ids(), { aim: "allround" });
+    const eff = effectiveLoads(yr);
+    for (const b of p.filter((x) => x.kcal === "deficit")) expect(flagsOf(b, yr)).not.toContain("kcal-load");
+    expect(p.some((b) => b.kcal === "deficit")).toBe(true);
+    void eff;
   });
 });

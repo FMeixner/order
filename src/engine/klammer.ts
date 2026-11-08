@@ -19,6 +19,8 @@ import { loadOfWindow, setTestWeek, testAfter, travelOfWindow } from "./stack";
 import { timeBias, type Aim, type DeficitWeights } from "./sequence";
 
 /** Länge einer Klammer in Wochen, Testwoche eingeschlossen */
+/** Kalender: Winter (Aufbau, Überschuss) und Sommer (Defizit-Fenster) */
+const WINTER = [11, 12, 1], SUMMER = [5, 6, 7, 8];
 export const KL_MIN = 8, KL_MAX = 16, KL_TARGET = 13;
 /** Dauerlast: So viele Wochen mittlere oder hohe Last am Stück, und mittlere Last zählt als hohe */
 export const DAUERLAST_WEEKS = 8;
@@ -26,6 +28,12 @@ export const DAUERLAST_WEEKS = 8;
 const byStart = <T extends { start: string }>(x: T[]): T[] => [...x].sort((a, b) => a.start.localeCompare(b.start));
 const weeksLeft = (a: string, b: string) => Math.floor(((parseIso(b).getTime() - parseIso(a).getTime()) / 864e5 + 1) / 7);
 const monthOf = (iso: string) => parseIso(iso).getMonth() + 1;
+/** Anteil der Wochen eines Fensters, die in den genannten Monaten liegen (Saison nach Anteil statt nach Fenstermitte) */
+export const monthShare = (a: string, b: string, months: number[]) => {
+  let n = 0, hit = 0;
+  for (let d = a; d <= b; d = addDays(d, 7)) { n++; if (months.includes(monthOf(d))) hit++; }
+  return n ? hit / n : 0;
+};
 const midOf = (a: string, b: string) => addDays(a, Math.round((parseIso(b).getTime() - parseIso(a).getTime()) / 864e5 / 2));
 
 /** Anzeigename eines Zeichens mit Stichwort: „Bär · Masse“ (die Tiere allein verraten weniger als die Ordensnamen) */
@@ -40,21 +48,24 @@ export const klammerName = (id: KlammerId | undefined) => {
     ohne ruhigen Abschnitt zur hohen. Ohne Abschnitte: leer (dann gilt die Last der Phase). */
 export function effectiveLoads(sections: Section[] | undefined): Map<string, Load> {
   const out = new Map<string, Load>();
+  // Dauerlast zählt nur zusammenhängende Wochen mittlerer Last: Hohe Last ist ohnehin hoch, niedrige setzt zurück.
+  // (Modelljahre 1.3: Mit hoher Last im Zähler wurde jede Semesterpause zur Dauerlast — Defizite waren nie planbar.)
   let run = 0;
   for (const s of byStart(sections ?? [])) {
     for (let d = mondayOf(s.start); d <= s.end; d = addDays(d, 7)) {
-      run = s.load === "low" ? 0 : run + 1;
+      run = s.load === "medium" ? run + 1 : 0;
       out.set(d, s.load === "medium" && run > DAUERLAST_WEEKS ? "high" : s.load);
     }
   }
   return out;
 }
 
-/** Hat das Fenster Wochen mit (effektiv) hoher Last? */
+/** Ist das Fenster überwiegend (mehr als die Hälfte der Wochen) effektiv hoch belastet? */
 export function hasHighLoad(eff: Map<string, Load>, start: string, end: string, fallback: Load): boolean {
   if (!eff.size) return fallback === "high";
-  for (let d = mondayOf(start); d <= end; d = addDays(d, 7)) if (eff.get(d) === "high") return true;
-  return false;
+  let hi = 0, n = 0;
+  for (let d = mondayOf(start); d <= end; d = addDays(d, 7)) { n++; if (eff.get(d) === "high") hi++; }
+  return n > 0 && hi * 2 > n;
 }
 
 /* ---------- Platzierung ---------- */
@@ -94,25 +105,40 @@ export function placeWindows(sections: Section[], from: string, endOf: string): 
 
 /* ---------- Art der Klammer ---------- */
 
-export interface KindCtx { aim: Aim; deficits: DeficitWeights; steer: DeficitWeights; prev?: KlammerId; used: KlammerId[] }
+export interface KindCtx { aim: Aim; deficits: DeficitWeights; steer: DeficitWeights; prev?: KlammerId; used: KlammerId[]; pool?: string[]; aims?: AimPrio[] }
 
 /** Punkte für eine Klammer-Art in einem Fenster: Richtung des Jahres, Saison, Last, Reise, rote Uhren, Abwechslung */
-export function kindScore(k: KlammerDef, load: Load, travel: boolean, mid: string, ctx: KindCtx): number {
+export function kindScore(k: KlammerDef, load: Load, travel: boolean, win: { start: string; end: string }, ctx: KindCtx): number {
   let s = 0;
+  // Ohne einen Orden, der das Ziel trägt und zur Last passt, bleibt das Zeichen leer (Falke in Hochlast: kein Schnellkraft-Orden)
+  const carriers = candidates(ctx.pool).filter((f) => fitScore(f, load).score >= 0 && bindOf(f, k) === "lead").length;
+  if (carriers === 0) s -= 10; // praktisch ausgeschlossen: ein Zeichen ohne Träger ist leer, auch wenn es Ziel Nr. 1 ist
   const { aim } = ctx;
-  if (aim !== "allround" && aim !== "deficits") s += k.axes.includes(aim) ? 3 : k.accept.includes(aim) ? 1 : 0;
+  const lead = (a: AxisId) => (k.axes.includes(a) ? 1 : k.accept.includes(a) ? 1 / 3 : 0);
+  if (ctx.aims?.length) {
+    // Mehrere Ziele mit Priorität: 1 zählt dreifach, 2 doppelt, 3 einfach
+    for (const a of ctx.aims) s += (4 - a.prio) * lead(a.aim);
+  } else if (aim !== "allround" && aim !== "deficits") s += 3 * lead(aim);
   if (aim === "deficits") s += ctx.deficits.reduce((a, d) => a + d.w * (k.axes.includes(d.axis) ? 2 : k.accept.includes(d.axis) ? 1 : 0), 0);
-  if (k.months.includes(monthOf(mid))) s += 1.2;
+  s += 1.2 * monthShare(win.start, win.end, k.months);
+  // Kalender: Im Sommer ohne hohe Last ist Zeit für ein Defizit — Zeichen, die eins tragen können, rücken vor
+  if (k.deficitOk && load !== "high") s += 1.5 * monthShare(win.start, win.end, SUMMER);
   if (load === "high" && k.id === "regeneration") s += 1;
   if (load === "low" && (k.id === "muskel" || k.id === "kraft")) s += 0.5;
   if (travel) s += k.travel ? 1.5 : -2;
   s += 0.8 * ctx.steer.filter((d) => k.axes.includes(d.axis)).length;
-  if (ctx.prev === k.id) s -= aim !== "allround" && aim !== "deficits" && k.axes.includes(aim) ? 1 : 2.5;
+  const top = ctx.aims?.find((a) => a.prio === 1)?.aim ?? (aim !== "allround" && aim !== "deficits" ? aim : undefined);
+  if (ctx.prev === k.id) s -= top && k.axes.includes(top) ? 1 : 2.5;
   s -= 0.6 * ctx.used.filter((u) => u === k.id).length;
+  // Zwei Überschuss-Zeichen im Jahr reichen für Hypertrophie (Grundsatz: zwei Aufbaublöcke); ein drittes rückt deutlich zurück
+  if (k.kcal === "surplus" && ctx.used.filter((u) => KLAMMER_BY_ID[u]?.kcal === "surplus").length >= 2) s -= 3;
   return s;
 }
 
 /* ---------- Orden in der Klammer ---------- */
+
+/** Ein Jahresziel mit Priorität (1 = wichtigstes) */
+export interface AimPrio { aim: AxisId; prio: 1 | 2 | 3 }
 
 export type Bind = "lead" | "accept" | "none";
 /** Zielbindung eines Ordens an die Klammer: trägt er die Leitachse (lead), eine Nebenachse (accept) oder keine? */
@@ -137,7 +163,8 @@ export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnTyp
   if (pos === "mid" && (k.early.includes(f.id) || k.late.includes(f.id))) s += 0.6;
   if (prev?.id === f.id) s -= 5;
   if (usedInK.includes(f.id)) s -= 4;
-  if (usedBefore.includes(f.id)) s -= 0.5;
+  // Abwechslung übers Jahr: jede frühere Verwendung im letzten Jahr kostet (Troubadour war in Modelljahren Lückenfüller)
+  s -= 0.7 * usedBefore.filter((x) => x === f.id).length;
   if (prev?.successors?.includes(f.id)) s += 0.5;
   s += 0.5 * timeBias(b, f);
   const v = goalVector(f);
@@ -162,8 +189,8 @@ export function rankInKlammer(plan: PlanBlock[], id: string, pool?: string[], st
   // Vorgänger: der Teil davor, beim ersten Teil der letzte Orden vor der Klammer (dieselbe Bewertung wie planYear)
   const before = byStart(plan).filter((x) => x.end < b.start && !isTestBlock(x));
   const prev = i > 0 ? FOCUS_BY_ID[parts[i - 1].focusId] : FOCUS_BY_ID[before[before.length - 1]?.focusId ?? ""];
-  const prevK = before.length ? before[before.length - 1].meso : undefined;
-  const usedBefore = i === 0 && prevK ? plan.filter((x) => x.meso === prevK && !isTestBlock(x)).map((x) => x.focusId) : [];
+  const kStart = parts[0].start;
+  const usedBefore = yearBefore(plan, kStart);
   // Nur die Teile davor zählen als „schon gewählt“ — wie beim Planen, das vorne beginnt
   const usedInK = parts.slice(0, i).map((x) => x.focusId);
   const weeks = weeksLeft(b.start, b.end);
@@ -173,18 +200,22 @@ export function rankInKlammer(plan: PlanBlock[], id: string, pool?: string[], st
     .sort((x, y) => y.score - x.score);
 }
 
+/** Orden im Jahr vor einem Datum (ohne Testwochen) — Grundlage für die Abwechslung übers Jahr */
+const yearBefore = (plan: PlanBlock[], at: string) => plan.filter((x) => !isTestBlock(x) && x.focusId && x.end < at && x.start >= addDays(at, -365)).map((x) => x.focusId);
+
 const candidates = (pool?: string[]) => (pool?.length ? FOCI.filter((f) => pool.includes(f.id)) : FOCI).filter((f) => f.id !== TEST_BLOCK);
 
 /* ---------- Kalorien je Klammer ---------- */
 
 /** Kalorien-Modus einer Klammer mit Begründung. Rangfolge: Last → Kalender → Reise → Grundmodus. */
 export function kcalOfKlammer(k: KlammerDef, start: string, end: string, eff: Map<string, Load>, load: Load, travel: boolean): { mode: Kcal; why: string } {
-  const m = monthOf(midOf(start, end));
   let mode: Kcal = k.kcal, why = `Grundmodus: ${k.name} · ${k.tag}`;
-  if ([11, 12, 1].includes(m) && (k.id === "muskel" || k.id === "kraft")) { mode = "surplus"; why = "Winter: Aufbau mit Überschuss"; }
-  if ([5, 6, 7, 8].includes(m) && k.deficitOk) { mode = "deficit"; why = "Sommer: Defizit-Fenster"; }
+  if (monthShare(start, end, WINTER) >= 0.5 && (k.id === "muskel" || k.id === "kraft")) { mode = "surplus"; why = "Winter: Aufbau mit Überschuss"; }
+  if (monthShare(start, end, SUMMER) >= 0.4 && k.deficitOk) { mode = "deficit"; why = "Sommer: Defizit-Fenster"; }
   if (travel) { mode = mode === "surplus" ? "surplus" : "maintenance"; why = "Reise: Erhaltung, kohlenhydratbetont"; }
+  // Last zuerst — aber je Orden: Ein Defizit-Zeichen hält in Teilen mit hoher Last oder Dauerlast nur Erhaltung
   if (mode === "deficit" && hasHighLoad(eff, start, end, load)) { mode = "maintenance"; why = "Hohe Last oder Dauerlast: kein Defizit"; }
+  else if (mode === "deficit") why += " — Teile mit hoher Last bleiben auf Erhaltung";
   return { mode, why };
 }
 
@@ -196,6 +227,8 @@ export interface PlanYearOpts {
   steer?: DeficitWeights;
   testPolicy?: "each" | "twice" | "none";
   pool?: string[];
+  /** Mehrere Jahresziele mit Priorität 1–3 (ersetzt `aim`, wenn gesetzt) */
+  aims?: AimPrio[];
   /** Klammer-Art je Fenster (Index), von Hand gewählt im Assistenten */
   kinds?: Partial<Record<number, KlammerId>>;
 }
@@ -222,9 +255,9 @@ export function planYear(plan: PlanBlock[], sections: Section[], today: string, 
   const windows = placeWindows(secs, from, endOf);
   let out: PlanBlock[] = [...kept];
   const keptKinds = kept.filter((b) => b.klammer).map((b) => b.klammer!);
-  const ctx: KindCtx = { aim, deficits, steer, prev: keptKinds[keptKinds.length - 1], used: [...keptKinds] };
+  const ctx: KindCtx = { aim, deficits, steer, prev: keptKinds[keptKinds.length - 1], used: [...keptKinds], pool, aims: opts.aims };
   let prevF: Focus | undefined = FOCUS_BY_ID[[...kept].reverse().find((b) => !isTestBlock(b))?.focusId ?? ""];
-  let usedBefore: string[] = [];
+  let usedBefore: string[] = yearBefore(kept, from);
 
   windows.forEach((w, wi) => {
     const load = loadOfWindow(secs, w.start, w.end);
@@ -232,7 +265,7 @@ export function planYear(plan: PlanBlock[], sections: Section[], today: string, 
     const mid = midOf(w.start, w.end);
     const pinnedKind = pinsAt(mid)?.pin?.klammer ? pinsAt(mid)!.klammer : undefined;
     const forced = opts.kinds?.[wi] ?? pinnedKind;
-    const k = forced ? KLAMMER_BY_ID[forced] : [...KLAMMERN].sort((a, b) => kindScore(b, load, travel, mid, ctx) - kindScore(a, load, travel, mid, ctx))[0];
+    const k = forced ? KLAMMER_BY_ID[forced] : [...KLAMMERN].sort((a, b) => kindScore(b, load, travel, w, ctx) - kindScore(a, load, travel, w, ctx))[0];
     ctx.prev = k.id; ctx.used.push(k.id);
 
     const test = testPolicy !== "none" && w.weeks >= 5;
@@ -250,6 +283,7 @@ export function planYear(plan: PlanBlock[], sections: Section[], today: string, 
       if (forced) b.pin = { klammer: true };
       const pinned = pinsAt(midOf(at, end));
       if (pinned?.pin?.focus && FOCUS_BY_ID[pinned.focusId]) { b.focusId = pinned.focusId; b.pin = { ...b.pin, focus: true }; }
+      if (b.kcal === "deficit" && hasHighLoad(eff, b.start, b.end, b.load)) b.kcal = "maintenance";
       if (pinned?.pin?.kcal && pinned.kcal) { b.kcal = pinned.kcal; b.pin = { ...b.pin, kcal: true }; }
       if (!b.focusId) {
         const best = candidates(pool)
@@ -263,7 +297,7 @@ export function planYear(plan: PlanBlock[], sections: Section[], today: string, 
       at = addDays(end, 1);
     }
     if (test) out.push({ id: newId(), focusId: TEST_BLOCK, label: "Testwoche", start: at, end: addDays(at, 6), load, travel: false });
-    usedBefore = usedInK;
+    usedBefore = [...usedBefore, ...usedInK];
   });
 
   // Zweimal im Jahr: die mittlere und die letzte Testwoche bleiben, die anderen gehen an die Phase davor zurück

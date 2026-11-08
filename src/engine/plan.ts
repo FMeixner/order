@@ -516,10 +516,11 @@ export function beastBudget(block: Extract<Block, { type: "beast" }>, opts: Beas
   const boost = !!opts.boost && !opts.reduced;
   const cap = (role.cap ?? Math.max(role.minutes, f.session_min)) + (boost ? BOOST_MIN : 0);
   const at = roleAt(role, opts.profile);
-  const e = estimateRole(at, opts.profile, opts.state.user, opts.week, opts.reduced, boost);
+  // Budget immer mit vollen Sätzen rechnen: −1 Satz (Entlastung, vor der Testwoche) soll die Bestie nicht ändern
+  const e = estimateRole(at, opts.profile, opts.state.user, opts.week, false, boost);
   // Schwert über Stufe 1 (Basics, längere Stufen): der Tag wird länger, die Bestie bleibt
   const sword = opts.profile.has.sword ? at.blocks.reduce((s, b) => s + (b.type === "module" && isWeaponModule(b.module) ? weaponSeconds(b.module, b.variant, opts.state.user.skills ?? null, boost) - weaponSeconds(b.module, b.variant, undefined, boost) : 0), 0) / 60 : 0;
-  return cap + sword - (e.total - blockSeconds(block, opts.profile, opts.reduced, boost) / 60);
+  return cap + sword - (e.total - blockSeconds(block, opts.profile, false, boost) / 60);
 }
 
 function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {

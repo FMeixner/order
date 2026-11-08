@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { evaluateBlock } from "../engine/norms";
 import { focusName, isTestBlock, isoDate } from "../engine/plan";
-import { deficitsOf, domainName, slotsFor, type SlotsPlan } from "../engine/sharpen";
+import { deficitsOf, domainName, PURPOSE_LABEL, slotsFor, type SlotsPlan } from "../engine/sharpen";
 import { residualClocks } from "../engine/residual";
 import { mesoBalance } from "../engine/bilanz";
 import { FOCUS_BY_ID, SHARPEN } from "../data";
@@ -34,12 +34,10 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
   const canApply = !!(update && ((nextB && slots && wants(nextB, slots)) || slotsParts.some((x) => wants(x.p, x.s))));
   const slotItems = (s: SlotsPlan) => (
     <ul>
-      <li>Schwerpunkt 1 (Schwachstelle): {s.s1.domain
+      <li>Schwerpunkt{s.s1.purpose ? ` (${PURPOSE_LABEL[s.s1.purpose]})` : ""}: {s.s1.domain
         ? <><strong>{domainName(s.s1.domain)}</strong>, {dayText(s.s1.domain)}. {s.s1.reason}</>
         : s.s1.source === "off" ? "ausgeschaltet." : s.s1.reason}</li>
-      <li>Schwerpunkt 2 (Vertiefung): {s.s2.domain
-        ? <><strong>{domainName(s.s2.domain)}</strong>, {dayText(s.s2.domain)}. {s.s2.reason}</>
-        : s.s2.source === "off" ? "ausgeschaltet." : s.s2.reason}</li>
+
     </ul>
   );
   const sources = [...new Map(withData.flatMap((d) => d.tests).filter((t) => t.norm).map((t) => [t.norm!.src, t.norm!.tier])).entries()];
@@ -103,7 +101,6 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
                   if (!s) return x;
                   return { ...x,
                     ...(s.s1.source === "auto" && s.s1.domain && !x.sharpen ? { sharpen: s.s1.domain } : {}),
-                    ...(s.s2.source === "auto" && s.s2.domain && !x.sharpen2 ? { sharpen2: s.s2.domain } : {}),
                   };
                 }) }))}>{slotsParts.length ? "Für das Zeichen übernehmen" : "Für die nächste Phase übernehmen"}</button>
               </div>
