@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.3] – 2026-11-08
+
+### Geändert
+- Assassin braucht mittlere Alltagslast. Bei hoher Last plant die App kein Defizit, und ohne Defizit verliert der Orden seinen Zweck. Er rutscht deshalb nicht mehr in Phasen mit hoher Last; von Hand geht er weiter.
+
 ## [1.4.2] – 2026-11-08
 
 ### Geändert
