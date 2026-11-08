@@ -10,6 +10,7 @@ Ein Orden ist eine JSON-Datei in `data/orders/`. Der Dateiname ist die `id`. Die
 | `goals` | `primary` plus `secondary`: hypertrophy, strength, power, speed, conditioning, endurance, fatloss, skill, mobility, wellbeing, test |
 | `nutrition` | deficit, maintenance, surplus, any |
 | `load_fit` | Alltagslast, die der Orden verträgt: high, medium, low |
+| `high_load` | Optional. Hohe Alltagslast: `odd`/`even` ersetzen gleichnamige Rollen in ungeraden/geraden Phasenwochen (Pilgrim: 3 × 4 Min, jede zweite Woche Grundlage), `note` erklärt es |
 | `session_min`, `level` | typische Dauer, Niveau |
 | `weeks` | `{ "min": 8, "max": 12 }` |
 | `test_week` / `test_weeks` | letzte Woche ist Testwoche / explizite Wochen |

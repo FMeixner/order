@@ -155,7 +155,10 @@ for (const [f, d] of allFoci) {
     if (kind === "interval" && !s.interval) err(f, `${s.id}: interval fehlt`);
   };
 
-  for (const [rk, r] of Object.entries(d.roles || {})) {
+  // Hohe Alltagslast: Ersatzrollen müssen eine Rolle des Ordens ersetzen und werden geprüft wie jede Rolle
+  const hl = Object.entries({ ...Object.fromEntries(Object.entries(d.high_load?.odd || {}).map(([k, v]) => [`${k} (hohe Last, ungerade)`, v])), ...Object.fromEntries(Object.entries(d.high_load?.even || {}).map(([k, v]) => [`${k} (hohe Last, gerade)`, v])) });
+  for (const k of [...Object.keys(d.high_load?.odd || {}), ...Object.keys(d.high_load?.even || {})]) if (!d.roles[k]) err(f, `high_load: Rolle "${k}" fehlt in roles`);
+  for (const [rk, r] of [...Object.entries(d.roles || {}), ...hl]) {
     const ctx = `${rk}`;
     if (!TIERS.has(r.location)) err(f, `${ctx}: location muss gym, home oder reise sein`);
     for (const w of [...(r.warmup || []), ...(r.cooldown || [])]) if (!correctives[w]) err(f, `${ctx}: Liste "${w}" fehlt in correctives.json`);

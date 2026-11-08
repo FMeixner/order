@@ -140,6 +140,8 @@ export interface Focus {
   /** Harlequin: je Woche ein anderer Orden, in dieser Reihenfolge */
   medley?: string[];
   roles: Record<string, Role>;
+  /** Hohe Alltagslast: Rollen, die in ungeraden (odd) bzw. geraden (even) Phasenwochen an die Stelle der gleichnamigen Rolle treten */
+  high_load?: { note: string; odd?: Record<string, Role>; even?: Record<string, Role> };
 }
 
 export type Equip =

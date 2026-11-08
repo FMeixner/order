@@ -159,10 +159,20 @@ function quietMoves(state: AppState, b: PlanBlock, week: number, f: Focus, days:
 const QUIET_EXTRA = 5;
 const DAY_LONG: Record<Weekday, string> = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag", Sa: "Samstag", So: "Sonntag" };
 
+/** Hohe Alltagslast: Ersatzrollen des Ordens (Pilgrim: Intervalle kürzer, jede zweite Woche Grundlage) */
+export function highLoadShape(f: Focus, b: PlanBlock, week: number): Focus {
+  if (b.load !== "high" || !f.high_load) return f;
+  const swap = week % 2 === 1 ? f.high_load.odd : f.high_load.even;
+  if (!swap) return f;
+  const roles = { ...f.roles };
+  for (const [k, r] of Object.entries(swap)) if (roles[k]) roles[k] = r;
+  return { ...f, roles };
+}
+
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {
   const base = blockFocus(b);
   if (!base) return null;
-  const f = base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base;
+  const f = highLoadShape(base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base, b, week);
   const n = trainingDays(state, b).length;
   let shaped = shapeFocus(f, n);
   // Kurz: gekürzte Rolle (die vier Kernübungen, Bestie eine Klasse kürzer, Schwertübungen einen Satz weniger, Ziel 35 Minuten); an jedem Tag möglich.
