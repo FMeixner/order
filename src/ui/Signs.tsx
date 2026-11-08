@@ -8,7 +8,7 @@ import { FLAG_TEXT } from "../engine/klammer";
 export type SignKind = "warn" | "off" | "pin" | "clock" | "gap" | "ok" | Kcal | `bind-${Bind}`;
 
 const KCAL_TEXT: Record<Kcal, string> = { deficit: "Defizit", maintenance: "Erhaltung", surplus: "Überschuss" };
-const BIND_TEXT: Record<Bind, string> = { lead: "trägt das Ziel der Klammer", accept: "trägt das Ziel teilweise", none: "trägt das Ziel der Klammer nicht" };
+const BIND_TEXT: Record<Bind, string> = { lead: "trägt das Ziel des Zeichens", accept: "trägt das Ziel teilweise", none: "trägt das Ziel des Zeichens nicht" };
 const TEXT: Record<string, string> = { warn: "Hinweis", off: "passt nicht", pin: "von Hand gesetzt", clock: "Uhr über Budget", gap: "Lücke in der Bilanz", ok: "alles im Lot", ...KCAL_TEXT };
 
 function path(kind: SignKind) {
@@ -45,19 +45,21 @@ export function FlagSign({ flags }: { flags: Flag[] }) {
   return <Sign kind={off ? "off" : "warn"} label={flags.map((f) => FLAG_TEXT[f]).join(" · ")} />;
 }
 
-/** Symbole der fünf Klammern: Strichzeichnungen, auch ohne Farbe unterscheidbar */
+/** Symbole der fünf Zeichen (intern: Klammern) — Tierköpfe als Strichzeichnungen, auch ohne Farbe unterscheidbar:
+    Bär (Muskelzuwachs), Stier (Kraft), Falke (Athletik), Wolf (Allround, Kondition), Hirsch (Regeneration). */
 export function KlammerIcon({ id, size = 16 }: { id: KlammerId; size?: number }) {
+  const line = { fill: "none", stroke: "currentColor", strokeWidth: 1.4, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   const d: Record<KlammerId, React.ReactNode> = {
-    // Muskelzuwachs: drei wachsende Bögen
-    muskel: <path d="M3 13c0-3 2-5 5-5s5 2 5 5M5 13c0-1.7 1.3-3 3-3s3 1.3 3 3M8 8V3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />,
-    // Kraft: Hantel
-    kraft: <path d="M1.5 8h13M3.5 5v6M5.5 4v8M10.5 4v8M12.5 5v6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />,
-    // Athletik: Blitz
-    athletik: <path d="M9.2 1.8 4 9h3.6l-1 5.2L12 7H8.3Z" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />,
-    // GPP: Kreis aus vier Bögen
-    gpp: <path d="M8 2.5a5.5 5.5 0 0 1 5.5 5.5M13.5 8A5.5 5.5 0 0 1 8 13.5M8 13.5A5.5 5.5 0 0 1 2.5 8M2.5 8A5.5 5.5 0 0 1 8 2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="6.6 2" strokeLinecap="round" />,
-    // Regeneration: Mondsichel
-    regeneration: <path d="M10.5 2.6A5.6 5.6 0 1 0 13.4 11 4.6 4.6 0 0 1 10.5 2.6Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />,
+    // Bär: runder Kopf, runde Ohren, Schnauze
+    muskel: <><circle cx="4.3" cy="4.4" r="1.9" {...line} /><circle cx="11.7" cy="4.4" r="1.9" {...line} /><path d="M8 4.4c3.4 0 5.4 2.5 5.4 5.3S11 14.6 8 14.6 2.6 12.5 2.6 9.7 4.6 4.4 8 4.4Z" {...line} /><ellipse cx="8" cy="11" rx="1.9" ry="1.4" {...line} /><circle cx="8" cy="10.6" r="0.55" fill="currentColor" /></>,
+    // Stier: geschwungene Hörner, kantiger Kopf, Nüstern
+    kraft: <><path d="M1.5 3.2c.6 2.6 2.4 3.8 4.6 3.8h3.8c2.2 0 4-1.2 4.6-3.8" {...line} /><path d="M5 7v3.6c0 2.3 1.3 3.9 3 3.9s3-1.6 3-3.9V7" {...line} /><circle cx="6.9" cy="12.6" r="0.5" fill="currentColor" /><circle cx="9.1" cy="12.6" r="0.5" fill="currentColor" /></>,
+    // Falke: gespreizte, spitze Schwingen im Sturzflug
+    athletik: <><path d="M8 6.6C6 6 3.6 5.6 1.4 7.6 4 8.1 6.1 8.8 8 10.2 9.9 8.8 12 8.1 14.6 7.6 12.4 5.6 10 6 8 6.6Z" {...line} /><circle cx="8" cy="4.6" r="1.3" {...line} /><path d="M7.1 10.2 6.6 13.6h2.8l-.5-3.4" {...line} /></>,
+    // Wolf: spitze Ohren, lange Schnauze
+    gpp: <><path d="M3 1.8 5.4 6h5.2L13 1.8V9l-5 5.4L3 9Z" {...line} /><path d="M6 8.6h.01M10 8.6h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M7 12h2" {...line} /></>,
+    // Hirsch: Geweih über schmalem Kopf
+    regeneration: <><path d="M6.2 9.2 3.6 5.2M3.6 5.2 2 3.6M3.6 5.2 4 2.2M9.8 9.2l2.6-4M12.4 5.2 14 3.6M12.4 5.2 12 2.2" {...line} /><path d="M6 8.6h4l-.6 4.2L8 14.6l-1.4-1.8Z" {...line} /></>,
   };
   return <svg className="klammer-icon" viewBox="0 0 16 16" width={size} height={size} aria-hidden>{d[id]}</svg>;
 }

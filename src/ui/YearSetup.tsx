@@ -15,7 +15,7 @@ import { SectionList } from "./SectionsCard";
 type Update = (fn: (s: AppState) => AppState) => void;
 type Dir = "allround" | "focus" | "unsure";
 const DIRS: { value: Dir; label: string }[] = [{ value: "allround", label: "Allround" }, { value: "focus", label: "Schwerpunkt" }, { value: "unsure", label: "Weiß nicht" }];
-const POLICY: { value: "each" | "twice" | "none"; label: string }[] = [{ value: "each", label: "nach jeder Klammer" }, { value: "twice", label: "zweimal im Jahr" }, { value: "none", label: "keine" }];
+const POLICY: { value: "each" | "twice" | "none"; label: string }[] = [{ value: "each", label: "nach jedem Zeichen" }, { value: "twice", label: "zweimal im Jahr" }, { value: "none", label: "keine" }];
 
 const days = (a: string, b: string) => Math.round((new Date(`${b}T12:00`).getTime() - new Date(`${a}T12:00`).getTime()) / 864e5);
 
@@ -42,7 +42,7 @@ export function YearSetup({ state, update, today }: { state: AppState; update: U
   return (
     <div className="stack">
       <h2>Dein Jahr</h2>
-      <p className="muted">Beschreibe dein Jahr in Abschnitten, so wie dein Alltag läuft: Semester, Projektzeiten, Ferien, Saison. Die App legt darüber Klammern mit einem Ziel und wählt die Orden darin. Alles lässt sich danach im Plan ändern.</p>
+      <p className="muted">Beschreibe dein Jahr in Abschnitten, so wie dein Alltag läuft: Semester, Projektzeiten, Ferien, Saison. Die App legt darüber Zeichen mit einem Ziel und wählt die Orden darin. Alles lässt sich danach im Plan ändern.</p>
 
       <div className="field-label">1 · Abschnitte</div>
       {sections.length > 0 && (
@@ -64,7 +64,7 @@ export function YearSetup({ state, update, today }: { state: AppState; update: U
 
       <div className="field-label">3 · Testwochen</div>
       <Seg value={policy} options={POLICY} onChange={(testPolicy) => update((st) => ({ ...st, testPolicy, sectionsChanged: st.plan.length > 0 }))} />
-      <p className="muted small">Eine Testwoche schließt eine Klammer ab: drei Tage Tests statt Training.</p>
+      <p className="muted small">Eine Testwoche schließt ein Zeichen ab: drei Tage Tests statt Training.</p>
 
       <button className={`btn ${!proposed || state.sectionsChanged ? "primary" : "ghost"}`} disabled={!sections.length} onClick={() => { if (!proposed || confirm("Phasen neu vorschlagen? Deine Änderungen im Plan gehen verloren.")) propose(); }}>
         {proposed ? "Neu vorschlagen" : "Vorschlag erstellen"}

@@ -7,9 +7,9 @@ export function Help() {
       <h3>Der Ablauf</h3>
       <ul>
         <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche. Mit ‹ › neben der Wochenzahl blätterst du: künftige Wochen als Vorschau, vergangene zum Nachtragen. Tage mit Schwert tragen „Schwert“ im Tagesknopf. Die Vorschau zeigt den Schwertblock auch, wenn das Profil des Tages kein Schwert hat, darunter den Ersatz (meist der Mobility-Flow für Hüfte und Schulter). So siehst du, welchen Tag du auf zuhause legen solltest.</li>
-        <li><strong>Plan</strong>: oben das Jahresbild in drei Ebenen — Lebensabschnitte (Balken = Alltagslast), Klammern (Ziel und Kalorien) und Orden (Variation), dazu der Strich für heute. Antippen öffnet Orden, Klammer oder Testwoche. Darunter der Stapel: − / + ändert die Länge wochenweise, der Stift öffnet das Phasenblatt. „Jahr planen“ führt durch den Assistenten, das Zeichen links daneben zeigt rote Uhren und Lücken. Zeichen: ▲ Hinweis, ⦸ passt nicht, Schloss = von Hand gesetzt, ↑ = ↓ Überschuss, Erhaltung, Defizit, ● ◐ ○ trägt das Ziel der Klammer ganz, teilweise, nicht. Text steht im Tooltip und im Phasenblatt.</li>
+        <li><strong>Plan</strong>: oben das Jahresbild in drei Ebenen — Lebensabschnitte (Balken = Alltagslast), Zeichen (Ziel und Kalorien) und Orden (Variation), dazu der Strich für heute. Antippen öffnet Orden, Zeichen oder Testwoche. Darunter der Stapel: − / + ändert die Länge wochenweise, der Stift öffnet das Phasenblatt. „Jahr planen“ führt durch den Assistenten, das Symbol links daneben zeigt rote Uhren und Lücken. Symbole: ▲ Hinweis, ⦸ passt nicht, Schloss = von Hand gesetzt, ↑ = ↓ Überschuss, Erhaltung, Defizit, ● ◐ ○ trägt das Ziel des Zeichens ganz, teilweise, nicht. Text steht im Tooltip und im Phasenblatt.</li>
         <li><strong>Almanach</strong>: Orden (alle Programme), Bestien (mit Bestzeiten, zum freien Jagen), Übungen (Arbeitsgewicht, 1RM, Verlauf) und das Log.</li>
-        <li>Jahr planen (Assistent): 1 Ziel — Richtung, Testwochen, Hausorden (aus diesen schlägt die App vor). 2 Klammern — deine Lebensabschnitte, darüber die Klammern; die Art jeder Klammer lässt sich antippen und ändern. 3 Schwachstellen — rote Uhren und Lücken, die Vorschläge greifen sie auf. 4 Orden — je Klammer die Orden mit Zielbindung, antippen zeigt Alternativen; dazu die Kalorien je Klammer. Was du von Hand wählst, wird gepinnt und bleibt beim nächsten Planen stehen. Laufende Klammern und Vergangenes bleiben unberührt.</li>
+        <li>Jahr planen (Assistent): 1 Ziel — Richtung, Testwochen, Hausorden (aus diesen schlägt die App vor). 2 Zeichen — deine Lebensabschnitte, darüber die Zeichen; jedes Zeichen lässt sich antippen und tauschen. 3 Schwachstellen — rote Uhren und Lücken, die Vorschläge greifen sie auf. 4 Orden — je Zeichen die Orden mit Zielbindung, antippen zeigt Alternativen; dazu die Kalorien je Zeichen. Was du von Hand wählst, wird gepinnt und bleibt beim nächsten Planen stehen. Laufende Zeichen und Vergangenes bleiben unberührt.</li>
         <li>Eine Phase behält den Stand ihres Ordens ab ihrem Start. Ändert sich ein Orden durch ein Update, steht im Plan „Neue Fassung verfügbar“; erst mit „Übernehmen“ gilt sie für die laufende Phase.</li>
         <li><strong>Setup</strong>: Profil, Equipment, Können, Sicherung.</li>
       </ul>
@@ -81,12 +81,12 @@ export function Help() {
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem Balmung-Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
-      <h3>Klammern</h3>
+      <h3>Zeichen</h3>
       <ul>
-        <li>Eine Klammer hält ein Ziel über 8–16 Wochen und endet mit der Testwoche: Muskelzuwachs, Kraft, Athletik, GPP / Allround oder Regeneration. Darin laufen ein bis drei Orden — bis 8 Wochen einer, bis 12 zwei, darüber drei. Die Klammer bindet das Ziel, die Orden bringen die Variation.</li>
-        <li>Klammern rasten an den Grenzen deiner Lebensabschnitte ein, mit ein bis zwei Wochen Spielraum; sie dürfen Abschnitte überspannen, ein langer Abschnitt trägt zwei.</li>
+        <li>Ein Zeichen hält ein Ziel über 8–16 Wochen und endet mit der Testwoche: Bär (Muskelzuwachs), Stier (Kraft), Falke (Athletik), Wolf (Allround und Kondition) oder Hirsch (Regeneration). Darin laufen ein bis drei Orden — bis 8 Wochen einer, bis 12 zwei, darüber drei. Das Zeichen bindet das Ziel, die Orden bringen die Variation.</li>
+        <li>Zeichen rasten an den Grenzen deiner Lebensabschnitte ein, mit ein bis zwei Wochen Spielraum; sie dürfen Abschnitte überspannen, ein langer Abschnitt trägt zwei.</li>
         <li>Die Orden wählt die App nach Zielbindung (trägt der Orden das Ziel), Variation (nicht zweimal derselbe) und Verlauf (Aufbau früh, Umwandlung und Zuspitzung spät). Zeit-Orden unter 35 Minuten tragen ein Ziel nur teilweise.</li>
-        <li>Die Entlastung zählt über die ganze Klammer: ab der fünften Woche alle vier Wochen, auch wenn ein Orden darin kürzer läuft.</li>
+        <li>Die Entlastung zählt über das ganze Zeichen: ab der fünften Woche alle vier Wochen, auch wenn ein Orden darin kürzer läuft.</li>
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Orden vor der Testwoche misst sie die Testwoche nicht mehr im Vollbesitz.</li>
       </ul>
 
@@ -99,19 +99,19 @@ export function Help() {
       <h3>Domänen-Bilanz</h3>
       <ul>
         <li>Effektive Wochen je Bereich und Halbjahr: Das Hauptziel eines Ordens zählt voll, jedes Nebenziel halb; Kondition trägt Kraftausdauer und Anaerob, Masse läuft mit der Kraft mit, Sehnen nach dem Anteil an Halteübungen (beide ohne Pflicht). Jeder getestete Bereich braucht mindestens 4 effektive Wochen je Halbjahr, sonst meldet die Bilanz eine Lücke.</li>
-        <li>Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge (eine Klammer zählt als eine Phase) — Harlequin ist der Joker und unterbricht die Reihe. Die Bilanz warnt nur, nichts wird gesperrt oder eingeplant.</li>
+        <li>Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge (ein Zeichen zählt als eine Phase) — Harlequin ist der Joker und unterbricht die Reihe. Die Bilanz warnt nur, nichts wird gesperrt oder eingeplant.</li>
       </ul>
 
       <h3>Lenkung: Wie die Vorschläge rote Uhren aufgreifen</h3>
       <ul>
-        <li>Rote Uhren und Bilanz-Lücken fließen in die Vorschläge ein: Der Assistent zieht Klammern und Orden vor, die die Bereiche halten (steht als Begründung am Kandidaten), Schwerpunkt 2 priorisiert rote Domänen als Vertiefung, und der Jahresblick nennt eine Gelegenheit aus dem Bestand. Nach jeder Testwoche fasst die Auswertung zusammen, was rot ist — und der Assistent zeigt sie in Schritt 3.</li>
+        <li>Rote Uhren und Bilanz-Lücken fließen in die Vorschläge ein: Der Assistent zieht Zeichen und Orden vor, die die Bereiche halten (steht als Begründung am Kandidaten), Schwerpunkt 2 priorisiert rote Domänen als Vertiefung, und der Jahresblick nennt eine Gelegenheit aus dem Bestand. Nach jeder Testwoche fasst die Auswertung zusammen, was rot ist — und der Assistent zeigt sie in Schritt 3.</li>
         <li>Alles bleibt Vorschlag: Die App plant nichts ein und sperrt nichts. Die Uhr zeigt, der Assistent schlägt vor, du entscheidest.</li>
       </ul>
 
       <h3>Kalorien: Energie zur Last passen</h3>
       <ul>
-        <li>Jede Klammer trägt einen Kalorien-Modus. Die Rangfolge: Last zuerst — kein Defizit bei hoher Last, und mittlere Last zählt nach acht Wochen ohne ruhigen Abschnitt als hohe (Dauerlast). Dann der Kalender: im Winter Überschuss für Aufbau, im Sommer Defizit-Fenster. Auf Reisen Erhaltung, kohlenhydratbetont — dazu passt Athletik. Zuletzt der Grundmodus der Klammer.</li>
-        <li>Du kannst den Modus je Klammer im Assistenten oder je Phase im Phasenblatt ändern; die App zeigt Konflikte als Zeichen, sie sperrt nichts.</li>
+        <li>Jedes Zeichen trägt einen Kalorien-Modus. Die Rangfolge: Last zuerst — kein Defizit bei hoher Last, und mittlere Last zählt nach acht Wochen ohne ruhigen Abschnitt als hohe (Dauerlast). Dann der Kalender: im Winter Überschuss für Aufbau, im Sommer Defizit-Fenster. Auf Reisen Erhaltung, kohlenhydratbetont — dazu passt Athletik. Zuletzt der Grundmodus des Zeichens.</li>
+        <li>Du kannst den Modus je Zeichen im Assistenten oder je Phase im Phasenblatt ändern; die App zeigt Konflikte als Symbol, sie sperrt nichts.</li>
       </ul>
 
       <h3>Allrounder oder Spezialist</h3>

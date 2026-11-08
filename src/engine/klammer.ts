@@ -176,7 +176,7 @@ const candidates = (pool?: string[]) => (pool?.length ? FOCI.filter((f) => pool.
 /** Kalorien-Modus einer Klammer mit Begründung. Rangfolge: Last → Kalender → Reise → Grundmodus. */
 export function kcalOfKlammer(k: KlammerDef, start: string, end: string, eff: Map<string, Load>, load: Load, travel: boolean): { mode: Kcal; why: string } {
   const m = monthOf(midOf(start, end));
-  let mode: Kcal = k.kcal, why = `Grundmodus ${k.name}`;
+  let mode: Kcal = k.kcal, why = `Grundmodus: ${k.name}`;
   if ([11, 12, 1].includes(m) && (k.id === "muskel" || k.id === "kraft")) { mode = "surplus"; why = "Winter: Aufbau mit Überschuss"; }
   if ([5, 6, 7, 8].includes(m) && k.deficitOk) { mode = "deficit"; why = "Sommer: Defizit-Fenster"; }
   if (travel) { mode = mode === "surplus" ? "surplus" : "maintenance"; why = "Reise: Erhaltung, kohlenhydratbetont"; }
@@ -309,7 +309,7 @@ export function flagsOf(b: PlanBlock, sections?: Section[]): Flag[] {
 }
 
 export const FLAG_TEXT: Record<Flag, string> = {
-  "off-goal": "Trägt das Ziel der Klammer nicht",
+  "off-goal": "Trägt das Ziel des Zeichens nicht",
   "kcal-load": "Defizit bei hoher Last oder Dauerlast",
   "kcal-goal": "Defizit gegen das Ziel des Ordens",
   short: "Kürzer, als der Orden gedacht ist",

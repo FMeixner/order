@@ -1,9 +1,9 @@
 {
-  "_doc": "Klammern: übergeordnete Ziel-Klammern über 8–16 Wochen (Testwoche am Ende). axes = Leitachse(n) für die Zielbindung, accept = Nebenachsen, die halb zählen. early/late: Orden, die im Verlauf früh (Aufbau) bzw. spät (Umwandlung, Zuspitzung) passen. months = Saison-Vorliebe (1–12). kcal = Grundmodus; deficitOk: Defizit überhaupt denkbar. travel: Klammer passt auf Reisen. Namen sind Arbeitsnamen.",
+  "_doc": "Klammern: übergeordnete Ziel-Klammern über 8–16 Wochen (Testwoche am Ende). axes = Leitachse(n) für die Zielbindung, accept = Nebenachsen, die halb zählen. early/late: Orden, die im Verlauf früh (Aufbau) bzw. spät (Umwandlung, Zuspitzung) passen. months = Saison-Vorliebe (1–12). kcal = Grundmodus; deficitOk: Defizit überhaupt denkbar. travel: Klammer passt auf Reisen. In der App heißen Klammern „Zeichen“; name = Tier des Zeichens (Symbol in src/ui/Signs.tsx, KlammerIcon).",
   "klammern": [
     {
       "id": "muskel",
-      "name": "Muskelzuwachs",
+      "name": "Bär",
       "axes": [
         "muskel"
       ],
@@ -29,7 +29,7 @@
     },
     {
       "id": "kraft",
-      "name": "Kraft",
+      "name": "Stier",
       "axes": [
         "kraft"
       ],
@@ -57,7 +57,7 @@
     },
     {
       "id": "athletik",
-      "name": "Athletik",
+      "name": "Falke",
       "axes": [
         "schnellkraft"
       ],
@@ -88,7 +88,7 @@
     },
     {
       "id": "gpp",
-      "name": "GPP / Allround",
+      "name": "Wolf",
       "axes": [
         "kondition",
         "ausdauer"
@@ -121,7 +121,7 @@
     },
     {
       "id": "regeneration",
-      "name": "Regeneration",
+      "name": "Hirsch",
       "axes": [
         "ruhe",
         "beweglichkeit"

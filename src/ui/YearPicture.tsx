@@ -1,5 +1,5 @@
-/* Jahresbild (1.0): das Jahr in drei Ebenen — Lebensabschnitte (Zeit und Last), Klammern (Leitziel und Kalorien),
-   Orden (Variation). Breite nach Tagen, Antippen öffnet Klammer oder Phase. Warnungen als Zeichen am Orden,
+/* Jahresbild (1.0): das Jahr in drei Ebenen — Lebensabschnitte (Zeit und Last), Zeichen (Leitziel und Kalorien),
+   Orden (Variation). Breite nach Tagen, Antippen öffnet Zeichen oder Phase. Warnungen als Zeichen am Orden,
    Text nur im title und im Phasenblatt. Ersetzt das alte Jahresband. */
 import { FOCUS_BY_ID } from "../data";
 import { flagsOf, klammerName, klammernOf, type KlammerView } from "../engine/klammer";
@@ -60,9 +60,9 @@ export function YearPicture({ plan, sections, today, onBlock, onKlammer, onTest 
             ) : <div key={s.key} className="yp-seg yp-gap" style={{ flex: flex(s) }} />)}
           </div>
         )}
-        <div className="yp-lane" aria-label="Klammern">
+        <div className="yp-lane" aria-label="Zeichen">
           {kSegs.map((s) => s.item ? (
-            <button key={s.key} className={`yp-seg yp-kl kl-${s.item.kind}`} style={{ flex: flex(s) }} onClick={() => onKlammer?.(s.item!)} title={`${klammerName(s.item.kind)} · ${fmtDate(s.item.start)}–${fmtDate(s.item.end)}`} aria-label={`Klammer ${klammerName(s.item.kind)}`}>
+            <button key={s.key} className={`yp-seg yp-kl kl-${s.item.kind}`} style={{ flex: flex(s) }} onClick={() => onKlammer?.(s.item!)} title={`${klammerName(s.item.kind)} · ${fmtDate(s.item.start)}–${fmtDate(s.item.end)}`} aria-label={`Zeichen: ${klammerName(s.item.kind)}`}>
               <KlammerIcon id={s.item.kind} size={14} />
               <span className="yp-txt">{klammerName(s.item.kind)}</span>
               {s.item.kcal && <Sign kind={s.item.kcal} size={12} />}

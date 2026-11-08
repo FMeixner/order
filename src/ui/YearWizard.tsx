@@ -24,8 +24,8 @@ import { unpinBeasts } from "./session/items";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 type Policy = "each" | "twice" | "none";
-const POLICY: { value: Policy; label: string }[] = [{ value: "each", label: "nach jeder Klammer" }, { value: "twice", label: "zweimal im Jahr" }, { value: "none", label: "keine" }];
-const STEPS = ["Ziel", "Klammern", "Schwachstellen", "Orden"];
+const POLICY: { value: Policy; label: string }[] = [{ value: "each", label: "nach jedem Zeichen" }, { value: "twice", label: "zweimal im Jahr" }, { value: "none", label: "keine" }];
+const STEPS = ["Ziel", "Zeichen", "Schwachstellen", "Orden"];
 const KCAL_OPTS: Kcal[] = ["deficit", "maintenance", "surplus"];
 
 export function YearWizard({ state, update, today, aim: aim0, deficits, steer, clocks, balance, onClose, startAt = 0 }: {
@@ -98,7 +98,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
                 return (
                   <div key={k.meso} className={`kl-card kl-${k.kind}`}>
                     <div className="kl-head"><KlammerIcon id={k.kind} /> {klammerName(k.kind)} {kinds[wi] && <Sign kind="pin" />}<span className="block-dates">{fmtDate(k.start)} – {fmtDate(k.end)}</span></div>
-                    <div className="kl-kinds" role="radiogroup" aria-label={`Klammer ${i + 1}`}>
+                    <div className="kl-kinds" role="radiogroup" aria-label={`Zeichen ${i + 1}`}>
                       {KLAMMERN.map((d) => <button key={d.id} role="radio" aria-checked={k.kind === d.id} aria-label={d.name} title={d.name} className={`kl-${d.id} ${k.kind === d.id ? "on" : ""}`} onClick={() => setKinds((x) => ({ ...x, [wi]: d.id }))}><KlammerIcon id={d.id} /></button>)}
                     </div>
                     <div className="row small muted"><Sign kind={k.kcal ?? "maintenance"} /> {kc.why}</div>
@@ -118,7 +118,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
               {hot.map((c) => <div key={c.id} className="row small"><Sign kind="clock" /> {c.name}<span className="muted mono">{c.days == null ? "nie" : `${c.days} / ${c.budget} Tage`}</span></div>)}
               {gaps.map((g) => <div key={g} className="row small"><Sign kind="gap" /> {g}</div>)}
             </div>
-            <p className="muted small">Rote Uhren und Lücken ziehen Klammern und Orden, die sie halten. Die Schwerpunkt-Slots jeder Phase folgen der letzten Testwoche; einzeln änderbar im Phasenblatt.</p>
+            <p className="muted small">Rote Uhren und Lücken ziehen Zeichen und Orden, die sie halten. Die Schwerpunkt-Slots jeder Phase folgen der letzten Testwoche; einzeln änderbar im Phasenblatt.</p>
             <Collapse title="Details" meta="Uhren, Bilanz, Balance">
               <div className="stack">
                 <ResidualClocks state={state} today={today} />

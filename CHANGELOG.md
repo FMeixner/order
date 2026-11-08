@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.1.0] – 2026-11-08
+
+### Geändert
+- Klammern heißen in der App jetzt „Zeichen“, mit Tieren als Namen und eigenen Symbolen: Bär (Muskelzuwachs), Stier (Kraft), Falke (Athletik), Wolf (Allround und Kondition), Hirsch (Regeneration). Die Logik bleibt gleich; Hinweise und Assistent sprechen von Zeichen („im Zeichen des Bären“).
+- Wo „Zeichen“ bisher kleine Warn- und Statussymbole meinte, heißen diese in der Anleitung jetzt „Symbole“.
+
 ## [1.0.0] – 2026-11-08
 
 ### Neu
