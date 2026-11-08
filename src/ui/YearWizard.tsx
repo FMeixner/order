@@ -9,6 +9,7 @@ import type { ResidualClock } from "../engine/residual";
 import { loadOfWindow, travelOfWindow } from "../engine/stack";
 import type { Aim, DeficitWeights } from "../engine/sequence";
 import { uid } from "../store";
+import { domainName, PURPOSE_LABEL, yearSlots, type YearSlot } from "../engine/sharpen";
 import type { AppState, Kcal, KlammerId, PlanBlock, Section } from "../types";
 import { DEFAULT_TEST_POLICY } from "../types";
 import { Modal, Seg } from "./common";
@@ -55,6 +56,8 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
     return p;
   }, [state.plan, sections, today, aim, aims, deficits, steer, policy, pool, kinds, orders, kcals]);
   const future = klammernOf(draft).filter((k) => k.parts[0].start > today);
+  // Schwerpunkte des Entwurfs in der Jahresgesamtschau (ein Slot je Orden)
+  const slots = useMemo(() => yearSlots({ ...state, plan: draft, yearAims: aims }, today), [state, draft, aims, today]);
   const eff = useMemo(() => effectiveLoads(sections), [sections]);
 
   const apply = () => {
@@ -129,7 +132,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
                   {KCAL_OPTS.map((m) => <button key={m} role="radio" aria-checked={k.kcal === m} className={`kl-${k.kind} ${k.kcal === m ? "on" : ""}`} onClick={() => setKcals((x) => ({ ...x, [k.start]: m }))}><Sign kind={m} /></button>)}
                   {k.parts[0].pin?.kcal && <Sign kind="pin" />}
                 </div>
-                {k.parts.map((p) => <PartRow key={p.id} plan={draft} p={p} pool={pool} steer={steer} open={open === p.start} onToggle={() => setOpen((o) => (o === p.start ? null : p.start))} onPick={(id) => { setOrders((x) => ({ ...x, [p.start]: id })); setOpen(null); }} />)}
+                {k.parts.map((p) => <PartRow key={p.id} slot={slots.get(p.id)} plan={draft} p={p} pool={pool} steer={steer} open={open === p.start} onToggle={() => setOpen((o) => (o === p.start ? null : p.start))} onPick={(id) => { setOrders((x) => ({ ...x, [p.start]: id })); setOpen(null); }} />)}
               </div>
             ))}
           </div>
@@ -144,7 +147,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
   );
 }
 
-function PartRow({ plan, p, pool, steer, open, onToggle, onPick }: { plan: PlanBlock[]; p: PlanBlock; pool: string[]; steer: DeficitWeights; open: boolean; onToggle: () => void; onPick: (id: string) => void }) {
+function PartRow({ plan, p, pool, steer, open, onToggle, onPick, slot }: { plan: PlanBlock[]; p: PlanBlock; pool: string[]; steer: DeficitWeights; open: boolean; onToggle: () => void; onPick: (id: string) => void; slot?: YearSlot }) {
   const f = FOCUS_BY_ID[p.focusId];
   const k = KLAMMER_BY_ID[p.klammer!];
   const alts = open ? rankInKlammer(plan, p.id, pool, steer).filter((r) => r.f.id !== p.focusId).slice(0, 4) : [];
@@ -157,6 +160,7 @@ function PartRow({ plan, p, pool, steer, open, onToggle, onPick }: { plan: PlanB
         {p.pin?.focus && <Sign kind="pin" />}
         <span className="block-dates">{fmtDate(p.start)} – {fmtDate(p.end)}</span>
       </button>
+      {slot?.domain && <div className="kl-slot small muted">+ {domainName(slot.domain)}{slot.purpose ? ` · ${PURPOSE_LABEL[slot.purpose]}` : ""}</div>}
       {open && (
         <div className="alt-row">
           {alts.map((r) => <button key={r.f.id} onClick={() => onPick(r.f.id)}><Sign kind={`bind-${r.bind}`} size={12} />{focusName(r.f.id)}</button>)}

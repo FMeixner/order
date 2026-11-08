@@ -10,6 +10,7 @@ import type { AppState, PlanBlock } from "../types";
 import { blockWeights, HALF_MIN } from "./bilanz";
 import { addDays, isTestBlock, parseIso } from "./plan";
 import { residualClocks, type ClockId, type ResidualClock } from "./residual";
+import { yearSlots } from "./sharpen";
 
 export type Fresh = "fresh" | "soon" | "due" | "never" | "none";
 export type Cover = "ok" | "thin" | "missing" | "free";
@@ -44,7 +45,10 @@ const WINDOW = 26 * 7;
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
 /** Effektive Wochen je Domäne im Fenster [from, from + 26 Wochen) — Testwochen zählen nicht */
-export function planCoverage(plan: PlanBlock[], from: string): Record<string, number> {
+/** Ein Schwerpunkt-Slot zählt als halbe Woche für seinen Bereich (Erhaltungsdosis, kein eigener Block) */
+export const SLOT_WEIGHT = 0.5;
+
+export function planCoverage(plan: PlanBlock[], from: string, slots?: Map<string, { domain: string | null }>): Record<string, number> {
   const to = addDays(from, WINDOW - 1);
   const out: Record<string, number> = {};
   for (const b of plan) {
@@ -52,6 +56,8 @@ export function planCoverage(plan: PlanBlock[], from: string): Record<string, nu
     const s = b.start < from ? from : b.start, e = b.end > to ? to : b.end;
     const weeks = ((parseIso(e).getTime() - parseIso(s).getTime()) / 864e5 + 1) / 7;
     for (const [d, w] of blockWeights(b)) out[d] = (out[d] ?? 0) + w * weeks;
+    const sd = slots?.get(b.id)?.domain;
+    if (sd) out[sd] = (out[sd] ?? 0) + SLOT_WEIGHT * weeks;
   }
   for (const k of Object.keys(out)) out[k] = round1(out[k]);
   return out;
@@ -66,7 +72,7 @@ export function freshOf(c: ResidualClock | undefined, anyData: boolean): Fresh {
 
 export function bereiche(state: AppState, today: string, plan: PlanBlock[] = state.plan, clocks: ResidualClock[] = residualClocks(state, today)): BereichRow[] {
   const anyData = clocks.some((c) => c.days !== null);
-  const cov = planCoverage(plan, today);
+  const cov = planCoverage(plan, today, yearSlots({ ...state, plan }, today));
   return BEREICHE.map((def) => {
     const c = def.clock ? clocks.find((x) => x.id === def.clock) : undefined;
     const weeks = round1(def.domains.reduce((s, d) => s + (cov[d] ?? 0), 0));

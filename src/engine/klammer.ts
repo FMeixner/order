@@ -112,7 +112,7 @@ export function kindScore(k: KlammerDef, load: Load, travel: boolean, win: { sta
   let s = 0;
   // Ohne einen Orden, der das Ziel trägt und zur Last passt, bleibt das Zeichen leer (Falke in Hochlast: kein Schnellkraft-Orden)
   const carriers = candidates(ctx.pool).filter((f) => fitScore(f, load).score >= 0 && bindOf(f, k) === "lead").length;
-  if (carriers === 0) s -= 3;
+  if (carriers === 0) s -= 10; // praktisch ausgeschlossen: ein Zeichen ohne Träger ist leer, auch wenn es Ziel Nr. 1 ist
   const { aim } = ctx;
   const lead = (a: AxisId) => (k.axes.includes(a) ? 1 : k.accept.includes(a) ? 1 / 3 : 0);
   if (ctx.aims?.length) {

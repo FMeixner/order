@@ -9,9 +9,12 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 - Mehrere Jahresziele mit Priorität 1–3: In Reihenfolge antippen; Priorität 1 zählt dreifach, 2 doppelt, 3 einfach bei der Wahl der Zeichen. Ohne Ziel gilt Allround oder „Defizite zuerst“.
 - Testwoche auf Tage verteilt: Studio, Zuhause und Park liegen auf deinen Trainingstagen (Studio zuerst, Park gern am Wochenende); der heutige Test-Cup ist aufgeklappt. Ab dem Wochenende davor (oder wenn die Woche geschafft ist) ist die Testwoche echt geplant und eintragbar, nicht mehr nur Vorschau.
 
+- Schwerpunkt: ein Slot je Orden, in der Jahresgesamtschau befüllt — mit genau einem Zweck: Testdefizit, Double down (im Zeichen des wichtigsten Ziels), Erhalt (was der Plan sonst verfallen ließe; Hochrechnung der Uhren über Orden, Bestien und frühere Slots) oder Sekundärziel. Nie gegen den Orden (Interferenz bleibt ausgeschlossen), derselbe Bereich nicht zweimal in Folge. Schwerpunkt 2 entfällt. Der Slot steht im Phasenblatt mit Zweck (nicht mehr unter „Mehr“), im Assistenten unter jedem Orden und zählt halb für „Im Plan“.
+- Bestien-Budget rechnet immer mit vollen Sätzen: −1 Satz ändert die Bestie nicht mehr.
+
 ### Geändert (Modelljahre geprüft)
 - Defizite werden wieder planbar: Dauerlast zählt nur zusammenhängende Wochen mittlerer Last; „hohe Last“ heißt jetzt: mehr als die Hälfte der Wochen. Ein Defizit-Zeichen bleibt in einzelnen Orden mit hoher Last auf Erhaltung. Sommer ohne hohe Last zieht Zeichen, die ein Defizit tragen; Saison nach Anteil der Wochen statt nach Fenstermitte. Im Semesterjahr landet so ein Wolf mit zehn Wochen Defizit in der Sommerpause.
-- Ein Zeichen ohne passenden Träger für die Alltagslast wird gemieden (Falke im Hochlast-Semester bekam vorher Acrobat und Herald statt eines Schnellkraft-Ordens).
+- Ein Zeichen ohne passenden Träger für die Alltagslast ist praktisch ausgeschlossen, auch wenn es Ziel Nr. 1 ist (Falke im Hochlast-Semester bekam vorher Acrobat und Herald statt eines Schnellkraft-Ordens).
 - Abwechslung übers Jahr: Jede frühere Verwendung eines Ordens im letzten Jahr kostet bei der Wahl (Troubadour war Lückenfüller in fast jedem Zeichen).
 - Höchstens zwei Überschuss-Zeichen im Jahr.
 - Bestien zählen in der Bilanz: ein Viertel Woche Kraftausdauer und Intervalle je Woche mit Bestie (Erhaltungsdosis).
