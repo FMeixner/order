@@ -83,7 +83,7 @@ export function Help() {
 
       <h3>Zeichen</h3>
       <ul>
-        <li>Ein Zeichen hält ein Ziel über 8–16 Wochen und endet mit der Testwoche: Bär (Muskelzuwachs), Stier (Kraft), Falke (Athletik), Wolf (Allround und Kondition) oder Hirsch (Regeneration). Darin laufen ein bis drei Orden — bis 8 Wochen einer, bis 12 zwei, darüber drei. Das Zeichen bindet das Ziel, die Orden bringen die Variation.</li>
+        <li>Ein Zeichen hält ein Ziel über 8–16 Wochen und endet mit der Testwoche: Bär (Muskelzuwachs), Stier (Kraft), Falke (Athletik), Fuchs (Skill: Turnen, Parkour, Kampfsport), Wolf (Allround und Kondition) oder Hirsch (Regeneration). Darin laufen ein bis drei Orden — bis 8 Wochen einer, bis 12 zwei, darüber drei. Das Zeichen bindet das Ziel, die Orden bringen die Variation.</li>
         <li>Zeichen rasten an den Grenzen deiner Lebensabschnitte ein, mit ein bis zwei Wochen Spielraum; sie dürfen Abschnitte überspannen, ein langer Abschnitt trägt zwei.</li>
         <li>Die Orden wählt die App nach Zielbindung (trägt der Orden das Ziel), Variation (nicht zweimal derselbe) und Verlauf (Aufbau früh, Umwandlung und Zuspitzung spät). Zeit-Orden unter 35 Minuten tragen ein Ziel nur teilweise.</li>
         <li>Die Entlastung zählt über das ganze Zeichen: ab der fünften Woche alle vier Wochen, auch wenn ein Orden darin kürzer läuft.</li>

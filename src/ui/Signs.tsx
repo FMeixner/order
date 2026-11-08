@@ -61,6 +61,8 @@ export function KlammerIcon({ id, size = 16 }: { id: KlammerId; size?: number })
     kraft: <><path d="M1.5 3.2c.6 2.6 2.4 3.8 4.6 3.8h3.8c2.2 0 4-1.2 4.6-3.8" {...line} /><path d="M5 7v3.6c0 2.3 1.3 3.9 3 3.9s3-1.6 3-3.9V7" {...line} /><circle cx="6.9" cy="12.6" r="0.5" fill="currentColor" /><circle cx="9.1" cy="12.6" r="0.5" fill="currentColor" /></>,
     // Falke: gespreizte, spitze Schwingen im Sturzflug
     athletik: <><path d="M8 6.6C6 6 3.6 5.6 1.4 7.6 4 8.1 6.1 8.8 8 10.2 9.9 8.8 12 8.1 14.6 7.6 12.4 5.6 10 6 8 6.6Z" {...line} /><circle cx="8" cy="4.6" r="1.3" {...line} /><path d="M7.1 10.2 6.6 13.6h2.8l-.5-3.4" {...line} /></>,
+    // Fuchs: große Ohren, breite Wangen, spitze Schnauze, helle Maske
+    skill: <><path d="M2.4 1.6 5.2 6M13.6 1.6 10.8 6M2.4 1.6 1.6 8.4 8 14.4l6.4-6 -.8-6.8" {...line} /><path d="M3.6 8.6 8 11l4.4-2.4" {...line} /><circle cx="8" cy="13.2" r="0.6" fill="currentColor" /></>,
     // Wolf: spitze Ohren, lange Schnauze
     gpp: <><path d="M3 1.8 5.4 6h5.2L13 1.8V9l-5 5.4L3 9Z" {...line} /><path d="M6 8.6h.01M10 8.6h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M7 12h2" {...line} /></>,
     // Hirsch: Geweih über schmalem Kopf

@@ -185,3 +185,25 @@ describe("Klammern: mehrere Ziele mit Priorität", () => {
     void eff;
   });
 });
+
+describe("Klammern: Fuchs (Skill)", () => {
+  it("Ziel Skill plant den Fuchs mit Acrobat, Huntsman oder Pugilist", () => {
+    const p = planYear([], YEAR, T, ids(), { aim: "skill" });
+    const fox = klammernOf(p).filter((k) => k.kind === "skill");
+    expect(fox.length).toBeGreaterThan(0);
+    for (const k of fox) expect(k.parts.some((x) => ["acrobat", "huntsman", "pugilist"].includes(x.focusId))).toBe(true);
+  });
+
+  it("Pugilist hat den Fuchs als Heimat", () => {
+    expect(bindOf(FOCUS_BY_ID.pugilist, KLAMMER_BY_ID.skill)).toBe("lead");
+  });
+
+  it("Nebenziel Beweglichkeit zieht Dancer in den Fuchs", () => {
+    const sk = [sec(T, 13, "medium", "Frühling")];
+    const without = planYear([], sk, T, ids(), { aim: "skill", kinds: { 0: "skill" } });
+    const withMob = planYear([], sk, T, ids(), { aim: "skill", aims: [{ aim: "skill", prio: 1 }, { aim: "beweglichkeit", prio: 2 }], kinds: { 0: "skill" } });
+    const has = (p: PlanBlock[]) => p.some((b) => b.focusId === "dancer");
+    expect(has(without)).toBe(false);
+    expect(has(withMob)).toBe(true);
+  });
+});

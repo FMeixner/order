@@ -450,7 +450,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* ---------- 1.0: Zeichen, Klammern, Jahresbild ---------- */
 :root {
   --kl-muskel: var(--goal-hypertrophy); --kl-kraft: var(--goal-strength); --kl-athletik: var(--goal-power);
-  --kl-gpp: var(--goal-conditioning); --kl-regeneration: var(--goal-wellbeing);
+  --kl-gpp: var(--goal-conditioning); --kl-regeneration: var(--goal-wellbeing); --kl-skill: var(--goal-skill);
 }
 .sign { display: inline-flex; align-items: center; justify-content: center; color: var(--muted); flex: none; vertical-align: middle; }
 .sign-warn, .sign-clock, .sign-gap { color: var(--amber); }
@@ -459,7 +459,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .sign-bind-none { color: var(--red); }
 .klammer-icon { flex: none; }
 .kl-muskel { --k: var(--kl-muskel); } .kl-kraft { --k: var(--kl-kraft); } .kl-athletik { --k: var(--kl-athletik); }
-.kl-gpp { --k: var(--kl-gpp); } .kl-regeneration { --k: var(--kl-regeneration); }
+.kl-gpp { --k: var(--kl-gpp); } .kl-regeneration { --k: var(--kl-regeneration); } .kl-skill { --k: var(--kl-skill); }
 
 .yp { display: flex; flex-direction: column; gap: 4px; }
 .yp-lanes { position: relative; display: flex; flex-direction: column; gap: 4px; }

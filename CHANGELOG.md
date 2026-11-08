@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.0] – 2026-11-08
+
+### Neu
+- Sechstes Zeichen: **Fuchs · Skill** (Turnen, Parkour, Kampfsport). Heimat von Acrobat, Huntsman und Pugilist; Dancer läuft spät mit. Saison Frühling und Herbst, Erhaltung, reisetauglich.
+
+### Geändert
+- Pugilist hat Skill als Hauptziel und den Fuchs als Heimat (vorher Wolf).
+- Mitläufer eines Zeichens rücken vor, wenn ihr Hauptziel ein Jahresziel ist: z. B. Dancer im Fuchs bei Ziel Beweglichkeit, Smith im Bär bei Ziel Kraft. Fremde Orden zieht ein Jahresziel nicht ins Zeichen.
+- Falke: Acrobat und Huntsman laufen nur noch mit.
+
 ## [1.3.2] – 2026-11-08
 
 ### Geändert

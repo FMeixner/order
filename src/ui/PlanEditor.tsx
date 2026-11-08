@@ -14,7 +14,7 @@ import { Check, Collapse, Field, Modal, Seg } from "./common";
 import { FocusDetail } from "./FociBrowser";
 import { PlanStack } from "./PlanStack";
 import { rankFor, type Aim } from "../engine/sequence";
-import { bindOf, FLAG_TEXT, flagsOf, rankInKlammer, klammerName, type KlammerView } from "../engine/klammer";
+import { aimsOf, bindOf, FLAG_TEXT, flagsOf, rankInKlammer, klammerName, type AimPrio, type KlammerView } from "../engine/klammer";
 import { YearPicture } from "./YearPicture";
 import { KlammerIcon, Sign } from "./Signs";
 import { KLAMMER_BY_ID } from "../data";
@@ -93,10 +93,10 @@ export function FocusPicker({ load, value, onPick, profile, days, restrict, klam
 
 /** Bearbeitungsseite einer Phase: erst die Phase (Name, Last), dann der Orden (Empfehlung zuerst),
     dann Aufteilen (Teilen, Verbinden), zuletzt Feinheiten (Zeitraum, eigener Wochenplan, Schwerpunkt-Slot). */
-export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], steer = [], onStructure, today }: {
+export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCancel, onDelete, plan, aim = "allround", deficits = [], steer = [], onStructure, today, aims }: {
   block: PlanBlock; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; slotInfo?: (b: PlanBlock) => SlotsPlan;
   onSave: (b: PlanBlock, opts?: { test?: boolean }) => void; onCancel: () => void; onDelete?: () => void;
-  plan?: PlanBlock[]; aim?: Aim; deficits?: DeficitWeights; steer?: DeficitWeights; onStructure?: (p: PlanBlock[]) => void; today?: string;
+  plan?: PlanBlock[]; aim?: Aim; deficits?: DeficitWeights; steer?: DeficitWeights; onStructure?: (p: PlanBlock[]) => void; today?: string; aims?: AimPrio[];
 }) {
   const [b, setB] = useState<PlanBlock>(block);
   const [ownWeek, setOwnWeek] = useState(!!block.schedule && Object.values(block.schedule).some(Boolean));
@@ -128,7 +128,7 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
   const lastPart = parts.length > 0 && parts[parts.length - 1].id === b.id;
   // In einer Klammer: Zielbindung, Variation, Verlauf (rankInKlammer); sonst die Empfehlung wie bisher
   const ranked: { id: string; bind?: "lead" | "accept" | "none"; why?: string }[] = k
-    ? rankInKlammer(draftPlan, b.id, user?.pool).slice(0, 5).map((r) => ({ id: r.f.id, bind: r.bind }))
+    ? rankInKlammer(draftPlan, b.id, user?.pool, steer, aimsOf(aim, aims)).slice(0, 5).map((r) => ({ id: r.f.id, bind: r.bind }))
     : rankFor(draftPlan, b.id, aim, deficits, steer).map((r) => ({ ...r, score: r.score + timeBias(b, r.f) })).sort((x, y) => y.score - x.score).slice(0, 5).map((r) => ({ id: r.f.id, why: r.reasons.slice(0, 2).join(", ") }));
   const locked = b.start <= day; // laufende Phase: Orden nicht hier wechseln (eingefroren)
   const inPlan = !!plan?.some((x) => x.id === b.id);
@@ -238,7 +238,7 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, sections, deficits, slotInfo, onChange, today, aim: aimIn, steer, onKlammer }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none"; onKlammer?: (k: KlammerView) => void }) {
+export function PlanList({ plan, profiles, days, user, sections, deficits, slotInfo, onChange, today, aim: aimIn, steer, onKlammer, aims }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none"; onKlammer?: (k: KlammerView) => void; aims?: AimPrio[] }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
@@ -271,7 +271,7 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, slotI
       {edit && (
         <Modal title={plan.some((x) => x.id === edit.id) ? "Phase bearbeiten" : "Neue Phase"} onClose={() => setEdit(null)} wide>
           <BlockForm block={edit} profiles={profiles} days={days} user={user} slotInfo={slotInfo} plan={plan} today={today}
-            aim={aim} deficits={deficits ?? []} steer={steer} onStructure={(p) => { onChange(p); setEdit(null); }}
+            aim={aim} aims={aims} deficits={deficits ?? []} steer={steer} onStructure={(p) => { onChange(p); setEdit(null); }}
             onCancel={() => setEdit(null)}
             onDelete={plan.some((x) => x.id === edit.id) ? () => { if (!confirm(`Phase ${fmtDate(edit.start)}–${fmtDate(edit.end)} löschen? Einträge im Log bleiben erhalten.`)) return; onChange(plan.filter((x) => x.id !== edit.id)); setEdit(null); } : undefined}
             onSave={(nb, o) => {
