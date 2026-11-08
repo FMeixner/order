@@ -3,10 +3,10 @@
   "id": "pilgrim",
   "name": "Pilgrim",
   "tagline": "Herz-Kreislauf zuerst, Kraft bleibt.",
-  "description": "Einmal hohe Intensität (4 × 4 Min), einmal lange Grundlage im Sprechtempo, eine lange Bestie und eine kurze Kraft-Erhaltung. Herz-Kreislauf-Fitness ist einer der stärksten Einzelmarker für Langlebigkeit. Die Kraft-Erhaltung läuft mit Körpergewicht, ohne Aufbau und an jedem Ort gleich.",
+  "description": "Einmal hohe Intensität (4 × 4 Min), einmal lange Grundlage im Sprechtempo, eine lange Bestie und eine kurze Kraft-Erhaltung. Herz-Kreislauf-Fitness ist einer der stärksten Einzelmarker für Langlebigkeit. Die Kraft-Erhaltung läuft mit Körpergewicht, ohne Aufbau und an jedem Ort gleich. Bei hoher Alltagslast wird der Intervalltag kürzer (3 × 4 Min) und jede zweite Woche zur lockeren Grundlage: Lockere Ausdauer kostet wenig Erholung, harte Intervalle viel.",
   "goals": {"primary": "endurance", "secondary": ["conditioning", "strength"]},
   "nutrition": "any",
-  "load_fit": "medium",
+  "load_fit": "high",
   "level": "beginner–intermediate",
   "session_min": 45,
   "weeks": {"min": 8, "max": 12},
@@ -17,6 +17,31 @@
   "sources": ["Helgerud et al. (2007)", "Mandsager et al. (2018)", "Kotarsky et al. (2018)", "Kikuchi & Nakazato (2017)", "Refalo et al. (2023)"],
   "week_4": ["intervalle", "kraft_kurz", "bestie_lang", "grundlage"],
   "week_3": ["intervalle", "kraft_kurz", "grundlage"],
+  "high_load": {
+    "note": "Hohe Alltagslast: Intervalle kürzer, jede zweite Woche Grundlage statt Intervallen.",
+    "odd": {
+      "intervalle": {
+        "name": "Intervalle (kurz)", "location": "reise", "minutes": 35,
+        "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+        "blocks": [
+          {"type": "single", "slot": {"id": "rh-hl-i", "name": "Intervalle 3 × 4 Min", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 3}, "prog": "none", "note": "Hohe Alltagslast: drei statt vier Runden. 85–95 % der maximalen Herzfrequenz. Lauf, Rad oder Rudern."}}
+        ]
+      }
+    },
+    "even": {
+      "intervalle": {
+        "name": "Grundlage statt Intervallen", "location": "reise", "minutes": 40,
+        "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+        "blocks": [
+          {"type": "single", "slot": {"id": "rh-hl-g", "name": "Lockere Grundlage", "kind": "timer", "minutes": 35, "max": 45, "step": 5, "prog": "minutes", "note": "Hohe Alltagslast: diese Woche locker statt Intervalle. Sprechtempo."}},
+          {"type": "superset", "rest": 60, "slots": [
+            {"id": "rh-hl-2a", "name": "Bodyweight Squat", "sets": 2, "reps": "15-30", "prog": "ladder", "ladder": ["Bodyweight Squat", "Squat Jump"]},
+            {"id": "rh-hl-2b", "name": "Push-Up", "sets": 2, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
+          ]}
+        ]
+      }
+    }
+  },
   "roles": {
     "intervalle": {
       "name": "Intervalle", "location": "reise", "minutes": 45,

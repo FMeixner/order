@@ -214,3 +214,16 @@ describe("Klammern: Heimat", () => {
     expect(FOCUS_BY_ID.paladin.load_fit).toBe("high");
   });
 });
+
+describe("Pilgrim bei hoher Last", () => {
+  it("passt zu hoher Last; Intervalle ungerade kürzer, gerade Grundlage", async () => {
+    const { highLoadShape } = await import("./weekplan");
+    const f = FOCUS_BY_ID.pilgrim;
+    expect(f.load_fit).toBe("high");
+    const b = { id: "x", focusId: "pilgrim", label: "", start: T, end: addDays(T, 55), load: "high" } as PlanBlock;
+    const slot = (w: number) => { const r = highLoadShape(f, b, w).roles.intervalle; const bl = r.blocks[0]; return bl.type === "single" ? bl.slot : null; };
+    expect(slot(1)?.interval?.rounds).toBe(3);
+    expect(slot(2)?.kind).toBe("timer");
+    expect(highLoadShape(f, { ...b, load: "medium" }, 2).roles.intervalle.blocks[0]).toEqual(f.roles.intervalle.blocks[0]);
+  });
+});

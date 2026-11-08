@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.2] – 2026-11-08
+
+### Geändert
+- Pilgrim passt zu hoher Alltagslast. In solchen Phasen wird der Intervalltag kürzer (3 × 4 Minuten statt 4 × 4) und jede zweite Woche zur lockeren Grundlage. Lockere Ausdauer kostet wenig Erholung, harte Intervalle viel. Damit hat der Wolf bei hoher Last einen Orden, der das Ziel trägt, nicht nur Assassin.
+
 ## [1.4.1] – 2026-11-08
 
 ### Geändert

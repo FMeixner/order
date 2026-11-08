@@ -560,6 +560,10 @@
     "equip": "cardio",
     "desc": "Vier Minuten hart (85–95 % HFmax), drei Minuten locker. Viermal."
   },
+  "Intervalle 3 × 4 Min": {
+    "equip": "cardio",
+    "desc": "Vier Minuten hart (85–95 % HFmax), drei Minuten locker. Dreimal — die kurze Fassung bei hoher Alltagslast."
+  },
   "Intervalle 4 × 4 Min (Rudern)": {
     "equip": "cardio",
     "needs": [
