@@ -6,7 +6,7 @@
   "description": "Für Anführer und alle, die vor Leuten stehen: harte, wechselnde Tage im Stil des Chaos-Trainings (jede Woche eine andere Mischung aus Kraft, Turnen und Kondition), dazu ein Tag Haltung und Kraft und ein Redner-Tag mit Grundlage, Atmung und Dehnung für Brust, Nacken und Kiefer. Trainierte reagieren im Stresstest mit Rede vor Publikum mit weniger Cortisol, Herzfrequenz und Angst. Nach jedem harten Tag fragt die App, wie es sich angefühlt hat (Feeling Scale −5 bis +5). Zweimal hintereinander −1 oder schlechter: Die nächste harte Einheit wird leichter.",
   "goals": {"primary": "conditioning", "secondary": ["wellbeing", "strength"]},
   "nutrition": "any",
-  "load_fit": "medium",
+  "load_fit": "high",
   "level": "intermediate",
   "session_min": 40,
   "weeks": {"min": 8, "max": 12},

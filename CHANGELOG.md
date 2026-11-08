@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.4] – 2026-11-08
+
+### Geändert
+- Fünf Orden passen jetzt auch zu hoher Alltagslast: Pugilist, King, Dancer, Huntsman und Conqueror. Sie arbeiten mit Körpergewicht, Runden und Bestien statt schwerer Langhantel. Solche Einheiten bei mittlerem bis höherem Puls tun auch in vollen Wochen gut, solange die Kalorien reichen. Schwere Grundübungen (Smith, Olympian, Scout) bleiben bei mittlerer Last.
+- Damit passen bei hoher Last 14 statt 9 Orden. Wolf, Fuchs und Hirsch brauchen dort keine Lückenfüller mehr.
+
 ## [1.4.3] – 2026-11-08
 
 ### Geändert

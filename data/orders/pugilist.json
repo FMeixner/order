@@ -6,7 +6,7 @@
   "description": "Kampfsportnahes Training: Rumpf, Nacken, Rotationskraft und Kondition in Runden (Arbeit und Pause wie im Ring). Das Kampfmodul ist Schattenboxen, mit Schwert im Equipment-Profil das Schwert. Kraft überwiegend mit Körpergewicht in Stufen, dazu Rotation am Kabel oder mit Kettlebell.",
   "goals": {"primary": "skill", "secondary": ["conditioning", "strength"]},
   "nutrition": "maintenance",
-  "load_fit": "medium",
+  "load_fit": "high",
   "level": "beginner–intermediate",
   "session_min": 45,
   "weeks": {"min": 8, "max": 10},
