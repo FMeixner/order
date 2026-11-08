@@ -1,15 +1,15 @@
 /* Zeichen statt Sätze (1.0): Warnungen, Zielbindung, Kalorien, Pins und Klammer-Arten als kleine Strichsymbole.
    Jedes Zeichen trägt seinen Text als aria-label und title — wer antippt oder darüberfährt, liest ihn;
    der ausführliche Satz steht im Phasenblatt. Eigene Strichzeichnungen, keine fremden Marken. */
-import type { Kcal, KlammerId } from "../types";
+import type { Kcal, KlammerId, Load } from "../types";
 import type { Bind, Flag } from "../engine/klammer";
 import { FLAG_TEXT } from "../engine/klammer";
 
-export type SignKind = "warn" | "off" | "pin" | "clock" | "gap" | "ok" | Kcal | `bind-${Bind}`;
+export type SignKind = "warn" | "off" | "pin" | "clock" | "gap" | "ok" | "travel" | `load-${Load}` | Kcal | `bind-${Bind}`;
 
 const KCAL_TEXT: Record<Kcal, string> = { deficit: "Defizit", maintenance: "Erhaltung", surplus: "Überschuss" };
 const BIND_TEXT: Record<Bind, string> = { lead: "trägt das Ziel des Zeichens", accept: "trägt das Ziel teilweise", none: "trägt das Ziel des Zeichens nicht" };
-const TEXT: Record<string, string> = { warn: "Hinweis", off: "passt nicht", pin: "von Hand gesetzt", clock: "Uhr über Budget", gap: "Lücke in der Bilanz", ok: "alles im Lot", ...KCAL_TEXT };
+const TEXT: Record<string, string> = { travel: "unterwegs möglich", "load-high": "auch bei viel Alltagslast", "load-medium": "bei mittlerer Alltagslast", "load-low": "nur bei wenig Alltagslast", warn: "Hinweis", off: "passt nicht", pin: "von Hand gesetzt", clock: "Uhr über Budget", gap: "Lücke in der Bilanz", ok: "alles im Lot", ...KCAL_TEXT };
 
 function path(kind: SignKind) {
   switch (kind) {
@@ -18,6 +18,11 @@ function path(kind: SignKind) {
     case "pin": return <><rect x="3.5" y="7.2" width="9" height="6.6" rx="1.4" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M5.6 7.2V5.2a2.4 2.4 0 0 1 4.8 0v2" fill="none" stroke="currentColor" strokeWidth="1.4" /></>;
     case "clock": return <><circle cx="8" cy="8.6" r="5.4" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M8 5.6v3.2l2.2 1.4M6.2 1.8h3.6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></>;
     case "gap": return <><path d="M2 12h3.4M10.6 12H14M2 4h12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /><path d="M5.4 12 8 8.2 10.6 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeDasharray="1.6 1.6" /></>;
+    case "travel": return <><rect x="2" y="5.2" width="12" height="8.3" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M5.8 5.2V3.6c0-.6.4-1 1-1h2.4c.6 0 1 .4 1 1v1.6M2 9h12" fill="none" stroke="currentColor" strokeWidth="1.4" /></>;
+    case "load-low": case "load-medium": case "load-high": {
+      const n = kind === "load-high" ? 3 : kind === "load-medium" ? 2 : 1;
+      return <>{[0, 1, 2].map((i) => <rect key={i} x={2 + i * 4.5} y={11 - i * 3.5} width="3" height={3 + i * 3.5} rx="0.8" fill="currentColor" opacity={i < n ? 1 : 0.25} />)}</>;
+    }
     case "ok": return <path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />;
     case "surplus": return <><path d="M8 13.5V3M4.2 6.8 8 3l3.8 3.8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></>;
     case "deficit": return <><path d="M8 2.5V13M4.2 9.2 8 13l3.8-3.8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></>;

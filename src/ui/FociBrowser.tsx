@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
-import { FLOWS, FOCI, FOCUS_BY_ID } from "../data";
+import { FLOWS, FOCI, FOCUS_BY_ID, KLAMMERN } from "../data";
+import { bindOf } from "../engine/klammer";
+import { KlammerIcon, Sign } from "./Signs";
 import { CLASS_LABEL, defaultRoles, focusName, isWeaponModule, MODULE_LABEL, pathLevel, pathList, PATHS, trainingDays } from "../engine/plan";
 import { shapeFocus } from "../engine/weekplan";
 import { resolveSlot } from "../engine/resolve";
@@ -62,7 +64,8 @@ export function FocusDetail({ f, profile, skills, days }: { f: Focus; profile?: 
   const n = days && days >= 1 ? days : 4;
   const sf = shapeFocus(f, n);
   const roles = defaultRoles(sf, n);
-  const facts = [GOAL_LABEL[f.goals.primary], `${f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen`, `etwa ${f.session_min} Min`, levelLabel(f.level)];
+  // Dauer nur, wenn sie fest ist (Monk): sonst bestimmt das Zeichen, wie lange ein Orden läuft
+  const facts = [GOAL_LABEL[f.goals.primary], ...(f.weeks.min === f.weeks.max ? [`fest ${f.weeks.min} Wochen`] : []), `etwa ${f.session_min} Min`, levelLabel(f.level)];
   return (
     <div className="stack focus-detail">
       {f.tagline && <p><strong>{f.tagline}</strong></p>}
@@ -105,13 +108,17 @@ export function FociBrowser({ state }: { state: AppState }) {
   const [open, setOpen] = useState<Focus | null>(null);
   return (
     <div className="stack">
-      <p className="muted">Alle Orden im Überblick. Welchem Orden du dich in welcher Phase anschließt, legst du im Plan fest.</p>
       {FOCI.map((f) => (
         <button key={f.id} className="focus-card solo" onClick={() => setOpen(f)}>
           <OrderMark id={f.id} />
           <div className="focus-name">{focusName(f.id)}</div>
           <div className="focus-tag">{f.tagline}</div>
-          <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {LOAD_FIT_LABEL[f.load_fit]} · {f.session_min} Min{f.travel ? " · unterwegs möglich" : ""}</div>
+          <div className="focus-meta row">
+            {GOAL_LABEL[f.goals.primary]} · {f.session_min} Min
+            <Sign kind={`load-${f.load_fit}`} />{f.travel && <Sign kind="travel" />}
+            {/* Zeichen, deren Ziel der Orden trägt */}
+            {KLAMMERN.filter((k) => bindOf(f, k) === "lead").map((k) => <span key={k.id} className={`kl-${k.id}`} style={{ color: "var(--k)", display: "inline-flex" }} title={`trägt ${k.name} · ${k.tag}`}><KlammerIcon id={k.id} size={14} /></span>)}
+          </div>
         </button>
       ))}
       {open && <Modal title={open.name} onClose={() => setOpen(null)} wide><FocusDetail f={open} profile={state.equipment[0]} days={trainingDays(state).length} skills={state.user.skills ? new Set(state.user.skills) : null} /></Modal>}

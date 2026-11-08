@@ -81,7 +81,7 @@ export function FocusPicker({ load, value, onPick, profile, days, restrict, klam
           <button className="focus-main" onClick={() => onPick(f.id)} aria-pressed={value === f.id}>
             <div className="focus-name row">{klammer && <Sign kind={`bind-${bindOf(f, klammer)}`} />}{focusName(f.id)}{value === f.id && <Sign kind="ok" label="gewählt" />}{score < 0 && <Sign kind="off" label={`passt nicht: ${reasons.filter((r) => /braucht|keine/.test(r)).join(", ")}`} />}</div>
             <div className="focus-tag">{f.tagline}</div>
-            <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen · {f.session_min} Min</div>
+            <div className="focus-meta">{GOAL_LABEL[f.goals.primary]}{f.weeks.min === f.weeks.max ? ` · fest ${f.weeks.min} Wochen` : ""} · {f.session_min} Min</div>
           </button>
           <button className="btn ghost small" onClick={() => setDetail(f)}>Details</button>
         </div>
@@ -253,7 +253,7 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, slotI
   return (
     <div className="stack">
       <YearPicture plan={plan} sections={sections} today={today} onBlock={(b) => (blockFocus(b) ? setView(b) : setEdit(b))} onKlammer={onKlammer} onTest={(b) => setTestView(b)} />
-      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer} sections={sections} onChange={onChange}
+      <PlanStack plan={plan} today={today} sections={sections} onChange={onChange} onKlammer={onKlammer}
         onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} testView={testView} setTestView={setTestView} />
       {gaps.length > 0 && <div className="note warn row"><Sign kind="warn" /> {gaps.join("; ")}</div>}
       <div className="row wrap">

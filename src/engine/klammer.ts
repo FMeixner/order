@@ -300,7 +300,7 @@ export function klammernOf(plan: PlanBlock[]): KlammerView[] {
 }
 
 /** Warnzeichen einer Phase als Codes statt Sätzen (das UI zeigt Symbole, der Text steht im Phasenblatt) */
-export type Flag = "off-goal" | "kcal-load" | "kcal-goal" | "short";
+export type Flag = "off-goal" | "kcal-load" | "kcal-goal";
 export function flagsOf(b: PlanBlock, sections?: Section[]): Flag[] {
   const f = FOCUS_BY_ID[b.focusId];
   if (!f || isTestBlock(b)) return [];
@@ -308,7 +308,6 @@ export function flagsOf(b: PlanBlock, sections?: Section[]): Flag[] {
   if (b.klammer && bindOf(f, KLAMMER_BY_ID[b.klammer]) === "none") out.push("off-goal");
   if (b.kcal === "deficit" && hasHighLoad(effectiveLoads(sections), b.start, b.end, b.load)) out.push("kcal-load");
   if (b.kcal === "deficit" && (f.nutrition === "surplus" || primaryAxis(f) === "muskel")) out.push("kcal-goal");
-  if (!b.klammer && !b.meso && weeksLeft(b.start, b.end) < f.weeks.min) out.push("short");
   return out;
 }
 
@@ -316,7 +315,6 @@ export const FLAG_TEXT: Record<Flag, string> = {
   "off-goal": "Trägt das Ziel des Zeichens nicht",
   "kcal-load": "Defizit bei hoher Last oder Dauerlast",
   "kcal-goal": "Defizit gegen das Ziel des Ordens",
-  short: "Kürzer, als der Orden gedacht ist",
 };
 
 /** Achse → Klammer, die sie als Leitachse trägt (für Hinweise) */
