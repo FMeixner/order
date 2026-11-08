@@ -2,6 +2,32 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.0.0] – 2026-11-08
+
+### Neu
+- Klammern: Fünf übergeordnete Ziel-Klammern — Muskelzuwachs, Kraft, Athletik, GPP / Allround, Regeneration (Arbeitsnamen, kuratiert in `data/modules/klammern.json`) — halten ein Ziel über 8–16 Wochen und enden mit der Testwoche. Darin laufen ein bis drei Orden: bis 8 Wochen einer, bis 12 zwei, darüber drei. Die Klammer bindet das Ziel, die Orden bringen die Variation (gleitender Fokus statt Ordenshopping).
+- Klammern rasten an den Grenzen der Lebensabschnitte ein, mit ein bis zwei Wochen Spielraum; sie dürfen Abschnitte überspannen, ein langer Abschnitt trägt zwei. Laufende Klammern bleiben beim Neuplanen ganz.
+- Ordenswahl in der Klammer nach Zielbindung (trägt der Orden das Ziel — Zeit-Orden unter 35 Minuten nur teilweise), Variation (nicht zweimal derselbe) und Verlauf (Aufbau früh, Umwandlung und Zuspitzung spät). Hausorden: Wer im Assistenten Orden markiert, bekommt nur aus diesen Vorschläge; der Almanach zeigt weiter alle.
+- Kalorien je Klammer mit fester Rangfolge: Last zuerst (kein Defizit bei hoher Last; mittlere Last wird nach acht Wochen ohne ruhigen Abschnitt zur Dauerlast und zählt wie hohe), dann Kalender (Winter Überschuss für Aufbau, Sommer Defizit-Fenster), dann Reise (Erhaltung, kohlenhydratbetont, Athletik passt), zuletzt der Grundmodus der Klammer.
+- Jahres-Assistent „Jahr planen“ in vier Schritten: Ziel → Klammern → Schwachstellen → Orden. Jeder Schritt zeigt den Vorschlag und lässt ihn überschreiben. Was von Hand gewählt wird (Orden, Kalorien, Klammer-Art), wird gepinnt und bleibt beim nächsten Planen stehen.
+- Jahresbild im Plan: drei Ebenen — Lebensabschnitte mit Last, Klammern mit Kalorien, Orden mit Warnzeichen — und der Strich für heute. Antippen öffnet Orden, Klammer oder Testwoche.
+- Zeichen statt Sätze: Hinweise, unpassende Orden, Zielbindung (● ◐ ○), Kalorien (↓ = ↑) und Pins erscheinen als Symbole mit Tooltip; der Text steht im Phasenblatt.
+- Domänen-Bilanz: neue Zeile „Sehnen“ (ohne Pflicht, wie Masse), gezählt nach dem Anteil an Halteübungen eines Ordens.
+
+### Geändert
+- Plan-Tab entschlackt: „Jahr planen“ ersetzt „Künftige Phasen neu vorschlagen“, „Jahr füllen“, „+ Mesozyklus anhängen“ und „Blockfolge vorschlagen“ — ein Generator statt vier. Lebensabschnitte, Richtung und Testwochen stehen im Assistenten, der Jahresblick (Uhren, Bilanz, Balance) in Schritt 3; im Plan bleibt ein Status-Zeichen.
+- „Deine Woche“ ist nach Setup umgezogen.
+- Der Stapel ist kompakt: eine Zeile je Phase mit Klammer, Orden, Wochen und Stift.
+- Phasenblatt: Orden zuerst, mit Zielbindung je Kandidat; Name, Alltagslast, Zeitraum, Wochenplan und Schwerpunkte unter „Mehr“. Teilen und Verbinden innerhalb einer Klammer lassen die Klammer stehen.
+- Entlastungswoche: Der Rhythmus (ab Woche 5 alle vier Wochen) zählt über die ganze Klammer, nicht über den einzelnen Orden — kurze Orden bekamen vorher nie eine Rhythmus-Entlastung.
+- Abwechslungs-Regel der Bilanz: Eine Klammer zählt als eine Phase.
+
+### Behoben
+- Testwochen-Regel: Lebensabschnitte zeigten ohne gesetzten Wert „keine“, „Jahr füllen“ plante aber nach jeder Phase. Jetzt gilt überall derselbe Standard (nach jeder Klammer).
+
+### Entfernt
+- Mesozyklus-Wizard (Formen 4+4 bis 5+5+5, Akzent-Modus), Coach „Jahr füllen“ und der Blockfolge-Dialog. Bestehende Mesozyklen laufen unverändert weiter.
+
 ## [0.99.4] – 2026-11-07
 
 ### Neu

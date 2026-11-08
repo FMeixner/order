@@ -255,6 +255,25 @@ export interface PlanBlock {
   accent?: AxisId;
   /** Kalorien-Modus für diesen Teil (Baustein „Kalorien-Layer“). Fehlt: nicht festgelegt, die App empfiehlt nur. */
   kcal?: Kcal;
+  /** Klammer (seit 1.0): Art der übergeordneten Ziel-Klammer. Alle Teile mit derselben `meso`-Id tragen dieselbe Klammer. */
+  klammer?: KlammerId;
+  /** Von Hand gesetzt: Orden, Kalorien oder Klammer-Art bleiben beim Neuplanen stehen */
+  pin?: { focus?: boolean; kcal?: boolean; klammer?: boolean };
+}
+
+/** Die übergeordneten Klammern (data/modules/klammern.json) */
+export type KlammerId = "muskel" | "kraft" | "athletik" | "gpp" | "regeneration";
+export interface KlammerDef {
+  id: KlammerId;
+  name: string;
+  axes: AxisId[];
+  accept: AxisId[];
+  early: string[];
+  late: string[];
+  kcal: Kcal;
+  deficitOk: boolean;
+  months: number[];
+  travel: boolean;
 }
 
 /** Achsen der Jahresbalance; als Typ hier, damit PlanBlock ihn ohne Engine-Import nutzen kann (Wertebereich identisch mit AxisId aus balance.ts). */
@@ -281,6 +300,8 @@ export interface UserProfile {
   skillTraining?: boolean;
   /** Allrounder: Schwerpunkt-Slot und Blockfolge folgen den Defiziten. Spezialist: kein Slot, Blockfolge wie geplant. */
   focusMode?: "allround" | "special";
+  /** Hausorden: aus diesen Orden schlägt der Coach vor (leer oder fehlend: alle) */
+  pool?: string[];
   /** Ordensnamen: passend zum Profil (Standard) oder immer die Grundform */
   orderNames?: "auto" | "base";
   /** Veraltet (0.1): wird beim Laden in has.sword der Heim-Profile übernommen */
@@ -375,7 +396,7 @@ export interface AppState {
   sectionsChanged?: boolean;
   /** Richtung des Jahres für Empfehlungen: allround, Defizite zuerst oder ein Bereich */
   yearAim?: string;
-  /** Testwochen beim Vorschlag der Phasen: nach jeder Phase, zweimal im Jahr oder keine */
+  /** Testwochen beim Vorschlag der Phasen: nach jeder Klammer, zweimal im Jahr oder keine. Fehlt: DEFAULT_TEST_POLICY. */
   testPolicy?: "each" | "twice" | "none";
   /** Intensiv (Session-Id → true): Bestien eine Klasse länger, Schwertübungen +1 Satz */
   energy?: Record<string, boolean>;
@@ -440,3 +461,6 @@ export interface Cup {
   id: string; name: string; place: string; focus: string; warmup: string[];
   tests: TestDef[]; who5?: boolean; benchmark?: { label: string; pool: string[] };
 }
+
+/** Einheitlicher Standard für die Testwochen-Regel (Plan, Coach, Onboarding) */
+export const DEFAULT_TEST_POLICY = "each" as const;

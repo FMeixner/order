@@ -1,25 +1,24 @@
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
-import { FOCI, SHARPEN } from "../data";
+import { FOCI, FOCUS_BY_ID, SHARPEN } from "../data";
 import { domainName, interferes, slotEligible, type DomainId, type SlotPlan, type SlotsPlan } from "../engine/sharpen";
 import type { DeficitWeights } from "../engine/sequence";
 import { timeBias } from "../engine/sequence";
-import { AXES, type AxisId } from "../engine/balance";
-import { KCAL_LABEL, axisName, carriesAccent, kcalCheck, recKcalOf } from "../engine/kcal";
-import type { Kcal, Section } from "../types";
+import { KCAL_LABEL } from "../engine/kcal";
+import type { Kcal, KlammerDef, Section } from "../types";
 import { addDays, blockFocus, blockWeeks, fitScore, fmtDate, focusName, isoDate, isTestBlock, mondayOf } from "../engine/plan";
 import { uid } from "../store";
 import type { EquipmentProfile, Focus, Load, PlanBlock, UserProfile, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { Check, Collapse, Field, Modal, Seg } from "./common";
 import { FocusDetail } from "./FociBrowser";
-import { SequenceDialog } from "./SequenceDialog";
 import { PlanStack } from "./PlanStack";
-import { rankFor, fillMeso, type Aim } from "../engine/sequence";
-import { fillYear } from "../engine/coach";
-import type { ResidualClock } from "../engine/residual";
-import type { MesoBalance } from "../engine/bilanz";
-import { loadOfWindow, mergeNext, newMeso, MESO_DEFAULT, MESO_FORMS, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
+import { rankFor, type Aim } from "../engine/sequence";
+import { bindOf, FLAG_TEXT, flagsOf, rankInKlammer, klammerName, type KlammerView } from "../engine/klammer";
+import { YearPicture } from "./YearPicture";
+import { KlammerIcon, Sign } from "./Signs";
+import { KLAMMER_BY_ID } from "../data";
+import { mergeNext, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
 
 export const LOAD_LABEL: Record<Load, string> = { high: "hoch", medium: "mittel", low: "niedrig" };
 /** Wie viel Alltagslast ein Orden verträgt, als kurzer Text */
@@ -61,7 +60,7 @@ const GOAL_GROUPS: { label: string; goals: string[] }[] = [
   { label: "Skill", goals: ["skill"] },
 ];
 
-export function FocusPicker({ load, value, onPick, profile, days, restrict }: { load: Load; value?: string; onPick: (id: string) => void; profile?: EquipmentProfile; days?: number; restrict?: string[] }) {
+export function FocusPicker({ load, value, onPick, profile, days, restrict, klammer }: { load: Load; value?: string; onPick: (id: string) => void; profile?: EquipmentProfile; days?: number; restrict?: string[]; klammer?: KlammerDef }) {
   const [detail, setDetail] = useState<Focus | null>(null);
   const [group, setGroup] = useState(0);
   const goals = GOAL_GROUPS[group].goals;
@@ -80,9 +79,9 @@ export function FocusPicker({ load, value, onPick, profile, days, restrict }: { 
         <div key={f.id} className={`focus-card ${value === f.id ? "on" : ""} ${score < 0 ? "dim" : ""}`}>
           <OrderMark id={f.id} />
           <button className="focus-main" onClick={() => onPick(f.id)} aria-pressed={value === f.id}>
-            <div className="focus-name">{focusName(f.id)}{value === f.id && <span className="tag teal">gewählt</span>}{score < 0 && <span className="tag">passt nicht</span>}</div>
+            <div className="focus-name row">{klammer && <Sign kind={`bind-${bindOf(f, klammer)}`} />}{focusName(f.id)}{value === f.id && <Sign kind="ok" label="gewählt" />}{score < 0 && <Sign kind="off" label={`passt nicht: ${reasons.filter((r) => /braucht|keine/.test(r)).join(", ")}`} />}</div>
             <div className="focus-tag">{f.tagline}</div>
-            <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen · {f.session_min} Min{score < 0 ? ` · ${reasons.filter((r) => /braucht|keine/.test(r)).join(", ")}` : ""}</div>
+            <div className="focus-meta">{GOAL_LABEL[f.goals.primary]} · {f.weeks.min === f.weeks.max ? f.weeks.min : `${f.weeks.min}–${f.weeks.max}`} Wochen · {f.session_min} Min</div>
           </button>
           <button className="btn ghost small" onClick={() => setDetail(f)}>Details</button>
         </div>
@@ -124,96 +123,81 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
   );
   // Empfehlung mit den Einstellungen dieser Seite (Last), Rest des Plans wie er ist
   const draftPlan = plan ? (plan.some((x) => x.id === b.id) ? plan.map((x) => (x.id === b.id ? b : x)) : [...plan, b]) : [b];
-  // Mesozyklus: Teile der Kette; jeder Teil folgt aus den Successors des vorherigen
-  const mesoParts = b.meso && plan ? plan.filter((x) => x.meso === b.meso).sort((x, y) => x.start.localeCompare(y.start)) : [];
-  const mesoLast = mesoParts.length > 0 && mesoParts[mesoParts.length - 1].id === b.id;
-  const prevPart = [...mesoParts].reverse().find((x) => x.end < b.start);
-  const prevF = prevPart ? blockFocus(prevPart) : undefined;
-  const succIds = prevPart && prevF?.successors ? prevF.successors : undefined;
-  const allRanked = rankFor(draftPlan, b.id, aim, deficits, steer);
-  const boundRanked = succIds ? allRanked.filter((r) => succIds.includes(r.f.id) || r.f.id === b.focusId) : allRanked;
-  // Akzent-Modus: nur Orden, die die Ziel-Domäne als Hauptziel tragen (genug Volumen, keine zeitoptimierten)
-  let pool = boundRanked.length ? boundRanked : allRanked;
-  const accPool = b.accent ? pool.filter((r) => carriesAccent(r.f, b.accent!)) : pool;
-  const accMissing = !!b.accent && accPool.length === 0;
-  if (b.accent && accPool.length) pool = accPool;
-  // Alltagslast ordnet mit: kurze Orden bei hoher Last, zeithungrige bei niedriger (Zusatzpunkte, kein Filter)
-  const ranked = [...pool].sort((x, y) => y.score + timeBias(b, y.f) - (x.score + timeBias(b, x.f))).slice(0, 5);
+  const k = b.klammer ? KLAMMER_BY_ID[b.klammer] : undefined;
+  const parts = b.meso && plan ? plan.filter((x) => x.meso === b.meso && !isTestBlock(x)).sort((x, y) => x.start.localeCompare(y.start)) : [];
+  const lastPart = parts.length > 0 && parts[parts.length - 1].id === b.id;
+  // In einer Klammer: Zielbindung, Variation, Verlauf (rankInKlammer); sonst die Empfehlung wie bisher
+  const ranked: { id: string; bind?: "lead" | "accept" | "none"; why?: string }[] = k
+    ? rankInKlammer(draftPlan, b.id, user?.pool).slice(0, 5).map((r) => ({ id: r.f.id, bind: r.bind }))
+    : rankFor(draftPlan, b.id, aim, deficits, steer).map((r) => ({ ...r, score: r.score + timeBias(b, r.f) })).sort((x, y) => y.score - x.score).slice(0, 5).map((r) => ({ id: r.f.id, why: r.reasons.slice(0, 2).join(", ") }));
   const locked = b.start <= day; // laufende Phase: Orden nicht hier wechseln (eingefroren)
   const inPlan = !!plan?.some((x) => x.id === b.id);
   const nx = plan && inPlan ? nextOf(plan, b) : undefined;
+  const flags = flagsOf(b);
+  const save = () => {
+    const pin = { ...b.pin };
+    if (b.focusId !== block.focusId) pin.focus = true;
+    if (b.kcal !== block.kcal) pin.kcal = true;
+    onSave(Object.keys(pin).length ? { ...b, pin } : b, { test });
+  };
   return (
     <div className="stack">
-      <div className="label teal"><span className="bar" />Phase</div>
-      <Field label="Name" hint="z. B. Wintersemester, Ferien, Projektphase">
-        <input type="text" value={b.label} onChange={(e) => setB({ ...b, label: e.target.value })} />
-      </Field>
-      <Field label="Alltagslast" hint="Hoch = wenig Energie und Zeit fürs Training übrig.">
-        <Seg value={b.load} options={[{ value: "low", label: "niedrig" }, { value: "medium", label: "mittel" }, { value: "high", label: "hoch" }]} onChange={(load) => setB({ ...b, load })} />
-      </Field>
-      {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && (!b.meso || mesoLast) && (
-        <Check checked={test} onChange={setTest} label="Testwoche am Ende (die letzte Woche wird zur Testwoche)" />
+      {k && (
+        <div className={`kl-card kl-${k.id}`}>
+          <div className="kl-head"><KlammerIcon id={k.id} /> {klammerName(k.id)}{b.pin?.klammer && <Sign kind="pin" />}<span className="block-dates">Teil {parts.findIndex((x) => x.id === b.id) + 1} von {parts.length}</span></div>
+        </div>
       )}
-      {b.meso && !mesoLast && b.end >= day && <p className="muted small">Dieser Mesozyklus-Teil misst nicht selbst: Die Testwoche steht am Ende des Mesozyklus, hinter dem letzten Teil.</p>}
-
-      <div className="label teal"><span className="bar" />Orden · {weeks} Wochen{f && weeks < f.weeks.min && b.meso ? " · Akzent im Mesozyklus" : f && (weeks < f.weeks.min || weeks > f.weeks.max) ? ` (passt für ${f.weeks.min}–${f.weeks.max})` : ""}</div>
-      {b.accent && (
-        <p className="muted small">Akzent-Modus: {axisName(b.accent)} bleibt Hauptziel in allen Teilen dieses Mesozyklus — die Orden rotieren, die Domäne nicht.</p>
+      <div className="label teal"><span className="bar" />Orden · {weeks} Wochen</div>
+      {flags.length > 0 && (
+        <div className="stack">
+          {flags.map((x) => <div key={x} className="row small"><Sign kind={x === "off-goal" ? "off" : "warn"} /> {FLAG_TEXT[x]}</div>)}
+        </div>
       )}
-      {accMissing && (
-        <p className="note warn small">Kein Orden trägt {axisName(b.accent!)} als Hauptziel mit genug Volumen für einen Akzent. Wähle frei — oder löse den Akzent über Teilen auf.</p>
-      )}
-      {mesoLast && f && (f.goals.primary === "power" || f.goals.primary === "speed") && (
-        <p className="note warn small">Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Teil misst die Testwoche dahinter sie nicht mehr im Vollbesitz. Lieber früher einplanen (oder bewusst so lassen).</p>
-      )}
+      {lastPart && f && (f.goals.primary === "power" || f.goals.primary === "speed") && <div className="row small"><Sign kind="warn" /> Schnellkraft klingt bis zur Testwoche ab</div>}
       {locked ? (
         <p className="muted small">{f ? focusName(f.id) : "–"} läuft schon. Einen anderen Orden wählst du für die nächste Phase.</p>
       ) : (
         <div className="sc-alts">
-          {succIds && prevF && <p className="muted small">Dieser Mesozyklus-Teil: folgt aus den Successors von {focusName(prevF.id)}.</p>}
-          {succIds && b.focusId && !succIds.includes(b.focusId) && prevF && <p className="note warn small">{focusName(b.focusId)} folgt nicht auf {focusName(prevF.id)} — bewusst so lassen oder einen Successor wählen.</p>}
           {ranked.map((r, i) => (
-            <button key={r.f.id} className={`sc-alt ${r.f.id === b.focusId ? "on" : ""}`} aria-pressed={r.f.id === b.focusId} onClick={() => setB({ ...b, focusId: r.f.id })}>
-              <span><strong>{focusName(r.f.id)}</strong>{i === 0 && <span className="tag rec">empfohlen</span>}{r.f.id === b.focusId && <span className="tag">gewählt</span>}</span>
-              <span className="muted small">{r.f.tagline}{r.reasons.length ? ` · ${r.reasons.slice(0, 2).join(", ")}` : ""}</span>
+            <button key={r.id} className={`sc-alt ${r.id === b.focusId ? "on" : ""}`} aria-pressed={r.id === b.focusId} onClick={() => setB({ ...b, focusId: r.id })}>
+              <span className="row">{r.bind && <Sign kind={`bind-${r.bind}`} />}<strong>{focusName(r.id)}</strong>{i === 0 && <span className="tag rec">empfohlen</span>}{r.id === b.focusId && b.pin?.focus && <Sign kind="pin" />}</span>
+              <span className="muted small">{FOCUS_BY_ID[r.id]?.tagline}{r.why ? ` · ${r.why}` : ""}</span>
             </button>
           ))}
           <button className="sc-alt muted" aria-expanded={all} onClick={() => setAll((x) => !x)}>{all ? "Weniger" : "Alle Orden …"}</button>
-          {all && <FocusPicker load={b.load} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} restrict={succIds} />}
+          {all && <FocusPicker load={b.load} value={b.focusId} onPick={(focusId) => setB({ ...b, focusId })} profile={profiles[0]} days={b.schedule && Object.values(b.schedule).some(Boolean) ? Object.values(b.schedule).filter(Boolean).length : days} klammer={k} />}
         </div>
       )}
 
       {user?.level !== "einsteiger" && (
-        <>
-          <div className="label teal"><span className="bar" />Kalorien</div>
-          {(() => {
-            const rec = recKcalOf(b, f ?? null);
-            const warns = kcalCheck(b, f ?? null);
-            return (
-              <div className="stack">
-                <Field label={<>Kalorien-Modus für diesen Teil{rec && <span className="tag rec">{KCAL_LABEL[rec.mode]} empfohlen</span>}</>} hint={rec?.why ?? "Defizit, Erhaltung oder Überschuss — die App warnt, wenn die Kombination mit Last und Orden nicht trägt."}>
-                  <Seg<"" | Kcal> value={b.kcal ?? ""} options={[{ value: "", label: "nicht festgelegt" }, { value: "deficit", label: KCAL_LABEL.deficit }, { value: "maintenance", label: KCAL_LABEL.maintenance }, { value: "surplus", label: KCAL_LABEL.surplus }]} onChange={(kcal) => setB({ ...b, kcal: kcal || undefined })} />
-                </Field>
-                {b.kcal && warns.map((w) => <p key={w} className="note warn small">{w}</p>)}
-              </div>
-            );
-          })()}
-        </>
+        <Field label={<span className="row">Kalorien{b.pin?.kcal && <Sign kind="pin" />}</span>}>
+          <div className="kl-kinds" role="radiogroup" aria-label="Kalorien">
+            {(["deficit", "maintenance", "surplus"] as Kcal[]).map((m) => (
+              <button key={m} type="button" role="radio" aria-checked={b.kcal === m} aria-label={KCAL_LABEL[m]} title={KCAL_LABEL[m]} className={`${k ? `kl-${k.id}` : "kl-gpp"} ${b.kcal === m ? "on" : ""}`} onClick={() => setB({ ...b, kcal: b.kcal === m ? undefined : m })}><Sign kind={m} /></button>
+            ))}
+          </div>
+        </Field>
+      )}
+
+      {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && (!b.meso || lastPart) && (
+        <Check checked={test} onChange={setTest} label="Testwoche am Ende (die letzte Woche wird zur Testwoche)" />
       )}
 
       {onStructure && inPlan && b.end >= day && (weeks >= 2 || nx) && (
-        <>
-          <div className="label teal"><span className="bar" />Aufteilen</div>
-          <div className="row wrap">
-            {weeks >= 2 && <button className="btn ghost small" onClick={() => onStructure(splitBlock(plan!, b.id, uid("b"), day))}>In zwei Phasen teilen</button>}
-            {nx && nx.start > day && <button className="btn ghost small" onClick={() => onStructure(mergeNext(plan!, b.id, day))}>Mit {focusName(nx.focusId)} verbinden</button>}
-          </div>
-          <p className="muted small">Teilen: zwei Phasen mit demselben Orden — für die zweite wählst du danach neu. Verbinden: diese Phase läuft bis zum Ende der nächsten weiter.</p>
-        </>
+        <div className="row wrap">
+          {weeks >= 2 && <button className="btn ghost small" onClick={() => onStructure(splitBlock(plan!, b.id, uid("b"), day))}>In zwei Phasen teilen</button>}
+          {nx && nx.start > day && <button className="btn ghost small" onClick={() => onStructure(mergeNext(plan!, b.id, day))}>Mit {focusName(nx.focusId)} verbinden</button>}
+        </div>
       )}
 
-      <Collapse title="Mehr" meta="Zeitraum, Wochenplan, Schwerpunkt">
+      <Collapse title="Mehr" meta="Name, Last, Zeitraum, Wochenplan, Schwerpunkt">
         <div className="stack">
+          <Field label="Name" hint="z. B. Wintersemester, Ferien, Projektphase">
+            <input type="text" value={b.label} onChange={(e) => setB({ ...b, label: e.target.value })} />
+          </Field>
+          <Field label="Alltagslast" hint="Kommt aus den Lebensabschnitten; hier nur für diese Phase überschreiben.">
+            <Seg value={b.load} options={[{ value: "low", label: "niedrig" }, { value: "medium", label: "mittel" }, { value: "high", label: "hoch" }]} onChange={(load) => setB({ ...b, load })} />
+          </Field>
           <div className="row two">
             <Field label="Beginn"><input type="date" value={b.start} onChange={(e) => setB({ ...b, start: e.target.value })} /></Field>
             <Field label="Ende"><input type="date" value={b.end} onChange={(e) => setB({ ...b, end: e.target.value })} /></Field>
@@ -231,7 +215,7 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
       <div className="sticky-actions">
         {onDelete && <button className="btn danger" onClick={onDelete}>Löschen</button>}
         <button className="btn ghost" onClick={onCancel}>Abbrechen</button>
-        <button className="btn primary" disabled={!valid} onClick={() => onSave(b, { test })}>{f ? "Speichern" : "Erst Orden wählen"}</button>
+        <button className="btn primary" disabled={!valid} onClick={save}>{f ? "Speichern" : "Erst Orden wählen"}</button>
       </div>
     </div>
   );
@@ -256,40 +240,24 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, sections, deficits, deficitNames, slotInfo, onChange, today, aim: aimIn, clocks, balance, steer, testPolicy }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; clocks?: ResidualClock[]; balance?: MesoBalance; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none" }) {
+export function PlanList({ plan, profiles, days, user, sections, deficits, slotInfo, onChange, today, aim: aimIn, steer, onKlammer }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none"; onKlammer?: (k: KlammerView) => void }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
   const [view, setView] = useState<PlanBlock | null>(null);
-  const [seq, setSeq] = useState(false);
-  const [mesoOpen, setMesoOpen] = useState(false);
-  const [accentOn, setAccentOn] = useState(false);
-  const [accent, setAccent] = useState<AxisId>("muskel");
+  const [testView, setTestView] = useState<PlanBlock | null>(null);
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
   const gaps: string[] = [];
   for (let i = 1; i < sorted.length; i++) if (addDays(sorted[i - 1].end, 1) < sorted[i].start) gaps.push(`${fmtDate(addDays(sorted[i - 1].end, 1))}–${fmtDate(addDays(sorted[i].start, -1))}`);
   for (let i = 1; i < sorted.length; i++) if (sorted[i].start <= sorted[i - 1].end) gaps.push(`Überschneidung bei ${fmtDate(sorted[i].start)}`);
-  // Alltagslast des Zeitraums hinter dem Plan (aus den Lebensabschnitten): empfiehlt die Form des nächsten Mesozyklus
-  const lastEnd = sorted.length ? sorted[sorted.length - 1].end : today;
-  const nextLoad = loadOfWindow(sections, addDays(lastEnd, 1), addDays(lastEnd, 7 * 16));
-  // Form-Empfehlung: Lücken in der Bilanz oder mehrere rote Uhren sprechen für drei Teile (mehr Orden, mehr Bereiche),
-  // sonst folgt die Form der Alltagslast: kurze Teile bei hoher Last, das Triple in ruhigen Abschnitten
-  const hot = clocks?.filter((c) => c.over) ?? [];
-  const bySignal = (balance?.gaps.length ?? 0) > 0 || hot.length >= 2;
-  const recForm: number[] = bySignal ? [5, 5, 5] : nextLoad === "high" ? [6, 4] : nextLoad === "low" ? [5, 5, 5] : MESO_DEFAULT;
-  const erf = user?.level !== "einsteiger";
   return (
     <div className="stack">
-      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer} onChange={onChange}
-        onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} />
-      {gaps.length > 0 && <div className="note warn">Lücken oder Überschneidungen: {gaps.join("; ")}</div>}
+      <YearPicture plan={plan} sections={sections} today={today} onBlock={(b) => (blockFocus(b) ? setView(b) : setEdit(b))} onKlammer={onKlammer} onTest={(b) => setTestView(b)} />
+      <PlanStack plan={plan} today={today} aim={aim} deficits={deficits ?? []} steer={steer} sections={sections} onChange={onChange}
+        onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} testView={testView} setTestView={setTestView} />
+      {gaps.length > 0 && <div className="note warn row"><Sign kind="warn" /> {gaps.join("; ")}</div>}
       <div className="row wrap">
-        {sections?.length ? (
-          <button className="btn primary" onClick={() => { if (confirm("Jahr füllen? Alles hinter der laufenden Phase wird durch Mesozyklen mit Ordensketten ersetzt — alles bleibt änderbar.")) onChange(fillYear(plan, sections, today, () => uid("b"), aim, deficits ?? [], steer ?? [], testPolicy ?? "each", bySignal)); }}>Jahr füllen</button>
-        ) : null}
-        <button className="btn ghost" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [], steer)[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
-        <button className="btn ghost" onClick={() => setMesoOpen(true)}>+ Mesozyklus anhängen</button>
-        {plan.some((b) => b.end >= today) && <button className="btn ghost" onClick={() => setSeq(true)}>Blockfolge vorschlagen</button>}
+        <button className="btn ghost small" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [], steer)[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
       </div>
       {view && blockFocus(view) && (
         <Modal title={focusName(view.focusId)} onClose={() => setView(null)} wide>
@@ -299,41 +267,6 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, defic
               <button className="btn small" onClick={() => { setEdit(view); setView(null); }}>Phase bearbeiten</button>
             </div>
             <FocusDetail f={blockFocus(view)!} profile={profiles[0]} days={days} skills={user?.skills ? new Set(user.skills) : null} />
-          </div>
-        </Modal>
-      )}
-      {seq && <SequenceDialog plan={plan} today={today} initialAim={aim} deficits={deficits} deficitNames={deficitNames} steer={steer} onApply={onChange} onClose={() => setSeq(false)} />}
-      {mesoOpen && (
-        <Modal title="Mesozyklus anhängen" onClose={() => setMesoOpen(false)}>
-          <div className="stack">
-            <p className="muted small">Kurze Phasen, die zusammengehören, mit Testwoche am Ende. Wähle die Form — Vorschläge für alle Teile kommen gleich dahinter.</p>
-            {sections?.length ? (
-              <p className="muted small">Der Zeitraum dahinter: {LOAD_LABEL[nextLoad]}e Alltagslast — {nextLoad === "high" ? "kurze Teile passen gut." : nextLoad === "low" ? "Raum für drei Teile und zeithungrige Orden." : "die Standardform passt."}</p>
-            ) : null}
-            {erf && (
-              <Check checked={accentOn} onChange={(v) => { setAccentOn(v); if (!v) setAccent("muskel"); }} label="Akzent halten — eine Ziel-Domäne bleibt Hauptziel in jedem Teil, die Orden rotieren" />
-            )}
-            {accentOn && (
-              <div className="chips" role="radiogroup" aria-label="Ziel-Domäne des Akzents">
-                {AXES.map((a) => <button key={a.id} role="radio" aria-checked={accent === a.id} className={accent === a.id ? "on" : ""} onClick={() => setAccent(a.id)}>{a.name}</button>)}
-              </div>
-            )}
-            {accentOn && <p className="muted small">Akzent auf {axisName(accent)}: Die Orden rotieren, die Domäne bleibt Hauptziel in jedem Teil — zeitoptimierte Orden bleiben draußen.</p>}
-            <div className="chips" role="radiogroup" aria-label="Form des Mesozyklus">
-              {MESO_FORMS.map((f) => (
-                <button key={f.join("+")} onClick={() => { onChange(fillMeso(newMeso(plan, today, () => uid("b"), f, sections, accentOn ? accent : undefined), aim, deficits ?? [], steer ?? [])); setMesoOpen(false); }}>{f.join("+")}{f.join("+") === recForm.join("+") && <span className="tag rec">empfohlen</span>}<span className="muted"> + Testwoche</span></button>
-              ))}
-            </div>
-            <p className="muted small">6+6 ist die Standardform; 5+5+5 füllt ein 16-Wochen-Fenster, 4+4 passt, wenn das Jahr eng wird.</p>
-            {bySignal ? (
-              <p className="note small">
-                Empfohlen: {recForm.join("+")}. {(balance?.gaps.length ?? 0) > 0
-                  ? `Lücken in der Bilanz (${[...new Set((balance?.gaps ?? []).map((g) => g.name))].join(", ")}) — drei Teile decken mehr Bereiche ab.`
-                  : `${hot.length} Uhren über Budget — drei kürzere Teile verteilen die Bereiche auf mehr Orden.`}
-              </p>
-            ) : sections?.length && nextLoad !== "medium" ? (
-              <p className="note small">Empfohlen: {recForm.join("+")} — {nextLoad === "high" ? "hohe Alltagslast verträgt kürzere Teile besser." : "niedrige Alltagslast gibt Raum für das Triple."}</p>
-            ) : null}
           </div>
         </Modal>
       )}

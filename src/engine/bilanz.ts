@@ -11,7 +11,7 @@
    (Meso-Vorschläge, die unterversorgte Domänen priorisieren) ist ein Folgeber. */
 import { DOMAINS } from "../data";
 import { addDays, blockFocus, blockWeeks, fmtDate, isTestBlock, mondayOf, parseIso } from "./plan";
-import type { Goal, PlanBlock } from "../types";
+import type { Focus, Goal, PlanBlock } from "../types";
 
 /** Mindestsumme effektiver Wochen je Pflichtdomäne je Halbjahr */
 export const HALF_MIN = 4;
@@ -20,6 +20,22 @@ export const HALF_CHECK = 13;
 
 /** Zeile „Masse": angezeigt, aber nie geprüft */
 const MASS = "masse";
+/** Zeile „Sehnen": angezeigt, aber nie geprüft (die Testwoche misst keine Sehnen) — zählt nach dem Anteil an Halteübungen */
+const TENDON = "sehnen";
+
+/** Anteil Halteübungen eines Ordens (Sehnen und Bindegewebe): ab 15 % halbe, ab 30 % volle Wochen */
+export function tendonWeight(f: Focus): number {
+  let hold = 0, all = 0;
+  for (const r of Object.values(f.roles)) {
+    if (r.optional) continue;
+    for (const b of r.blocks) {
+      const slots = b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : [];
+      for (const x of slots) { all++; if (x.kind === "hold") hold++; }
+    }
+  }
+  const share = all ? hold / all : 0;
+  return share >= 0.3 ? 1 : share >= 0.15 ? 0.5 : 0;
+}
 
 /** Goal → Testwochen-Domänen; Kondition trägt Kraftausdauer und Anaerob */
 const DOMAINS_OF_GOAL: Partial<Record<Goal, string[]>> = {};
@@ -36,6 +52,8 @@ function blockWeights(b: PlanBlock): Map<string, number> {
   };
   add(f.goals.primary, 1);
   for (const g of f.goals.secondary) add(g, 0.5);
+  const t = tendonWeight(f);
+  if (t) m.set(TENDON, t);
   return m;
 }
 
@@ -122,6 +140,14 @@ export function mesoBalance(plan: PlanBlock[]): MesoBalance {
     });
     rows.push({ id: MASS, name: "Masse (kein Test)", cells, required: false });
   }
+  {
+    const cells = order.map((k) => {
+      let w = 0;
+      for (const b of groups.get(k)!.blocks) w += (wOf.get(b.id)!.get(TENDON) ?? 0) * blockWeeks(b);
+      return round1(w);
+    });
+    rows.push({ id: TENDON, name: "Sehnen (kein Test)", cells, required: false });
+  }
 
   // Halbjahre: jede Woche zählt zu dem Halbjahr, in dem ihr Montag liegt
   const halves = new Map<string, HalfYear>();
@@ -150,8 +176,12 @@ export function mesoBalance(plan: PlanBlock[]): MesoBalance {
 
   // Abwechslungs-Invariante: Harlequin ist der Joker und unterbricht jede Reihe
   const streaks: BalanceStreak[] = [];
+  // Eine Klammer zählt als eine Phase: Zielbindung über ihre Orden ist gewollt, keine Wiederholung
   let run: { goal: Goal; labels: string[] } | null = null;
+  let lastMeso: string | undefined;
   for (const b of trained) {
+    if (b.klammer && b.meso && b.meso === lastMeso) continue;
+    lastMeso = b.meso;
     if (b.focusId === "harlequin") { run = null; continue; }
     const f = blockFocus(b);
     if (!f) { run = null; continue; }

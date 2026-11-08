@@ -1,12 +1,12 @@
 /* Jahresplan als Stapel: Band als Überblick, darunter je Phase eine Karte mit − / + (wochenweise, alles danach rückt mit),
    Testwoche am Ende als Schalter, Orden mit Empfehlung und zwei Alternativen. Feinheiten hinter „Phase bearbeiten“. */
-import { useState } from "react";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
+import { flagsOf, klammerName } from "../engine/klammer";
+import { FlagSign, KlammerIcon, Sign } from "./Signs";
 import { blockWeeks, fmtDate, focusName, isTestBlock, newerFocus, refreeze } from "../engine/plan";
 import { rankFor, type Aim, type DeficitWeights } from "../engine/sequence";
 import { canShrink, isPast, resizeBlock, testAfter } from "../engine/stack";
-import { KCAL_LABEL, kcalCheck } from "../engine/kcal";
-import type { Load, PlanBlock } from "../types";
+import type { Load, PlanBlock, Section } from "../types";
 import { OrderMark } from "./OrderIcon";
 import { Modal } from "./common";
 
@@ -38,34 +38,16 @@ function LoadIcon({ load }: { load: Load }) {
 /** Farbe je Hauptziel (Band und Kartenrand) */
 const goalColor = (id: string) => `var(--goal-${FOCUS_BY_ID[id]?.goals.primary ?? "none"}, var(--border-lit))`;
 
-export function PlanStack({ plan, today, aim, deficits, steer, onChange, onView, onEdit }: {
-  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; steer?: DeficitWeights;
+export function PlanStack({ plan, today, aim, deficits, steer, sections, onChange, onView, onEdit, testView, setTestView }: {
+  plan: PlanBlock[]; today: string; aim: Aim; deficits: DeficitWeights; steer?: DeficitWeights; sections?: Section[];
   onChange: (p: PlanBlock[]) => void; onView: (b: PlanBlock) => void; onEdit: (b: PlanBlock) => void;
+  testView: PlanBlock | null; setTestView: (b: PlanBlock | null) => void;
 }) {
-  const [testView, setTestView] = useState<PlanBlock | null>(null);
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
-  const total = sorted.reduce((s, b) => s + blockWeeks(b), 0);
-  const first = sorted[0]?.start, last = sorted[sorted.length - 1]?.end;
-  const span = first && last ? Math.max(1, (new Date(`${last}T12:00`).getTime() - new Date(`${first}T12:00`).getTime()) / 864e5 + 1) : 1;
-  const nowPct = first ? Math.min(100, Math.max(0, ((new Date(`${today}T12:00`).getTime() - new Date(`${first}T12:00`).getTime()) / 864e5 / span) * 100)) : 0;
   let n = 0;
 
   return (
     <div className="stack plan-stack">
-      {sorted.length > 0 && (
-        <div className="year-band-wrap" aria-label="Jahr im Überblick">
-          <div className="year-band">
-            {sorted.map((b) => (
-              <div key={b.id} className={`yb-seg ${isTestBlock(b) ? "test" : ""}`} style={{ flex: blockWeeks(b), ["--c" as string]: isTestBlock(b) ? "var(--amber)" : goalColor(b.focusId) }} title={`${focusName(b.focusId)} · ${blockWeeks(b)} Wochen${b.meso ? " · Mesozyklus" : ""}`}>
-                {!isTestBlock(b) && blockWeeks(b) >= 4 && <OrderMark id={b.focusId} />}
-              </div>
-            ))}
-            <span className="yb-now" style={{ left: `${nowPct}%` }} aria-hidden />
-          </div>
-          <div className="muted small">{fmtDate(first!)} – {fmtDate(last!)} · {total} Wochen · {((k) => (k === 1 ? "1 Testwoche" : `${k} Testwochen`))(sorted.filter(isTestBlock).length)}</div>
-        </div>
-      )}
-
       {testView && (
         <Modal title="Testwoche" onClose={() => setTestView(null)}>
           <div className="stack">
@@ -95,10 +77,11 @@ export function PlanStack({ plan, today, aim, deficits, steer, onChange, onView,
           <div key={b.id} className={`stack-card ${now ? "now" : ""} ${past ? "past" : ""}`} style={{ ["--c" as string]: goalColor(b.focusId) }}>
             <OrderMark id={b.focusId} />
             <div className="sc-text">
-              <div className="sc-phase">{b.label || `Phase ${n}`}<LoadIcon load={b.load} />{b.kcal && <span className="tag" style={kcalCheck(b, FOCUS_BY_ID[b.focusId] ?? null).length ? { color: "var(--amber)", borderColor: "var(--amber)" } : undefined}>{KCAL_LABEL[b.kcal]}</span>}</div>
+              <div className="sc-phase row">{b.klammer && <span className={`kl-${b.klammer}`} style={{ color: "var(--k)", display: "inline-flex" }} title={klammerName(b.klammer)}><KlammerIcon id={b.klammer} size={14} /></span>}{b.label || (b.klammer ? klammerName(b.klammer) : `Phase ${n}`)}<LoadIcon load={b.load} />{b.kcal && <Sign kind={b.kcal} />}<FlagSign flags={flagsOf(b, sections)} /></div>
               <div className="sc-order">
                 <button className="sc-name" onClick={() => onView(b)}>{focusName(b.focusId)}</button>
                 {tag && <StatusIcon kind={tag} />}
+                {b.pin?.focus && <Sign kind="pin" />}
               </div>
               <div className="block-dates">{fmtDate(b.start)} – {fmtDate(t?.end ?? b.end)}</div>
             </div>

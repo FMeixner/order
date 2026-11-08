@@ -66,7 +66,7 @@ test("Deine Woche: Einheiten tauschen, fixierte Tage nur als Hinweis, Ordenssymb
   st.dayFlags = { Fr: { short: true } };
   await seed(page, st);
   await page.goto("./");
-  await page.getByRole("button", { name: "Plan" }).click();
+  await page.getByRole("button", { name: "Setup" }).click();
   await page.getByRole("button", { name: /Deine Woche/ }).click();
   await expect(page.locator(".week-fixed")).toHaveText("kurz");
   await expect(page.getByRole("button", { name: /^Kurz am / })).toHaveCount(0);
@@ -76,6 +76,7 @@ test("Deine Woche: Einheiten tauschen, fixierte Tage nur als Hinweis, Ordenssymb
   const first = await roleSel.nth(0).inputValue();
   await roleSel.nth(0).selectOption(second);
   await expect(roleSel.nth(1)).toHaveValue(first);
+  await page.getByRole("button", { name: "Plan" }).click();
   await expect(page.locator(".stack-card .order-mark").first()).toBeAttached();
 });
 
@@ -121,23 +122,34 @@ test("Plan als Stapel: Woche länger, Testwoche am Ende, Phase anhängen mit Emp
   expect(st.plan.some((b) => b.focusId === "test")).toBe(true);
 });
 
-test("Lebensabschnitte: Vorlage, Richtung, Testwochen, künftige Phasen neu vorschlagen", async ({ page }) => {
+test("Jahr planen: Vorlage, Richtung, Klammern, Orden, Übernehmen", async ({ page }) => {
   await seed(page);
   await page.goto("./");
   await page.getByRole("button", { name: "Plan" }).click();
-  await page.getByRole("button", { name: /Lebensabschnitte/ }).click();
   page.on("dialog", (d) => d.accept());
-  await page.getByRole("button", { name: "Vorlage Semester-Rhythmus" }).click();
-  await expect(page.locator(".sec-row").nth(3)).toBeVisible();
-  await page.getByRole("radio", { name: "Ausdauer" }).click();
-  await page.getByRole("radio", { name: "nach jeder Phase" }).click();
-  await page.getByRole("button", { name: "Künftige Phasen neu vorschlagen" }).click();
+  await page.getByRole("button", { name: "Jahr planen" }).click();
+  const dlg = page.getByRole("dialog");
+  await dlg.getByRole("radio", { name: "Ausdauer" }).click();
+  await dlg.getByRole("radio", { name: "nach jeder Klammer" }).click();
+  await dlg.getByRole("button", { name: "Weiter" }).click();
+  await dlg.getByRole("button", { name: "Vorlage Semester-Rhythmus" }).click();
+  await expect(dlg.locator(".sec-row").nth(3)).toBeVisible();
+  await expect(dlg.locator(".kl-card").first()).toBeVisible();
+  // Art der ersten künftigen Klammer von Hand: Regeneration (wird gepinnt)
+  await dlg.locator(".kl-card").first().getByRole("radio", { name: "Regeneration" }).click();
+  await dlg.getByRole("button", { name: "Weiter" }).click();
+  await dlg.getByRole("button", { name: "Weiter" }).click();
+  await expect(dlg.locator(".kl-part").first()).toBeVisible();
+  await dlg.getByRole("button", { name: "Übernehmen" }).click();
   const st = await stored(page);
   expect(st.plan.length).toBeGreaterThan(4);
   expect(st.plan.some((b) => b.focusId === "test")).toBe(true);
   expect(st.plan.find((b) => b.start <= new Date().toISOString().slice(0, 10))?.focusId).toBe("assassin");
+  expect(st.plan.some((b) => b.klammer === "regeneration" && b.pin?.klammer)).toBe(true);
   expect(st.sectionsChanged).toBe(false);
   expect(st.yearAim).toBe("ausdauer");
+  expect(st.testPolicy).toBe("each");
+  await expect(page.locator(".yp-kl").first()).toBeVisible();
 });
 
 test("Sicherung: speichern und wieder laden", async ({ page }, info) => {

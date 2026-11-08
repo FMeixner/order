@@ -1,5 +1,5 @@
 /* Lädt alle Inhalte aus /data. Eine neue Datei in data/orders/ ist nach dem nächsten Build automatisch ein neuer Orden. */
-import type { Beast, Cup, Drill, Exercise, Focus, Goal, Norm } from "./types";
+import type { Beast, Cup, Drill, Exercise, Focus, Goal, KlammerDef, KlammerId, Norm } from "./types";
 import exercisesJson from "../data/exercises.json";
 import beastsJson from "../data/beasts.json";
 import correctivesJson from "../data/modules/correctives.json";
@@ -14,6 +14,7 @@ import skillsJson from "../data/modules/skills.json";
 import flowsJson from "../data/modules/flows.json";
 import sharpenJson from "../data/modules/sharpen.json";
 import bandsJson from "../data/modules/bands.json";
+import klammernJson from "../data/modules/klammern.json";
 
 const fociModules = import.meta.glob("../data/orders/*.json", { eager: true, import: "default" }) as Record<string, Focus>;
 
@@ -55,3 +56,6 @@ export const BANDS = bandsJson as unknown as { levels: string[] };
 export interface SharpenDef { name: string; place: "start" | "end"; days: "all" | 1 | 2; why: string; drills: Drill[] }
 export const SHARPEN = (sharpenJson as unknown as { domains: Record<string, SharpenDef> }).domains;
 export const FLOWS = (flowsJson as unknown as { variants: Record<string, { name: string; drills: Drill[] }> }).variants;
+/** Klammern: übergeordnete Ziel-Klammern über 8–16 Wochen */
+export const KLAMMERN = (klammernJson as unknown as { klammern: KlammerDef[] }).klammern;
+export const KLAMMER_BY_ID = Object.fromEntries(KLAMMERN.map((k) => [k.id, k])) as Record<KlammerId, KlammerDef>;
