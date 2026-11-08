@@ -59,16 +59,15 @@ function blockNames(b: Block, c: Ctx): string[] {
   }
 }
 
-/** Zeichen eines Ordens fürs Almanach-Symbol: die Zeichen, deren Ziel er trägt; sonst die, in deren Verlauf er
-    kuratiert ist (früh/spät) — so hat jeder Orden ein Tier (Skill-Orden wie Acrobat und Huntsman laufen im Falken mit,
-    Herald trägt den Stier nur teilweise, weil er unter 35 Minuten bleibt). */
+/** Zeichen eines Ordens fürs Almanach (1.3.1): Orden sind Mehrzweck. Voll: Zeichen, deren Ziel er trägt.
+    Blass: Zeichen, in deren Verlauf er kuratiert mitläuft (früh oder spät). Ohne beides das Zeichen seines
+    Hauptziels, blass (Herald: Stier, unter 35 Minuten nur teilweise). */
 function zeichenOf(f: Focus): { k: (typeof KLAMMERN)[number]; lead: boolean }[] {
-  const lead = KLAMMERN.filter((k) => bindOf(f, k) === "lead").map((k) => ({ k, lead: true }));
-  if (lead.length) return lead;
+  const lead = KLAMMERN.filter((k) => bindOf(f, k) === "lead");
+  const curated = KLAMMERN.filter((k) => !lead.includes(k) && (k.early.includes(f.id) || k.late.includes(f.id)));
+  if (lead.length || curated.length) return [...lead.map((k) => ({ k, lead: true })), ...curated.map((k) => ({ k, lead: false }))];
   const own = KLAMMERN.filter((k) => { const a = primaryAxis(f); return !!a && k.axes.includes(a); });
-  if (own.length) return own.map((k) => ({ k, lead: false }));
-  const curated = KLAMMERN.filter((k) => k.early.includes(f.id) || k.late.includes(f.id));
-  const acc = curated.length ? curated : KLAMMERN.filter((k) => bindOf(f, k) === "accept").slice(0, 1);
+  const acc = own.length ? own : KLAMMERN.filter((k) => bindOf(f, k) === "accept").slice(0, 1);
   return acc.map((k) => ({ k, lead: false }));
 }
 
