@@ -3,7 +3,7 @@
    und bleibt beim nächsten Neuplanen stehen. Ein Generator (planYear) statt vier Knöpfen. */
 import { useMemo, useState } from "react";
 import { FOCI, FOCUS_BY_ID, KLAMMERN, KLAMMER_BY_ID } from "../data";
-import { type AimPrio, bindOf, klammerName, klammernOf, kcalOfKlammer, effectiveLoads, planYear, rankInKlammer } from "../engine/klammer";
+import { type AimPrio, whyCut, bindOf, klammerName, klammernOf, kcalOfKlammer, effectiveLoads, planYear, rankInKlammer } from "../engine/klammer";
 import { fmtDate, focusName, isTestBlock } from "../engine/plan";
 import type { ResidualClock } from "../engine/residual";
 import { loadOfWindow, travelOfWindow } from "../engine/stack";
@@ -105,6 +105,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
                       {KLAMMERN.map((d) => <button key={d.id} role="radio" aria-checked={k.kind === d.id} aria-label={d.name} title={`${d.name} · ${d.tag}`} className={`kl-${d.id} ${k.kind === d.id ? "on" : ""}`} onClick={() => setKinds((x) => ({ ...x, [wi]: d.id }))}><KlammerIcon id={d.id} /></button>)}
                     </div>
                     <div className="row small muted"><Sign kind={k.kcal ?? "maintenance"} /> {kc.why}</div>
+                    <div className="small muted">{whyCut(k, sections)}</div>
                   </div>
                 );
               })}

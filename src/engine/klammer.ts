@@ -353,3 +353,23 @@ export const FLAG_TEXT: Record<Flag, string> = {
 
 /** Achse → Klammer, die sie als Leitachse trägt (für Hinweise) */
 export const klammerForAxis = (a: AxisId): KlammerDef | undefined => KLAMMERN.find((k) => k.axes.includes(a));
+
+/** Warum ein Zeichen so geschnitten ist (für den Assistenten): wo es endet und warum es so viele Orden hat */
+export function whyCut(k: KlammerView, sections: Section[]): string {
+  const next = addDays(k.end, 1);
+  const secs = byStart(sections);
+  const wk = (a: string, b: string) => Math.round((parseIso(b).getTime() - parseIso(a).getTime()) / (7 * 864e5));
+  let end: string;
+  const at = secs.find((x) => x.start === next);
+  if (at || !secs.some((x) => x.start <= k.end && x.end >= next)) end = at ? `Endet, wo „${at.name}“ beginnt.` : "Endet mit dem geplanten Jahr.";
+  else {
+    const near = secs.filter((x) => x.start > k.start).map((x) => ({ x, d: wk(x.start, next) })).sort((a, b) => Math.abs(a.d) - Math.abs(b.d))[0];
+    const inside = secs.find((x) => x.start < next && next <= x.end)!;
+    end = near && Math.abs(near.d) <= 2
+      ? `Endet ${Math.abs(near.d)} ${Math.abs(near.d) === 1 ? "Woche" : "Wochen"} ${near.d > 0 ? "nach" : "vor"} dem Beginn von „${near.x.name}“ — so passen die Längen der Zeichen besser (8–16 Wochen, Ziel etwa 13).`
+      : `Teilt „${inside.name}“: zu lang für ein Zeichen (höchstens 16 Wochen).`;
+  }
+  const train = k.parts.reduce((n, p) => n + wk(p.start, addDays(p.end, 1)), 0);
+  const n = k.parts.length;
+  return `${end} ${n} ${n === 1 ? "Orden" : "Orden"}, weil ${train} Trainingswochen (bis 8 einer, bis 12 zwei, darüber drei).`;
+}

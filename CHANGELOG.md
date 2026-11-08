@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.3.1] – 2026-11-08
+
+### Geändert
+- Testwoche sieht aus wie jede andere Woche: Tage als Knöpfe oben (Tag, Ort, Cups, ✓ wenn erledigt), der gewählte Tag zeigt seine Cups. Vorgewählt ist heute, sonst der nächste offene Testtag.
+- Almanach: Orden zeigen alle Zeichen, in denen sie sinnvoll sind — voll, wo sie das Ziel tragen; blass, wo sie im Verlauf kuratiert mitlaufen (z. B. Smith: Stier voll, Bär blass; Olympian: Falke voll, Stier blass).
+- Assistent Schritt 2: Jedes Zeichen sagt, warum es so geschnitten ist (wo es endet, ob es einen Abschnitt teilt) und warum es so viele Orden hat.
+
 ## [1.3.0] – 2026-11-08
 
 ### Neu

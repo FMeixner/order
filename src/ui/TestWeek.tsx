@@ -136,22 +136,33 @@ export function testDays(state: AppState, block: PlanBlock): { place: string; da
 export function TestWeek({ state, update, block, today, preview = false }: { state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean }) {
   const saveTest = (t: TestDef, value: number, raw: string, variant?: string) =>
     update((st) => ({ ...st, tests: { ...st.tests, [t.id]: [...(st.tests[t.id] ?? []), { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } }));
+  const days = testDays(state, block);
+  // Gewählter Testtag: angetippt, sonst heute, sonst der nächste offene, sonst der erste
+  const [pick, setPick] = useState<string | null>(null);
+  const openDay = days.find((t) => !TESTWEEK.cups.filter((c) => c.place === t.place).every((c) => c.tests.every((x) => (state.tests[x.id] ?? []).some((r) => r.blockId === block.id))));
+  const sel = days.find((t) => t.place === pick) ?? days.find((t) => t.date === today) ?? openDay ?? days[0];
   return (
     <div className="stack">
       {ravenOn(state) && <RavenTournament state={state} block={block} today={today} />}
       <div className="card note">
-        <strong>Testwoche.</strong> Fünf Cups an drei Tagen, jeder Tag frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.{preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}
+        <strong>Testwoche.</strong> Drei Testtage, jeder frisch; Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, Tests ohne Material auslassen.{preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}
       </div>
-      <div className="card test-days">
-        {testDays(state, block).map((t) => (
-          <div key={t.place} className={`row test-day ${t.date === today ? "now" : ""}`}>
-            <span className="mono">{t.day} {fmtDate(t.date)}</span><strong>{t.place}</strong>
-            <span className="muted small">{TESTWEEK.cups.filter((c) => c.place === t.place).map((c) => c.name).join(" · ")}</span>
-          </div>
-        ))}
+      {/* Wie jede andere Woche: Tage oben, der gewählte Tag zeigt seine Cups */}
+      <div className="days">
+        {days.map((t) => {
+          const cups = TESTWEEK.cups.filter((c) => c.place === t.place);
+          const done = cups.every((c) => c.tests.every((x) => (state.tests[x.id] ?? []).some((r) => r.blockId === block.id)));
+          return (
+            <button key={t.place} className={`day-btn ${sel?.place === t.place ? "on" : ""} ${done ? "done" : ""} ${t.date === today ? "today" : ""}`} onClick={() => setPick(t.place)}>
+              <span className="day">{t.day}</span>
+              <span className="day-role">{t.place}</span>
+              <span className="muted small">{cups.map((c) => c.name.replace("-Cup", "")).join(" · ")}{done ? " · ✓" : ""}</span>
+            </button>
+          );
+        })}
       </div>
-      {TESTWEEK.cups.map((cup) => (
-        <Collapse key={cup.id} title={cup.name} meta={`${testDays(state, block).find((t) => t.place === cup.place)?.day ?? ""} · ${cup.place} · ${cup.focus}`} tone="teal" defaultOpen={testDays(state, block).find((t) => t.place === cup.place)?.date === today}>
+      {TESTWEEK.cups.filter((cup) => cup.place === sel?.place).map((cup) => (
+        <Collapse key={cup.id} title={cup.name} meta={cup.focus} tone="teal" defaultOpen>
           <Collapse title="Warm-up" meta={`${expandDrills(cup.warmup, state.user, 1).length} Übungen`}>
             <ul className="slot-list">{expandDrills(cup.warmup, state.user, 1).map((d) => <li key={d.id}>{d.name} · {d.groups.map((g) => `${g.label ? g.label + " " : ""}${d.mode === "reps" ? g.value + "×" : fmt(g.value)}`).join(", ")}</li>)}</ul>
           </Collapse>
