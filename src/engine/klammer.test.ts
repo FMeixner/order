@@ -150,3 +150,12 @@ describe("Klammern: Phasenblatt", () => {
     expect(klammernOf(s)[0].parts.length).toBe(k.parts.length + 1);
   });
 });
+
+describe("Klammern: Athletik", () => {
+  it("drei Orden in der Athletik-Klammer weichen nicht auf einen Kraft-Orden aus", () => {
+    const out = planYear([], [sec(T, 16, "low", "Sommer", true)], T, ids(), { aim: "schnellkraft" });
+    const k = klammernOf(out)[0];
+    expect(k.kind).toBe("athletik");
+    for (const p of k.parts) expect(FOCUS_BY_ID[p.focusId].goals.primary).not.toBe("strength");
+  });
+});

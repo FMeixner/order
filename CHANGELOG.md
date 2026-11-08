@@ -12,6 +12,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 - Jahres-Assistent „Jahr planen“ in vier Schritten: Ziel → Klammern → Schwachstellen → Orden. Jeder Schritt zeigt den Vorschlag und lässt ihn überschreiben. Was von Hand gewählt wird (Orden, Kalorien, Klammer-Art), wird gepinnt und bleibt beim nächsten Planen stehen.
 - Jahresbild im Plan: drei Ebenen — Lebensabschnitte mit Last, Klammern mit Kalorien, Orden mit Warnzeichen — und der Strich für heute. Antippen öffnet Orden, Klammer oder Testwoche.
 - Zeichen statt Sätze: Hinweise, unpassende Orden, Zielbindung (● ◐ ○), Kalorien (↓ = ↑) und Pins erscheinen als Symbole mit Tooltip; der Text steht im Phasenblatt.
+- Athletik-Klammer: Huntsman trägt den Verlauf früh und spät mit, damit der dritte Orden nicht auf einen Kraft-Orden ausweicht. Scout bleibt Orden — in der Athletik-Klammer ist er neben Olympian der zweite Träger der Leitachse.
 - Domänen-Bilanz: neue Zeile „Sehnen“ (ohne Pflicht, wie Masse), gezählt nach dem Anteil an Halteübungen eines Ordens.
 
 ### Geändert

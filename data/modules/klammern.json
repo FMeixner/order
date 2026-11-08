@@ -4,58 +4,139 @@
     {
       "id": "muskel",
       "name": "Muskelzuwachs",
-      "axes": ["muskel"],
-      "accept": ["kraft"],
-      "early": ["knight", "slayer"],
-      "late": ["smith"],
+      "axes": [
+        "muskel"
+      ],
+      "accept": [
+        "kraft"
+      ],
+      "early": [
+        "knight",
+        "slayer"
+      ],
+      "late": [
+        "smith"
+      ],
       "kcal": "surplus",
       "deficitOk": false,
-      "months": [11, 12, 1, 2],
+      "months": [
+        11,
+        12,
+        1,
+        2
+      ],
       "travel": false
     },
     {
       "id": "kraft",
       "name": "Kraft",
-      "axes": ["kraft"],
-      "accept": ["muskel", "schnellkraft"],
-      "early": ["knight", "troubadour"],
-      "late": ["smith", "olympian"],
+      "axes": [
+        "kraft"
+      ],
+      "accept": [
+        "muskel",
+        "schnellkraft"
+      ],
+      "early": [
+        "knight",
+        "troubadour"
+      ],
+      "late": [
+        "smith",
+        "olympian"
+      ],
       "kcal": "maintenance",
       "deficitOk": false,
-      "months": [10, 11, 2, 3],
+      "months": [
+        10,
+        11,
+        2,
+        3
+      ],
       "travel": false
     },
     {
       "id": "athletik",
       "name": "Athletik",
-      "axes": ["schnellkraft"],
-      "accept": ["skill", "kondition", "kraft"],
-      "early": ["olympian", "huntsman", "acrobat"],
-      "late": ["scout", "olympian"],
+      "axes": [
+        "schnellkraft"
+      ],
+      "accept": [
+        "skill",
+        "kondition",
+        "kraft"
+      ],
+      "early": [
+        "olympian",
+        "acrobat",
+        "huntsman"
+      ],
+      "late": [
+        "scout",
+        "huntsman"
+      ],
       "kcal": "maintenance",
       "deficitOk": false,
-      "months": [5, 6, 7, 8, 9],
+      "months": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
       "travel": true
     },
     {
       "id": "gpp",
       "name": "GPP / Allround",
-      "axes": ["kondition", "ausdauer"],
-      "accept": ["kraft", "skill"],
-      "early": ["troubadour", "harlequin", "pilgrim"],
-      "late": ["conqueror", "pugilist", "assassin"],
+      "axes": [
+        "kondition",
+        "ausdauer"
+      ],
+      "accept": [
+        "kraft",
+        "skill"
+      ],
+      "early": [
+        "troubadour",
+        "harlequin",
+        "pilgrim"
+      ],
+      "late": [
+        "conqueror",
+        "pugilist",
+        "assassin"
+      ],
       "kcal": "maintenance",
       "deficitOk": true,
-      "months": [3, 4, 5, 6, 7, 8],
+      "months": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
       "travel": true
     },
     {
       "id": "regeneration",
       "name": "Regeneration",
-      "axes": ["ruhe", "beweglichkeit"],
-      "accept": ["skill"],
-      "early": ["monk", "alchemist"],
-      "late": ["dancer", "paladin"],
+      "axes": [
+        "ruhe",
+        "beweglichkeit"
+      ],
+      "accept": [
+        "skill"
+      ],
+      "early": [
+        "monk",
+        "alchemist"
+      ],
+      "late": [
+        "dancer",
+        "paladin"
+      ],
       "kcal": "maintenance",
       "deficitOk": true,
       "months": [],
