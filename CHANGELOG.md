@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.5] – 2026-11-08
+
+### Geändert
+- King ist der Bestien-Orden, auch für volle Wochen:
+  - Neu: Chaos C mit Bestie, ATG Split Squat und Table Row.
+  - Redner und Haltung sind ein gemeinsamer Tag: Resonanzatmung, Stab, Pullover mit Deficit Push-Up, Face Pull mit Chin Tuck, lockere Grundlage.
+  - Bei hoher Alltagslast läuft Chaos B mit Seil im mittleren Puls statt Sprints.
+  - Laufende King-Phasen behalten ihre Fassung bis „Übernehmen“.
+
 ## [1.4.4] – 2026-11-08
 
 ### Geändert

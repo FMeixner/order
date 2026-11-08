@@ -227,3 +227,14 @@ describe("Pilgrim bei hoher Last", () => {
     expect(highLoadShape(f, { ...b, load: "medium" }, 2).roles.intervalle.blocks[0]).toEqual(f.roles.intervalle.blocks[0]);
   });
 });
+
+describe("King als Bestien-Orden", () => {
+  it("drei Bestientage plus Redner und Haltung; bei hoher Last Seil statt Sprints", async () => {
+    const { highLoadShape } = await import("./weekplan");
+    const f = FOCUS_BY_ID.king;
+    expect(f.week_4).toEqual(["chaos_a", "redner", "chaos_b", "chaos_c"]);
+    expect(["chaos_a", "chaos_b", "chaos_c"].filter((r) => f.roles[r].blocks.some((b) => b.type === "beast")).length).toBeGreaterThanOrEqual(2);
+    const b = { id: "x", focusId: "king", label: "", start: T, end: addDays(T, 55), load: "high" } as PlanBlock;
+    for (const w of [1, 2]) { const bl = highLoadShape(f, b, w).roles.chaos_b.blocks[0]; expect(bl.type === "single" && bl.slot.name).toBe("Seilspringen"); }
+  });
+});
