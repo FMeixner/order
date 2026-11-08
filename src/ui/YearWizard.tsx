@@ -99,7 +99,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
                   <div key={k.meso} className={`kl-card kl-${k.kind}`}>
                     <div className="kl-head"><KlammerIcon id={k.kind} /> {klammerName(k.kind)} {kinds[wi] && <Sign kind="pin" />}<span className="block-dates">{fmtDate(k.start)} – {fmtDate(k.end)}</span></div>
                     <div className="kl-kinds" role="radiogroup" aria-label={`Zeichen ${i + 1}`}>
-                      {KLAMMERN.map((d) => <button key={d.id} role="radio" aria-checked={k.kind === d.id} aria-label={d.name} title={d.name} className={`kl-${d.id} ${k.kind === d.id ? "on" : ""}`} onClick={() => setKinds((x) => ({ ...x, [wi]: d.id }))}><KlammerIcon id={d.id} /></button>)}
+                      {KLAMMERN.map((d) => <button key={d.id} role="radio" aria-checked={k.kind === d.id} aria-label={d.name} title={`${d.name} · ${d.tag}`} className={`kl-${d.id} ${k.kind === d.id ? "on" : ""}`} onClick={() => setKinds((x) => ({ ...x, [wi]: d.id }))}><KlammerIcon id={d.id} /></button>)}
                     </div>
                     <div className="row small muted"><Sign kind={k.kcal ?? "maintenance"} /> {kc.why}</div>
                   </div>

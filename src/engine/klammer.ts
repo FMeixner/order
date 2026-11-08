@@ -28,7 +28,11 @@ const weeksLeft = (a: string, b: string) => Math.floor(((parseIso(b).getTime() -
 const monthOf = (iso: string) => parseIso(iso).getMonth() + 1;
 const midOf = (a: string, b: string) => addDays(a, Math.round((parseIso(b).getTime() - parseIso(a).getTime()) / 864e5 / 2));
 
-export const klammerName = (id: KlammerId | undefined) => (id ? KLAMMER_BY_ID[id]?.name ?? id : "");
+/** Anzeigename eines Zeichens mit Stichwort: „Bär · Masse“ (die Tiere allein verraten weniger als die Ordensnamen) */
+export const klammerName = (id: KlammerId | undefined) => {
+  const k = id ? KLAMMER_BY_ID[id] : undefined;
+  return k ? `${k.name} · ${k.tag}` : id ?? "";
+};
 
 /* ---------- Last je Woche, mit Dauerlast ---------- */
 
@@ -176,7 +180,7 @@ const candidates = (pool?: string[]) => (pool?.length ? FOCI.filter((f) => pool.
 /** Kalorien-Modus einer Klammer mit Begründung. Rangfolge: Last → Kalender → Reise → Grundmodus. */
 export function kcalOfKlammer(k: KlammerDef, start: string, end: string, eff: Map<string, Load>, load: Load, travel: boolean): { mode: Kcal; why: string } {
   const m = monthOf(midOf(start, end));
-  let mode: Kcal = k.kcal, why = `Grundmodus: ${k.name}`;
+  let mode: Kcal = k.kcal, why = `Grundmodus: ${k.name} · ${k.tag}`;
   if ([11, 12, 1].includes(m) && (k.id === "muskel" || k.id === "kraft")) { mode = "surplus"; why = "Winter: Aufbau mit Überschuss"; }
   if ([5, 6, 7, 8].includes(m) && k.deficitOk) { mode = "deficit"; why = "Sommer: Defizit-Fenster"; }
   if (travel) { mode = mode === "surplus" ? "surplus" : "maintenance"; why = "Reise: Erhaltung, kohlenhydratbetont"; }
