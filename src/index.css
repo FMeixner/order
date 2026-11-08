@@ -533,3 +533,9 @@ button.yp-seg { cursor: pointer; text-align: left; }
 .stack-card > .row.wrap { flex-basis: 100%; }
 .stack-card.test { padding: 4px 10px; }
 .stack-card.test .sc-name { font-size: 14px; }
+
+/* 1.1: Jahresbild waagerecht scrollbar, Monatsleiste, Rand-Verlauf als Hinweis */
+.yp-scroll { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; padding-bottom: 4px; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 20px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 20px), transparent 100%); }
+.yp-scroll .yp-lanes { padding: 0 12px 0 4px; }
+.yp-months { position: relative; height: 14px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.yp-months span { position: absolute; top: 0; padding-left: 3px; border-left: 1px solid var(--border-lit); line-height: 14px; white-space: nowrap; }
