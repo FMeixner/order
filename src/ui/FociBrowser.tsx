@@ -2,6 +2,7 @@ import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
 import { FLOWS, FOCI, FOCUS_BY_ID, KLAMMERN } from "../data";
 import { bindOf } from "../engine/klammer";
+import { primaryAxis } from "../engine/kcal";
 import { KlammerIcon, Sign } from "./Signs";
 import { CLASS_LABEL, defaultRoles, focusName, isWeaponModule, MODULE_LABEL, pathLevel, pathList, PATHS, trainingDays } from "../engine/plan";
 import { shapeFocus } from "../engine/weekplan";
@@ -56,6 +57,19 @@ function blockNames(b: Block, c: Ctx): string[] {
     case "beast": return ["Bestie"];
     case "module": return [b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? "Schwerpunkt" : MODULE_LABEL[b.module]];
   }
+}
+
+/** Zeichen eines Ordens fürs Almanach-Symbol: die Zeichen, deren Ziel er trägt; sonst die, in deren Verlauf er
+    kuratiert ist (früh/spät) — so hat jeder Orden ein Tier (Skill-Orden wie Acrobat und Huntsman laufen im Falken mit,
+    Herald trägt den Stier nur teilweise, weil er unter 35 Minuten bleibt). */
+function zeichenOf(f: Focus): { k: (typeof KLAMMERN)[number]; lead: boolean }[] {
+  const lead = KLAMMERN.filter((k) => bindOf(f, k) === "lead").map((k) => ({ k, lead: true }));
+  if (lead.length) return lead;
+  const own = KLAMMERN.filter((k) => { const a = primaryAxis(f); return !!a && k.axes.includes(a); });
+  if (own.length) return own.map((k) => ({ k, lead: false }));
+  const curated = KLAMMERN.filter((k) => k.early.includes(f.id) || k.late.includes(f.id));
+  const acc = curated.length ? curated : KLAMMERN.filter((k) => bindOf(f, k) === "accept").slice(0, 1);
+  return acc.map((k) => ({ k, lead: false }));
 }
 
 export function FocusDetail({ f, profile, skills, days }: { f: Focus; profile?: EquipmentProfile; skills?: Set<string> | null; days?: number }) {
@@ -117,7 +131,7 @@ export function FociBrowser({ state }: { state: AppState }) {
             {GOAL_LABEL[f.goals.primary]} · {f.session_min} Min
             <Sign kind={`load-${f.load_fit}`} />{f.travel && <Sign kind="travel" />}
             {/* Zeichen, deren Ziel der Orden trägt */}
-            {KLAMMERN.filter((k) => bindOf(f, k) === "lead").map((k) => <span key={k.id} className={`kl-${k.id}`} style={{ color: "var(--k)", display: "inline-flex" }} title={`trägt ${k.name} · ${k.tag}`}><KlammerIcon id={k.id} size={14} /></span>)}
+            {zeichenOf(f).map((z) => <span key={z.k.id} className={`kl-${z.k.id}`} style={{ color: "var(--k)", display: "inline-flex", opacity: z.lead ? 1 : 0.55 }} title={`${z.lead ? "trägt" : "läuft mit in"} ${z.k.name} · ${z.k.tag}`}><KlammerIcon id={z.k.id} size={14} /></span>)}
           </div>
         </button>
       ))}

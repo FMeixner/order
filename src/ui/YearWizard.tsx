@@ -3,21 +3,18 @@
    und bleibt beim nächsten Neuplanen stehen. Ein Generator (planYear) statt vier Knöpfen. */
 import { useMemo, useState } from "react";
 import { FOCI, FOCUS_BY_ID, KLAMMERN, KLAMMER_BY_ID } from "../data";
-import { bindOf, klammerName, klammernOf, kcalOfKlammer, effectiveLoads, planYear, rankInKlammer } from "../engine/klammer";
+import { type AimPrio, bindOf, klammerName, klammernOf, kcalOfKlammer, effectiveLoads, planYear, rankInKlammer } from "../engine/klammer";
 import { fmtDate, focusName, isTestBlock } from "../engine/plan";
-import type { MesoBalance } from "../engine/bilanz";
 import type { ResidualClock } from "../engine/residual";
 import { loadOfWindow, travelOfWindow } from "../engine/stack";
 import type { Aim, DeficitWeights } from "../engine/sequence";
 import { uid } from "../store";
 import type { AppState, Kcal, KlammerId, PlanBlock, Section } from "../types";
 import { DEFAULT_TEST_POLICY } from "../types";
-import { Collapse, Modal, Seg } from "./common";
-import { ResidualClocks } from "./ResidualClocks";
-import { DomainBalance } from "./DomainBalance";
-import { YearBalance } from "./YearBalance";
+import { Modal, Seg } from "./common";
+import { Bereiche } from "./Bereiche";
 import { OrderMark } from "./OrderIcon";
-import { AimPicker, SectionList } from "./SectionsCard";
+import { AimsPicker, SectionList } from "./SectionsCard";
 import { KlammerIcon, Sign } from "./Signs";
 import { YearPicture } from "./YearPicture";
 import { unpinBeasts } from "./session/items";
@@ -25,15 +22,17 @@ import { unpinBeasts } from "./session/items";
 type Update = (fn: (s: AppState) => AppState) => void;
 type Policy = "each" | "twice" | "none";
 const POLICY: { value: Policy; label: string }[] = [{ value: "each", label: "nach jedem Zeichen" }, { value: "twice", label: "zweimal im Jahr" }, { value: "none", label: "keine" }];
-const STEPS = ["Ziel", "Zeichen", "Schwachstellen", "Orden"];
+const STEPS = ["Ziel", "Zeichen", "Bereiche", "Orden"];
 const KCAL_OPTS: Kcal[] = ["deficit", "maintenance", "surplus"];
 
-export function YearWizard({ state, update, today, aim: aim0, deficits, steer, clocks, balance, onClose, startAt = 0 }: {
+export function YearWizard({ state, update, today, aim: aim0, deficits, steer, clocks, onClose, startAt = 0 }: {
   state: AppState; update: Update; today: string; aim: Aim; deficits: DeficitWeights; steer: DeficitWeights;
-  clocks: ResidualClock[]; balance: MesoBalance; onClose: () => void; startAt?: number;
+  clocks: ResidualClock[]; onClose: () => void; startAt?: number;
 }) {
   const [step, setStep] = useState(startAt);
-  const [aim, setAim] = useState<Aim>(aim0);
+  const [aims, setAims] = useState<AimPrio[]>(state.yearAims ?? (aim0 !== "allround" && aim0 !== "deficits" ? [{ aim: aim0, prio: 1 }] : []));
+  const [mode, setMode] = useState<"allround" | "deficits">(aim0 === "deficits" ? "deficits" : "allround");
+  const aim: Aim = aims.find((a) => a.prio === 1)?.aim ?? mode;
   const [policy, setPolicy] = useState<Policy>(state.testPolicy ?? DEFAULT_TEST_POLICY);
   const [pool, setPool] = useState<string[]>(state.user.pool ?? []);
   const [sections, setSections] = useState<Section[]>(state.sections ?? []);
@@ -44,7 +43,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
 
   // Entwurf: ein Generator, danach die Handänderungen dieses Assistenten (nach Startdatum, damit sie Neuberechnungen überleben)
   const draft = useMemo(() => {
-    let p = planYear(state.plan, sections, today, () => uid("b"), { aim, deficits, steer, testPolicy: policy, pool, kinds });
+    let p = planYear(state.plan, sections, today, () => uid("b"), { aim, aims, deficits, steer, testPolicy: policy, pool, kinds });
     p = p.map((b) => {
       if (b.start <= today || isTestBlock(b)) return b;
       let x = b;
@@ -54,16 +53,14 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
       return x;
     });
     return p;
-  }, [state.plan, sections, today, aim, deficits, steer, policy, pool, kinds, orders, kcals]);
+  }, [state.plan, sections, today, aim, aims, deficits, steer, policy, pool, kinds, orders, kcals]);
   const future = klammernOf(draft).filter((k) => k.parts[0].start > today);
   const eff = useMemo(() => effectiveLoads(sections), [sections]);
 
   const apply = () => {
-    update((st) => unpinBeasts({ ...st, plan: draft, sections, sectionsChanged: false, yearAim: aim, testPolicy: policy, user: { ...st.user, pool } }, (s) => s.date > today));
+    update((st) => unpinBeasts({ ...st, plan: draft, sections, sectionsChanged: false, yearAim: aim, yearAims: aims, testPolicy: policy, user: { ...st.user, pool } }, (s) => s.date > today));
     onClose();
   };
-  const hot = clocks.filter((c) => c.over);
-  const gaps = [...new Set(balance.gaps.map((g) => g.name))];
 
   return (
     <Modal title="Jahr planen" onClose={onClose} wide>
@@ -74,8 +71,8 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
 
         {step === 0 && (
           <>
-            <div className="field-label">Richtung des Jahres</div>
-            <AimPicker value={aim} deficits={deficits} onChange={setAim} />
+            <div className="field-label">Ziele des Jahres · bis zu drei, in Reihenfolge antippen</div>
+            <AimsPicker aims={aims} mode={mode} deficits={deficits} onChange={(a, m) => { setAims(a); setMode(m); }} />
             <div className="field-label">Testwochen</div>
             <Seg value={policy} options={POLICY} onChange={setPolicy} />
             <div className="row between"><div className="field-label">Hausorden {pool.length ? `· ${pool.length}` : "· alle"}</div>{pool.length > 0 && <button className="btn ghost small" onClick={() => setPool([])}>Alle</button>}</div>
@@ -90,6 +87,9 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
 
         {step === 1 && (
           <>
+            <div className="field-label">Lebensabschnitte · führend</div>
+            <SectionList sections={sections} onChange={setSections} start={today} />
+            <div className="field-label">Zeichen darüber</div>
             <YearPicture plan={draft} sections={sections} today={today} />
             <div className="stack">
               {future.map((k, i) => {
@@ -106,26 +106,13 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
                 );
               })}
             </div>
-            <div className="field-label">Lebensabschnitte</div>
-            <SectionList sections={sections} onChange={setSections} start={today} />
           </>
         )}
 
         {step === 2 && (
           <>
-            <div className="stack">
-              {hot.length === 0 && gaps.length === 0 && <div className="row"><Sign kind="ok" /> Keine roten Uhren, keine Lücken.</div>}
-              {hot.map((c) => <div key={c.id} className="row small"><Sign kind="clock" /> {c.name}<span className="muted mono">{c.days == null ? "nie" : `${c.days} / ${c.budget} Tage`}</span></div>)}
-              {gaps.map((g) => <div key={g} className="row small"><Sign kind="gap" /> {g}</div>)}
-            </div>
-            <p className="muted small">Rote Uhren und Lücken ziehen Zeichen und Orden, die sie halten. Die Schwerpunkt-Slots jeder Phase folgen der letzten Testwoche; einzeln änderbar im Phasenblatt.</p>
-            <Collapse title="Details" meta="Uhren, Bilanz, Balance">
-              <div className="stack">
-                <ResidualClocks state={state} today={today} />
-                <DomainBalance plan={draft} />
-                <YearBalance plan={draft} />
-              </div>
-            </Collapse>
+            <Bereiche state={state} plan={draft} today={today} clocks={clocks} />
+            <p className="muted small">Fällige Bereiche und Lücken ziehen Zeichen und Orden, die sie halten. Die Schwerpunkt-Slots jeder Phase folgen der letzten Testwoche; einzeln änderbar im Phasenblatt.</p>
           </>
         )}
 

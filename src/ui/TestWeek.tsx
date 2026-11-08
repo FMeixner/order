@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { BEAST_BY_ID, TESTWEEK } from "../data";
-import { expandDrills, fmtDate } from "../engine/plan";
+import { addDays, expandDrills, fmtDate, mondayOf, scheduleFor, trainingDays } from "../engine/plan";
 import { variantHint } from "../engine/norms";
 import { parseClock } from "../engine/clock";
-import type { AppState, Cup, PlanBlock, TestDef } from "../types";
+import type { AppState, Cup, PlanBlock, TestDef, Weekday } from "../types";
+import { WEEKDAYS } from "../types";
 import { Collapse, Desc } from "./common";
 import { Evaluation } from "./Evaluation";
 import { fmt } from "./Timer";
@@ -115,6 +116,23 @@ function Benchmark({ cup, state, update, preview = false }: { cup: Cup; state: A
   );
 }
 
+/** Testtage (1.3): Die drei Testtage auf deine Trainingstage verteilt — Studio zuerst, Zuhause in der Mitte,
+    Park zuletzt (gern am Wochenende). Studio ist der Tag, dessen Ort eine Langhantel hat oder „Studio“ heißt. */
+export function testDays(state: AppState, block: PlanBlock): { place: string; day: Weekday; date: string }[] {
+  const days = trainingDays(state, block);
+  const sch = scheduleFor(state, block);
+  const prof = (d: Weekday) => state.equipment.find((p) => p.id === sch[d]);
+  const isGym = (d: Weekday) => { const p = prof(d); return !!p && (!!p.barbell || /studio|gym/i.test(p.name)); };
+  const pool: Weekday[] = days.length >= 3 ? days : (WEEKDAYS.filter((_, i) => i % 2 === 0) as Weekday[]);
+  const studio = pool.find(isGym) ?? pool[0];
+  const rest = pool.filter((d) => d !== studio);
+  const park = [...rest].reverse().find((d) => d === "Sa" || d === "So") ?? rest[rest.length - 1];
+  const home = rest.filter((d) => d !== park).find((d) => !isGym(d)) ?? rest.find((d) => d !== park) ?? rest[0];
+  const at = (d: Weekday) => addDays(mondayOf(block.start), WEEKDAYS.indexOf(d));
+  return [{ place: "Studio", day: studio, date: at(studio) }, { place: "Zuhause", day: home, date: at(home) }, { place: "Park", day: park, date: at(park) }]
+    .sort((a, b) => WEEKDAYS.indexOf(a.day) - WEEKDAYS.indexOf(b.day));
+}
+
 export function TestWeek({ state, update, block, today, preview = false }: { state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean }) {
   const saveTest = (t: TestDef, value: number, raw: string, variant?: string) =>
     update((st) => ({ ...st, tests: { ...st.tests, [t.id]: [...(st.tests[t.id] ?? []), { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } }));
@@ -122,10 +140,18 @@ export function TestWeek({ state, update, block, today, preview = false }: { sta
     <div className="stack">
       {ravenOn(state) && <RavenTournament state={state} block={block} today={today} />}
       <div className="card note">
-        <strong>Testwoche.</strong> Fünf Cups an drei Tagen: Studio, Zuhause ×2 im Anschluss, Park ×2 im Anschluss. Jeder Tag frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.{preview ? " Vorschau: erst ansehen — eintragen kannst du, sobald die Woche läuft." : ""}
+        <strong>Testwoche.</strong> Fünf Cups an drei Tagen, jeder Tag frisch. In der Woche davor −1 Satz, in dieser Woche Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, dann sind die Werte vergleichbar. Tests ohne passendes Material einfach auslassen.{preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}
+      </div>
+      <div className="card test-days">
+        {testDays(state, block).map((t) => (
+          <div key={t.place} className={`row test-day ${t.date === today ? "now" : ""}`}>
+            <span className="mono">{t.day} {fmtDate(t.date)}</span><strong>{t.place}</strong>
+            <span className="muted small">{TESTWEEK.cups.filter((c) => c.place === t.place).map((c) => c.name).join(" · ")}</span>
+          </div>
+        ))}
       </div>
       {TESTWEEK.cups.map((cup) => (
-        <Collapse key={cup.id} title={cup.name} meta={`${cup.place} · ${cup.focus}`} tone="teal">
+        <Collapse key={cup.id} title={cup.name} meta={`${testDays(state, block).find((t) => t.place === cup.place)?.day ?? ""} · ${cup.place} · ${cup.focus}`} tone="teal" defaultOpen={testDays(state, block).find((t) => t.place === cup.place)?.date === today}>
           <Collapse title="Warm-up" meta={`${expandDrills(cup.warmup, state.user, 1).length} Übungen`}>
             <ul className="slot-list">{expandDrills(cup.warmup, state.user, 1).map((d) => <li key={d.id}>{d.name} · {d.groups.map((g) => `${g.label ? g.label + " " : ""}${d.mode === "reps" ? g.value + "×" : fmt(g.value)}`).join(", ")}</li>)}</ul>
           </Collapse>

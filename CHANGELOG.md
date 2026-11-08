@@ -2,6 +2,23 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.3.0] – 2026-11-08
+
+### Neu
+- Bereiche statt Residual-Uhren, Domänen-Bilanz und Jahresbalance: eine Liste mit neun Bereichen in Alltagssprache (Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill) und je zwei Punkten — Frische (wie lange der letzte Reiz her ist; frisch, bald fällig, fällig) und Im Plan (Wochen im nächsten halben Jahr; Richtwert 4, sonst knapp oder fehlt). Darunter Tipps für fällige Bereiche, die Abwechslungs-Regel und die Waage Spezialist ↔ Allrounder. Schritt 3 im Assistenten heißt jetzt „Bereiche“.
+- Mehrere Jahresziele mit Priorität 1–3: In Reihenfolge antippen; Priorität 1 zählt dreifach, 2 doppelt, 3 einfach bei der Wahl der Zeichen. Ohne Ziel gilt Allround oder „Defizite zuerst“.
+- Testwoche auf Tage verteilt: Studio, Zuhause und Park liegen auf deinen Trainingstagen (Studio zuerst, Park gern am Wochenende); der heutige Test-Cup ist aufgeklappt. Ab dem Wochenende davor (oder wenn die Woche geschafft ist) ist die Testwoche echt geplant und eintragbar, nicht mehr nur Vorschau.
+
+### Geändert (Modelljahre geprüft)
+- Defizite werden wieder planbar: Dauerlast zählt nur zusammenhängende Wochen mittlerer Last; „hohe Last“ heißt jetzt: mehr als die Hälfte der Wochen. Ein Defizit-Zeichen bleibt in einzelnen Orden mit hoher Last auf Erhaltung. Sommer ohne hohe Last zieht Zeichen, die ein Defizit tragen; Saison nach Anteil der Wochen statt nach Fenstermitte. Im Semesterjahr landet so ein Wolf mit zehn Wochen Defizit in der Sommerpause.
+- Ein Zeichen ohne passenden Träger für die Alltagslast wird gemieden (Falke im Hochlast-Semester bekam vorher Acrobat und Herald statt eines Schnellkraft-Ordens).
+- Abwechslung übers Jahr: Jede frühere Verwendung eines Ordens im letzten Jahr kostet bei der Wahl (Troubadour war Lückenfüller in fast jedem Zeichen).
+- Höchstens zwei Überschuss-Zeichen im Jahr.
+- Bestien zählen in der Bilanz: ein Viertel Woche Kraftausdauer und Intervalle je Woche mit Bestie (Erhaltungsdosis).
+- GPP / Wolf bevorzugt Juni bis August.
+- Assistent Schritt 2: Lebensabschnitte stehen oben und führen, die Zeichen darunter.
+- Almanach: Jeder Orden zeigt ein Tier — die Zeichen, deren Ziel er trägt; sonst blass das Zeichen, in dem er mitläuft (Acrobat und Huntsman im Falken, Herald im Stier).
+
 ## [1.2.0] – 2026-11-08
 
 ### Geändert

@@ -127,7 +127,7 @@ test("Jahr planen: Vorlage, Richtung, Zeichen, Orden, Übernehmen", async ({ pag
   page.on("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Jahr planen" }).click();
   const dlg = page.getByRole("dialog");
-  await dlg.getByRole("radio", { name: "Ausdauer" }).click();
+  await dlg.getByRole("checkbox", { name: "Ausdauer" }).click();
   await dlg.getByRole("radio", { name: "nach jedem Zeichen" }).click();
   await dlg.getByRole("button", { name: "Weiter" }).click();
   await dlg.getByRole("button", { name: "Vorlage Semester-Rhythmus" }).click();
@@ -146,6 +146,7 @@ test("Jahr planen: Vorlage, Richtung, Zeichen, Orden, Übernehmen", async ({ pag
   expect(st.plan.some((b) => b.klammer === "regeneration" && b.pin?.klammer)).toBe(true);
   expect(st.sectionsChanged).toBe(false);
   expect(st.yearAim).toBe("ausdauer");
+  expect(st.yearAims).toEqual([{ aim: "ausdauer", prio: 1 }]);
   expect(st.testPolicy).toBe("each");
   await expect(page.locator(".yp-kl").first()).toBeVisible();
 });

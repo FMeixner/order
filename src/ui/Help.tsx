@@ -90,22 +90,13 @@ export function Help() {
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Orden vor der Testwoche misst sie die Testwoche nicht mehr im Vollbesitz.</li>
       </ul>
 
-      <h3>Residual-Uhren</h3>
+      <h3>Bereiche: Frische und Plan</h3>
       <ul>
-        <li>Jede Uhr zählt die Tage seit dem letzten wirksamen Reiz eines Bereichs — abgeleitet aus deinen erledigten Einheiten, ohne neue Eingaben. Rot heißt über Haltefenster: Dann hält ein Orden mit dem Bereich als Ziel, ein Schwerpunkt-Slot oder eine passende Bestie ihn frisch.</li>
-        <li>Haltefenster: Sprungkraft und Schnelligkeit etwa eine Woche, Kraftausdauer und Anaerob zwei, Ausdauer, Beweglichkeit und Sehnen drei, Kraft und Masse einen Monat. Warm-up und Cool-down zählen nicht, Bestien und die freie Jagd wie jede Einheit. Die Uhren sind Messung, kein Planer: Rot sperrt nichts, es lenkt die Vorschläge.</li>
-      </ul>
-
-      <h3>Domänen-Bilanz</h3>
-      <ul>
-        <li>Effektive Wochen je Bereich und Halbjahr: Das Hauptziel eines Ordens zählt voll, jedes Nebenziel halb; Kondition trägt Kraftausdauer und Anaerob, Masse läuft mit der Kraft mit, Sehnen nach dem Anteil an Halteübungen (beide ohne Pflicht). Jeder getestete Bereich braucht mindestens 4 effektive Wochen je Halbjahr, sonst meldet die Bilanz eine Lücke.</li>
-        <li>Abwechslungs-Regel: Kein Hauptziel in mehr als zwei Phasen in Folge (ein Zeichen zählt als eine Phase) — Harlequin ist der Joker und unterbricht die Reihe. Die Bilanz warnt nur, nichts wird gesperrt oder eingeplant.</li>
-      </ul>
-
-      <h3>Lenkung: Wie die Vorschläge rote Uhren aufgreifen</h3>
-      <ul>
-        <li>Rote Uhren und Bilanz-Lücken fließen in die Vorschläge ein: Der Assistent zieht Zeichen und Orden vor, die die Bereiche halten (steht als Begründung am Kandidaten), Schwerpunkt 2 priorisiert rote Domänen als Vertiefung, und der Jahresblick nennt eine Gelegenheit aus dem Bestand. Nach jeder Testwoche fasst die Auswertung zusammen, was rot ist — und der Assistent zeigt sie in Schritt 3.</li>
-        <li>Alles bleibt Vorschlag: Die App plant nichts ein und sperrt nichts. Die Uhr zeigt, der Assistent schlägt vor, du entscheidest.</li>
+        <li>Neun Bereiche — Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill — mit je zwei Punkten. Zu finden in „Jahr planen“, Schritt 3; das Symbol links neben „Jahr planen“ zählt Fälliges und Lücken.</li>
+        <li><strong>Frische</strong> (Rückblick): Wie lange der letzte wirksame Reiz her ist, aus deinen erledigten Einheiten. Jeder Bereich hält eine Weile: Spritzigkeit etwa eine Woche, Kraftausdauer und Intervalle zwei, Grundausdauer, Beweglichkeit und Sehnen drei, Kraft und Muskel einen Monat. Grün frisch, gelb bald fällig (ab 70 %), rot fällig. Warm-up und Cool-down zählen nicht; Bestien und die freie Jagd wie jede Einheit.</li>
+        <li><strong>Im Plan</strong> (Vorschau): Wie viele Wochen das nächste halbe Jahr den Bereich trägt — Hauptziel eines Ordens voll, Nebenziel halb. Richtwert: vier Wochen; darunter „knapp“, ohne Woche „fehlt“. Muskel und Sehnen werden nur angezeigt.</li>
+        <li>Fällige Bereiche und Lücken ziehen die Vorschläge: Der Assistent bevorzugt Zeichen und Orden, die sie halten; Schwerpunkt 2 greift fällige Bereiche als Vertiefung auf; unter der Liste steht, womit du einen fälligen Bereich ohne Umplanen bedienst.</li>
+        <li>Abwechslung: Kein Hauptziel mehr als zweimal in Folge (ein Zeichen zählt als eins) — Harlequin unterbricht die Reihe. Die Waage darunter zeigt, ob das nächste halbe Jahr eher Spezialist oder Allrounder ist. Alles bleibt Hinweis, nichts wird gesperrt.</li>
       </ul>
 
       <h3>Kalorien: Energie zur Last passen</h3>

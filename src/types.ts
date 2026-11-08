@@ -398,6 +398,8 @@ export interface AppState {
   sectionsChanged?: boolean;
   /** Richtung des Jahres für Empfehlungen: allround, Defizite zuerst oder ein Bereich */
   yearAim?: string;
+  /** Mehrere Jahresziele mit Priorität 1–3 (seit 1.3); leer: Richtung aus yearAim (Allround oder Defizite zuerst) */
+  yearAims?: { aim: AxisId; prio: 1 | 2 | 3 }[];
   /** Testwochen beim Vorschlag der Phasen: nach jeder Klammer, zweimal im Jahr oder keine. Fehlt: DEFAULT_TEST_POLICY. */
   testPolicy?: "each" | "twice" | "none";
   /** Intensiv (Session-Id → true): Bestien eine Klasse länger, Schwertübungen +1 Satz */

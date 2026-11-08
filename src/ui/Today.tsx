@@ -87,7 +87,8 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
   const deload = isDeloadWeek(baseFocus, week);
   const entlastet = isDeloaded(state, block, week);
   const beforeTest = extTest ? week === total : isTestWeek(baseFocus, block, week + 1);
-  // Vorschau der folgenden Testwoche: Cups, Turnier und Protokolle ansehen, noch keine Eingaben
+  // Folgende Testwoche: ab dem Wochenende davor (oder wenn die Woche geschafft ist) echt geplant, vorher Vorschau
+  const testLive = !!testBlock && (today >= addDays(testBlock.start, -2) || weekDone(state, block, total));
   if (testBlock && week > total) return (
     <div className="stack">
       <div className="card hero">
@@ -98,15 +99,15 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
           </div>
           <div className="week-nav">
             <button onClick={() => go(total)} aria-label="Vorige Woche">‹</button>
-            <div className="hero-week">Vorschau</div>
+            <div className="hero-week">{testLive ? "Test" : "Vorschau"}</div>
             <button disabled aria-label="Nächste Woche">›</button>
           </div>
         </div>
         <div className="progress"><div style={{ width: "100%" }} /></div>
-        <div className="tags"><span className="tag amber">Vorschau · eintragen, sobald die Woche läuft</span></div>
+        {!testLive && <div className="tags"><span className="tag amber">Vorschau · eintragen ab dem Wochenende davor</span></div>}
         {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
       </div>
-      <TestWeek state={state} update={update} block={testBlock} today={today} preview />
+      <TestWeek state={state} update={update} block={testBlock} today={today} preview={!testLive} />
     </div>
   );
   // Wiedereinstieg: letzte abgeschlossene Einheit liegt 10 Tage oder mehr zurück

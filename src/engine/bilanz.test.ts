@@ -117,3 +117,11 @@ function endOf2(s: string, weeks: number) {
   d.setDate(d.getDate() + weeks * 7 - 1);
   return d.toISOString().slice(0, 10);
 }
+
+describe("Domänen-Bilanz: Bestien", () => {
+  it("Bestien halten Kraftausdauer und Intervalle mit einem Viertel je Woche, höchstens eine volle Woche", () => {
+    const b = mesoBalance([blk(8, { focusId: "knight" })]);
+    expect(row(b, "ke").cells).toEqual([2]);
+    expect(row(b, "anaerob").cells).toEqual([2]);
+  });
+});

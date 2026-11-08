@@ -1,6 +1,7 @@
 /* Lebensabschnitte (Name frei, − / + Wochen, Alltagslast) und Richtung des Jahres — Bausteine für den
    Jahres-Assistenten und das Onboarding. Geplant wird über planYear (engine/klammer.ts). */
-import { AXES } from "../engine/balance";
+import { AXES, type AxisId } from "../engine/balance";
+import type { AimPrio } from "../engine/klammer";
 import { fmtDate } from "../engine/plan";
 import { addSection, removeSection, resizeSection, sectionWeeks, semesterTemplate } from "../engine/sections";
 import type { Aim, DeficitWeights } from "../engine/sequence";
@@ -17,6 +18,31 @@ export function AimPicker({ value, deficits, onChange }: { value: Aim; deficits:
   return (
     <div className="chips" role="radiogroup" aria-label="Richtung des Jahres">
       {opts.map((o) => <button key={o.value} role="radio" aria-checked={value === o.value} className={value === o.value ? "on" : ""} onClick={() => onChange(o.value)}>{o.label}</button>)}
+    </div>
+  );
+}
+
+/** Mehrere Ziele mit Priorität (1.3): Antippen vergibt die nächste Nummer (1, 2, 3), noch einmal antippen nimmt das Ziel
+    heraus und rückt die übrigen auf. Ohne Ziel gilt der Modus: Allround oder Defizite zuerst. */
+export function AimsPicker({ aims, mode, deficits, onChange }: { aims: AimPrio[]; mode: "allround" | "deficits"; deficits: DeficitWeights; onChange: (aims: AimPrio[], mode: "allround" | "deficits") => void }) {
+  const toggle = (id: AxisId) => {
+    const has = aims.find((a) => a.aim === id);
+    const rest = aims.filter((a) => a.aim !== id).sort((a, b) => a.prio - b.prio).map((a, i) => ({ ...a, prio: (i + 1) as 1 | 2 | 3 }));
+    if (has) onChange(rest, mode);
+    else if (aims.length < 3) onChange([...rest, { aim: id, prio: (rest.length + 1) as 1 | 2 | 3 }], mode);
+  };
+  return (
+    <div className="stack">
+      <div className="chips" role="radiogroup" aria-label="Modus ohne Ziel">
+        <button role="radio" aria-checked={!aims.length && mode === "allround"} className={!aims.length && mode === "allround" ? "on" : ""} onClick={() => onChange([], "allround")}>Allround</button>
+        {deficits.length > 0 && <button role="radio" aria-checked={!aims.length && mode === "deficits"} className={!aims.length && mode === "deficits" ? "on" : ""} onClick={() => onChange([], "deficits")}>Defizite zuerst</button>}
+      </div>
+      <div className="chips" role="group" aria-label="Ziele mit Priorität">
+        {AXES.map((a) => {
+          const p = aims.find((x) => x.aim === a.id)?.prio;
+          return <button key={a.id} role="checkbox" aria-checked={!!p} aria-label={p ? `${a.name}, Priorität ${p}` : a.name} className={p ? "on" : ""} onClick={() => toggle(a.id)} disabled={!p && aims.length >= 3}>{p && <span className="prio">{p}</span>}{a.name}</button>;
+        })}
+      </div>
     </div>
   );
 }
