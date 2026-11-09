@@ -36,8 +36,8 @@
       "warmup": ["short_base", "stab_prep", "lower_prep"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "fl-b-1a", "core": true, "name": "DB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
-          {"id": "fl-b-1b", "name": "Push-Up", "sets": 3, "reps": "8-15", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"]}
+          {"id": "fl-b-1a", "core": true, "name": "DB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double"},
+          {"id": "fl-b-1b", "name": "Push-Up", "sets": 4, "reps": "8-15", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"]}
         ]},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "fl-b-2a", "core": true, "name": "KB Cossack Squat", "reise": {"name": "Cossack Squat", "reps": "8-10/Seite", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double"},

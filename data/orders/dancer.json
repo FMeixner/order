@@ -28,11 +28,12 @@
       ]
     },
     "schulter_bws": {
-      "name": "Schulter und BWS", "location": "home", "minutes": 35,
+      "name": "Schulter und BWS", "location": "home", "minutes": 45,
       "warmup": ["short_base", "shoulder_prep", "dislocate", "thoracic_roller"], "cooldown": ["cd_upper"],
       "blocks": [
         {"type": "single", "slot": {"id": "dc-s-1", "name": "DB Pullover", "sets": 3, "reps": "10", "prog": "weight", "rest": 90}},
-        {"type": "single", "slot": {"id": "dc-s-2", "name": "Deficit Push-Up", "sets": 3, "reps": "8", "prog": "reps", "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-s-2", "name": "Deficit Push-Up", "sets": 4, "reps": "8", "prog": "reps", "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-s-c", "name": "Chin-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 3, "reps": "5-8", "prog": "reps", "rest": 90, "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."}},
         {"type": "single", "slot": {"id": "dc-s-3", "name": "Brücken-Leiter", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "max": 45, "step": 5, "rest": 60}},
         {"type": "single", "slot": {"id": "dc-s-4", "name": "German Hang", "kind": "hold", "hold": 20, "sets": 4, "prog": "hold", "max": 45, "step": 5, "rest": 60, "note": "An den Ringen, Last langsam erhöhen."}},
         {"type": "single", "slot": {"id": "dc-s-5", "name": "KB Windmill", "sets": 3, "reps": "6/Seite", "prog": "weight", "rest": 90}},
@@ -55,7 +56,7 @@
         {"type": "single", "slot": {"id": "dc-b-1", "name": "ATG Split Squat", "sets": 3, "reps": "10/Seite", "prog": "reps", "rest": 90}},
         {"type": "single", "slot": {"id": "dc-b-2", "name": "Sissy Squat", "sets": 3, "reps": "8", "prog": "reps", "rest": 90}},
         {"type": "single", "slot": {"id": "dc-b-3", "name": "Bodyweight Leg Extension", "sets": 3, "reps": "12", "prog": "none", "rest": 60}},
-        {"type": "single", "slot": {"id": "dc-b-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "4", "prog": "reps", "rest": 150}},
+        {"type": "single", "slot": {"id": "dc-b-4", "name": "Nordic Curl Negative", "sets": 4, "reps": "4", "prog": "reps", "rest": 150}},
         {"type": "single", "slot": {"id": "dc-b-5", "name": "Plage", "kind": "hold", "hold": 40, "sets": 3, "prog": "hold", "max": 90, "step": 10, "rest": 60}}
       ]
     },

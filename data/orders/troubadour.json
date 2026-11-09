@@ -42,7 +42,7 @@
       "name": "Kraft B", "location": "gym", "minutes": 50,
       "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "lo-b-1", "core": true, "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "lo-b-1", "core": true, "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 4, "reps": "8", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "lo-b-2", "core": true, "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "lo-b-3", "core": true, "name": "Chest-Supported Row", "home": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "lo-b-4", "name": "Leg Press", "home": "Goblet Squat", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},

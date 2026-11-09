@@ -29,11 +29,14 @@
       ]
     },
     "schulter_ellbogen": {
-      "name": "Schulter und Ellbogen", "location": "home", "minutes": 40,
+      "name": "Schulter und Ellbogen", "location": "home", "minutes": 50,
       "warmup": ["short_base", "shoulder_prep", "dislocate"], "cooldown": ["cd_upper"],
       "blocks": [
         {"type": "single", "slot": {"id": "pal-s-1", "name": "DB Pullover", "sets": 3, "reps": "10", "prog": "weight", "rest": 90}},
-        {"type": "single", "slot": {"id": "pal-s-2", "name": "Deficit Push-Up", "sets": 3, "reps": "8", "prog": "reps", "rest": 90}},
+        {"type": "superset", "rest": 75, "slots": [
+          {"id": "pal-s-2", "name": "Deficit Push-Up", "sets": 4, "reps": "8", "prog": "reps"},
+          {"id": "pal-s-r", "name": "Table Row", "sets": 4, "reps": "8-12", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."}
+        ]},
         {"type": "single", "slot": {"id": "pal-s-3", "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "none", "rest": 60}},
         {"type": "single", "slot": {"id": "pal-s-4", "name": "Band External Rotation", "sets": 3, "reps": "15/Seite", "prog": "none", "rest": 45}},
         {"type": "superset", "id": "pal-s-5", "rest": 60, "slots": [

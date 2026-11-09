@@ -155,6 +155,8 @@ export function yearSlots(state: AppState, today: string = isoDate(new Date())):
       else if (c && !touches.has(d) && ago >= 0.7 * budgetOf(c)) { sc = 3 + Math.min(0.5, Math.max(0, ago - budgetOf(c)) / 60); purpose = "erhalt";  reason = `Erhalt: ohne Slot läge der letzte Reiz zur Phasenmitte ${ago === Infinity ? "nie" : `${ago} Tage`} zurück (hält etwa ${budgetOf(c)}).`; }
       // Hauptziel des Jahres (oder Spezialist): Double down vor Erhalt
       if (own.has(d)) { const x = (aim1 && DOMAIN_AXIS[d] === aim1) || state.user.focusMode === "special" ? 3.6 : 2.2; if (x > sc) { sc = x; purpose = "double"; reason = `Double down: ${focusName(f.id)} trainiert ${domainName(d)} selbst, der Slot legt nach.`; } }
+      // Hirsch: Der Slot hält dein wichtigstes Jahresziel warm, damit die Atempause nichts kostet
+      if (b.klammer === "regeneration" && aim1 && DOMAIN_AXIS[d] === aim1 && !own.has(d) && 4.5 > sc) { sc = 4.5; purpose = "erhalt"; reason = `Erhalt im Hirsch: ${domainName(d)} ist dein wichtigstes Ziel und bleibt in der Atempause warm.`; }
       if (sec.has(d) && !own.has(d) && 1.8 > sc) { sc = 1.8; purpose = "sekundaer"; reason = `Sekundärziel: ${domainName(d)} vertieft das Nebenziel von ${focusName(f.id)}.`; }
       if (sc > 0 && prev === d && purpose !== "defizit") sc -= 0.8;
       if (sc > 0 && (!best || sc > best.s)) best = { d, s: sc, purpose, reason };

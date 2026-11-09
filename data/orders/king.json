@@ -95,8 +95,9 @@
       "warmup": ["short_base", "jump_prep", "shoulder_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "beast", "id": "ki-c-1", "classes": ["bestie"]},
-        {"type": "single", "slot": {"id": "ki-c-atg", "core": true, "name": "ATG Split Squat", "sets": 3, "reps": "6-10/Seite", "prog": "reps", "rest": 60, "note": "erst eine Seite komplett, dann die andere"}},
-        {"type": "single", "slot": {"id": "ki-c-row", "core": true, "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 60}}
+        {"type": "single", "slot": {"id": "ki-c-atg", "core": true, "name": "ATG Split Squat", "sets": 4, "reps": "6-10/Seite", "prog": "reps", "rest": 60, "note": "erst eine Seite komplett, dann die andere"}},
+        {"type": "single", "slot": {"id": "ki-c-row", "core": true, "name": "Table Row", "sets": 4, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 60}},
+        {"type": "single", "slot": {"id": "ki-c-nc", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 90, "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."}}
       ]
     },
     "bonus": {

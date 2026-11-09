@@ -32,16 +32,19 @@
       ]
     },
     "kraft_rotation": {
-      "name": "Kraft und Rotation", "location": "home", "minutes": 45,
+      "name": "Kraft und Rotation", "location": "home", "minutes": 55,
       "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "fi-r-1", "core": true, "name": "Medicine Ball Rotational Throw", "reise": {"name": "Band Woodchopper", "reps": "10/Seite", "prog": "reps"}, "sets": 4, "reps": "5/Seite", "prog": "none", "rest": 60}},
         {"type": "single", "slot": {"id": "fi-r-2", "name": "Cable Woodchopper", "home": "KB Woodchop", "reise": {"name": "Band Woodchopper", "prog": "reps"}, "sets": 3, "reps": "10/Seite", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "fi-r-3a", "core": true, "name": "Cossack Squat", "sets": 3, "reps": "8-15/Seite", "prog": "reps"},
-          {"id": "fi-r-3b", "name": "Push-Up", "sets": 3, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
+          {"id": "fi-r-3a", "core": true, "name": "Cossack Squat", "sets": 4, "reps": "8-15/Seite", "prog": "reps"},
+          {"id": "fi-r-3b", "name": "Push-Up", "sets": 4, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
         ]},
-        {"type": "single", "slot": {"id": "fi-r-4", "core": true, "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 75}}
+        {"type": "superset", "rest": 75, "slots": [
+          {"id": "fi-r-4", "core": true, "name": "Table Row", "sets": 4, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"]},
+          {"id": "fi-r-5", "name": "Single-Leg RDL", "sets": 4, "reps": "8-12/Seite", "prog": "reps", "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."}
+        ]}
       ]
     },
     "runden_kondition": {

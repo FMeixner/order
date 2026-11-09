@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.15.0] – 2026-11-09
+
+### Geändert
+- **Erhaltungsdosis in jedem Orden:** Jeder Orden hält jetzt jeden großen Muskel mit mindestens 4 harten Sätzen pro Woche (Arme mindestens 2), bei vier und bei drei Trainingstagen. Wo es fehlte, kamen kompakte Grundübungen dazu, mit dem Hinweis „Erhaltung: schwer genug, 2 Wiederholungen Reserve“:
+  - Magician: Erhaltungsblock (Goblet Squat + Chin-Up, DB Romanian Deadlift).
+  - Monk, Paladin, Dancer, King, Pilgrim, Acrobat, Huntsman, Pugilist, Scout, Troubadour, Herald: einzelne Übungen oder Sätze, meist als Superset mit dem Gegenspieler.
+- **Hirsch · Erneuerung statt Erholung:** Der Hirsch ist jetzt eine Atempause von 4–6 Wochen ohne eigene Testwoche. Er bereitet das nächste Zeichen vor, das direkt danach kommt und mit der Testwoche endet. Nur wenn Beweglichkeit oder Erholung dein wichtigstes Ziel ist, bleibt er ein volles Zeichen.
+- Im Hirsch hält der Schwerpunkt-Slot dein wichtigstes Jahresziel warm (Erhalt).
+
 ## [1.14.0] – 2026-11-09
 
 ### Neu

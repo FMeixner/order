@@ -38,22 +38,27 @@
       ]
     },
     "schwert": {
-      "name": "Klinge schnell", "location": "home", "minutes": 30,
+      "name": "Klinge schnell", "location": "home", "minutes": 40,
       "warmup": ["short_base", "shoulder_prep", "sword_prep"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "intervalle", "fallbackFlow": "mobility"},
         {"type": "single", "slot": {"id": "sc-w-1", "name": "Reaktion auf Ansage", "kind": "interval", "interval": {"work": 30, "rest": 45, "rounds": 4}, "prog": "none", "note": "Mit der Klinge: Partner ruft die Hiebseite, du antwortest mit einem sauberen Drehhau. Ohne Partner: Seiten vorher aufschreiben."}},
-        {"type": "single", "slot": {"id": "sc-w-2", "name": "Landmine Rotational Press", "home": "KB Half-Kneeling Press", "reise": {"name": "Band Rotational Press", "prog": "reps"}, "sets": 3, "reps": "6/Seite", "prog": "double", "rest": 90}}
+        {"type": "single", "slot": {"id": "sc-w-2", "name": "Landmine Rotational Press", "home": "KB Half-Kneeling Press", "reise": {"name": "Band Rotational Press", "prog": "reps"}, "sets": 3, "reps": "6/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "sc-w-pp", "name": "Pike Push-Up", "sets": 3, "reps": "6-12", "prog": "reps", "rest": 75, "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve."}}
       ]
     },
     "kraft": {
-      "name": "Kraft und Hüfte", "location": "gym", "minutes": 40,
+      "name": "Kraft und Hüfte", "location": "gym", "minutes": 50,
       "warmup": ["short_base", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "sc-k-1", "name": "Hang Power Clean", "reise": {"name": "KB Swing", "prog": "none"}, "sets": 4, "reps": "3", "prog": "none", "rest": 120, "cluster": {"size": 1, "rest": 20}}},
         {"type": "single", "slot": {"id": "sc-k-2", "core": true, "name": "Back Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "5", "prog": "double", "rest": 180}},
         {"type": "single", "slot": {"id": "sc-k-3", "name": "Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "sc-k-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}}
+        {"type": "single", "slot": {"id": "sc-k-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}},
+        {"type": "superset", "rest": 75, "slots": [
+          {"id": "sc-k-5a", "name": "Push-Up", "sets": 4, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"], "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."},
+          {"id": "sc-k-5b", "name": "Pull-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 4, "reps": "5-8", "prog": "reps"}
+        ]}
       ]
     }
   }

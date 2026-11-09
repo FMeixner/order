@@ -18,12 +18,17 @@
   "week_3": ["stab_atem", "haltung_kraft", "grundlage"],
   "roles": {
     "stab_atem": {
-      "name": "Stab und Atem", "location": "home", "minutes": 35,
+      "name": "Stab und Atem", "location": "home", "minutes": 55,
       "warmup": ["short_base", "shake_out"], "cooldown": ["cd_speaker"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "stab"},
         {"type": "single", "slot": {"id": "mg-a-2", "name": "Einbeinstand, Augen zu", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}},
         {"type": "single", "slot": {"id": "mg-a-4", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps", "rest": 45}},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "mg-e-1", "core": true, "name": "Goblet Squat", "sets": 4, "reps": "6-10", "prog": "double", "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."},
+          {"id": "mg-e-2", "core": true, "name": "Chin-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 4, "reps": "5-8", "prog": "reps"}
+        ]},
+        {"type": "single", "slot": {"id": "mg-e-3", "core": true, "name": "DB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "prog": "reps", "reps": "10-15/Seite"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "mg-a-3", "name": "Resonanzatmung (6 pro Minute)", "kind": "timer", "minutes": 6, "max": 12, "step": 1, "prog": "minutes"}}
       ]
     },
@@ -32,8 +37,8 @@
       "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_speaker"],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "mg-h-pp-a", "core": true, "name": "DB Pullover", "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
-          {"id": "mg-h-pp-b", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "6-12", "prog": "reps"}
+          {"id": "mg-h-pp-a", "core": true, "name": "DB Pullover", "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "10-12", "prog": "double"},
+          {"id": "mg-h-pp-b", "core": true, "name": "Deficit Push-Up", "sets": 4, "reps": "6-12", "prog": "reps"}
         ]},
         {"type": "single", "slot": {"id": "mg-h-atg", "core": true, "name": "ATG Split Squat", "sets": 3, "reps": "6-10/Seite", "prog": "reps", "rest": 60, "note": "erst eine Seite komplett, dann die andere"}},
         {"type": "superset", "rest": 45, "slots": [

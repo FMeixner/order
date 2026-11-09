@@ -44,7 +44,8 @@
         {"type": "single", "slot": {"id": "pm-d-1", "name": "Wall Handstand (Brust zur Wand)", "kind": "hold", "hold": 30, "sets": 5, "prog": "ladder", "ladder": ["Wall Handstand (Brust zur Wand)", "Wall Handstand (Zehen weg)", "Freier Handstand (Versuche)"], "rest": 60}},
         {"type": "single", "slot": {"id": "pm-d-2", "name": "Pike Push-Up", "sets": 4, "reps": "5-8", "prog": "ladder", "ladder": ["Pike Push-Up", "Pike Push-Up (Füße erhöht)", "Wall Handstand Push-Up (Teilbereich)"], "rest": 90}},
         {"type": "single", "slot": {"id": "pm-d-3", "name": "Pistol Squat (Box)", "sets": 4, "reps": "3-6/Seite", "prog": "ladder", "ladder": ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"], "rest": 90}},
-        {"type": "single", "slot": {"id": "pm-d-4", "name": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "5-10", "prog": "ladder", "ladder": ["Ring Dip", "RTO Ring Dip"], "rest": 90}},
+        {"type": "single", "slot": {"id": "pm-d-4", "name": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 4, "reps": "5-10", "prog": "ladder", "ladder": ["Ring Dip", "RTO Ring Dip"], "rest": 90}},
+        {"type": "single", "slot": {"id": "pm-d-rdl", "name": "Single-Leg RDL", "sets": 3, "reps": "8-12/Seite", "prog": "reps", "rest": 60, "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."}},
         {"type": "single", "slot": {"id": "pm-d-5", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 45}}
       ]
     },

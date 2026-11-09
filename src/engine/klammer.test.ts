@@ -280,3 +280,19 @@ describe("Ortsregel: Studio-Orden ohne Studio", () => {
     expect(gym.filter((b) => !isTestBlock(b)).length).toBeGreaterThan(0);
   });
 });
+
+describe("Hirsch als Atempause", () => {
+  it("ohne Ziel Erholung/Beweglichkeit: Hirsch höchstens 6 Wochen, danach ein Zeichen mit Testwoche", async () => {
+    const { HIRSCH_MAX } = await import("./klammer");
+    const p = planYear([], [sec(T, 14, "medium", "A")], T, ids(), { aim: "allround", kinds: { 0: "regeneration" } });
+    const ks = klammernOf(p);
+    const h = ks.find((k) => k.kind === "regeneration")!;
+    expect(h.parts.reduce((s, x) => s + blockWeeks(x), 0)).toBeLessThanOrEqual(HIRSCH_MAX);
+    expect(ks.length).toBe(2);
+    expect(ks[1].test).toBeTruthy();
+  });
+  it("mit Ziel Beweglichkeit: Hirsch bleibt ein volles Zeichen", () => {
+    const p = planYear([], [sec(T, 14, "medium", "A")], T, ids(), { aim: "beweglichkeit", kinds: { 0: "regeneration" } });
+    expect(klammernOf(p)).toHaveLength(1);
+  });
+});

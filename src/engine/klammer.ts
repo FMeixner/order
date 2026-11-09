@@ -70,6 +70,9 @@ export function hasHighLoad(eff: Map<string, Load>, start: string, end: string, 
 
 /* ---------- Platzierung ---------- */
 
+/** Längste Hirsch-Atempause in Wochen */
+export const HIRSCH_MAX = 6;
+
 export interface Window { start: string; end: string; weeks: number }
 
 /** Klammer-Fenster ab `from` bis `endOf`: Schnitte möglichst auf Abschnittsgrenzen (±2 Wochen Spielraum),
@@ -290,16 +293,12 @@ export function planYear(plan: PlanBlock[], sections: Section[], today: string, 
   let prevF: Focus | undefined = FOCUS_BY_ID[[...kept].reverse().find((b) => !isTestBlock(b))?.focusId ?? ""];
   let usedBefore: string[] = yearBefore(kept, from);
 
-  windows.forEach((w, wi) => {
+  /** Ein Zeichen in einem Fenster: Teile, Orden, Kalorien, Testwoche am Ende (wenn erlaubt) */
+  const emit = (w: Window, k: KlammerDef, forced: boolean, allowTest: boolean) => {
     const load = loadOfWindow(secs, w.start, w.end);
     const travel = travelOfWindow(secs, w.start, w.end);
-    const mid = midOf(w.start, w.end);
-    const pinnedKind = pinsAt(mid)?.pin?.klammer ? pinsAt(mid)!.klammer : undefined;
-    const forced = opts.kinds?.[wi] ?? pinnedKind;
-    const k = forced ? KLAMMER_BY_ID[forced] : [...KLAMMERN].sort((a, b) => kindScore(b, load, travel, w, ctx) - kindScore(a, load, travel, w, ctx))[0];
     ctx.prev = k.id; ctx.used.push(k.id);
-
-    const test = testPolicy !== "none" && w.weeks >= 5;
+    const test = allowTest && testPolicy !== "none" && w.weeks >= 5;
     const T = w.weeks - (test ? 1 : 0);
     const n = T <= 8 ? 1 : T <= 12 ? 2 : 3;
     const base = Math.floor(T / n), rem = T % n;
@@ -329,6 +328,30 @@ export function planYear(plan: PlanBlock[], sections: Section[], today: string, 
     }
     if (test) out.push({ id: newId(), focusId: TEST_BLOCK, label: "Testwoche", start: at, end: addDays(at, 6), load, travel: false });
     usedBefore = [...usedBefore, ...usedInK];
+  };
+
+  windows.forEach((w, wi) => {
+    const load = loadOfWindow(secs, w.start, w.end);
+    const travel = travelOfWindow(secs, w.start, w.end);
+    const mid = midOf(w.start, w.end);
+    const pinnedKind = pinsAt(mid)?.pin?.klammer ? pinsAt(mid)!.klammer : undefined;
+    const forced = opts.kinds?.[wi] ?? pinnedKind;
+    const k = forced ? KLAMMER_BY_ID[forced] : [...KLAMMERN].sort((a, b) => kindScore(b, load, travel, w, ctx) - kindScore(a, load, travel, w, ctx))[0];
+    // Hirsch (1.15): eine Atempause von 4–6 Wochen ohne eigene Testwoche, kein Quartal. Er bereitet das nächste
+    // Zeichen vor, das den Rest des Fensters bekommt und mit der Testwoche endet.
+    // Ist Beweglichkeit oder Erholung selbst das wichtigste Ziel, bleibt der Hirsch ein volles Zeichen.
+    const hirschIsGoal = aimList.some((a) => a.prio === 1 && k.axes.includes(a.aim));
+    if (k.id === "regeneration" && w.weeks > HIRSCH_MAX && !hirschIsGoal) {
+      const hw = w.weeks <= 9 ? 4 : w.weeks <= 12 ? 5 : HIRSCH_MAX;
+      const w1: Window = { start: w.start, end: addDays(w.start, 7 * hw - 1), weeks: hw };
+      const w2: Window = { start: addDays(w.start, 7 * hw), end: w.end, weeks: w.weeks - hw };
+      emit(w1, k, !!forced, false);
+      const l2 = loadOfWindow(secs, w2.start, w2.end), t2 = travelOfWindow(secs, w2.start, w2.end);
+      const k2 = [...KLAMMERN].filter((x) => x.id !== "regeneration").sort((a, b) => kindScore(b, l2, t2, w2, ctx) - kindScore(a, l2, t2, w2, ctx))[0];
+      emit(w2, k2, false, true);
+      return;
+    }
+    emit(w, k, !!forced, true);
   });
 
   // Zweimal im Jahr: die mittlere und die letzte Testwoche bleiben, die anderen gehen an die Phase davor zurück
