@@ -77,15 +77,19 @@ export function deloadAdvice(state: AppState, b: PlanBlock, week: number, today:
     neue Übungen ist leicht, und kein Orden wird mitten in seinem Aufbau unterbrochen. */
 export function rhythmWeeks(plan: PlanBlock[], b: PlanBlock, total: number): number[] {
   const starts: number[] = [];
+  let hasTest = false;
   if (b.meso && b.klammer) {
     const parts = plan.filter((x) => x.meso === b.meso && !isTestBlock(x)).sort((x, y) => x.start.localeCompare(y.start));
     let w = 1;
     for (const p of parts) { if (w > 1) starts.push(w); w += blockWeeks(p); }
+    hasTest = plan.some((x) => x.meso === b.meso && isTestBlock(x));
   }
   const out: number[] = [];
   for (let w = 5; w <= total; ) {
     const snap = starts.find((s) => Math.abs(s - w) <= 2 && s >= 4 && (out.length === 0 || s - out[out.length - 1] >= 4));
     const at = snap ?? w;
+    // Nie direkt vor der Testwoche: Die Testwoche entlastet selbst, und ein Tapering davor würde die Werte schönen
+    if (hasTest && at >= total) break;
     out.push(at);
     w = at + 4;
   }

@@ -48,11 +48,11 @@ describe("Akzent-Modus: Domäne konstant, Orden rotieren", () => {
     // Domäne konstant, Orden im Wechsel: nicht zweimal derselbe
     expect(new Set(ids).size).toBe(2);
   });
-  it("fillMeso mit Akzent Kraft: Smith und Troubadour, Herald bleibt draußen", () => {
+  it("fillMeso mit Akzent Kraft: Kraft-Orden (Smith, Troubadour, Mercenary), Herald bleibt draußen", () => {
     let n = 0;
     const filled = fillMeso(newMeso([], "2026-11-04", () => `b${n++}`, [6, 6], undefined, "kraft"), "allround");
     const ids = filled.filter((x) => x.meso).map((x) => x.focusId);
-    expect(ids.every((id) => ["smith", "troubadour"].includes(id))).toBe(true);
+    expect(ids.every((id) => ["smith", "troubadour", "mercenary"].includes(id))).toBe(true);
     expect(new Set(ids).size).toBe(2);
   });
 });

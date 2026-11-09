@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "id": "mercenary",
+  "name": "Mercenary", "name_w": "Mercenary",
+  "tagline": "Kraft aus zwei Kurzhanteln, Können als Würze.",
+  "description": "Kraft fürs Zuhause: etwa 70 % Kurzhantel (DB Bench Press, Goblet Reverse Lunge, Staggered Stance RDL, Schulterdrücken, Rudern), 30 % Skill-Kraft mit dem eigenen Körper (Archer Pull-Ups, Archer Push-Ups, Pistol Squats) und ein Power-Tag mit DB Snatches. Keine schwere Last vom Boden, darum auch in vollen Wochen gut verträglich. Einseitige Kraftübungen erst eine Seite komplett, dann die andere; Snatches im Wechsel.",
+  "goals": {"primary": "strength", "secondary": ["skill", "hypertrophy"]},
+  "nutrition": "any",
+  "load_fit": "high",
+  "level": "intermediate",
+  "session_min": 45,
+  "weeks": {"min": 8, "max": 12},
+  "test_week": true,
+  "travel": false,
+  "modules": ["correctives", "beast"],
+  "successors": ["smith", "acrobat", "troubadour", "huntsman"],
+  "sources": ["Nunes et al. (2021)"],
+  "week_4": ["druck_beine", "zug_hinge", "power_skill", "volumen"],
+  "week_3": ["druck_beine", "zug_hinge", "power_skill"],
+  "roles": {
+    "druck_beine": {
+      "name": "Drücken und Beine", "location": "home", "minutes": 45,
+      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "me-a-0", "name": "DB Lateral Raise", "sets": 2, "reps": "12-15", "prog": "double", "rest": 45, "note": "Zum Einstieg: wärmt die Schulter vor, ohne die Brust für das Drücken zu ermüden."}},
+        {"type": "single", "slot": {"id": "me-a-1", "core": true, "name": "DB Bench Press", "sets": 4, "reps": "6-8", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "me-a-2", "core": true, "name": "Goblet Reverse Lunge", "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90, "note": "erst eine Seite komplett, dann die andere"}},
+        {"type": "single", "slot": {"id": "me-a-3", "name": "Archer Push-Up", "sets": 3, "reps": "4-8/Seite", "prog": "reps", "rest": 90, "note": "Skill: der gestreckte Arm hilft nur so viel wie nötig."}},
+        {"type": "single", "slot": {"id": "me-a-4", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30}}
+      ]
+    },
+    "zug_hinge": {
+      "name": "Ziehen und Hüfte", "location": "home", "minutes": 40,
+      "warmup": ["short_base", "lat_box", "lower_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "me-b-0", "name": "DB Rear Delt Fly", "sets": 2, "reps": "12-15", "prog": "double", "rest": 45, "note": "Zum Einstieg: hintere Schulter warm, Griff und Rücken bleiben frisch."}},
+        {"type": "single", "slot": {"id": "me-b-1", "core": true, "name": "Pull-Up", "sets": 4, "reps": "4-8", "prog": "ladder", "ladder": ["Pull-Up", "Archer Pull-Up"], "rest": 150, "note": "Skill: ab acht sauberen Wiederholungen als Archer Pull-Up, je Seite."}},
+        {"type": "single", "slot": {"id": "me-b-2", "core": true, "name": "Staggered Stance DB RDL", "sets": 4, "reps": "6-8/Seite", "prog": "double", "rest": 120, "note": "erst eine Seite komplett, dann die andere"}},
+        {"type": "single", "slot": {"id": "me-b-3", "name": "Double DB Row", "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}}
+      ]
+    },
+    "power_skill": {
+      "name": "Power und Skill", "location": "home", "minutes": 45,
+      "warmup": ["short_base", "jump_prep", "shoulder_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "me-c-1a", "name": "DB Snatch", "sets": 4, "reps": "4/Seite", "prog": "weight", "note": "explosiv, Seiten im Wechsel"},
+          {"id": "me-c-1b", "name": "Superman", "sets": 4, "reps": "10", "prog": "reps", "note": "am Boden, oben kurz halten"}
+        ]},
+        {"type": "single", "slot": {"id": "me-c-2", "core": true, "name": "Pistol Squat (Box)", "sets": 4, "reps": "3-6/Seite", "prog": "ladder", "ladder": ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"], "rest": 90, "note": "erst eine Seite komplett, dann die andere"}},
+        {"type": "single", "slot": {"id": "me-c-3", "core": true, "name": "Seated DB Shoulder Press", "sets": 3, "reps": "6-8", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "me-c-4", "name": "Chin-Up", "sets": 3, "reps": "5-8", "prog": "reps", "rest": 120}},
+        {"type": "beast", "id": "me-c-bst", "classes": ["plage"]}
+      ]
+    },
+    "volumen": {
+      "name": "Volumen", "location": "home", "minutes": 45,
+      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "me-d-0", "name": "Lying Leg Curl", "home": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double", "rest": 60, "note": "Zum Einstieg: Kniebeuger warm, der vordere Oberschenkel bleibt frisch."}},
+        {"type": "single", "slot": {"id": "me-d-1", "core": true, "name": "Bulgarian Split Squat", "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90, "note": "erst eine Seite komplett, dann die andere"}},
+        {"type": "single", "slot": {"id": "me-d-2", "core": true, "name": "Incline DB Press", "sets": 3, "reps": "6-8", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "me-d-3", "name": "Double DB Row", "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "me-d-4a", "name": "Hammer Curl", "sets": 2, "reps": "10-12", "prog": "double"},
+          {"id": "me-d-4b", "name": "DB Overhead Triceps Extension", "sets": 2, "reps": "10-12", "prog": "double"}
+        ]}
+      ]
+    },
+    "bonus": {
+      "name": "Bonus: Bestie", "location": "home", "minutes": 30,
+      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "beast", "id": "bx-me-bst", "classes": ["bestie"]},
+        {"type": "single", "slot": {"id": "bx-me-c", "name": "Copenhagen Plank", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 2, "prog": "hold", "rest": 30, "note": "pro Seite"}}
+      ]
+    }
+  }
+}

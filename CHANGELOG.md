@@ -2,13 +2,23 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.7.0] – 2026-11-09
+
+### Neu
+- **Mercenary** (Arbeitsname), ein Kraft-Orden für zu Hause: etwa 70 % Kurzhantel (DB Bench Press, Goblet Reverse Lunge, Staggered Stance RDL, Schulterdrücken, Rudern) und 30 % Skill-Kraft (Archer Pull-Ups, Archer Push-Ups, Pistol Squats). Dazu ein Power-Tag mit DB Snatches und Supermen. Ohne schwere Last vom Boden passt er auch zu hoher Alltagslast. Heimat ist der Stier; im Fuchs läuft er früh mit, in Bär und Wolf zählt er halb.
+- Neue Übungen: Archer Pull-Up, Staggered Stance DB RDL, DB Snatch, Superman, Goblet Reverse Lunge.
+
+### Geändert
+- Keine Entlastung in der Woche direkt vor der Testwoche eines Zeichens: Die Testwoche entlastet selbst, und eine Entlastung davor würde die Testwerte schönen.
+- „Bauchroller“ heißt wieder „Bauchroller“.
+
 ## [1.6.0] – 2026-11-09
 
 ### Geändert
 - **Warm-up macht nur bereit.** Jeder Tag wärmt gezielt auf, was er trainiert: Oberkörper, Unterkörper, Sprünge, Lauf oder Schwert. Kraft- und Aufbauübungen sind aus dem Warm-up verschwunden. Neck Curl Complex und Rumpfübungen laufen jetzt im Trainingsteil, wo sie hingehören. An Bestientagen gibt es ein knappes Ganzkörper-Warm-up (World's Greatest Stretch, Inchworm).
 - **Cool-down dehnt, was trainiert wurde,** mit wenigen großen Dehnungen, die viel auf einmal erfassen, 45–60 Sekunden zum Hineinsinken: Puppy Pose und Türrahmen nach Oberkörpertagen, Couch Stretch, Pigeon und Wall Hinge nach Beintagen.
 - **Isolation zum Einstieg:** Viele Kraft- und Muskelorden beginnen mit ein bis zwei Isolationsübungen, zum Beispiel Cable Fly vor Bench Press, Leg Extension vor Leg Press oder Leg Curl vor Front Squat. Das wärmt vor, die Grundübung danach braucht einen Aufwärmsatz weniger. Kraftorden wählen dafür Muskeln, die der erste Lift nicht braucht.
-- **Neue Ausrüstung:** Black Roll und Black-Roll-Ball (Setup › Equipment). Ohne Rolle kommt ein Ersatz im Stehen. „Bauchroller“ heißt jetzt „Ab Roller (Bauchroller)“.
+- **Neue Ausrüstung:** Black Roll und Black-Roll-Ball (Setup › Equipment). Ohne Rolle kommt ein Ersatz im Stehen. 
 
 ## [1.5.0] – 2026-11-09
 

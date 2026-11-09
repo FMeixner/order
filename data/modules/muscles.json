@@ -30,6 +30,11 @@
     "Tragen": {"Unterarme": 1, "Rumpf": 0.5}
   },
   "exercises": {
+    "Archer Pull-Up": {"Rücken": 1, "Bizeps": 0.5},
+    "Staggered Stance DB RDL": {"Beinbeuger": 1, "Gesäß": 1},
+    "DB Snatch": {"Gesäß": 1, "Beinbeuger": 0.5, "Schultern": 0.5},
+    "Superman": {"Gesäß": 1, "Rücken": 0.5},
+    "Goblet Reverse Lunge": {"Quadrizeps": 1, "Gesäß": 1},
     "Jackknives": {"Rumpf": 1},
     "Weightless Windmill": {"Rumpf": 0.5, "Schultern": 0.5},
     "KB Windmill": {"Rumpf": 0.5, "Schultern": 0.5, "Gesäß": 0.5},

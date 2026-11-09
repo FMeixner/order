@@ -51,6 +51,27 @@
       }
     ]
   },
+  "Archer Pull-Up": {
+    "equip": "bodyweight",
+    "needs": ["bar"],
+    "desc": "Weiter Griff, zu einer Hand ziehen, der andere Arm bleibt fast gestreckt und hilft nur so viel wie nötig. Seiten im Wechsel oder eine Seite komplett."
+  },
+  "Staggered Stance DB RDL": {
+    "equip": "dumbbell",
+    "desc": "Versetzter Stand (Kickstand): hinterer Fuß nur mit dem Ballen auf Höhe der vorderen Ferse, Gewicht auf dem vorderen Bein. Zwei Kurzhanteln, Hüfte zurück bis zur Dehnung hinten am Oberschenkel."
+  },
+  "DB Snatch": {
+    "equip": "dumbbell",
+    "desc": "Kurzhantel zwischen den Füßen, aus der Hüfte explosiv strecken und in einem Zug über den Kopf reißen, Arm gestreckt fixieren. Seiten im Wechsel."
+  },
+  "Superman": {
+    "equip": "bodyweight",
+    "desc": "Bauchlage, Arme lang nach vorn. Arme, Brust und Beine gleichzeitig abheben, oben kurz halten, Gesäß fest."
+  },
+  "Goblet Reverse Lunge": {
+    "equip": "dumbbell",
+    "desc": "Eine Kurzhantel senkrecht vor der Brust. Großer Schritt zurück, hinteres Knie fast zum Boden, über das vordere Bein hoch."
+  },
   "Archer Push-Up": {
     "equip": "bodyweight"
   },

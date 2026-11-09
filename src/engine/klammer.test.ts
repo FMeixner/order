@@ -249,3 +249,14 @@ describe("Entlastung an Ordensgrenzen", () => {
     expect(rhythmWeeks([c, d], c, 12)).toEqual([5, 9]);
   });
 });
+
+describe("Entlastung und Testwoche", () => {
+  it("keine Entlastung in der Woche direkt vor der Testwoche der Klammer", async () => {
+    const { rhythmWeeks } = await import("./deload");
+    const mk = (id: string, start: string, weeks: number, focusId = "knight"): PlanBlock => ({ id, focusId, label: "", start, end: addDays(start, 7 * weeks - 1), load: "medium", meso: "m", klammer: "muskel" } as PlanBlock);
+    const a = mk("a", T, 9);
+    const t = mk("t", addDays(T, 63), 1, "test");
+    expect(rhythmWeeks([a], a, 9)).toEqual([5, 9]);
+    expect(rhythmWeeks([a, t], a, 9)).toEqual([5]);
+  });
+});
