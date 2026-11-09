@@ -6,7 +6,7 @@
   "description": "Vier Ganzkörpertage, kein Hauptlift zweimal pro Woche in derselben Form. Hauptlifts als Top-Satz plus drei Back-off-Sätze mit −10 %, gesteuert über das Feedback. Woche 5 Entlastung. Ohne Langhantel verliert der Fokus seinen Zweck, deshalb keine Reisevariante.",
   "goals": {"primary": "strength", "secondary": ["hypertrophy"]},
   "nutrition": "maintenance",
-  "load_fit": "medium",
+  "load_fit": "high",
   "level": "intermediate–advanced",
   "session_min": 60,
   "weeks": {"min": 9, "max": 12},
