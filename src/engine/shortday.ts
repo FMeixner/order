@@ -24,6 +24,8 @@ import { musclesOf, volumeRange } from "./volume";
 import { halfOf } from "./warmup";
 
 /** Die vier Kernübungen des Tages (Kern zuerst, dann schwer, dann Mehrgelenk); verdichtet darf eine fünfte bleiben */
+/** Bleibt am Kurztag drin, nur kürzer: Waffen-Module und der Ansage-Drill (halbe Runden) */
+const keptModule = (m: string) => isWeaponModule(m) || m === "call";
 export const SHORT_KEEP = 4;
 export const SHORT_MAX = 5;
 /** Zielzeit der kurzen Einheit in Minuten */
@@ -160,7 +162,7 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   // 1. Kurztag: die vier Kernübungen, Bestie und Schwerttraining eine Stufe kürzer, kurzes Warm-up.
   //    Auch Grundlagen- und Skill-Tage: Ihr Inhalt ist das Ziel des Tages, er bleibt (gefüllt wird mit dem Besten zuerst,
   //    bis vier Blöcke zusammen sind — ist weniger Kraft da, rücken Timer und Flows nach).
-  const ranked = short.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && isWeaponModule(b.module)) ? -1 : rank(b) })).filter((x) => x.r >= 0);
+  const ranked = short.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && keptModule(b.module)) ? -1 : rank(b) })).filter((x) => x.r >= 0);
   // A- und B-Woche getrennt: je die vier besten Übungen (Kern zuerst, dann schwer, dann Mehrgelenk)
   const shortWarm = ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
   const pick = (n: number) => {
@@ -176,10 +178,10 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   // Bestie bleibt drin, aber eine Klasse kürzer (mindestens Plage); jede Schwertübung einen Satz weniger (short-Flag)
   const shorter = (b: Block): Block => {
     if (b.type === "beast") return { ...b, classes: (b.classes?.length ? b.classes : (["bestie", "ungeheuer"] as BeastClass[])).map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]) };
-    if (b.type === "module" && isWeaponModule(b.module)) return { ...b, short: true };
+    if (b.type === "module" && keptModule(b.module)) return { ...b, short: true };
     return b;
   };
-  short.blocks = short.blocks.map(shorter).filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && isWeaponModule(b.module)));
+  short.blocks = short.blocks.map(shorter).filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && keptModule(b.module)));
   short.warmup = shortWarm;
   short.cooldown = (short.cooldown ?? []).slice(0, 1);
   short.name = `${short.name} (Kurztag)`;
@@ -335,10 +337,10 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
 export function shortDeload(f: Focus, roleKey: string): Focus {
   const roles: Record<string, Role> = { ...f.roles };
   const r: Role = JSON.parse(JSON.stringify(f.roles[roleKey]));
-  const ranked = r.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && isWeaponModule(b.module)) ? -1 : rank(b) })).filter((x) => x.r >= 0);
+  const ranked = r.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && keptModule(b.module)) ? -1 : rank(b) })).filter((x) => x.r >= 0);
   const keep = new Set<Block>();
   for (const ab of ["A", "B"]) ranked.filter((x) => !x.b.rotation || x.b.rotation === ab).sort((a, c) => c.r - a.r || a.i - c.i).slice(0, SHORT_KEEP).forEach((x) => keep.add(x.b));
-  r.blocks = r.blocks.filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && isWeaponModule(b.module))).map((b) => (b.type === "module" && isWeaponModule(b.module) ? { ...b, short: true } : b));
+  r.blocks = r.blocks.filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && keptModule(b.module))).map((b) => (b.type === "module" && keptModule(b.module) ? { ...b, short: true } : b));
   r.warmup = ["short_base", ...(r.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
   r.cooldown = (r.cooldown ?? []).slice(0, 1);
   r.name = `${r.name} (Kurztag)`;

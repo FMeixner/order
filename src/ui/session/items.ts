@@ -1,4 +1,5 @@
 /* Inhalte einer Einheit sammeln (Übungen, Bestien, Module) und Bestien festhalten. */
+import { callView, type CallView } from "../../engine/call";
 import { EXERCISES } from "../../data";
 import type { AppState, Beast, BeastClass, BeastRun, Block, Session, WeaponModule } from "../../types";
 import { dayMods, withDay } from "../../engine/dayadj";
@@ -11,7 +12,7 @@ import { boostOf, runSubOf, type SessionCtx, sessionId, skillSet } from "./ctx";
 import { type CardioSub, SUB_EXERCISE } from "../../engine/cardio";
 
 /* ---------- Slots dieser Einheit sammeln ---------- */
-export interface Item { block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule } }
+export interface Item { call?: CallView; block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule } }
 
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
@@ -90,7 +91,8 @@ export function collectItems(ctx: SessionCtx): Item[] {
     return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state), boost: boostOf(ctx) }) };
   };
   const otherItem = (b: Block): Item => {
-    if (b.type === "module" && (b.module === "flow" || b.module === "sharpen" || ctx.profile.has.sword)) {
+    if (b.type === "module" && b.module === "call") return { block: b, resolved: [], call: callView(b, ctx.state.user, ctx.week, ctx.profile, { deload: ctx.reduced }) ?? undefined };
+    if (b.type === "module" && b.module !== "call" && (b.module === "flow" || b.module === "sharpen" || ctx.profile.has.sword)) {
       const full = moduleDrills(b.variant, ctx.state.user, ctx.week, b.module);
       // Kurztag: beim Schwert bleibt jede Übung, ein Satz weniger (der Ersatz-Flow ohne Schwert läuft in der Kurzfassung)
       const drills = b.short ? shortSwordDrills(full) : full;
@@ -124,7 +126,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
     if (b.type !== "superset" || (b.sameStation && it.resolved.every((r) => r.equip === "cable")) || it.resolved.filter(station).length < 2) return [it];
     return it.resolved.map((r, i) => ({ block: { type: "single", slot: { ...(b.slots.find((x) => x.id === r.slotId) ?? b.slots[i]), rest: b.rest ?? 60 } }, resolved: [r] }));
   });
-  const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword);
+  const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword || it.call);
   // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
   if (ctx.block.load === "high") {
     const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })));

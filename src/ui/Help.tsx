@@ -153,6 +153,14 @@ export function Help() {
         <li>Bei fünf Tagen kommt ein Zusatztag zwischen die schweren Tage: eine Bestie plus etwas, das es nur dann gibt, je nach Orden zum Beispiel Unterarme, Nacken, Füße, Seilspringen oder Qigong.</li>
       </ul>
 
+      <h3>Ansage-Drill</h3>
+      <ul>
+        <li>Die App ist dein Partner: Sie ruft zufällig eine Richtung, einen Hieb oder einen Schlag, per Sprache und in großer Schrift (wählbar: beides, nur Ton, nur Schrift). Du entscheidest im Moment und bewegst dich. Der Abstand zwischen den Ansagen ist zufällig, damit nichts vorhersehbar wird. Feste Farben: links blau, rechts orange, vor grün, zurück bernstein, „Nicht …!“ rot.</li>
+        <li>Varianten: Richtung (Scout), Antritt draußen (Skirmisher), Klinge (Scout, mit Schwert oder Stock; ohne kommen Richtungen), Schattenboxen (Pugilist), Stab (King, ruhig und genau statt schnell; ohne Stock entfällt er).</li>
+        <li>Stufen: Richtungen und Schattenboxen steigern sich über die Wochen im Orden (Woche 3 mit Schritten oder Serien, ab Woche 5 Gegenteil-Ansagen wie „Nicht links!“ oder Konter). Klinge und Stab folgen deinem Lernweg: Gerufen wird nur, was du schon gelernt hast. Die neueste Stufe kommt öfter dran.</li>
+        <li>Kurztag: halb so viele Runden. Entlastungs- und leichtere Wochen: eine Runde weniger.</li>
+        <li>Warum: Bewegung mit Denkanforderung ist eine plausible Brücke zur kognitiven Fitness (Tomporowski & Pesce, 2019), und Training wirkt messbar, wenn auch klein, auf die Kognition (Ludyga et al., 2020). Dass gerade dieses Format mehr bringt als normales Training, ist nicht direkt belegt. Darum heißt es hier „Entscheiden unter Zeitdruck“, nicht Gehirntraining.</li>
+      </ul>
       <h3>Tagesanpassung: Kurz · Intensiv · Leise · Kein Platz · Fällt aus</h3>
       <ul>
         <li>Unter ⚙ Anpassen neben dem Namen der Einheit. Kurz, Leise und Kein Platz lassen sich kombinieren, Intensiv steht allein. Die Zahl am Zahnrad zeigt, wie viele Anpassungen aktiv sind.</li>

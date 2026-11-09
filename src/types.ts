@@ -93,7 +93,7 @@ export type Block =
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
     }
-  | { type: "module"; module: WeaponModule | "flow" | "sharpen"; variant: string; fallback?: Slot; /** Ohne Schwert und Stock: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B"; /** Kurztag: nur die erste Hälfte der Übungen */ short?: true }
+  | { type: "module"; module: WeaponModule | "flow" | "sharpen" | "call"; variant: string; fallback?: Slot; /** Ohne Schwert und Stock: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B"; /** Kurztag: nur die erste Hälfte der Übungen */ short?: true }
 
 /** Die drei Waffen-Module mit Lernweg: Messer, Langschwert, Stab (Stock reicht). */
 export type WeaponModule = "sword" | "longsword" | "stab";
@@ -384,6 +384,8 @@ export interface Session {
 }
 
 export interface AppState {
+  /** Ansage-Drill: Sprache und Schrift, nur Sprache oder nur Schrift */
+  callMode?: "both" | "sound" | "text";
   version: 1;
   onboarded: boolean;
   user: UserProfile;
@@ -489,3 +491,7 @@ export interface Cup {
 
 /** Einheitlicher Standard für die Testwochen-Regel (Plan, Coach, Onboarding) */
 export const DEFAULT_TEST_POLICY = "each" as const;
+
+/** Ansage-Drill (data/modules/calls.json): eine Stufe mit ihren Ansagen */
+export interface CallLevel { name: string; weeks?: number; cues: string[] }
+export interface CallVariant { name: string; tool?: "sword"; path?: WeaponModule; fallback?: string; rounds: number; work: number; rest: number; gap: [number, number]; how: string; levels: CallLevel[] }

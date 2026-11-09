@@ -584,3 +584,14 @@ button.yp-seg { cursor: pointer; text-align: left; }
 /* 1.14: Schätzwerte gestrichelt */
 .score.est { color: var(--muted); }
 .bar-fill.est { background: repeating-linear-gradient(90deg, var(--teal) 0 6px, transparent 6px 10px); opacity: .8; }
+
+/* Ansage-Drill: große Ansage, feste Farbe je Richtung */
+.call-stage { border: 1.5px solid var(--border-lit); border-radius: 14px; padding: 14px 12px; text-align: center; background: var(--surface2); }
+.call-stage.rest { opacity: .75; }
+.call-cue { font-family: var(--display); font-size: clamp(40px, 13vw, 84px); line-height: 1.1; letter-spacing: .02em; margin-top: 6px; overflow-wrap: anywhere; }
+.call-left { color: var(--goal-strength); }
+.call-right { color: var(--goal-power); }
+.call-front { color: var(--teal); }
+.call-back { color: var(--amber); }
+.call-not { color: var(--red); }
+.call-other { color: var(--text); }

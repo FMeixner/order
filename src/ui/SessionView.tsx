@@ -12,6 +12,7 @@ import { warmupKeys } from "../engine/warmup";
 import { fmt, useTimer } from "./Timer";
 import { Collapse } from "./common";
 import { BeastCard } from "./session/BeastCard";
+import { CallCard } from "./session/CallCard";
 import { allDrillsDone, DrillList, DrillSection, toggleDrill } from "./session/Drills";
 import { SlotCard, WarmCtx } from "./session/SlotCard";
 import { boostOf, type SessionCtx, sessionId } from "./session/ctx";
@@ -129,7 +130,7 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
   const b = it.block as Extract<Block, { type: "module" }>;
   const drills = it.drills ?? [];
   const prefix = b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : b.module === "longsword" ? "ls" : b.module === "stab" ? "sb" : "dm";
-  const title = b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : MODULE_LABEL[b.module];
+  const title = b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : isWeaponModule(b.module) ? MODULE_LABEL[b.module] : "";
   const allDone = allDrillsDone(drills, session?.drills ?? {}, prefix);
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -152,6 +153,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
   const b = it.block;
   const t = useTimer();
   if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} cardio={it.cardio} ctx={ctx} session={session} mut={mut} note={b.note} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
+  if (b.type === "module" && it.call) return <CallCard call={it.call} ctx={ctx} session={session} mut={mut} />;
   if (b.type === "module" && it.drills) return <ModuleCard it={it} ctx={ctx} session={session} mut={mut} />;
   if (b.type === "contrast") {
     const [heavy, expl] = it.resolved;
@@ -221,6 +223,13 @@ export function SessionPreview(ctx: SessionCtx) {
               </div>
             );
           }
+          if (it.call) return (
+            <div key={i} className="preview-group">
+              <div className="block-label amber">{it.call.def.name} · Stufe {it.call.levelName}</div>
+              <div className="preview-row"><span>{it.call.rounds} Runden à {it.call.def.work} s, {it.call.def.rest} s Pause</span><span className="mono muted">{it.call.pool.filter((c, j, a) => a.indexOf(c) === j).slice(0, 4).join(" · ")} …</span></div>
+              {it.call.replaced && <div className="preview-row muted"><span>Statt „{it.call.replaced}“ (ohne Schwert und Stock)</span></div>}
+            </div>
+          );
           if (it.sword && !ctx.profile.has.sword) {
             // Sonderrolle Waffe: die Vorschau zeigt den Waffenblock auch für ein Profil ohne Schwert und Stock, darunter den Ersatz
             const sw = it.sword;

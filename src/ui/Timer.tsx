@@ -22,7 +22,7 @@ const TimerCtx = createContext<Ctx | null>(null);
 export const useTimer = () => useContext(TimerCtx)!;
 
 let wakeLock: { release: () => Promise<void> } | null = null;
-async function keepAwake(on: boolean) {
+export async function keepAwake(on: boolean) {
   try {
     const nav = navigator as unknown as { wakeLock?: { request: (t: string) => Promise<{ release: () => Promise<void> }> } };
     if (on && nav.wakeLock && !wakeLock) wakeLock = await nav.wakeLock.request("screen");

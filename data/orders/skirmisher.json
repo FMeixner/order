@@ -36,7 +36,7 @@
         {"type": "single", "slot": {"id": "sk-b-1", "core": true, "name": "Beschleunigung 10 m", "sets": 6, "reps": "10 m", "prog": "none", "rest": 90, "note": "aus dem Stand oder Fallstart; Bergauf geht auch"}},
         {"type": "single", "slot": {"id": "sk-b-2", "name": "Fliegende 20 m", "sets": 3, "reps": "20 m", "prog": "none", "rest": 180, "note": "20 m Anlauf, dann 20 m voll"}},
         {"type": "single", "slot": {"id": "sk-b-3", "core": true, "name": "5-10-5 Shuttle", "sets": 4, "reps": "1", "prog": "none", "rest": 120}},
-        {"type": "single", "slot": {"id": "sk-b-4", "name": "Reaktion auf Ansage", "kind": "interval", "interval": {"work": 20, "rest": 60, "rounds": 4}, "prog": "none", "note": "Partner ruft die Richtung, sofort drehen und zwei Schritte hinein. Ohne Partner: Richtungen vorher aufschreiben."}},
+        {"type": "module", "module": "call", "variant": "sprint"},
         {"type": "single", "slot": {"id": "sk-b-5", "name": "Tibialis Raise", "sets": 2, "reps": "15-25", "prog": "reps", "rest": 45}}
       ]
     },

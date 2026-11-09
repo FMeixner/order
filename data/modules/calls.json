@@ -1,0 +1,230 @@
+{
+  "_info": "Ansage-Drill: Die App ruft zufällige Richtungen, Hiebe oder Schläge (Sprache und große Schrift), du entscheidest im Moment. Aus einer geschlossenen Aufgabe wird eine offene (Entscheiden unter Zeitdruck). Stufen nach Woche im Orden (weeks) oder nach dem Lernweg der Waffe (path). Der Pool wächst: jede erreichte Stufe kommt dazu. Grundlage: Tomporowski & Pesce, 2019; Ludyga et al., 2020 (Bewegung mit Denkanforderung; ob gerade dieses Format mehr bringt als normales Training, ist nicht direkt belegt).",
+  "variants": {
+    "schritte": {
+      "name": "Ansage: Richtung",
+      "rounds": 6,
+      "work": 30,
+      "rest": 60,
+      "gap": [
+        1.5,
+        4
+      ],
+      "how": "Locker auf den Fußballen. Bei jeder Ansage sofort hineindrehen, zwei schnelle Schritte, stabil stehen, zurück in die Mitte.",
+      "levels": [
+        {
+          "weeks": 1,
+          "name": "Richtungen",
+          "cues": [
+            "Links",
+            "Rechts",
+            "Vor",
+            "Zurück",
+            "Unten"
+          ]
+        },
+        {
+          "weeks": 3,
+          "name": "Richtung und Schritte",
+          "cues": [
+            "Links, drei",
+            "Rechts, drei",
+            "Vor, eins",
+            "Zurück, eins",
+            "Drehen"
+          ]
+        },
+        {
+          "weeks": 5,
+          "name": "Gegenteil",
+          "cues": [
+            "Nicht links!",
+            "Nicht rechts!",
+            "Nicht vor!",
+            "Links, rechts"
+          ]
+        }
+      ]
+    },
+    "sprint": {
+      "name": "Ansage: Antritt",
+      "rounds": 4,
+      "work": 20,
+      "rest": 60,
+      "gap": [
+        2.5,
+        5
+      ],
+      "how": "Draußen, freie Fläche. Bei der Ansage in die Richtung drehen und fünf Schritte antreten, auslaufen, zurücktraben.",
+      "levels": [
+        {
+          "weeks": 1,
+          "name": "Richtungen",
+          "cues": [
+            "Links",
+            "Rechts",
+            "Vor",
+            "Zurück"
+          ]
+        },
+        {
+          "weeks": 3,
+          "name": "Mit Bodenkontakt",
+          "cues": [
+            "Links, Hand",
+            "Rechts, Hand",
+            "Unten, dann vor"
+          ]
+        },
+        {
+          "weeks": 5,
+          "name": "Gegenteil",
+          "cues": [
+            "Nicht links!",
+            "Nicht vor!",
+            "Links, rechts"
+          ]
+        }
+      ]
+    },
+    "klinge": {
+      "name": "Ansage: Klinge",
+      "tool": "sword",
+      "path": "sword",
+      "fallback": "schritte",
+      "rounds": 4,
+      "work": 30,
+      "rest": 45,
+      "gap": [
+        2,
+        4
+      ],
+      "how": "Grundstellung, Klinge vorn. Die App ruft den Hieb, du antwortest mit einem sauberen Hieb und kehrst in die Hut zurück. Sauber vor schnell.",
+      "levels": [
+        {
+          "name": "Hiebe",
+          "cues": [
+            "Zorn rechts",
+            "Zorn links",
+            "Zwerch",
+            "Scheitel"
+          ]
+        },
+        {
+          "name": "Stiche",
+          "cues": [
+            "Oberstich",
+            "Mittelstich",
+            "Unterstich"
+          ]
+        },
+        {
+          "name": "Kombiformen",
+          "cues": [
+            "Zorn, Stich",
+            "Zwerch, Zwerch",
+            "Stichwechsel"
+          ]
+        },
+        {
+          "name": "Klinge & Faust",
+          "cues": [
+            "Hieb, Faust",
+            "Faust, Stich"
+          ]
+        },
+        {
+          "name": "Drehhau",
+          "cues": [
+            "Drehhau rechts",
+            "Drehhau links"
+          ]
+        }
+      ]
+    },
+    "stab": {
+      "name": "Ansage: Stab",
+      "tool": "sword",
+      "path": "stab",
+      "rounds": 4,
+      "work": 40,
+      "rest": 40,
+      "gap": [
+        3,
+        5
+      ],
+      "how": "Ruhig und genau statt schnell: Die App ruft, du führst den Hieb in halbem Tempo, atmest aus und kehrst in den Langort zurück.",
+      "levels": [
+        {
+          "name": "Haltung & Atem",
+          "cues": [
+            "Langort",
+            "Kreis vorn",
+            "Heben"
+          ]
+        },
+        {
+          "name": "Hiebe in Zeitlupe",
+          "cues": [
+            "Zorn",
+            "Zwerch",
+            "Scheitel",
+            "Wechselhau"
+          ]
+        },
+        {
+          "name": "Zeptertanz",
+          "cues": [
+            "Acht",
+            "Zorn, Acht",
+            "Wechsel, Zwerch"
+          ]
+        }
+      ]
+    },
+    "schatten": {
+      "name": "Ansage: Schattenboxen",
+      "rounds": 4,
+      "work": 120,
+      "rest": 60,
+      "gap": [
+        1.5,
+        3
+      ],
+      "how": "Boxstellung, Fäuste oben, locker in den Füßen. Zwischen den Ansagen bewegen und Schritte setzen, auf die Ansage sofort schlagen. Nach jedem Schlag die Deckung zurück.",
+      "levels": [
+        {
+          "weeks": 1,
+          "name": "Einzelschläge",
+          "cues": [
+            "Jab",
+            "Cross",
+            "Haken links",
+            "Haken rechts",
+            "Uppercut",
+            "Ducken"
+          ]
+        },
+        {
+          "weeks": 3,
+          "name": "Serien",
+          "cues": [
+            "Eins-Zwei",
+            "Eins-Zwei-Haken",
+            "Ducken, Haken",
+            "Jab, Jab, Cross"
+          ]
+        },
+        {
+          "weeks": 5,
+          "name": "Konter",
+          "cues": [
+            "Abrollen, Cross",
+            "Schritt raus, Haken",
+            "Nicht Jab!"
+          ]
+        }
+      ]
+    }
+  }
+}

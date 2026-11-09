@@ -17,7 +17,7 @@ import { MAINTAIN, MUSCLES, pairToFit, rank, slotsOf, weekVolume } from "./short
 const LOWER = ["Quadrizeps", "Beinbeuger", "Gesäß", "Waden"];
 const MAX_SETS = 5;
 const MAX_ADDS = 2;
-const MODULE: Record<string, string> = { sword: "Schwert", stab: "Stab", longsword: "Langschwert", flow: "Flow", sharpen: "Schärfen" };
+const MODULE: Record<string, string> = { sword: "Schwert", stab: "Stab", longsword: "Langschwert", flow: "Flow", sharpen: "Schärfen", call: "Ansage" };
 const lower = (s: Slot) => (halfOf(s.name) ?? (Object.keys(musclesOf(s.name)).some((m) => LOWER.includes(m)) ? "unten" : "oben")) === "unten";
 /** Beintag: mindestens eine Kraftübung für den Unterkörper */
 const legDay = (r: Role) => r.blocks.flatMap(slotsOf).some((s) => isStrength(s) && lower(s));

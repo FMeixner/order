@@ -21,6 +21,7 @@ const sbv = read("modules/staff.json").variants;
 /** Waffen-Module mit Lernweg: Modulkennung → Varianten */
 const WEAPONS = { sword: dm, longsword: lsv, stab: sbv };
 const flows = read("modules/flows.json").variants;
+const calls = read("modules/calls.json").variants;
 const sharpen = read("modules/sharpen.json").domains;
 for (const [k, d] of Object.entries(sharpen)) {
   if (!d.name || !["start", "end"].includes(d.place) || !["all", 1, 2].includes(d.days) || !d.drills?.length) err("sharpen.json", `${k}: name, place (start/end), days (all/1/2) und drills nötig`);
@@ -182,7 +183,7 @@ for (const [f, d] of allFoci) {
           break;
         case "contrast": checkSlot(b.heavy, ctx); checkSlot(b.explosive, ctx); break;
         case "module":
-          if (b.module === "flow" ? !flows[b.variant] : b.module === "sharpen" ? !sharpen[b.variant] : !WEAPONS[b.module] || !WEAPONS[b.module][b.variant]) err(f, `${ctx}: Modul-Variante ${b.module}/${b.variant} unbekannt`);
+          if (b.module === "call" ? !calls[b.variant] : b.module === "flow" ? !flows[b.variant] : b.module === "sharpen" ? !sharpen[b.variant] : !WEAPONS[b.module] || !WEAPONS[b.module][b.variant]) err(f, `${ctx}: Modul-Variante ${b.module}/${b.variant} unbekannt`);
           if (b.fallback) checkSlot(b.fallback, ctx);
           if (b.fallbackFlow && !flows[b.fallbackFlow]) err(f, `${ctx}: Ersatz-Flow ${b.fallbackFlow} unbekannt`);
           break;

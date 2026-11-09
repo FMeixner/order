@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.17.0] – 2026-11-09
+
+### Neu
+- **Ansage-Drill** als eigenes Modul (`call`, data/modules/calls.json): Die App ruft zufällig eine Richtung, einen Hieb oder einen Schlag, per Sprache und in großer Schrift, mit fester Farbe je Richtung. Du entscheidest im Moment: Aus einer geschlossenen Aufgabe wird eine offene. Wählbar: Ton und Schrift, nur Ton oder nur Schrift. Bildschirm bleibt an, Runden haken sich nach ihrer Arbeitszeit selbst ab.
+  - Varianten: Richtung (Scout), Antritt draußen (Skirmisher), Klinge (Scout; ohne Schwert und Stock kommen Richtungen), Schattenboxen (Pugilist), Stab (King, ruhig und genau; ohne Stock entfällt er).
+  - Stufen: Richtungen und Schattenboxen steigern sich über die Wochen (Schritte und Serien, dann Gegenteil-Ansagen und Konter). Klinge und Stab folgen dem Lernweg: Gerufen wird nur, was du schon gelernt hast.
+  - Kurztag: halbe Runden. Leichtere Wochen: eine Runde weniger.
+  - Belege: Tomporowski & Pesce (2019), Ludyga et al. (2020). Dass gerade dieses Format mehr bringt als normales Training, ist nicht direkt belegt; die App nennt es „Entscheiden unter Zeitdruck“.
+
 ## [1.16.0] – 2026-11-09
 
 ### Neu

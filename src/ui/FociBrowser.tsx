@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
-import { FLOWS, FOCI, FOCUS_BY_ID, KLAMMERN } from "../data";
+import { CALLS, FLOWS, FOCI, FOCUS_BY_ID, KLAMMERN } from "../data";
 import { bindOf } from "../engine/klammer";
 import { primaryAxis } from "../engine/kcal";
 import { KlammerIcon, Sign } from "./Signs";
@@ -35,6 +35,7 @@ function BlockLines({ b, c }: { b: Block; c: Ctx }) {
     case "contrast": return <li>Kontrast{rot}: {slotLine(b.heavy, c)} → {b.transfer ?? 30} s → {b.explosive.name} {b.explosive.reps}, {Math.round((b.rest ?? 180) / 60)} Min Pause</li>;
     case "beast": return <li>Bestie{rot}: {b.pool ? `aus ${b.pool.length} festgelegten` : (b.classes ?? []).map((x) => CLASS_LABEL[x]).join(" oder ")}{b.pace === "easy" ? ", ruhiges Grundlagentempo" : ""}{b.benchmark_every ? `, jede ${b.benchmark_every}. Woche Wiederholung` : ""}</li>;
     case "module":
+      if (b.module === "call") return <li>{CALLS[b.variant]?.name ?? b.variant}{rot}: {CALLS[b.variant]?.rounds} Runden à {CALLS[b.variant]?.work} s, Ansagen: {(CALLS[b.variant]?.levels ?? []).map((l) => l.name).join(" → ")}</li>;
       if (b.module === "flow") return <li>{FLOWS[b.variant]?.name ?? b.variant}{rot}: <ul>{(FLOWS[b.variant]?.drills ?? []).map((d) => <li key={d.id}>{d.name} · {d.mode === "reps" ? `${d.value}×` : `${d.value} s`}{d.sides ? " je Seite" : ""}</li>)}</ul></li>;
     {
       // Sonderrolle: Waffen-Module immer zeigen, auch wenn das Profil keins hat; der Ersatz steht dahinter
@@ -55,7 +56,7 @@ function blockNames(b: Block, c: Ctx): string[] {
     case "superset": return b.slots.map(nm).filter(Boolean) as string[];
     case "contrast": return [nm(b.heavy), b.explosive.name].filter(Boolean) as string[];
     case "beast": return ["Bestie"];
-    case "module": return [b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? "Schwerpunkt" : MODULE_LABEL[b.module]];
+    case "module": return [b.module === "call" ? CALLS[b.variant]?.name ?? "Ansage" : b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? "Schwerpunkt" : MODULE_LABEL[b.module]];
   }
 }
 

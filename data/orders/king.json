@@ -66,6 +66,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "ki-r-2", "name": "Resonanzatmung (6 pro Minute)", "kind": "timer", "minutes": 6, "max": 12, "step": 1, "prog": "minutes"}},
         {"type": "module", "module": "stab", "variant": "lernweg", "fallback": {"id": "ki-e-1", "name": "Meditation, offenes Gewahrsein", "kind": "timer", "minutes": 8, "max": 15, "step": 1, "prog": "minutes", "note": "ohne Stab und Zepter"}},
+        {"type": "module", "module": "call", "variant": "stab"},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "ki-c-pp-a", "core": true, "name": "DB Pullover", "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
           {"id": "ki-c-pp-b", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "6-12", "prog": "reps"}

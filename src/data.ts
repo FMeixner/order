@@ -1,5 +1,5 @@
 /* Lädt alle Inhalte aus /data. Eine neue Datei in data/orders/ ist nach dem nächsten Build automatisch ein neuer Orden. */
-import type { Beast, Cup, Drill, Exercise, Focus, Goal, KlammerDef, KlammerId, Norm } from "./types";
+import type { Beast, CallVariant, Cup, Drill, Exercise, Focus, Goal, KlammerDef, KlammerId, Norm } from "./types";
 import exercisesJson from "../data/exercises.json";
 import beastsJson from "../data/beasts.json";
 import correctivesJson from "../data/modules/correctives.json";
@@ -12,6 +12,7 @@ import swapsJson from "../data/modules/swaps.json";
 import normsJson from "../data/modules/norms.json";
 import skillsJson from "../data/modules/skills.json";
 import flowsJson from "../data/modules/flows.json";
+import callsJson from "../data/modules/calls.json";
 import sharpenJson from "../data/modules/sharpen.json";
 import bandsJson from "../data/modules/bands.json";
 import klammernJson from "../data/modules/klammern.json";
@@ -55,6 +56,8 @@ export const BANDS = bandsJson as unknown as { levels: string[] };
 /** Schwerpunkt-Slot: Erhaltungsdosis je Bereich */
 export interface SharpenDef { name: string; place: "start" | "end"; days: "all" | 1 | 2; why: string; drills: Drill[] }
 export const SHARPEN = (sharpenJson as unknown as { domains: Record<string, SharpenDef> }).domains;
+/** Ansage-Drill: Varianten mit Stufen und Ansagen */
+export const CALLS = (callsJson as unknown as { variants: Record<string, CallVariant> }).variants;
 export const FLOWS = (flowsJson as unknown as { variants: Record<string, { name: string; drills: Drill[] }> }).variants;
 /** Klammern: übergeordnete Ziel-Klammern über 8–16 Wochen */
 export const KLAMMERN = (klammernJson as unknown as { klammern: KlammerDef[] }).klammern;

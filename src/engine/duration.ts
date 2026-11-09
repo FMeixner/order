@@ -1,6 +1,7 @@
 /* Schätzt die Dauer einer Einheit aus ihren Bausteinen. Grob, aber ehrlich:
    Arbeitszeit je Wiederholung, Pausen aus der Orden-Datei, Aufwärmsätze vor schweren Grundübungen,
    Umbau zwischen den Übungen, Warm-up und Cool-down aus den Listen. */
+import { callSeconds } from "./call";
 import { BEAST_BY_ID } from "../data";
 import type { BeastClass, Block, Drill, EquipmentProfile, Role, Slot, UserProfile, WeaponModule } from "../types";
 import { CLASS_ORDER, isWeaponModule, moduleDrills, pathList, roleDrills, shortDrills, shortSwordDrills } from "./plan";
@@ -103,6 +104,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
       return (cls.reduce((a, c) => a + CLASS_MIN[c], 0) / cls.length) * 60 + SETUP;
     }
     case "module": {
+      if (b.module === "call") return callSeconds(b, p);
       if (b.module === "flow" || b.module === "sharpen") return moduleDrills(b.variant, NEUTRAL_USER, 1, b.module).reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP;
       if (p.has.sword) return weaponSeconds(b.module, b.variant, skills, boost, b.short) + SETUP;
       if (b.fallbackFlow) { const ds = b.short ? shortDrills(moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow")) : moduleDrills(b.fallbackFlow, NEUTRAL_USER, 1, "flow"); return ds.reduce((sum, d) => sum + drillSeconds(d, d.groups), 0) + SETUP; }

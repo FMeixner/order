@@ -365,3 +365,21 @@ test("Testwoche: Testtag mit Warm-up zum Abhaken für den ganzen Tag und Cool-do
   await expect(page.locator(".tw-sum")).toContainText("Standweitsprung");
   await expect(page.locator(".tw-result")).toHaveCount(0);
 });
+
+test("Ansage-Drill: Start ruft Ansagen in großer Schrift, Stopp hält an, Runde von Hand abhaken", async ({ page }) => {
+  await seed(page, fixture("scout"));
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Reaktion" }).first().click();
+  const card = page.locator(".collapse").filter({ hasText: "Ansage: Richtung" });
+  await card.locator(".collapse-head").click();
+  await card.getByRole("radio", { name: "Nur Schrift" }).click();
+  await card.getByRole("button", { name: "Start" }).click();
+  await expect(card.locator(".call-cue")).not.toHaveText("Bereit", { timeout: 6000 });
+  await expect(card.locator(".call-cue")).toHaveText(/Links|Rechts|Vor|Zurück|Unten/);
+  await card.getByRole("button", { name: "Stopp" }).click();
+  await expect(card.locator(".call-stage")).toHaveCount(0);
+  await card.getByRole("button", { name: "Runde 1" }).click();
+  const st = await stored(page);
+  expect(st.callMode).toBe("text");
+  expect(st.sessions.some((s) => s.drills?.["ca:schritte"]?.[0])).toBe(true);
+});

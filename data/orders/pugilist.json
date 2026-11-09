@@ -51,7 +51,7 @@
       "name": "Konditionsrunden", "location": "home", "minutes": 40,
       "warmup": ["short_base", "jump_prep", "full_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "single", "slot": {"id": "fi-k-1", "name": "Intensivrunden: Serien, hohes Tempo", "kind": "interval", "interval": {"work": 120, "rest": 60, "rounds": 5}, "prog": "none", "note": "Schattenboxen oder Schwert, je nach Equipment."}},
+        {"type": "module", "module": "call", "variant": "schatten"},
         {"type": "beast", "id": "fi-k-2", "classes": ["plage", "bestie"]}
       ]
     },
