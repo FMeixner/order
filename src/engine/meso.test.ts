@@ -88,14 +88,10 @@ describe("Mesozyklen", () => {
     expect(FOCUS_BY_ID.slayer.successors).toContain(third.focusId);
   });
 
-  it("Monk (12/12 fix) bleibt ein ganzer Block: kein Kandidat für einen Mesozyklus-Teil", () => {
-    expect(FOCUS_BY_ID.monk.weeks).toEqual({ min: 12, max: 12 });
-    expect(mesoPartFit(FOCUS_BY_ID.monk)).toBe(false);
-    // variable Ordensreihen bleiben bewusste Akzente, auch über sechs Wochen
+  it("Monk (seit 1.15.1: 4–12 Wochen) passt auch als Teil eines Zeichens", () => {
+    expect(FOCUS_BY_ID.monk.weeks).toEqual({ min: 4, max: 12 });
+    expect(mesoPartFit(FOCUS_BY_ID.monk)).toBe(true);
     expect(mesoPartFit(FOCUS_BY_ID.slayer)).toBe(true);
-    let n = 0;
-    const filled = fillMeso(newMeso([], T, () => `b${n++}`), "allround");
-    expect(filled.filter((x) => x.meso).every((x) => x.focusId !== "monk")).toBe(true);
   });
 
   it("Slayer → Smith ist eine empfohlene Nachfolge: Masse oben, dann Kraft an der Langhantel", () => {
