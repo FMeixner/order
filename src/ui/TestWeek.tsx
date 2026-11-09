@@ -9,7 +9,10 @@ import { Collapse, Desc } from "./common";
 import { DrillList } from "./session/Drills";
 import { fmt } from "./Timer";
 import { Evaluation } from "./Evaluation";
-import { RavenCup, RavenTournament, ravenOn } from "./Raven";
+import { RavenCup, RavenLines, ravenOn } from "./Raven";
+import { evaluateBlock, type TestEval } from "../engine/norms";
+import { narratorOf, tournamentOf } from "../engine/saga";
+import { Modal } from "./common";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -134,7 +137,7 @@ export function testDays(state: AppState, block: PlanBlock): { place: string; da
     .sort((a, b) => WEEKDAYS.indexOf(a.day) - WEEKDAYS.indexOf(b.day));
 }
 
-export function TestWeek({ state, update, block, today, preview = false }: { state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean }) {
+export function TestWeek({ state, update, block, today, preview = false, onPlan }: { state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean; onPlan?: () => void }) {
   const saveTest = (t: TestDef, value: number, raw: string, variant?: string) =>
     update((st) => ({ ...st, tests: { ...st.tests, [t.id]: [...(st.tests[t.id] ?? []), { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } }));
   const days = testDays(state, block);
@@ -142,12 +145,18 @@ export function TestWeek({ state, update, block, today, preview = false }: { sta
   const [pick, setPick] = useState<string | null>(null);
   const openDay = days.find((t) => !TESTWEEK.cups.filter((c) => c.place === t.place).every((c) => c.tests.every((x) => (state.tests[x.id] ?? []).some((r) => r.blockId === block.id))));
   const sel = days.find((t) => t.place === pick) ?? days.find((t) => t.date === today) ?? openDay ?? days[0];
+  // Fertig: an jedem Testtag hat jeder Cup mindestens einen Wert (Tests ohne Material dürfen fehlen), oder die Woche ist vorbei
+  const has = (id: string) => (state.tests[id] ?? []).some((r) => r.blockId === block.id);
+  const allDone = !preview && (days.every((t) => TESTWEEK.cups.filter((c) => c.place === t.place).every((c) => c.tests.some((x) => has(x.id)))) || (today > block.end && TESTWEEK.cups.some((c) => c.tests.some((x) => has(x.id)))));
   return (
     <div className="stack">
-      {ravenOn(state) && <RavenTournament state={state} block={block} today={today} />}
-      <div className="card note">
-        <strong>Testwoche.</strong> Drei Testtage, jeder frisch; Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, Tests ohne Material auslassen.{preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}
+      {/* Hinweise und Erzähler hinter Symbolen, wie bei jedem Orden */}
+      <div className="row tw-head">
+        <span className="muted small">Drei Testtage, jeder frisch</span>
+        <Desc text={`Drei Testtage, jeder frisch; Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, Tests ohne Material auslassen. Die Woche davor läuft mit −1 Satz.${preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}`} />
+        {ravenOn(state) && <RavenTournamentBadge state={state} block={block} today={today} />}
       </div>
+      {allDone && <TestSummary state={state} block={block} today={today} onPlan={onPlan} />}
       {/* Wie jede andere Woche: Tage oben, der gewählte Tag zeigt seine Cups */}
       <div className="days">
         {days.map((t) => {
@@ -163,7 +172,7 @@ export function TestWeek({ state, update, block, today, preview = false }: { sta
         })}
       </div>
       {sel && <TestDay state={state} update={update} block={block} today={today} place={sel.place} preview={preview} saveTest={saveTest} />}
-      <Evaluation state={state} blockId={block.id} update={preview ? undefined : update} />
+      <Evaluation state={state} blockId={block.id} update={preview ? undefined : update} defaultOpen={false} />
       <div className="muted small">{preview ? "Vorschau der Testwoche. " : "Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. "}Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
     </div>
   );
@@ -205,10 +214,101 @@ function TestDay({ state, update, block, today, place, preview, saveTest }: {
           {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
         </Collapse>
       ))}
+      {!preview && <DaySummary state={state} block={block} cups={cups} />}
       {cool.length > 0 && (
         <Collapse title="Cool-down" meta={`${cool.length} Übungen`} tone="amber">
           <DrillList drills={cool} done={done} prefix="cd" onToggle={toggle} />
         </Collapse>
+      )}
+    </>
+  );
+}
+
+const unitShow = (v: number, unit: string): string => show(v, unit);
+const CHANGE: Record<string, string> = { better: "besser als letztes Mal", same: "gleich (im Messfehler)", worse: "unter letztem Mal" };
+
+/** Eine Zeile je Test: Wert, Norm (Punkte ≈ Perzentil), Verlauf */
+function TestLine({ t }: { t: TestEval }) {
+  const sc = t.norm && !t.norm.noScore ? t.norm.score : null;
+  return (
+    <li className="tw-line">
+      <span>{t.test.name}: <strong>{unitShow(t.result.value, t.test.unit)}</strong></span>
+      {sc != null && <span className={`score ${sc < 40 ? "low" : sc >= 70 ? "high" : ""}`} title={t.norm!.label}>{sc}</span>}
+      <span className="muted small">{t.norm ? t.norm.label : t.why ?? ""}{t.change ? ` · ${CHANGE[t.change]}` : ""}</span>
+    </li>
+  );
+}
+
+/** Tagesbilanz: sobald ein Cup des Tages Werte hat, wie du abschneidest */
+function DaySummary({ state, block, cups }: { state: AppState; block: PlanBlock; cups: Cup[] }) {
+  const ids = new Set(cups.flatMap((c) => c.tests.map((t) => t.id)));
+  const rows = evaluateBlock(state, block.id).domains.flatMap((d) => d.tests).filter((t) => ids.has(t.test.id));
+  if (!rows.length) return null;
+  const better = rows.filter((r) => r.change === "better").length;
+  return (
+    <section className="card tw-sum">
+      <div className="row between"><strong>Tagesbilanz</strong><span className="muted small">{rows.length} Tests{better ? ` · ${better} besser` : ""}</span></div>
+      <ul className="slot-list">{rows.map((t) => <TestLine key={t.test.id} t={t} />)}</ul>
+    </section>
+  );
+}
+
+/** Ergebnis der Testwoche: Bereiche gegen die Norm, was besser wurde, Ausgang des Turniers, dann der Weg in die Planung */
+function TestSummary({ state, block, today, onPlan }: { state: AppState; block: PlanBlock; today: string; onPlan?: () => void }) {
+  const ev = evaluateBlock(state, block.id);
+  const doms = ev.domains.filter((d) => d.tests.length);
+  const all = doms.flatMap((d) => d.tests);
+  const better = all.filter((t) => t.change === "better").length;
+  const scored = doms.filter((d) => d.score != null).sort((a, b) => b.score! - a.score!);
+  const best = scored[0];
+  const cups = ravenOn(state) ? tournamentOf(state, block, today).cups.filter((c) => c.text) : [];
+  return (
+    <section className="card hero tw-result">
+      <div className="hero-focus">Ergebnis der Testwoche</div>
+      <div className="muted small">{all.length} Tests{better ? ` · ${better} besser als letztes Mal` : ""}{best ? ` · stärkster Bereich ${best.name}` : ""}{ev.weakest ? ` · Baustelle ${ev.weakest.name}` : ""}</div>
+      {scored.length > 0 && (
+        <div className="stack tight">
+          {scored.map((d) => (
+            <div key={d.id} className="tw-dom">
+              <div className="row between small"><span>{d.name}</span><span className={`score ${d.score! < 40 ? "low" : d.score! >= 70 ? "high" : ""}`}>{d.score}</span></div>
+              <div className="bar-track"><div className="bar-fill" style={{ width: `${d.score}%` }} /></div>
+            </div>
+          ))}
+          <div className="muted small">Punkte ≈ Perzentil der Altersnorm: 50 heißt, die Hälfte der Vergleichsgruppe ist besser.</div>
+        </div>
+      )}
+      {ev.missingProfile && <div className="note small">Für Normwerte fehlen Geburtsjahr und Geschlecht (Setup › Profil).</div>}
+      {cups.length > 0 && (
+        <div className="raven">
+          <h3 className="raven-head">{narratorOf(state).tournament}: Ausgang des Turniers</h3>
+          <div className="raven-lines">{cups.map((c) => <p key={c.cupId}>{c.text}</p>)}</div>
+        </div>
+      )}
+      {onPlan && <button className="btn primary" onClick={onPlan}>Orden nach Schwachstellen optimieren</button>}
+    </section>
+  );
+}
+
+/** Turnier der Klingen hinter einem Symbol: Einleitung und die Urteile der Cups, wie die Ausgabe eines Ordens */
+function RavenTournamentBadge({ state, block, today }: { state: AppState; block: PlanBlock; today: string }) {
+  const [open, setOpen] = useState(false);
+  const t = tournamentOf(state, block, today);
+  const nr = narratorOf(state);
+  const title = `${nr.tournament}: Das Turnier der Klingen`;
+  return (
+    <>
+      <button className="raven-badge" onClick={() => setOpen(true)} aria-label={title} title={nr.name}>
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden>
+          <path d="M20 3c-6 1-11 5-13 11l-2 6 2-1c1-3 3-6 6-8-2 3-3 5-4 8 6-1 10-7 11-16z" fill="currentColor" />
+          <path d="M4 21h9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+      </button>
+      {open && (
+        <Modal title={title} onClose={() => setOpen(false)}>
+          <div className="raven">
+            <RavenLines lines={[{ kind: "text", text: t.intro }, ...t.cups.filter((c) => c.text).map((c) => ({ kind: "text" as const, text: c.text! }))]} aside={nr.aside} />
+          </div>
+        </Modal>
       )}
     </>
   );

@@ -30,7 +30,7 @@ function weekDone(state: AppState, b: PlanBlock, week: number): boolean {
   return days.length > 0 && days.every((d) => done.has(d.role));
 }
 
-export function Today({ state, update, today, goPlan }: { state: AppState; update: Update; today: string; goPlan: () => void }) {
+export function Today({ state, update, today, goPlan, onOptimize }: { state: AppState; update: Update; today: string; goPlan: () => void; onOptimize?: () => void }) {
   // Woche(n) geschafft: Jede voll erledigte Woche vor der heutigen zählt als vorbei — auch mehrere hintereinander
   // (schnelles Nachtragen oder Durchklicken) und über eine Phasengrenze hinweg. Die Ansicht springt in die
   // erste Woche, die noch nicht komplett ist.
@@ -66,7 +66,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
       <div className="card hero">
         <div className="hero-top"><div><div className="hero-focus">Testwoche</div><div className="muted small">{fmtDate(block.start)} – {fmtDate(block.end)}</div></div></div>
       </div>
-      <TestWeek state={state} update={update} block={block} today={today} />
+      <TestWeek state={state} update={update} block={block} today={today} onPlan={onOptimize} />
     </div>
   );
   const baseFocus = blockFocus(block);
@@ -107,12 +107,14 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
         {!testLive && <div className="tags"><span className="tag amber">Vorschau · eintragen ab dem Wochenende davor</span></div>}
         {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
       </div>
-      <TestWeek state={state} update={update} block={testBlock} today={today} preview={!testLive} />
+      <TestWeek state={state} update={update} block={testBlock} today={today} preview={!testLive} onPlan={onOptimize} />
     </div>
   );
   // Wiedereinstieg: letzte abgeschlossene Einheit liegt 10 Tage oder mehr zurück
   // gilt für die ganze Woche: Abstand zwischen der letzten Einheit vor dieser Woche und der ersten in dieser Woche (oder heute)
-  const lastBefore = state.sessions.filter((s) => s.done && s.date < weekStart).map((s) => s.date).sort().pop();
+  // Testwerte zählen als Training: Nach der Testwoche gibt es kein „Willkommen zurück“ (die Testwoche ist die Entlastung)
+  const testDates = Object.values(state.tests).flat().map((r) => r.date);
+  const lastBefore = [...state.sessions.filter((s) => s.done).map((s) => s.date), ...testDates].filter((d) => d < weekStart).sort().pop();
   const firstThis = state.sessions.filter((s) => s.done && s.date >= weekStart).map((s) => s.date).sort()[0] ?? today;
   const pauseDays = lastBefore ? daysBetween(lastBefore, firstThis) : 0;
   const comeback = isCur && pauseDays >= 10;
@@ -287,7 +289,7 @@ export function Today({ state, update, today, goPlan }: { state: AppState; updat
         </>
       ) : test && !showTraining ? (
         <>
-          <TestWeek state={state} update={update} block={block} today={today} />
+          <TestWeek state={state} update={update} block={block} today={today} onPlan={onOptimize} />
           <button className="btn ghost" onClick={() => setShowTraining(true)}>Stattdessen normal trainieren</button>
         </>
       ) : (

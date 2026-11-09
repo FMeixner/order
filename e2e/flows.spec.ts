@@ -342,4 +342,9 @@ test("Testwoche: Testtag mit Warm-up zum Abhaken für den ganzen Tag und Cool-do
   await page.locator(".drill .set-btn").filter({ hasText: "×" }).first().click();
   const saved = await stored(page);
   expect(Object.keys(saved.testDrills?.["t1:Park"] ?? {}).length).toBe(1);
+  // Tagesbilanz, sobald ein Wert da ist
+  await page.locator(".test-row").filter({ hasText: "Standweitsprung" }).locator("input").first().fill("230");
+  await page.locator(".test-row").filter({ hasText: "Standweitsprung" }).getByRole("button", { name: "Speichern" }).click();
+  await expect(page.locator(".tw-sum")).toContainText("Standweitsprung");
+  await expect(page.locator(".tw-result")).toHaveCount(0);
 });

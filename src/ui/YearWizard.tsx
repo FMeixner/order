@@ -26,13 +26,15 @@ const POLICY: { value: Policy; label: string }[] = [{ value: "each", label: "nac
 const STEPS = ["Ziel", "Zeichen", "Bereiche", "Orden"];
 const KCAL_OPTS: Kcal[] = ["deficit", "maintenance", "surplus"];
 
-export function YearWizard({ state, update, today, aim: aim0, deficits, steer, clocks, onClose, startAt = 0 }: {
+export function YearWizard({ state, update, today, aim: aim0, deficits, steer, clocks, onClose, startAt = 0, fromTest }: {
   state: AppState; update: Update; today: string; aim: Aim; deficits: DeficitWeights; steer: DeficitWeights;
   clocks: ResidualClock[]; onClose: () => void; startAt?: number;
+  /** Aus der Testwoche: Namen der Defizite; der Assistent startet mit „Defizite zuerst“, wenn kein Jahresziel gesetzt ist */
+  fromTest?: string[];
 }) {
   const [step, setStep] = useState(startAt);
   const [aims, setAims] = useState<AimPrio[]>(state.yearAims ?? (aim0 !== "allround" && aim0 !== "deficits" ? [{ aim: aim0, prio: 1 }] : []));
-  const [mode, setMode] = useState<"allround" | "deficits">(aim0 === "deficits" ? "deficits" : "allround");
+  const [mode, setMode] = useState<"allround" | "deficits">(aim0 === "deficits" || (fromTest?.length && !state.yearAims?.length) ? "deficits" : "allround");
   const aim: Aim = aims.find((a) => a.prio === 1)?.aim ?? mode;
   const [policy, setPolicy] = useState<Policy>(state.testPolicy ?? DEFAULT_TEST_POLICY);
   const [pool, setPool] = useState<string[]>(state.user.pool ?? []);
@@ -84,6 +86,11 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
           {STEPS.map((s, i) => <button key={s} role="tab" aria-selected={step === i} className={step === i ? "on" : i < step ? "done" : ""} onClick={() => go(i)}>{i + 1} · {s}</button>)}
         </div>
 
+        {fromTest && step === 0 && (
+          <div className="note small">
+            <strong>Neu aus der Testwoche:</strong> {fromTest.length ? `Defizite ${fromTest.join(", ")}. Sie ziehen Zeichen, Orden und Schwerpunkt-Slots.` : "keine Defizite gegen die Norm — die Planung bleibt bei deinen Zielen."}
+          </div>
+        )}
         {step === 0 && (
           <>
             <div className="field-label">Ziele des Jahres · bis zu drei, in Reihenfolge antippen</div>

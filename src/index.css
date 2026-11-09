@@ -571,3 +571,12 @@ button.yp-seg { cursor: pointer; text-align: left; }
 .test-day.now strong { color: var(--teal); }
 .chips button .prio { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; margin-right: 5px; border-radius: 50%; background: var(--teal); color: var(--bg); font-size: 11px; font-weight: 700; }
 .kl-slot { padding-left: 32px; margin-top: -4px; }
+
+/* ---------- 1.12: Testwoche mit Bilanz ---------- */
+.tw-head { gap: 6px; align-items: center; }
+.tw-head .muted { flex: 1; }
+.tw-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.tw-line .score { margin-left: auto; }
+.tw-line .muted { flex-basis: 100%; }
+.tw-result { gap: 10px; display: flex; flex-direction: column; }
+.tw-dom .bar-track { margin-top: 2px; }

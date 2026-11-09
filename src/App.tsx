@@ -52,6 +52,8 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("heute");
   const [help, setHelp] = useState(false);
   const [wizard, setWizard] = useState<number | null>(null);
+  // Aus der Testwoche geöffnet: Assistent startet mit „Defizite zuerst“ und zeigt, was die Tests ergeben haben
+  const [fromTest, setFromTest] = useState(false);
   const today = isoDate(new Date());
   // Allrounder: Defizite der letzten Testwoche für Blockfolge und Schwerpunkt-Slot
   const src = state.user.focusMode === "special" ? null : deficitsBefore(state, addDays(today, 1));
@@ -84,7 +86,7 @@ export default function App() {
           </div>
         </header>
         <main className="main">
-          {tab === "heute" && <Today state={state} update={update} today={today} goPlan={() => setTab("plan")} />}
+          {tab === "heute" && <Today state={state} update={update} today={today} goPlan={() => setTab("plan")} onOptimize={() => { setFromTest(true); setWizard(0); }} />}
           {tab === "plan" && (
             <div className="stack">
               <div className="plan-head">
@@ -104,7 +106,7 @@ export default function App() {
             </div>
           )}
           {wizard !== null && (
-            <YearWizard state={state} update={update} today={today} aim={yearAimOf(state, deficits)} deficits={deficits} steer={steer} clocks={clocks} startAt={wizard} onClose={() => setWizard(null)} />
+            <YearWizard state={state} update={update} today={today} aim={yearAimOf(state, deficits)} deficits={deficits} steer={steer} clocks={clocks} startAt={wizard} fromTest={fromTest ? deficitNames : undefined} onClose={() => { setWizard(null); setFromTest(false); }} />
           )}
           {tab === "almanach" && <Almanac state={state} update={update} today={today} />}
           {tab === "setup" && <Setup state={state} update={update} replace={replace} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}

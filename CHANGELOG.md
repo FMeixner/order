@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.12.0] – 2026-11-09
+
+### Neu
+- **Tagesbilanz:** Unter jedem Testtag steht, sobald ein Wert gespeichert ist, wie du abschneidest: Wert, Punkte gegen die Altersnorm und Vergleich mit dem letzten Test.
+- **Ergebnis der Testwoche:** Sind alle Cups eingetragen (oder ist die Woche vorbei), steht oben eine Zusammenfassung: Bereiche gegen die Norm als Balken, was besser wurde, stärkster Bereich und Baustelle. Beim Erzähler folgt der Ausgang des Turniers.
+- **Orden nach Schwachstellen optimieren:** Der Knopf unter dem Ergebnis öffnet „Jahr planen“ mit den Defiziten aus der Testwoche. Ohne Jahresziel startet der Assistent mit „Defizite zuerst“.
+
+### Geändert
+- Testwoche aufgeräumt: Hinweis und Turnier-Einleitung liegen hinter Symbolen (i und Feder) wie bei jedem Orden, nicht mehr als Karten über den Cups.
+- Nach der Testwoche kein „Willkommen zurück“ mit −1 Satz mehr: Testwerte zählen als Training, die Testwoche ist die Pause.
+
 ## [1.11.0] – 2026-11-09
 
 ### Neu

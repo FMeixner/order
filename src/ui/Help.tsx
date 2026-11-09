@@ -77,7 +77,10 @@ export function Help() {
 
       <h3>Testwoche</h3>
       <ul>
-        <li>Nach dem Speichern der Werte erscheint die Auswertung: je Bereich Punkte von 0 bis 100 (etwa ein Perzentil), der Vergleich mit deinem letzten Test und ein Vorschlag für die nächste Phase.</li>
+        <li>Ein Testtag läuft wie eine Einheit: ein Warm-up zum Abhaken für den ganzen Tag, die Cups, am Ende das Cool-down. Hinweise (i) und der Erzähler (Feder) liegen hinter Symbolen.</li>
+        <li>Unter jedem Testtag steht die Tagesbilanz, sobald ein Wert gespeichert ist: Wert, Punkte gegen die Altersnorm (0–100, etwa ein Perzentil) und der Vergleich mit deinem letzten Test. So weißt du schon nach dem Kraft-Cup, wo du stehst.</li>
+        <li>Ist jeder Cup eingetragen (oder die Woche vorbei), steht oben das Ergebnis der Testwoche: Bereiche gegen die Norm, was besser wurde, beim Erzähler der Ausgang des Turniers. Darunter „Orden nach Schwachstellen optimieren“: öffnet „Jahr planen“ mit den Defiziten aus den Tests. Die ausführliche Auswertung mit Vorschlägen bleibt darunter aufklappbar.</li>
+        <li>Nach der Testwoche kommt keine eigene Entlastung und kein „Willkommen zurück“: Die Testwoche ist die Pause.</li>
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem Balmung-Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
