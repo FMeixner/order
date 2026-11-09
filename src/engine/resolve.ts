@@ -102,6 +102,7 @@ export function available(name: string, p: EquipmentProfile, skills?: SkillSet):
     if (n === "box" && !p.has.box) return false;
     if (n === "dip" && !p.has.dip) return false;
     if (n === "wheel" && !p.has.wheel) return false;
+    if (n === "sword" && !p.has.sword) return false;
     // Defizit: Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln als Griffe
     if (n === "deficit" && !p.has.handles && !p.has.rings && !p.dumbbells.length) return false;
   }

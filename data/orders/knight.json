@@ -55,7 +55,8 @@
           {"id": "cl-ub-5a", "name": "Reverse Pec Deck", "home": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 2, "reps": "12-15", "prog": "double"},
           {"id": "cl-ub-5b", "name": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"}
         ]},
-        {"type": "single", "slot": {"id": "cl-ub-6", "name": "Lat Pulldown (Untergriff)", "home": {"name": "Chin-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}}
+        {"type": "single", "slot": {"id": "cl-ub-6", "name": "Lat Pulldown (Untergriff)", "home": {"name": "Chin-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "cl-ub-kl", "name": "Klingen-Seitheben", "sets": 3, "reps": "12-15", "prog": "reps", "rest": 45, "note": "Langer Stock oder Schwert, mit Handgelenkgewicht schwerer; ohne Klinge im Profil: Seitheben mit Kurzhantel."}}
       ]
     },
     "lower_b": {

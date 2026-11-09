@@ -10,11 +10,11 @@
    - Pins: Was der Nutzer von Hand setzt (Orden, Kalorien, Klammer-Art), bleibt beim Neuplanen stehen.
    Technisch ist eine Klammer eine Gruppe von Phasen mit gemeinsamer `meso`-Id und `klammer`-Art. */
 import { FOCI, FOCUS_BY_ID, KLAMMERN, KLAMMER_BY_ID } from "../data";
-import type { AxisId, Focus, Kcal, KlammerDef, KlammerId, Load, PlanBlock, Section } from "../types";
+import type { AppState, AxisId, Focus, Kcal, KlammerDef, KlammerId, Load, PlanBlock, Section } from "../types";
 import { DEFAULT_TEST_POLICY } from "../types";
 import { goalVector } from "./balance";
 import { primaryAxis } from "./kcal";
-import { addDays, fitScore, isTestBlock, mondayOf, parseIso, TEST_BLOCK } from "./plan";
+import { addDays, fitScore, isTestBlock, mondayOf, parseIso, TEST_BLOCK, trainingDays } from "./plan";
 import { loadOfWindow, setTestWeek, testAfter, travelOfWindow } from "./stack";
 import { timeBias, type Aim, type DeficitWeights } from "./sequence";
 
@@ -159,7 +159,7 @@ export const aimsOf = (aim: Aim, aims?: AimPrio[]): AimPrio[] => aims?.length ? 
 export const posOf = (i: number, n: number): "early" | "mid" | "late" | "single" => (n === 1 ? "single" : i === 0 ? "early" : i === n - 1 ? "late" : "mid");
 
 /** Punkte eines Ordens für einen Teil der Klammer */
-export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnType<typeof posOf>, prev: Focus | undefined, usedInK: string[], usedBefore: string[], steer: DeficitWeights, aims: AimPrio[] = []): number {
+export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnType<typeof posOf>, prev: Focus | undefined, usedInK: string[], usedBefore: string[], steer: DeficitWeights, aims: AimPrio[] = [], gymDays?: number): number {
   const bind = bindOf(f, k);
   let s = bind === "lead" ? 3 : bind === "accept" ? 1.2 : 0;
   if ((pos === "early" || pos === "single") && k.early.includes(f.id)) s += 1.5;
@@ -180,7 +180,24 @@ export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnTyp
   if (aimHit && f.session_min >= 35 && (k.early.includes(f.id) || k.late.includes(f.id))) s += 4 - aimHit.prio;
   // Zeit-Orden (Herald, unter 35 Minuten): wählbar, aber nie Vorschlag — für Wochen mit wenig Zeit wählt man ihn bewusst
   if (f.session_min < 35) s -= 3;
+  // Ortsregel (1.13): Studio-Orden (Smith, Knight, Olympian …) brauchen mindestens die Hälfte ihrer Studio-Tage im Studio.
+  // Sonst verlieren sie ihren Kern (Back Squat wird Goblet Squat) — die Gegenstücke ohne Studio rücken vor. Reise: kein Studio.
+  if (gymDays != null && studioNeed(f) > 0 && (b.travel ? 0 : gymDays) < studioNeed(f)) s -= 4;
   return s;
+}
+
+/** Wie viele Studio-Tage ein Orden braucht: die Hälfte seiner Studio-Rollen (aufgerundet), 0 ohne Studio-Rollen */
+export function studioNeed(f: Focus): number {
+  const g = f.week_4.filter((r) => f.roles[r]?.location === "gym").length;
+  return g ? Math.ceil(g / 2) : 0;
+}
+
+/** Studio-Tage der Woche: Trainingstage, deren Ort Langhantel oder Maschinen hat */
+export function gymDaysOf(state: AppState): number {
+  return trainingDays(state).filter((d) => {
+    const p = state.equipment.find((x) => x.id === state.schedule[d]);
+    return !!p && (!!p.barbell || !!p.has.machines);
+  }).length;
 }
 
 /** Darf der Orden diesen Teil tragen? Last muss passen; Orden mit fester Länge über sechs Wochen (Monk) brechen verkürzt. */
@@ -191,7 +208,7 @@ export function orderFits(f: Focus, b: PlanBlock, weeks: number): boolean {
 }
 
 /** Kandidaten für einen Teil, beste zuerst (für Assistent und Phasenblatt) */
-export function rankInKlammer(plan: PlanBlock[], id: string, pool?: string[], steer: DeficitWeights = [], aims: AimPrio[] = []): { f: Focus; score: number; bind: Bind }[] {
+export function rankInKlammer(plan: PlanBlock[], id: string, pool?: string[], steer: DeficitWeights = [], aims: AimPrio[] = [], gymDays?: number): { f: Focus; score: number; bind: Bind }[] {
   const b = plan.find((x) => x.id === id);
   if (!b?.klammer || !b.meso) return [];
   const k = KLAMMER_BY_ID[b.klammer];
@@ -207,7 +224,7 @@ export function rankInKlammer(plan: PlanBlock[], id: string, pool?: string[], st
   const weeks = weeksLeft(b.start, b.end);
   return candidates(pool)
     .filter((f) => orderFits(f, b, weeks) || f.id === b.focusId)
-    .map((f) => ({ f, bind: bindOf(f, k), score: orderScore(f, k, b, posOf(i, parts.length), prev, usedInK, usedBefore, steer, aims) }))
+    .map((f) => ({ f, bind: bindOf(f, k), score: orderScore(f, k, b, posOf(i, parts.length), prev, usedInK, usedBefore, steer, aims, gymDays) }))
     .sort((x, y) => y.score - x.score);
 }
 
@@ -240,6 +257,8 @@ export interface PlanYearOpts {
   pool?: string[];
   /** Mehrere Jahresziele mit Priorität 1–3 (ersetzt `aim`, wenn gesetzt) */
   aims?: AimPrio[];
+  /** Studio-Tage pro Woche (Ortsregel); ohne Angabe gilt die Regel nicht */
+  gymDays?: number;
   /** Klammer-Art je Fenster (Index), von Hand gewählt im Assistenten */
   kinds?: Partial<Record<number, KlammerId>>;
 }
@@ -300,7 +319,7 @@ export function planYear(plan: PlanBlock[], sections: Section[], today: string, 
       if (!b.focusId) {
         const best = candidates(pool)
           .filter((f) => orderFits(f, b, weeks))
-          .map((f) => ({ f, s: orderScore(f, k, b, posOf(i, n), prevF, usedInK, usedBefore, steer, aimList) }))
+          .map((f) => ({ f, s: orderScore(f, k, b, posOf(i, n), prevF, usedInK, usedBefore, steer, aimList, opts.gymDays) }))
           .sort((x, y) => y.s - x.s)[0];
         if (best) b.focusId = best.f.id;
       }

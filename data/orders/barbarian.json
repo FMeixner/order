@@ -27,7 +27,7 @@
         {"type": "single", "slot": {"id": "ba-oa-2", "core": true, "name": "Pull-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 4, "reps": "6-10", "prog": "reps", "rest": 120, "finish": {"kind": "mech", "chain": ["Pull-Up", "Chin-Up", "Negative Chin-Up"]}}},
         {"type": "single", "slot": {"id": "ba-oa-3", "core": true, "name": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps", "reps": "12-15"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "ba-oa-4a", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
+          {"id": "ba-oa-4a", "name": "Klingen-Seitheben", "sets": 3, "reps": "12-15", "prog": "reps", "note": "mit Handgelenkgewicht schwerer"},
           {"id": "ba-oa-4b", "name": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"}
         ]}
       ]
@@ -79,6 +79,7 @@
           {"id": "bx-ba-a", "name": "DB Biceps Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "double"},
           {"id": "bx-ba-b", "name": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "double"}
         ]},
+        {"type": "single", "slot": {"id": "bx-ba-sh", "name": "Schwert-Hebeln", "sets": 2, "reps": "12-15", "prog": "reps", "rest": 45, "note": "Unterarme: erst nach vorn, dann nach hinten, je Hand"}},
         {"type": "beast", "id": "bx-ba-bst", "classes": ["plage"]}
       ]
     }

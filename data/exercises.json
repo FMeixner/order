@@ -637,6 +637,24 @@
   "KB Woodchop": {
     "equip": "kettlebell"
   },
+  "Klingen-Seitheben": {
+    "equip": "bodyweight",
+    "needs": ["sword"],
+    "instead": [{"name": "DB Lateral Raise"}, {"name": "Band Lateral Raise"}],
+    "desc": "Schwert oder Stock am Griff, Klinge waagerecht nach vorn. Arm seitlich bis Schulterhöhe heben, oben kurz halten, langsam senken. Der lange Hebel macht aus wenig Gewicht viel Arbeit für die seitliche Schulter; schwerer mit Handgelenkgewicht."
+  },
+  "Schwert-Hebeln": {
+    "equip": "bodyweight",
+    "needs": ["sword"],
+    "instead": [{"name": "Wrist Curl"}],
+    "desc": "Schwert oder Stock senkrecht vor dem Körper am Griff, Arm locker gestreckt. Die Spitze nur aus dem Handgelenk nach vorn senken und wieder heben, dann mit der Spitze nach hinten. Kräftigt Unterarme und Handgelenke; je weiter die Hand vom Gewicht, desto schwerer."
+  },
+  "Klingen-Außenrotation": {
+    "equip": "bodyweight",
+    "needs": ["sword"],
+    "instead": [{"name": "Band External Rotation"}],
+    "desc": "Oberarm am Körper, Ellbogen 90°, Schwert oder Stock waagerecht in der Hand. Den Unterarm nach außen drehen, Ellbogen bleibt am Körper, langsam zurück. Für die Rotatorenmanschette; mit Handgelenkgewicht schwerer."
+  },
   "Knee Push-Up": {
     "equip": "bodyweight"
   },

@@ -75,7 +75,7 @@
     },
     "grundlage": {
       "name": "Grundlage", "location": "reise", "minutes": 60,
-      "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+      "warmup": ["run_prep"], "cooldown": ["cd_lower", "cd_stab"],
       "blocks": [
         {"type": "single", "slot": {"id": "rh-g-1", "name": "Lockere Grundlage", "kind": "timer", "minutes": 45, "max": 75, "step": 5, "prog": "minutes", "note": "Sprechtempo. Lauf, Rad, Rudern oder Wandern."}}
       ]

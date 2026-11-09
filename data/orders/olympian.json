@@ -51,7 +51,8 @@
       "blocks": [
         {"type": "single", "slot": {"id": "at-s-1", "name": "Beschleunigung 10 m", "sets": 6, "reps": "10 m", "prog": "none", "rest": 90}},
         {"type": "single", "slot": {"id": "at-s-2", "name": "Fliegende 20 m", "sets": 4, "reps": "20 m", "prog": "none", "rest": 180}},
-        {"type": "single", "slot": {"id": "at-s-3", "name": "5-10-5 Shuttle", "sets": 4, "reps": "1", "prog": "none", "rest": 120}}
+        {"type": "single", "slot": {"id": "at-s-3", "name": "5-10-5 Shuttle", "sets": 4, "reps": "1", "prog": "none", "rest": 120}},
+        {"type": "module", "module": "longsword", "variant": "bookend"}
       ]
     },
     "power_hinge": {

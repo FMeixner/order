@@ -64,7 +64,8 @@
         {"type": "superset", "rest": 60, "slots": [
           {"id": "me-d-4a", "name": "Hammer Curl", "sets": 2, "reps": "10-12", "prog": "double"},
           {"id": "me-d-4b", "name": "DB Overhead Triceps Extension", "sets": 2, "reps": "10-12", "prog": "double"}
-        ]}
+        ]},
+        {"type": "single", "slot": {"id": "me-d-sh", "name": "Schwert-Hebeln", "sets": 2, "reps": "12-15", "prog": "reps", "rest": 45, "note": "Unterarme: erst nach vorn, dann nach hinten, je Hand; mit Handgelenkgewicht schwerer"}}
       ]
     },
     "bonus": {

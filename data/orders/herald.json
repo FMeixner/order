@@ -19,7 +19,7 @@
   "roles": {
     "flash_a": {
       "name": "Herald A", "location": "home", "minutes": 20,
-      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": [],
+      "warmup": ["short_base", "stab_prep", "lower_prep"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
           {"id": "fl-a-1a", "core": true, "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"},
@@ -33,7 +33,7 @@
     },
     "flash_b": {
       "name": "Herald B", "location": "home", "minutes": 20,
-      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": [],
+      "warmup": ["short_base", "stab_prep", "lower_prep"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
           {"id": "fl-b-1a", "core": true, "name": "DB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
@@ -47,7 +47,7 @@
     },
     "flash_c": {
       "name": "Herald C", "location": "home", "minutes": 20,
-      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": [],
+      "warmup": ["short_base", "stab_prep", "lower_prep"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
           {"id": "fl-c-1a", "core": true, "name": "Goblet Squat mit Pause", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},

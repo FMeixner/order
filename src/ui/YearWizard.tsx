@@ -3,7 +3,7 @@
    und bleibt beim nächsten Neuplanen stehen. Ein Generator (planYear) statt vier Knöpfen. */
 import { useMemo, useState } from "react";
 import { FOCI, FOCUS_BY_ID, KLAMMERN, KLAMMER_BY_ID } from "../data";
-import { type AimPrio, aimsOf, whyCut, bindOf, klammerName, klammernOf, kcalOfKlammer, effectiveLoads, planYear, rankInKlammer } from "../engine/klammer";
+import { type AimPrio, aimsOf, gymDaysOf, whyCut, bindOf, klammerName, klammernOf, kcalOfKlammer, effectiveLoads, planYear, rankInKlammer } from "../engine/klammer";
 import { fmtDate, focusName, isTestBlock } from "../engine/plan";
 import type { ResidualClock } from "../engine/residual";
 import { loadOfWindow, travelOfWindow } from "../engine/stack";
@@ -52,7 +52,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
   const unpinned = (p: PlanBlock[]) => p.map((b) => (b.start > today && b.pin ? { ...b, pin: undefined } : b));
 
   const build = (plan: PlanBlock[], secs: Section[], k: typeof kinds, o: typeof orders, kc: typeof kcals) => {
-    let p = planYear(plan, secs, today, () => uid("b"), { aim, aims, deficits, steer, testPolicy: policy, pool, kinds: k });
+    let p = planYear(plan, secs, today, () => uid("b"), { aim, aims, deficits, steer, testPolicy: policy, pool, kinds: k, gymDays: gymDaysOf(state) });
     p = p.map((b) => {
       if (b.start <= today || isTestBlock(b)) return b;
       let x = b;
@@ -158,7 +158,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
                   {KCAL_OPTS.map((m) => <button key={m} role="radio" aria-checked={k.kcal === m} className={`kl-${k.kind} ${k.kcal === m ? "on" : ""}`} onClick={() => setKcals((x) => ({ ...x, [k.start]: m }))}><Sign kind={m} /></button>)}
                   {k.parts[0].pin?.kcal && <Sign kind="pin" />}
                 </div>
-                {k.parts.map((p) => <PartRow key={p.id} slot={slots.get(p.id)} plan={draft} p={p} pool={pool} steer={steer} aims={aimsOf(aim, aims)} open={open === p.start} onToggle={() => setOpen((o) => (o === p.start ? null : p.start))} onPick={(id) => { setOrders((x) => ({ ...x, [p.start]: id })); setOpen(null); }} />)}
+                {k.parts.map((p) => <PartRow key={p.id} slot={slots.get(p.id)} plan={draft} p={p} pool={pool} steer={steer} aims={aimsOf(aim, aims)} gymDays={gymDaysOf(state)} open={open === p.start} onToggle={() => setOpen((o) => (o === p.start ? null : p.start))} onPick={(id) => { setOrders((x) => ({ ...x, [p.start]: id })); setOpen(null); }} />)}
               </div>
             ))}
           </div>
@@ -173,10 +173,10 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
   );
 }
 
-function PartRow({ plan, p, pool, steer, aims, open, onToggle, onPick, slot }: { plan: PlanBlock[]; p: PlanBlock; pool: string[]; steer: DeficitWeights; aims: AimPrio[]; open: boolean; onToggle: () => void; onPick: (id: string) => void; slot?: YearSlot }) {
+function PartRow({ plan, p, pool, steer, aims, gymDays, open, onToggle, onPick, slot }: { plan: PlanBlock[]; p: PlanBlock; pool: string[]; steer: DeficitWeights; aims: AimPrio[]; gymDays: number; open: boolean; onToggle: () => void; onPick: (id: string) => void; slot?: YearSlot }) {
   const f = FOCUS_BY_ID[p.focusId];
   const k = KLAMMER_BY_ID[p.klammer!];
-  const alts = open ? rankInKlammer(plan, p.id, pool, steer, aims).filter((r) => r.f.id !== p.focusId).slice(0, 4) : [];
+  const alts = open ? rankInKlammer(plan, p.id, pool, steer, aims, gymDays).filter((r) => r.f.id !== p.focusId).slice(0, 4) : [];
   return (
     <>
       <button className="kl-part btn ghost small" onClick={onToggle} aria-expanded={open}>

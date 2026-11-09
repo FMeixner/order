@@ -663,6 +663,32 @@
         "sides": true,
         "desc": "Unterarm in 90° an den Türrahmen, Körper langsam nach vorn drehen, bis Brust und vordere Schulter ziehen. Ellbogen etwas höher erfasst die untere Brust, Arm gestreckt auch den Bizeps."
       }
+    ],
+    "stab_prep": [
+      {
+        "id": "wu-stabkreis",
+        "name": "Stabkreise",
+        "mode": "reps",
+        "value": 8,
+        "sides": true,
+        "desc": "Stab oder Schwert locker in einer Hand, große langsame Kreise vor dem Körper, das Handgelenk führt. Schultern und Unterarme werden warm."
+      },
+      {
+        "id": "wu-zepter",
+        "name": "Zepterhaltung mit Atem",
+        "mode": "hold",
+        "value": 30,
+        "desc": "Stab senkrecht vor dem Herzen, beide Hände am Stab. Ruhig atmen, Rumpf leise anspannen, die Spitze steht still. Sammelt Haltung und Atem vor dem Training."
+      }
+    ],
+    "cd_stab": [
+      {
+        "id": "cd-stab-zeit",
+        "name": "Stab-Zeitlupe",
+        "mode": "activity",
+        "value": 90,
+        "desc": "Stab oder Schwert beidhändig. Zwei langsame Hiebe je Seite, ein Hieb pro Atemzug: einatmen heben, ausatmen führen. Fährt Puls und Kopf herunter, die Schultern bleiben lang."
+      }
     ]
   }
 }

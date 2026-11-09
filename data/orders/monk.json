@@ -52,7 +52,7 @@
     },
     "yoga_ruhe": {
       "name": "Yoga-Ruhe", "location": "reise", "minutes": 35,
-      "warmup": [], "cooldown": [],
+      "warmup": ["stab_prep"], "cooldown": [],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "yin"},
         {"type": "single", "slot": {"id": "zw-r-2", "name": "Body Scan", "kind": "timer", "minutes": 15, "prog": "none"}}

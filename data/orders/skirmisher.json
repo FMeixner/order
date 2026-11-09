@@ -20,7 +20,7 @@
   "roles": {
     "sprung": {
       "name": "Sprünge", "location": "reise", "minutes": 40,
-      "warmup": ["short_base", "jump_prep"], "cooldown": ["cd_lower"],
+      "warmup": ["short_base", "jump_prep", "stab_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "sk-a-1", "core": true, "name": "Broad Jump", "sets": 5, "reps": "3", "prog": "none", "rest": 90, "note": "volle Pause: jeder Sprung so hoch und weit wie der erste. Wird er kürzer, ist der Satz vorbei."}},
         {"type": "single", "slot": {"id": "sk-a-2", "core": true, "name": "Skater Jumps", "sets": 4, "reps": "5/Seite", "prog": "none", "rest": 75, "note": "seitlich weit, Landung halten"}},

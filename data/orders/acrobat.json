@@ -29,7 +29,7 @@
     },
     "animal_flow": {
       "name": "Animal Flow", "location": "reise", "minutes": 40,
-      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "full_prep", "stab_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-a-1", "name": "Bear Crawl, Crab Walk, Ape Walk (Zirkel)", "sets": 3, "reps": "20 m je Form", "prog": "none", "rest": 60}},
         {"type": "module", "module": "flow", "variant": "animal"},

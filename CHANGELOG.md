@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.13.0] – 2026-11-09
+
+### Neu
+- **Werkzeug in jedem Orden:** Jeder Orden arbeitet mindestens einmal pro Woche mit Stab, Schwert oder langem Stock.
+  - Neue Übungen mit Klinge oder Stock, mit Handgelenkgewicht schwerer: **Klingen-Seitheben** (seitliche Schulter, langer Hebel), **Schwert-Hebeln** (Unterarme) und **Klingen-Außenrotation** (Rotatorenmanschette). Ohne Schwert im Profil kommen Kurzhantel, Band oder Wrist Curl.
+  - Knight und Barbarian bekommen Klingen-Seitheben, Barbarian und Mercenary Schwert-Hebeln. Olympian endet den Sprinttag mit Langschwert-Hieben.
+  - Neues Warm-up „Stab“ (Stabkreise, Zepterhaltung mit Atem) für Smith, Herald, Skirmisher, Acrobat und Monk; neues Cool-down „Stab-Zeitlupe“ für Pilgrim, Huntsman und Troubadour.
+- **Ortsregel im Planer:** Studio-Orden (Smith, Knight, Olympian und alle mit Studio-Tagen) brauchen mindestens die Hälfte ihrer Studio-Tage im Studio. Hat deine Woche weniger Studio-Tage, oder läuft der Abschnitt auf Reisen, schlägt der Planer die Gegenstücke ohne Studio vor: Mercenary statt Smith, Barbarian statt Knight, Skirmisher statt Olympian. Von Hand bleibt alles wählbar.
+
 ## [1.12.2] – 2026-11-09
 
 ### Geändert

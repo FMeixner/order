@@ -30,6 +30,9 @@
     "Tragen": {"Unterarme": 1, "Rumpf": 0.5}
   },
   "exercises": {
+    "Klingen-Seitheben": {"Schultern": 1},
+    "Schwert-Hebeln": {"Unterarme": 1},
+    "Klingen-Außenrotation": {"Schultern": 0.5},
     "Archer Pull-Up": {"Rücken": 1, "Bizeps": 0.5},
     "Staggered Stance DB RDL": {"Beinbeuger": 1, "Gesäß": 1},
     "DB Snatch": {"Gesäß": 1, "Beinbeuger": 0.5, "Schultern": 0.5},

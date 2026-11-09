@@ -46,3 +46,18 @@ describe("Cluster-Sätze", () => {
     expect(resolveSlot(slot("scout", "kraft", "sc-k-1"), EQUIPMENT_PRESETS[0].make())!.cluster?.size).toBe(1);
   });
 });
+
+describe("Werkzeug in jedem Orden", () => {
+  it("jeder Orden arbeitet mindestens einmal pro Woche mit Stab, Schwert oder Langschwert (Harlequin erbt)", () => {
+    const tool = new Set(["Klingen-Seitheben", "Schwert-Hebeln", "Klingen-Außenrotation"]);
+    for (const f of Object.values(FOCUS_BY_ID)) {
+      if (f.medley?.length) continue;
+      const hit = f.week_4.some((k) => {
+        const r = f.roles[k];
+        return r.blocks.some((b) => (b.type === "module" && ["sword", "longsword", "stab"].includes(b.module)) || (b.type === "single" && tool.has(b.slot.name)) || (b.type === "superset" && b.slots.some((s) => tool.has(s.name))))
+          || [...(r.warmup ?? []), ...(r.cooldown ?? [])].some((l) => ["stab_prep", "cd_stab", "sword_prep"].includes(l));
+      });
+      expect(hit, f.id).toBe(true);
+    }
+  });
+});

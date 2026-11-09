@@ -270,3 +270,13 @@ describe("Zeichen an Abschnittsgrenzen", () => {
     expect(placeWindows(secs2, T, secs2[2].end).map((x) => x.weeks)).toEqual([11, 11, 14]);
   });
 });
+
+describe("Ortsregel: Studio-Orden ohne Studio", () => {
+  it("ohne Studio-Tag schlägt der Stier Mercenary statt Smith vor, mit zwei Studio-Tagen Smith wieder möglich", () => {
+    const secs = [sec(T, 10, "medium", "A")];
+    const home = planYear([], secs, T, ids(), { aim: "kraft", kinds: { 0: "kraft" }, gymDays: 0 });
+    expect(home.filter((b) => !isTestBlock(b)).some((b) => ["smith", "knight", "olympian"].includes(b.focusId))).toBe(false);
+    const gym = planYear([], secs, T, ids(), { aim: "kraft", kinds: { 0: "kraft" }, gymDays: 2 });
+    expect(gym.filter((b) => !isTestBlock(b)).length).toBeGreaterThan(0);
+  });
+});

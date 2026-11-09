@@ -1,3 +1,4 @@
+import { gymDaysOf } from "./engine/klammer";
 import { useEffect, useRef, useState } from "react";
 import { autoBackup } from "./backup";
 import { isoDate } from "./engine/plan";
@@ -100,7 +101,7 @@ export default function App() {
                 <button className="btn primary" onClick={() => setWizard(0)}>Jahr planen</button>
               </div>
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} sections={state.sections} today={today}
-                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} aims={state.yearAims} steer={steer}
+                deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} aims={state.yearAims} gymDays={gymDaysOf(state)} steer={steer}
                 onKlammer={() => setWizard(3)}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
