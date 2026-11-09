@@ -246,10 +246,17 @@ function DaySummary({ state, block, cups }: { state: AppState; block: PlanBlock;
   const rows = evaluateBlock(state, block.id).domains.flatMap((d) => d.tests).filter((t) => ids.has(t.test.id));
   if (!rows.length) return null;
   const better = rows.filter((r) => r.change === "better").length;
+  // Maximalkraft ohne belastbare Norm (Maschine): Schätzung aus Zuhause- und Park-Cup, sobald da
+  const strength = evaluateBlock(state, block.id).domains.find((d) => d.id === "strength");
+  const strengthHere = rows.some((r) => r.test.id.startsWith("t-5rm"));
+  const estLine = strength && strength.score == null && (strengthHere || strength.estimate)
+    ? strength.estimate ? `Maximalkraft geschätzt ~${strength.estimate.score} (aus ${strength.estimate.from.join(", ")}) — Rangfolge, kein Perzentil.` : "Maximalkraft: Maschinenwerte haben keine belastbare Norm. Eine Schätzung folgt mit Klimmzügen, Liegestützen (Zuhause) und Standweitsprung (Park)."
+    : null;
   return (
     <section className="card tw-sum">
       <div className="row between"><strong>Tagesbilanz</strong><span className="muted small">{rows.length} Tests{better ? ` · ${better} besser` : ""}</span></div>
       <ul className="slot-list">{rows.map((t) => <TestLine key={t.test.id} t={t} />)}</ul>
+      {estLine && <div className="muted small">{estLine}</div>}
     </section>
   );
 }
@@ -260,8 +267,8 @@ function TestSummary({ state, block, today, onPlan }: { state: AppState; block: 
   const doms = ev.domains.filter((d) => d.tests.length);
   const all = doms.flatMap((d) => d.tests);
   const better = all.filter((t) => t.change === "better").length;
-  const scored = doms.filter((d) => d.score != null).sort((a, b) => b.score! - a.score!);
-  const best = scored[0];
+  const scored = doms.filter((d) => d.score != null || d.estimate).map((d) => ({ ...d, v: d.score ?? d.estimate!.score, est: d.score == null })).sort((a, b) => b.v - a.v);
+  const best = scored.find((d) => !d.est);
   const cups = ravenOn(state) ? tournamentOf(state, block, today).cups.filter((c) => c.text) : [];
   return (
     <section className="card hero tw-result">
@@ -271,8 +278,8 @@ function TestSummary({ state, block, today, onPlan }: { state: AppState; block: 
         <div className="stack tight">
           {scored.map((d) => (
             <div key={d.id} className="tw-dom">
-              <div className="row between small"><span>{d.name}</span><span className={`score ${d.score! < 40 ? "low" : d.score! >= 70 ? "high" : ""}`}>{d.score}</span></div>
-              <div className="bar-track"><div className="bar-fill" style={{ width: `${d.score}%` }} /></div>
+              <div className="row between small"><span>{d.name}{d.est ? " (Schätzung)" : ""}</span><span className={`score ${d.est ? "est" : d.v < 40 ? "low" : d.v >= 70 ? "high" : ""}`} title={d.est ? `aus ${d.estimate!.from.join(", ")}` : undefined}>{d.est ? "~" : ""}{d.v}</span></div>
+              <div className="bar-track"><div className={`bar-fill ${d.est ? "est" : ""}`} style={{ width: `${d.v}%` }} /></div>
             </div>
           ))}
           <div className="muted small">Punkte ≈ Perzentil der Altersnorm: 50 heißt, die Hälfte der Vergleichsgruppe ist besser.</div>

@@ -49,9 +49,10 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
           <div key={d.id} className="eval-domain">
             <div className="row between">
               <strong>{d.name}</strong>
-              {d.score != null ? <span className={`score ${d.score < 40 ? "low" : d.score >= 70 ? "high" : ""}`}>{d.score}</span> : <span className="muted small">ohne Norm</span>}
+              {d.score != null ? <span className={`score ${d.score < 40 ? "low" : d.score >= 70 ? "high" : ""}`}>{d.score}</span> : d.estimate ? <span className="score est" title={`Schätzung aus ${d.estimate.from.join(", ")}`}>~{d.estimate.score}</span> : <span className="muted small">ohne Norm</span>}
             </div>
             {d.score != null && <div className="bar-track"><div className="bar-fill" style={{ width: `${d.score}%` }} /></div>}
+            {d.score == null && d.estimate && <><div className="bar-track"><div className="bar-fill est" style={{ width: `${d.estimate.score}%` }} /></div><div className="muted small">Schätzung aus {d.estimate.from.join(", ")} — Rangfolge, kein Perzentil.</div></>}
             <ul className="slot-list">
               {d.tests.map((t) => (
                 <li key={t.test.id}>
@@ -77,7 +78,7 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
         )}
         {defs.length > 0 && (
           <div className="card note">
-            <strong>Defizite:</strong> {defs.map((d) => `${d.name}${d.kind === "norm" ? ` (${d.score})` : " (Rückgang)"}`).join(", ")}.
+            <strong>Defizite:</strong> {defs.map((d) => `${d.name}${d.kind === "norm" ? ` (${d.score})` : d.kind === "estimate" ? ` (geschätzt ${d.score})` : " (Rückgang)"}`).join(", ")}.
             <ul className="slot-list small">
               {slots && nextB && (
                 <li>

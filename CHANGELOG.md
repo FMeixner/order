@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.14.0] – 2026-11-09
+
+### Neu
+- **Schätzung der Maximalkraft ohne Norm:** Testest du an der Maschine (keine belastbare Norm), schätzt die App den Bereich aus Klimmzügen, Liegestützen und Standweitsprung. Die Schätzung erscheint mit „~“ und gestricheltem Balken, als Rangfolge, nicht als Perzentil.
+  - Als Schwachstelle zählt sie nur, wenn sie klar hinten liegt (bis 25 Punkte), und dann halb so stark wie ein gemessenes Defizit.
+  - Ist Kraftausdauer oder Sprungkraft schon selbst ein Defizit, zählt die Schätzung nicht doppelt.
+  - Die Tagesbilanz sagt nach dem Studio-Cup, dass die Schätzung mit Zuhause- und Park-Cup folgt, und zeigt sie, sobald sie da ist.
+
 ## [1.13.0] – 2026-11-09
 
 ### Neu

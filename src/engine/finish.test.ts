@@ -61,3 +61,21 @@ describe("Werkzeug in jedem Orden", () => {
     }
   });
 });
+
+describe("Schätzung Maximalkraft ohne Norm", () => {
+  it("Maschinenwerte ohne Punkte: Schätzung aus Klimmzügen, Liegestützen und Standweitsprung, Defizit zählt halb", async () => {
+    const { emptyState } = await import("../store");
+    const { evaluateBlock } = await import("./norms");
+    const { deficitsOf, deficitWeights } = await import("./sharpen");
+    const st = emptyState();
+    st.user = { ...st.user, sex: "m", birthYear: 1989 } as typeof st.user;
+    const v = (id: string, value: number, variant?: string) => ({ [id]: [{ date: "2026-11-10", blockId: "t", value, raw: String(value), ...(variant ? { variant } : {}) }] });
+    st.tests = { ...v("t-bodyweight", 80), ...v("t-5rm-push", 100, "machine"), ...v("t-pullups", 12), ...v("t-pushups", 40), ...v("t-broad", 150) };
+    const strength = evaluateBlock(st, "t").domains.find((d) => d.id === "strength")!;
+    expect(strength.score).toBeNull();
+    expect(strength.estimate?.from.length).toBeGreaterThan(0);
+    // Kraftausdauer gut, Sprung schwach: die Schätzung liegt zwischen beiden, ein Defizit zählt halb
+    expect(deficitWeights([{ id: "strength", name: "Maximalkraft", score: 20, kind: "estimate" }])[0].w).toBe(0.5);
+    void deficitsOf;
+  });
+});

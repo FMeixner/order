@@ -21,7 +21,7 @@ import { evaluateBlock } from "./norms";
 import { CLOCKS, residualClocks, type ClockId } from "./residual";
 
 export type DomainId = "speed" | "power" | "strength" | "ke" | "anaerob" | "aerob" | "skill" | "mobility";
-export interface Deficit { id: DomainId; name: string; score: number | null; kind: "norm" | "trend" }
+export interface Deficit { id: DomainId; name: string; score: number | null; kind: "norm" | "trend" | "estimate" }
 
 /** Welche Bereiche ein Ziel direkt trainiert */
 export const GOAL_DOMAINS: Record<Goal, DomainId[]> = {
@@ -49,7 +49,7 @@ export const interferes = (f: Focus, d: DomainId) => (d === "aerob" || d === "an
 /** Defizite aus einer Testauswertung, schwächstes zuerst */
 export function deficitsOf(state: AppState, blockId: string): Deficit[] {
   const ev = evaluateBlock(state, blockId);
-  const norm: Deficit[] = [], trend: Deficit[] = [];
+  const norm: Deficit[] = [], trend: Deficit[] = [], est: Deficit[] = [];
   for (const d of ev.domains) {
     const scored = d.tests.filter((t) => t.norm && !t.norm.noScore);
     if (d.score != null) {
@@ -57,9 +57,15 @@ export function deficitsOf(state: AppState, blockId: string): Deficit[] {
       continue;
     }
     const ch = d.tests.map((t) => t.change);
-    if (ch.includes("worse") && !ch.includes("better")) trend.push({ id: d.id as DomainId, name: d.name, score: null, kind: "trend" });
+    if (ch.includes("worse") && !ch.includes("better")) { trend.push({ id: d.id as DomainId, name: d.name, score: null, kind: "trend" }); continue; }
+    // Schätzung zählt halb: nur wenn sie trotz Unsicherheit klar hinten liegt (≤ 25), und hinter echten Defiziten
+    if (d.estimate && d.estimate.score <= 25) est.push({ id: d.id as DomainId, name: d.name, score: d.estimate.score, kind: "estimate" });
   }
-  return [...norm.sort((a, b) => a.score! - b.score!), ...trend];
+  // Nicht doppelt zählen: Ist ein Quellbereich der Schätzung (Kraftausdauer, Sprungkraft) schon selbst ein Defizit,
+  // trägt er die Schwäche bereits — die Schätzung fällt dann weg.
+  const srcDomains = new Set(ev.domains.filter((d) => d.estimate).flatMap((d) => ev.domains.filter((x) => x.id !== d.id && x.tests.some((t) => d.estimate!.from.includes(t.test.name))).map((x) => x.id)));
+  if (norm.some((n) => srcDomains.has(n.id))) est.length = 0;
+  return [...norm.sort((a, b) => a.score! - b.score!), ...trend, ...est];
 }
 
 /** Letzte Testwoche vor einem Datum (Block der jüngsten Testergebnisse) */
@@ -144,7 +150,7 @@ export function yearSlots(state: AppState, today: string = isoDate(new Date())):
       const def = defs.find((x) => x.id === d);
       const c = clockOfDomain(d);
       const ago = c ? (last.get(c) ? daysBetween(last.get(c)!, mid) : Infinity) : 0;
-      if (def && !own.has(d)) { sc = def.kind === "norm" ? 5 : 4; purpose = "defizit"; reason = `Testdefizit: ${def.kind === "norm" ? `${def.score} Punkte` : "schlechter als beim letzten Test"}.`; }
+      if (def && !own.has(d)) { sc = def.kind === "norm" ? 5 : def.kind === "estimate" ? 3 : 4; purpose = "defizit"; reason = `Testdefizit: ${def.kind === "norm" ? `${def.score} Punkte` : def.kind === "estimate" ? `geschätzt ${def.score} Punkte` : "schlechter als beim letzten Test"}.`; }
       // Erhalt: länger vernachlässigt zählt mehr — absolut, sonst gewinnt das kürzeste Haltefenster immer
       else if (c && !touches.has(d) && ago >= 0.7 * budgetOf(c)) { sc = 3 + Math.min(0.5, Math.max(0, ago - budgetOf(c)) / 60); purpose = "erhalt";  reason = `Erhalt: ohne Slot läge der letzte Reiz zur Phasenmitte ${ago === Infinity ? "nie" : `${ago} Tage`} zurück (hält etwa ${budgetOf(c)}).`; }
       // Hauptziel des Jahres (oder Spezialist): Double down vor Erhalt
@@ -186,7 +192,7 @@ export function slotsFor(state: AppState, b: PlanBlock): SlotsPlan {
     for (const d of list) {
       if (own.has(d.id)) { skipped.push(`${d.name} trainiert ${focusName(f.id)} selbst`); continue; }
       if (deferred.includes(d)) continue;
-      const basis = d.kind === "norm" ? `${d.score} Punkte in der letzten Testwoche` : "schlechter als beim letzten Test";
+      const basis = d.kind === "norm" ? `${d.score} Punkte in der letzten Testwoche` : d.kind === "estimate" ? `geschätzt ${d.score} Punkte in der letzten Testwoche` : "schlechter als beim letzten Test";
       return { domain: d.id, source: "auto", reason: `${basis[0].toUpperCase()}${basis.slice(1)}.${skipped.length ? ` ${skipped.join(", ")}, deshalb der nächste Bereich.` : ""}` };
     }
     return none(skipped.length ? `${skipped.join(", ")}. Die übrigen Defizite passen nicht in einen Slot.` : "Die Defizite passen nicht in einen Slot, sie gehen in den Vorschlag für die Blockfolge.");
@@ -257,7 +263,8 @@ export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
 export function deficitWeights(list: Deficit[]): { axis: AxisId; w: number }[] {
   const ws = [1, 0.7, 0.5, 0.35];
   const out = new Map<AxisId, number>();
-  list.slice(0, ws.length).forEach((d, i) => out.set(DOMAIN_AXIS[d.id], Math.max(out.get(DOMAIN_AXIS[d.id]) ?? 0, ws[i])));
+  // Schätzungen zählen halb
+  list.slice(0, ws.length).forEach((d, i) => out.set(DOMAIN_AXIS[d.id], Math.max(out.get(DOMAIN_AXIS[d.id]) ?? 0, ws[i] * (d.kind === "estimate" ? 0.5 : 1))));
   return [...out].map(([axis, w]) => ({ axis, w }));
 }
 

@@ -83,7 +83,15 @@ export interface TestEval {
   /** Warum keine Norm */
   why?: string;
 }
-export interface DomainEval { id: string; name: string; score: number | null; tests: TestEval[] }
+export interface DomainEval {
+  id: string; name: string; score: number | null; tests: TestEval[];
+  /** Schätzung (1.14), wenn der Bereich selbst keine belastbare Norm hat: aus verwandten Tests mit Norm, breite Spanne */
+  estimate?: { score: number; from: string[] };
+}
+
+/** Verwandte Tests für Bereiche ohne belastbare Norm. Maximalkraft: Klimmzüge und Liegestütze (Oberkörper) und
+    Standweitsprung (Beine) hängen mäßig mit der Maximalkraft zusammen — das ergibt eine Rangfolge, kein Perzentil. */
+const ESTIMATE_FROM: Record<string, string[]> = { strength: ["t-pullups", "t-pushups", "t-broad"] };
 export interface Evaluation {
   domains: DomainEval[];
   weakest: DomainEval | null;
@@ -137,6 +145,14 @@ export function evaluateBlock(state: AppState, blockId: string): Evaluation {
     return { id: d.id, name: d.name, score, tests };
   });
 
+  // Schätzungen für Bereiche ohne Punkte (z. B. Maximalkraft an der Maschine)
+  const byTest = new Map(domains.flatMap((d) => d.tests).map((t) => [t.test.id, t]));
+  for (const d of domains) {
+    const src = ESTIMATE_FROM[d.id];
+    if (d.score != null || !src) continue;
+    const used = src.map((id) => byTest.get(id)).filter((t): t is TestEval => !!t?.norm && !t.norm.noScore);
+    if (used.length) d.estimate = { score: Math.round(used.reduce((a, t) => a + t.norm!.score, 0) / used.length), from: used.map((t) => t.test.name) };
+  }
   const scoredDomains = domains.filter((d) => d.score != null);
   const weakest = scoredDomains.length >= 2 ? scoredDomains.reduce((a, b) => (b.score! < a.score! ? b : a)) : null;
   const who5List = state.who5.filter((w) => w.blockId === blockId);
