@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.6] – 2026-11-09
+
+### Geändert
+- Smith passt jetzt auch zu hoher Alltagslast. Im Studio läuft dann etwa die Hälfte der Kraftübungen an Maschine oder Kabel (Leg Press, Chest Press, Lat Pulldown …). Die erste Hauptübung des Tages bleibt frei. Damit hat der Stier bei hoher Last zwei passende Orden.
+
 ## [1.4.5] – 2026-11-08
 
 ### Geändert
