@@ -169,10 +169,22 @@ export function highLoadShape(f: Focus, b: PlanBlock, week: number): Focus {
   return { ...f, roles };
 }
 
+/** Hohe Alltagslast: Satzende-Techniken (Myo-Reps, Drop-Sets) nur noch an Ergänzungsübungen, nicht an Kernübungen —
+    Nähe zum Muskelversagen kostet Erholung, an kleinen Übungen am wenigsten */
+export function highLoadFinish(f: Focus, b: PlanBlock): Focus {
+  if (b.load !== "high") return f;
+  let hit = false;
+  const roles: Focus["roles"] = {};
+  for (const [k, r] of Object.entries(f.roles)) {
+    roles[k] = { ...r, blocks: r.blocks.map((x) => (x.type === "single" && x.slot.core && x.slot.finish ? ((hit = true), { ...x, slot: { ...x.slot, finish: undefined } }) : x)) };
+  }
+  return hit ? { ...f, roles } : f;
+}
+
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {
   const base = blockFocus(b);
   if (!base) return null;
-  const f = highLoadShape(base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base, b, week);
+  const f = highLoadFinish(highLoadShape(base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base, b, week), b);
   const n = trainingDays(state, b).length;
   let shaped = shapeFocus(f, n);
   // Kurz: gekürzte Rolle (die vier Kernübungen, Bestie eine Klasse kürzer, Schwertübungen einen Satz weniger, Ziel 35 Minuten); an jedem Tag möglich.

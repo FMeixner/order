@@ -1,7 +1,7 @@
 /* Satzkarte einer Übung: Dosis, Sätze, Rückmeldung, Tausch. */
 import { createContext, useContext, useEffect, useState } from "react";
 import { EXERCISES } from "../../data";
-import { type Feedback, FEEDBACK_LABEL, type Session, type SessionEntry, type SetEntry } from "../../types";
+import { type Feedback, FEEDBACK_LABEL, type Finish, type Session, type SessionEntry, type SetEntry } from "../../types";
 import { snapDown, snapNearest } from "../../engine/loads";
 import { daysBetween } from "../../engine/plan";
 import { backoffLoad, sharedState, suggest, type Suggestion } from "../../engine/progression";
@@ -219,6 +219,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
           {r.guided && <span className="tag teal" title="Phase mit hoher Alltagslast">geführt</span>}
           {r.swapped && <span className="tag amber" title={`statt ${r.original}`}>getauscht</span>}
           {r.regressedFrom && <span className="tag" title={`statt ${r.regressedFrom}: Skill noch nicht abgehakt`}>leichter</span>}
+          {r.finish && <span className="tag finish" title={finishText(r.finish)}>{FINISH_TAG[r.finish.kind]}</span>}
         </div>
         <div className="slot-icons">
           <Desc text={desc} />
@@ -240,6 +241,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
           {r.regressedFrom && <div>Statt {r.regressedFrom}, bis der Skill sitzt (Setup › Können).</div>}
         </div>
       )}
+      {r.finish && <div className="muted small">{finishText(r.finish)}</div>}
       {warmSets.length > 0 && (
         <div className="muted small">Satz 0 aufwärmen: {warmSets.map((w) => `${w.reps} × ${w.kg != null ? kg(w.kg) : "leicht"}`).join(", dann ")}{warmSets.every((w) => w.kg == null) ? " (halbes Gewicht)" : ""}</div>
       )}
@@ -317,3 +319,11 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
 }
 
 /* ---------- Bestie ---------- */
+
+const FINISH_TAG = { myo: "Myo-Reps", drop: "Drop-Set", mech: "Mech. Drop" } as const;
+/** Satzende am letzten Satz: kurz erklärt, direkt unter der Dosis */
+function finishText(f: Finish): string {
+  if (f.kind === "myo") return "Letzter Satz mit Myo-Reps: danach drei tiefe Atemzüge (etwa 15 s), dann 3–5 Wiederholungen; bis zu vier Mini-Sätze, Schluss, wenn die Zahl nicht mehr klappt.";
+  if (f.kind === "drop") return "Letzter Satz als Drop-Set: bis 1–2 Wiederholungen vor dem Versagen, dann etwa ein Viertel leichter und sofort weiter — zweimal.";
+  return `Letzter Satz als mechanischer Drop: ${(f.chain ?? []).join(" → ")}, ohne Pause, jede Stufe bis kurz vor dem Versagen.`;
+}

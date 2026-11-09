@@ -1,6 +1,6 @@
 /* Wählt für einen Slot die konkrete Übung passend zum Equipment-Profil des Tages. */
 import { EXERCISES, GUIDED, SWAP_GROUPS } from "../data";
-import type { Choice, Equip, EquipmentProfile, Prog, Slot, SlotKind, Tier } from "../types";
+import type { Choice, Equip, EquipmentProfile, Finish, Prog, Slot, SlotKind, Tier } from "../types";
 import { isLoadable, loadScale } from "./loads";
 import { ladderStart, regressions, skillOk, type SkillSet } from "./skills";
 
@@ -23,6 +23,8 @@ export interface Resolved {
   ladder?: string[];
   rest: number;
   note?: string;
+  /** Satzende am letzten Satz (Myo-Reps, Drop-Set, mechanischer Drop), nur wenn es zur aufgelösten Übung passt */
+  finish?: Finish;
   proposal?: boolean;
   missingEquipment: boolean;
   loadable: boolean;
@@ -65,6 +67,19 @@ function choiceFor(slot: Slot, tier: Tier): Choice | null | undefined {
 
 export function equipOf(name: string): Equip {
   return EXERCISES[name]?.equip ?? "bodyweight";
+}
+
+/** Satzende nur, wo es passt: Myo-Reps an Kraftübungen; Drop-Set braucht Gewicht in Stufen;
+    mechanischer Drop nur, wenn die Übung in der Kette steht (dann ab ihr weiter) */
+function finishFor(slot: Slot, name: string, kind: SlotKind, loadable: boolean, equip: Equip): Finish | undefined {
+  const f = slot.finish;
+  if (!f || kind !== "strength") return undefined;
+  if (f.kind === "drop") return loadable && ["dumbbell", "kettlebell", "machine", "cable", "barbell"].includes(equip) ? f : undefined;
+  if (f.kind === "mech") {
+    const i = (f.chain ?? []).indexOf(name);
+    return i >= 0 && i < (f.chain ?? []).length - 1 ? { kind: "mech", chain: f.chain!.slice(i) } : undefined;
+  }
+  return f;
 }
 
 /** Ist die Übung mit diesem Profil (und, wenn angegeben, diesen Skills) machbar? */
@@ -193,6 +208,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
     rest: compactRest(slot.rest ?? 90),
     note: slot.note,
     why: slot.why,
+    finish: finishFor(slot, c.name, kind, loadable, equip),
     proposal: slot.proposal,
     missingEquipment: !chosen,
     loadable,

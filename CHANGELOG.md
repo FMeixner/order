@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.10.0] – 2026-11-09
+
+### Neu
+- **Satzende-Techniken** für Orden mit Körpergewicht, Band und Kurzhantel. Der letzte Satz ausgewählter Übungen läuft verlängert, ein Zeichen am Namen zeigt es an:
+  - **Myo-Reps** an Isolationsübungen: drei Atemzüge Pause, dann 3–5 Wiederholungen, bis zu vier Mini-Sätze.
+  - **Drop-Set** an Kurzhantel-Seitheben: etwa ein Viertel leichter, sofort weiter, zweimal.
+  - **Mechanischer Drop** an Push-Ups und Klimmzügen: zum Beispiel Deficit Push-Up → Push-Up → Incline Push-Up oder Pull-Up → Chin-Up → Negativ.
+  - Bei Barbarian an Band Fly, Seitheben, Pullover, Waden und Leg Curl; bei Conqueror an Deficit und Pike Push-Up; bei Mercenary nur an den Einstiegsübungen (Kraft bleibt sauber).
+  - In Entlastungswochen entfällt das Satzende. Bei hoher Alltagslast bleibt es nur an kleinen Ergänzungsübungen. Power-Orden wie Skirmisher bekommen keines.
+- Scout spielt beim Erzähler in der Wildnis.
+
 ## [1.9.0] – 2026-11-09
 
 ### Neu

@@ -23,7 +23,7 @@ export function setDeload(state: AppState, b: PlanBlock, week: number, v: "ja" |
 const half = (n: number | undefined): number | undefined => (n == null ? undefined : Math.max(2, Math.ceil(n / 2)));
 const halfChoice = (c: Choice | string | null | undefined): Choice | string | null | undefined =>
   typeof c === "object" && c ? { ...c, sets: half(c.sets) } : c;
-const halfSlot = (s: Slot): Slot => ({ ...s, sets: half(s.sets), home: halfChoice(s.home), reise: halfChoice(s.reise) });
+const halfSlot = (s: Slot): Slot => ({ ...s, sets: half(s.sets), home: halfChoice(s.home), reise: halfChoice(s.reise), finish: undefined });
 
 /** Bestien ruhen, Supersets behalten ihr Superset (kein Finisher), Module und Kernübungen bleiben. */
 function halfBlock(b: Block): Block | null {

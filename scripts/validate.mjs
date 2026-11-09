@@ -164,8 +164,17 @@ for (const [f, d] of allFoci) {
     for (const w of [...(r.warmup || []), ...(r.cooldown || [])]) if (!correctives[w]) err(f, `${ctx}: Liste "${w}" fehlt in correctives.json`);
     for (const b of r.blocks || []) {
       switch (b.type) {
-        case "single": checkSlot(b.slot, ctx); break;
-        case "superset": b.slots.forEach((s) => checkSlot(s, ctx)); for (const id of b.finisher?.pool || []) if (!beastIds.has(id)) err(f, `${ctx}: Finisher-Bestie ${id} unbekannt`);
+        case "single": checkSlot(b.slot, ctx);
+          if (b.slot.finish) {
+            const fin = b.slot.finish;
+            if (!["myo", "drop", "mech"].includes(fin.kind)) err(f, `${ctx}: Satzende "${fin.kind}" unbekannt`);
+            if (fin.kind === "mech") {
+              if (!fin.chain || fin.chain.length < 2 || fin.chain[0] !== b.slot.name) err(f, `${ctx}: mechanischer Drop braucht eine Kette, die mit ${b.slot.name} beginnt`);
+              for (const n of fin.chain || []) if (!exercises[n]) err(f, `${ctx}: Kette "${n}" fehlt in exercises.json`);
+            }
+          }
+          break;
+        case "superset": b.slots.forEach((s) => { checkSlot(s, ctx); if (s.finish) err(f, `${ctx}: Satzende (${s.finish.kind}) nur an Einzelübungen, nicht im Superset (${s.name})`); }); for (const id of b.finisher?.pool || []) if (!beastIds.has(id)) err(f, `${ctx}: Finisher-Bestie ${id} unbekannt`);
           for (const c of b.finisher?.classes || []) if (!CLASSES.has(c)) err(f, `${ctx}: Klasse ${c} unbekannt`);
           // Im Studio nie zwei feste Geräte im Wechsel
           if (r.location === "gym" && !b.sameStation && b.slots.filter((s) => ["machine", "cable"].includes(exercises[s.name]?.equip)).length > 1) err(f, `${ctx}: Superset aus zwei Maschinen/Kabeln (${b.slots.map((s) => s.name).join(" + ")})`);

@@ -22,7 +22,7 @@
       "name": "Drücken und Beine", "location": "home", "minutes": 45,
       "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "me-a-0", "name": "DB Lateral Raise", "sets": 2, "reps": "12-15", "prog": "double", "rest": 45, "note": "Zum Einstieg: wärmt die Schulter vor, ohne die Brust für das Drücken zu ermüden."}},
+        {"type": "single", "slot": {"id": "me-a-0", "name": "DB Lateral Raise", "sets": 2, "reps": "12-15", "prog": "double", "rest": 45, "note": "Zum Einstieg: wärmt die Schulter vor, ohne die Brust für das Drücken zu ermüden.", "finish": {"kind": "myo"}}},
         {"type": "single", "slot": {"id": "me-a-1", "core": true, "name": "DB Bench Press", "sets": 4, "reps": "6-8", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "me-a-2", "core": true, "name": "Goblet Reverse Lunge", "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90, "note": "erst eine Seite komplett, dann die andere"}},
         {"type": "single", "slot": {"id": "me-a-3", "name": "Archer Push-Up", "sets": 3, "reps": "4-8/Seite", "prog": "reps", "rest": 90, "note": "Skill: der gestreckte Arm hilft nur so viel wie nötig."}},
@@ -33,7 +33,7 @@
       "name": "Ziehen und Hüfte", "location": "home", "minutes": 40,
       "warmup": ["short_base", "lat_box", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "me-b-0", "name": "DB Rear Delt Fly", "sets": 2, "reps": "12-15", "prog": "double", "rest": 45, "note": "Zum Einstieg: hintere Schulter warm, Griff und Rücken bleiben frisch."}},
+        {"type": "single", "slot": {"id": "me-b-0", "name": "DB Rear Delt Fly", "sets": 2, "reps": "12-15", "prog": "double", "rest": 45, "note": "Zum Einstieg: hintere Schulter warm, Griff und Rücken bleiben frisch.", "finish": {"kind": "myo"}}},
         {"type": "single", "slot": {"id": "me-b-1", "core": true, "name": "Pull-Up", "sets": 4, "reps": "4-8", "prog": "ladder", "ladder": ["Pull-Up", "Archer Pull-Up"], "rest": 150, "note": "Skill: ab acht sauberen Wiederholungen als Archer Pull-Up, je Seite."}},
         {"type": "single", "slot": {"id": "me-b-2", "core": true, "name": "Staggered Stance DB RDL", "sets": 4, "reps": "6-8/Seite", "prog": "double", "rest": 120, "note": "erst eine Seite komplett, dann die andere"}},
         {"type": "single", "slot": {"id": "me-b-3", "name": "Double DB Row", "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}}

@@ -298,6 +298,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* Tausch */
 .tag.amber { border-color: var(--amber); color: var(--amber); }
+.tag.finish { border-color: var(--goal-skill); color: var(--goal-skill); }
 .swap-btn { margin-left: 6px; font-size: 12.5px; }
 .swap-list { display: flex; flex-direction: column; gap: 6px; }
 .swap-opt { display: flex; justify-content: space-between; align-items: center; gap: 8px; text-align: left; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-lit); background: var(--surface, transparent); color: inherit; font: inherit; cursor: pointer; }

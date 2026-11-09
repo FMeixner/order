@@ -42,6 +42,7 @@
     "conqueror": "front",
     "mercenary": "front",
     "skirmisher": "wildnis",
+    "scout": "wildnis",
     "barbarian": "wildnis",
     "monk": "kloster",
     "alchemist": "turm",

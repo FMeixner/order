@@ -63,7 +63,13 @@ export interface Slot {
   proposal?: boolean;
   /** Erst ab dieser Blockwoche freigeschaltet */
   gate_week?: number;
+  /** Satzende (1.10): der letzte Satz läuft verlängert — Myo-Reps, Drop-Set (Gewicht runter) oder mechanischer Drop
+      (leichtere Variante, chain). Entfällt in Entlastungswochen und bei hoher Alltagslast an Kernübungen. */
+  finish?: Finish;
 }
+
+export type FinishKind = "myo" | "drop" | "mech";
+export interface Finish { kind: FinishKind; chain?: string[] }
 
 export type Block =
   | { type: "single"; slot: Slot; rotation?: "A" | "B" }

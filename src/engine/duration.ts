@@ -68,6 +68,9 @@ export function drillSeconds(d: Drill, groups: { value: number; sets: number }[]
 /** Viel Energie: Bestie eine Klasse länger (nicht bei −1 Satz und nicht bei festen Pools) */
 export const boostClass = (c: BeastClass): BeastClass => CLASS_ORDER[Math.min(CLASS_ORDER.length - 1, CLASS_ORDER.indexOf(c) + 1)];
 
+/** Satzende am letzten Satz: Myo-Reps (Mini-Sätze mit 15 s), Drop-Set (zwei Abstufungen), mechanischer Drop (Kette) */
+export const FINISH_SEC = { myo: 45, drop: 35, mech: 45 } as const;
+
 export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost = false, skills?: string[] | null): number {
   switch (b.type) {
     case "single": {
@@ -76,7 +79,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
       if (!n) return 0;
       const r = resolveSlot(s, p)!;
       const rest = r.kind === "timer" || r.kind === "interval" ? 0 : (n - 1) * r.rest;
-      return SETUP + n * workOf(s, p, red) + rest;
+      return SETUP + n * workOf(s, p, red) + rest + (r.finish ? FINISH_SEC[r.finish.kind] : 0);
     }
     case "superset": {
       const rounds = Math.max(...b.slots.map((s) => setsOf(s, p, red)));
