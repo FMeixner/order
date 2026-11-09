@@ -25,7 +25,7 @@ describe("Tagesanpassung", () => {
     s = toggleMod(s, s.plan[0], 2, d.role, d.day, "quiet");
     expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toMatchObject({ short: true, quiet: true, intense: false });
     s = toggleMod(s, s.plan[0], 2, d.role, d.day, "intense");
-    expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toEqual({ short: false, quiet: false, tight: false, intense: true });
+    expect(dayMods(s, s.plan[0], 2, d.role, d.day)).toEqual({ short: false, quiet: false, tight: false, intense: true, skip: false, grow: false });
   });
   it("Spontan Kurz am letzten Tag: kein Ausgleich; am ersten Tag gleichen nur die Tage danach aus", () => {
     const s0 = st();

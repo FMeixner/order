@@ -91,8 +91,8 @@ export function pairToFit(r: Role, limit: number, onPair?: (a: Slot, c: Slot) =>
 
 /** Taugt als Kurztag: jeder Tag mit Inhalt — Kraft, Bestie, Schwert, aber auch Grundlagen- und Ausdauertage */
 export const shortEligible = (r: Role) => r.blocks.length > 0;
-const MUSCLES = ["Brust", "Rücken", "Schultern", "Quadrizeps", "Gesäß", "Beinbeuger", "Bizeps", "Trizeps"];
-const MAINTAIN = 4;
+export const MUSCLES = ["Brust", "Rücken", "Schultern", "Quadrizeps", "Gesäß", "Beinbeuger", "Bizeps", "Trizeps"];
+export const MAINTAIN = 4;
 const MAX_SETS = 5;
 const MAX_ADDS = 2;
 /** Feste Geräte: nie zwei davon als Superset */
@@ -101,12 +101,12 @@ const STATION = new Set(["machine", "cable"]);
 const est = planMinutes;
 
 type Share = Record<string, number>;
-const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : []);
+export const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : []);
 const strengthBlock = (b: Block) => (b.type === "single" && (isStrength(b.slot) || b.slot.kind === "hold")) || b.type === "superset" || b.type === "contrast";
 const primary = (s: Slot) => Object.entries(musclesOf(s.name)).sort((a, c) => c[1] - a[1])[0]?.[0];
 
 /** Rang einer Übung für den Kurztag: im Orden als Kern markiert, dann schwer, dann Mehrgelenk, dann der Rest */
-function rank(b: Block): number {
+export function rank(b: Block): number {
   const ss = slotsOf(b);
   if (ss.some((s) => s.core)) return 100;
   if (b.type === "contrast") return 60;
@@ -120,7 +120,7 @@ function rank(b: Block): number {
 }
 
 /** Sätze je Muskel und Woche (A/B gemittelt) */
-function weekVolume(roles: Role[]): Share {
+export function weekVolume(roles: Role[]): Share {
   const v: Share = {};
   for (const ab of ["A", "B"]) for (const r of roles) for (const b of r.blocks) {
     if (b.rotation && b.rotation !== ab) continue;

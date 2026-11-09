@@ -61,6 +61,23 @@ test("Kurz: spontan für heute, als Wochentag merken, kurze Einheit", async ({ p
   expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.short).length).toBe(1);
 });
 
+test("Fällt aus: Woche verdichten, Bericht, doch trainieren", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.locator(".day-btn").first().click();
+  await page.getByRole("button", { name: "Anpassen für heute" }).click();
+  await page.getByRole("button", { name: "Fällt aus", exact: true }).click();
+  await expect(page.getByRole("heading", { name: /fällt aus$/ })).toBeVisible();
+  await expect(page.locator(".day-btn").first()).toContainText("fällt aus");
+  await expect(page.getByText("Andere Tage dürfen bis zu 15 Minuten länger werden")).toBeVisible();
+  let st = await stored(page);
+  expect(Object.values(st.dayAdj ?? {}).some((x) => (x as { skip?: boolean }).skip)).toBe(true);
+  await page.getByRole("button", { name: "Doch trainieren" }).click();
+  await expect(page.locator(".slot-name").first()).toBeVisible();
+  st = await stored(page);
+  expect(Object.values(st.dayAdj ?? {}).some((x) => (x as { skip?: boolean }).skip)).toBe(false);
+});
+
 test("Deine Woche: Einheiten tauschen, fixierte Tage nur als Hinweis, Ordenssymbol", async ({ page }) => {
   const st = fixture();
   st.dayFlags = { Fr: { short: true } };

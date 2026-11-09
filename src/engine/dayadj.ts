@@ -9,7 +9,7 @@ import type { AppState, EquipmentProfile, PlanBlock, Weekday } from "../types";
 
 export type DayKey = "short" | "quiet" | "tight";
 export type FixKey = "short" | "quiet" | "tight";
-export interface DayMods { short: boolean; quiet: boolean; tight: boolean; intense: boolean }
+export interface DayMods { short: boolean; quiet: boolean; tight: boolean; intense: boolean; skip: boolean; grow: boolean }
 
 const sid = (b: PlanBlock, week: number, role: string) => `${b.id}:${week}:${role}`;
 
@@ -25,12 +25,16 @@ export function dayMods(state: AppState, b: PlanBlock, week: number, role: strin
   const own = state.dayAdj?.[id] ?? {};
   const mem = remembered(state, b, role, day);
   const intense = !!state.energy?.[id];
-  if (intense) return { short: false, quiet: false, tight: false, intense };
+  // Fällt aus: steht allein, die Einheit gibt ihr Wichtigstes an die Tage danach ab
+  if (own.skip) return { short: false, quiet: false, tight: false, intense: false, skip: true, grow: !!own.grow };
+  if (intense) return { short: false, quiet: false, tight: false, intense, skip: false, grow: false };
   return {
     short: own.short ?? mem.short,
     quiet: own.quiet ?? mem.quiet,
     tight: own.tight ?? mem.tight,
     intense,
+    skip: false,
+    grow: false,
   };
 }
 
@@ -80,4 +84,15 @@ export function rememberMod(state: AppState, b: PlanBlock, week: number, role: s
   const base = { ...state, dayFlags: flags, plan, dayAdj: adj };
   // Gemerkt heißt: heute an
   return on && !dayMods(base, b, week, role, day)[key] ? toggleMod(base, b, week, role, day, key) : base;
+}
+
+/** Fällt aus (Woche verdichten): an oder aus; grow erlaubt den übrigen Tagen bis zu 15 Minuten mehr.
+    Andere Anpassungen der Einheit bleiben gespeichert und gelten wieder, wenn sie doch stattfindet. */
+export function setSkip(state: AppState, b: PlanBlock, week: number, role: string, on: boolean, grow = false): AppState {
+  const id = sid(b, week, role);
+  const adj = { ...(state.dayAdj ?? {}) };
+  const next = { ...(adj[id] ?? {}) };
+  if (on) { next.skip = true; if (grow) next.grow = true; else delete next.grow; } else { delete next.skip; delete next.grow; }
+  if (Object.keys(next).length) adj[id] = next; else delete adj[id];
+  return { ...state, dayAdj: adj };
 }

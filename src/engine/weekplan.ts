@@ -6,6 +6,8 @@
    Harlequin: Orden mit "medley" nehmen jede Woche einen anderen Orden. */
 import { SWAP_GROUPS } from "../data";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot, Weekday } from "../types";
+import { WEEKDAYS } from "../types";
+import { skipDay } from "./skipweek";
 import { isHeavy, isStrength, planMinutes } from "./slots";
 import { applyDrillEdits, blockFocus, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { pairToFit, shortDay, shortDeload } from "./shortday";
@@ -188,6 +190,22 @@ export function highLoadFinish(f: Focus, b: PlanBlock): Focus {
   return hit ? { ...f, roles } : f;
 }
 
+/** Fällt aus: Kernübungen und Erhaltung wandern auf die offenen Tage danach (Woche verdichten, skipweek.ts) */
+function applySkips(state: AppState, b: PlanBlock, week: number, f: Focus, n: number): Focus {
+  const days = dayRoleMap(state, b, f, week);
+  const done = new Set(state.sessions.filter((x) => x.blockId === b.id && x.week === week && x.done).map((x) => x.role));
+  const skips = days.map((d, i) => ({ ...d, i, mods: dayMods(state, b, week, d.role, d.day) })).filter((d) => d.mods.skip && f.roles[d.role] && !done.has(d.role));
+  if (!skips.length) return f;
+  const weekRoles = defaultRoles(f, n);
+  const dayOf = Object.fromEntries(days.map((d) => [d.role, WEEKDAYS.indexOf(d.day)]));
+  const skipped = new Set(skips.map((d) => d.role));
+  for (const d of skips) {
+    const targets = days.slice(d.i + 1).filter((x) => !skipped.has(x.role) && !done.has(x.role) && f.roles[x.role]).map((x) => ({ role: x.role, day: WEEKDAYS.indexOf(x.day) }));
+    f = skipDay(f, state.user, { role: d.role, weekRoles, targets, dayOf, grow: d.mods.grow });
+  }
+  return f;
+}
+
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {
   const base = blockFocus(b);
   if (!base) return null;
@@ -215,6 +233,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
     }
     shaped = quietMoves(state, b, week, shaped, days, shortened);
   } else if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
+  shaped = applySkips(state, b, week, shaped, n);
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.
   return applyDrillEdits(applySlots(shaped, state, b), state.drillEdits);
 }

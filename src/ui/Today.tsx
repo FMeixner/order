@@ -7,7 +7,7 @@ import { runSubOf, sessionId } from "./session/ctx";
 import { SUB_LABEL } from "../engine/cardio";
 import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
-import { dayMods, rememberMod, remembered, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
+import { dayMods, rememberMod, remembered, setSkip, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
 import { deloadAdvice, isDeloaded, setDeload } from "../engine/deload";
 
 const FIX_LABEL: Record<FixKey, string> = { short: "Kurz", quiet: "Leise", tight: "Kein Platz" };
@@ -27,7 +27,8 @@ function weekDone(state: AppState, b: PlanBlock, week: number): boolean {
   if (!f) return false;
   const days = dayRoleMap(state, b, f, week);
   const done = new Set(state.sessions.filter((s) => s.blockId === b.id && s.week === week && s.done).map((s) => s.role));
-  return days.length > 0 && days.every((d) => done.has(d.role));
+  // Ausgefallene Einheiten zählen als erledigt: Ihr Wichtigstes steckt in den Tagen danach
+  return days.length > 0 && days.every((d) => done.has(d.role) || !!f.roles[d.role]?.skipped);
 }
 
 export function Today({ state, update, today, goPlan, onOptimize }: { state: AppState; update: Update; today: string; goPlan: () => void; onOptimize?: () => void }) {
@@ -168,7 +169,10 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   const flip = (k: DayKey | "intense") => sel && update((st) => unpinBeasts(toggleMod(st, block, week, sel.role, sel.day, k), k === "short" || k === "quiet" || k === "tight" ? weekMatch : (s) => s.id === sid));
   const remember = (k: FixKey, on: boolean) => sel && update((st) => unpinBeasts(rememberMod(st, block, week, sel.role, sel.day, k, on), weekMatch));
   const mem = sel ? remembered(state, block, sel.role, sel.day) : { short: false, quiet: false, tight: false };
-  const activeAdj = sel ? [profile0 && profile0.id !== sel.profileId, mods?.short, mods?.intense, mods?.quiet, mods?.tight, (hasRun || hasBeast) && !!runSub].filter(Boolean).length : 0;
+  const skipped = role0?.skipped;
+  const lastOpen = sel ? days.slice(days.findIndex((d) => d.day === sel.day) + 1).filter((d) => !doneRoles.has(d.role) && !focus.roles[d.role]?.skipped).length : 0;
+  const skip = (on: boolean, grow = false) => sel && update((st) => unpinBeasts(setSkip(st, block, week, sel.role, on, grow), weekMatch));
+  const activeAdj = sel ? [mods?.skip, profile0 && profile0.id !== sel.profileId, mods?.short, mods?.intense, mods?.quiet, mods?.tight, (hasRun || hasBeast) && !!runSub].filter(Boolean).length : 0;
   const modsLabel = chips.filter((c) => c.on).map((c) => c.label).join(" · ");
   const adjustButton = (
     <button className={`btn ghost small adjust-btn ${activeAdj ? "on" : ""}`} onClick={() => setAdjust((o) => !o)} aria-expanded={adjust} aria-label="Anpassen für heute">
@@ -185,6 +189,20 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
             ))}
           </div>
           {chips.filter((c) => c.on).map((c) => <div key={c.k} className="muted small"><strong>{c.label}:</strong> {c.info}</div>)}
+          {!doneRoles.has(sel.role) && (
+            <div className="stack skip-box">
+              <button className={`mod-chip ${mods?.skip ? "on" : ""}`} aria-pressed={!!mods?.skip} onClick={() => skip(!mods?.skip, mods?.grow)}>Fällt aus</button>
+              <span className="muted small">{lastOpen
+                ? "Woche verdichten: Kernübungen und was für die Erhaltung fehlt (4 Sätze je Muskel und Woche) wandern auf die offenen Tage danach. Bestien und Module entfallen. Schwere Grundübungen nie im Superset, nie zwei Beintage hintereinander."
+                : "Danach ist diese Woche nichts mehr offen: Die Einheit entfällt ohne Ausgleich. Eine Woche mit etwa einem Drittel des Volumens hält den Stand."}</span>
+              {mods?.skip && lastOpen > 0 && (
+                <label className="check small">
+                  <input type="checkbox" checked={!!mods.grow} onChange={(e) => skip(true, e.target.checked)} />
+                  <span>Andere Tage dürfen bis zu 15 Minuten länger werden</span>
+                </label>
+              )}
+            </div>
+          )}
           {(["short", "quiet", "tight"] as const).filter((k) => mods?.[k] || mem[k]).map((k) => (
             <label key={k} className="check small">
               <input type="checkbox" checked={mem[k]} onChange={(e) => remember(k, e.target.checked)} />
@@ -303,12 +321,24 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
                 <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${isCur && inWeek && d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
                   <span className="day">{d.day}</span>
                   <span className="day-role">{r?.name ?? d.role}</span>
-                  <span className="muted small">{p?.name ?? "?"}{r && weaponTag(r.blocks) ? ` · ${weaponTag(r.blocks)}` : ""}{done ? " · ✓" : ""}</span>
+                  <span className="muted small">{r?.skipped ? "fällt aus" : `${p?.name ?? "?"}${r && weaponTag(r.blocks) ? ` · ${weaponTag(r.blocks)}` : ""}${done ? " · ✓" : ""}`}</span>
                 </button>
               );
             })}
           </div>
-          {sel && profile && future ? (
+          {sel && skipped ? (
+            <div className="stack">
+              <div className="card stack skip-card">
+                <div className="row between wrap"><h2>{role0!.name} fällt aus</h2>{adjustButton}</div>
+                {adjustPanel}
+                {skipped.moved.length > 0 && <div className="stack"><span className="field-label">Wandert in die Woche</span><ul className="small">{skipped.moved.map((m) => <li key={m}>{m}</li>)}</ul></div>}
+                {skipped.dropped.length > 0 && <div className="muted small">Entfällt: {skipped.dropped.join(", ")}</div>}
+                {skipped.unresolved.length > 0 && <div className="note small">Reicht nicht ganz: {skipped.unresolved.join(" · ")}</div>}
+                {!skipped.moved.length && <div className="muted small">Kein Ausgleich nötig oder möglich. Eine Woche mit weniger Volumen kostet nichts: Etwa ein Drittel des üblichen Volumens hält Kraft und Muskeln (Bickel et al., 2011).</div>}
+                <button className="btn small" onClick={() => skip(false)}>Doch trainieren</button>
+              </div>
+            </div>
+          ) : sel && profile && future ? (
             <SessionPreview state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} modsLabel={modsLabel} headAction={adjustButton} headPanel={adjustPanel} />
           ) : sel && profile ? (
             <SessionView key={sessionId(block.id, week, sel.role) + profile.id} state={state} update={update} block={block} focus={focus} week={week} roleKey={sel.role} profile={profile} date={dateFor(sel.day)} reduced={reduced} modsLabel={modsLabel} headAction={adjustButton} headPanel={adjustPanel} />

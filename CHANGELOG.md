@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.16.0] – 2026-11-09
+
+### Neu
+- **Fällt aus (Woche verdichten):** Unter ⚙ Anpassen lässt sich eine Einheit absagen. Ihr Wichtigstes wandert auf die offenen Tage danach: erst die Kernübungen, dann was für die Erhaltung fehlt (4 Sätze je Muskel und Woche, Bickel et al., 2011), der Rest entfällt. Platz schaffen die Tage über Supersets, dann über ihre Bestie, dann über einen Satz weniger an Ergänzungsübungen (nie unter die Erhaltung), zuletzt über ein Modul.
+  - Schwere Grundübungen nie im Superset, nie zwei Beintage direkt hintereinander.
+  - Kein Tag über seinem Zeitlimit; beim Auslösen lassen sich bis zu 15 Minuten mehr erlauben.
+  - Bleibt nur eine Einheit: Ganzkörper aus den Kernübungen beider Tage, je zwei Sätze.
+  - Die ausgefallene Einheit zeigt, was wohin gewandert ist und was entfällt; „Doch trainieren“ nimmt es zurück. Sie zählt für „Woche geschafft“ als erledigt.
+
 ## [1.15.1] – 2026-11-09
 
 ### Geändert

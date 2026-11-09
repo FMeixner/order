@@ -112,6 +112,8 @@ export interface Role {
   note?: string;
   /** Eigene Änderungen an Warm-up und Cool-down (aus AppState.drillEdits, nicht in den Orden-Dateien) */
   drillEdit?: DrillEdits;
+  /** Fällt aus (Woche verdichten): was wohin gewandert ist */
+  skipped?: { moved: string[]; dropped: string[]; unresolved: string[] };
 }
 
 /** Warm-up (wu) und Cool-down (cd): entfernte und hinzugefügte Übungen (Drill-Ids) */
@@ -406,7 +408,7 @@ export interface AppState {
   /** Testwoche: abgehakte Warm-up- und Cool-down-Übungen je Testtag (Schlüssel `<blockId>:<Ort>`) */
   testDrills?: Record<string, Record<string, boolean[]>>;
   /** Tagesanpassung je Einheit (Session-Id): eigene Wahl für Kurz, Leicht, Leise; fehlt sie, gilt das Gemerkte */
-  dayAdj?: Record<string, { short?: boolean; quiet?: boolean; tight?: boolean }>;
+  dayAdj?: Record<string, { short?: boolean; quiet?: boolean; tight?: boolean; skip?: boolean; grow?: boolean }>;
   /** Je Wochentag gemerkt, gilt in allen Phasen: Kurz (höchstens ein Tag) und Leise */
   dayFlags?: Partial<Record<Weekday, { short?: boolean; quiet?: boolean; tight?: boolean }>>;
   /** Lebensabschnitte des Jahres (Name frei, Zeitraum, Alltagslast): Grundlage für den Vorschlag der Phasen. Fehlt: aus den Phasen abgeleitet. */
