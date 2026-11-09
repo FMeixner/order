@@ -12,6 +12,8 @@ const PATHS: Record<string, string> = {
   knight: "M24 4l16 6v12c0 12-8 19-16 22-8-3-16-10-16-22V10zM24 10v28M12 21h24",
   /** Mercenary: Kurzhantel mit Funke (Kraft plus Können) */
   mercenary: "M6 26v8M11 21v18M37 21v18M42 26v8M11 30h26M24 4l2 4.5 4.8.6-3.6 3.3 1 4.8-4.2-2.4-4.2 2.4 1-4.8-3.6-3.3 4.8-.6z",
+  /** Skirmisher: Feder im Flug, drei Bewegungsstriche */
+  skirmisher: "M40 8C24 10 14 22 12 40M40 8c-2 10-10 20-22 24M40 8L27 21M8 20h8M6 27h7M8 34h4",
   monk: "M37 15A17 17 0 1 0 41 27M26 25a2 2 0 1 1-4 0a2 2 0 1 1 4 0",
   paladin: "M10 6h28v6H10zM14 12v13c0 9 4 15 10 17 6-2 10-8 10-17V12M24 12v26M17 22h14",
   olympian: "M17 40C7 32 6 18 14 8M31 40c10-8 11-22 3-32M12 33l-5 1M10 25l-5-1M11 17l-4-3M36 33l5 1M38 25l5-1M37 17l4-3M17 40h14",

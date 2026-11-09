@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.8.0] – 2026-11-09
+
+### Neu
+- **Skirmisher**, ein Falke-Orden für draußen: Sprünge (Broad Jump, Skater, Split Jump), Sprints und Richtungswechsel, explosives Ziehen und Drücken an Stange und Boden (Chest-to-Bar, Clap Push-Up) und ein Kettlebell-Tag (Swing, Press, Cossack Squat, Get-Up). Das braucht nur den eigenen Körper, ein Band und eine Klimmzugstange. Wenige Wiederholungen und volle Pausen machen ihn auch für volle Wochen verträglich. Reisetauglich, mit Nordic Curls zum Schutz der hinteren Oberschenkel.
+- Damit hat der Falke einen Orden für hohe Alltagslast und für den Urlaub. Im Fuchs und im Stier zählt Skirmisher halb.
+
 ## [1.7.1] – 2026-11-09
 
 ### Geändert

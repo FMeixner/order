@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "skirmisher",
+  "name": "Skirmisher", "name_w": "Skirmisher",
+  "tagline": "Leicht, schnell, draußen.",
+  "description": "Sprungkraft und Antritt im Freien, mit dem eigenen Körper, Band und Klimmzugstange; ein Tag mit Kettlebell, die im Urlaub oft dabei ist. Sprünge, Sprints, Richtungswechsel und explosives Ziehen und Drücken — wenige Wiederholungen, volle Pausen, nie ausbelastet. Darum auch in vollen Wochen verträglich. Nordic Curls schützen die hinteren Oberschenkel.",
+  "goals": {"primary": "power", "secondary": ["speed", "skill"]},
+  "nutrition": "any",
+  "load_fit": "high",
+  "level": "intermediate",
+  "session_min": 40,
+  "weeks": {"min": 6, "max": 10},
+  "test_week": true,
+  "travel": true,
+  "modules": ["correctives", "beast"],
+  "successors": ["olympian", "huntsman", "mercenary", "scout"],
+  "sources": ["Markovic (2007)"],
+  "week_4": ["sprung", "sprint_wechsel", "zug_stuetz", "kettlebell"],
+  "week_3": ["sprung", "sprint_wechsel", "zug_stuetz"],
+  "roles": {
+    "sprung": {
+      "name": "Sprünge", "location": "reise", "minutes": 40,
+      "warmup": ["short_base", "jump_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "sk-a-1", "core": true, "name": "Broad Jump", "sets": 5, "reps": "3", "prog": "none", "rest": 90, "note": "volle Pause: jeder Sprung so hoch und weit wie der erste. Wird er kürzer, ist der Satz vorbei."}},
+        {"type": "single", "slot": {"id": "sk-a-2", "core": true, "name": "Skater Jumps", "sets": 4, "reps": "5/Seite", "prog": "none", "rest": 75, "note": "seitlich weit, Landung halten"}},
+        {"type": "single", "slot": {"id": "sk-a-3", "name": "Split Jump", "sets": 3, "reps": "6/Seite", "prog": "none", "rest": 75}},
+        {"type": "single", "slot": {"id": "sk-a-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 90}},
+        {"type": "single", "slot": {"id": "sk-a-5", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30}}
+      ]
+    },
+    "sprint_wechsel": {
+      "name": "Sprint und Richtungswechsel", "location": "reise", "minutes": 40,
+      "warmup": ["short_base", "run_prep", "jump_prep"], "cooldown": ["cd_lower"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "sk-b-1", "core": true, "name": "Beschleunigung 10 m", "sets": 6, "reps": "10 m", "prog": "none", "rest": 90, "note": "aus dem Stand oder Fallstart; Bergauf geht auch"}},
+        {"type": "single", "slot": {"id": "sk-b-2", "name": "Fliegende 20 m", "sets": 3, "reps": "20 m", "prog": "none", "rest": 180, "note": "20 m Anlauf, dann 20 m voll"}},
+        {"type": "single", "slot": {"id": "sk-b-3", "core": true, "name": "5-10-5 Shuttle", "sets": 4, "reps": "1", "prog": "none", "rest": 120}},
+        {"type": "single", "slot": {"id": "sk-b-4", "name": "Reaktion auf Ansage", "kind": "interval", "interval": {"work": 20, "rest": 60, "rounds": 4}, "prog": "none", "note": "Partner ruft die Richtung, sofort drehen und zwei Schritte hinein. Ohne Partner: Richtungen vorher aufschreiben."}},
+        {"type": "single", "slot": {"id": "sk-b-5", "name": "Tibialis Raise", "sets": 2, "reps": "15-25", "prog": "reps", "rest": 45}}
+      ]
+    },
+    "zug_stuetz": {
+      "name": "Zug und Stütz explosiv", "location": "reise", "minutes": 45,
+      "warmup": ["short_base", "shoulder_prep", "jump_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "sk-c-1", "core": true, "name": "Chest-to-Bar Pull-Up", "reise": {"name": "Band Row", "reps": "8", "prog": "reps"}, "sets": 5, "reps": "3", "prog": "none", "rest": 120, "note": "schnell hoch, kontrolliert runter; ohne Stange: Band Row explosiv"}},
+        {"type": "single", "slot": {"id": "sk-c-2", "core": true, "name": "Clap Push-Up", "sets": 5, "reps": "3-5", "prog": "none", "rest": 90, "note": "volle Pause: jeder Sprung so hoch und weit wie der erste. Wird er kürzer, ist der Satz vorbei."}},
+        {"type": "single", "slot": {"id": "sk-c-3", "name": "Squat Jump", "sets": 3, "reps": "5", "prog": "none", "rest": 90}},
+        {"type": "single", "slot": {"id": "sk-c-4", "name": "Band Woodchopper", "sets": 3, "reps": "6/Seite", "prog": "reps", "rest": 60, "note": "explosiv drehen, langsam zurück"}},
+        {"type": "single", "slot": {"id": "sk-c-5", "name": "Hanging Leg Raise", "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "8-12", "prog": "reps", "rest": 60}},
+        {"type": "beast", "id": "sk-c-bst", "classes": ["plage"]}
+      ]
+    },
+    "kettlebell": {
+      "name": "Kettlebell", "location": "home", "minutes": 40,
+      "warmup": ["short_base", "lower_prep", "shoulder_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "single", "slot": {"id": "sk-d-1", "core": true, "name": "KB Swing", "sets": 5, "reps": "10", "prog": "weight", "rest": 75, "note": "explosiv aus der Hüfte, jede Wiederholung gleich schnell"}},
+        {"type": "single", "slot": {"id": "sk-d-2", "core": true, "name": "KB Half-Kneeling Press", "sets": 3, "reps": "6/Seite", "prog": "double", "rest": 90, "note": "erst eine Seite komplett, dann die andere"}},
+        {"type": "single", "slot": {"id": "sk-d-3", "core": true, "name": "KB Cossack Squat", "sets": 3, "reps": "6/Seite", "prog": "double", "rest": 90}},
+        {"type": "single", "slot": {"id": "sk-d-4", "name": "Turkish Get-Up", "sets": 2, "reps": "1/Seite", "prog": "weight", "rest": 60}},
+        {"type": "beast", "id": "sk-d-bst", "classes": ["plage"]}
+      ]
+    },
+    "bonus": {
+      "name": "Bonus: Bestie", "location": "reise", "minutes": 30,
+      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
+      "blocks": [
+        {"type": "beast", "id": "bx-sk-bst", "classes": ["bestie"]},
+        {"type": "single", "slot": {"id": "bx-sk-p", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 45}}
+      ]
+    }
+  }
+}
