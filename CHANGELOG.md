@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.12.2] – 2026-11-09
+
+### Geändert
+- Brustpresse und Beinpresse vergeben keine Normpunkte mehr. Die Vergleichswerte des Cooper Institute stammen von alten Universal-DVR-Geräten; heutige Maschinen haben andere Hebel, so dass etwa 100 kg an der Brustpresse fälschlich als P99 erschienen. Der Wert steht weiter als Orientierung da, der Bereich Maximalkraft zählt nur noch Kniebeuge und Bankdrücken mit Punkten. Dein eigener Verlauf bleibt der Maßstab.
+- Werte mit Orientierungsnorm sind in der Tagesbilanz als solche gekennzeichnet.
+
 ## [1.12.1] – 2026-11-09
 
 ### Geändert

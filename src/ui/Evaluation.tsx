@@ -57,7 +57,7 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
                 <li key={t.test.id}>
                   {t.test.name}{t.result.variant && t.test.variants ? ` (${t.test.variants.find((v) => v.id === t.result.variant)?.name ?? t.result.variant})` : ""}: <strong>{show(t.result.value, t.test.unit)}</strong>
                   {t.change && <span className={t.change === "better" ? "ok-text" : "muted"}> · {t.change === "better" ? "besser als" : t.change === "same" ? "gleich wie" : "letztes Mal"} {show(t.prev!.value, t.test.unit)}{t.change === "same" ? " (im Messfehler)" : ""}</span>}
-                  {t.norm ? <span className="muted"> · {t.norm.label}{t.norm.tier === "B" ? " (Orientierung)" : ""}</span> : t.why ? <span className="muted"> · {t.why}</span> : null}
+                  {t.norm ? <span className="muted"> · {t.norm.label}{t.norm.noScore ? " (nur Orientierung, ohne Punkte)" : t.norm.tier === "B" ? " (Orientierung)" : ""}</span> : t.why ? <span className="muted"> · {t.why}</span> : null}
                 </li>
               ))}
             </ul>

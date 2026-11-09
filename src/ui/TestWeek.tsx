@@ -235,7 +235,7 @@ function TestLine({ t }: { t: TestEval }) {
     <li className="tw-line">
       <span>{t.test.name}: <strong>{unitShow(t.result.value, t.test.unit)}</strong></span>
       {sc != null && <span className={`score ${sc < 40 ? "low" : sc >= 70 ? "high" : ""}`} title={t.norm!.label}>{sc}</span>}
-      <span className="muted small">{t.norm ? t.norm.label : t.why ?? ""}{t.change ? ` · ${CHANGE[t.change]}` : ""}</span>
+      <span className="muted small">{t.norm ? `${t.norm.label}${t.norm.noScore ? " (nur Orientierung, ohne Punkte)" : t.norm.tier === "B" ? " (Orientierung)" : ""}` : t.why ?? ""}{t.change ? ` · ${CHANGE[t.change]}` : ""}</span>
     </li>
   );
 }
