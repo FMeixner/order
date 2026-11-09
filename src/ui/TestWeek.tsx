@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { BEAST_BY_ID, TESTWEEK } from "../data";
 import { addDays, expandDrills, fmtDate, mondayOf, scheduleFor, trainingDays } from "../engine/plan";
 import { variantHint } from "../engine/norms";
@@ -6,7 +6,7 @@ import { parseClock } from "../engine/clock";
 import type { AppState, Cup, PlanBlock, TestDef, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { Collapse, Desc } from "./common";
-import { DrillList } from "./session/Drills";
+import { allDrillsDone, DrillList } from "./session/Drills";
 import { fmt } from "./Timer";
 import { Evaluation } from "./Evaluation";
 import { RavenCup, RavenLines, ravenOn } from "./Raven";
@@ -203,22 +203,23 @@ function TestDay({ state, update, block, today, place, preview, saveTest }: {
   };
   return (
     <>
-      <Collapse title="Warm-up" meta={`${warm.length} Übungen · für den ganzen Tag`} tone="amber">
+      <AutoCollapse title="Warm-up" meta={`${warm.length} Übungen · für den ganzen Tag`} tone="amber" done={allDrillsDone(warm, done, "wu")}>
         <DrillList drills={warm} done={done} prefix="wu" onToggle={toggle} />
-      </Collapse>
+      </AutoCollapse>
       {cups.map((cup) => (
-        <Collapse key={cup.id} title={cup.name} meta={cup.focus} tone="teal" defaultOpen>
+        <AutoCollapse key={`${place}:${cup.id}`} title={cup.name} meta={cup.focus} tone="teal" defaultOpen
+          done={!preview && cup.tests.every((t) => (state.tests[t.id] ?? []).some((r) => r.blockId === block.id))}>
           {cup.who5 && !preview && <Who5 state={state} update={update} block={block} />}
           {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} preview={preview} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} />)}
           <Benchmark cup={cup} state={state} update={update} preview={preview} />
           {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
-        </Collapse>
+        </AutoCollapse>
       ))}
       {!preview && <DaySummary state={state} block={block} cups={cups} />}
       {cool.length > 0 && (
-        <Collapse title="Cool-down" meta={`${cool.length} Übungen`} tone="amber">
+        <AutoCollapse title="Cool-down" meta={`${cool.length} Übungen`} tone="amber" done={allDrillsDone(cool, done, "cd")}>
           <DrillList drills={cool} done={done} prefix="cd" onToggle={toggle} />
-        </Collapse>
+        </AutoCollapse>
       )}
     </>
   );
@@ -312,4 +313,16 @@ function RavenTournamentBadge({ state, block, today }: { state: AppState; block:
       )}
     </>
   );
+}
+
+/** Klappt ein, sobald alles erledigt ist — nach kurzer Zeit, wie Übungskarten und Warm-up in einer Einheit.
+    Fertiges startet eingeklappt; wieder aufklappen geht jederzeit. */
+function AutoCollapse({ done, defaultOpen = false, title, meta, tone, children }: { done: boolean; defaultOpen?: boolean; title: string; meta?: string; tone?: "amber" | "teal"; children: ReactNode }) {
+  const [open, setOpen] = useState(defaultOpen && !done);
+  const [was, setWas] = useState(done);
+  useEffect(() => {
+    if (done && !was) { const id = setTimeout(() => setOpen(false), 2500); setWas(true); return () => clearTimeout(id); }
+    if (!done && was) setWas(false);
+  }, [done]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <Collapse title={done ? `${title} ✓` : title} meta={meta} tone={tone} open={open} onOpenChange={setOpen}>{children}</Collapse>;
 }

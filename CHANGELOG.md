@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.12.1] – 2026-11-09
+
+### Geändert
+- Testwoche klappt automatisch ein wie eine Einheit: Warm-up und Cool-down, sobald alles abgehakt ist, ein Cup, sobald jeder Test gespeichert ist. Fertiges trägt ein ✓ und lässt sich jederzeit wieder aufklappen.
+
 ## [1.12.0] – 2026-11-09
 
 ### Neu
