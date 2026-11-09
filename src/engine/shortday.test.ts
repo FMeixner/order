@@ -6,7 +6,7 @@ import { estimateRole } from "./duration";
 import { CLASS_ORDER, defaultRoles, moduleDrills, shortSwordDrills } from "./plan";
 import { equipOf } from "./resolve";
 import { isStrength } from "./slots";
-import { SHORT_KEEP, SHORT_LIMIT, shortDay, shortEligible } from "./shortday";
+import { SHORT_MAX, SHORT_LIMIT, shortDay, shortDeload, shortEligible } from "./shortday";
 
 const P = { gym: EQUIPMENT_PRESETS[0].make(), home: EQUIPMENT_PRESETS[1].make(), reise: EQUIPMENT_PRESETS[2].make() };
 const user = emptyState().user;
@@ -18,19 +18,20 @@ describe("Kurztag", () => {
     if (f.medley?.length) continue;
     for (const n of [3, 4, 5]) {
       const wr = defaultRoles(f, n);
-      for (const rk of wr.filter((k) => shortEligible(f.roles[k]))) it(`${f.id}.${rk} (${n} Tage): vier Kernübungen, kurze Bestie und kurzes Schwert, Ziel 35 Minuten, Ausgleich mit Deckel +15 Minuten`, () => {
+      for (const rk of wr.filter((k) => shortEligible(f.roles[k]))) it(`${f.id}.${rk} (${n} Tage): bis fünf Übungen verdichtet, kurze Bestie und kurzes Schwert, Ziel 30 Minuten, Ausgleich mit Deckel +15 Minuten`, () => {
         const { focus, report } = shortDay(f, rk, user, wr);
         const short = focus.roles[rk];
         // Die vier Kernübungen (je A/B-Woche), Bestie und Schwerttraining bleiben drin, aber kürzer
-        for (const ab of ["A", "B"] as const) expect(strengthBlocks(short.blocks, ab).length).toBeLessThanOrEqual(SHORT_KEEP);
+        for (const ab of ["A", "B"] as const) expect(strengthBlocks(short.blocks, ab).length).toBeLessThanOrEqual(SHORT_MAX);
         const oBeast = f.roles[rk].blocks.find((b) => b.type === "beast");
         const nBeast = short.blocks.find((b) => b.type === "beast");
         if (oBeast && nBeast) expect(nBeast.classes).toEqual((oBeast.classes?.length ? oBeast.classes : (["bestie", "ungeheuer"] as const)).map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]));
         const hadSword = f.roles[rk].blocks.some((b) => b.type === "module" && b.module === "sword");
         if (hadSword) expect((short.blocks.find((b) => b.type === "module" && b.module === "sword") as { short?: true } | undefined)?.short).toBe(true);
-        // Ziel 35 Minuten — wenn es nicht reicht, sind alle Sätze schon unten
+        // Ziel 30 Minuten — wenn es nicht reicht, sind alle Sätze schon unten (oder die Timer an ihrer Untergrenze)
         const est = estimateRole(short, P[short.location]).total;
-        const atFloor = short.blocks.flatMap(slotsOf).filter(isStrength).every((s) => (s.sets ?? 3) <= 1);
+        const timerFloor = (x: Slot) => { const o = f.roles[rk].blocks.flatMap(slotsOf).find((y) => y.id === x.id); return (x.minutes ?? 0) <= Math.max(10, Math.ceil((o?.minutes ?? 0) / 2 / (x.step ?? 5)) * (x.step ?? 5)); };
+        const atFloor = short.blocks.flatMap(slotsOf).filter(isStrength).every((s) => (s.sets ?? 3) <= 1) && short.blocks.flatMap(slotsOf).filter((x) => x.kind === "timer").every(timerFloor);
         expect(est <= SHORT_LIMIT + 0.6 || atFloor).toBe(true);
         // Ausgleich: kein Tag über seiner Obergrenze und nie mehr als 15 Minuten über seiner normalen Dauer
         for (const k of wr.filter((x) => x !== rk)) {
@@ -64,13 +65,25 @@ describe("Kurztag", () => {
     expect(report.changes).toEqual([]);
     for (const k of wr.filter((x) => x !== "kraft_1")) expect(focus.roles[k]).toEqual(f.roles[k]);
   });
-  it("Assassin: Kurztag am Dienstag behält alle vier Kernübungen, höchstens 35 Minuten", () => {
+  it("Assassin: Kurztag am Dienstag behält alle vier Kernübungen, höchstens 30 Minuten", () => {
     const f = FOCUS_BY_ID.assassin;
     const { report, focus } = shortDay(f, "arme_schultern", user, defaultRoles(f, 4));
-    expect(report.kept).toEqual(["Chest Press Machine", "Chest-Supported Row Machine", "Face Pull", "Incline Cable Curl"]);
-    expect(focus.roles.arme_schultern.minutes).toBeLessThanOrEqual(35);
+    for (const n of ["Chest Press Machine", "Chest-Supported Row Machine", "Face Pull", "Incline Cable Curl"]) expect(report.kept).toContain(n);
+    expect(focus.roles.arme_schultern.minutes).toBeLessThanOrEqual(30);
   });
-  it("Grundlagentag ohne Kraftübungen: Inhalt bleibt, Dauer geht Richtung 35 Minuten", () => {
+  it("Kurz verdichtet: Gegenspieler als Superset (Smith: Bench Press + Pull-Up)", () => {
+    const f = FOCUS_BY_ID.smith;
+    const { focus } = shortDay(f, "kraft_1", user, defaultRoles(f, 4));
+    expect(focus.roles.kraft_1.blocks.some((b) => b.type === "superset" && b.slots.some((x) => x.why?.some((w) => w.startsWith("Verdichtet"))))).toBe(true);
+  });
+  it("Kurz in der Entlastungswoche: keine Supersets dazu, keine anderen Tage verändert", () => {
+    const f = FOCUS_BY_ID.knight;
+    const out = shortDeload(f, "upper_a");
+    const added = out.roles.upper_a.blocks.filter((b) => b.type === "superset").length;
+    expect(added).toBeLessThanOrEqual(f.roles.upper_a.blocks.filter((b) => b.type === "superset").length);
+    for (const k of Object.keys(f.roles).filter((k) => k !== "upper_a")) expect(out.roles[k]).toBe(f.roles[k]);
+  });
+  it("Grundlagentag ohne Kraftübungen: Inhalt bleibt, Dauer geht Richtung 30 Minuten", () => {
     const f = FOCUS_BY_ID.pilgrim;
     const orig = f.roles.grundlage.blocks.flatMap(slotsOf).find((s) => s.kind === "timer")!;
     const { focus, report } = shortDay(f, "grundlage", user, defaultRoles(f, 4));
@@ -80,7 +93,7 @@ describe("Kurztag", () => {
     const t = r.blocks.flatMap(slotsOf).find((s) => s.kind === "timer")!;
     expect(t.minutes!).toBeLessThan(orig.minutes!);
     expect(t.minutes!).toBeGreaterThanOrEqual(Math.max(10, Math.ceil(orig.minutes! / 2 / (orig.step ?? 5)) * (orig.step ?? 5)));
-    expect(estimateRole(r, P[r.location]).total).toBeLessThanOrEqual(SHORT_LIMIT + 0.6);
+    expect(estimateRole(r, P[r.location]).total <= SHORT_LIMIT + 0.6 || t.minutes! <= Math.max(10, Math.ceil(orig.minutes! / 2 / (orig.step ?? 5)) * (orig.step ?? 5))).toBe(true);
     expect(report.unresolved).toEqual([]);
     expect(report.changes).toEqual([]);
   });

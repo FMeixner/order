@@ -177,6 +177,8 @@ export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnTyp
   const p = primaryAxis(f);
   const aimHit = aims.find((a) => a.aim === p && !k.axes.includes(a.aim));
   if (aimHit && f.session_min >= 35 && (k.early.includes(f.id) || k.late.includes(f.id))) s += 4 - aimHit.prio;
+  // Zeit-Orden (Herald, unter 35 Minuten): wählbar, aber nie Vorschlag — für Wochen mit wenig Zeit wählt man ihn bewusst
+  if (f.session_min < 35) s -= 3;
   return s;
 }
 

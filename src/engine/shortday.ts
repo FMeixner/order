@@ -1,6 +1,10 @@
-/* Kurztag: Wenig Zeit oder tiefe Tagesform — die Einheit bleibt, aber kurz: die vier Kernübungen,
-   Bestie eine Klasse und jede Schwertübung einen Satz kürzer (keine fällt weg), Ziel 35 Minuten (nötigenfalls weniger Sätze).
-   Das ist kein Deload: Zeit und Tagesform steuern, nicht Ermüdung — und eine kurze Einheit ist ein echter Erfolg.
+/* Kurztag (Kürzung, 1.5): Wenig Zeit — die Einheit wird verdichtet, nicht nur gestrichen (Herald-Logik):
+   bis zu fünf Übungen (Kern zuerst), Gegenspieler als Supersets (Brust/Rücken, Quadrizeps/Beinbeuger, Bizeps/Trizeps),
+   dann Sätze gleichmäßig runter (erst bis zwei, dann fällt die fünfte Übung, dann bis eins), Ziel 30 Minuten.
+   Bestie eine Klasse und jede Schwertübung einen Satz kürzer (keine fällt weg).
+   Das ist kein Deload: Zeit steuert, nicht Ermüdung — und eine kurze Einheit ist ein echter Erfolg.
+   In einer Entlastungswoche verdichtet Kurz nicht (shortDeload): Die Woche ist schon halbiert, Kurz kürzt nur noch
+   auf vier Übungen und knappes Warm-up, ohne Supersets und ohne Ausgleich an anderen Tagen.
    Grundlagen- und Skill-Tage (Lauf, Atem, Parkour) haben keine Kraftübungen: ihr Inhalt bleibt erhalten und wird
    über die Dauer Richtung 35 Minuten gekürzt, statt ihn wegzustreichen.
    Danach wird geprüft, ob das Ziel des Ordens leidet (Sätze je Muskel und Woche):
@@ -19,10 +23,46 @@ import { equipOf } from "./resolve";
 import { musclesOf, volumeRange } from "./volume";
 import { halfOf } from "./warmup";
 
-/** Die vier Kernübungen des Tages (Kern zuerst, dann schwer, dann Mehrgelenk) */
+/** Die vier Kernübungen des Tages (Kern zuerst, dann schwer, dann Mehrgelenk); verdichtet darf eine fünfte bleiben */
 export const SHORT_KEEP = 4;
+export const SHORT_MAX = 5;
 /** Zielzeit der kurzen Einheit in Minuten */
-export const SHORT_LIMIT = 35;
+export const SHORT_LIMIT = 30;
+
+/** Gegenspieler: Hauptmuskeln, die sich im Superset nicht in die Quere kommen und sich gegenseitig Pause geben */
+const ANTAGONIST: Record<string, string[]> = {
+  Brust: ["Rücken"], Rücken: ["Brust", "Schultern"], Schultern: ["Rücken"],
+  Quadrizeps: ["Beinbeuger", "Gesäß"], Beinbeuger: ["Quadrizeps"], Gesäß: ["Quadrizeps"],
+  Bizeps: ["Trizeps"], Trizeps: ["Bizeps"],
+};
+
+/** Verdichtung des Kurztags: Gegenspieler-Supersets bis die Rolle ins Zeitlimit passt. Nie die erste Kraftübung und
+    nie Kontrastpaare; Kernübungen dürfen gepaart werden (wie beim Herald). Gegenspieler zuerst, sonst Ober- mit
+    Unterkörper. Nie derselbe Hauptmuskel, im Studio nie zwei Maschinen oder Kabel. */
+export function pairAntagonists(r: Role, limit: number): void {
+  let guard = 10;
+  while (est(r) > limit + 0.5 && guard--) {
+    const first = r.blocks.findIndex(strengthBlock);
+    const cands = r.blocks.map((b, i) => ({ b, i })).filter(({ b, i }) => i > first && b.type === "single" && isStrength(b.slot)) as { b: Extract<Block, { type: "single" }>; i: number }[];
+    const ok = (a: Slot, c: Slot) => !(primary(a) && primary(a) === primary(c)) && !(r.location === "gym" && STATION.has(equipOf(a.name)) && STATION.has(equipOf(c.name)));
+    const anta = (a: Slot, c: Slot) => !!primary(a) && (ANTAGONIST[primary(a)!] ?? []).includes(primary(c)!);
+    const half = (x: Slot) => halfOf(x.name);
+    let pair: [number, number] | null = null;
+    for (const test of [anta, (a: Slot, c: Slot) => !!half(a) && !!half(c) && half(a) !== half(c)])
+      for (let x = 0; x < cands.length && !pair; x++) for (let y = x + 1; y < cands.length && !pair; y++) {
+        const a = cands[x].b.slot, c = cands[y].b.slot;
+        if (ok(a, c) && test(a, c)) pair = [cands[x].i, cands[y].i];
+      }
+    if (!pair) return;
+    const a = (r.blocks[pair[0]] as Extract<Block, { type: "single" }>).slot, c = (r.blocks[pair[1]] as Extract<Block, { type: "single" }>).slot;
+    const heavy = isHeavy(a) || isHeavy(c);
+    const { rest: _a, ...sa } = a; const { rest: _c, ...sc } = c; void _a; void _c;
+    const why = "Verdichtet: als Superset mit dem Gegenspieler, damit die kurze Einheit ihr Volumen behält.";
+    sa.why = [...(sa.why ?? []), why]; sc.why = [...(sc.why ?? []), why];
+    r.blocks.splice(pair[1], 1);
+    r.blocks.splice(pair[0], 1, { type: "superset", rest: heavy ? 90 : 60, slots: [sa, sc] });
+  }
+}
 /** Supersets aus Übungen, die sich nicht in die Quere kommen, bis die Rolle ins Zeitlimit (Minuten) passt.
     Nie die erste Kraftübung, nie große Grundübungen oder Kernübungen, nie zwei Übungen für denselben Hauptmuskel,
     im Studio nie zwei Maschinen oder Kabel. Ändert die Rolle direkt; true, wenn sie danach passt. */
@@ -123,16 +163,16 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   const ranked = short.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && isWeaponModule(b.module)) ? -1 : rank(b) })).filter((x) => x.r >= 0);
   // A- und B-Woche getrennt: je die vier besten Übungen (Kern zuerst, dann schwer, dann Mehrgelenk)
   const shortWarm = ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
-  const pick = () => {
+  const pick = (n: number) => {
     const k = new Set<Block>();
     for (const ab of ["A", "B"]) {
       const wk = ranked.filter((x) => !x.b.rotation || x.b.rotation === ab).sort((a, c) => c.r - a.r || a.i - c.i);
-      wk.slice(0, SHORT_KEEP).forEach((x) => k.add(x.b));
+      wk.slice(0, n).forEach((x) => k.add(x.b));
     }
     return k;
   };
-  const keep = pick();
-  const droppedBlocks = ranked.filter((x) => !keep.has(x.b)).map((x) => x.b);
+  const keep = pick(SHORT_MAX);
+  const core4 = pick(SHORT_KEEP);
   // Bestie bleibt drin, aber eine Klasse kürzer (mindestens Plage); jede Schwertübung einen Satz weniger (short-Flag)
   const shorter = (b: Block): Block => {
     if (b.type === "beast") return { ...b, classes: (b.classes?.length ? b.classes : (["bestie", "ungeheuer"] as BeastClass[])).map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]) };
@@ -143,6 +183,8 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   short.warmup = shortWarm;
   short.cooldown = (short.cooldown ?? []).slice(0, 1);
   short.name = `${short.name} (Kurztag)`;
+  // Verdichten vor Streichen: Gegenspieler-Supersets (Herald-Logik)
+  pairAntagonists(short, SHORT_LIMIT);
   // Länger als 35 Minuten? Sätze runter, bis die Einheit passt — gleichmäßig über alle behaltenen Übungen
   // verteilt (Round-Robin, die leichten zuerst): auch schwere Grundübungen geben einen Satz ab, statt dass
   // die leichten zuerst auf einen Satz plattgedrückt werden. Supersets und Kontrastpaare nur im Ganzen:
@@ -151,29 +193,40 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   // bis zur Hälfte ihrer Dauer, mindestens 10 Minuten.
   const timerBase = new Map(short.blocks.flatMap(slotsOf).filter((s) => s.kind === "timer").map((s) => [s, s.minutes ?? 0]));
   const whyOnce = (s: Slot, text: string) => { if (!(s.why ?? []).includes(text)) s.why = [...(s.why ?? []), text]; };
-  const cutRound = ranked.filter((x) => keep.has(x.b)).sort((a, c) => a.r - c.r);
+  // Sätze über die behaltenen Übungen (nach dem Verdichten: Supersets als Ganzes)
+  const liveSlots = () => short.blocks.filter((b) => b.type === "single" || b.type === "superset" || b.type === "contrast").map((b) => ({ b, r: Math.max(...slotsOf(b).map((x) => (x.core ? 100 : isHeavy(x) ? 50 : 10))) })).sort((a, c) => a.r - c.r);
+  let cutRound = liveSlots();
   let cursor = 0;
-  let shrinkGuard = 40;
+  let shrinkGuard = 60;
+  let floor = 2;
   while (est(short) > SHORT_LIMIT + 0.5 && shrinkGuard--) {
     let cut = -1;
     for (let j = 0; j < cutRound.length; j++) {
       const at = (cursor + j) % cutRound.length;
       const ss = slotsOf(cutRound[at].b).filter(isStrength);
-      if (ss.length && Math.max(...ss.map((s) => s.sets ?? 3)) > 1) { cut = at; break; }
+      if (ss.length && Math.max(...ss.map((s) => s.sets ?? 3)) > floor) { cut = at; break; }
+    }
+    if (cut < 0 && floor === 2) {
+      // Bis zwei Sätze reicht nicht: die fünfte Übung fällt (wandert in den Ausgleich), dann bis ein Satz
+      const extra = [...keep].find((b) => !core4.has(b));
+      if (extra && short.blocks.includes(extra)) { short.blocks = short.blocks.filter((b) => b !== extra); keep.delete(extra); cutRound = liveSlots(); cursor = 0; continue; }
+      floor = 1;
+      continue;
     }
     if (cut >= 0) {
       const ss = slotsOf(cutRound[cut].b).filter(isStrength);
       const hi = Math.max(...ss.map((s) => s.sets ?? 3));
-      for (const s of ss) if ((s.sets ?? 3) === hi) { s.sets = hi - 1; whyOnce(s, "Weniger Sätze, damit die kurze Einheit bei 35 Minuten bleibt."); }
+      for (const s of ss) if ((s.sets ?? 3) === hi) { s.sets = hi - 1; whyOnce(s, `Weniger Sätze, damit die kurze Einheit bei ${SHORT_LIMIT} Minuten bleibt.`); }
       cursor = cut + 1;
       continue;
     }
     const t = short.blocks.flatMap(slotsOf).find((s) => s.kind === "timer" && (s.minutes ?? 0) > Math.max(10, Math.ceil((timerBase.get(s) ?? 0) / 2 / (s.step ?? 5)) * (s.step ?? 5)));
     if (!t) break;
     t.minutes = Math.max(10, (t.minutes ?? 10) - (t.step ?? 5));
-    whyOnce(t, "Kürzer, damit die kurze Einheit bei 35 Minuten bleibt.");
+    whyOnce(t, `Kürzer, damit die kurze Einheit bei ${SHORT_LIMIT} Minuten bleibt.`);
   }
   short.minutes = Math.max(15, Math.round(est(short) / 5) * 5);
+  const droppedBlocks = ranked.filter((x) => !keep.has(x.b)).map((x) => x.b);
 
   const changes: string[] = [];
   const unresolved: string[] = [];
@@ -275,4 +328,25 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   const out = { focus: { ...f, roles }, report };
   mf.set(key, out);
   return out;
+}
+
+/** Kurz in einer Entlastungswoche: keine Verdichtung, kein Ausgleich. Die Woche ist schon halbiert (deloadShape);
+    Kurz behält die vier Kernübungen, knappes Warm-up und einen Cooldown, kürzt Timer bis zur Hälfte. */
+export function shortDeload(f: Focus, roleKey: string): Focus {
+  const roles: Record<string, Role> = { ...f.roles };
+  const r: Role = JSON.parse(JSON.stringify(f.roles[roleKey]));
+  const ranked = r.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && isWeaponModule(b.module)) ? -1 : rank(b) })).filter((x) => x.r >= 0);
+  const keep = new Set<Block>();
+  for (const ab of ["A", "B"]) ranked.filter((x) => !x.b.rotation || x.b.rotation === ab).sort((a, c) => c.r - a.r || a.i - c.i).slice(0, SHORT_KEEP).forEach((x) => keep.add(x.b));
+  r.blocks = r.blocks.filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && isWeaponModule(b.module))).map((b) => (b.type === "module" && isWeaponModule(b.module) ? { ...b, short: true } : b));
+  r.warmup = ["short_base", ...(r.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
+  r.cooldown = (r.cooldown ?? []).slice(0, 1);
+  r.name = `${r.name} (Kurztag)`;
+  for (const t of r.blocks.flatMap(slotsOf).filter((x) => x.kind === "timer")) {
+    const lo = Math.max(10, Math.ceil((t.minutes ?? 0) / 2));
+    while (est(r) > SHORT_LIMIT + 0.5 && (t.minutes ?? 0) - (t.step ?? 5) >= lo) t.minutes = (t.minutes ?? 10) - (t.step ?? 5);
+  }
+  r.minutes = Math.max(15, Math.round(est(r) / 5) * 5);
+  roles[roleKey] = r;
+  return { ...f, roles };
 }

@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.5.0] – 2026-11-09
+
+### Geändert
+- **Kurz verdichtet statt zu streichen.** Ein Kurztag behält bis zu fünf Übungen, paart Gegenspieler als Supersets (Brust/Rücken, Quadrizeps/Beinbeuger, Bizeps/Trizeps) und nimmt erst dann Sätze weg. Ziel sind 30 statt 35 Minuten.
+- **Kurz in der Entlastungswoche:** Die Entlastung hat Vorrang. Kurz kürzt dann nur noch auf die vier Kernübungen und ein knappes Warm-up, ohne Supersets und ohne Ausgleich an anderen Tagen.
+- **Entlastung am Ordenswechsel:** Der Vorschlag alle vier Wochen rastet auf die erste Woche eines neuen Ordens ein, wenn der Wechsel höchstens zwei Wochen daneben liegt. So unterbricht die Entlastung keinen Orden mitten im Aufbau.
+- **Herald** bleibt der Orden für Wochen mit wenig Zeit, ohne dass du „Kurz“ wählen musst. Er passt halb zu Stier und Bär, wird aber nie vorgeschlagen: Du wählst ihn bewusst.
+
 ## [1.4.6] – 2026-11-09
 
 ### Geändert

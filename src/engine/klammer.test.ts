@@ -238,3 +238,14 @@ describe("King als Bestien-Orden", () => {
     for (const w of [1, 2]) { const bl = highLoadShape(f, b, w).roles.chaos_b.blocks[0]; expect(bl.type === "single" && bl.slot.name).toBe("Seilspringen"); }
   });
 });
+
+describe("Entlastung an Ordensgrenzen", () => {
+  it("Rhythmus rastet auf den Ordenswechsel ein (±2 Wochen)", async () => {
+    const { rhythmWeeks } = await import("./deload");
+    const mk = (id: string, start: string, weeks: number): PlanBlock => ({ id, focusId: "knight", label: "", start, end: addDays(start, 7 * weeks - 1), load: "medium", meso: "m", klammer: "muskel" } as PlanBlock);
+    const a = mk("a", T, 6), b = mk("b", addDays(T, 42), 6);
+    expect(rhythmWeeks([a, b], a, 12)).toEqual([7, 11]);
+    const c = mk("c", T, 4), d = mk("d", addDays(T, 28), 8);
+    expect(rhythmWeeks([c, d], c, 12)).toEqual([5, 9]);
+  });
+});

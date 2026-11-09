@@ -62,7 +62,7 @@ export function deloadAdvice(state: AppState, b: PlanBlock, week: number, today:
   // In einer Klammer zählt die Klammer, nicht der Teil: Teile von vier bis sechs Wochen bekämen sonst nie Entlastung.
   const k = klammerWeek(state.plan, b, week);
   const kTotal = k?.total ?? total, kWeek = k?.week ?? week;
-  if (kTotal >= 8 && kWeek >= 5 && (kWeek - 1) % 4 === 0) return { why: "rhythmus", count: 0 };
+  if (kTotal >= 8 && rhythmWeeks(state.plan, b, kTotal).includes(kWeek)) return { why: "rhythmus", count: 0 };
   // Signale: dreimal „zu schwer“ in den letzten vierzehn Tagen
   const cutoff = addDays(today, -14);
   const count = state.sessions
@@ -70,6 +70,26 @@ export function deloadAdvice(state: AppState, b: PlanBlock, week: number, today:
     .reduce((n, s) => n + Object.values(s.entries ?? {}).filter((e) => e.feedback === "zuschwer").length, 0);
   if (week >= 3 && count >= 3) return { why: "signale", count };
   return null;
+}
+
+/** Rhythmus-Wochen einer Klammer (Klammerwochen): ab der fünften alle vier Wochen. Liegt ein Ordenswechsel
+    höchstens zwei Wochen daneben, rastet die Entlastung auf die erste Woche des neuen Ordens ein — der Einstieg in
+    neue Übungen ist leicht, und kein Orden wird mitten in seinem Aufbau unterbrochen. */
+export function rhythmWeeks(plan: PlanBlock[], b: PlanBlock, total: number): number[] {
+  const starts: number[] = [];
+  if (b.meso && b.klammer) {
+    const parts = plan.filter((x) => x.meso === b.meso && !isTestBlock(x)).sort((x, y) => x.start.localeCompare(y.start));
+    let w = 1;
+    for (const p of parts) { if (w > 1) starts.push(w); w += blockWeeks(p); }
+  }
+  const out: number[] = [];
+  for (let w = 5; w <= total; ) {
+    const snap = starts.find((s) => Math.abs(s - w) <= 2 && s >= 4 && (out.length === 0 || s - out[out.length - 1] >= 4));
+    const at = snap ?? w;
+    out.push(at);
+    w = at + 4;
+  }
+  return out;
 }
 
 /** Woche innerhalb der Klammer und deren Trainingswochen (ohne Testwoche); null außerhalb einer Klammer */

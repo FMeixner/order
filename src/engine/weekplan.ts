@@ -8,7 +8,7 @@ import { SWAP_GROUPS } from "../data";
 import type { AppState, Block, Focus, PlanBlock, Role, Slot, Weekday } from "../types";
 import { isHeavy, isStrength, planMinutes } from "./slots";
 import { applyDrillEdits, blockFocus, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
-import { pairToFit, shortDay } from "./shortday";
+import { pairToFit, shortDay, shortDeload } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlots } from "./sharpen";
 import { deloadShape, isDeloaded } from "./deload";
@@ -186,15 +186,17 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
       .map((d) => ({ ...d, planned: remembered(state, b, d.role, d.day).short && state.dayAdj?.[`${b.id}:${week}:${d.role}`]?.short === undefined }))
       .sort((x, y) => Number(y.planned) - Number(x.planned) || x.i - y.i);
     const shortened = new Set<string>();
+    // Entlastungswoche: erst halbieren, dann kürzt Kurz nur noch (keine Verdichtung, kein Ausgleich an anderen Tagen)
+    const deload = isDeloaded(state, b, week);
+    if (deload) shaped = deloadShape(shaped);
     for (const d of shorts) {
       const targets = (d.planned ? weekRoles : days.slice(d.i + 1).map((x) => x.role)).filter((r) => !shortened.has(r) && r !== d.role);
-      shaped = shortDay(shaped, d.role, state.user, weekRoles, targets).focus;
+      shaped = deload ? shortDeload(shaped, d.role) : shortDay(shaped, d.role, state.user, weekRoles, targets).focus;
       shortened.add(d.role);
     }
     shaped = quietMoves(state, b, week, shaped, days, shortened);
-  }
+  } else if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.
-  if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
   return applyDrillEdits(applySlots(shaped, state, b), state.drillEdits);
 }
 
