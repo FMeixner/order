@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.9.0] – 2026-11-09
+
+### Neu
+- **Barbarian**, ein Bär-Orden ohne Studio: Muskelaufbau mit Kurzhanteln, Bändern, Stange und eigenem Körper. Oberkörper und Unterkörper im Wechsel, jeder Muskel zweimal pro Woche. Übungen mit tiefer Dehnung (Deficit Push-Up, Bulgarian Split Squat, DB RDL, DB Pullover, Überkopf-Trizeps) und je eine Isolation zum Einstieg. Unterwegs gibt es Band-Varianten. Er passt zu hoher Alltagslast und zählt im Stier halb.
+
 ## [1.8.0] – 2026-11-09
 
 ### Neu
