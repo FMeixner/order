@@ -59,11 +59,11 @@ describe("Kurztag", () => {
     }
   }
   it("leidet das Ziel nicht, bleiben die anderen Tage unverändert", () => {
-    const f = FOCUS_BY_ID.smith;
+    const f = FOCUS_BY_ID.knight;
     const wr = defaultRoles(f, 4);
-    const { focus, report } = shortDay(f, "kraft_1", user, wr);
+    const { focus, report } = shortDay(f, "lower_a", user, wr);
     expect(report.changes).toEqual([]);
-    for (const k of wr.filter((x) => x !== "kraft_1")) expect(focus.roles[k]).toEqual(f.roles[k]);
+    for (const k of wr.filter((x) => x !== "lower_a")) expect(focus.roles[k]).toEqual(f.roles[k]);
   });
   it("Assassin: Kurztag am Dienstag behält alle vier Kernübungen, höchstens 30 Minuten", () => {
     const f = FOCUS_BY_ID.assassin;

@@ -6,7 +6,7 @@ import { Check, Field } from "./common";
 
 const HAS_LABEL: Record<keyof EquipmentProfile["has"], string> = {
   bar: "Klimmzugstange", rings: "Ringe", bench: "Bank", rower: "Rudergerät", bike: "Rad/Ergometer",
-  box: "Box/Stufe", sandbag: "Sandsack", cable: "Kabelzug", machines: "Maschinen", medball: "Medizinball 2 kg", sword: "Schwert oder Stock", handles: "Liegestützgriffe oder Yoga-Blöcke", dip: "Dip-Barren", wheel: "Bauchroller",
+  box: "Box/Stufe", sandbag: "Sandsack", cable: "Kabelzug", machines: "Maschinen", medball: "Medizinball 2 kg", sword: "Schwert oder Stock", handles: "Liegestützgriffe oder Yoga-Blöcke", dip: "Dip-Barren", wheel: "Ab Roller (Bauchroller)", roll: "Black Roll", ball: "Black-Roll-Ball",
   run: "Laufen möglich", sprint: "Sprints möglich", rope: "Springseil",
 };
 
@@ -45,7 +45,7 @@ export function ProfileForm({ p, onChange, onDelete }: { p: EquipmentProfile; on
       )}
       <div className="grid-checks">
         {(Object.keys(HAS_LABEL) as (keyof EquipmentProfile["has"])[]).map((k) => (
-          <Check key={k} checked={p.has[k]} onChange={(v) => set({ has: { ...p.has, [k]: v } })} label={HAS_LABEL[k]} />
+          <Check key={k} checked={p.has[k] ?? true} onChange={(v) => set({ has: { ...p.has, [k]: v } })} label={HAS_LABEL[k]} />
         ))}
       </div>
       <Check checked={p.spread ?? !!p.has.machines} onChange={(v) => set({ spread: v })} label="Stationen weit auseinander (Studio): keine Bestien, die Laufband oder Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen" />

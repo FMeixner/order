@@ -202,6 +202,9 @@ export interface Drill {
   max?: number;
   /** Sekunden pro Wiederholung, nur für die Zeitschätzung (Flows) */
   rep_s?: number;
+  /** Ausrüstung für Warm-up/Cool-down (roll: Black Roll, ball: Black-Roll-Ball); fehlt sie, gilt instead oder die Übung fällt weg */
+  needs?: ("roll" | "ball")[];
+  instead?: Drill;
   note?: string;
   desc?: string;
 }
@@ -220,7 +223,7 @@ export interface EquipmentProfile {
   machineStep: number;
   vest: number[];
   bands: string[];
-  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean; run: boolean; sprint: boolean; rope: boolean };
+  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean; run: boolean; sprint: boolean; rope: boolean; roll?: boolean; ball?: boolean };
   /** Alt (bis 0.45): Schweißfrei am Ort; wird beim Laden zu „Leise“ an den Wochentagen dieses Orts */
   sweatFree?: boolean;
   /** Stationen weit auseinander (Studio): keine Bestien, die Laufband/Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen. Fehlt: ja, wenn das Profil Maschinen hat. */

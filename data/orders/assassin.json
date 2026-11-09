@@ -19,11 +19,10 @@
   "roles": {
     "kraft_a": {
       "name": "Unterkörper und Trizeps", "location": "gym", "minutes": 50, "cap": 60,
-      "warmup": ["short_base", "thoracic_roller", "dislocate", "lower_prep", "hip9090"],
-      "cooldown": ["cd_mdf"],
+      "warmup": ["short_base", "lower_prep", "hip9090"], "cooldown": ["cd_mdf"],
       "blocks": [
+        {"type": "single", "slot": {"id": "ka-2", "core": true, "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "6-8", "prog": "reps"}, "reise": {"name": "Nordic Curl Negative", "reps": "6-8", "prog": "reps"}, "sets": 4, "reps": "10-12", "prog": "double", "rest": 90, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
         {"type": "single", "slot": {"id": "ka-1", "core": true, "name": "Leg Press", "home": "Goblet Squat", "reise": {"name": "Bodyweight Squat", "reps": "15-20", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120, "note": "tief, voller Bewegungsumfang"}},
-        {"type": "single", "slot": {"id": "ka-2", "core": true, "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "6-8", "prog": "reps"}, "reise": {"name": "Nordic Curl Negative", "reps": "6-8", "prog": "reps"}, "sets": 4, "reps": "10-12", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "kb-2c", "name": "KB Cossack Squat", "home": "KB Cossack Squat", "reise": {"name": "Cossack Squat", "reps": "8-10/Seite", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double"},
           {"id": "kb-8", "name": "Seated Calf Raise", "home": "DB Seated Calf Raise", "reise": {"name": "Single-Leg Calf Raise", "reps": "15-20/Seite", "prog": "reps"}, "sets": 3, "reps": "15", "prog": "double"}
@@ -34,29 +33,27 @@
     },
     "arme_schultern": {
       "name": "Oberkörper Zug", "location": "gym", "minutes": 45,
-      "warmup": ["short_base", "thoracic_standing", "windmill", "db_er"],
-      "cooldown": ["cd_di"],
+      "warmup": ["short_base", "thoracic_standing", "windmill", "shoulder_prep"], "cooldown": ["cd_di"],
       "blocks": [
+        {"type": "single", "slot": {"id": "kas-fp", "core": true, "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
+        {"type": "single", "slot": {"id": "kas-icc", "core": true, "name": "Incline Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
         {"type": "single", "slot": {"id": "kb-3", "core": true, "name": "Chest Press Machine", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "kas-csr", "core": true, "name": "Chest-Supported Row Machine", "home": "Chest-Supported Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "ka-3", "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "kas-fp", "core": true, "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "kas-icc", "core": true, "name": "Incline Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}}
+        {"type": "single", "slot": {"id": "ka-3", "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}}
       ]
     },
     "skill_kondition": {
       "name": "Schwert und Bestie", "location": "home", "minutes": 45, "cap": 60,
-      "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep", "neck_complex", "sword_prep"],
-      "cooldown": ["cd_mdf", "cd_ball"],
+      "warmup": ["short_base", "sword_prep", "full_prep"], "cooldown": ["cd_mdf", "cd_ball"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "einzelmesser", "fallbackFlow": "mobility"},
+        {"type": "single", "slot": {"name": "Neck Curl Complex (leichte KB)", "sets": 2, "reps": "20", "prog": "none", "rest": 45, "note": "Je Satz 5 vorwärts, 5 links, 5 rückwärts, 5 rechts. Langsam, voller Bewegungsumfang, kein Ruck.", "id": "ass-skill_-neck"}},
         {"type": "beast", "id": "sk-beast", "classes": ["bestie", "ungeheuer"]}
       ]
     },
     "kraft_b": {
       "name": "Oberkörper und Swing", "location": "gym", "minutes": 55, "cap": 60,
-      "warmup": ["short_base", "lat_box", "dislocate", "core_prep", "hip9090"],
-      "cooldown": ["cd_mdf"],
+      "warmup": ["short_base", "lat_box", "dislocate", "hip9090"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "single", "slot": {"id": "kb-1", "core": true, "name": "KB Swing", "home": "KB Swing", "reise": {"name": "Band Pull-Through", "reps": "15-20", "prog": "reps"}, "sets": 4, "reps": "15", "prog": "double", "rest": 60, "note": "zuerst, solange die Technik frisch ist"}},
         {"type": "single", "slot": {"id": "kas-7", "core": true, "name": "Dip", "load": "plate", "home": {"name": "Ring Dip", "reps": "6-10"}, "reise": {"name": "Deficit Push-Up", "reps": "AMRAP"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120, "note": "tief bis die Brust dehnt"}},
@@ -70,7 +67,7 @@
     },
     "bonus": {
       "name": "Bonus: Unterarme und Nacken", "location": "home", "minutes": 45,
-      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
           {"id": "bx-as-fa", "name": "Wrist Curl", "sets": 3, "reps": "12-20", "prog": "double"},
@@ -80,7 +77,8 @@
           {"id": "bx-as-na", "name": "Neck Curl", "sets": 2, "reps": "15-25", "prog": "reps"},
           {"id": "bx-as-nb", "name": "Neck Extension", "sets": 2, "reps": "15-25", "prog": "reps"}
         ]},
-        {"type": "beast", "id": "bx-as-bst", "classes": ["plage"]}, {"type": "beast", "id": "bx-as-bst2", "classes": ["plage"]}
+        {"type": "beast", "id": "bx-as-bst", "classes": ["plage"]},
+        {"type": "beast", "id": "bx-as-bst2", "classes": ["plage"]}
       ]
     }
   }

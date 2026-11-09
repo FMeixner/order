@@ -20,7 +20,7 @@
   "roles": {
     "studio_kraft": {
       "name": "Studio-Kraft", "location": "gym", "minutes": 55,
-      "warmup": ["base", "lower_prep"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "lower_prep", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "superset", "rest": 150, "slots": [
           {"id": "c-s-1a", "core": true, "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Bulgarian Split Squat", "reps": "10-12/Seite", "prog": "reps"}, "sets": 4, "reps": "5-6", "prog": "double"},
@@ -37,7 +37,7 @@
     },
     "unterwegs_kraft": {
       "name": "Unterwegs-Kraft", "location": "reise", "minutes": 40,
-      "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "rotation": "A", "slot": {"id": "c-u-a1", "core": true, "name": "Bulgarian Split Squat", "sets": 3, "reps": "12-15/Seite", "prog": "reps", "rest": 60}},
         {"type": "single", "rotation": "A", "slot": {"id": "c-u-a2", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "8-15", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"], "rest": 90}},
@@ -56,7 +56,7 @@
     },
     "work_capacity": {
       "name": "Belastbarkeit", "location": "reise", "minutes": 35,
-      "warmup": ["base", "jump_prep"], "cooldown": ["cd_lower"],
+      "warmup": ["short_base", "jump_prep", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "module", "module": "longsword", "variant": "bookend"},
         {"type": "beast", "id": "c-w-1", "classes": ["ungeheuer"], "benchmark_every": 3, "note": "Jede dritte Woche: Bestie aus Woche 1 als Zwischenwert."}
@@ -72,11 +72,12 @@
     },
     "bonus": {
       "name": "Bonus: Tragen und Griff", "location": "reise", "minutes": 40,
-      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-co-f", "name": "Farmer's Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60, "reise": {"name": "Suitcase Carry"}}},
         {"type": "single", "slot": {"id": "bx-co-h", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}},
-        {"type": "beast", "id": "bx-co-bst", "classes": ["bestie"]}, {"type": "beast", "id": "bx-co-bst2", "classes": ["plage"]}
+        {"type": "beast", "id": "bx-co-bst", "classes": ["bestie"]},
+        {"type": "beast", "id": "bx-co-bst2", "classes": ["plage"]}
       ]
     }
   }

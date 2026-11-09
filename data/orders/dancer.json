@@ -1,16 +1,15 @@
 {
   "schema": 1,
   "id": "dancer",
-  "name": "Dancer",
-  "name_w": "Tänzerin",
+  "name": "Dancer", "name_w": "Tänzerin",
   "tagline": "Tiefe Positionen, starke Schultern, fließende Klingen.",
   "description": "Der Beweglichkeits-Orden der belastbaren Endpositionen: Hüfte in der Dehnung unter Last, Schulter über Kopf mit Kontrolle, tiefe Beuge ohne Einbruch — die Voraussetzung für tiefe Ausfallschritte, lange Stiche und den Overhead des Langen Tanzes. Vier Tage zu Hause: Hüfte, Schulter und Brustwirbelsäule, Stab mit Fluss, Beine in der Dehnung. Donnerstags trägt der Stab die Tanzarbeit — der Zeptertanz ist der Tanz des Ordens, der Klingentanz bleibt der Lohn des Messerwegs.",
-  "goals": { "primary": "mobility", "secondary": ["strength", "skill"] },
+  "goals": {"primary": "mobility", "secondary": ["strength", "skill"]},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "intermediate–advanced",
   "session_min": 35,
-  "weeks": { "min": 8, "max": 10 },
+  "weeks": {"min": 8, "max": 10},
   "travel": true,
   "modules": ["correctives", "stab", "beast"],
   "successors": ["acrobat", "monk", "alchemist"],
@@ -18,70 +17,54 @@
   "week_3": ["huefte", "schwert_flow", "beine_dehnung"],
   "roles": {
     "huefte": {
-      "name": "Hüfte",
-      "location": "home",
-      "minutes": 35,
-      "warmup": ["hip9090", "gentle"],
-      "cooldown": ["cd_general"],
+      "name": "Hüfte", "location": "home", "minutes": 35,
+      "warmup": ["hip9090", "gentle"], "cooldown": ["cd_general"],
       "blocks": [
-        { "type": "single", "slot": { "id": "dc-h-1", "name": "KB Cossack Squat", "sets": 3, "reps": "8/Seite", "prog": "reps", "rest": 90 } },
-        { "type": "single", "slot": { "id": "dc-h-2", "name": "Pancake mit Last", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "max": 60, "step": 5, "rest": 60 } },
-        { "type": "single", "slot": { "id": "dc-h-3", "name": "Jefferson Curl (ohne Last)", "sets": 3, "reps": "8", "prog": "ladder", "ladder": ["Jefferson Curl (ohne Last)", "Jefferson Curl"], "rest": 90 } },
-        { "type": "single", "slot": { "id": "dc-h-4", "name": "Hüftbeuger-Halt mit KB", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "max": 60, "step": 5, "rest": 45, "note": "pro Seite" } },
-        { "type": "single", "slot": { "id": "dc-h-5", "name": "Spagat-Übergang", "kind": "timer", "minutes": 5, "max": 10, "step": 1, "prog": "minutes", "note": "Spannweite explorieren, nie verrenken." } }
+        {"type": "single", "slot": {"id": "dc-h-1", "name": "KB Cossack Squat", "sets": 3, "reps": "8/Seite", "prog": "reps", "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-h-2", "name": "Pancake mit Last", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "max": 60, "step": 5, "rest": 60}},
+        {"type": "single", "slot": {"id": "dc-h-3", "name": "Jefferson Curl (ohne Last)", "sets": 3, "reps": "8", "prog": "ladder", "ladder": ["Jefferson Curl (ohne Last)", "Jefferson Curl"], "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-h-4", "name": "Hüftbeuger-Halt mit KB", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "max": 60, "step": 5, "rest": 45, "note": "pro Seite"}},
+        {"type": "single", "slot": {"id": "dc-h-5", "name": "Spagat-Übergang", "kind": "timer", "minutes": 5, "max": 10, "step": 1, "prog": "minutes", "note": "Spannweite explorieren, nie verrenken."}}
       ]
     },
     "schulter_bws": {
-      "name": "Schulter und BWS",
-      "location": "home",
-      "minutes": 35,
-      "warmup": ["shoulder_prep", "dislocate", "thoracic_roller"],
-      "cooldown": ["cd_general"],
+      "name": "Schulter und BWS", "location": "home", "minutes": 35,
+      "warmup": ["short_base", "shoulder_prep", "dislocate", "thoracic_roller"], "cooldown": ["cd_upper"],
       "blocks": [
-        { "type": "single", "slot": { "id": "dc-s-1", "name": "DB Pullover", "sets": 3, "reps": "10", "prog": "weight", "rest": 90 } },
-        { "type": "single", "slot": { "id": "dc-s-2", "name": "Deficit Push-Up", "sets": 3, "reps": "8", "prog": "reps", "rest": 90 } },
-        { "type": "single", "slot": { "id": "dc-s-3", "name": "Brücken-Leiter", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "max": 45, "step": 5, "rest": 60 } },
-        { "type": "single", "slot": { "id": "dc-s-4", "name": "German Hang", "kind": "hold", "hold": 20, "sets": 4, "prog": "hold", "max": 45, "step": 5, "rest": 60, "note": "An den Ringen, Last langsam erhöhen." } },
-        { "type": "single", "slot": { "id": "dc-s-5", "name": "KB Windmill", "sets": 3, "reps": "6/Seite", "prog": "weight", "rest": 90 } },
-        { "type": "single", "slot": { "id": "dc-s-6", "name": "KB Halo", "sets": 2, "reps": "8/Seite", "prog": "none", "rest": 60 } }
+        {"type": "single", "slot": {"id": "dc-s-1", "name": "DB Pullover", "sets": 3, "reps": "10", "prog": "weight", "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-s-2", "name": "Deficit Push-Up", "sets": 3, "reps": "8", "prog": "reps", "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-s-3", "name": "Brücken-Leiter", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "max": 45, "step": 5, "rest": 60}},
+        {"type": "single", "slot": {"id": "dc-s-4", "name": "German Hang", "kind": "hold", "hold": 20, "sets": 4, "prog": "hold", "max": 45, "step": 5, "rest": 60, "note": "An den Ringen, Last langsam erhöhen."}},
+        {"type": "single", "slot": {"id": "dc-s-5", "name": "KB Windmill", "sets": 3, "reps": "6/Seite", "prog": "weight", "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-s-6", "name": "KB Halo", "sets": 2, "reps": "8/Seite", "prog": "none", "rest": 60}}
       ]
     },
     "schwert_flow": {
-      "name": "Stab und Fluss",
-      "location": "home",
-      "minutes": 40,
-      "cap": 55,
-      "warmup": ["short_base", "shoulder_prep", "sword_prep"],
-      "cooldown": ["cd_calm"],
+      "name": "Stab und Fluss", "location": "home", "minutes": 40, "cap": 55,
+      "warmup": ["short_base", "sword_prep", "full_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        { "type": "module", "module": "stab", "variant": "lernweg", "fallbackFlow": "taichi" },
-        { "type": "single", "slot": { "id": "dc-w-1", "name": "Mobility-Nachlauf", "kind": "timer", "minutes": 6, "max": 12, "step": 1, "prog": "minutes", "note": "Was der Stab geöffnet hat, halten: Hüftöffner und Schulter-Dislocates." } },
-        { "type": "beast", "id": "dc-w-2", "classes": ["plage", "bestie"] }
+        {"type": "module", "module": "stab", "variant": "lernweg", "fallbackFlow": "taichi"},
+        {"type": "single", "slot": {"id": "dc-w-1", "name": "Mobility-Nachlauf", "kind": "timer", "minutes": 6, "max": 12, "step": 1, "prog": "minutes", "note": "Was der Stab geöffnet hat, halten: Hüftöffner und Schulter-Dislocates."}},
+        {"type": "beast", "id": "dc-w-2", "classes": ["plage", "bestie"]}
       ]
     },
     "beine_dehnung": {
-      "name": "Beine in der Dehnung",
-      "location": "home",
-      "minutes": 35,
-      "warmup": ["lower_prep", "hip9090"],
-      "cooldown": ["cd_lower"],
+      "name": "Beine in der Dehnung", "location": "home", "minutes": 35,
+      "warmup": ["short_base", "lower_prep", "hip9090"], "cooldown": ["cd_lower"],
       "blocks": [
-        { "type": "single", "slot": { "id": "dc-b-1", "name": "ATG Split Squat", "sets": 3, "reps": "10/Seite", "prog": "reps", "rest": 90 } },
-        { "type": "single", "slot": { "id": "dc-b-2", "name": "Sissy Squat", "sets": 3, "reps": "8", "prog": "reps", "rest": 90 } },
-        { "type": "single", "slot": { "id": "dc-b-3", "name": "Bodyweight Leg Extension", "sets": 3, "reps": "12", "prog": "none", "rest": 60 } },
-        { "type": "single", "slot": { "id": "dc-b-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "4", "prog": "reps", "rest": 150 } },
-        { "type": "single", "slot": { "id": "dc-b-5", "name": "Plage", "kind": "hold", "hold": 40, "sets": 3, "prog": "hold", "max": 90, "step": 10, "rest": 60 } }
+        {"type": "single", "slot": {"id": "dc-b-1", "name": "ATG Split Squat", "sets": 3, "reps": "10/Seite", "prog": "reps", "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-b-2", "name": "Sissy Squat", "sets": 3, "reps": "8", "prog": "reps", "rest": 90}},
+        {"type": "single", "slot": {"id": "dc-b-3", "name": "Bodyweight Leg Extension", "sets": 3, "reps": "12", "prog": "none", "rest": 60}},
+        {"type": "single", "slot": {"id": "dc-b-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "4", "prog": "reps", "rest": 150}},
+        {"type": "single", "slot": {"id": "dc-b-5", "name": "Plage", "kind": "hold", "hold": 40, "sets": 3, "prog": "hold", "max": 90, "step": 10, "rest": 60}}
       ]
     },
     "bonus": {
-      "name": "Bonus: Freier Fluss",
-      "location": "home",
-      "minutes": 25,
-      "warmup": ["gentle"],
-      "cooldown": ["cd_calm"],
+      "name": "Bonus: Freier Fluss", "location": "home", "minutes": 25,
+      "warmup": ["gentle"], "cooldown": ["cd_calm"],
       "blocks": [
-        { "type": "single", "slot": { "id": "dc-x-1", "name": "Freier Mobility-Flow", "kind": "timer", "minutes": 10, "max": 20, "step": 1, "prog": "minutes", "note": "Wohin der Körper heute will." } },
-        { "type": "beast", "id": "dc-x-2", "classes": ["plage"] }
+        {"type": "single", "slot": {"id": "dc-x-1", "name": "Freier Mobility-Flow", "kind": "timer", "minutes": 10, "max": 20, "step": 1, "prog": "minutes", "note": "Wohin der Körper heute will."}},
+        {"type": "beast", "id": "dc-x-2", "classes": ["plage"]}
       ]
     }
   }

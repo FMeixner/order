@@ -31,7 +31,7 @@
     "even": {
       "intervalle": {
         "name": "Grundlage statt Intervallen", "location": "reise", "minutes": 40,
-        "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+        "warmup": ["short_base", "run_prep", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
         "blocks": [
           {"type": "single", "slot": {"id": "rh-hl-g", "name": "Lockere Grundlage", "kind": "timer", "minutes": 35, "max": 45, "step": 5, "prog": "minutes", "note": "Hohe Alltagslast: diese Woche locker statt Intervalle. Sprechtempo."}},
           {"type": "superset", "rest": 60, "slots": [
@@ -45,7 +45,7 @@
   "roles": {
     "intervalle": {
       "name": "Intervalle", "location": "reise", "minutes": 45,
-      "warmup": ["run_prep"], "cooldown": ["cd_lower"],
+      "warmup": ["short_base", "run_prep", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "rh-i-1", "name": "Intervalle 4 × 4 Min", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none", "note": "85–95 % der maximalen Herzfrequenz. Lauf, Rad oder Rudern."}},
         {"type": "superset", "rest": 60, "slots": [
@@ -56,7 +56,7 @@
     },
     "kraft_kurz": {
       "name": "Kraft-Erhaltung", "location": "home", "minutes": 50,
-      "warmup": ["base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "rh-k-1", "core": true, "name": "Single-Leg RDL", "sets": 3, "reps": "10-15/Seite", "prog": "reps", "rest": 60}},
         {"type": "single", "slot": {"id": "rh-k-2", "core": true, "name": "Table Row", "sets": 3, "reps": "10-20", "prog": "ladder", "ladder": ["Table Row", "Ring Row", "Ring Row (Füße erhöht)"], "rest": 75}},
@@ -68,7 +68,7 @@
     },
     "bestie_lang": {
       "name": "Lange Bestie", "location": "home", "minutes": 40,
-      "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
+      "warmup": ["short_base", "jump_prep", "full_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "beast", "id": "rh-b-1", "classes": ["uralte"]}
       ]
@@ -82,7 +82,7 @@
     },
     "bonus": {
       "name": "Bonus: Füße und Schienbein", "location": "home", "minutes": 45,
-      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "lower_prep"], "cooldown": ["cd_lower"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-pi-c", "name": "Single-Leg Calf Raise", "sets": 3, "reps": "12-20/Seite", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "bx-pi-t", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},

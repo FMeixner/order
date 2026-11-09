@@ -18,7 +18,7 @@
   "roles": {
     "skill_zug": {
       "name": "Skill Zug", "location": "home", "minutes": 40,
-      "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "shoulder_prep"], "cooldown": ["cd_upper"],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-z-1", "name": "Front Lever (Tuck)", "kind": "hold", "hold": 8, "sets": 5, "prog": "ladder", "ladder": ["Front Lever (Tuck)", "Front Lever (Advanced Tuck)", "Front Lever (ein Bein)", "Front Lever (Straddle)"], "rest": 90, "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}}},
         {"type": "single", "slot": {"id": "pm-z-2", "name": "Pull-Up", "sets": 4, "reps": "3-8", "prog": "ladder", "ladder": ["Pull-Up", "Chest-to-Bar Pull-Up", "Muscle-Up-Übergang (Band)"], "rest": 120, "reise": {"name": "Band Pulldown", "reps": "10-12", "prog": "reps"}}},
@@ -29,7 +29,7 @@
     },
     "animal_flow": {
       "name": "Animal Flow", "location": "reise", "minutes": 40,
-      "warmup": ["base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-a-1", "name": "Bear Crawl, Crab Walk, Ape Walk (Zirkel)", "sets": 3, "reps": "20 m je Form", "prog": "none", "rest": 60}},
         {"type": "module", "module": "flow", "variant": "animal"},
@@ -39,7 +39,7 @@
     },
     "skill_druck": {
       "name": "Skill Druck", "location": "home", "minutes": 40,
-      "warmup": ["base", "dislocate"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "dislocate", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "pm-d-1", "name": "Wall Handstand (Brust zur Wand)", "kind": "hold", "hold": 30, "sets": 5, "prog": "ladder", "ladder": ["Wall Handstand (Brust zur Wand)", "Wall Handstand (Zehen weg)", "Freier Handstand (Versuche)"], "rest": 60}},
         {"type": "single", "slot": {"id": "pm-d-2", "name": "Pike Push-Up", "sets": 4, "reps": "5-8", "prog": "ladder", "ladder": ["Pike Push-Up", "Pike Push-Up (Füße erhöht)", "Wall Handstand Push-Up (Teilbereich)"], "rest": 90}},
@@ -63,7 +63,7 @@
     },
     "bonus": {
       "name": "Bonus: Handgelenke und Handstand", "location": "home", "minutes": 30,
-      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-ac-w", "name": "Wrist Prep", "sets": 2, "reps": "10", "prog": "none", "rest": 30}},
         {"type": "single", "slot": {"id": "bx-ac-h", "name": "Freier Handstand (Versuche)", "kind": "timer", "minutes": 10, "prog": "none"}},

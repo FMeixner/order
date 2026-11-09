@@ -15,7 +15,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Studio",
       dumbbells: range(2.5, 50, 2.5), kettlebells: [8, 12, 16, 20, 24, 28, 32],
       barbell: { bar: 20, smallestPlate: 1.25 }, cableStep: 2.5, machineStep: 5, vest: [], bands: [],
-      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false, handles: true, dip: true, wheel: true, run: true, sprint: false, rope: true },
+      has: { bar: true, rings: false, bench: true, rower: true, bike: true, box: true, sandbag: false, cable: true, machines: true, medball: false, sword: false, handles: true, dip: true, wheel: true, run: true, sprint: false, rope: true, roll: true, ball: false },
     }),
   },
   {
@@ -24,7 +24,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Zuhause",
       dumbbells: range(2, 24, 2), kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: true, run: true, sprint: false, rope: true },
+      has: { bar: true, rings: false, bench: true, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: true, run: true, sprint: false, rope: true, roll: true, ball: true },
     }),
   },
   {
@@ -33,7 +33,7 @@ export const EQUIPMENT_PRESETS: { label: string; make: () => EquipmentProfile }[
       id: uid("eq"), name: "Unterwegs",
       dumbbells: [], kettlebells: [], barbell: null, cableStep: 2.5, machineStep: 5, vest: [],
       bands: ["leicht", "mittel", "schwer"],
-      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: false, run: true, sprint: false, rope: false },
+      has: { bar: false, rings: false, bench: false, rower: false, bike: false, box: false, sandbag: false, cable: false, machines: false, medball: false, sword: false, handles: false, dip: false, wheel: false, run: true, sprint: false, rope: false, roll: false, ball: false },
     }),
   },
 ];

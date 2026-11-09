@@ -19,7 +19,7 @@
   "roles": {
     "kraft_a": {
       "name": "Kraft A", "location": "home", "minutes": 40,
-      "warmup": ["base"], "cooldown": ["cd_calm"],
+      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "zw-a-1", "core": true, "name": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "zw-a-2", "core": true, "name": "Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Incline Push-Up", "Push-Up", "Deficit Push-Up"], "rest": 90}},
@@ -39,7 +39,7 @@
     },
     "kraft_b": {
       "name": "Kraft B", "location": "home", "minutes": 50,
-      "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_calm"],
+      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "zw-b-1", "core": true, "name": "KB Cossack Squat", "reise": {"name": "Cossack Squat", "reps": "8-10/Seite", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "zw-b-2", "core": true, "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 90}},
@@ -60,7 +60,7 @@
     },
     "bonus": {
       "name": "Bonus: Qigong", "location": "reise", "minutes": 40,
-      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "baduanjin"},
         {"type": "beast", "id": "bx-mo-bst", "classes": ["bestie"], "pace": "easy"}

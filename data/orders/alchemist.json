@@ -29,7 +29,7 @@
     },
     "haltung_kraft": {
       "name": "Haltungskraft", "location": "home", "minutes": 50,
-      "warmup": ["base", "neck_complex"], "cooldown": ["cd_speaker"],
+      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_speaker"],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
           {"id": "mg-h-pp-a", "core": true, "name": "DB Pullover", "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
@@ -40,6 +40,7 @@
           {"id": "mg-h-1a", "core": true, "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "reps"},
           {"id": "mg-h-1b", "name": "Prone Y-T-W", "sets": 3, "reps": "6", "prog": "reps", "note": "je Buchstabe"}
         ]},
+        {"type": "single", "slot": {"name": "Neck Curl Complex (leichte KB)", "sets": 2, "reps": "20", "prog": "none", "rest": 45, "note": "Je Satz 5 vorwärts, 5 links, 5 rückwärts, 5 rechts. Langsam, voller Bewegungsumfang, kein Ruck.", "id": "alc-haltun-neck"}},
         {"type": "beast", "id": "mg-h-bst", "classes": ["plage"]}
       ]
     },
@@ -62,7 +63,7 @@
     },
     "bonus": {
       "name": "Bonus: Hände und Handgelenke", "location": "home", "minutes": 25,
-      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "bx-al-w", "name": "Wrist Prep", "sets": 2, "reps": "10", "prog": "none", "rest": 30}},
         {"type": "single", "slot": {"id": "bx-al-p", "name": "Plate Pinch", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "rest": 45, "max": 45, "step": 5}},

@@ -41,7 +41,10 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 - Entlastung (Rhythmus ab Woche 5 alle vier) rastet auf einen Ordenswechsel ±2 Wochen ein (`rhythmWeeks` in `deload.ts`).
 - Jeder Trainingstag ist normal lang geplant, auch der Dienstag; gekürzt wird nur über „Anpassen › Kurz“. Kein Orden plant einen Kurztag ein (das alte `shortRole` der Phase wirkt nicht mehr).
 - Schwert hat eine Sonderrolle: Tagesknopf und Vorschau zeigen den Schwertblock auch für ein Profil ohne Schwert, darunter den Ersatz. Ersatz ohne Schwert: `fallbackFlow` (geführter Flow aus `flows.json`, z. B. `mobility`) oder `fallback` (eine Übung, z. B. Schattenboxen).
-- Aufwärmsätze nur nach Last und Verletzungsrisiko (`warmCount` in `warmup.ts`), nicht nach Wiederholungen oder Mehrgelenkigkeit.
+- Aufwärmsätze nur nach Last und Verletzungsrisiko (`warmCount` in `warmup.ts`), nicht nach Wiederholungen oder Mehrgelenkigkeit. Ging eine Isolationsübung für einen Hauptmuskel voraus, ein Satz weniger (schwere Langhantel mindestens einer).
+- Warm-up (Vorgabe 09.11.2026): nur Beweglichkeit und Bereitschaft für den Tag (short_base + bis zu drei passende Listen), keine Kraft- oder Aufbauübungen — die gehören in den Trainingsteil (Neck Curl Complex ist eine Trainingsübung). Cool-down: wenige große Dehnungen der trainierten Teile, 45–60 s (`cd_upper`, `cd_lower`, `cd_general`). So kurz wie möglich, so lang wie nötig. Drills mit `needs` (roll, ball) brauchen die Ausrüstung, sonst `instead`.
+- Reihenfolge (Vorgabe 09.11.2026): 1–2 Isolationsübungen vor der ersten Grundübung (erweitertes Warm-up, leichte Vorermüdung), dann die Grundübungen, dann die restlichen Isolationen. Hypertrophie-Orden: Synergist (Curl vor Row, Fly vor Bench). Kraft-Orden: nur Muskeln, die der erste Lift nicht braucht (Leg Curl vor Front Squat). Kein Griff-Ermüden vor Ziehen und Heben, keine Rumpfübung vor schweren Kniebeugen.
+- Orden-Dateien kompakt halten (eine Zeile je Block, Supersets je Slot eine Zeile), nicht mit `indent=2` neu schreiben.
 
 ## Arbeitsablauf je Release
 1. Eintrag in `CHANGELOG.md` (Keep a Changelog, Deutsch, für Nutzer formuliert).

@@ -672,6 +672,8 @@ export function expandDrills(listNames: string[] | undefined, _user: UserProfile
   return out;
 }
 
+const DRILL_BY_ID = new Map(Object.values(DRILL_LISTS).flat().map((d) => [d.id, d] as const));
+
 /** Alle Warm-up- bzw. Cool-down-Übungen des Katalogs (Cool-down: Listen „cd_…“), nach Namen */
 export function drillPool(kind: "wu" | "cd", p?: EquipmentProfile): Drill[] {
   const out = new Map<string, Drill>();
@@ -686,7 +688,13 @@ export function drillPool(kind: "wu" | "cd", p?: EquipmentProfile): Drill[] {
 export function roleDrills(role: Role, kind: "wu" | "cd", p: EquipmentProfile | undefined, user: UserProfile, week: number): DrillView[] {
   const lists = kind === "wu" ? (role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || !!p?.has.sword) : role.cooldown ?? ["cd_general"];
   const ed = role.drillEdit?.[kind];
-  const base = expandDrills(lists, user, week);
+  // Ausrüstung: fehlt Black Roll oder Ball am Ort (ausdrücklich abgewählt), gilt der Ersatz oder die Übung fällt weg
+  const missing = (d: Drill) => (d.needs ?? []).some((n) => p?.has[n] === false);
+  const base = expandDrills(lists, user, week).flatMap((v) => {
+    const d = DRILL_BY_ID.get(v.id);
+    if (!d || !missing(d)) return [v];
+    return d.instead && !missing(d.instead) ? [drillView(d.instead, week)] : [];
+  });
   if (!ed) return base;
   const off = new Set(ed.off);
   const have = new Set(base.map((d) => d.id));

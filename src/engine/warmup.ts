@@ -5,6 +5,7 @@
    - Nie: Kabel, Körpergewicht, Bänder und schwungvolle Übungen (Swing, Snatch, Clean, Sprünge, Würfe).
    - Noch kein Arbeitsgewicht bekannt: nur Mehrgelenksübungen mit Langhantel einen Satz. Für die Zeitschätzung (ohne Gewichte) zählt jede Mehrgelenksübung mit Last einen, schwere Langhantel (bis 6 Wdh oder Top-Satz) zwei.
    Je Körperhälfte bekommt nur die erste so schwere Übung des Tages Aufwärmsätze; danach ist man warm.
+   Ging eine Isolationsübung für einen ihrer Hauptmuskeln voraus, einen Satz weniger (schwere Langhantel: mindestens einer).
    Gewicht: 50 % × 8 bei einem Satz; bei zwei 50 % × 5 und 75 % × 3, auf eine vorhandene Last gelegt. */
 import type { EquipmentProfile } from "../types";
 import type { Resolved } from "./resolve";
@@ -50,10 +51,17 @@ function sideOf(name: string): Half | null {
 /** Schlüssel der Übungen, die heute Aufwärmsätze bekommen (Reihenfolge der Einheit), mit Anzahl der Sätze */
 export function warmupKeys(list: Slotish[], kgOf: (r: Slotish) => number | null | undefined = () => undefined): Map<string, number> {
   const warm = new Set<Half>();
+  const primed = new Set<string>();
   const out = new Map<string, number>();
   for (const r of list) {
-    const n = warmCount(r, kgOf(r));
+    const kg = kgOf(r);
+    let n = warmCount(r, kg);
     const h = sideOf(r.name);
+    const top = Object.entries(musclesOf(r.name)).filter(([, v]) => v >= 0.5).map(([m]) => m);
+    // Isolation vorweg (Curl vor Row, Leg Extension vor Leg Press): Der Muskel ist schon warm, ein Aufwärmsatz weniger.
+    // Schwere Langhantel (zwei Sätze) behält mindestens einen.
+    if (n && top.some((m) => primed.has(m))) n = Math.max(n >= 2 ? 1 : 0, n - 1);
+    if (r.kind === "strength") for (const m of top) primed.add(m);
     if (!n || !h || warm.has(h)) continue;
     warm.add(h);
     out.set(r.key, n);

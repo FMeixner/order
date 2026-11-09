@@ -737,6 +737,10 @@
     "equip": "bodyweight",
     "desc": "Hand gegen die Stirn, den Hinterkopf, die linke und rechte Kopfseite drücken, Kopf bleibt still."
   },
+  "Neck Curl Complex (leichte KB)": {
+    "equip": "kettlebell",
+    "desc": "Leichte Kettlebell, Nacken in alle vier Richtungen: vorwärts, links, rückwärts, rechts. Langsam, voller Bewegungsumfang, kein Ruck."
+  },
   "Neck Curl": {
     "equip": "bodyweight",
     "weighted": true

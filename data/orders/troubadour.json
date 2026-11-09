@@ -19,7 +19,7 @@
   "roles": {
     "kraft_a": {
       "name": "Kraft A", "location": "gym", "minutes": 45,
-      "warmup": ["base", "lower_prep"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "lower_prep", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "lo-a-1", "core": true, "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "lo-a-2", "core": true, "name": "Bench Press", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
@@ -40,7 +40,7 @@
     },
     "kraft_b": {
       "name": "Kraft B", "location": "gym", "minutes": 50,
-      "warmup": ["base", "shoulder_prep"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "lo-b-1", "core": true, "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "8", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "lo-b-2", "core": true, "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
@@ -55,14 +55,14 @@
     },
     "ausdauer_intensiv": {
       "name": "Ausdauer intensiv", "location": "home", "minutes": 30,
-      "warmup": ["base", "jump_prep"], "cooldown": ["cd_calm"],
+      "warmup": ["short_base", "jump_prep", "full_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "beast", "id": "lo-i-1", "classes": ["bestie"]}
       ]
     },
     "bonus": {
       "name": "Bonus: Schulterpflege", "location": "home", "minutes": 35,
-      "warmup": ["short_base"], "cooldown": ["cd_general"],
+      "warmup": ["short_base", "shoulder_prep"], "cooldown": ["cd_upper"],
       "blocks": [
         {"type": "superset", "rest": 45, "slots": [
           {"id": "bx-tr-a", "name": "Band External Rotation", "sets": 3, "reps": "12-15/Seite", "prog": "reps"},
