@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.10.1] – 2026-11-09
+
+### Geändert
+- Assassin: Drop-Set am letzten Satz von Lat Pulldown, Cable Overhead Triceps Extension und Cable Chest Fly. Im Defizit sinkt das Volumen; Drop-Sets halten den Muskelreiz in kurzer Zeit.
+
 ## [1.10.0] – 2026-11-09
 
 ### Neu
