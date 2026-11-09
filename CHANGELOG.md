@@ -2,10 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.7.1] – 2026-11-09
+
+### Geändert
+- Mercenary heißt Mercenary und ist reisetauglich: Kurzhanteln stehen zu Hause, im Studio und in jedem Hotel-Gym.
+
 ## [1.7.0] – 2026-11-09
 
 ### Neu
-- **Mercenary** (Arbeitsname), ein Kraft-Orden für zu Hause: etwa 70 % Kurzhantel (DB Bench Press, Goblet Reverse Lunge, Staggered Stance RDL, Schulterdrücken, Rudern) und 30 % Skill-Kraft (Archer Pull-Ups, Archer Push-Ups, Pistol Squats). Dazu ein Power-Tag mit DB Snatches und Supermen. Ohne schwere Last vom Boden passt er auch zu hoher Alltagslast. Heimat ist der Stier; im Fuchs läuft er früh mit, in Bär und Wolf zählt er halb.
+- **Mercenary**, ein Kraft-Orden für zu Hause: etwa 70 % Kurzhantel (DB Bench Press, Goblet Reverse Lunge, Staggered Stance RDL, Schulterdrücken, Rudern) und 30 % Skill-Kraft (Archer Pull-Ups, Archer Push-Ups, Pistol Squats). Dazu ein Power-Tag mit DB Snatches und Supermen. Ohne schwere Last vom Boden passt er auch zu hoher Alltagslast. Heimat ist der Stier; im Fuchs läuft er früh mit, in Bär und Wolf zählt er halb.
 - Neue Übungen: Archer Pull-Up, Staggered Stance DB RDL, DB Snatch, Superman, Goblet Reverse Lunge.
 
 ### Geändert
