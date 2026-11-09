@@ -82,7 +82,8 @@ export function placeWindows(sections: Section[], from: string, endOf: string): 
   const cut = (j: number) => {
     if (j === N) return 0;
     const d = bounds.length ? Math.min(...bounds.map((b) => Math.abs(b - j))) : 99;
-    return d === 0 ? 0 : d <= 2 ? d * 0.8 : 3;
+    // Exakt auf der Grenze ist deutlich besser als daneben: Ein Zeichen soll keinen Abschnitt anschneiden, wo es nicht muss
+    return d === 0 ? 0 : d <= 2 ? d * 1.5 : 4;
   };
   const dp: number[] = Array(N + 1).fill(Infinity);
   const back: number[] = Array(N + 1).fill(-1);

@@ -132,6 +132,9 @@ test("Jahr planen: Vorlage, Richtung, Zeichen, Orden, Übernehmen", async ({ pag
   await dlg.getByRole("button", { name: "Weiter" }).click();
   await dlg.getByRole("button", { name: "Vorlage Semester-Rhythmus" }).click();
   await expect(dlg.locator(".sec-row").nth(3)).toBeVisible();
+  // Abschnitte geändert: Zeichen erst neu setzen, dann wählen
+  await dlg.getByRole("button", { name: "Zeichen neu setzen" }).click();
+  await expect(dlg.getByRole("button", { name: "Zeichen neu setzen" })).toHaveCount(0);
   await expect(dlg.locator(".kl-card").first()).toBeVisible();
   // Art der ersten künftigen Klammer von Hand: Regeneration (wird gepinnt)
   await dlg.locator(".kl-card").first().getByRole("radio", { name: "Hirsch" }).click();
@@ -323,4 +326,20 @@ test("Laufen ersetzen: Auslaufen wird Rudergerät, gleiche Zeit", async ({ page 
   await page.getByRole("radio", { name: "Rudergerät" }).click();
   await expect(page.locator(".slot-name").filter({ hasText: "Rudergerät" })).toBeVisible();
   await expect(page.getByText("Lockeres Auslaufen")).toHaveCount(0);
+});
+
+test("Testwoche: Testtag mit Warm-up zum Abhaken für den ganzen Tag und Cool-down am Ende", async ({ page }) => {
+  const st = fixture();
+  st.plan = [{ id: "t1", focusId: "test", label: "Testwoche", start: st.plan[0].start, end: st.plan[0].start.slice(0, 8) + st.plan[0].start.slice(8), load: "medium", travel: false }];
+  const d = new Date(`${st.plan[0].start}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 6);
+  st.plan[0].end = d.toISOString().slice(0, 10);
+  await seed(page, st);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Park" }).click();
+  await expect(page.locator(".collapse-head").filter({ hasText: "Warm-up" })).toHaveCount(1);
+  await expect(page.locator(".collapse-head").filter({ hasText: "Cool-down" })).toHaveCount(1);
+  await page.locator(".collapse-head").filter({ hasText: "Warm-up" }).click();
+  await page.locator(".drill .set-btn").filter({ hasText: "×" }).first().click();
+  const saved = await stored(page);
+  expect(Object.keys(saved.testDrills?.["t1:Park"] ?? {}).length).toBe(1);
 });

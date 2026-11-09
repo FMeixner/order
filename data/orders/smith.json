@@ -23,7 +23,7 @@
       "name": "Kraft 1: Squat und Bench", "location": "gym", "minutes": 60,
       "warmup": ["short_base", "lower_prep", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "pf-1-1", "core": true, "name": "Back Squat", "home": "Goblet Squat", "sets": 4, "reps": "5", "prog": "topset", "step": 2, "rest": 180, "note": "1 Top-Satz, dann 3 Sätze mit −10 %"}},
+        {"type": "single", "slot": {"id": "pf-1-1", "core": true, "name": "Back Squat", "home": "Goblet Squat", "sets": 4, "reps": "5", "prog": "topset", "step": 2, "rest": 180, "note": "1 Top-Satz, dann 3 Sätze mit −10 %", "cluster": {"size": 2, "rest": 20, "when": "high"}}},
         {"type": "single", "slot": {"id": "pf-1-2", "core": true, "name": "Bench Press", "home": "DB Bench Press", "sets": 4, "reps": "5", "prog": "topset", "step": 1, "rest": 180, "note": "1 Top-Satz, dann 3 Sätze mit −10 %"}},
         {"type": "single", "slot": {"id": "pf-1-3", "core": true, "name": "Pull-Up", "load": "plate", "home": {"name": "Pull-Up", "load": "plate"}, "sets": 4, "reps": "5-6", "prog": "double", "rest": 150}},
         {"type": "superset", "rest": 60, "slots": [
@@ -36,7 +36,7 @@
       "name": "Kraft 2: Deadlift und Press", "location": "gym", "minutes": 60,
       "warmup": ["short_base", "lat_box", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "pf-2-1", "core": true, "name": "Deadlift", "home": "KB Deadlift", "sets": 3, "reps": "3", "prog": "topset", "step": 2, "rest": 210, "note": "1 Top-Satz, dann 2 Sätze mit −10 %"}},
+        {"type": "single", "slot": {"id": "pf-2-1", "core": true, "name": "Deadlift", "home": "KB Deadlift", "sets": 3, "reps": "3", "prog": "topset", "step": 2, "rest": 210, "note": "1 Top-Satz, dann 2 Sätze mit −10 %", "cluster": {"size": 1, "rest": 20, "when": "high"}}},
         {"type": "single", "slot": {"id": "pf-2-2", "core": true, "name": "Overhead Press", "home": "DB Shoulder Press", "sets": 4, "reps": "5", "prog": "topset", "step": 1, "rest": 180}},
         {"type": "single", "slot": {"id": "pf-2-3", "core": true, "name": "Barbell Row", "home": "Ring Row", "sets": 3, "reps": "8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "pf-2-4", "name": "Hip Thrust", "home": "DB Hip Thrust", "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
@@ -51,7 +51,7 @@
       "warmup": ["short_base", "lower_prep", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "pf-3-4", "name": "Lying Leg Curl", "home": {"name": "Nordic Curl Negative", "reps": "4-8", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
-        {"type": "single", "slot": {"id": "pf-3-1", "core": true, "name": "Front Squat", "home": "Goblet Squat", "sets": 4, "reps": "4-6", "prog": "double", "rest": 180}},
+        {"type": "single", "slot": {"id": "pf-3-1", "core": true, "name": "Front Squat", "home": "Goblet Squat", "sets": 4, "reps": "4-6", "prog": "double", "rest": 180, "cluster": {"size": 2, "rest": 20, "when": "high"}}},
         {"type": "single", "slot": {"id": "pf-3-2", "core": true, "name": "Incline Bench Press", "home": "Incline DB Press", "sets": 4, "reps": "6", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "pf-3-3", "core": true, "name": "Chin-Up", "load": "plate", "home": {"name": "Chin-Up", "load": "plate"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 150}},
         {"type": "superset", "rest": 60, "slots": [

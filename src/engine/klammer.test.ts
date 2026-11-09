@@ -260,3 +260,13 @@ describe("Entlastung und Testwoche", () => {
     expect(rhythmWeeks([a, t], a, 9)).toEqual([5]);
   });
 });
+
+describe("Zeichen an Abschnittsgrenzen", () => {
+  it("passt eine Grenze in 8–16 Wochen, sitzt der Schnitt genau darauf", () => {
+    const secs = [sec(T, 10, "high", "A"), sec(addDays(T, 70), 12, "low", "B"), sec(addDays(T, 154), 14, "medium", "C")];
+    const w = placeWindows(secs, T, secs[2].end);
+    expect(w.map((x) => x.weeks)).toEqual([10, 12, 14]);
+    const secs2 = [sec(T, 11, "high", "A"), sec(addDays(T, 77), 11, "low", "B"), sec(addDays(T, 154), 14, "medium", "C")];
+    expect(placeWindows(secs2, T, secs2[2].end).map((x) => x.weeks)).toEqual([11, 11, 14]);
+  });
+});

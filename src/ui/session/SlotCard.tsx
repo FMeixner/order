@@ -220,6 +220,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
           {r.swapped && <span className="tag amber" title={`statt ${r.original}`}>getauscht</span>}
           {r.regressedFrom && <span className="tag" title={`statt ${r.regressedFrom}: Skill noch nicht abgehakt`}>leichter</span>}
           {r.finish && <span className="tag finish" title={finishText(r.finish)}>{FINISH_TAG[r.finish.kind]}</span>}
+          {r.cluster && <span className="tag teal" title="Cluster-Satz">Cluster</span>}
         </div>
         <div className="slot-icons">
           <Desc text={desc} />
@@ -242,6 +243,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
         </div>
       )}
       {r.finish && <div className="muted small">{finishText(r.finish)}</div>}
+      {r.cluster && <div className="muted small">Cluster: je Satz in Portionen zu {r.cluster.size === 1 ? "einer Wiederholung" : `${r.cluster.size} Wiederholungen`}, {r.cluster.rest} s Pause dazwischen — jede Wiederholung so schnell wie die erste.</div>}
       {warmSets.length > 0 && (
         <div className="muted small">Satz 0 aufwärmen: {warmSets.map((w) => `${w.reps} × ${w.kg != null ? kg(w.kg) : "leicht"}`).join(", dann ")}{warmSets.every((w) => w.kg == null) ? " (halbes Gewicht)" : ""}</div>
       )}

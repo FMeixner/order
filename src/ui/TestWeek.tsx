@@ -6,8 +6,9 @@ import { parseClock } from "../engine/clock";
 import type { AppState, Cup, PlanBlock, TestDef, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { Collapse, Desc } from "./common";
-import { Evaluation } from "./Evaluation";
+import { DrillList } from "./session/Drills";
 import { fmt } from "./Timer";
+import { Evaluation } from "./Evaluation";
 import { RavenCup, RavenTournament, ravenOn } from "./Raven";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -161,19 +162,54 @@ export function TestWeek({ state, update, block, today, preview = false }: { sta
           );
         })}
       </div>
-      {TESTWEEK.cups.filter((cup) => cup.place === sel?.place).map((cup) => (
+      {sel && <TestDay state={state} update={update} block={block} today={today} place={sel.place} preview={preview} saveTest={saveTest} />}
+      <Evaluation state={state} blockId={block.id} update={preview ? undefined : update} />
+      <div className="muted small">{preview ? "Vorschau der Testwoche. " : "Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. "}Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
+    </div>
+  );
+}
+
+/** Ein Testtag wie eine Einheit: ein Warm-up zum Abhaken mit Timer (der zweite Cup am Ort braucht keins),
+    dann die Cups, am Ende des Tages das Cool-down. */
+function TestDay({ state, update, block, today, place, preview, saveTest }: {
+  state: AppState; update: Update; block: PlanBlock; today: string; place: string; preview: boolean;
+  saveTest: (t: TestDef, value: number, raw: string, variant?: string) => void;
+}) {
+  const cups = TESTWEEK.cups.filter((c) => c.place === place);
+  // Warm-up einmal für den Tag: die Listen aller Cups am Ort, ohne Doppelte, in Reihenfolge des ersten Cups
+  const warm = expandDrills([...new Set(cups.flatMap((c) => c.warmup))], state.user, 1);
+  const coolLists = cups[cups.length - 1]?.cooldown ?? [];
+  const cool = expandDrills(coolLists, state.user, 1);
+  const key = `${block.id}:${place}`;
+  const done = state.testDrills?.[key] ?? {};
+  const toggle = (k: string, i: number) => {
+    if (preview) return;
+    update((st) => {
+      const day = { ...(st.testDrills?.[key] ?? {}) };
+      const arr = [...(day[k] ?? [])];
+      arr[i] = !arr[i];
+      day[k] = arr;
+      return { ...st, testDrills: { ...(st.testDrills ?? {}), [key]: day } };
+    });
+  };
+  return (
+    <>
+      <Collapse title="Warm-up" meta={`${warm.length} Übungen · für den ganzen Tag`} tone="amber">
+        <DrillList drills={warm} done={done} prefix="wu" onToggle={toggle} />
+      </Collapse>
+      {cups.map((cup) => (
         <Collapse key={cup.id} title={cup.name} meta={cup.focus} tone="teal" defaultOpen>
-          <Collapse title="Warm-up" meta={`${expandDrills(cup.warmup, state.user, 1).length} Übungen`}>
-            <ul className="slot-list">{expandDrills(cup.warmup, state.user, 1).map((d) => <li key={d.id}>{d.name} · {d.groups.map((g) => `${g.label ? g.label + " " : ""}${d.mode === "reps" ? g.value + "×" : fmt(g.value)}`).join(", ")}</li>)}</ul>
-          </Collapse>
           {cup.who5 && !preview && <Who5 state={state} update={update} block={block} />}
           {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} preview={preview} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} />)}
           <Benchmark cup={cup} state={state} update={update} preview={preview} />
           {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
         </Collapse>
       ))}
-      <Evaluation state={state} blockId={block.id} update={preview ? undefined : update} />
-      <div className="muted small">{preview ? "Vorschau der Testwoche. " : "Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. "}Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
-    </div>
+      {cool.length > 0 && (
+        <Collapse title="Cool-down" meta={`${cool.length} Übungen`} tone="amber">
+          <DrillList drills={cool} done={done} prefix="cd" onToggle={toggle} />
+        </Collapse>
+      )}
+    </>
   );
 }

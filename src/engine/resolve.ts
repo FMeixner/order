@@ -25,6 +25,8 @@ export interface Resolved {
   note?: string;
   /** Satzende am letzten Satz (Myo-Reps, Drop-Set, mechanischer Drop), nur wenn es zur aufgelösten Übung passt */
   finish?: Finish;
+  /** Cluster-Satz: Portionen mit kurzer Pause (nur an der Hauptübung des Slots) */
+  cluster?: { size: number; rest: number };
   proposal?: boolean;
   missingEquipment: boolean;
   loadable: boolean;
@@ -209,6 +211,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
     note: slot.note,
     why: slot.why,
     finish: finishFor(slot, c.name, kind, loadable, equip),
+    cluster: kind === "strength" && c.name === slot.name ? slot.cluster : undefined,
     proposal: slot.proposal,
     missingEquipment: !chosen,
     loadable,

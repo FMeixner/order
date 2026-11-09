@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.11.0] – 2026-11-09
+
+### Neu
+- **Zeichen neu setzen:** Änderst du in „Jahr planen“, Schritt 2, die Lebensabschnitte, erscheint ein Knopf „Zeichen neu setzen“. Er ordnet Zeichen, Orden und Kalorien neu nach Zielen und Zeiträumen; eigene Wahl aus dem Assistenten und alte Festlegungen künftiger Phasen fallen dabei weg. Wer weiterblättert oder übernimmt, ohne zu tippen, bekommt die neue Zuordnung automatisch.
+- **Testwoche wie eine Einheit:** Jeder Testtag hat ein Warm-up zum Abhaken mit Timer, einmal für den ganzen Tag (der zweite Cup am Ort braucht keins), und am Ende ein Cool-down. Die Übungen selbst bleiben gleich, damit die Testwerte vergleichbar bleiben.
+- **Cluster-Sätze:** Smith macht Kniebeugen und Deadlift in Phasen mit hoher Alltagslast in Portionen mit 20 s Pause (Deadlift als Einzelwiederholungen). Scout macht den Hang Power Clean immer so. Gleiche Anpassung, weniger Ermüdung, schnellere Wiederholungen.
+
+### Geändert
+- Zeichen sitzen genauer auf den Abschnittsgrenzen: Passt eine Grenze in 8–16 Wochen, schneidet das Zeichen den Abschnitt nicht mehr an.
+
 ## [1.10.1] – 2026-11-09
 
 ### Geändert

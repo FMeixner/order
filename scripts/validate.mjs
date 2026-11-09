@@ -165,6 +165,7 @@ for (const [f, d] of allFoci) {
     for (const b of r.blocks || []) {
       switch (b.type) {
         case "single": checkSlot(b.slot, ctx);
+          if (b.slot.cluster && !(b.slot.cluster.size >= 1 && b.slot.cluster.rest > 0)) err(f, `${ctx}: Cluster braucht size ≥ 1 und rest > 0`);
           if (b.slot.finish) {
             const fin = b.slot.finish;
             if (!["myo", "drop", "mech"].includes(fin.kind)) err(f, `${ctx}: Satzende "${fin.kind}" unbekannt`);

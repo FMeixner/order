@@ -1,9 +1,9 @@
 {
-  "_info": "Testwoche: fünf Cups an drei Tagen — Studio, Zuhause, Park; der zweite Cup am Ort läuft direkt im Anschluss. Outdoor und Studio werden nicht gemischt. Gleiche Tests bei jedem Durchgang, damit Werte vergleichbar sind. unit: s, cm, m, reps, kg, mmss (m:ss.z), bpm. better: higher oder lower. swc: kleinste Veränderung, die über dem Messfehler liegt (Schätzung aus typischen Messfehlern, Hopkins 2000); kleinere Unterschiede zeigt die App als „gleich”.",
+  "_info": "Testwoche: fünf Cups an drei Tagen — Studio, Zuhause, Park; der zweite Cup am Ort läuft direkt im Anschluss, ohne eigenes Warm-up; das Cool-down kommt einmal am Ende des Tages (cooldown am letzten Cup des Ortes). Outdoor und Studio werden nicht gemischt. Gleiche Tests bei jedem Durchgang, damit Werte vergleichbar sind. unit: s, cm, m, reps, kg, mmss (m:ss.z), bpm. better: higher oder lower. swc: kleinste Veränderung, die über dem Messfehler liegt (Schätzung aus typischen Messfehlern, Hopkins 2000); kleinere Unterschiede zeigt die App als „gleich”.",
   "cups": [
     {
       "id": "balmung", "name": "Balmung-Cup", "place": "Studio", "focus": "Maximalkraft, anaerob",
-      "warmup": ["base", "lower_prep"],
+      "warmup": ["base", "lower_prep"], "cooldown": ["cd_general"],
       "tests": [
         {"id": "t-bodyweight", "name": "Körpergewicht", "unit": "kg", "attempts": 1, "better": "lower", "swc": 1, "desc": "Morgens nüchtern, gleiche Waage — die 5RM-Norm rechnet relativ dazu."},
         {"id": "t-5rm-squat", "name": "5RM Beinpresse oder Kniebeuge", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "desc": "2–3 Steigerungssätze, dann höchstens 4 Versuche bis zum 5RM, 3–5 Min Pause. Abbruch bei Technikverlust. Immer dieselbe Übung wie beim letzten Mal.", "variants": [{"id": "legpress", "name": "Beinpresse"}, {"id": "squat", "name": "Kniebeuge"}]},
@@ -28,7 +28,7 @@
     },
     {
       "id": "arondight", "name": "Arondight-Cup", "place": "Zuhause", "focus": "Koordination und Kraftausdauer",
-      "warmup": ["base"],
+      "warmup": ["base"], "cooldown": ["cd_general"],
       "benchmark": {"label": "Bestie auf Zeit", "pool": ["ng-garm", "ng-ubba", "ng-orvar", "ng-hel", "ng-saga", "ng-odin"]},
       "tests": [
         {"id": "t-stichserie", "name": "Stichtest: Serie bis zum ersten Fehler", "unit": "reps", "attempts": 2, "better": "higher", "swc": 3, "desc": "Stiche durch die Ringöffnung, Ring unberührt — jeder gültige Treffer zählt. Der erste ungültige Stich (Ring berührt oder in Bewegung) beendet die Serie. 2 Versuche, 2–3 Min Pause, der bessere zählt. Ohne Ringe: immer dieselbe feste Aufgabe, z. B. Burpee-Box-Step-Overs."}
@@ -47,7 +47,7 @@
     },
     {
       "id": "joyeuse", "name": "Joyeuse-Cup", "place": "Park", "focus": "Wohlbefinden, Belastbarkeit, Ausdauer",
-      "warmup": ["run_prep"],
+      "warmup": ["run_prep"], "cooldown": ["cd_lower"],
       "who5": true,
       "tests": [
         {"id": "t-cooper", "name": "Cooper-Test: 12 Min Lauf", "unit": "m", "attempts": 1, "better": "higher", "swc": 100, "desc": "Ebene Strecke, 12 Minuten so weit wie möglich. Immer dieselbe Runde."},

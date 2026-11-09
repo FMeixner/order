@@ -50,7 +50,7 @@
       "name": "Kraft und Hüfte", "location": "gym", "minutes": 40,
       "warmup": ["short_base", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "single", "slot": {"id": "sc-k-1", "name": "Hang Power Clean", "reise": {"name": "KB Swing", "prog": "none"}, "sets": 4, "reps": "3", "prog": "none", "rest": 120}},
+        {"type": "single", "slot": {"id": "sc-k-1", "name": "Hang Power Clean", "reise": {"name": "KB Swing", "prog": "none"}, "sets": 4, "reps": "3", "prog": "none", "rest": 120, "cluster": {"size": 1, "rest": 20}}},
         {"type": "single", "slot": {"id": "sc-k-2", "core": true, "name": "Back Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "5", "prog": "double", "rest": 180}},
         {"type": "single", "slot": {"id": "sc-k-3", "name": "Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "sc-k-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}}

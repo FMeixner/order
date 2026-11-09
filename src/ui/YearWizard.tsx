@@ -37,31 +37,43 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
   const [policy, setPolicy] = useState<Policy>(state.testPolicy ?? DEFAULT_TEST_POLICY);
   const [pool, setPool] = useState<string[]>(state.user.pool ?? []);
   const [sections, setSections] = useState<Section[]>(state.sections ?? []);
+  // Zuordnung: Die Zeichen folgen den Abschnitten, die zuletzt zugeordnet wurden. Ändern sich die Abschnitte oben,
+  // erscheint „Zeichen neu setzen“: Dann werden Zeichen, Orden und Kalorien neu nach Zielen und Zeiträumen gesetzt
+  // (eigene Wahl aus diesem Assistenten und alte Pins künftiger Phasen fallen weg).
+  const [mapped, setMapped] = useState<Section[]>(state.sections ?? []);
+  const [basePlan, setBasePlan] = useState<PlanBlock[]>(state.plan);
   const [kinds, setKinds] = useState<Partial<Record<number, KlammerId>>>({});
   const [orders, setOrders] = useState<Record<string, string>>({});
   const [kcals, setKcals] = useState<Record<string, Kcal>>({});
   const [open, setOpen] = useState<string | null>(null);
+  const dirty = JSON.stringify(sections) !== JSON.stringify(mapped);
+  const unpinned = (p: PlanBlock[]) => p.map((b) => (b.start > today && b.pin ? { ...b, pin: undefined } : b));
 
-  // Entwurf: ein Generator, danach die Handänderungen dieses Assistenten (nach Startdatum, damit sie Neuberechnungen überleben)
-  const draft = useMemo(() => {
-    let p = planYear(state.plan, sections, today, () => uid("b"), { aim, aims, deficits, steer, testPolicy: policy, pool, kinds });
+  const build = (plan: PlanBlock[], secs: Section[], k: typeof kinds, o: typeof orders, kc: typeof kcals) => {
+    let p = planYear(plan, secs, today, () => uid("b"), { aim, aims, deficits, steer, testPolicy: policy, pool, kinds: k });
     p = p.map((b) => {
       if (b.start <= today || isTestBlock(b)) return b;
       let x = b;
-      if (orders[b.start]) x = { ...x, focusId: orders[b.start], pin: { ...x.pin, focus: true } };
+      if (o[b.start]) x = { ...x, focusId: o[b.start], pin: { ...x.pin, focus: true } };
       const mesoStart = b.meso ? p.filter((y) => y.meso === b.meso).map((y) => y.start).sort()[0] : undefined;
-      if (mesoStart && kcals[mesoStart]) x = { ...x, kcal: kcals[mesoStart], pin: { ...x.pin, kcal: true } };
+      if (mesoStart && kc[mesoStart]) x = { ...x, kcal: kc[mesoStart], pin: { ...x.pin, kcal: true } };
       return x;
     });
     return p;
-  }, [state.plan, sections, today, aim, aims, deficits, steer, policy, pool, kinds, orders, kcals]);
+  };
+  // Entwurf: ein Generator, danach die Handänderungen dieses Assistenten (nach Startdatum, damit sie Neuberechnungen überleben)
+  const draft = useMemo(() => build(basePlan, mapped, kinds, orders, kcals), // eslint-disable-line react-hooks/exhaustive-deps
+    [basePlan, mapped, today, aim, aims, deficits, steer, policy, pool, kinds, orders, kcals]);
+  const remap = () => { setMapped(sections); setBasePlan(unpinned(state.plan)); setKinds({}); setOrders({}); setKcals({}); };
+  const go = (n: number) => { if (dirty) remap(); setStep(n); };
   const future = klammernOf(draft).filter((k) => k.parts[0].start > today);
   // Schwerpunkte des Entwurfs in der Jahresgesamtschau (ein Slot je Orden)
   const slots = useMemo(() => yearSlots({ ...state, plan: draft, yearAims: aims }, today), [state, draft, aims, today]);
   const eff = useMemo(() => effectiveLoads(sections), [sections]);
 
   const apply = () => {
-    update((st) => unpinBeasts({ ...st, plan: draft, sections, sectionsChanged: false, yearAim: aim, yearAims: aims, testPolicy: policy, user: { ...st.user, pool } }, (s) => s.date > today));
+    const plan = dirty ? build(unpinned(state.plan), sections, {}, {}, {}) : draft;
+    update((st) => unpinBeasts({ ...st, plan, sections, sectionsChanged: false, yearAim: aim, yearAims: aims, testPolicy: policy, user: { ...st.user, pool } }, (s) => s.date > today));
     onClose();
   };
 
@@ -69,7 +81,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
     <Modal title="Jahr planen" onClose={onClose} wide>
       <div className="stack">
         <div className="stepper" role="tablist">
-          {STEPS.map((s, i) => <button key={s} role="tab" aria-selected={step === i} className={step === i ? "on" : i < step ? "done" : ""} onClick={() => setStep(i)}>{i + 1} · {s}</button>)}
+          {STEPS.map((s, i) => <button key={s} role="tab" aria-selected={step === i} className={step === i ? "on" : i < step ? "done" : ""} onClick={() => go(i)}>{i + 1} · {s}</button>)}
         </div>
 
         {step === 0 && (
@@ -92,6 +104,12 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
           <>
             <div className="field-label">Lebensabschnitte · führend</div>
             <SectionList sections={sections} onChange={setSections} start={today} />
+            {dirty && (
+              <div className="note row between wrap">
+                <span className="small">Abschnitte geändert — die Zeichen passen noch zur alten Einteilung. Erst neu setzen, dann wählen.</span>
+                <button className="btn primary small" onClick={remap}>Zeichen neu setzen</button>
+              </div>
+            )}
             <div className="field-label">Zeichen darüber</div>
             <YearPicture plan={draft} sections={sections} today={today} />
             <div className="stack">
@@ -102,7 +120,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
                   <div key={k.meso} className={`kl-card kl-${k.kind}`}>
                     <div className="kl-head"><KlammerIcon id={k.kind} /> {klammerName(k.kind)} {kinds[wi] && <Sign kind="pin" />}<span className="block-dates">{fmtDate(k.start)} – {fmtDate(k.end)}</span></div>
                     <div className="kl-kinds" role="radiogroup" aria-label={`Zeichen ${i + 1}`}>
-                      {KLAMMERN.map((d) => <button key={d.id} role="radio" aria-checked={k.kind === d.id} aria-label={d.name} title={`${d.name} · ${d.tag}`} className={`kl-${d.id} ${k.kind === d.id ? "on" : ""}`} onClick={() => setKinds((x) => ({ ...x, [wi]: d.id }))}><KlammerIcon id={d.id} /></button>)}
+                      {KLAMMERN.map((d) => <button key={d.id} role="radio" disabled={dirty} aria-checked={k.kind === d.id} aria-label={d.name} title={`${d.name} · ${d.tag}`} className={`kl-${d.id} ${k.kind === d.id ? "on" : ""}`} onClick={() => setKinds((x) => ({ ...x, [wi]: d.id }))}><KlammerIcon id={d.id} /></button>)}
                     </div>
                     <div className="row small muted"><Sign kind={k.kcal ?? "maintenance"} /> {kc.why}</div>
                     <div className="small muted">{whyCut(k, sections)}</div>
@@ -141,7 +159,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
 
         <div className="sticky-actions">
           {step > 0 ? <button className="btn ghost" onClick={() => setStep(step - 1)}>Zurück</button> : <button className="btn ghost" onClick={onClose}>Abbrechen</button>}
-          {step < 3 ? <button className="btn primary" onClick={() => setStep(step + 1)}>Weiter</button> : <button className="btn primary" onClick={apply}>Übernehmen</button>}
+          {step < 3 ? <button className="btn primary" onClick={() => go(step + 1)}>Weiter</button> : <button className="btn primary" onClick={apply}>Übernehmen</button>}
         </div>
       </div>
     </Modal>

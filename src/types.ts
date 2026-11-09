@@ -66,6 +66,10 @@ export interface Slot {
   /** Satzende (1.10): der letzte Satz läuft verlängert — Myo-Reps, Drop-Set (Gewicht runter) oder mechanischer Drop
       (leichtere Variante, chain). Entfällt in Entlastungswochen und bei hoher Alltagslast an Kernübungen. */
   finish?: Finish;
+  /** Cluster-Satz (1.11): jeder Satz in Portionen von `size` Wiederholungen mit `rest` Sekunden dazwischen.
+      Gleiche Anpassung wie normale Sätze, aber weniger Ermüdung und schnellere Wiederholungen (Davies et al., 2021).
+      when "high": nur in Phasen mit hoher Alltagslast. */
+  cluster?: { size: number; rest: number; when?: "high" };
 }
 
 export type FinishKind = "myo" | "drop" | "mech";
@@ -399,6 +403,8 @@ export interface AppState {
   swaps: Record<string, string>;
   /** Eigene Warm-up- und Cool-down-Listen je Tag: "focusId:rolle" → Änderungen. Gilt dauerhaft für diesen Tag des Ordens. */
   drillEdits?: Record<string, DrillEdits>;
+  /** Testwoche: abgehakte Warm-up- und Cool-down-Übungen je Testtag (Schlüssel `<blockId>:<Ort>`) */
+  testDrills?: Record<string, Record<string, boolean[]>>;
   /** Tagesanpassung je Einheit (Session-Id): eigene Wahl für Kurz, Leicht, Leise; fehlt sie, gilt das Gemerkte */
   dayAdj?: Record<string, { short?: boolean; quiet?: boolean; tight?: boolean }>;
   /** Je Wochentag gemerkt, gilt in allen Phasen: Kurz (höchstens ein Tag) und Leise */
@@ -474,6 +480,8 @@ export interface Norm {
 }
 export interface Cup {
   id: string; name: string; place: string; focus: string; warmup: string[];
+  /** Cool-down am Ende des Testtags (gezeigt beim letzten Cup des Tages) */
+  cooldown?: string[];
   tests: TestDef[]; who5?: boolean; benchmark?: { label: string; pool: string[] };
 }
 

@@ -169,14 +169,21 @@ export function highLoadShape(f: Focus, b: PlanBlock, week: number): Focus {
   return { ...f, roles };
 }
 
-/** Hohe Alltagslast: Satzende-Techniken (Myo-Reps, Drop-Sets) nur noch an Ergänzungsübungen, nicht an Kernübungen —
-    Nähe zum Muskelversagen kostet Erholung, an kleinen Übungen am wenigsten */
+/** Alltagslast formt die Sätze: Bei hoher Last bleiben Satzende-Techniken (Myo-Reps, Drop-Sets) nur an Ergänzungsübungen —
+    Nähe zum Muskelversagen kostet Erholung, an kleinen Übungen am wenigsten. Cluster-Sätze mit when "high" gelten nur
+    bei hoher Last (weniger Ermüdung bei schweren Grundübungen), sonst laufen die Sätze am Stück. */
 export function highLoadFinish(f: Focus, b: PlanBlock): Focus {
-  if (b.load !== "high") return f;
+  const high = b.load === "high";
   let hit = false;
+  const fix = (sl: Slot): Slot => {
+    let x = sl;
+    if (high && x.core && x.finish) { x = { ...x, finish: undefined }; hit = true; }
+    if (!high && x.cluster?.when === "high") { x = { ...x, cluster: undefined }; hit = true; }
+    return x;
+  };
   const roles: Focus["roles"] = {};
   for (const [k, r] of Object.entries(f.roles)) {
-    roles[k] = { ...r, blocks: r.blocks.map((x) => (x.type === "single" && x.slot.core && x.slot.finish ? ((hit = true), { ...x, slot: { ...x.slot, finish: undefined } }) : x)) };
+    roles[k] = { ...r, blocks: r.blocks.map((x) => (x.type === "single" ? { ...x, slot: fix(x.slot) } : x)) };
   }
   return hit ? { ...f, roles } : f;
 }

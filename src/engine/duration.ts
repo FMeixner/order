@@ -79,7 +79,9 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
       if (!n) return 0;
       const r = resolveSlot(s, p)!;
       const rest = r.kind === "timer" || r.kind === "interval" ? 0 : (n - 1) * r.rest;
-      return SETUP + n * workOf(s, p, red) + rest + (r.finish ? FINISH_SEC[r.finish.kind] : 0);
+      // Cluster: je Satz (Portionen − 1) kurze Pausen
+      const clusterSec = r.cluster ? n * Math.max(0, Math.ceil((parseInt(r.reps) || r.cluster.size) / r.cluster.size) - 1) * r.cluster.rest : 0;
+      return SETUP + n * workOf(s, p, red) + rest + (r.finish ? FINISH_SEC[r.finish.kind] : 0) + clusterSec;
     }
     case "superset": {
       const rounds = Math.max(...b.slots.map((s) => setsOf(s, p, red)));

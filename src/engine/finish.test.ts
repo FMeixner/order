@@ -34,3 +34,15 @@ describe("Satzende: Myo-Reps, Drop-Set, mechanischer Drop", () => {
     expect(JSON.stringify(FOCUS_BY_ID.skirmisher.roles)).not.toContain('"finish"');
   });
 });
+
+describe("Cluster-Sätze", () => {
+  it("Smith: Deadlift als Einzelwiederholungen nur bei hoher Last", () => {
+    const mk = (load: "high" | "medium") => ({ id: "x", focusId: "smith", label: "", start: "2026-11-09", end: "2026-12-31", load } as PlanBlock);
+    const dl = (f: ReturnType<typeof highLoadFinish>) => f.roles.kraft_2.blocks.flatMap((b) => (b.type === "single" ? [b.slot] : [])).find((s) => s.name === "Deadlift")!;
+    expect(dl(highLoadFinish(FOCUS_BY_ID.smith, mk("high"))).cluster?.size).toBe(1);
+    expect(dl(highLoadFinish(FOCUS_BY_ID.smith, mk("medium"))).cluster).toBeUndefined();
+  });
+  it("Scout: Hang Power Clean immer als Cluster", () => {
+    expect(resolveSlot(slot("scout", "kraft", "sc-k-1"), EQUIPMENT_PRESETS[0].make())!.cluster?.size).toBe(1);
+  });
+});
