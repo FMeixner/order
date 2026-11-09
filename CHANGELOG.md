@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.15.1] – 2026-11-09
+
+### Geändert
+- Monk läuft 4 bis 12 Wochen statt fest 12 und passt damit auch in die Hirsch-Atempause. Die antidepressive Wirkung von Bewegung hängt an durchgehender Aktivität über Wochen, und die läuft im Jahresplan ohnehin das ganze Jahr.
+
 ## [1.15.0] – 2026-11-09
 
 ### Geändert
