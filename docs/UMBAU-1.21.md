@@ -32,6 +32,7 @@ beschrieben, erst den Nutzer fragen.
   Bestienwahl darf keinen Muskel über die Obergrenze schieben (Details in PB, Abschnitt 3a und 5).
 - 10.11.2026 · P4: nur der Ideenparkplatz. Keine Rückfrage, kein „Trotzdem ändern“, keine Bedenkzeit beim Ändern
   laufender Phasen — der Nutzer will frei spielen und Jahrespläne ausprobieren.
+- 10.11.2026 · P5: Wochenrückblick nur im Stand (Karte „Letzte Woche“), keine Karte auf Heute.
 - 10.11.2026 · Notiz an der Übung (neu, in P12): kleiner Stift, nur bei Bedarf, z. B. Sitzhöhe oder Einstellung am Gerät.
 
 ## Reihenfolge
@@ -43,7 +44,7 @@ beschrieben, erst den Nutzer fragen.
 | P2 | 1.24.0 | Befinden (Feeling Scale) nach jeder Einheit, Auswertung im Stand |
 | P3 | 1.25.0 | Volumen Soll-Ist im Stand |
 | P4 | 1.26.0 | Ideenparkplatz (ohne Sperre oder Rückfrage) |
-| P5 | 1.27.0 | Wochenrückblick |
+| P5 | 1.27.0 | Wochenrückblick (im Stand) |
 | P6 | 1.28.0 | Defizit-Phasen: „gehalten“ zählt als Erfolg |
 | P7 | 1.29.0 | Ausklang nach Bestie und Finisher |
 | P8 | 1.30.0 | Entlastung nach Signalen |
@@ -384,20 +385,23 @@ an dem sie warten können.
 
 ---
 
-## P5 · Wochenrückblick (1.27.0)
+## P5 · Wochenrückblick im Stand (1.27.0)
+
+Entscheidung (10.11.2026): **keine neue Karte auf Heute.** Der Rückblick lebt im Stand; Heute bleibt fürs Training.
 
 ### Verhalten
-- Ist die Woche geschafft (`weekDone` in `Today.tsx`) oder ist Sonntag, zeigt die Heute-Ansicht über den
-  Tagesknöpfen eine schmale Karte „Woche 7“: 
-  `3 von 4 Einheiten · 1 verdichtet · Befinden +1 · 2 Gewichte gesteigert`.
-  Ausgefallenes heißt „verdichtet“ oder „entfallen“, nie „verpasst“.
-- Ein Tipp öffnet Details: je Einheit eine Zeile (Tag, Name, Dauer, Befinden), darunter gesteigerte Übungen.
-- Schließen merkt sich `AppState.weekSeen?: Record<string, true>` (Schlüssel `blockId:week`); die Karte kommt nicht wieder.
+- Stand, neue Karte „Letzte Woche“ (zwischen „Bereiche“ und „Testwoche“). Zeigt die zuletzt abgeschlossene
+  Trainingswoche (oder die laufende, wenn sie geschafft ist):
+  `3 von 4 Einheiten · 1 verdichtet · Befinden +2 · 2 Gewichte gesteigert`.
+  Ausgefallenes heißt „verdichtet“ (Fällt aus mit Ausgleich) oder „entfallen“, nie „verpasst“.
+- Antippen klappt Details auf: je Einheit eine Zeile (Tag, Name, Dauer, Befinden), darunter gesteigerte und (im
+  Defizit, P6) gehaltene Übungen.
+- Keine Pflicht, nichts zum Wegklicken, kein Zähler.
 
 ### Technik
-`src/engine/weekreview.ts`: `weekReview(state, block, week)`. Gesteigert = Übung, deren `SlotState.weight` oder
-`target` in dieser Woche gestiegen ist (Vergleich der Sätze der Einheit mit der vorigen Einheit derselben Übung im
-Log). Tests mit zwei aufeinanderfolgenden Wochen.
+`src/engine/weekreview.ts`: `weekReview(state, block, week)`. Gesteigert = Übung, deren bestes Satzprodukt
+(Gewicht × (1 + Wdh/30)) über dem der vorigen Einheit derselben Übung liegt. Karte in `Dashboard.tsx`.
+Tests mit zwei aufeinanderfolgenden Wochen (gesteigert, entfallen, verdichtet).
 
 ---
 
@@ -409,7 +413,7 @@ Die Angst vor Leistungsverlust im Defizit ist Abbruchgrund Nr. 1 des Nutzers. Im
 ### Verhalten
 - In Phasen mit `kcal === "deficit"`: Schließt eine Übung mit gleichem Gewicht und gleichen Wiederholungen wie
   beim letzten Mal, zeigt die Karte nach dem Abschluss ein kleines grünes „gehalten“ (statt nichts).
-- Wochenrückblick (P5) zählt im Defizit „4 Übungen gehalten, 1 gesteigert“.
+- Wochenrückblick (P5, Karte im Stand) zählt im Defizit „4 Übungen gehalten, 1 gesteigert“.
 - Stand, Karte „Volumen“ (P3) und „Verlauf“: Unterzeile „Defizit-Phase: Halten ist das Ziel.“
 - Fällt eine Kernübung in zwei Einheiten nacheinander (Gewicht oder Wiederholungen runter), ein sachlicher
   Hinweis: „<Übung> gibt nach. Bei ausreichend Eiweiß und Schlaf fängt sich das meist; sonst Defizit eine Woche pausieren.“
