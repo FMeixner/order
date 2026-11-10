@@ -14,7 +14,7 @@
   "travel": true,
   "modules": ["correctives", "beast", "sword"],
   "sources": ["Kotarsky et al. (2018)", "Kikuchi & Nakazato (2017)", "Refalo et al. (2023)"],
-  "successors": ["huntsman", "king", "olympian"],
+  "successors": ["huntsman", "king", "olympian", "gladiator"],
   "week_4": ["runden_technik", "kraft_rotation", "runden_kondition", "nacken_rumpf"],
   "week_3": ["runden_technik", "kraft_rotation", "runden_kondition"],
   "roles": {

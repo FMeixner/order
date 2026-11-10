@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.21.0] – 2026-11-10
+
+### Neu
+- **Neuer Orden: Gladiator.** Kondition als Sport vor Zeugen, nicht als Hintergrundlärm: vier Events die Woche — Lasten (Sandsack-Familie: Ground-to-Shoulder, Squat, Bent-Over Row, dazu Suitcase Carry), Runde (Seilsprints und Burpee-Intervalle im A/B-Wechsel, Swing-Superset), Eisen (Langhantel-Anker mit Rudern), Spiel (Shuttle auf Zeit, Sprints, Sprünge). Die Bestie sitzt als Finisher hinter den Lasten. Er bringt die sieben Sandbag-Übungen und zwei Carries erstmals zum Einsatz; wer keinen Sandsack hat, bekommt Kurzhantel- und Band-Varianten angezeigt. Szene: die Grube (Arena), Klassen plagen/bestie, intermediate, 8–10 Wochen, maintenance.
+- Kanten: King, Pugilist, Conqueror und Harlequin können in die Grube führen; der Gladiator übergibt an Knight, Smith, Pilgrim und Troubadour.
+
+### Geändert
+- README: Tabelle der Orden komplett — Barbarian, Mercenary und Skirmisher standen bisher nicht darin.
+
 ## [1.20.0] – 2026-11-10
 
 ### Neu

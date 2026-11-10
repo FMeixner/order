@@ -14,7 +14,7 @@
   "affect_rule": true,
   "travel": true,
   "modules": ["correctives", "beast"],
-  "successors": ["troubadour", "pilgrim", "alchemist"],
+  "successors": ["troubadour", "pilgrim", "alchemist", "gladiator"],
   "sources": ["Rimmele et al. (2007)", "Ekkekakis et al. (2011)", "Hardy & Rejeski (1989)", "Kotarsky et al. (2018)"],
   "week_4": ["chaos_a", "redner", "chaos_b", "chaos_c"],
   "week_3": ["chaos_a", "redner", "chaos_b"],

@@ -146,8 +146,8 @@ describe("Progression", () => {
 });
 
 describe("Orden und Plan", () => {
-  it("lädt alle 22 Orden", () => {
-    expect(FOCI.length).toBe(22);
+  it("lädt alle 23 Orden", () => {
+    expect(FOCI.length).toBe(23);
   });
   it("jede Rolle ist mit jedem Standardprofil auflösbar", () => {
     for (const f of FOCI) for (const role of Object.values(f.roles)) for (const b of role.blocks) {

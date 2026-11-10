@@ -13,7 +13,7 @@
   "test_week": true,
   "travel": true,
   "modules": ["correctives", "beast", "sword"],
-  "successors": ["assassin", "knight", "troubadour"],
+  "successors": ["assassin", "knight", "troubadour", "gladiator"],
   "sources": ["Helgerud et al. (2007)", "Kotarsky et al. (2018)", "Kikuchi & Nakazato (2017)", "Refalo et al. (2023)"],
   "week_4": ["studio_kraft", "unterwegs_kraft", "work_capacity", "ausdauer"],
   "week_3": ["studio_kraft", "work_capacity", "ausdauer"],

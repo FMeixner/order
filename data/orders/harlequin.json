@@ -12,7 +12,7 @@
   "weeks": {"min": 6, "max": 12},
   "travel": false,
   "modules": ["correctives"],
-  "successors": ["knight", "smith", "troubadour", "pilgrim"],
+  "successors": ["knight", "smith", "troubadour", "pilgrim", "gladiator"],
   "sources": [],
   "medley": ["slayer", "pugilist", "smith", "pilgrim", "olympian", "king", "assassin", "huntsman", "conqueror", "acrobat", "troubadour", "alchemist"],
   "week_4": [],

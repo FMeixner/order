@@ -14,7 +14,7 @@ Läuft im Browser und lässt sich auf dem Handy wie eine App installieren. Alle 
 4. **Trainieren**: Unter *Heute* steht die Einheit. Nach jedem Satz Wiederholungen und Gewicht eintragen, nach der Übung kurz Feedback geben (Schwer, OK, Leicht, Sehr leicht). Daraus kommt der Vorschlag fürs nächste Mal.
 5. **Erzähler** (optional): Ein Rabe erzählt jeden Orden als Geschichte, mit Wochenbericht, Saga und der Testwoche als Turnier. Welt austauschbar.
 
-## Die 19 Orden
+## Die 23 Orden
 
 | Orden | Schwerpunkt |
 |---|---|
@@ -37,6 +37,10 @@ Läuft im Browser und lässt sich auf dem Handy wie eine App installieren. Alle 
 | Slayer | Muskelaufbau mit Kontrastpaaren, Gewichtsweste als Steigerung |
 | Conqueror | Unterwegs belastbar bleiben |
 | Harlequin | Jede Woche ein anderer Orden, gegen Langeweile |
+| Barbarian | Masse ohne Studio, mit Kurzhanteln, Bändern und Körpergewicht |
+| Gladiator | Kondition als Sport vor Zeugen: Lasten, Runde, Eisen, Spiel |
+| Mercenary | Maximalkraft mit dem, was überall steht |
+| Skirmisher | Sprungkraft und Antritt im Freien |
 
 ## Inhalte bearbeiten
 
