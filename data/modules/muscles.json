@@ -54,6 +54,7 @@
     "Sandbag Ground-to-Shoulder": {"Gesäß": 1, "Quadrizeps": 0.5, "Schultern": 0.5},
     "Sandbag Bent-Over Row": {"Rücken": 1, "Bizeps": 0.5, "Unterarme": 0.5},
     "Lizard Crawl": {"Brust": 0.5, "Schultern": 0.5, "Rumpf": 0.5},
+    "Medicine Ball Chest Pass": {"Brust": 1, "Schultern": 0.5, "Trizeps": 0.5},
     "Standups": {"Quadrizeps": 0.5, "Gesäß": 0.5},
     "Combat Rolls": {"Rumpf": 0.5},
     "Nordic Curl": {"Beinbeuger": 1},

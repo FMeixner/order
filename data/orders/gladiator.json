@@ -20,11 +20,11 @@
   "roles": {
     "lasten": {
       "name": "Lasten", "location": "gym", "minutes": 45,
-      "warmup": ["short_base", "lower_prep"], "cooldown": ["cd_lower"],
+      "warmup": ["short_base", "lower_prep"], "cooldown": ["cd_lower", "cd_stab"],
       "blocks": [
         {"type": "single", "slot": { "id": "gl-la-1", "name": "Sandbag Ground-to-Shoulder", "home": { "name": "DB Snatch", "prog": "double" }, "reise": { "name": "Band Pull-Through", "prog": "reps" }, "sets": 5, "reps": "6/Seite", "prog": "weight", "rest": 90, "note": "alternierend links/rechts, Zahl je Runde gerade" }},
         {"type": "single", "slot": { "id": "gl-la-2", "name": "Sandbag Squat", "home": "Goblet Reverse Lunge", "reise": "Split Squat", "sets": 4, "reps": "8", "prog": "weight", "rest": 90 }},
-        {"type": "single", "slot": { "id": "gl-la-3", "name": "Sandbag Bent-Over Row", "home": { "name": "1-Arm DB Row", "prog": "double" }, "reise": { "name": "Band Row", "prog": "reps" }, "sets": 3, "reps": "10", "prog": "weight", "rest": 75 }},
+        {"type": "single", "slot": { "id": "gl-la-3", "name": "Sandbag Bent-Over Row", "home": { "name": "1-Arm DB Row", "prog": "double" }, "reise": { "name": "Band Row", "prog": "reps" }, "sets": 4, "reps": "10", "prog": "weight", "rest": 75 }},
         {"type": "single", "slot": { "id": "gl-la-4", "name": "Suitcase Carry", "home": "Farmer's Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60, "note": "pro Seite, ruhig gehen" }},
         {"type": "beast", "id": "gl-la-5", "classes": ["plage", "bestie"]}
       ]
@@ -36,10 +36,10 @@
         {"type": "single", "rotation": "A", "slot": { "id": "gl-ru-1a", "name": "Seilsprints", "kind": "interval", "interval": { "work": 20, "rest": 40, "rounds": 8 }, "prog": "none" }},
         {"type": "single", "rotation": "B", "slot": { "id": "gl-ru-1b", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": { "work": 30, "rest": 30, "rounds": 10 }, "prog": "none", "note": "hohe Alltagslast: Seilspringen statt Burpees, mittlerer Puls" }},
         {"type": "superset", "rest": 60, "slots": [
-          { "id": "gl-ru-2a", "name": "KB Swing", "reise": { "name": "Band Pull-Through", "prog": "reps" }, "sets": 3, "reps": "15", "prog": "weight" },
-          { "id": "gl-ru-2b", "name": "Push-Up", "sets": 3, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"] }
+          { "id": "gl-ru-2a", "name": "KB Swing", "reise": { "name": "Band Pull-Through", "prog": "reps" }, "sets": 4, "reps": "15", "prog": "weight" },
+          { "id": "gl-ru-2b", "name": "Push-Up", "sets": 4, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"] }
         ]},
-        {"type": "single", "slot": { "id": "gl-ru-3", "name": "Sandbag Push Press", "home": { "name": "DB Shoulder Press", "prog": "double" }, "reise": { "name": "Band Rotational Press", "prog": "reps" }, "sets": 4, "reps": "5/Seite", "prog": "weight", "rest": 75 }},
+        {"type": "single", "slot": { "id": "gl-ru-3", "name": "Sandbag Push Press", "home": { "name": "DB Shoulder Press", "prog": "double" }, "reise": { "name": "Band Rotational Press", "prog": "reps" }, "sets": 3, "reps": "5/Seite", "prog": "weight", "rest": 75 }},
         {"type": "single", "slot": { "id": "gl-ru-4", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30 }},
         {"type": "single", "slot": { "id": "gl-ru-5", "name": "Lockeres Auslaufen", "kind": "timer", "minutes": 5, "prog": "none", "note": "Sprechtempo: ganze Sätze gehen noch" }}
       ]
