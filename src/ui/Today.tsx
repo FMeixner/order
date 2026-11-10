@@ -198,8 +198,8 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
             <div className="stack skip-box">
               <button className={`mod-chip ${mods?.skip ? "on" : ""}`} aria-pressed={!!mods?.skip} onClick={() => skip(!mods?.skip, mods?.grow)}>Fällt aus</button>
               <span className="muted small">{lastOpen
-                ? "Woche verdichten: Kernübungen und was für die Erhaltung fehlt (4 Sätze je Muskel und Woche) wandern auf die offenen Tage danach. Bestien und Module entfallen. Schwere Grundübungen nie im Superset, nie zwei Beintage hintereinander."
-                : "Danach ist diese Woche nichts mehr offen: Die Einheit entfällt ohne Ausgleich. Eine Woche mit etwa einem Drittel des Volumens hält den Stand."}</span>
+                ? "Das Wichtigste wandert auf die offenen Tage danach."
+                : "Diese Woche ist danach nichts mehr offen: Die Einheit entfällt ohne Ausgleich."}</span>
               {mods?.skip && lastOpen > 0 && (
                 <label className="check small">
                   <input type="checkbox" checked={!!mods.grow} onChange={(e) => skip(true, e.target.checked)} />

@@ -1,3 +1,4 @@
+import { useState } from "react";
 /* Lebensabschnitte (Name frei, − / + Wochen, Alltagslast) und Richtung des Jahres — Bausteine für den
    Jahres-Assistenten und das Onboarding. Geplant wird über planYear (engine/klammer.ts). */
 import { AXES, type AxisId } from "../engine/balance";
@@ -48,12 +49,20 @@ export function AimsPicker({ aims, mode, deficits, onChange }: { aims: AimPrio[]
 }
 
 /** Abschnitte bearbeiten (Liste mit Name, Wochen, Last) */
-export function SectionList({ sections, onChange, start }: { sections: Section[]; onChange: (s: Section[]) => void; start: string }) {
+export function SectionList({ sections, onChange, start, compact }: { sections: Section[]; onChange: (s: Section[]) => void; start: string; compact?: boolean }) {
+  // Kompakt (Jahr planen): eine Zeile je Abschnitt, Antippen öffnet die Bearbeitung
+  const [open, setOpen] = useState<string | null>(null);
   const sorted = [...sections].sort((a, b) => a.start.localeCompare(b.start));
   const total = sorted.reduce((s, x) => s + sectionWeeks(x), 0);
   return (
     <div className="stack sec-list">
-      {sorted.map((s) => (
+      {sorted.map((s) => compact && open !== s.id ? (
+        <button key={s.id} className={`sec-row sec-line load-${s.load}`} onClick={() => setOpen(s.id)} aria-label={`${s.name} bearbeiten`}>
+          <span className="sec-line-name">{s.name}</span>
+          <span className="block-dates">{fmtDate(s.start)} – {fmtDate(s.end)}</span>
+          <span className="sec-line-meta">{sectionWeeks(s)} Wo. · {LOADS.find((l) => l.value === s.load)?.label}</span>
+        </button>
+      ) : (
         <div key={s.id} className={`sec-row load-${s.load}`}>
           <div className="sec-top">
             <input type="text" value={s.name} aria-label="Name des Abschnitts" onChange={(e) => onChange(sections.map((x) => (x.id === s.id ? { ...x, name: e.target.value } : x)))} />

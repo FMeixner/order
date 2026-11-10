@@ -110,7 +110,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
         {step === 1 && (
           <>
             <div className="field-label">Lebensabschnitte · führend</div>
-            <SectionList sections={sections} onChange={setSections} start={today} />
+            <SectionList sections={sections} onChange={setSections} start={today} compact />
             {dirty && (
               <div className="note row between wrap">
                 <span className="small">Abschnitte geändert — die Zeichen passen noch zur alten Einteilung. Erst neu setzen, dann wählen.</span>

@@ -70,3 +70,13 @@ export function KlammerIcon({ id, size = 16 }: { id: KlammerId; size?: number })
   };
   return <svg className="klammer-icon" viewBox="0 0 16 16" width={size} height={size} aria-hidden>{d[id]}</svg>;
 }
+
+/** Symbole der Navigation: schlichte Strichzeichnungen, 1,75 px */
+export function TabIcon({ k, size = 20 }: { k: "heute" | "plan" | "stand" | "almanach" | "setup"; size?: number }) {
+  const p = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.75, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
+  if (k === "heute") return <svg {...p}><path d="M6.5 8v8M17.5 8v8M3.5 10v4M20.5 10v4M6.5 12h11" /></svg>;
+  if (k === "plan") return <svg {...p}><rect x="3.5" y="5" width="17" height="15" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>;
+  if (k === "stand") return <svg {...p}><path d="M5 20v-6M12 20V5M19 20v-9" /></svg>;
+  if (k === "almanach") return <svg {...p}><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z" /><path d="M5 17a3 3 0 0 1 3-3h11M9 8.5h6" /></svg>;
+  return <svg {...p}><path d="M4 7h9M17 7h3M4 17h3M11 17h9" /><circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" /></svg>;
+}

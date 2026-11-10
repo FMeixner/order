@@ -1,0 +1,105 @@
+/* Stand: das Dashboard. Oben das Jahr (wo bin ich), dann die Bereiche in einer Tabelle (Test · Zustand · Schwachstelle),
+   dann die letzte Testwoche, darunter Volumen und Verlauf. Details bleiben einen Tipp entfernt. */
+import { useMemo, useState } from "react";
+import { balanceOf } from "../engine/balance";
+import { mesoBalance } from "../engine/bilanz";
+import { standOf, type StandRow } from "../engine/dashboard";
+import { addDays, daysBetween, fmtDate } from "../engine/plan";
+import type { ResidualClock } from "../engine/residual";
+import type { AppState } from "../types";
+import { Collapse, Modal } from "./common";
+import { Evaluation } from "./Evaluation";
+import { GOAL_LABEL } from "./PlanEditor";
+import { ProgressView, VolumeView } from "./Progress";
+import { YearPicture } from "./YearPicture";
+
+const WATCH = { gut: "ok", bald: "soon", fehlt: "due" } as const;
+const ARROW = { better: "↑", same: "→", worse: "↓" } as const;
+const detail = (r: StandRow) => [
+  r.score != null ? `${r.est ? "Schätzung " : ""}${r.score} Punkte (≈ Perzentil der Altersnorm)` : "noch kein Testwert",
+  r.days != null ? `letzter Reiz vor ${r.days} Tagen, hält etwa ${r.budget}` : null,
+  r.def.required ? `${String(r.weeks).replace(".", ",")} Wochen im nächsten halben Jahr (Richtwert 4)` : null,
+].filter(Boolean).join(" · ");
+
+export function Dashboard({ state, today, clocks, onOptimize, goPlan }: { state: AppState; today: string; clocks: ResidualClock[]; onOptimize: () => void; goPlan: () => void }) {
+  const st = useMemo(() => standOf(state, today, clocks), [state, today, clocks]);
+  const [evalOpen, setEvalOpen] = useState(false);
+  const [open, setOpen] = useState<string | null>(null);
+  const streaks = mesoBalance(state.plan).streaks;
+  const bal = balanceOf(state.plan, today, addDays(today, 26 * 7 - 1));
+  const anyScore = st.rows.some((r) => r.score != null);
+  const attention = st.rows.filter((r) => r.watch !== "gut");
+  return (
+    <div className="stack dash">
+      <section className="card stack">
+        <div className="row between"><h2>Dein Jahr</h2><button className="btn ghost small" onClick={goPlan}>Plan öffnen</button></div>
+        <YearPicture plan={state.plan} sections={state.sections} today={today} />
+      </section>
+
+      <section className="card stack">
+        <div className="row between wrap">
+          <h2>Bereiche</h2>
+          <span className="muted small">{attention.length ? `${attention.length} brauchen Aufmerksamkeit` : "alles im Lot"}</span>
+        </div>
+        <div className="dash-grid" role="table" aria-label="Bereiche">
+          <div className="dash-row dash-head" role="row"><span role="columnheader">Bereich</span><span role="columnheader">Test</span><span role="columnheader">Zustand</span></div>
+          {st.rows.map((r) => (
+            <div key={r.def.id} className="dash-item">
+              <button className="dash-row" role="row" aria-expanded={open === r.def.id} onClick={() => setOpen(open === r.def.id ? null : r.def.id)}>
+                <span role="cell" className="dash-name">{r.def.name}{r.weak && <i className="dash-weak" title="Schwachstelle aus den Tests" aria-label="Schwachstelle" />}</span>
+                <span role="cell" className="dash-test">
+                  {r.score != null ? <>
+                    <span className="bar-track"><span className={`bar-fill ${r.est ? "est" : r.score < 40 ? "low" : r.score >= 70 ? "high" : ""}`} style={{ width: `${r.score}%` }} /></span>
+                    <span className="dash-score">{r.est ? "~" : ""}{r.score}{r.change && <em className={r.change}>{ARROW[r.change]}</em>}</span>
+                  </> : <span className="muted">–</span>}
+                </span>
+                <span role="cell" className={`ber-pill ${WATCH[r.watch]}`}><i />{r.watch === "gut" ? "gut" : r.why}</span>
+              </button>
+              {open === r.def.id && <div className="dash-detail muted small">{r.def.hint}. {detail(r)}.</div>}
+            </div>
+          ))}
+        </div>
+        {anyScore && <div className="muted small">Test: Punkte ≈ Perzentil deiner Altersnorm, 50 ist der Durchschnitt. <i className="dash-weak inline" /> Schwachstelle · ~ Schätzung · ↑↓ gegenüber dem Test davor.</div>}
+        {(st.weak.length > 0 || st.slot) && (
+          <div className="note small">
+            {st.weak.length > 0 && <div><strong>Schwachstellen:</strong> {st.weak.join(", ")}</div>}
+            {st.slot && <div><strong>Schwerpunkt jetzt:</strong> {st.slot.name}{st.slot.purpose ? ` (${st.slot.purpose})` : ""}</div>}
+          </div>
+        )}
+        {streaks.length > 0 && <div className="note warn small">{streaks.map((s) => `${GOAL_LABEL[s.goal]} ${s.labels.length}-mal in Folge`).join("; ")} — Abwechslung fehlt.</div>}
+        {bal.score != null && (
+          <div className="balance-scale" role="img" aria-label={`Nächstes halbes Jahr: ${bal.label}`}>
+            <div className="balance-track"><div className="balance-marker" style={{ left: `${bal.score * 100}%` }} /></div>
+            <div className="row between small muted"><span>Spezialist</span><span>{bal.label}</span><span>Allrounder</span></div>
+          </div>
+        )}
+      </section>
+
+      <section className="card stack">
+        <h2>Testwoche</h2>
+        {st.test ? (
+          <>
+            <div className="dash-kpis">
+              <div><b>{fmtDate(st.test.date)}</b><span>zuletzt</span></div>
+              <div><b>{st.test.tests}</b><span>Tests</span></div>
+              <div><b className="up">{st.test.better}</b><span>besser</span></div>
+              <div><b className={st.test.worse ? "down" : ""}>{st.test.worse}</b><span>schwächer</span></div>
+            </div>
+            <div className="row wrap">
+              <button className="btn small" onClick={() => setEvalOpen(true)}>Auswertung</button>
+              <button className="btn primary small" onClick={onOptimize}>Orden nach Schwachstellen optimieren</button>
+            </div>
+          </>
+        ) : <div className="muted small">Noch keine Testwoche. Nach der ersten weiß die App, wo du stehst und was dir fehlt.</div>}
+        {st.nextTest && <div className="muted small">Nächste Testwoche: ab {fmtDate(st.nextTest.start)}{st.nextTest.start > today ? ` (in ${Math.ceil(daysBetween(today, st.nextTest.start) / 7)} Wochen)` : " — läuft"}.</div>}
+      </section>
+
+      <Collapse title="Volumen und Verlauf" meta="Sätze je Muskel, Gewichte">
+        <VolumeView state={state} today={today} />
+        <ProgressView state={state} />
+      </Collapse>
+
+      {evalOpen && st.test && <Modal title="Auswertung der Testwoche" onClose={() => setEvalOpen(false)} wide><Evaluation state={state} blockId={st.test.blockId} defaultOpen /></Modal>}
+    </div>
+  );
+}

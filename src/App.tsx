@@ -19,11 +19,13 @@ import { TimerBar, TimerProvider } from "./ui/Timer";
 import { Today } from "./ui/Today";
 import { unlockAudio } from "./audio";
 import { Help } from "./ui/Help";
+import { Dashboard } from "./ui/Dashboard";
+import { TabIcon } from "./ui/Signs";
 import { Modal } from "./ui/common";
 
-type Tab = "heute" | "plan" | "almanach" | "setup";
+type Tab = "heute" | "plan" | "stand" | "almanach" | "setup";
 const TABS: { k: Tab; l: string }[] = [
-  { k: "heute", l: "Heute" }, { k: "plan", l: "Plan" }, { k: "almanach", l: "Almanach" }, { k: "setup", l: "Setup" },
+  { k: "heute", l: "Heute" }, { k: "plan", l: "Plan" }, { k: "stand", l: "Stand" }, { k: "almanach", l: "Almanach" },
 ];
 
 export default function App() {
@@ -84,6 +86,7 @@ export default function App() {
           <div className="topbar-right">
             {state.user.name && <div className="muted small">{state.user.name}</div>}
             <button className="help" onClick={() => setHelp(true)} aria-label="Anleitung">?</button>
+            <button className={`help ${tab === "setup" ? "on" : ""}`} onClick={() => setTab(tab === "setup" ? "heute" : "setup")} aria-label="Setup" title="Setup"><TabIcon k="setup" /></button>
           </div>
         </header>
         <main className="main">
@@ -92,10 +95,10 @@ export default function App() {
             <div className="stack">
               <div className="plan-head">
                 {state.user.level !== "einsteiger" && (
-                  <button className="status-chip" onClick={() => setWizard(2)} aria-label={`Jahresblick: ${yearMeta}`} title={yearMeta}>
-                    {overClocks.length === 0 && gapNames.length === 0 ? <Sign kind="ok" /> : null}
-                    {overClocks.length > 0 && <><Sign kind="clock" />{overClocks.length}</>}
-                    {gapNames.length > 0 && <><Sign kind="gap" />{gapNames.length}</>}
+                  <button className="status-chip" onClick={() => setTab("stand")} aria-label={`Stand: ${yearMeta}`} title={yearMeta}>
+                    {overClocks.length === 0 && gapNames.length === 0 ? <><Sign kind="ok" />alles im Lot</> : null}
+                    {overClocks.length > 0 && <><Sign kind="clock" />{overClocks.length} bald</>}
+                    {gapNames.length > 0 && <><Sign kind="gap" />{gapNames.length} fehlt</>}
                   </button>
                 )}
                 <button className="btn primary" onClick={() => setWizard(0)}>Jahr planen</button>
@@ -109,13 +112,14 @@ export default function App() {
           {wizard !== null && (
             <YearWizard state={state} update={update} today={today} aim={yearAimOf(state, deficits)} deficits={deficits} steer={steer} clocks={clocks} startAt={wizard} fromTest={fromTest ? deficitNames : undefined} onClose={() => { setWizard(null); setFromTest(false); }} />
           )}
+          {tab === "stand" && <Dashboard state={state} today={today} clocks={clocks} onOptimize={() => { setFromTest(true); setWizard(0); }} goPlan={() => setTab("plan")} />}
           {tab === "almanach" && <Almanac state={state} update={update} today={today} />}
           {tab === "setup" && <Setup state={state} update={update} replace={replace} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
         </main>
         <TimerBar />
         {help && <Modal title="Anleitung" onClose={() => setHelp(false)} wide><Help /></Modal>}
         <nav className="tabbar">
-          {TABS.map((t) => <button key={t.k} className={tab === t.k ? "on" : ""} onClick={() => setTab(t.k)}>{t.l}</button>)}
+          {TABS.map((t) => <button key={t.k} className={tab === t.k ? "on" : ""} aria-current={tab === t.k ? "page" : undefined} onClick={() => setTab(t.k)}><TabIcon k={t.k} /><span>{t.l}</span></button>)}
         </nav>
       </div>
     </TimerProvider>

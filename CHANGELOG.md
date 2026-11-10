@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.20.0] – 2026-11-10
+
+### Neu
+- **Stand: ein Dashboard.** Schwachstellen, Jahresbalance und Testergebnis standen an vier Orten; jetzt gibt es einen Reiter. Oben das Jahr in drei Ebenen, dann jeder Bereich in einer Zeile mit Test (Punkte, Schätzung, Richtung) und Zustand (gut, bald, fehlt), Schwachstellen markiert. Darunter Schwerpunkt-Slot, Waage Spezialist ↔ Allrounder, letzte und nächste Testwoche, Volumen und Verlauf.
+- **Neue Optik:** modern, klar, dunkel zuerst. Tiefe neutrale Flächen, Haarlinien statt Rahmen, ein frischer Akzent, Systemschrift, gefüllte Knöpfe für erledigte Sätze, Navigation mit Symbolen. Das helle Design zieht mit.
+
+### Geändert
+- Navigation: Heute · Plan · Stand · Almanach. Setup liegt oben rechts hinter dem Regler-Symbol.
+- „Jahr planen“, Schritt 2: Lebensabschnitte als kompakte Zeilen, Antippen öffnet die Bearbeitung — die Zeichen stehen damit ohne langes Scrollen darunter.
+- Anpassen: „Fällt aus“ erklärt sich in einem Satz. Das Status-Symbol im Plan sagt „1 bald“ statt nur einer Zahl und führt zum Stand.
+- Volumen, Verlauf und Auswertung sind aus dem Log in den Stand gewandert; das Log zeigt die Einheiten.
+
 ## [1.19.0] – 2026-11-10
 
 ### Neu

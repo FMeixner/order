@@ -96,9 +96,16 @@ export function Help() {
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Orden vor der Testwoche misst sie die Testwoche nicht mehr im Vollbesitz.</li>
       </ul>
 
+      <h3>Stand: dein Dashboard</h3>
+      <ul>
+        <li>Der Reiter „Stand“ bündelt, was vorher verteilt war: oben dein Jahr in drei Ebenen, dann jeder Bereich in einer Zeile mit <strong>Test</strong> (Punkte ≈ Perzentil der Altersnorm aus der letzten Testwoche, ~ ist eine Schätzung, der Pfeil zeigt die Richtung seit dem Test davor) und <strong>Zustand</strong> (gut, bald, fehlt). Ein Dreieck markiert Schwachstellen aus den Tests. Antippen zeigt die Zahlen dahinter.</li>
+        <li>Darunter: woran der Schwerpunkt-Slot gerade arbeitet, die Waage Spezialist ↔ Allrounder, die Bilanz der letzten Testwoche mit „Auswertung“ und „Orden nach Schwachstellen optimieren“, und aufklappbar Volumen und Verlauf.</li>
+        <li>Setup liegt jetzt oben rechts hinter dem Regler-Symbol.</li>
+      </ul>
+
       <h3>Bereiche: im Blick</h3>
       <ul>
-        <li>Neun Bereiche — Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill — mit einem Zustand: <strong>gut</strong>, <strong>bald</strong> oder <strong>fehlt</strong>. Zu finden in „Jahr planen“, Schritt 3; das Symbol links neben „Jahr planen“ zählt „bald“ und „fehlt“.</li>
+        <li>Neun Bereiche — Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill — mit einem Zustand: <strong>gut</strong>, <strong>bald</strong> oder <strong>fehlt</strong>. Zu finden im Reiter „Stand“ und in „Jahr planen“, Schritt 3; das Symbol links neben „Jahr planen“ zählt „bald“ und „fehlt“ und führt zum Stand.</li>
         <li>Dahinter stehen zwei Messungen (Antippen zeigt beide): wie lange der letzte Reiz her ist (Spritzigkeit hält etwa eine Woche, Kraftausdauer und Intervalle zwei, Grundausdauer, Beweglichkeit und Sehnen drei, Kraft und Muskel einen Monat) und wie viele Wochen das nächste halbe Jahr den Bereich trägt (Hauptziel voll, Nebenziel halb, Schwerpunkt-Slot halb; Richtwert vier).</li>
         <li>„fehlt“: keine Woche im Plan. „bald“: fällig, noch nie trainiert, knapp im Plan oder bald fällig. Muskel und Sehnen haben keinen Richtwert.</li>
         <li>Was „bald“ oder „fehlt“ ist, ziehen die Vorschläge: Zeichen, Orden und der Schwerpunkt-Slot (Erhalt) bevorzugen, was es hält. Darunter steht, womit du einen Bereich ohne Umplanen bedienst.</li>

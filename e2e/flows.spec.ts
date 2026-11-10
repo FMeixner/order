@@ -383,3 +383,16 @@ test("Ansage-Drill: Start ruft Ansagen in großer Schrift, Stopp hält an, Runde
   expect(st.callMode).toBe("text");
   expect(st.sessions.some((s) => s.drills?.["ca:schritte"]?.[0])).toBe(true);
 });
+
+test("Stand: Dashboard zeigt Jahr, Bereiche und Testwoche; Setup liegt oben rechts", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Stand", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Bereiche" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "Bereiche" }).getByRole("row")).toHaveCount(10);
+  await page.getByRole("row", { name: /Kraftausdauer/ }).click();
+  await expect(page.getByText(/viele Wiederholungen/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Testwoche" })).toBeVisible();
+  await page.getByRole("button", { name: "Setup", exact: true }).click();
+  await expect(page.getByText("Equipment-Profile")).toBeVisible();
+});
