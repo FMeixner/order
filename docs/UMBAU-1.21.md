@@ -91,13 +91,19 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
 ### 2 · Achsen und Modus je Orden
 - Zwei Achsen: **Muskel** (harte Sätze je Muskel und Woche, `MUSCLES` aus volume.ts) und **Kondition**
   (Abschnitt 4).
-- Je Achse ein Modus: `progress` oder `maintain`. Standard aus den Zielen: Ein Ziel der Achse in `goals.primary` oder
+- Je Achse ein Modus: `progress`, `soft` oder `maintain`. Standard aus den Zielen: Ein Ziel der Achse in `goals.primary` oder
   `goals.secondary` → `progress`, sonst `maintain`. Muskel: `hypertrophy`, `strength`. Kondition: `conditioning`,
-  `endurance`. Regenerations-Orden (Zeichen Hirsch) immer `maintain` auf beiden.
+  `endurance`. Regenerations-Orden (Zeichen Hirsch) standardmäßig `maintain` auf beiden.
   Überschreibbar im Orden: `"dose": { "muscle": "progress", "cardio": "maintain" }`.
-- Beispiele: Knight → Muskel steigt, Kondition hält. Gladiator → Kondition steigt, Muskel steigt (Kraft sekundär).
-  King → je nach seinen Zielen; falls dort nur Kondition steht und Muskel steigen soll, `dose` setzen
-  (Nutzer fragen).
+- **Entschieden (Nutzer, 10.11.2026)**, als `dose` in die Orden schreiben:
+
+  | Orden | Muskel | Kondition |
+  |---|---|---|
+  | Pilgrim | maintain | progress |
+  | King | soft | soft |
+  | Magician (`alchemist`) | maintain | soft |
+- Beispiele aus den Zielen: Knight → Muskel steigt, Kondition hält. Gladiator → Kondition steigt, Muskel steigt
+  (Kraft sekundär).
 
 ### 3 · Ziel je Woche: die Welle
 - Spanne je Niveau: Muskel `volumeRange(user)` (heute 6–10 / 10–16 / 12–20 harte Sätze je Muskel und Woche, in
@@ -111,6 +117,9 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
   3 = zusätzlich Bonus für Lastbestien (Morgenland/Süd, `suggestLoad`) und Weste, wo vorhanden.
   Die klassischen Übungen steigen weiter über ihre eigene Progression (Wiederholungen, dann Gewicht); sie werden
   nicht umgebaut.
+- **soft**: dieselbe Welle und dieselben Stufen, aber von Erhalt bis `lo` statt von `lo` bis `hi`
+  (Muskel: `maintenanceVolume` → `volumeRange[0]`; Kondition: Erhalt → unterer Wert der Konditionsspanne).
+  Für Orden, deren Hauptreiz woanders liegt, die aber spürbar vorankommen sollen.
 - **maintain**: Ziel = Erhalt (Untergrenze; mehr ist erlaubt, nie abgewertet).
 - Bestienziel je Muskel = max(0, Ziel − feste Slots der geplanten Woche). Nicht erreichbar → auf das Erreichbare
   kürzen und im `why` sagen.
@@ -123,6 +132,13 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
   (Hickson et al., 1985).
 - Welle und Stufen wie Abschnitt 3; Formen (Doppel, Triple, Serie) heben die Minuten, Stufe 2+ bevorzugt Bestien,
   deren Bestzeit-Klasse steigt (bestehende Klassenlogik).
+- **Feste Konditionsslots wachsen mit** (sonst steigt in Pilgrim und Magician fast nichts, ihre Kondition steckt
+  in festen Slots): In `progress` und `soft` folgen Slots mit `kind: "timer"` (Grundlage, lockeres Auslaufen) und
+  `kind: "interval"` der Welle der Kondition: Minuten von der kuratierten Dauer bis höchstens + 50 %, Intervalle eine
+  Runde mehr je Zykluswoche bis höchstens + 2 Runden (Pilgrim 4 × 4 Min → 5 × 4 → 6 × 4). Nach der Entlastung zurück
+  auf die kuratierte Dauer; die Stufe hebt dann die Bestien, nicht die Grundlage. Zeitlimit des Tages gilt
+  (`planMinutes` ≤ Limit, sonst weniger Zuwachs). Hohe Alltagslast: kein Zuwachs der Intervalle
+  (`highLoadShape` bleibt vorrangig).
 
 ### 5 · Wahl
 - Bestienplätze der Woche in Tagesreihenfolge; jeder Platz sieht das Restziel beider Achsen.
@@ -152,12 +168,14 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
 - Leiter, Halten (1 je Runde), Cardio (0 Sätze, Minuten), Partial/Doppel/Triple.
 - Päckchengröße: Tabelle je Niveau, eigener Wert schlägt Tabelle, Aktualisierung nur nach Testwoche, 60 % gerundet.
 - Welle: Woche 1 = lo, letzte Zykluswoche = hi, Entlastung × 0,5, nach Entlastung Stufe + 1 und lo, Testwoche null.
-- Modus aus Zielen und Override; Hirsch immer maintain.
+- Modus aus Zielen und Override; Hirsch standardmäßig maintain; Pilgrim/King/Magician wie in der Tabelle.
+- soft: Woche 1 = Erhalt, letzte Zykluswoche = `lo`.
+- Pilgrim: Intervalle 4 × 4 → 5 × 4 → 6 × 4 in einem Zyklus, nach Entlastung wieder 4 × 4; Grundlage höchstens + 50 %;
+  nie über das Zeitlimit des Tages.
 - Wahl: Restziel sinkt über die Woche; Varianz schlägt Dosis.
 
 ### Offen beim Nutzer (Vorgabe bis zur Antwort in Klammern)
 1. Päckchen-Startwerte der häufigsten 30 Übungen gegenlesen (Tabelle steht nach dem Bau in Setup › Können).
-2. King, Pilgrim, Alchemist: Modus je Achse (Standard aus den Zielen).
 3. Konditionsspannen (Startwerte oben).
 
 ---
