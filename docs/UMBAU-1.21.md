@@ -20,7 +20,7 @@ beschrieben, erst den Nutzer fragen.
 
 | Paket | Version | Inhalt |
 |---|---|---|
-| **PB** | **1.22.0** | **Bestien-Dosis: die Woche zählt, der Pool dosiert (Pilot King) — Vorrang** |
+| **PB** | **1.22.0** | **Dosis: Bestien und Sätze in einer Währung, alle Orden, Muskel und Kondition — Vorrang** |
 | P1 | 1.23.0 | Zeitstrahl: ganzes Jahr und ab heute, Jahresbilanz der Zeichen |
 | P2 | 1.24.0 | Befinden nach jeder Einheit, Auswertung im Stand |
 | P3 | 1.25.0 | Volumen Soll-Ist im Stand |
@@ -39,106 +39,126 @@ alte Nummer steht, gilt die Tabelle.
 
 ---
 
-## PB · Bestien-Dosis: die Woche zählt, der Pool dosiert (1.22.0) — Vorrang
+## PB · Dosis: Bestien und Sätze in einer Währung (1.22.0) — Vorrang
 
-Konzept und Rechnungen: `docs/BESTIEN-DOSIS.md` (Friedrichs Reißbrett vom 10.11.2026, unverändert abgelegt).
-Dieses Kapitel ist die verbindliche Bauvorgabe; wo es vom Konzept abweicht, gilt dieses Kapitel (Abweichungen
-sind markiert und begründet).
+Ersetzt den ersten PB-Entwurf (Kategorien, nur King). Entschieden mit dem Nutzer am 10.11.2026.
+Hintergrund und Reißbrett-Rechnungen: `docs/BESTIEN-DOSIS.md` (gilt nur noch als Hintergrund; wo es abweicht, gilt
+dieses Kapitel).
 
-### Warum
-King, Pilgrim und Alchemist fühlen sich schwach und unprogressiv an. Ihre Bestien sind Varianz- und Zeitinstrumente,
-keine Fortschrittsnerven. Gesucht ist ein Bestienpool je Woche, der eine Dosis je Bewegungskategorie erfüllt und
-über die Blockwochen sanft steigt — ohne eine einzige Bestie zu ändern.
+### Vision (Nutzer)
+Workouts wie bei Freeletics oder CrossFit so formalisieren, dass klassische Progression möglich wird. Bestien laufen
+nicht separat, sondern stehen gleichberechtigt neben Sätzen und Wiederholungen und werden genauso gerechnet. Jeder
+Orden erzeugt auf **beiden Achsen** — Muskel und Herz-Kreislauf — entweder Erhalt oder Progression. Die Dosis soll
+von Woche zu Woche steigen; ob über Volumen, Komplexität oder Last, ist zweitrangig. Erst Volumen hoch, dann
+Schwierigkeit hoch und Volumen zurück, dann wieder Volumen hoch.
 
-### Feste Regeln (Friedrich, nicht verhandelbar)
-- Bestien stehen fest, Wiederholungen einer Runde ändern sich nie. Keine neuen Bestien, keine Stufen-Kuration.
-- Dosisformen nur: **voll**, **Partial k/R** (jede Rundenzahl ab 1), **Doppel**, **Triple**, dazu die bestehende
-  **Serie** zweier Bestien (`pair` in `pickWith`).
-- Zielkriterium: Ziel erreichen, Überhang bis +15 % ist ideal, darüber leicht abgewertet.
-- Fenster: das Klassenfenster des Tages, geprüft gegen die **formeffektiven** Minuten. Keine Wochen-Obergrenze.
-- Der Pool-Filter ist ein Gewicht, nie eine Sperre. Rangfolge: Zeitfenster > Varianz > Dosis.
-- Deload: Ziele × 0,5. Testwoche: Dosis aus. Keine neue UI-Karte; die Wirkung zeigt sich im `why` der Bestie.
+### Feste Regeln
+- Bestien stehen fest, Wiederholungen einer Runde ändern sich nie, keine neuen Bestien, keine Stufen-Kuration.
+- Dosisformen: voll, Partial k/R (k ≥ 1, nur `canShorten`), Doppel, Triple, Serie (`pair`).
+- Fenster: Klassenfenster des Tages gegen formeffektive Minuten. Keine Wochen-Obergrenze.
+- Gewicht, nie Sperre. Rangfolge: Zeitfenster > Varianz > Dosis.
+- Kein Nachholen ausgefallener Wochen („Alltag ist Trumpf“).
 
-### Zählung (Abweichung vom Konzept, wichtig)
-Das Konzept nennt die Dosis „dieselbe Skala wie volume.ts“. Das stimmt nicht: `beastSets` verteilt eine Übung
-über ihre Muskelanteile (Push-ups zählen für Brust, Trizeps und Schultern), das Konzept rechnet **eine Kategorie je
-Übung**. Nachgerechnet: Aufhocker + Asag + Peri ergeben über Muskelanteile push 8 · pull 3 · legs 5 · core 4, über eine
-Kategorie je Übung (mit den Overrides unten) 4 · 4 · 4 · 4 wie im Konzept.
+### 1 · Zählung: Päckchen (ersetzt die Runden-Zählung)
+Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 50 Wiederholungen (Venus 4 × 50 Push-ups
+= 2 Sätze). Neu zählt die Bestie, wie der Nutzer sie tatsächlich bricht:
+- **Päckchen** je Runde und Übung = ⌈Wiederholungen / Päckchengröße⌉. Ein Päckchen = ein halber Satz (Faktor 0,5,
+  Entscheidung des Nutzers: Bestienrunden enden oft weit vor 1–3 Wiederholungen in Reserve).
+  Beispiel Venus (4 Runden: 50 Push-ups, 20 Crunches, 50 Squats; Päckchen 25 / 20 / 50): 8 + 4 + 4 Päckchen =
+  4 + 2 + 2 Sätze, verteilt über die Muskelanteile aus `musclesOf` wie bei jeder klassischen Übung.
+- Leitern (40/30/20/10): je Runde die Wiederholungen dieser Runde.
+- Ohne Wiederholungszahl (Halten, Hängen, Tragen, Strecken in Metern, Zeitangaben): 1 Päckchen je Runde.
+- Sprints, Läufe, Rudern, Rad, Seilspringen, Pausen (`CARDIO` in `volume.ts`): keine Sätze, sie zählen auf der
+  Kondition (Abschnitt 4).
+- Sprünge und Würfe (Squat Jumps, Tuck Jumps, Box Jumps, Broad Jumps, Clapping Pushups): Päckchengröße wie eine
+  harte Variante (klein), sie zählen.
+- **Päckchengröße** aus `data/modules/packets.json`: Tabelle je Übung mit drei Werten
+  `[Einsteiger, Fortgeschritten, Erfahren]` (Niveau aus `user.level`), dazu Regeln für alle übrigen Namen
+  (Hauptmuskel und Muster, z. B. Oberkörper-Drücken mit Körpergewicht `[10, 20, 25]`, Kniebeuge-Muster `[25, 40, 50]`,
+  Rumpf `[15, 25, 30]`, Klimmzug-Familie `[3, 8, 12]`, Handstand-Push-ups `[2, 5, 8]`, Muscle-Ups `[1, 3, 5]`).
+  Die Startwerte sind Schätzungen; der Nutzer kuratiert die Tabelle. Validator: jede Übung aus jeder Bestie bekommt
+  eine Päckchengröße oder fällt sicher unter Cardio/„1 je Runde“.
+- **Nachschärfen nach jeder Testwoche** (eigene Werte schlagen die Tabelle): aus Tests (`t-pushups` → Push-up-Familie,
+  `t-pullups` → Klimmzug-Familie) und aus dem Log (bester Satz derselben Übung als klassischer Slot in den letzten
+  12 Wochen): Päckchengröße = 60 % der maximalen Wiederholungen, gerundet. Gespeichert in
+  `AppState.packets?: Record<string, number>`, nur nach Testwochen aktualisiert (nicht nach Tagesform), in Setup ›
+  Können sichtbar und überschreibbar.
+- Folge: Wer stärker wird, braucht weniger Päckchen für dieselbe Bestie. Das ist gewollt (relative Intensität, wie ein
+  leichter gewordenes Gewicht) und treibt die Wahl zu mehr Runden oder härteren Bestien.
+- `beastSets` (volume.ts) rechnet ab jetzt so. Damit zeigen Volumen-Anzeige, Erhaltungsprüfung (`maint.test.ts`)
+  und Dosis dieselben Zahlen.
 
-Verbindlich ist die Konzept-Zählung, als eigene Funktion, nicht über `beastSets`:
-- Je Übung genau eine Kategorie: `push` (Brust, Trizeps, Schultern), `pull` (Rücken, Bizeps), `legs` (Quadrizeps,
-  Gesäß, Beinbeuger, Waden), `core` (Rumpf, Unterarme). Ableitung: Kategorie mit der größten Summe der Anteile aus
-  `musclesOf`; Gleichstand → Reihenfolge push, pull, legs, core. Laufen, Rudern, Pausen (`CARDIO` in `volume.ts`)
-  zählen nicht.
-- **Overrides** in `data/modules/beastdose.json` → `categories` (Übung → Kategorie), mindestens:
-  Thrusters, Burpees (und Burpee-Varianten) = push · Snatch-, Swing-, Deadlift-Familie = legs · Supermen, Hangs =
-  core · Face Pull, Band Upright Rows, Pull Press, Reverse Fly = pull · OA Band Curl-and-Press = push.
-- Bestie: Runden × 0,5 je Übung in ihrer Kategorie (Leitern: Anteil wie `shortBeast`). Partial k/R skaliert wie
-  `shortBeast`, Doppel × 2, Triple × 3.
-- Feste Slots des Ordens: Sätze × 1 je Übung in ihrer Kategorie (gleiche Zuordnung), aus der geplanten Woche
-  (`focusFor` aller Rollen der Woche).
-- Einheit überall: **App-Sätze**. Die Volumen-Karte (P3) bleibt bei Muskelanteilen; sie zeigt etwas anderes
-  (Muskel), die Dosis zeigt Bewegungsmuster.
+### 2 · Achsen und Modus je Orden
+- Zwei Achsen: **Muskel** (harte Sätze je Muskel und Woche, `MUSCLES` aus volume.ts) und **Kondition**
+  (Abschnitt 4).
+- Je Achse ein Modus: `progress` oder `maintain`. Standard aus den Zielen: Ein Ziel der Achse in `goals.primary` oder
+  `goals.secondary` → `progress`, sonst `maintain`. Muskel: `hypertrophy`, `strength`. Kondition: `conditioning`,
+  `endurance`. Regenerations-Orden (Zeichen Hirsch) immer `maintain` auf beiden.
+  Überschreibbar im Orden: `"dose": { "muscle": "progress", "cardio": "maintain" }`.
+- Beispiele: Knight → Muskel steigt, Kondition hält. Gladiator → Kondition steigt, Muskel steigt (Kraft sekundär).
+  King → je nach seinen Zielen; falls dort nur Kondition steht und Muskel steigen soll, `dose` setzen
+  (Nutzer fragen).
 
-### Ziel der Woche
-- Neues optionales Ordensfeld `beast_dose`:
-  ```json
-  "beast_dose": { "push": [12, 14, 17, 17], "pull": [9, 11, 13, 13], "legs": [12, 14, 17, 17], "core": [12, 14, 16, 16], "quality_from": 4 }
-  ```
-  Werte = **Gesamtziel** (feste Slots + Bestien) je Blockwoche; nach dem letzten Wert gilt der letzte.
-  In einem Zeichen zählt die Klammerwoche (`klammerWeek`), sonst die Blockwoche.
-- Bestienziel je Kategorie = max(0, Gesamtziel − feste Slots der geplanten Woche).
-- Ist das Bestienziel mit den Slots der Woche nicht erreichbar (Summe der besten Einzelbeiträge je Slot), wird es auf
-  das Erreichbare gekürzt; das `why` sagt es ehrlich („Zug: 13 geplant, 11 erreichbar — die Woche hat zwei
-  Bestienplätze“).
-- Kein Nachholen: Was in Woche N ausfiel, erhöht Woche N+1 nicht („Alltag ist Trumpf“).
-- Ohne `beast_dose` ändert sich für den Orden nichts. **Pilot: nur King.** Gladiator, Pilgrim, Alchemist erst nach
-  Rückmeldung des Nutzers.
+### 3 · Ziel je Woche: die Welle
+- Spanne je Niveau: Muskel `volumeRange(user)` (heute 6–10 / 10–16 / 12–20 harte Sätze je Muskel und Woche, in
+  Setup änderbar), Erhalt `maintenanceVolume(user)`.
+- **progress**: Zyklus = Wochen zwischen zwei Entlastungen (`rhythmWeeks`, in einem Zeichen die Klammerwochen).
+  Ziel in Zykluswoche s von n: `lo + (hi − lo) × s / (n − 1)`, gerundet auf 0,5. Entlastungswoche: × 0,5.
+  Testwoche: kein Ziel.
+- Nach jeder Entlastung: **Schwierigkeitsstufe + 1**, Volumen zurück auf `lo`. Stufen:
+  1 = alles erlaubt; 2 = Bonus für Bestien mit fortgeschrittenen Übungen (`data/modules/packets.json` → `advanced`:
+  Archer-, Clapping-, Commando-Varianten, Muscle-Ups, Handstand-Push-ups, Dragon Flags, Pistol Squats);
+  3 = zusätzlich Bonus für Lastbestien (Morgenland/Süd, `suggestLoad`) und Weste, wo vorhanden.
+  Die klassischen Übungen steigen weiter über ihre eigene Progression (Wiederholungen, dann Gewicht); sie werden
+  nicht umgebaut.
+- **maintain**: Ziel = Erhalt (Untergrenze; mehr ist erlaubt, nie abgewertet).
+- Bestienziel je Muskel = max(0, Ziel − feste Slots der geplanten Woche). Nicht erreichbar → auf das Erreichbare
+  kürzen und im `why` sagen.
 
-### Wahl
-- Bestienplätze der Woche in Tagesreihenfolge (`dayRoleMap`) nacheinander wählen; jeder Platz sieht das Restziel
-  (Ziel − schon gewählte Plätze dieser Woche). Deterministisch wie heute (Seed).
-- Kandidaten wie heute (`pickWith`: single, double, pair, Kurzform) plus: **alle** Partials k = 1 … R−1 für
-  `canShorten`-Bestien, die ins Fenster passen (nicht nur die längste Kurzform), und **Triple**, wenn `inSlot(m × 3)`.
-  Bestien, die `canShorten` nicht erfüllen (Teile, Wiederholung, AMRAP, `noShort`), haben keine Partials — das bleibt.
-- Dosis-Gewicht `poolWeight(cand, rest)`: für jede Kategorie mit Restziel > 0 Anteil der Abdeckung; Fehlbetrag in
-  `pull` zählt doppelt (Flaschenhals des Bestands); Überhang über +15 % je Kategorie leicht negativ. Das Gewicht wird
-  **nach** Zeitfenster und Varianz addiert und darf die Varianzregel nicht überstimmen (Test `weekbeasts.test.ts`
-  bleibt grün).
-- Qualität ab `quality_from`: Kandidaten mit Übungen aus `data/modules/beastdose.json` → `advanced` (Startliste:
-  Archer Pushup, Clapping Pushups, Clapping Pullups, Commando Pullups, Muscle-Ups und Familie) in einer Kategorie mit
-  Restziel bekommen einen festen Bonus. Ersetzt wird nichts; „mehr Archer“ entsteht über die Auswahl.
-- Lastbestien (Morgenland/Süd): Last weiter über `suggestLoad`; sie ist die letzte Stufe der Progression.
+### 4 · Kondition als zweite Währung
+- **Konditionsminuten** je Woche: Bestien mit formeffektiven Minuten (ganz), Intervall-Slots mit ihrer Blockdauer
+  (ganz), Läufe und Rudern mit Hinweis „locker“ oder Sprechtempo zur Hälfte.
+- Spannen (Startwerte, in Setup änderbar, `user.cardioRange?`): Einsteiger 30–60, Fortgeschritten 45–90, Erfahren
+  60–120 Minuten; Erhalt: 20 Minuten an mindestens zwei Tagen. Für den Erhalt zählt vor allem die Intensität
+  (Hickson et al., 1985).
+- Welle und Stufen wie Abschnitt 3; Formen (Doppel, Triple, Serie) heben die Minuten, Stufe 2+ bevorzugt Bestien,
+  deren Bestzeit-Klasse steigt (bestehende Klassenlogik).
 
-### Sichtbar
-- `why` der Bestie, eine Zeile: „Dosis Woche 3: Druck 17, Zug 13, Beine 17, Rumpf 16 — diese Bestie bringt
-  +3 Zug, +2 Rumpf.“ Bei Partial/Doppel/Triple steht die Form im Namen wie heute bei Kurzformen.
-- Hilfe: Absatz „Bestien: die Woche zählt, der Pool dosiert“ (Empfehlung, nie Sperre; Formen; Zählung).
+### 5 · Wahl
+- Bestienplätze der Woche in Tagesreihenfolge; jeder Platz sieht das Restziel beider Achsen.
+- Kandidaten: wie heute plus alle Partials k = 1 … R−1 und Triple, wenn sie ins Fenster passen.
+- `doseWeight(cand, rest)`: Abdeckung der Muskel-Fehlbeträge (gewichtet nach Fehlbetrag), Abdeckung der
+  Konditionsminuten, Überhang über +15 % je Muskel leicht negativ, Stufen-Bonus. Wird nach Zeitfenster und Varianz
+  addiert; `weekbeasts.test.ts` bleibt grün.
+
+### 6 · Sichtbar
+- `why` der Bestie: „Woche 3 · Stufe 2: Brust 14 von 16, Rücken 11 von 16 — diese Bestie bringt Rücken +3, 18 Min.“
+- P3 (Volumen Soll-Ist) nutzt dieses Ziel als Soll; P3 bekommt eine zweite Zeile für die Konditionsminuten.
+- Hilfe: Absatz „Dosis: Bestien zählen wie Sätze“ (Päckchen, Faktor 0,5, Welle, Stufen, zwei Achsen, Quellen).
 
 ### Technik
-- NEU `src/engine/beastdose.ts`: `categoryOf(exercise)`, `beastDose(beast): Dose` (App-Sätze je Kategorie),
-  `formDose(beast, form)`, `fixedDose(focus, roles)`, `doseGoal(state, block, week): Dose | null`,
-  `poolWeight(cand, rest): number`.
-- NEU `data/modules/beastdose.json`: `categories` (Overrides), `advanced`. Validator: jede Übung existiert.
+- NEU `src/engine/dose.ts`: `packetSize(name, user, state)`, `beastDose(beast, user, state): Share` (Päckchen × 0,5,
+  verteilt über Muskelanteile), `cardioMinutes(block | beast | form)`, `doseMode(focus)`, `doseTarget(state, block,
+  week): { muscle: Share; cardio: number; stage: number } | null`, `doseWeight(cand, rest)`.
+- `volume.ts`: `beastSets` ruft `beastDose` (Signatur bekommt `user`/`state`; alle Aufrufer anpassen).
+- NEU `data/modules/packets.json`: `sizes`, `rules`, `advanced`. Validator wie oben.
 - `plan.ts` `pickWith`/`pickBeast`: Kandidaten erweitern, Restziel durchreichen, Gewicht einrechnen.
-- `types.ts`: `Focus.beast_dose?`. Validator: vier Kategorien, Zahlen ≥ 0, `quality_from` ≥ 1.
-- King: `beast_dose` mit den Zahlen oben (Konzept, Reißbrett-Runde 4) — erst nach Bestätigung durch den Nutzer.
+- `types.ts`: `Focus.dose?`, `AppState.packets?`, `UserProfile.cardioRange?`.
+- `maint.test.ts` neu rechnen lassen: Mit der Päckchen-Zählung steigen Bestienbeiträge; Orden, die bisher knapp
+  waren, können frei werden. Nichts an Orden ändern, ohne den Nutzer zu fragen.
 
-### Tests (`beastdose.test.ts`)
-- Fixpunkt: Aufhocker + Asag + Peri (alle voll) = 4 · 4 · 4 · 4 App-Sätze, 36 Minuten.
-- Zählung: Partial 2/4 halbiert, Doppel verdoppelt, Triple verdreifacht; Cardio zählt nicht; Leiter-Partial wie
-  `shortBeast`.
-- Ziel: Woche 1–4 nach Tabelle, Woche 6 = letzter Wert; Deload × 0,5; Testwoche null; ohne `beast_dose` null.
-- Wahl: King Woche 4 trifft das Bestienziel in jeder Kategorie oder meldet das Erreichbare; keine Bestie zweimal in
-  der Woche, wenn es Alternativen gibt (Varianz vor Dosis).
-- Die Lösungszahlen aus dem Konzept (6.499 Lösungen usw.) **nicht** als Unit-Test: Sie hängen am Bestand, und der
-  wird laufend kuratiert. Stattdessen `scripts/beastdose-report.mjs` (Aufzählung, manuell).
+### Tests (`dose.test.ts`)
+- Venus-Beispiel wie oben (Päckchen 25/20/50 → 4 / 2 / 2 Sätze, verteilt über Muskelanteile).
+- Leiter, Halten (1 je Runde), Cardio (0 Sätze, Minuten), Partial/Doppel/Triple.
+- Päckchengröße: Tabelle je Niveau, eigener Wert schlägt Tabelle, Aktualisierung nur nach Testwoche, 60 % gerundet.
+- Welle: Woche 1 = lo, letzte Zykluswoche = hi, Entlastung × 0,5, nach Entlastung Stufe + 1 und lo, Testwoche null.
+- Modus aus Zielen und Override; Hirsch immer maintain.
+- Wahl: Restziel sinkt über die Woche; Varianz schlägt Dosis.
 
-### Offen (beim Nutzer, vor dem Bau klären)
-1. King-Zahlen bestätigen (Tabelle oben).
-2. Pilgrim: Dosisziel mit Zeit-Äquivalent für aerobe Anteile, oder nur Auswahl? (Vorgabe bis zur Antwort: kein Ziel.)
-3. King `chaos_b` bekommt einen Bestienplatz? (Vorgabe: nein, nicht ohne Zustimmung.)
-4. Gladiator in die Pilotrunde?
+### Offen beim Nutzer (Vorgabe bis zur Antwort in Klammern)
+1. Päckchen-Startwerte der häufigsten 30 Übungen gegenlesen (Tabelle steht nach dem Bau in Setup › Können).
+2. King, Pilgrim, Alchemist: Modus je Achse (Standard aus den Zielen).
+3. Konditionsspannen (Startwerte oben).
 
 ---
 
