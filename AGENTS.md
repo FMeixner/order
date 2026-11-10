@@ -61,6 +61,9 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 4. `npx vitest run` und `npm run e2e` (Playwright). Für einen eigenen Chromium-Pfad: `PW_CHROMIUM=<pfad>`.
 5. Commit, Push, CI und Pages prüfen. Scheitert nur das Pages-Deployment: neuen Lauf per `workflow_dispatch` starten, den fehlgeschlagenen Job nicht wiederholen (sonst „Multiple artifacts“).
 
+## Umbauplan
+Die nächsten Pakete (Zeitstrahl, Befinden, Volumen Soll-Ist, Hopping-Schutz …) stehen als Vorgabe in `docs/UMBAU-1.21.md`: ein Paket je Release, in der dortigen Reihenfolge. Erledigte Pakete dort mit Version und Datum abhaken.
+
 ## Gestaltung (1.20)
 Modern, klar, dunkel zuerst; kein Fantasy-Look. Tokens oben in `src/index.css` (Flächen, Haarlinien, Akzent `--teal`, `--on-accent` für Text auf Akzent, Radien `--r-card`/`--r-ctl`), darunter die „moderne Schicht“ am Dateiende. Systemschrift, keine Webfonts. Gefüllter Akzent nur für die eine Hauptaktion und erledigte Sätze. Navigation: vier Reiter mit Symbol (`TabIcon` in `Signs.tsx`), Setup als Symbol oben rechts.
 
