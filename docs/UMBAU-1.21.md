@@ -27,6 +27,9 @@ beschrieben, erst den Nutzer fragen.
   ersetzt die Verhex-Logik nicht; dort gilt dieselbe `instead`-Zuordnung. Validator: jede Übung mit `needs: rope` hat
   `instead`. Mit PB oder vorher als kleines Paket bauen.
 - 10.11.2026 · P2 Befinden: Feeling Scale −5 bis +5 für alle Orden (statt fünf Stufen).
+- 10.11.2026 · P3 Volumen: Anzeige neutral, kein Hinweis über dem Band. Überschießen wird stattdessen **by design
+  verhindert**: Die Dosis wird zu Beginn jedes Ordens als Trajektorie geplant, die exakt machbar ist, und die
+  Bestienwahl darf keinen Muskel über die Obergrenze schieben (Details in PB, Abschnitt 3a und 5).
 
 ## Reihenfolge
 
@@ -133,8 +136,23 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
   (Muskel: `maintenanceVolume` → `volumeRange[0]`; Kondition: Erhalt → unterer Wert der Konditionsspanne).
   Für Orden, deren Hauptreiz woanders liegt, die aber spürbar vorankommen sollen.
 - **maintain**: Ziel = Erhalt (Untergrenze; mehr ist erlaubt, nie abgewertet).
-- Bestienziel je Muskel = max(0, Ziel − feste Slots der geplanten Woche). Nicht erreichbar → auf das Erreichbare
-  kürzen und im `why` sagen.
+- Bestienziel je Muskel = max(0, Ziel − feste Slots der geplanten Woche).
+
+### 3a · Trajektorie zu Beginn des Ordens (Entscheidung des Nutzers: exakt machbar, kein Überschießen)
+- `doseTrajectory(state, block)` rechnet beim Start des Ordens **alle** Wochen auf einmal: Ziel je Muskel und
+  Konditionsminuten je Woche, Stufe je Woche. Grundlage: Welle (Abschnitt 3), feste Slots je Woche (A/B-Wechsel,
+  Wochen mit 3 oder 4 Tagen nach `schedule`), Bestienplätze und ihre Fenster.
+- **Machbarkeit vor dem Start, nicht Woche für Woche:** Für jede Woche wird geprüft, ob die Bestienplätze das
+  Restziel mit erlaubten Formen erreichen können (obere Schranke: bester Beitrag je Platz und Muskel). Ist ein Ziel
+  nicht erreichbar, wird die **ganze Welle** dieses Muskels vor dem Start abgesenkt, sodass jede Woche erreichbar ist
+  und die Steigerung gleichmäßig bleibt (kein Knick in Woche 3). Ein Satz im `why` der ersten Woche nennt es einmal.
+- **Obergrenze**: je Muskel das Ziel der Woche + 15 %, nie über `volumeRange[1]` (progress) bzw. `volumeRange[0]`
+  (soft) bzw. Ziel + 15 % (maintain). Feste Slots allein dürfen sie nicht reißen; wo sie es tun, ist das ein
+  Kuratierfehler: Test listet die Fälle je Orden und Niveau, Orden nicht still ändern, den Nutzer fragen.
+- Die Trajektorie wird pro Orden und Niveau deterministisch berechnet (Memo über `block.id`, `user.level`,
+  `schedule`, `packets`); sie ändert sich nur, wenn sich eines davon ändert, oder nach einer Testwoche
+  (neue Päckchengrößen).
+- Ausfall, Kurztag, „Fällt aus“: Die Trajektorie bleibt; die Woche wird einfach weniger (kein Nachholen).
 
 ### 4 · Kondition als zweite Währung
 - **Konditionsminuten** je Woche: Bestien mit formeffektiven Minuten (ganz), Intervall-Slots mit ihrer Blockdauer
@@ -155,9 +173,14 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
 ### 5 · Wahl
 - Bestienplätze der Woche in Tagesreihenfolge; jeder Platz sieht das Restziel beider Achsen.
 - Kandidaten: wie heute plus alle Partials k = 1 … R−1 und Triple, wenn sie ins Fenster passen.
+- **Obergrenze ist hart** (Ausnahme von „nie Sperre“): Ein Kandidat, der einen Muskel über die Obergrenze der
+  Woche (3a) schiebt, scheidet aus, solange es einen Kandidaten gibt, der ins Fenster passt und es nicht tut. Mit
+  Partials ab einer Runde ist das fast immer der Fall. Gibt es keinen, gewinnt der kleinste Überhang, und das `why`
+  sagt es.
+- Rangfolge damit: Zeitfenster > Obergrenze > Varianz > Dosis.
 - `doseWeight(cand, rest)`: Abdeckung der Muskel-Fehlbeträge (gewichtet nach Fehlbetrag), Abdeckung der
-  Konditionsminuten, Überhang über +15 % je Muskel leicht negativ, Stufen-Bonus. Wird nach Zeitfenster und Varianz
-  addiert; `weekbeasts.test.ts` bleibt grün.
+  Konditionsminuten, Stufen-Bonus. Wird nach Zeitfenster, Obergrenze und Varianz addiert; `weekbeasts.test.ts`
+  bleibt grün.
 
 ### 6 · Sichtbar
 - `why` der Bestie: „Woche 3 · Stufe 2: Brust 14 von 16, Rücken 11 von 16 — diese Bestie bringt Rücken +3, 18 Min.“
@@ -168,6 +191,7 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
 - NEU `src/engine/dose.ts`: `packetSize(name, user, state)`, `beastDose(beast, user, state): Share` (Päckchen × 0,5,
   verteilt über Muskelanteile), `cardioMinutes(block | beast | form)`, `doseMode(focus)`, `doseTarget(state, block,
   week): { muscle: Share; cardio: number; stage: number } | null`, `doseWeight(cand, rest)`.
+- `dose.ts` zusätzlich: `doseTrajectory(state, block)`, `doseCap(traj, week)`.
 - `volume.ts`: `beastSets` ruft `beastDose` (Signatur bekommt `user`/`state`; alle Aufrufer anpassen).
 - NEU `data/modules/packets.json`: `sizes`, `rules`, `advanced`. Validator wie oben.
 - `plan.ts` `pickWith`/`pickBeast`: Kandidaten erweitern, Restziel durchreichen, Gewicht einrechnen.
@@ -184,7 +208,11 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
 - soft: Woche 1 = Erhalt, letzte Zykluswoche = `lo`.
 - Pilgrim: Intervalle 4 × 4 → 5 × 4 → 6 × 4 in einem Zyklus, nach Entlastung wieder 4 × 4; Grundlage höchstens + 50 %;
   nie über das Zeitlimit des Tages.
-- Wahl: Restziel sinkt über die Woche; Varianz schlägt Dosis.
+- Wahl: Restziel sinkt über die Woche; Varianz schlägt Dosis; kein Muskel über der Obergrenze, wenn ein Kandidat
+  ohne Überhang ins Fenster passt.
+- Trajektorie: für jeden Orden, jedes Niveau und 3- wie 4-Tage-Wochen ist jede Woche erreichbar (nach Absenkung);
+  die Welle steigt monoton innerhalb eines Zyklus; feste Slots allein reißen keine Obergrenze (sonst Liste an den
+  Nutzer, Test markiert sie als bekannt).
 
 ### Offen beim Nutzer (Vorgabe bis zur Antwort in Klammern)
 1. Päckchen-Startwerte der häufigsten 30 Übungen gegenlesen (Tabelle steht nach dem Bau in Setup › Können).
@@ -318,7 +346,8 @@ Coaching-Größe. Heute steht das Volumen aufklappbar und ohne Zielband.
   (`volumeRange`) und Erhaltungsmarke (`maintenanceVolume`), rechts die Zahl.
 - Zwei Balken übereinander oder ein Balken mit Marke: **geplant** (aus `focusFor` der laufenden Woche, alle Rollen)
   als Umriss, **erledigt** (aus `weeklyVolume`) gefüllt.
-- Farbe wertneutral: unter Erhaltung `--amber`, sonst `--teal`; über dem Band keine Warnfarbe.
+- Farbe wertneutral: unter Erhaltung `--amber`, sonst `--teal`; über dem Band keine Warnfarbe und kein Hinweis
+  (Entscheidung des Nutzers: Überschießen verhindert die Planung, PB 3a).
 - Im Defizit (Phase `kcal === "deficit"`) gilt als Zielband Erhaltung bis unterer Richtwert, mit dem Satz
   „Im Defizit hält weniger Volumen den Stand.“
 - Entlastungs- und Testwochen: Karte zeigt „Entlastungswoche: Volumen zählt nicht.“
