@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.21.1] – 2026-11-10
+
+### Geändert
+- Gladiator gehört jetzt zum Zeichen Wolf, als später Orden direkt vor der Testwoche (neben Conqueror, Pugilist und Assassin). Bisher stand er in keinem Zeichen und wurde kaum vorgeschlagen.
+
 ## [1.21.0] – 2026-11-10
 
 ### Neu
