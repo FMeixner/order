@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.18.0] – 2026-11-10
+
+### Neu
+- **Kompass auf der Heute-Karte:** Unter dem Ordensnamen steht, wo du im Jahr stehst — Zeichen, Kalorien-Modus, „Hohe Last“ (wenn die Woche so belastet ist) und was als Nächstes kommt („in 3 Wo.: Testwoche“).
+- **Übergabe zwischen Orden:** Wechselt eine Übung den Wiederholungsbereich (Aufbau 8–12, dann Kraft 4–6), rechnet die App das Gewicht um, statt das alte zu übernehmen. Vorsichtig angesetzt, mit Hinweis an der Übung. Hat die Stelle schon einen eigenen Stand, bleibt der (schwerer und leichter Tag derselben Übung stören sich nicht mehr).
+- **Alltagslast je Woche:** Prüfungswochen mitten in einer ruhigen Phase laufen in der Form für hohe Last (mehr geführte Übungen, Cluster-Sätze, Satzende nur an Ergänzungen), die Wochen danach wieder normal.
+
+### Geändert
+- **Jahresbogen:** Zeichen bauen aufeinander auf (Masse → Kraft → Explosiv → Kondition → Masse); die Folge bekommt beim Planen einen kleinen Vorrang.
+- Im Stier steht wieder ein Kraft-Orden, auch wenn Muskelaufbau Ziel Nr. 1 ist (das Ziel wählt die Zeichen, es füllt nicht jedes mit Aufbau-Orden).
+- Drei Orden in einem Zeichen: zwei Aufbau-Orden, die Umwandlung zuletzt vor der Testwoche.
+- Orden kehren im Jahr seltener wieder. Mit zwei Studio-Tagen rücken Orden ohne Studio in Bär und Stier zurück; auf Reisen rücken Reise-Orden vor, und es gibt dort kein Defizit-Fenster.
+
 ## [1.17.0] – 2026-11-09
 
 ### Neu

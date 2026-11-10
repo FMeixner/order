@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { compassOf } from "../engine/compass";
+import { klammerName } from "../engine/klammer";
+import { KCAL_LABEL } from "../engine/kcal";
+import { KlammerIcon, Sign } from "./Signs";
 import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, isWeaponModule, weaponTag, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import type { AppState, PlanBlock, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
@@ -78,6 +82,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   // Folgt auf diesen Orden direkt eine Testwoche, öffnet der Pfeil in der letzten Woche die Vorschau
   const testBlock = extTest ? state.plan.find((x) => isTestBlock(x) && x.start === addDays(block.end, 1)) ?? null : null;
   const week = view?.id === block.id ? view.w : curWeek;
+  const compass = compassOf(state, block, Math.min(week, total));
   const isCur = week === curWeek;
   const future = week > curWeek;
   const weekStart = addDays(mondayOf(block.start), (week - 1) * 7);
@@ -278,7 +283,14 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
               <div className="hero-focus">{focusName(baseFocus.id)}</div>
               {ravenOn(state) && <RavenBadge key={`${block.id}:${today}`} state={state} update={update} block={block} today={today} />}
             </div>
-            <div className="muted small">{baseFocus.medley ? `Diese Woche: ${focusName(focus.id)}` : block.label || focus.tagline}</div>
+            {baseFocus.medley && <div className="muted small">Diese Woche: {focusName(focus.id)}</div>}
+            <div className="compass muted small">
+              {compass.klammer && <span className="compass-item"><KlammerIcon id={compass.klammer} size={14} />{klammerName(compass.klammer)}</span>}
+              {compass.kcal && <span className="compass-item" title={`Kalorien: ${KCAL_LABEL[compass.kcal]}`}><Sign kind={compass.kcal} size={13} />{KCAL_LABEL[compass.kcal]}</span>}
+              {compass.load === "high" && <span className="compass-item warn" title="Diese Woche hohe Alltagslast: mehr geführte Übungen, Satzende-Techniken nur an Ergänzungen">Hohe Last</span>}
+              {compass.next && <span className="compass-item">{compass.next.weeks === 0 ? "nächste Woche" : `in ${compass.next.weeks} Wo.`}: {compass.next.label}</span>}
+              {!compass.klammer && !compass.kcal && !compass.next && (block.label || focus.tagline)}
+            </div>
           </div>
           <div className="week-nav">
             <button onClick={() => go(week - 1)} disabled={week <= 1} aria-label="Vorige Woche">‹</button>

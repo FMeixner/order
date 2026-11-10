@@ -126,13 +126,17 @@ export function kindScore(k: KlammerDef, load: Load, travel: boolean, win: { sta
   if (aim === "deficits") s += ctx.deficits.reduce((a, d) => a + d.w * (k.axes.includes(d.axis) ? 2 : k.accept.includes(d.axis) ? 1 : 0), 0);
   s += 1.2 * monthShare(win.start, win.end, k.months);
   // Kalender: Im Sommer ohne hohe Last ist Zeit für ein Defizit — Zeichen, die eins tragen können, rücken vor
-  if (k.deficitOk && load !== "high") s += 1.5 * monthShare(win.start, win.end, SUMMER);
+  // Unterwegs isst man, was es gibt: kein Defizit-Fenster auf Reisen
+  if (k.deficitOk && load !== "high" && !travel) s += 1.5 * monthShare(win.start, win.end, SUMMER);
   if (load === "high" && k.id === "regeneration") s += 1;
   if (load === "low" && (k.id === "muskel" || k.id === "kraft")) s += 0.5;
   if (travel) s += k.travel ? 1.5 : -2;
   s += 0.8 * ctx.steer.filter((d) => k.axes.includes(d.axis)).length;
   const top = ctx.aims?.find((a) => a.prio === 1)?.aim ?? (aim !== "allround" && aim !== "deficits" ? aim : undefined);
   if (ctx.prev === k.id) s -= top && k.axes.includes(top) ? 1 : 2.5;
+  // Jahresbogen (1.18): Was aufgebaut ist, wird als Nächstes umgewandelt — Masse → Kraft → Explosivität → Kondition → Masse.
+  // Das vorige Zeichen bereitet dieses vor (Phasen-Potenzierung; Issurin, 2010). Ein Bonus, kein Zwang: Ziel, Last und Saison wiegen schwerer.
+  if (ctx.prev && KLAMMER_BY_ID[ctx.prev]?.next?.includes(k.id)) s += 1;
   s -= 0.6 * ctx.used.filter((u) => u === k.id).length;
   // Zwei Überschuss-Zeichen im Jahr reichen für Hypertrophie (Grundsatz: zwei Aufbaublöcke); ein drittes rückt deutlich zurück
   if (k.kcal === "surplus" && ctx.used.filter((u) => KLAMMER_BY_ID[u]?.kcal === "surplus").length >= 2) s -= 3;
@@ -167,11 +171,12 @@ export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnTyp
   let s = bind === "lead" ? 3 : bind === "accept" ? 1.2 : 0;
   if ((pos === "early" || pos === "single") && k.early.includes(f.id)) s += 1.5;
   if ((pos === "late" || pos === "single") && k.late.includes(f.id)) s += pos === "single" ? 0.8 : 1.5;
-  if (pos === "mid" && (k.early.includes(f.id) || k.late.includes(f.id))) s += 0.6;
+  // Mitte: Der Aufbau läuft mit einem zweiten Aufbau-Orden weiter; die Zuspitzung (late) wartet auf den letzten Teil vor der Testwoche
+  if (pos === "mid") s += k.early.includes(f.id) ? 0.9 : k.late.includes(f.id) ? -1.5 : 0;
   if (prev?.id === f.id) s -= 5;
   if (usedInK.includes(f.id)) s -= 4;
   // Abwechslung übers Jahr: jede frühere Verwendung im letzten Jahr kostet (Troubadour war in Modelljahren Lückenfüller)
-  s -= 0.7 * usedBefore.filter((x) => x === f.id).length;
+  s -= 1.2 * usedBefore.filter((x) => x === f.id).length;
   if (prev?.successors?.includes(f.id)) s += 0.5;
   s += 0.5 * timeBias(b, f);
   const v = goalVector(f);
@@ -180,12 +185,19 @@ export function orderScore(f: Focus, k: KlammerDef, b: PlanBlock, pos: ReturnTyp
   // Nur kuratierte Mitläufer: Fremde Orden verwässern das Zeichen nicht.
   const p = primaryAxis(f);
   const aimHit = aims.find((a) => a.aim === p && !k.axes.includes(a.aim));
-  if (aimHit && f.session_min >= 35 && (k.early.includes(f.id) || k.late.includes(f.id))) s += 4 - aimHit.prio;
+  // Ziel Nr. 1 zählt hier nur halb (1.18): Es wählt schon die Zeichen des Jahres. Sonst füllte bei Ziel Muskel ein
+  // Aufbau-Orden auch den Stier, und das Zeichen verlöre seinen Sinn. Nebenziele (2, 3) färben mit vollem Gewicht.
+  if (aimHit && f.session_min >= 35 && (k.early.includes(f.id) || k.late.includes(f.id))) s += aimHit.prio === 1 ? 1.5 : 4 - aimHit.prio;
   // Zeit-Orden (Herald, unter 35 Minuten): wählbar, aber nie Vorschlag — für Wochen mit wenig Zeit wählt man ihn bewusst
   if (f.session_min < 35) s -= 3;
   // Ortsregel (1.13): Studio-Orden (Smith, Knight, Olympian …) brauchen mindestens die Hälfte ihrer Studio-Tage im Studio.
   // Sonst verlieren sie ihren Kern (Back Squat wird Goblet Squat) — die Gegenstücke ohne Studio rücken vor. Reise: kein Studio.
   if (gymDays != null && studioNeed(f) > 0 && (b.travel ? 0 : gymDays) < studioNeed(f)) s -= 4;
+  // Umgekehrt (1.18): Wer zwei Studio-Tage hat, baut Masse und Kraft dort — die Gegenstücke ohne Studio (Barbarian, Mercenary)
+  // sind für Zeiten ohne Studio gedacht und rücken zurück.
+  if (gymDays != null && gymDays >= 2 && !b.travel && studioNeed(f) === 0 && (k.id === "muskel" || k.id === "kraft")) s -= 1.5;
+  // Reise: Orden, die für unterwegs gebaut sind (alle Tage ohne Studio), rücken vor
+  if (b.travel && studioNeed(f) === 0 && f.week_4.every((r) => f.roles[r]?.location === "reise")) s += 1;
   return s;
 }
 

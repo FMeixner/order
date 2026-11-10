@@ -282,6 +282,8 @@ export interface PlanBlock {
 export type KlammerId = "muskel" | "kraft" | "athletik" | "skill" | "gpp" | "regeneration";
 export interface KlammerDef {
   id: KlammerId;
+  /** Jahresbogen: Zeichen, die sinnvoll auf dieses folgen (Aufbau → Kraft → Explosiv → Kondition → Aufbau) */
+  next?: KlammerId[];
   name: string;
   /** Stichwort hinter dem Namen, z. B. „Masse“ → „Bär · Masse“ */
   tag: string;
@@ -339,6 +341,8 @@ export interface SlotState {
   fb: Feedback[];
   topHits: number;
   updated: string;
+  /** Nur zur Laufzeit: Gewicht wurde aus einem anderen Wiederholungsbereich umgerechnet (nie gespeichert) */
+  shifted?: { kg: number; reps: number };
   /** Übung ohne Gewicht hat die Wiederholungsgrenze erreicht: weiter mit Zusatzlast */
   loaded?: boolean;
 }

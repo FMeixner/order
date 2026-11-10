@@ -110,8 +110,30 @@ export function sharedState(slots: Record<string, SlotState>, r: Resolved): Slot
     if (k === r.key || k.slice(k.indexOf("|") + 1) !== r.name || st.weight == null) continue;
     if (!best || (st.updated ?? "") > (best.updated ?? "")) best = st;
   }
+  if (!best || best === own) return best;
   // Stufe (Leiter) gehört zur Stelle, Gewicht und Wiederholungsziel zur Übung
-  return best && best !== own ? { ...best, stage: own?.stage ?? 0 } : best;
+  const borrowed = { ...best, stage: own?.stage ?? 0 };
+  // Übergabe zwischen Wiederholungsbereichen (1.18): Dieselbe Übung läuft woanders in einem anderen Bereich
+  // (Bench Press 4 × 10 im Aufbau, dann 4 × 5 im Kraft-Orden). Dann zählt der eigene Stand dieser Stelle; gibt es
+  // noch keinen, wird das Gewicht umgerechnet statt übernommen.
+  const shifted = rangeShift(r, borrowed);
+  if (shifted === borrowed) return borrowed;
+  return own?.weight != null ? own : shifted;
+}
+
+/** Gewicht in einen anderen Wiederholungsbereich umrechnen. Leistung = Gewicht × (1 + Wdh/30) (Epley, 1985).
+    Vorsichtig: Das neue Gewicht ist für das obere Ende des neuen Bereichs gerechnet, gestartet wird am unteren —
+    die erste Einheit ist machbar, die Rückmeldung holt den Rest in ein, zwei Einheiten auf.
+    Greift nur, wenn das alte Ziel klar außerhalb liegt (mehr als 2 darüber oder mehr als 1 darunter). */
+export function rangeShift(r: Resolved, st: SlotState): SlotState {
+  if (st.weight == null || st.target == null || !r.loadable || (r.prog !== "double" && r.prog !== "weight" && r.prog !== "topset")) return st;
+  const rp = parseReps(r.reps);
+  if (rp.lo == null || rp.amrap) return st;
+  const lo = rp.lo, hi = rp.hi ?? rp.lo;
+  if (st.target <= hi + 2 && st.target >= lo - 1) return st;
+  const cap = st.weight * (1 + st.target / 30);
+  const weight = Math.round((cap / (1 + hi / 30)) * 100) / 100;
+  return { ...st, weight, target: lo, fb: [], topHits: 0, shifted: { kg: st.weight, reps: st.target } };
 }
 
 /** Stand auf ein Profil übertragen, in dem es das gespeicherte Gewicht nicht gibt.
@@ -183,6 +205,7 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
   const weight = r.loadable ? s.weight : null;
   const backoff: number | null = null; // Back-off-Last rechnet backoffLoad() mit dem Profil
   if (weight == null && r.loadable) hint = "Startgewicht wählen";
+  if (s.shifted && weight != null) hint = `Neuer Bereich: umgerechnet aus ${fmtKg(s.shifted.kg)} kg × ${s.shifted.reps}. Vorsichtig angesetzt, die Rückmeldung justiert.`;
 
   let seconds: number | null = null;
   if (r.kind === "hold") seconds = r.prog === "hold" || r.prog === "ladder" ? Math.max(r.hold ?? 20, s.target ?? r.hold ?? 20) : r.hold ?? 20;
@@ -199,6 +222,7 @@ export function backoffLoad(p: EquipmentProfile, r: Resolved, top: number): numb
 /** Nach der Einheit: neuen Zustand berechnen */
 export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEntry, p: EquipmentProfile, today: string): SlotState {
   const s: SlotState = { ...(st ?? EMPTY_STATE), fb: [...(st?.fb ?? [])] };
+  delete s.shifted;
   if (r.ladder && (r.ladderStart ?? 0) > s.stage) s.stage = r.ladderStart!; // Skillcheck: Leiter startet höher
   const fb0: Feedback = entry.feedback ?? "ok";
   // „Zu schwer“ wirkt wie „Schwer“; die verfehlte Zahl steckt in den Sätzen (letzter Satz nachgefragt)

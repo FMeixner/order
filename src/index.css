@@ -595,3 +595,9 @@ button.yp-seg { cursor: pointer; text-align: left; }
 .call-back { color: var(--amber); }
 .call-not { color: var(--red); }
 .call-other { color: var(--text); }
+
+/* Kompass auf der Heute-Karte: Zeichen · Kalorien · Last · was kommt */
+.compass { display: flex; flex-wrap: wrap; gap: 2px 12px; margin-top: 4px; align-items: center; }
+.compass-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.compass-item.warn { color: var(--amber); font-weight: 500; }
+.compass-item svg { flex-shrink: 0; }
