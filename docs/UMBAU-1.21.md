@@ -35,6 +35,7 @@ beschrieben, erst den Nutzer fragen.
 - 10.11.2026 · P5: Wochenrückblick nur im Stand (Karte „Letzte Woche“), keine Karte auf Heute.
 - 10.11.2026 · P6: wie geplant — „gehalten“ sichtbar; Hinweis nur nach zwei Einheiten in Folge mit Rückgang und nur an Kernübungen, einzelne schwache Tage bleiben still.
 - 10.11.2026 · P7: Ausklang wie geplant (2 Min locker gehen mit Atemfokus nach hartem Ende; Kurztag ohne).
+- 10.11.2026 · P8: Entlastung nach Signalen wie geplant. Die Dosis-Welle (PB) wendet zur geplanten Zeit auch ohne Entlastungswoche (Stufe + 1, Volumen zurück); nur die halbierte Woche entfällt.
 - 10.11.2026 · Notiz an der Übung (neu, in P12): kleiner Stift, nur bei Bedarf, z. B. Sitzhöhe oder Einstellung am Gerät.
 
 ## Reihenfolge
@@ -465,6 +466,9 @@ Signale bekommen mehr Gewicht.
   −1 bei mindestens drei Werten (P2); zwei Kernübungen mit Trend „down“ (P6); hohe Last der Woche (`weekLoad`).
   Ab zwei Punkten: Empfehlung mit Begründung in Worten („zweimal zu schwer, Befinden zäh“), „Entlasten“ hervorgehoben.
 - Unverändert: nie in oder direkt vor der Testwoche, nie dicht nach der letzten Entlastung.
+- Die Dosis-Welle (PB) hängt nicht an der Entlastung: Ihre Zyklusgrenzen kommen aus `rhythmWeeks` (geplant), nicht
+  aus tatsächlich genommenen Entlastungen. Wird eine Entlastung übersprungen, wendet die Welle trotzdem (Stufe + 1,
+  Volumen auf den Start), nur ohne × 0,5. Test: übersprungene Entlastung → Woche danach = Startwert der nächsten Welle.
 
 ### Technik
 `DeloadAdvice` bekommt `signals: string[]`. Tests in `deload.test.ts` für jede Kombination.
