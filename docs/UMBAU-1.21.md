@@ -19,6 +19,13 @@ beschrieben, erst den Nutzer fragen.
 ## Entscheidungen gesammelt (noch nicht gebaut)
 - 10.11.2026 · Gladiator „Spiel“: neue Reihenfolge 5-10-5 Shuttle → Pogo Hops + Skater Jumps → Medizinball-Brustpass
   → Sprint oder Seilspringen 10 × 30 s (Explosives frisch, Intervalle als Ausklang). Mit P10 bauen.
+- 10.11.2026 · Springseil: neues Equipment-Feld `has.rope` (optional, wie `roll`/`ball`; fehlt = vorhanden, damit alte
+  Profile nichts verlieren — beim Anlegen neuer Profile abfragen). Übungen mit Seil (Seilsprints, Seilspringen,
+  Single Unders, „Sprint oder Seilspringen“, „Burpees oder Seilspringen“) bekommen `needs: ["rope"]` und je einen
+  festen Ersatz ohne Seil (`instead`): Seilsprints → High Knees auf der Stelle, Seilspringen/Single Unders →
+  Pogo Hops (Sprungrhythmus, gleiche Zeit), Mischübungen → die seilfreie Hälfte (Sprints bzw. Burpees). In Bestien
+  ersetzt die Verhex-Logik nicht; dort gilt dieselbe `instead`-Zuordnung. Validator: jede Übung mit `needs: rope` hat
+  `instead`. Mit PB oder vorher als kleines Paket bauen.
 
 ## Reihenfolge
 
