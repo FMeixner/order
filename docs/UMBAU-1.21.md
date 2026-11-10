@@ -26,6 +26,7 @@ beschrieben, erst den Nutzer fragen.
   Pogo Hops (Sprungrhythmus, gleiche Zeit), Mischübungen → die seilfreie Hälfte (Sprints bzw. Burpees). In Bestien
   ersetzt die Verhex-Logik nicht; dort gilt dieselbe `instead`-Zuordnung. Validator: jede Übung mit `needs: rope` hat
   `instead`. Mit PB oder vorher als kleines Paket bauen.
+- 10.11.2026 · P2 Befinden: Feeling Scale −5 bis +5 für alle Orden (statt fünf Stufen).
 
 ## Reihenfolge
 
@@ -33,7 +34,7 @@ beschrieben, erst den Nutzer fragen.
 |---|---|---|
 | **PB** | **1.22.0** | **Dosis: Bestien und Sätze in einer Währung, alle Orden, Muskel und Kondition — Vorrang** |
 | P1 | 1.23.0 | Zeitstrahl: ganzes Jahr und ab heute, Jahresbilanz der Zeichen |
-| P2 | 1.24.0 | Befinden nach jeder Einheit, Auswertung im Stand |
+| P2 | 1.24.0 | Befinden (Feeling Scale) nach jeder Einheit, Auswertung im Stand |
 | P3 | 1.25.0 | Volumen Soll-Ist im Stand |
 | P4 | 1.26.0 | Schutz vor Programm-Hopping: Begründung und Ideenparkplatz |
 | P5 | 1.27.0 | Wochenrückblick |
@@ -278,17 +279,17 @@ Affekt sagt Dabeibleiben besser voraus als Vorsätze (Ekkekakis-Linie). Heute fr
 King ab (`focus.affect_rule`), und nur dort wirkt es (`affectDowngrade`).
 
 ### Verhalten
-- Die Frage „Wie hat sich die Einheit angefühlt?“ steht in jeder Einheit auf der Abschlusskarte, als fünf Knöpfe
-  statt elf: −2 · −1 · 0 · +1 · +2 mit Beschriftung an den Enden („schlecht“, „sehr gut“). Freiwillig; ohne Wahl
-  wird nichts gespeichert. Gespeichert wird wie bisher in `state.feeling`, auf der alten Skala: −5, −3, 0, +3, +5.
-  So rechnet `affectDowngrade` (zweimal ≤ −1) unverändert. Ausgewertet wird auf der Anzeige-Skala −2 bis +2
-  (gespeicherter Wert ÷ 2,5; alte Elfer-Werte werden genauso geteilt).
+- Die Frage „Wie hat sich die Einheit angefühlt?“ steht in jeder Einheit auf der Abschlusskarte, als **Feeling
+  Scale −5 bis +5** (Hardy & Rejeski, 1989; Entscheidung des Nutzers 10.11.2026: validiert, anschlussfähig an die
+  Ekkekakis-Literatur). Elf Knöpfe in einer Reihe (bestehende `.fs-scale`), Endbeschriftungen „sehr schlecht“ /
+  „sehr gut“, Mitte „neutral“. Freiwillig; ohne Wahl wird nichts gespeichert. Gespeichert wie bisher in
+  `state.feeling` (−5 … +5), keine Umrechnung.
 - Die King-Regel bleibt, wie sie ist.
 - Stand, neue Karte „Befinden“ (unter „Bereiche“): 
-  - Mittelwert der letzten vier Wochen als Zahl und Wort (unter −0,5 „zäh“, bis +0,5 „neutral“, darüber „gut“).
+  - Mittelwert der letzten vier Wochen als Zahl und Wort (unter −1 „zäh“, −1 bis +1 „neutral“, darüber „gut“).
   - Je Tagestyp der laufenden Phase (Rollenname) eine Zeile mit Punktreihe der letzten sechs Werte
     (Punkte in `--red`/`--muted`/`--teal`) und Mittelwert. Sortiert vom besten zum schwächsten.
-  - Ein Hinweis, nur wenn ein Tagestyp bei mindestens drei Werten im Mittel unter −0,5 liegt:
+  - Ein Hinweis, nur wenn ein Tagestyp bei mindestens drei Werten im Mittel unter −1 liegt:
     „<Tag> fühlt sich seit drei Einheiten zäh an. Unter Anpassen lässt er sich kürzen oder tauschen.“
     Keine automatische Änderung am Training.
   - Unter fünf Werten insgesamt: nur „Noch zu wenige Einheiten mit Befinden.“
@@ -300,8 +301,8 @@ King ab (`focus.affect_rule`), und nur dort wirkt es (`affectDowngrade`).
 - `Dashboard.tsx`: Karte „Befinden“.
 
 ### Tests
-`affect.test.ts` (Mittelwert, Fenster vier Wochen, Hinweis erst ab drei Werten, Skalenumrechnung);
-e2e: Einheit abschließen mit „+1“ speichert einen Wert; Stand zeigt die Karte.
+`affect.test.ts` (Mittelwert, Fenster vier Wochen, Hinweis erst ab drei Werten);
+e2e: Einheit abschließen mit „+3“ speichert einen Wert; Stand zeigt die Karte.
 
 ---
 
@@ -426,7 +427,7 @@ Signale bekommen mehr Gewicht.
   leise Zeile „Entlastung wäre dran. Dir geht es gut: weiter, oder trotzdem entlasten?“ mit beiden Knöpfen
   gleichrangig (bisher ist „Entlasten“ hervorgehoben).
 - Signale (letzte 14 Tage), jedes zählt einen Punkt: dreimal „zu schwer“ (wie bisher); Befinden im Mittel unter
-  −0,5 bei mindestens drei Werten (P2); zwei Kernübungen mit Trend „down“ (P6); hohe Last der Woche (`weekLoad`).
+  −1 bei mindestens drei Werten (P2); zwei Kernübungen mit Trend „down“ (P6); hohe Last der Woche (`weekLoad`).
   Ab zwei Punkten: Empfehlung mit Begründung in Worten („zweimal zu schwer, Befinden zäh“), „Entlasten“ hervorgehoben.
 - Unverändert: nie in oder direkt vor der Testwoche, nie dicht nach der letzten Entlastung.
 
