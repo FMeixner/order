@@ -33,6 +33,7 @@ beschrieben, erst den Nutzer fragen.
 - 10.11.2026 · P4: nur der Ideenparkplatz. Keine Rückfrage, kein „Trotzdem ändern“, keine Bedenkzeit beim Ändern
   laufender Phasen — der Nutzer will frei spielen und Jahrespläne ausprobieren.
 - 10.11.2026 · P5: Wochenrückblick nur im Stand (Karte „Letzte Woche“), keine Karte auf Heute.
+- 10.11.2026 · P6: wie geplant — „gehalten“ sichtbar; Hinweis nur nach zwei Einheiten in Folge mit Rückgang und nur an Kernübungen, einzelne schwache Tage bleiben still.
 - 10.11.2026 · Notiz an der Übung (neu, in P12): kleiner Stift, nur bei Bedarf, z. B. Sitzhöhe oder Einstellung am Gerät.
 
 ## Reihenfolge
@@ -416,7 +417,7 @@ Die Angst vor Leistungsverlust im Defizit ist Abbruchgrund Nr. 1 des Nutzers. Im
 - Wochenrückblick (P5, Karte im Stand) zählt im Defizit „4 Übungen gehalten, 1 gesteigert“.
 - Stand, Karte „Volumen“ (P3) und „Verlauf“: Unterzeile „Defizit-Phase: Halten ist das Ziel.“
 - Fällt eine Kernübung in zwei Einheiten nacheinander (Gewicht oder Wiederholungen runter), ein sachlicher
-  Hinweis: „<Übung> gibt nach. Bei ausreichend Eiweiß und Schlaf fängt sich das meist; sonst Defizit eine Woche pausieren.“
+  Hinweis (einzelne schwache Tage bleiben still; nur Slots mit `core`): „<Übung> gibt nach. Bei ausreichend Eiweiß und Schlaf fängt sich das meist; sonst Defizit eine Woche pausieren.“
   Keine automatische Änderung.
 
 ### Technik
