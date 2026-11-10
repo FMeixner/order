@@ -30,6 +30,9 @@ beschrieben, erst den Nutzer fragen.
 - 10.11.2026 · P3 Volumen: Anzeige neutral, kein Hinweis über dem Band. Überschießen wird stattdessen **by design
   verhindert**: Die Dosis wird zu Beginn jedes Ordens als Trajektorie geplant, die exakt machbar ist, und die
   Bestienwahl darf keinen Muskel über die Obergrenze schieben (Details in PB, Abschnitt 3a und 5).
+- 10.11.2026 · P4: nur der Ideenparkplatz. Keine Rückfrage, kein „Trotzdem ändern“, keine Bedenkzeit beim Ändern
+  laufender Phasen — der Nutzer will frei spielen und Jahrespläne ausprobieren.
+- 10.11.2026 · Notiz an der Übung (neu, in P12): kleiner Stift, nur bei Bedarf, z. B. Sitzhöhe oder Einstellung am Gerät.
 
 ## Reihenfolge
 
@@ -39,7 +42,7 @@ beschrieben, erst den Nutzer fragen.
 | P1 | 1.23.0 | Zeitstrahl: ganzes Jahr und ab heute, Jahresbilanz der Zeichen |
 | P2 | 1.24.0 | Befinden (Feeling Scale) nach jeder Einheit, Auswertung im Stand |
 | P3 | 1.25.0 | Volumen Soll-Ist im Stand |
-| P4 | 1.26.0 | Schutz vor Programm-Hopping: Begründung und Ideenparkplatz |
+| P4 | 1.26.0 | Ideenparkplatz (ohne Sperre oder Rückfrage) |
 | P5 | 1.27.0 | Wochenrückblick |
 | P6 | 1.28.0 | Defizit-Phasen: „gehalten“ zählt als Erfolg |
 | P7 | 1.29.0 | Ausklang nach Bestie und Finisher |
@@ -359,28 +362,25 @@ geplant ≥ erledigt bei vollständiger Woche; Deload liefert null.
 
 ---
 
-## P4 · Schutz vor Programm-Hopping (1.26.0)
+## P4 · Ideenparkplatz (1.26.0)
 
 ### Warum
-Programm-Hopping ist das dokumentierte Hauptrisiko des Nutzers. Er will externe Regeln statt Stimmung.
+Programm-Hopping ist das dokumentierte Hauptrisiko des Nutzers. **Entscheidung (10.11.2026): keine Sperre, keine
+Rückfrage, keine Bedenkzeit.** Der Nutzer will mit dem Plan frei spielen und Jahrespläne ausprobieren können; jeder
+zusätzliche Bestätigungsschritt wäre Ballast. Geschützt wird nur über den Parkplatz: Neue Ideen bekommen einen Ort,
+an dem sie warten können.
 
 ### Verhalten
-- **Ideenparkplatz**: Im Plan-Reiter ein Knopf „Idee notieren“ (neben „+ Phase anhängen“). Öffnet ein Textfeld;
-  gespeichert in `AppState.ideas?: { date: string; text: string; done?: boolean }[]`. Liste aufklappbar „Ideen für
-  später“ mit Abhaken und Löschen.
-- **Laufende Phase ändern** (Orden wechseln, Phase kürzen, teilen, löschen — alles, was eine Phase mit
-  `start <= heute <= end` trifft): Vor dem Speichern erscheint ein Dialog:
-  „Du bist in Woche 6 von 9. Was ist der Grund?“ mit drei Knöpfen: „Schmerz oder Verletzung“, „Alltag hat sich
-  geändert“, „Neue Idee“. Die ersten beiden speichern sofort (mit Eintrag in `AppState.planChanges?: { date; blockId; reason }[]`).
-  „Neue Idee“ bietet an: „Als Idee für später notieren“ (Standard, hervorgehoben) oder „Trotzdem ändern“.
-- Künftige Phasen bleiben frei änderbar. „Jahr planen“ ändert laufende Phasen ohnehin nicht (`planYear` hält sie).
+- Im Plan-Reiter ein Knopf „Idee notieren“ (neben „+ Phase anhängen“). Öffnet ein Textfeld; gespeichert in
+  `AppState.ideas?: { date: string; text: string; done?: boolean }[]`. Liste aufklappbar „Ideen für später“ mit
+  Abhaken und Löschen.
+- Laufende Phasen bleiben **ohne jede Rückfrage** änderbar, wie heute.
 - In der Testwoche zeigt die Auswertung offene Ideen: „3 Ideen warten. Jetzt ist der Moment, sie einzuplanen.“
+  Dasselbe im „Jahr planen“-Assistenten, Schritt 4, als aufklappbare Liste.
 
 ### Technik
-`src/engine/guard.ts`: `touchesRunning(before: PlanBlock[], after: PlanBlock[], today): PlanBlock | null`.
-Einhängen an der einen Stelle, an der der Plan gespeichert wird (`onChange` der `PlanList` in `App.tsx`).
-Tests: Änderung an künftiger Phase → null; Verlängern der laufenden Phase um eine Woche → null (kein Hopping);
-Ordenswechsel, Kürzen, Löschen der laufenden → Phase.
+`types.ts` (`ideas`), `PlanEditor.tsx` bzw. Plan-Liste (Knopf und Liste), `TestWeek.tsx` (`TestSummary`) und
+`YearWizard.tsx` (Schritt 4). Test: e2e Idee notieren, abhaken, in der Testwoche sichtbar.
 
 ---
 
@@ -525,6 +525,19 @@ systematic review and meta-analysis. *Sports Medicine, 52*(3), 601–612.
 - **Hilfe**: Suchfeld oben (filtert Abschnitte nach Überschrift und Text, Treffer hervorgehoben); Abschnitte
   aufklappbar, alle zu, außer es wird gesucht. Kein Text geht verloren.
 - **Plan-Liste**: „Später · n Orden“ zeigt aufgeklappt die Zeichen als Gruppen wie bisher; kein Umbau über P1 hinaus.
+- **Notiz an der Übung** (Entscheidung des Nutzers 10.11.2026): für Einstellungen, die man beim nächsten Mal wieder
+  braucht („Sitz 4“, „Defizit −3“, „Rolle auf Loch 6“).
+  - Kleiner Stift (✎, `--muted`, 28 px Tippfläche) rechts in der Kopfzeile der Übungskarte, neben „i“ und Tauschen.
+    Ohne Notiz ist das das Einzige, was man sieht.
+  - Antippen öffnet ein einzeiliges Feld direkt unter dem Namen (max. 80 Zeichen, Enter oder Verlassen speichert,
+    leeres Feld löscht).
+  - Mit Notiz steht sie als kleine graue Zeile unter dem Übungsnamen, ohne Stift-Rahmen; Antippen bearbeitet.
+  - Gilt je **Übung und Equipment-Profil** (Studio-Beinpresse ≠ Labor-Beinpresse), über alle Orden und Wochen
+    hinweg: `AppState.exNotes?: Record<string, string>`, Schlüssel `${profileId}|${exerciseName}`. Wird die Übung
+    getauscht, gilt die Notiz der neuen Übung.
+  - Auch in Bestien? Nein, nur an Übungskarten (`SlotCard`). Nicht im Warm-up/Cool-down.
+  - Export/Import der Daten nimmt `exNotes` mit; keine Anzeige im Log.
+  - Test: e2e Notiz anlegen, Seite neu laden, Notiz steht noch; anderes Profil zeigt sie nicht.
 
 ---
 
