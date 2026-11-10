@@ -34,6 +34,7 @@ beschrieben, erst den Nutzer fragen.
   laufender Phasen — der Nutzer will frei spielen und Jahrespläne ausprobieren.
 - 10.11.2026 · P5: Wochenrückblick nur im Stand (Karte „Letzte Woche“), keine Karte auf Heute.
 - 10.11.2026 · P6: wie geplant — „gehalten“ sichtbar; Hinweis nur nach zwei Einheiten in Folge mit Rückgang und nur an Kernübungen, einzelne schwache Tage bleiben still.
+- 10.11.2026 · P7: Ausklang wie geplant (2 Min locker gehen mit Atemfokus nach hartem Ende; Kurztag ohne).
 - 10.11.2026 · Notiz an der Übung (neu, in P12): kleiner Stift, nur bei Bedarf, z. B. Sitzhöhe oder Einstellung am Gerät.
 
 ## Reihenfolge
