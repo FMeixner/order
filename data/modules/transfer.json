@@ -1,0 +1,28 @@
+{
+  "_info": "Umrechnung zwischen verwandten Übungen (1.19): Hat eine Übung noch kein Gewicht, schätzt die App es aus einer verwandten Übung derselben Familie, damit nach den ersten Wochen fast nichts mehr bei null startet. Die Zahlen sind Verhältnisse zur Ankerübung (1.0) bei gleicher Wiederholungszahl; Kurzhanteln und Kettlebells je Hantel. Es sind Erfahrungswerte, keine gemessenen Normen: Maschinen und Kabelzüge unterscheiden sich je Hersteller und Übersetzung stark. Darum setzt die App die Schätzung 15 % tiefer an und zeigt sie als Schätzung; die erste Rückmeldung korrigiert.",
+  "discount": 0.85,
+  "families": {
+    "Drücken": {
+      "Bench Press": 1.0, "DB Bench Press": 0.37, "DB Floor Press": 0.35, "Chest Press Machine": 0.9,
+      "Incline Bench Press": 0.82, "Incline DB Press": 0.31, "Incline Chest Press Machine": 0.75,
+      "Overhead Press": 0.62, "DB Shoulder Press": 0.23, "Seated DB Shoulder Press": 0.24, "Shoulder Press Machine": 0.6
+    },
+    "Beine": {
+      "Back Squat": 1.0, "Box Squat": 1.0, "Front Squat": 0.82, "Goblet Squat": 0.35, "Leg Press": 1.7, "Single-Leg Leg Press": 0.8
+    },
+    "Heben": {
+      "Deadlift": 1.0, "Trap Bar Deadlift": 1.05, "Romanian Deadlift": 0.75, "DB Romanian Deadlift": 0.28, "Hip Thrust": 1.0, "Hip Thrust Machine": 0.9
+    },
+    "Ziehen": {
+      "Lat Pulldown": 1.0, "Lat Pulldown (Untergriff)": 1.05, "Lat Pulldown (V-Griff)": 1.05,
+      "Seated Cable Row": 1.0, "Seated Cable Row (Untergriff)": 1.0, "Chest-Supported Row Machine": 1.0,
+      "Barbell Row": 0.95, "Double DB Row": 0.4, "1-Arm DB Row": 0.5, "Single-Arm Cable Row": 0.5
+    },
+    "Bizeps": { "Barbell Curl": 1.0, "Cable Curl": 0.9, "Rope Hammer Curl": 0.9, "DB Biceps Curl": 0.42, "Hammer Curl": 0.45, "Incline DB Curl": 0.35 },
+    "Trizeps": { "Rope Pushdown": 1.0, "Cable Overhead Triceps Extension": 0.8, "DB Overhead Triceps Extension": 0.5 },
+    "Seitheben": { "DB Lateral Raise": 1.0, "Cable Lateral Raise": 0.6 },
+    "Fly": { "DB Fly": 1.0, "Cable Chest Fly": 0.8, "Cable Fly (tief nach hoch)": 0.6 },
+    "Beinbeuger": { "Lying Leg Curl": 1.0, "Seated Leg Curl": 1.15 },
+    "Waden": { "Standing Calf Raise": 1.0, "Seated Calf Raise": 0.6 }
+  }
+}

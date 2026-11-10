@@ -217,6 +217,19 @@ for (const [f, d] of allFoci) {
   for (const [k, list] of Object.entries(pack.tables)) { if (!list.length) err(f, `Tabelle ${k} leer`); list.forEach((t, i) => check(`${k}/${i}`, t)); }
 }
 
+// Umrechnung zwischen verwandten Übungen: jede Übung existiert, steht in genau einer Familie, Verhältnis > 0
+{
+  const tr = read("modules/transfer.json");
+  const seen = new Set();
+  for (const [fam, m] of Object.entries(tr.families)) for (const [n, v] of Object.entries(m)) {
+    if (!exercises[n]) err("transfer.json", `${fam}: Übung „${n}“ fehlt in exercises.json`);
+    if (!(v > 0)) err("transfer.json", `${fam}/${n}: Verhältnis muss größer als 0 sein`);
+    if (seen.has(n)) err("transfer.json", `„${n}“ steht in zwei Familien`);
+    seen.add(n);
+  }
+  if (!(tr.discount > 0 && tr.discount <= 1)) err("transfer.json", "discount zwischen 0 und 1");
+}
+
 for (const w of warns) console.log("Hinweis:", w);
 if (errors.length) {
   for (const e of errors) console.error("Fehler:", e);

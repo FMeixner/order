@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.19.0] – 2026-11-10
+
+### Neu
+- **Fast nichts startet mehr bei null:** Hat eine Übung noch kein Gewicht, schätzt die App es aus einer verwandten Übung (Chest Press aus Bench Press, Front Squat aus Back Squat, Kurzhantel aus Langhantel). Vorsichtig angesetzt (15 % Abschlag) und als Schätzung markiert; die erste Rückmeldung korrigiert.
+- **Dauerlast formt das Training:** Der erste Orden eines mittleren Abschnitts läuft normal. Ein Orden, der nach fünf oder mehr Wochen mittlerer Last beginnt, wechselt auf geführt wie bei hoher Last. Auf der Heute-Karte steht dann „Dauerlast“.
+
+### Geändert
+- Läuft ein Orden acht Wochen oder länger in hoher Last, kommt ab seiner Mitte eine geführte Übung dazu. Der erste freie Lift des Tages bleibt immer frei.
+
 ## [1.18.0] – 2026-11-10
 
 ### Neu

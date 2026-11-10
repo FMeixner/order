@@ -8,6 +8,7 @@ import longswordJson from "../data/modules/longsword.json";
 import staffJson from "../data/modules/staff.json";
 import testweekJson from "../data/modules/testweek.json";
 import guidedJson from "../data/modules/guided.json";
+import transferJson from "../data/modules/transfer.json";
 import swapsJson from "../data/modules/swaps.json";
 import normsJson from "../data/modules/norms.json";
 import skillsJson from "../data/modules/skills.json";
@@ -41,6 +42,8 @@ export const LS_VARIANTS = (longswordJson as unknown as { variants: Record<strin
 export const STAB = staffJson as unknown as { levels: { name: string; variant: string; skill?: string; echo?: Drill[] }[]; leveled: string[] };
 export const SB_VARIANTS = (staffJson as unknown as { variants: Record<string, Drill[]> }).variants;
 /** Freie Übung → geführte Variante (Maschine/Kabel) für Phasen mit hoher Last */
+/** Umrechnung zwischen verwandten Übungen: Familie → Übung → Verhältnis zur Ankerübung */
+export const TRANSFER = transferJson as unknown as { discount: number; families: Record<string, Record<string, number>> };
 export const GUIDED = (guidedJson as unknown as { map: Record<string, string> }).map;
 export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; who5: string[]; who5_intro: string; who5_scale: string[] };
 /** Tauschgruppen: Übungen mit ähnlichem Bewegungsmuster */

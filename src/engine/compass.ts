@@ -2,12 +2,14 @@
    Zeichen der Phase, Kalorien-Modus, Alltagslast dieser Woche (nur wenn hoch) und was als Nächstes kommt. */
 import type { AppState, Kcal, KlammerId, Load, PlanBlock } from "../types";
 import { blockWeeks, focusName, isTestBlock } from "./plan";
-import { weekLoad } from "./weekplan";
+import { dauerlast, weekLoad } from "./weekplan";
 
 export interface Compass {
   klammer?: KlammerId;
   kcal?: Kcal;
   load: Load;
+  /** Dauerlast: mittlere Last schon lange — der Orden läuft mit mehr geführten Übungen */
+  dauer: boolean;
   /** Was nach dieser Phase kommt und in wie vielen Wochen (0 = nächste Woche) */
   next?: { label: string; test: boolean; weeks: number };
 }
@@ -19,6 +21,7 @@ export function compassOf(state: Pick<AppState, "plan" | "sections">, b: PlanBlo
     klammer: b.klammer,
     kcal: b.kcal,
     load: weekLoad(state.sections, b, week),
+    dauer: dauerlast(state.sections, b),
     next: after ? { label: isTestBlock(after) ? "Testwoche" : focusName(after.focusId), test: isTestBlock(after), weeks: left } : undefined,
   };
 }

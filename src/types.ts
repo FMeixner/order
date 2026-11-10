@@ -341,6 +341,8 @@ export interface SlotState {
   fb: Feedback[];
   topHits: number;
   updated: string;
+  /** Nur zur Laufzeit: Gewicht ist aus einer verwandten Übung geschätzt (nie gespeichert) */
+  estimated?: { from: string; kg: number; reps: number };
   /** Nur zur Laufzeit: Gewicht wurde aus einem anderen Wiederholungsbereich umgerechnet (nie gespeichert) */
   shifted?: { kg: number; reps: number };
   /** Übung ohne Gewicht hat die Wiederholungsgrenze erreicht: weiter mit Zusatzlast */

@@ -7,7 +7,7 @@ import { blockSeconds } from "../../engine/duration";
 import { affectDowngrade, asWeaponBlock, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, isWeaponModule, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks, shortDrills, shortSwordDrills } from "../../engine/plan";
 import { loadPhase } from "../../engine/progression";
 import { guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../../engine/resolve";
-import { focusFor, weekLoad } from "../../engine/weekplan";
+import { focusFor, guidedLevel } from "../../engine/weekplan";
 import { boostOf, runSubOf, type SessionCtx, sessionId, skillSet } from "./ctx";
 import { type CardioSub, SUB_EXERCISE } from "../../engine/cardio";
 
@@ -128,9 +128,10 @@ export function collectItems(ctx: SessionCtx): Item[] {
   });
   const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword || it.call);
   // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
-  if (weekLoad(ctx.state.sections, ctx.block, ctx.week) === "high") {
+  const guided = guidedLevel(ctx.state.sections, ctx.block, ctx.week);
+  if (guided) {
     const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })));
-    const keys = guidedKeys(all, ctx.profile);
+    const keys = guidedKeys(all, ctx.profile, guided - 1);
     if (keys.size) for (const it of items) it.resolved = it.resolved.map((r) => (keys.has(r.key) ? toGuided(r, ctx.profile) ?? r : r));
   }
   return items;

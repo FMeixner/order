@@ -9,7 +9,7 @@ import type { AppState, Block, Focus, Load, PlanBlock, Role, Section, Slot, Week
 import { WEEKDAYS } from "../types";
 import { skipDay } from "./skipweek";
 import { isHeavy, isStrength, planMinutes } from "./slots";
-import { addDays, applyDrillEdits, blockFocus, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { addDays, applyDrillEdits, blockFocus, blockWeeks, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { pairToFit, shortDay, shortDeload } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlots } from "./sharpen";
@@ -215,6 +215,32 @@ export function weekLoad(sections: Section[] | undefined, b: PlanBlock, week: nu
   const s = sections?.find((x) => x.start <= d && x.end >= d) ?? sections?.find((x) => x.start <= addDays(d, 6) && x.end >= d);
   return s && LOAD_RANK[s.load] > LOAD_RANK[b.load] ? s.load : b.load;
 }
+/** Dauerlast (1.19): Mittlere Last am Stück wird zur hohen — aber erst für den Orden, der nach mindestens
+    DAUER_START Wochen mittlerer Last beginnt. Der erste Orden eines mittleren Abschnitts läuft normal, der nächste
+    wechselt auf geführt (5 + 5 Wochen: der zweite). Ein ruhiger Abschnitt dazwischen setzt zurück. */
+export const DAUER_START = 5;
+export function dauerlast(sections: Section[] | undefined, b: PlanBlock): boolean {
+  if (!sections?.length || b.load === "high") return false;
+  const secs = [...sections].sort((a, c) => a.start.localeCompare(c.start));
+  let i = secs.findIndex((x) => x.start <= b.start && x.end >= b.start);
+  if (i < 0 || secs[i].load !== "medium") return false;
+  while (i > 0 && secs[i - 1].load === "medium") i--;
+  return (parseIso(b.start).getTime() - parseIso(secs[i].start).getTime()) / (7 * 864e5) >= DAUER_START;
+}
+
+/** Wie stark ein Tag auf geführte Übungen wechselt: 0 gar nicht, 1 etwa die Hälfte (hohe Last oder Dauerlast),
+    2 eine Übung mehr — ab der Mitte eines Ordens, der mindestens acht Wochen in hoher Last läuft.
+    Nie alles: Der erste freie Lift des Tages bleibt frei (guidedKeys). */
+export function guidedLevel(sections: Section[] | undefined, b: PlanBlock, week: number): 0 | 1 | 2 {
+  if (weekLoad(sections, b, week) === "high") {
+    const total = blockWeeks(b);
+    let hi = 0;
+    for (let w = 1; w <= total; w++) if (weekLoad(sections, b, w) === "high") hi++;
+    return hi >= 8 && week > total / 2 ? 2 : 1;
+  }
+  return dauerlast(sections, b) ? 1 : 0;
+}
+
 /** Die Phase, wie sie in dieser Woche belastet ist (für alles, was auf hohe Last reagiert) */
 export const blockInWeek = (state: Pick<AppState, "sections">, b: PlanBlock, week: number): PlanBlock => {
   const load = weekLoad(state.sections, b, week);

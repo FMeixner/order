@@ -3,7 +3,7 @@ import { FOCUS_BY_ID, KLAMMER_BY_ID } from "../data";
 import type { PlanBlock, Section } from "../types";
 import { compassOf } from "./compass";
 import { kindScore, orderScore, planYear } from "./klammer";
-import { focusFor, weekLoad } from "./weekplan";
+import { dauerlast, focusFor, guidedLevel, weekLoad } from "./weekplan";
 import { emptyState } from "../store";
 
 const sec = (id: string, start: string, end: string, load: Section["load"], travel = false): Section => ({ id, name: id, start, end, load, travel });
@@ -74,5 +74,29 @@ describe("Kompass", () => {
     const c = compassOf({ plan, sections: SECS }, plan[0], 2);
     expect(c).toMatchObject({ klammer: "kraft", kcal: "maintenance", load: "high", next: { label: "Testwoche", test: true, weeks: 5 } });
     expect(compassOf({ plan, sections: SECS }, plan[0], 7).next?.weeks).toBe(0);
+  });
+});
+
+describe("Dauerlast und geführte Übungen", () => {
+  const winter = [sec("Winter", "2026-09-28", "2027-01-31", "medium")];
+  it("der erste Orden eines mittleren Abschnitts läuft normal, der nächste wechselt auf geführt", () => {
+    const first = blk({ start: "2026-09-28", end: "2026-11-01", load: "medium" });
+    const second = blk({ start: "2026-11-02", end: "2026-12-06", load: "medium" });
+    expect(dauerlast(winter, first)).toBe(false);
+    expect(dauerlast(winter, second)).toBe(true);
+    expect(guidedLevel(winter, first, 3)).toBe(0);
+    expect(guidedLevel(winter, second, 1)).toBe(1);
+  });
+  it("ein ruhiger Abschnitt setzt zurück; ohne Abschnitte keine Dauerlast", () => {
+    const secs = [sec("A", "2026-09-28", "2026-11-29", "medium"), sec("Pause", "2026-11-30", "2026-12-20", "low"), sec("B", "2026-12-21", "2027-03-28", "medium")];
+    expect(dauerlast(secs, blk({ start: "2026-12-21", end: "2027-02-14", load: "medium" }))).toBe(false);
+    expect(dauerlast(undefined, blk({ load: "medium" }))).toBe(false);
+  });
+  it("acht Wochen hohe Last: ab der Mitte eine geführte Übung mehr, nie von Anfang an", () => {
+    const b = blk({ start: "2027-02-01", end: "2027-03-28", load: "high" });
+    expect(guidedLevel(undefined, b, 2)).toBe(1);
+    expect(guidedLevel(undefined, b, 5)).toBe(2);
+    // kürzer als acht Wochen: bleibt bei der Hälfte
+    expect(guidedLevel(undefined, blk({ start: "2027-02-01", end: "2027-03-14", load: "high" }), 6)).toBe(1);
   });
 });

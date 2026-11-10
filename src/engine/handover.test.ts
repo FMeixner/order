@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS } from "../store";
 import type { SlotState } from "../types";
-import { advance, rangeShift, sharedState, suggest } from "./progression";
+import { advance, estimateFrom, rangeShift, sharedState, suggest } from "./progression";
 import type { Resolved } from "./resolve";
 
 const gym = EQUIPMENT_PRESETS[0].make();
@@ -43,5 +43,34 @@ describe("Übergabe zwischen Wiederholungsbereichen", () => {
     const s = sharedState({ "a|Bench Press": st(60, 12, "2026-11-01") }, r)!;
     const next = advance(r, s, { feedback: "ok", sets: [{ done: true, reps: 5, weight: 67.5 }] } as never, gym, "2026-11-10");
     expect(next.shifted).toBeUndefined();
+  });
+});
+
+describe("Schätzung aus verwandten Übungen", () => {
+  const r2 = (name: string, reps: string, equip = "machine"): Resolved => ({ ...res(`x|${name}`, reps), name, equip } as Resolved);
+  it("Chest Press startet aus Bench Press: leichter als gerechnet, nie bei null", () => {
+    const slots = { "a|Bench Press": st(80, 8, "2026-11-01") };
+    const r = r2("Chest Press Machine", "8-12");
+    const s = sharedState(slots, r)!;
+    expect(s.estimated?.from).toBe("Bench Press");
+    // 80 × (1 + 8/30) × 0,9 / (1 + 12/30) × 0,85 ≈ 55
+    expect(s.weight!).toBeGreaterThan(45);
+    expect(s.weight!).toBeLessThan(65);
+    const sug = suggest(r, s, 1, gym);
+    expect(sug.weight).not.toBeNull();
+    expect(sug.hint).toMatch(/Schätzung aus Bench Press/);
+  });
+  it("Kurzhantel je Hantel: DB Bench Press aus Bench Press", () => {
+    const s = estimateFrom({ "a|Bench Press": st(80, 8, "2026-11-01") }, r2("DB Bench Press", "8-12", "dumbbell"))!;
+    expect(s.weight!).toBeGreaterThan(15);
+    expect(s.weight!).toBeLessThan(30);
+  });
+  it("eigener Stand gewinnt; fremde Familie schätzt nichts; die Schätzung wird nie gespeichert", () => {
+    const slots = { "a|Bench Press": st(80, 8, "2026-11-01"), "c|Chest Press Machine": st(70, 10, "2026-10-01") };
+    expect(sharedState(slots, r2("Chest Press Machine", "8-12"))!.weight).toBe(70);
+    expect(estimateFrom({ "a|Bench Press": st(80, 8, "2026-11-01") }, r2("Leg Press", "8-12"))).toBeUndefined();
+    const r = r2("Chest Press Machine", "8-12");
+    const next = advance(r, sharedState({ "a|Bench Press": st(80, 8, "2026-11-01") }, r), { feedback: "ok", sets: [{ done: true, reps: 10, weight: 55 }] } as never, gym, "2026-11-10");
+    expect(next.estimated).toBeUndefined();
   });
 });

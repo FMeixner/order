@@ -288,6 +288,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
               {compass.klammer && <span className="compass-item"><KlammerIcon id={compass.klammer} size={14} />{klammerName(compass.klammer)}</span>}
               {compass.kcal && <span className="compass-item" title={`Kalorien: ${KCAL_LABEL[compass.kcal]}`}><Sign kind={compass.kcal} size={13} />{KCAL_LABEL[compass.kcal]}</span>}
               {compass.load === "high" && <span className="compass-item warn" title="Diese Woche hohe Alltagslast: mehr geführte Übungen, Satzende-Techniken nur an Ergänzungen">Hohe Last</span>}
+              {compass.load !== "high" && compass.dauer && <span className="compass-item warn" title="Mittlere Last schon seit Wochen: Dieser Orden läuft mit mehr geführten Übungen">Dauerlast</span>}
               {compass.next && <span className="compass-item">{compass.next.weeks === 0 ? "nächste Woche" : `in ${compass.next.weeks} Wo.`}: {compass.next.label}</span>}
               {!compass.klammer && !compass.kcal && !compass.next && (block.label || focus.tagline)}
             </div>
