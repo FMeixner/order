@@ -16,6 +16,10 @@ beschrieben, erst den Nutzer fragen.
 - Jede zitierte Studie in `data/modules/references.json` (Test `references.test.ts` prüft die Hilfe).
 - Screenshots zur Kontrolle im Dark Mode bei 390 × 844 (Playwright `test.use({ colorScheme: "dark" })`).
 
+## Entscheidungen gesammelt (noch nicht gebaut)
+- 10.11.2026 · Gladiator „Spiel“: neue Reihenfolge 5-10-5 Shuttle → Pogo Hops + Skater Jumps → Medizinball-Brustpass
+  → Sprint oder Seilspringen 10 × 30 s (Explosives frisch, Intervalle als Ausklang). Mit P10 bauen.
+
 ## Reihenfolge
 
 | Paket | Version | Inhalt |
@@ -451,7 +455,7 @@ Gleichzeitiges Ausdauertraining stört Muskel und Maximalkraft kaum, Explosivkra
 ### Verhalten
 - Prüfung in `scripts/validate.mjs` für Orden mit Hauptziel `power` oder `speed`: In keiner Rolle steht ein
   Lauf-, Intervall- oder Bestienblock vor einer Sprung-, Wurf- oder Sprintübung. Verstöße sind Fehler.
-- Bekannter Fall: Gladiator „Spiel“ (Pogo Hops/Skater Jumps nach den Sprint-Intervallen). Vor dem Umstellen den Nutzer fragen, es ist seine Kuration.
+- Gladiator „Spiel“: entschieden, siehe „Entscheidungen gesammelt“ oben.
 - Orden-Dateien entsprechend umstellen (kompakt halten, Formatierer aus `AGENTS.md`-Regel: nicht mit `indent=2`).
 - Bestienwahl im Falken: am Tag nach einem Sprint- oder Sprungtag keine Bestie der Klassen „uralte“/„verfluchte“
   (`pickBeast` in `plan.ts`, über die Rolle des Vortags in `dayRoleMap`).
