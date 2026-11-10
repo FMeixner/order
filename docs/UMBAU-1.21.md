@@ -20,22 +20,129 @@ beschrieben, erst den Nutzer fragen.
 
 | Paket | Version | Inhalt |
 |---|---|---|
-| P1 | 1.21.0 | Zeitstrahl: ganzes Jahr und ab heute, Jahresbilanz der Zeichen |
-| P2 | 1.22.0 | Befinden nach jeder Einheit, Auswertung im Stand |
-| P3 | 1.23.0 | Volumen Soll-Ist im Stand |
-| P4 | 1.24.0 | Schutz vor Programm-Hopping: Begründung und Ideenparkplatz |
-| P5 | 1.25.0 | Wochenrückblick |
-| P6 | 1.26.0 | Defizit-Phasen: „gehalten“ zählt als Erfolg |
-| P7 | 1.27.0 | Ausklang nach Bestie und Finisher |
-| P8 | 1.28.0 | Entlastung nach Signalen |
-| P9 | 1.29.0 | Zuspitzung vor der Testwoche |
-| P10 | 1.30.0 | Explosives vor Ausdauer (Prüfung der Orden) |
-| P11 | 1.31.0 | Schätzwerte lernen aus dem Log |
-| P12 | 1.32.0 | Kleines an der Oberfläche: Tagesknöpfe, Hilfe mit Suche |
+| **PB** | **1.22.0** | **Bestien-Dosis: die Woche zählt, der Pool dosiert (Pilot King) — Vorrang** |
+| P1 | 1.23.0 | Zeitstrahl: ganzes Jahr und ab heute, Jahresbilanz der Zeichen |
+| P2 | 1.24.0 | Befinden nach jeder Einheit, Auswertung im Stand |
+| P3 | 1.25.0 | Volumen Soll-Ist im Stand |
+| P4 | 1.26.0 | Schutz vor Programm-Hopping: Begründung und Ideenparkplatz |
+| P5 | 1.27.0 | Wochenrückblick |
+| P6 | 1.28.0 | Defizit-Phasen: „gehalten“ zählt als Erfolg |
+| P7 | 1.29.0 | Ausklang nach Bestie und Finisher |
+| P8 | 1.30.0 | Entlastung nach Signalen |
+| P9 | 1.31.0 | Zuspitzung vor der Testwoche |
+| P10 | 1.32.0 | Explosives vor Ausdauer (Prüfung der Orden) |
+| P11 | 1.33.0 | Schätzwerte lernen aus dem Log |
+| P12 | 1.34.0 | Kleines an der Oberfläche: Tagesknöpfe, Hilfe mit Suche |
+
+1.21.0 ist vergeben (Orden Gladiator, 10.11.2026). Die Versionen unten folgen dieser Tabelle; wo im Text noch eine
+alte Nummer steht, gilt die Tabelle.
 
 ---
 
-## P1 · Zeitstrahl (1.21.0)
+## PB · Bestien-Dosis: die Woche zählt, der Pool dosiert (1.22.0) — Vorrang
+
+Konzept und Rechnungen: `docs/BESTIEN-DOSIS.md` (Friedrichs Reißbrett vom 10.11.2026, unverändert abgelegt).
+Dieses Kapitel ist die verbindliche Bauvorgabe; wo es vom Konzept abweicht, gilt dieses Kapitel (Abweichungen
+sind markiert und begründet).
+
+### Warum
+King, Pilgrim und Alchemist fühlen sich schwach und unprogressiv an. Ihre Bestien sind Varianz- und Zeitinstrumente,
+keine Fortschrittsnerven. Gesucht ist ein Bestienpool je Woche, der eine Dosis je Bewegungskategorie erfüllt und
+über die Blockwochen sanft steigt — ohne eine einzige Bestie zu ändern.
+
+### Feste Regeln (Friedrich, nicht verhandelbar)
+- Bestien stehen fest, Wiederholungen einer Runde ändern sich nie. Keine neuen Bestien, keine Stufen-Kuration.
+- Dosisformen nur: **voll**, **Partial k/R** (jede Rundenzahl ab 1), **Doppel**, **Triple**, dazu die bestehende
+  **Serie** zweier Bestien (`pair` in `pickWith`).
+- Zielkriterium: Ziel erreichen, Überhang bis +15 % ist ideal, darüber leicht abgewertet.
+- Fenster: das Klassenfenster des Tages, geprüft gegen die **formeffektiven** Minuten. Keine Wochen-Obergrenze.
+- Der Pool-Filter ist ein Gewicht, nie eine Sperre. Rangfolge: Zeitfenster > Varianz > Dosis.
+- Deload: Ziele × 0,5. Testwoche: Dosis aus. Keine neue UI-Karte; die Wirkung zeigt sich im `why` der Bestie.
+
+### Zählung (Abweichung vom Konzept, wichtig)
+Das Konzept nennt die Dosis „dieselbe Skala wie volume.ts“. Das stimmt nicht: `beastSets` verteilt eine Übung
+über ihre Muskelanteile (Push-ups zählen für Brust, Trizeps und Schultern), das Konzept rechnet **eine Kategorie je
+Übung**. Nachgerechnet: Aufhocker + Asag + Peri ergeben über Muskelanteile push 8 · pull 3 · legs 5 · core 4, über eine
+Kategorie je Übung (mit den Overrides unten) 4 · 4 · 4 · 4 wie im Konzept.
+
+Verbindlich ist die Konzept-Zählung, als eigene Funktion, nicht über `beastSets`:
+- Je Übung genau eine Kategorie: `push` (Brust, Trizeps, Schultern), `pull` (Rücken, Bizeps), `legs` (Quadrizeps,
+  Gesäß, Beinbeuger, Waden), `core` (Rumpf, Unterarme). Ableitung: Kategorie mit der größten Summe der Anteile aus
+  `musclesOf`; Gleichstand → Reihenfolge push, pull, legs, core. Laufen, Rudern, Pausen (`CARDIO` in `volume.ts`)
+  zählen nicht.
+- **Overrides** in `data/modules/beastdose.json` → `categories` (Übung → Kategorie), mindestens:
+  Thrusters, Burpees (und Burpee-Varianten) = push · Snatch-, Swing-, Deadlift-Familie = legs · Supermen, Hangs =
+  core · Face Pull, Band Upright Rows, Pull Press, Reverse Fly = pull · OA Band Curl-and-Press = push.
+- Bestie: Runden × 0,5 je Übung in ihrer Kategorie (Leitern: Anteil wie `shortBeast`). Partial k/R skaliert wie
+  `shortBeast`, Doppel × 2, Triple × 3.
+- Feste Slots des Ordens: Sätze × 1 je Übung in ihrer Kategorie (gleiche Zuordnung), aus der geplanten Woche
+  (`focusFor` aller Rollen der Woche).
+- Einheit überall: **App-Sätze**. Die Volumen-Karte (P3) bleibt bei Muskelanteilen; sie zeigt etwas anderes
+  (Muskel), die Dosis zeigt Bewegungsmuster.
+
+### Ziel der Woche
+- Neues optionales Ordensfeld `beast_dose`:
+  ```json
+  "beast_dose": { "push": [12, 14, 17, 17], "pull": [9, 11, 13, 13], "legs": [12, 14, 17, 17], "core": [12, 14, 16, 16], "quality_from": 4 }
+  ```
+  Werte = **Gesamtziel** (feste Slots + Bestien) je Blockwoche; nach dem letzten Wert gilt der letzte.
+  In einem Zeichen zählt die Klammerwoche (`klammerWeek`), sonst die Blockwoche.
+- Bestienziel je Kategorie = max(0, Gesamtziel − feste Slots der geplanten Woche).
+- Ist das Bestienziel mit den Slots der Woche nicht erreichbar (Summe der besten Einzelbeiträge je Slot), wird es auf
+  das Erreichbare gekürzt; das `why` sagt es ehrlich („Zug: 13 geplant, 11 erreichbar — die Woche hat zwei
+  Bestienplätze“).
+- Kein Nachholen: Was in Woche N ausfiel, erhöht Woche N+1 nicht („Alltag ist Trumpf“).
+- Ohne `beast_dose` ändert sich für den Orden nichts. **Pilot: nur King.** Gladiator, Pilgrim, Alchemist erst nach
+  Rückmeldung des Nutzers.
+
+### Wahl
+- Bestienplätze der Woche in Tagesreihenfolge (`dayRoleMap`) nacheinander wählen; jeder Platz sieht das Restziel
+  (Ziel − schon gewählte Plätze dieser Woche). Deterministisch wie heute (Seed).
+- Kandidaten wie heute (`pickWith`: single, double, pair, Kurzform) plus: **alle** Partials k = 1 … R−1 für
+  `canShorten`-Bestien, die ins Fenster passen (nicht nur die längste Kurzform), und **Triple**, wenn `inSlot(m × 3)`.
+  Bestien, die `canShorten` nicht erfüllen (Teile, Wiederholung, AMRAP, `noShort`), haben keine Partials — das bleibt.
+- Dosis-Gewicht `poolWeight(cand, rest)`: für jede Kategorie mit Restziel > 0 Anteil der Abdeckung; Fehlbetrag in
+  `pull` zählt doppelt (Flaschenhals des Bestands); Überhang über +15 % je Kategorie leicht negativ. Das Gewicht wird
+  **nach** Zeitfenster und Varianz addiert und darf die Varianzregel nicht überstimmen (Test `weekbeasts.test.ts`
+  bleibt grün).
+- Qualität ab `quality_from`: Kandidaten mit Übungen aus `data/modules/beastdose.json` → `advanced` (Startliste:
+  Archer Pushup, Clapping Pushups, Clapping Pullups, Commando Pullups, Muscle-Ups und Familie) in einer Kategorie mit
+  Restziel bekommen einen festen Bonus. Ersetzt wird nichts; „mehr Archer“ entsteht über die Auswahl.
+- Lastbestien (Morgenland/Süd): Last weiter über `suggestLoad`; sie ist die letzte Stufe der Progression.
+
+### Sichtbar
+- `why` der Bestie, eine Zeile: „Dosis Woche 3: Druck 17, Zug 13, Beine 17, Rumpf 16 — diese Bestie bringt
+  +3 Zug, +2 Rumpf.“ Bei Partial/Doppel/Triple steht die Form im Namen wie heute bei Kurzformen.
+- Hilfe: Absatz „Bestien: die Woche zählt, der Pool dosiert“ (Empfehlung, nie Sperre; Formen; Zählung).
+
+### Technik
+- NEU `src/engine/beastdose.ts`: `categoryOf(exercise)`, `beastDose(beast): Dose` (App-Sätze je Kategorie),
+  `formDose(beast, form)`, `fixedDose(focus, roles)`, `doseGoal(state, block, week): Dose | null`,
+  `poolWeight(cand, rest): number`.
+- NEU `data/modules/beastdose.json`: `categories` (Overrides), `advanced`. Validator: jede Übung existiert.
+- `plan.ts` `pickWith`/`pickBeast`: Kandidaten erweitern, Restziel durchreichen, Gewicht einrechnen.
+- `types.ts`: `Focus.beast_dose?`. Validator: vier Kategorien, Zahlen ≥ 0, `quality_from` ≥ 1.
+- King: `beast_dose` mit den Zahlen oben (Konzept, Reißbrett-Runde 4) — erst nach Bestätigung durch den Nutzer.
+
+### Tests (`beastdose.test.ts`)
+- Fixpunkt: Aufhocker + Asag + Peri (alle voll) = 4 · 4 · 4 · 4 App-Sätze, 36 Minuten.
+- Zählung: Partial 2/4 halbiert, Doppel verdoppelt, Triple verdreifacht; Cardio zählt nicht; Leiter-Partial wie
+  `shortBeast`.
+- Ziel: Woche 1–4 nach Tabelle, Woche 6 = letzter Wert; Deload × 0,5; Testwoche null; ohne `beast_dose` null.
+- Wahl: King Woche 4 trifft das Bestienziel in jeder Kategorie oder meldet das Erreichbare; keine Bestie zweimal in
+  der Woche, wenn es Alternativen gibt (Varianz vor Dosis).
+- Die Lösungszahlen aus dem Konzept (6.499 Lösungen usw.) **nicht** als Unit-Test: Sie hängen am Bestand, und der
+  wird laufend kuratiert. Stattdessen `scripts/beastdose-report.mjs` (Aufzählung, manuell).
+
+### Offen (beim Nutzer, vor dem Bau klären)
+1. King-Zahlen bestätigen (Tabelle oben).
+2. Pilgrim: Dosisziel mit Zeit-Äquivalent für aerobe Anteile, oder nur Auswahl? (Vorgabe bis zur Antwort: kein Ziel.)
+3. King `chaos_b` bekommt einen Bestienplatz? (Vorgabe: nein, nicht ohne Zustimmung.)
+4. Gladiator in die Pilotrunde?
+
+---
+
+## P1 · Zeitstrahl (1.23.0)
 
 ### Warum
 Der Zeitstrahl ist die Makro-Perspektive. Wer in einer Fettverlust- oder Urlaubsphase steckt, soll auf einen Blick
@@ -115,7 +222,7 @@ viele Wochen jedes Zeichen im Jahr hat. In einer Defizit-Phase steht der Satz mi
 
 ---
 
-## P2 · Befinden nach jeder Einheit (1.22.0)
+## P2 · Befinden nach jeder Einheit (1.24.0)
 
 ### Warum
 Affekt sagt Dabeibleiben besser voraus als Vorsätze (Ekkekakis-Linie). Heute fragt die App das Befinden nur im
@@ -149,7 +256,7 @@ e2e: Einheit abschließen mit „+1“ speichert einen Wert; Stand zeigt die Kar
 
 ---
 
-## P3 · Volumen Soll-Ist im Stand (1.23.0)
+## P3 · Volumen Soll-Ist im Stand (1.25.0)
 
 ### Warum
 Der Richtwert des Nutzers (`volumeRange(user)`, bei ihm 12–16 harte Sätze je Muskel und Woche) ist die direkteste
@@ -173,7 +280,7 @@ geplant ≥ erledigt bei vollständiger Woche; Deload liefert null.
 
 ---
 
-## P4 · Schutz vor Programm-Hopping (1.24.0)
+## P4 · Schutz vor Programm-Hopping (1.26.0)
 
 ### Warum
 Programm-Hopping ist das dokumentierte Hauptrisiko des Nutzers. Er will externe Regeln statt Stimmung.
@@ -198,7 +305,7 @@ Ordenswechsel, Kürzen, Löschen der laufenden → Phase.
 
 ---
 
-## P5 · Wochenrückblick (1.25.0)
+## P5 · Wochenrückblick (1.27.0)
 
 ### Verhalten
 - Ist die Woche geschafft (`weekDone` in `Today.tsx`) oder ist Sonntag, zeigt die Heute-Ansicht über den
@@ -215,7 +322,7 @@ Log). Tests mit zwei aufeinanderfolgenden Wochen.
 
 ---
 
-## P6 · Defizit: „gehalten“ zählt (1.26.0)
+## P6 · Defizit: „gehalten“ zählt (1.28.0)
 
 ### Warum
 Die Angst vor Leistungsverlust im Defizit ist Abbruchgrund Nr. 1 des Nutzers. Im Defizit ist Halten das Ziel.
@@ -235,7 +342,7 @@ Gewicht × (1 + Wdh/30)). Tests für alle drei Fälle.
 
 ---
 
-## P7 · Ausklang (1.27.0)
+## P7 · Ausklang (1.29.0)
 
 ### Warum
 Sinkt die Intensität zum Ende, wird die Einheit angenehmer erinnert (Hutchinson et al., 2020; an Krafttraining
@@ -258,7 +365,7 @@ Psychology, 42*(2), 143–152. (Vor dem Eintragen Band und Seiten prüfen.)
 
 ---
 
-## P8 · Entlastung nach Signalen (1.28.0)
+## P8 · Entlastung nach Signalen (1.30.0)
 
 ### Warum
 Eine feste Pause brachte Trainierten in neun Wochen keinen Vorteil für Muskel und kostete etwas Kraft (Coleman et
@@ -282,7 +389,7 @@ one-week deload period during supervised resistance training on muscular adaptat
 
 ---
 
-## P9 · Zuspitzung vor der Testwoche (1.29.0)
+## P9 · Zuspitzung vor der Testwoche (1.31.0)
 
 ### Verhalten
 - Die Woche vor der Testwoche läuft heute mit −1 Satz. Neu: Sätze auf etwa 60 % (aufgerundet, mindestens zwei),
@@ -298,7 +405,7 @@ Hilfe anpassen (Abschnitt Testwoche).
 
 ---
 
-## P10 · Explosives vor Ausdauer (1.30.0)
+## P10 · Explosives vor Ausdauer (1.32.0)
 
 ### Warum
 Gleichzeitiges Ausdauertraining stört Muskel und Maximalkraft kaum, Explosivkraft aber schon (Schumann et al., 2022).
@@ -306,6 +413,7 @@ Gleichzeitiges Ausdauertraining stört Muskel und Maximalkraft kaum, Explosivkra
 ### Verhalten
 - Prüfung in `scripts/validate.mjs` für Orden mit Hauptziel `power` oder `speed`: In keiner Rolle steht ein
   Lauf-, Intervall- oder Bestienblock vor einer Sprung-, Wurf- oder Sprintübung. Verstöße sind Fehler.
+- Bekannter Fall: Gladiator „Spiel“ (Pogo Hops/Skater Jumps nach den Sprint-Intervallen). Vor dem Umstellen den Nutzer fragen, es ist seine Kuration.
 - Orden-Dateien entsprechend umstellen (kompakt halten, Formatierer aus `AGENTS.md`-Regel: nicht mit `indent=2`).
 - Bestienwahl im Falken: am Tag nach einem Sprint- oder Sprungtag keine Bestie der Klassen „uralte“/„verfluchte“
   (`pickBeast` in `plan.ts`, über die Rolle des Vortags in `dayRoleMap`).
@@ -315,7 +423,7 @@ systematic review and meta-analysis. *Sports Medicine, 52*(3), 601–612.
 
 ---
 
-## P11 · Schätzwerte lernen (1.31.0)
+## P11 · Schätzwerte lernen (1.33.0)
 
 ### Verhalten
 - Die Verhältnisse in `data/modules/transfer.json` sind Erfahrungswerte. Hat der Nutzer für zwei Übungen einer
@@ -330,7 +438,7 @@ systematic review and meta-analysis. *Sports Medicine, 52*(3), 601–612.
 
 ---
 
-## P12 · Kleines an der Oberfläche (1.32.0)
+## P12 · Kleines an der Oberfläche (1.34.0)
 
 - **Tagesknöpfe** (Heute): Bei vier Tagen und Bildschirmbreite unter 420 px zwei Reihen zu je zwei Knöpfen
   (`.days` → `grid-template-columns: repeat(2, 1fr)` per Containerabfrage), Rollenname ohne Trennung, Ort in
