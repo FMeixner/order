@@ -217,7 +217,8 @@ export function slotsFor(state: AppState, b: PlanBlock): SlotsPlan {
     sonst kürzt die Leiter erst die Tage von Slot 2, dann Slot 2 selbst, dann die Tage von Slot 1. */
 export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
   const plan = slotsFor(state, b);
-  if (!plan.s1.domain && !plan.s2.domain) return f;
+  // Kein Schwerpunkt, obwohl automatisch: an einem Tag „Mehr vom Ordensziel“ (Inhalt und Junk-Grenze in ui/session/fill.ts)
+  if (!plan.s1.domain && !plan.s2.domain) return plan.s1.source === "none" && slotEligible(blockFocus(b) ?? f) && !b.sharpen ? withFill(f, state, b) : f;
   const roles = rolesFor(state, b, f);
   const p = state.equipment[0];
   const weekOf = (ff: Focus): number =>
@@ -259,6 +260,29 @@ export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
   if (over(out)) out = build(1, 0);
   if (over(out)) out = build(0, 0);
   return out;
+}
+
+/** Einmalig (1.35): Phasen, deren Schwerpunkt fest auf genau dem steht, was „Automatisch“ ohnehin wählen würde (früher
+    per „Übernehmen“ in der Auswertung festgeschrieben), wieder auf „Automatisch“ – die Vorgabe ist immer automatisch. */
+export function unpinAutoSlots(state: AppState): AppState {
+  const today = isoDate(new Date());
+  const plan = state.plan.map((b) => {
+    if (!b.sharpen || b.sharpen === "off" || b.end < today) return b;
+    const auto = slotsFor(state, { ...b, sharpen: undefined }).s1.domain;
+    return auto === b.sharpen ? { ...b, sharpen: undefined } : b;
+  });
+  return { ...state, plan, autoSlots: true };
+}
+
+/** Platzhalter „Mehr vom Ordensziel“ am kürzesten Trainingstag; bei Schnellkraft und Schnelligkeit frisch am Anfang */
+function withFill(f: Focus, state: AppState, b: PlanBlock): Focus {
+  const roles = rolesFor(state, b, f).filter((rk) => f.roles[rk]);
+  if (!roles.length) return f;
+  const rk = roles.reduce((best, x) => ((f.roles[x].minutes ?? 99) < (f.roles[best].minutes ?? 99) ? x : best), roles[0]);
+  const blk: Block = { type: "module", module: "sharpen", variant: "ordensziel" };
+  const start = f.goals.primary === "power" || f.goals.primary === "speed";
+  const r = f.roles[rk];
+  return { ...f, roles: { ...f.roles, [rk]: { ...r, blocks: start ? [blk, ...r.blocks] : [...r.blocks, blk] } } };
 }
 
 /** Defizite als Gewichte für die Blockfolge: schwächster Bereich zählt am meisten */

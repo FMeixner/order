@@ -27,6 +27,7 @@ import { allDrillsDone, DrillList, DrillSection, toggleDrill } from "./session/D
 import { SlotCard, WarmCtx } from "./session/SlotCard";
 import { boostOf, type SessionCtx, sessionId } from "./session/ctx";
 import { collectItems, type Item, pinBeasts } from "./session/items";
+import { PURPOSE_LABEL, slotsFor } from "../engine/sharpen";
 import { dayGear } from "./session/gear";
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
@@ -135,6 +136,13 @@ function PathLevel({ module, skills }: { module: WeaponModule; skills: string[] 
   );
 }
 
+/** Überschrift der Schwerpunkt-Karte mit dem echten Zweck (Testdefizit, Erhalt, Double down, Sekundärziel, selbst gewählt) */
+function sharpenTitle(ctx: SessionCtx, variant: string): string {
+  const s1 = slotsFor(ctx.state, ctx.block).s1;
+  const why = s1.domain === variant ? (s1.purpose ? PURPOSE_LABEL[s1.purpose] : s1.source === "manual" ? "selbst gewählt" : "") : "";
+  return `Schwerpunkt: ${SHARPEN[variant]?.name ?? variant}${why ? ` · ${why}` : ""}`;
+}
+
 /** Schwert-, Flow- und Schwerpunkt-Block: aufklappbare Karte wie das Warm-up —
     ist alles abgehakt, klappt sie nach kurzer Zeit ein wie eine Übungskarte */
 function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void }) {
@@ -142,7 +150,7 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
   const b = it.block as Extract<Block, { type: "module" }>;
   const drills = it.drills ?? [];
   const prefix = b.module === "flow" ? "fl" : b.module === "sharpen" ? "sh" : b.module === "longsword" ? "ls" : b.module === "stab" ? "sb" : "dm";
-  const title = b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? `Schwerpunkt: ${SHARPEN[b.variant]?.name ?? b.variant} · Erhaltung` : isWeaponModule(b.module) ? MODULE_LABEL[b.module] : "";
+  const title = it.fill ?? (b.module === "flow" ? FLOWS[b.variant]?.name ?? "Flow" : b.module === "sharpen" ? sharpenTitle(ctx, b.variant) : isWeaponModule(b.module) ? MODULE_LABEL[b.module] : "");
   const allDone = allDrillsDone(drills, session?.drills ?? {}, prefix);
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -191,7 +199,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
   if (b.type === "module") {
     return <section className="card">{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={() => {}} />)}</section>;
   }
-  return <section className="card">{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}</section>;
+  return <section className="card">{it.fill && <div className="block-label amber">{it.fill}</div>}{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}</section>;
 }
 
 
@@ -230,7 +238,7 @@ export function SessionPreview(ctx: SessionCtx) {
       <section className="card preview">
         <div className="preview-row muted"><span>Warm-up</span><span>{warm.length} Übungen</span></div>
         {items.map((it, i) => {
-          const title = BLOCK_TITLE[it.block.type];
+          const title = it.fill ?? BLOCK_TITLE[it.block.type];
           if (it.beast !== undefined) {
             const bst = it.beast ? swapRunBeast(it.beast, it.cardio) : it.beast;
             const parts = bst?.parts ?? (bst ? [{ id: bst.id, name: bst.name, rounds: bst.rounds, work: bst.work, times: bst.repeat ?? 1 }] : []);
@@ -269,7 +277,7 @@ export function SessionPreview(ctx: SessionCtx) {
           if (it.drills) {
             if (it.block.type === "module" && !isWeaponModule(it.block.module)) return (
               <div key={i} className="preview-group">
-                <div className="block-label amber">{it.block.module === "flow" ? FLOWS[it.block.variant]?.name : `Schwerpunkt: ${SHARPEN[it.block.variant]?.name} · Erhaltung`}</div>
+                <div className="block-label amber">{it.fill ?? (it.block.module === "flow" ? FLOWS[it.block.variant]?.name : sharpenTitle(ctx, it.block.variant))}</div>
                 {it.drills.map((d) => <div key={d.id} className="preview-row"><span>{d.name}</span><span className="mono muted">{d.mode === "reps" ? `${d.value}×` : fmt(d.value)}{d.sides ? " je Seite" : ""}</span></div>)}
               </div>
             );

@@ -226,7 +226,7 @@ function SlotField({ f, label, hint, value, auto, onChange }: { f: Focus; label:
   return (
     <Field label={label} hint={value ? (value === "off" ? "Kein Slot, der Orden bekommt die volle Zeit." : SHARPEN[value]?.why) : auto?.reason || hint}>
       <select value={value ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
-        <option value="">Automatisch{auto?.domain ? `: ${domainName(auto.domain)}${auto.purpose ? ` · ${PURPOSE_LABEL[auto.purpose]}` : ""}` : " (derzeit keiner)"}</option>
+        <option value="">Automatisch{auto?.domain ? `: ${domainName(auto.domain)}${auto.purpose ? ` · ${PURPOSE_LABEL[auto.purpose]}` : ""}` : slotEligible(f) ? ": mehr vom Ordensziel" : " (derzeit keiner)"}</option>
         {Object.entries(SHARPEN).map(([id, d]) => <option key={id} value={id} disabled={interferes(f, id as DomainId)}>{d.name}{interferes(f, id as DomainId) ? " (stört das Ziel dieses Ordens)" : ""}</option>)}
         <option value="off">Aus</option>
       </select>

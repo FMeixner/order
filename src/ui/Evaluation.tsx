@@ -5,7 +5,7 @@ import { deficitsOf, domainName, PURPOSE_LABEL, slotsFor, type SlotsPlan } from 
 import { residualClocks } from "../engine/residual";
 import { mesoBalance } from "../engine/bilanz";
 import { FOCUS_BY_ID, SHARPEN } from "../data";
-import type { AppState, PlanBlock } from "../types";
+import type { AppState } from "../types";
 import { Collapse } from "./common";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -17,7 +17,7 @@ function show(v: number, unit: string): string {
 }
 
 /** Auswertung eines Blocks: je Bereich Punkte gegen Normen, Verlauf zum letzten Test, Vorschlag für den nächsten Orden. */
-export function Evaluation({ state, blockId, defaultOpen, update }: { state: AppState; blockId: string; defaultOpen?: boolean; update?: Update }) {
+export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; blockId: string; defaultOpen?: boolean; update?: Update }) {
   const ev = evaluateBlock(state, blockId);
   const withData = ev.domains.filter((d) => d.tests.length);
   if (!withData.length && ev.who5 == null) return null;
@@ -30,8 +30,6 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
   const slots = nextB ? slotsFor(state, nextB) : null;
   const slotsParts = parts.map((p) => ({ p, s: slotsFor(state, p) }));
   const dayText = (dom: string): string => SHARPEN[dom].days === "all" ? "jeden Trainingstag" : SHARPEN[dom].days === 2 ? "zweimal pro Woche" : "einmal pro Woche";
-  const wants = (x: PlanBlock, s: SlotsPlan) => (s.s1.source === "auto" && s.s1.domain && !x.sharpen) || (s.s2.source === "auto" && s.s2.domain && !x.sharpen2);
-  const canApply = !!(update && ((nextB && slots && wants(nextB, slots)) || slotsParts.some((x) => wants(x.p, x.s))));
   const slotItems = (s: SlotsPlan) => (
     <ul>
       <li>Schwerpunkt{s.s1.purpose ? ` (${PURPOSE_LABEL[s.s1.purpose]})` : ""}: {s.s1.domain
@@ -95,17 +93,6 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
               })()}
               {ev.suggestions.length > 0 && <li>{ev.who5 != null && ev.who5 < 52 ? "Wohlbefinden ist eingeschränkt, Orden für Erholung" : `Orden, die ${ev.weakest?.name ?? defs[0].name} direkt trainieren`}: {ev.suggestions.map((f) => focusName(f.id)).join(", ")}.</li>}
             </ul>
-            {canApply && (
-              <div className="row wrap">
-                <button className="btn small" onClick={() => update!((st) => ({ ...st, plan: st.plan.map((x) => {
-                  const s = x.id === nextB!.id ? slots : slotsParts.find((y) => y.p.id === x.id)?.s ?? null;
-                  if (!s) return x;
-                  return { ...x,
-                    ...(s.s1.source === "auto" && s.s1.domain && !x.sharpen ? { sharpen: s.s1.domain } : {}),
-                  };
-                }) }))}>{slotsParts.length ? "Für das Zeichen übernehmen" : "Für die nächste Phase übernehmen"}</button>
-              </div>
-            )}
             {(() => {
               // Lenkung für das nächste Zeichen: rote Uhren und Bilanz-Lücken laufen ab hier
               // in die Vorschläge mit ein — gleiche Anlaufstelle wie die Schwerpunkte darüber
@@ -122,7 +109,7 @@ export function Evaluation({ state, blockId, defaultOpen, update }: { state: App
                 </div>
               );
             })()}
-            <div className="small muted">Nur Vorschläge. Beide Schwerpunkte änderst du je Phase im Plan.</div>
+            <div className="small muted">Steht der Schwerpunkt auf „Automatisch“ (Vorgabe), übernimmt die Phase das von selbst. Ändern kannst du ihn je Phase im Plan.</div>
           </div>
         )}
         {sources.length > 0 && (

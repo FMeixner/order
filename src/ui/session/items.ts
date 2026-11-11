@@ -10,9 +10,10 @@ import { guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../..
 import { focusFor, guidedLevel } from "../../engine/weekplan";
 import { boostOf, runSubOf, type SessionCtx, sessionId, skillSet } from "./ctx";
 import { type CardioSub, SUB_EXERCISE } from "../../engine/cardio";
+import { goalFill, isFillMarker } from "./fill";
 
 /* ---------- Slots dieser Einheit sammeln ---------- */
-export interface Item { call?: CallView; block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule } }
+export interface Item { call?: CallView; block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule }; /** „Mehr vom Ordensziel“: Überschrift der Karte */ fill?: string }
 
 function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
@@ -91,6 +92,8 @@ export function collectItems(ctx: SessionCtx): Item[] {
     return { block: b, resolved: [], beast: pickBeast(b, { blockId: ctx.block.id, week: ctx.week, profile: ctx.profile, state: ctx.state, reduced: ctx.reduced, downgrade: !!ctx.focus.affect_rule && affectDowngrade(ctx.state), boost: boostOf(ctx) }) };
   };
   const otherItem = (b: Block): Item => {
+    // Mehr vom Ordensziel: nur, wenn es kein Junk-Volumen wäre (sonst fällt der Platzhalter weg)
+    if (isFillMarker(b)) { const g = goalFill(ctx, b); return g ? { ...g.item, fill: g.title } : { block: b, resolved: [] }; }
     if (b.type === "module" && b.module === "call") return { block: b, resolved: [], call: callView(b, ctx.state.user, ctx.week, ctx.profile, { deload: ctx.reduced }) ?? undefined };
     if (b.type === "module" && b.module !== "call" && (b.module === "flow" || b.module === "sharpen" || ctx.profile.has.sword)) {
       const full = moduleDrills(b.variant, ctx.state.user, ctx.week, b.module);
