@@ -3,7 +3,7 @@ import { FOCUS_BY_ID } from "../data";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState, Beast, PlanBlock } from "../types";
 import { collectItems } from "../ui/session/items";
-import { beastDose, cardioRange, doseMode, DOSE_MUSCLES, packetSize, repsPerRound, wavePos } from "./dose";
+import { beastDose, cardioRange, coreTarget, doseMode, DOSE_GROUPS, DOSE_MUSCLES, packetSize, repsPerRound, wavePos } from "./dose";
 import { dayRoleMap, doseAt, shortBeast, composeBeast } from "./plan";
 import { musclesOf, volumeRange } from "./volume";
 import { focusFor } from "./weekplan";
@@ -106,13 +106,21 @@ describe("Welle und Trajektorie", () => {
       }
     }
   });
+  it("Rumpf: festes Ziel in jedem Orden, unabhängig von Modus und Welle (Knight, Monk, Pilgrim)", () => {
+    for (const fid of ["knight", "monk", "pilgrim"]) {
+      const st = state(fid);
+      const w1 = doseAt(st, st.plan[0], 1)!, w4 = doseAt(st, st.plan[0], 4)!;
+      expect(w1.muscle.Rumpf, fid).toBe(w4.muscle.Rumpf);
+      expect(w1.muscle.Rumpf, fid).toBeLessThanOrEqual(Math.max(coreTarget(st.user), w1.fixed.Rumpf ?? 0) + 0.01);
+    }
+  });
   it("Kondition: Spanne je Niveau", () => {
     expect(cardioRange({ ...user, level: "einsteiger" })[1]).toBeLessThan(cardioRange({ ...user, level: "erfahren" })[1]);
   });
 });
 
 describe("Wahl und feste Konditionsslots", () => {
-  it("die Bestien einer Woche schieben keinen Muskel über die Obergrenze, wenn es anders geht (Stichprobe King, Gladiator, Knight)", () => {
+  it("die Bestien einer Woche schieben keine Gruppe über die Obergrenze, wenn es anders geht (Stichprobe King, Gladiator, Knight)", () => {
     for (const fid of ["king", "gladiator", "knight"]) {
       const st = state(fid);
       const b = st.plan[0];
@@ -129,7 +137,11 @@ describe("Wahl und feste Konditionsslots", () => {
             for (const [m, v] of Object.entries(beastDose(it.beast, st.user, st))) sum[m] = (sum[m] ?? 0) + v;
           }
         }
-        for (const mu of DOSE_MUSCLES) { n++; if ((d.fixed[mu] ?? 0) + (sum[mu] ?? 0) > d.cap[mu] + 0.6) over++; }
+        for (const ms of Object.values(DOSE_GROUPS)) {
+          n++;
+          const room = ms.reduce((x, mu) => x + Math.max(0, d.cap[mu] - (d.fixed[mu] ?? 0)), 0);
+          if (ms.reduce((x, mu) => x + (sum[mu] ?? 0), 0) > room + 0.6) over++;
+        }
       }
       // Grenzfälle erlaubt (Varianz geht vor, dann der kleinste Überhang), aber selten
       expect(over / n, fid).toBeLessThan(0.15);

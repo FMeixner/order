@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.22.1] – 2026-11-11
+
+### Geändert
+- **Bestien füllen in vier Gruppen auf:** Push, Pull, Beine, Rumpf. Die Ziele bleiben je Muskel, aber Klimmzüge in einer Bestie füllen jetzt Rücken oder Bizeps, Squats Quadrizeps oder Gesäß. Auch die Obergrenze gilt für die Bestien je Gruppe.
+- **Festes Rumpfziel in jedem Orden:** unterer Richtwert deines Niveaus, unabhängig von Welle und Modus; die Entlastung halbiert es. Was die Bestienplätze nicht erreichen können, senkt das Ziel.
+
 ## [1.22.0] – 2026-11-11
 
 ### Neu

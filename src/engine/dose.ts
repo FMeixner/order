@@ -33,8 +33,25 @@ const ADVANCED = new RegExp(P.advanced.join("|"), "i");
 export const BEAST_FACTOR = 0.5;
 /** Kein Satz: Laufen, Rudern, Rad, Seil, Pausen und Ähnliches (zählt als Kondition) */
 export const CARDIO = /^(row|run|sprints?|bike|rest\b|obstacle run|jumping jacks|single unders|double unders|seilsprung|seilspringen|handstand practice)/i;
-/** Hauptmuskeln, für die die Dosis ein Ziel setzt (Waden, Rumpf, Unterarme, Nacken laufen ohne Ziel mit) */
-export const DOSE_MUSCLES = ["Brust", "Rücken", "Schultern", "Bizeps", "Trizeps", "Quadrizeps", "Beinbeuger", "Gesäß"];
+/** Muskeln, für die die Dosis ein Ziel setzt (Waden, Unterarme, Nacken laufen ohne Ziel mit) */
+export const DOSE_MUSCLES = ["Brust", "Rücken", "Schultern", "Bizeps", "Trizeps", "Quadrizeps", "Beinbeuger", "Gesäß", "Rumpf"];
+/** Bestien füllen auf Gruppenebene auf: Klimmzüge in der Bestie füllen Rücken oder Bizeps, Squats Quadrizeps oder
+    Gesäß. Die Ziele bleiben je Muskel (feste Sätze fein), nur Wahl und Obergrenze der Bestien rechnen in Gruppen. */
+export const DOSE_GROUPS: Record<string, string[]> = {
+  Push: ["Brust", "Schultern", "Trizeps"],
+  Pull: ["Rücken", "Bizeps"],
+  Beine: ["Quadrizeps", "Beinbeuger", "Gesäß"],
+  Rumpf: ["Rumpf"],
+};
+/** Summe je Gruppe */
+export function groupShare(s: Share): Share {
+  const o: Share = {};
+  for (const [g, ms] of Object.entries(DOSE_GROUPS)) o[g] = ms.reduce((a, m) => a + (s[m] ?? 0), 0);
+  return o;
+}
+/** Rumpfziel: fest in jedem Orden und jeder Woche (unterer Richtwert des Niveaus), unabhängig von Modus und Welle;
+    Entlastung halbiert. Rumpf ermüdet wenig und lässt sich gut im Superset unterbringen. */
+export const coreTarget = (u: UserProfile) => volumeRange(u)[0];
 
 const levelIx = (u: UserProfile) => (u.level === "einsteiger" ? 0 : u.level === "erfahren" ? 2 : 1);
 
@@ -141,15 +158,15 @@ export interface DoseHooks {
 
 const r05 = (x: number) => Math.round(x * 2) / 2;
 const capMemo = new Map<string, Share>();
-/** Was ein Bestienplatz je Muskel realistisch beiträgt (oberes Viertel des Bestands, nicht das Maximum) */
+/** Was ein Bestienplatz je Gruppe realistisch beiträgt (oberes Viertel des Bestands, nicht das Maximum) */
 function slotCapacity(user: UserProfile): Share {
   const k = user.level ?? "fortgeschritten";
   const hit = capMemo.get(k);
   if (hit) return hit;
   const out: Share = {};
-  for (const mu of DOSE_MUSCLES) {
-    const vs = BEASTS.map((b) => beastDose(b, user)[mu] ?? 0).sort((a, c) => a - c);
-    out[mu] = vs[Math.floor(vs.length * 0.75)] ?? 0;
+  for (const g of Object.keys(DOSE_GROUPS)) {
+    const vs = BEASTS.map((b) => groupShare(beastDose(b, user))[g] ?? 0).sort((a, c) => a - c);
+    out[g] = vs[Math.floor(vs.length * 0.75)] ?? 0;
   }
   capMemo.set(k, out);
   return out;
@@ -204,23 +221,34 @@ export function doseTrajectory(state: AppState, pb: PlanBlock, hooks: DoseHooks)
     const fixed = hooks.fixedSets(state, pb, w);
     const fixedCardio = hooks.fixedCardio(state, pb, w);
     const muscle: Share = {};
-    for (const mu of DOSE_MUSCLES) muscle[mu] = (mA + (mB - mA) * t) * fac;
+    for (const mu of DOSE_MUSCLES) muscle[mu] = (mu === "Rumpf" ? coreTarget(user) : mA + (mB - mA) * t) * fac;
     raw.push({ week: w, stage: s.stage, pos: s.pos, len: s.len, deload, muscle, cap: {}, fixed, cardio: (cA + (cB - cA) * t) * fac, fixedCardio, modes, lowered: [] });
   }
-  // Machbarkeit vor dem Start: Was die Bestienplätze nicht erreichen, senkt die ganze Welle des Muskels gleichmäßig
+  // Machbarkeit vor dem Start: Was die Bestienplätze einer Gruppe nicht erreichen, senkt die ganze Welle ihrer Muskeln
+  // gleichmäßig. Je Muskel zählt, was die festen Sätze nicht schon decken; ein Überschuss bei einem Muskel füllt den
+  // Nachbarn nicht.
   const capSlot = slotCapacity(user);
   const lowered: string[] = [];
-  for (const mu of DOSE_MUSCLES) {
+  for (const [g, ms] of Object.entries(DOSE_GROUPS)) {
     let f0 = 1;
     for (const d of raw) {
-      if (d.deload || d.muscle[mu] <= 0) continue;
-      const reach = (d.fixed[mu] ?? 0) + hooks.beastSlots(state, pb, d.week) * (capSlot[mu] ?? 0);
-      f0 = Math.min(f0, reach / d.muscle[mu]);
+      if (d.deload) continue;
+      const need = ms.reduce((a, mu) => a + Math.max(0, d.muscle[mu] - (d.fixed[mu] ?? 0)), 0);
+      if (need <= 0) continue;
+      const slots = hooks.beastSlots(state, pb, d.week) * (capSlot[g] ?? 0);
+      f0 = Math.min(f0, slots / need);
     }
-    if (f0 < 0.999) lowered.push(mu);
+    // f0 skaliert den Anteil über den festen Sätzen
+    if (f0 < 0.999) lowered.push(...ms);
+    for (const mu of ms) for (const d of raw) {
+      const fx = d.fixed[mu] ?? 0;
+      if (d.muscle[mu] > fx) d.muscle[mu] = fx + (d.muscle[mu] - fx) * f0;
+    }
+  }
+  for (const mu of DOSE_MUSCLES) {
     for (const d of raw) {
       // Nie unter dem, was die festen Übungen ohnehin bringen
-      d.muscle[mu] = r05(Math.max(d.muscle[mu] * f0, d.fixed[mu] ?? 0));
+      d.muscle[mu] = r05(Math.max(d.muscle[mu], d.fixed[mu] ?? 0));
       d.cap[mu] = r05(d.muscle[mu] * 1.15);
     }
   }
@@ -233,7 +261,7 @@ export const doseWeek = (state: AppState, pb: PlanBlock, week: number, hooks: Do
 
 /** Kurzzeile für die Bestie: was sie zur Woche beiträgt */
 export function doseLine(dw: DoseWeek, dose: Share, minutes: number): string {
-  const top = DOSE_MUSCLES.map((mu) => [mu, dose[mu] ?? 0] as const).filter(([, v]) => v >= 0.5).sort((a, c) => c[1] - a[1]).slice(0, 3);
+  const top = Object.entries(groupShare(dose)).filter(([, v]) => v >= 0.5).sort((a, c) => c[1] - a[1]).slice(0, 3);
   const fmt = (v: number) => String(r05(v)).replace(".", ",");
   const parts = top.map(([mu, v]) => `${mu} +${fmt(v)}`);
   const head = dw.deload ? `Entlastung` : `Woche ${dw.pos + 1} der Welle · Stufe ${dw.stage}`;

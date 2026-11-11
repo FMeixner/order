@@ -207,6 +207,9 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
   toleriert; darüber springt die Wahl zur nächsten Altersklasse, die unter der Grenze bleibt (nie die Vorwoche).
   Ziel je Muskel = max(Welle, feste Sätze): King hat 10,5 feste Sätze Schultern, über dem sanften Gipfel 10.
   Test: < 15 % der Muskelwochen über Obergrenze + 0,6.
+- **1.22.1:** Bestien füllen in vier Gruppen auf (Push: Brust, Schultern, Trizeps · Pull: Rücken, Bizeps · Beine:
+  Quadrizeps, Beinbeuger, Gesäß · Rumpf); Ziele bleiben je Muskel. Rumpf hat ein festes Ziel (unterer Richtwert des
+  Niveaus) in jedem Orden. Machbarkeit je Gruppe: Slot-Kapazität skaliert nur den Anteil über den festen Sätzen.
 - `doseWeight(cand, rest)`: Abdeckung der Muskel-Fehlbeträge (gewichtet nach Fehlbetrag), Abdeckung der
   Konditionsminuten, Stufen-Bonus. Wird nach Zeitfenster, Obergrenze und Varianz addiert; `weekbeasts.test.ts`
   bleibt grün.

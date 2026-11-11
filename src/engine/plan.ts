@@ -1,5 +1,5 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
-import { beastDose, DOSE_MUSCLES, doseWeek, isAdvancedBeast, type DoseWeek } from "./dose";
+import { beastDose, DOSE_GROUPS, doseWeek, groupShare, isAdvancedBeast, type DoseWeek } from "./dose";
 import { beastLocSub, hasLocText, mixesStations } from "./cardio";
 import { dayMods, withDay } from "./dayadj";
 import { allRuns } from "./runs";
@@ -677,11 +677,12 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   const candMin = (c: Cand) => c.units.reduce((s0, u) => s0 + (mins.get(u.id) ?? min(u)), 0) * (c.kind === "double" ? c.k ?? 2 : 1);
   const over = (c: Cand): number => {
     if (!dw) return 0;
-    const d = candDose(c);
+    // Gruppenebene: Raum = Summe des Raums ihrer Muskel bis zur Obergrenze
+    const d = groupShare(candDose(c));
     let o = 0;
-    for (const mu of DOSE_MUSCLES) {
-      const room = (dw.cap[mu] ?? Infinity) - (dw.fixed[mu] ?? 0) - (weekDose[mu] ?? 0);
-      o += Math.max(0, (d[mu] ?? 0) - Math.max(0, room));
+    for (const [g, ms] of Object.entries(DOSE_GROUPS)) {
+      const room = ms.reduce((a, mu) => a + Math.max(0, (dw.cap[mu] ?? Infinity) - (dw.fixed[mu] ?? 0) - (weekDose[mu] ?? 0)), 0);
+      o += Math.max(0, (d[g] ?? 0) - room);
     }
     return o;
   };
@@ -721,11 +722,12 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   // Dosis-Gewicht: Abdeckung des Restziels (Muskel und Kondition), Stufen-Bonus; Partials teilen sich ihr Gewicht
   const doseMult = (c: Cand): number => {
     if (!dw) return 1;
-    const d = candDose(c);
+    // Auffüllen je Gruppe: Rest = Summe der Fehlbeträge ihrer Muskeln
+    const d = groupShare(candDose(c));
     let need = 0, hit = 0;
-    for (const mu of DOSE_MUSCLES) {
-      const rest = Math.max(0, (dw.muscle[mu] ?? 0) - (dw.fixed[mu] ?? 0) - (weekDose[mu] ?? 0));
-      need += rest; hit += Math.min(rest, d[mu] ?? 0);
+    for (const [g, ms] of Object.entries(DOSE_GROUPS)) {
+      const rest = ms.reduce((a, mu) => a + Math.max(0, (dw.muscle[mu] ?? 0) - (dw.fixed[mu] ?? 0) - (weekDose[mu] ?? 0)), 0);
+      need += rest; hit += Math.min(rest, d[g] ?? 0);
     }
     const cRest = Math.max(0, dw.cardio - dw.fixedCardio - weekMin);
     const mCover = need > 0 ? hit / need : 0, cCover = cRest > 0 ? Math.min(1, candMin(c) / cRest) : 0;
