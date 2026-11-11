@@ -4,6 +4,8 @@
    nach einer Test-, Entlastungs- oder Deload-Woche. Angenommen wird sie als Wochenzustand, widerrufbar. */
 import type { AppState, Block, Choice, Focus, PlanBlock, Role, Slot } from "../types";
 import { addDays, blockFocus, blockWeeks, isDeloadWeek, isTestBlock, isTestWeek } from "./plan";
+import { coreDowns } from "./progression";
+import { weekLoad } from "./weekload";
 
 export const deloadKey = (b: PlanBlock, week: number) => `${b.id}:${week}`;
 
@@ -45,7 +47,28 @@ export function deloadShape(f: Focus): Focus {
   return { ...f, roles };
 }
 
-export interface DeloadAdvice { why: "rhythmus" | "signale"; count: number }
+/** Empfehlung (1.30): Rhythmus oder Signale. `signals`: Begründung in Worten. `quiet`: Rhythmus-Woche ohne Signal —
+    nur eine leise Zeile, beide Knöpfe gleichrangig. */
+export interface DeloadAdvice { why: "rhythmus" | "signale"; count: number; signals: string[]; quiet: boolean }
+
+const TIMES = ["", "einmal", "zweimal", "dreimal", "viermal", "fünfmal"];
+/** Signale der letzten 14 Tage, jedes zählt einen Punkt: dreimal „zu schwer“, Befinden im Mittel unter −1 (mindestens
+    drei Werte), zwei Kernübungen geben nach, hohe Last der Woche. */
+export function deloadSignals(state: AppState, b: PlanBlock, week: number, today: string): { signals: string[]; tooHard: number } {
+  const cutoff = addDays(today, -14);
+  const tooHard = state.sessions
+    .filter((s) => s.date >= cutoff)
+    .reduce((n, s) => n + Object.values(s.entries ?? {}).filter((e) => e.feedback === "zuschwer").length, 0);
+  const out: string[] = [];
+  if (tooHard >= 3) out.push(`${TIMES[tooHard] ?? `${tooHard}-mal`} zu schwer`);
+  const fs = state.feeling.filter((x) => x.date >= cutoff && x.date <= today).map((x) => x.value);
+  if (fs.length >= 3 && fs.reduce((a, c) => a + c, 0) / fs.length < -1) out.push("Befinden zäh");
+  const f = blockFocus(b);
+  const downs = f ? coreDowns(state, f, cutoff) : [];
+  if (downs.length >= 2) out.push(`${downs.length} Kernübungen geben nach`);
+  if (weekLoad(state.sections, b, week) === "high") out.push("hohe Last diese Woche");
+  return { signals: out, tooHard };
+}
 
 /** Empfehlung für diese Blockwoche: null, wenn keine nötig oder schon entschieden ist. */
 export function deloadAdvice(state: AppState, b: PlanBlock, week: number, today: string): DeloadAdvice | null {
@@ -62,13 +85,11 @@ export function deloadAdvice(state: AppState, b: PlanBlock, week: number, today:
   // In einer Klammer zählt die Klammer, nicht der Teil: Teile von vier bis sechs Wochen bekämen sonst nie Entlastung.
   const k = klammerWeek(state.plan, b, week);
   const kTotal = k?.total ?? total, kWeek = k?.week ?? week;
-  if (kTotal >= 8 && rhythmWeeks(state.plan, b, kTotal).includes(kWeek)) return { why: "rhythmus", count: 0 };
-  // Signale: dreimal „zu schwer“ in den letzten vierzehn Tagen
-  const cutoff = addDays(today, -14);
-  const count = state.sessions
-    .filter((s) => s.date >= cutoff)
-    .reduce((n, s) => n + Object.values(s.entries ?? {}).filter((e) => e.feedback === "zuschwer").length, 0);
-  if (week >= 3 && count >= 3) return { why: "signale", count };
+  const { signals, tooHard } = deloadSignals(state, b, week, today);
+  // Ab zwei Signalen: Empfehlung mit Begründung, „Entlasten“ hervorgehoben
+  if (week >= 3 && signals.length >= 2) return { why: "signale", count: tooHard, signals, quiet: false };
+  // Rhythmus: ab der fünften Woche alle vier Wochen. Mit einem Signal eine Empfehlung, ohne Signal nur die leise Frage.
+  if (kTotal >= 8 && rhythmWeeks(state.plan, b, kTotal).includes(kWeek)) return { why: "rhythmus", count: tooHard, signals, quiet: signals.length === 0 };
   return null;
 }
 

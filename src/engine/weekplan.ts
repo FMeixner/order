@@ -5,12 +5,12 @@
    Fünf Tage: Der Zusatztag (Rolle außerhalb von week_4, meist „bonus“) kommt zwischen die schweren Tage.
    Harlequin: Orden mit "medley" nehmen jede Woche einen anderen Orden. */
 import { SWAP_GROUPS } from "../data";
-import type { AppState, Block, Focus, Load, PlanBlock, Role, Section, Slot, Weekday } from "../types";
+import type { AppState, Block, Focus, PlanBlock, Role, Section, Slot, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { skipDay } from "./skipweek";
 import { doseMode, wavePos } from "./dose";
 import { isHeavy, isStrength, planMinutes } from "./slots";
-import { addDays, applyDrillEdits, blockFocus, blockWeeks, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { applyDrillEdits, blockFocus, blockWeeks, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { pairToFit, shortDay, shortDeload } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlots } from "./sharpen";
@@ -207,15 +207,8 @@ function applySkips(state: AppState, b: PlanBlock, week: number, f: Focus, n: nu
   return f;
 }
 
-/** Alltagslast einer Woche (1.18): Die Phase trägt eine Last für ihre ganze Dauer (Mehrheit der Wochen). Liegt eine
-    einzelne Woche in einem Lebensabschnitt mit höherer Last (Prüfungen mitten in einer ruhigen Phase), gilt für diese
-    Woche die höhere. Nie niedriger als die Phase: Wer die Phase von Hand auf hoch stellt, behält hoch. */
-const LOAD_RANK: Record<Load, number> = { low: 0, medium: 1, high: 2 };
-export function weekLoad(sections: Section[] | undefined, b: PlanBlock, week: number): Load {
-  const d = addDays(b.start, 7 * (week - 1));
-  const s = sections?.find((x) => x.start <= d && x.end >= d) ?? sections?.find((x) => x.start <= addDays(d, 6) && x.end >= d);
-  return s && LOAD_RANK[s.load] > LOAD_RANK[b.load] ? s.load : b.load;
-}
+import { weekLoad } from "./weekload";
+export { weekLoad };
 /** Dauerlast (1.19): Mittlere Last am Stück wird zur hohen — aber erst für den Orden, der nach mindestens
     DAUER_START Wochen mittlerer Last beginnt. Der erste Orden eines mittleren Abschnitts läuft normal, der nächste
     wechselt auf geführt (5 + 5 Wochen: der zweite). Ein ruhiger Abschnitt dazwischen setzt zurück. */

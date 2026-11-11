@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import type { AppState, Block, PlanBlock, Session, Slot } from "../types";
-import { addDays, blockFocus, blockWeeks, dayRoleMap } from "./plan";
+import { addDays, blockFocus, blockWeeks, dayRoleMap, doseAt } from "./plan";
+import { wavePos } from "./dose";
 import { deloadAdvice, deloadShape, isDeloaded, setDeload } from "./deload";
 import { focusFor } from "./weekplan";
 import { chapterOf } from "./saga";
@@ -63,7 +64,7 @@ describe("Entlastungswoche", () => {
   it("Rhythmus: ab Woche 5 alle vier Wochen, nur in Phasen ab 8 Wochen", () => {
     expect(blockWeeks(KNIGHT)).toBe(8);
     const s = st();
-    expect(deloadAdvice(s, KNIGHT, 5, "2026-11-16")).toEqual({ why: "rhythmus", count: 0 });
+    expect(deloadAdvice(s, KNIGHT, 5, "2026-11-16")).toEqual({ why: "rhythmus", count: 0, signals: [], quiet: true });
     expect(deloadAdvice(s, KNIGHT, 4, "2026-11-16")).toBeNull();
     expect(deloadAdvice(s, KNIGHT, 6, "2026-11-16")).toBeNull();
     const kurz = { ...KNIGHT, end: "2026-11-30" }; // 6 Wochen
@@ -78,7 +79,7 @@ describe("Entlastungswoche", () => {
     const davor = setDeload(s, ASSASSIN, 2, "ja");
     expect(deloadAdvice(davor, ASSASSIN, 5, "2026-11-16")).toBeNull(); // drei Wochen Abstand nicht genug
     const weit = setDeload(s, ASSASSIN, 1, "ja");
-    expect(deloadAdvice(weit, ASSASSIN, 5, "2026-11-16")).toEqual({ why: "rhythmus", count: 0 });
+    expect(deloadAdvice(weit, ASSASSIN, 5, "2026-11-16")).toMatchObject({ why: "rhythmus", quiet: true });
   });
 
   it("Signale: dreimal „zu schwer“ in zwei Wochen, sonst nicht", () => {
@@ -86,8 +87,12 @@ describe("Entlastungswoche", () => {
     const fb = (date: string, n: number): Session[] =>
       Array.from({ length: n }, (_, i) => ({ id: `s${date}-${i}`, date, blockId: "b1", focusId: "knight", week: 3, role: "mo", profileId: "g", entries: { [`e${i}`]: { key: `k${i}`, slotId: `sl${i}`, name: "Übung", prog: "none", sets: [], feedback: "zuschwer" } }, drills: {}, done: true }));
     const heute = "2026-11-09"; // Woche 4 läuft, Rhythmus greift nicht
-    const sTooHard = { ...s, sessions: [...fb(addDays(heute, -7), 3)] };
-    expect(deloadAdvice(sTooHard, KNIGHT, 4, heute)).toEqual({ why: "signale", count: 3 });
+    // Ein Signal allein reicht außerhalb des Rhythmus nicht mehr (1.30), zwei schon
+    const sOne = { ...s, sessions: [...fb(addDays(heute, -7), 3)] };
+    expect(deloadAdvice(sOne, KNIGHT, 4, heute)).toBeNull();
+    const zaeh = [-3, -2, -2].map((value, i) => ({ date: addDays(heute, -i - 1), sessionId: `f${i}`, value }));
+    const sTooHard = { ...sOne, feeling: zaeh };
+    expect(deloadAdvice(sTooHard, KNIGHT, 4, heute)).toEqual({ why: "signale", count: 3, signals: ["dreimal zu schwer", "Befinden zäh"], quiet: false });
     const sAlt = { ...s, sessions: [...fb(addDays(heute, -40), 3)] };
     expect(deloadAdvice(sAlt, KNIGHT, 4, heute)).toBeNull();
     const sWenig = { ...s, sessions: [...fb(addDays(heute, -7), 2)] };
@@ -95,6 +100,35 @@ describe("Entlastungswoche", () => {
     // Abgelehnt für diese Woche: nicht erneut fragen
     const abgelehnt = setDeload(sTooHard, KNIGHT, 4, "nein");
     expect(deloadAdvice(abgelehnt, KNIGHT, 4, heute)).toBeNull();
+  });
+
+  it("Rhythmus-Woche: ohne Signal leise, mit einem Signal Empfehlung mit Begründung", () => {
+    const s = st();
+    const heute = "2026-11-18"; // Woche 5
+    expect(deloadAdvice(s, KNIGHT, 5, heute)).toMatchObject({ quiet: true, signals: [] });
+    const hoch = { ...s, sections: [{ id: "x", name: "Prüfungen", start: "2026-11-16", end: "2026-11-22", load: "high" as const }] };
+    expect(deloadAdvice(hoch, KNIGHT, 5, heute)).toMatchObject({ why: "rhythmus", quiet: false, signals: ["hohe Last diese Woche"] });
+  });
+
+  it("Signale: Befinden nur ab drei Werten, zwei Kernübungen mit Rückgang", () => {
+    const s = st();
+    const heute = "2026-11-09";
+    const zwei = [-4, -4].map((value, i) => ({ date: addDays(heute, -i - 1), sessionId: `f${i}`, value }));
+    const hoch = { ...s, feeling: zwei, sections: [{ id: "x", name: "Prüfungen", start: "2026-11-09", end: "2026-11-15", load: "high" as const }] };
+    expect(deloadAdvice(hoch, KNIGHT, 4, heute)).toBeNull();
+    const core = Object.values(blockFocus(KNIGHT)!.roles).flatMap((r) => r.blocks).flatMap(slotsOf).filter((x) => x.core).slice(0, 2);
+    const run = (date: string, kg: number): Session => ({ id: `c${date}`, date, blockId: "b1", focusId: "knight", week: 3, role: "x", profileId: "g", done: true, drills: {},
+      entries: Object.fromEntries(core.map((c) => [c.id, { key: c.id, slotId: c.id, name: c.name, prog: "double" as const, sets: [{ done: true, weight: kg, reps: 8 }] }])) });
+    const down = { ...hoch, sessions: [run("2026-11-02", 60), run("2026-11-06", 55)] };
+    expect(deloadAdvice(down, KNIGHT, 4, heute)).toMatchObject({ why: "signale", signals: ["2 Kernübungen geben nach", "hohe Last diese Woche"] });
+  });
+
+  it("Übersprungene Entlastung: die Welle wendet trotzdem (Stufe + 1, Start der nächsten Welle)", () => {
+    const s = setDeload(st(), KNIGHT, 5, "nein");
+    expect(wavePos(s.plan, KNIGHT, 6)).toMatchObject({ stage: 2, pos: 0 });
+    const d = doseAt(s, s.plan[0], 6)!;
+    expect(d).toMatchObject({ stage: 2, pos: 0, deload: false });
+    expect(doseAt(s, s.plan[0], 5)!.deload).toBe(true);
   });
 
   it("Aschekurier druckt die Entlastungswoche in die Ausgabe", () => {

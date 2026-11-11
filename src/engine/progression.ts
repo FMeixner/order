@@ -384,14 +384,34 @@ export function trendOf(prev: SessionEntry, cur: SessionEntry): "up" | "held" | 
   return c > p + 1e-6 ? "up" : c < p - 1e-6 ? "down" : "held";
 }
 
-/** Kernübungen (Slots mit `core`), die in zwei Einheiten nacheinander nachgegeben haben (Gewicht oder Wiederholungen
-    runter). Einzelne schwache Tage bleiben still. `since`: nur Einheiten ab diesem Datum zählen für den letzten Rückgang. */
-export function slippingCore(state: AppState, focus: Focus, since?: string): string[] {
+/** Kernübungen, deren letzte Einheit (ab `since`) gegenüber der davor nachgegeben hat — ein Signal für die Entlastung */
+export function coreDowns(state: AppState, focus: Focus, since: string): string[] {
+  const core = coreIds(focus);
+  const hist = new Map<string, { date: string; e: SessionEntry }[]>();
+  for (const s of state.sessions) if (s.done) for (const e of Object.values(s.entries)) {
+    if (!core.has(e.slotId) || e.prog === "none" || !e.sets.some((x) => x.done)) continue;
+    hist.set(e.name, [...(hist.get(e.name) ?? []), { date: s.date, e }]);
+  }
+  const out: string[] = [];
+  for (const [name, h] of hist) {
+    const xs = h.sort((a, b) => a.date.localeCompare(b.date)).slice(-2);
+    if (xs.length === 2 && xs[1].date >= since && trendOf(xs[0].e, xs[1].e) === "down") out.push(name);
+  }
+  return out;
+}
+const coreIds = (focus: Focus): Set<string> => {
   const core = new Set<string>();
   for (const r of Object.values(focus.roles)) for (const b of r.blocks) {
     const slots = b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : [];
     for (const sl of slots) if (sl.core) core.add(sl.id);
   }
+  return core;
+};
+
+/** Kernübungen (Slots mit `core`), die in zwei Einheiten nacheinander nachgegeben haben (Gewicht oder Wiederholungen
+    runter). Einzelne schwache Tage bleiben still. `since`: nur Einheiten ab diesem Datum zählen für den letzten Rückgang. */
+export function slippingCore(state: AppState, focus: Focus, since?: string): string[] {
+  const core = coreIds(focus);
   const out: string[] = [];
   const hist = new Map<string, { date: string; e: SessionEntry }[]>();
   for (const s of state.sessions) if (s.done) for (const e of Object.values(s.entries)) {

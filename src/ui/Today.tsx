@@ -262,12 +262,18 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
           <button className="btn small" onClick={() => ease("nein")}>Weiter normal trainieren</button>
         </div>
       )}
-      {advice && (
+      {advice && (advice.quiet ? (
+        <div className="note small row between wrap deload-quiet">
+          <span>Entlastung wäre dran. Dir geht es gut: weiter, oder trotzdem entlasten?</span>
+          <span className="row">
+            <button className="btn small" onClick={() => ease("nein")}>Weiter</button>
+            <button className="btn small" onClick={() => ease("ja")}>Entlasten</button>
+          </span>
+        </div>
+      ) : (
         <div className="note small row between wrap">
           <span>
-            {advice.why === "signale"
-              ? `In den letzten zwei Wochen ${advice.count === 3 ? "dreimal" : `${advice.count}-mal`} „zu schwer“ gemeldet. `
-              : "Fünf Wochen am Stück — Zeit für eine Entlastungswoche. "}
+            {`${advice.why === "rhythmus" ? "Entlastung wäre dran" : "Zeit für eine Entlastung"}: ${advice.signals.join(", ")}. `}
             Vorschlag: halbe Sätze, keine Bestien, Gewichte und Übungen bleiben.
           </span>
           <span className="row">
@@ -275,7 +281,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
             <button className="btn small" onClick={() => ease("nein")}>Normal weiter</button>
           </span>
         </div>
-      )}
+      ))}
       <div className="card hero">
         <div className="hero-top">
           <div>

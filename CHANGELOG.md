@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.30.0] – 2026-11-11
+
+### Geändert
+- **Entlastung nach Signalen:** Der Rhythmus (ab Woche 5 alle vier Wochen) ist nur noch ein Angebot. Geht es dir gut, steht in der Rhythmus-Woche die leise Frage „Entlastung wäre dran. Dir geht es gut: weiter, oder trotzdem entlasten?“ mit zwei gleichrangigen Knöpfen. Empfohlen wird nach Signalen der letzten zwei Wochen — dreimal „zu schwer“, Befinden im Mittel unter −1, zwei Kernübungen mit Rückgang, hohe Last der Woche —, mit Begründung in Worten („Zeit für eine Entlastung: dreimal zu schwer, Befinden zäh“). In der Rhythmus-Woche reicht ein Signal, sonst braucht es zwei.
+- Die Dosis-Welle wendet zur geplanten Zeit auch, wenn du die Entlastung auslässt (Stufe + 1, Volumen zurück auf den Start).
+- Quelle Coleman et al. (2024) mit allen Autorinnen und Autoren.
+
 ## [1.29.0] – 2026-11-11
 
 ### Neu

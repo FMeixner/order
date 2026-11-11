@@ -65,7 +65,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P5~~ | 1.27.0 ✓ | Wochenrückblick (im Stand) — **gebaut 11.11.2026** |
 | ~~P6~~ | 1.28.0 ✓ | Defizit-Phasen: „gehalten“ zählt als Erfolg — **gebaut 11.11.2026** |
 | ~~P7~~ | 1.29.0 ✓ | Ausklang nach Bestie und Finisher — **gebaut 11.11.2026** |
-| P8 | 1.30.0 | Entlastung nach Signalen |
+| ~~P8~~ | 1.30.0 ✓ | Entlastung nach Signalen — **gebaut 11.11.2026** |
 | P9 | 1.31.0 | Zuspitzung vor der Testwoche |
 | P10 | 1.32.0 | Explosives vor Ausdauer (Prüfung der Orden) |
 | P11 | 1.33.0 | Schätzwerte lernen aus dem Log |
@@ -509,6 +509,12 @@ Signale bekommen mehr Gewicht.
 
 ### Technik
 `DeloadAdvice` bekommt `signals: string[]`. Tests in `deload.test.ts` für jede Kombination.
+
+**Annahmen (Agent, 11.11.2026):** „Zwei Kernübungen mit Trend down“ = zwei Kernübungen, deren letzte Einheit in den
+14 Tagen gegenüber der Einheit davor nachgab (`coreDowns` in `progression.ts`). Außerhalb der Rhythmus-Woche braucht
+eine Empfehlung zwei Signale; dreimal „zu schwer“ allein empfiehlt dort nicht mehr (bis 1.29 schon). `weekLoad` liegt
+jetzt in `src/engine/weekload.ts` (von `weekplan.ts` weitergereicht), damit `deload.ts` ohne Import-Kreis darauf
+zugreift.
 Quelle: Coleman, M., Burke, R., Augustin, F., Piñero, A., Maldonado, J., Fisher, J. P., Israetel, M., Androulakis
 Korakakis, P., Swinton, P., Oberlin, D., & Schoenfeld, B. J. (2024). Gaining more from doing less? The effects of a
 one-week deload period during supervised resistance training on muscular adaptations. *PeerJ, 12*, e16777.
