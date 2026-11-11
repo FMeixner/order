@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unveröffentlicht]
+
+### Geändert
+- **Harlequin wählt je Phase:** Zu Beginn jeder Harlequin-Phase nimmt die App so viele Orden, wie die Phase Wochen hat – zuerst die, die in früheren Harlequin-Phasen am längsten nicht oder nie dran waren, bei Gleichstand die, die zum Zeichen passen. Bisher begann jede Phase wieder mit denselben vier Orden.
+
 ## [1.34.3] – 2026-11-11
 
 ### Geändert

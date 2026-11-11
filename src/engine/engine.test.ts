@@ -528,12 +528,14 @@ describe("Wochenform", () => {
     expect(defaultRoles(FOCUS_BY_ID.knight, 5)).toEqual(["upper_a", "lower_a", "bonus", "upper_b", "lower_b"]);
   });
   it("Harlequin: jede Woche ein anderer Orden", async () => {
-    const { focusFor } = await import("./weekplan");
+    const { focusFor, medleySequence } = await import("./weekplan");
     const s = sample();
     const b = { ...s.plan[0], focusId: "harlequin" };
-    expect(focusFor(s, b, 1)!.id).toBe("slayer");
-    expect(focusFor(s, b, 2)!.id).toBe("pugilist");
-    expect(focusFor(s, b, 13)!.id).toBe("slayer");
+    const seq = medleySequence(s, b);
+    expect(focusFor(s, b, 1)!.id).toBe(seq[0]);
+    expect(focusFor(s, b, 2)!.id).toBe(seq[1]);
+    expect(seq[0]).not.toBe(seq[1]);
+    expect(focusFor(s, b, seq.length + 1)!.id).toBe(seq[0]);
   });
 });
 
