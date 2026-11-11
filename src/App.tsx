@@ -1,3 +1,4 @@
+import { unpinAutoSlots } from "./engine/sharpen";
 import { gymDaysOf } from "./engine/klammer";
 import { useEffect, useRef, useState } from "react";
 import { autoBackup } from "./backup";
@@ -35,6 +36,8 @@ export default function App() {
     const t = state.theme ?? "auto";
     if (t === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
   }, [state.theme]);
+  // Einmalig: festgeschriebene Schwerpunkte, die „Automatisch“ entsprechen, wieder automatisch
+  useEffect(() => { if (!state.autoSlots) update((s) => unpinAutoSlots(s)); }, [state.autoSlots]); // eslint-disable-line react-hooks/exhaustive-deps
   // Browser bitten, die Daten nicht von sich aus zu löschen (schützt nicht vor manuellem Löschen)
   useEffect(() => { navigator.storage?.persist?.().catch(() => undefined); }, []);
   // Automatische Sicherung, sobald eine Einheit abgeschlossen wurde

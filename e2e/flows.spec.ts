@@ -505,3 +505,19 @@ test("Hilfe: Abschnitte zu, Suche öffnet Treffer und blendet den Rest aus", asy
   await expect(dlg.locator("details.help-sec[open]")).toHaveCount(0);
   await expect(dlg.locator("details.help-sec[hidden]")).toHaveCount(0);
 });
+
+test("Schwerpunkt: „Für diesen Orden entfernen“ schaltet ihn für die Phase ab", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  let found = false;
+  for (const d of await page.locator(".day-btn").all()) {
+    await d.click();
+    const card = page.getByText(/^Schwerpunkt:|^Mehr vom Ordensziel/).first();
+    if (await card.count()) { await card.click(); found = true; break; }
+  }
+  expect(found).toBe(true);
+  await page.getByRole("button", { name: "Für diesen Orden entfernen" }).click();
+  await page.getByRole("button", { name: "Entfernen", exact: true }).click();
+  expect((await stored(page)).plan.some((b: { sharpen?: string }) => b.sharpen === "off")).toBe(true);
+  await expect(page.getByText(/^Schwerpunkt:|^Mehr vom Ordensziel/)).toHaveCount(0);
+});

@@ -416,6 +416,8 @@ export interface AppState {
   roleOrder: Record<string, string[]>; // blockId → Rollen in Reihenfolge der Trainingstage
   plan: PlanBlock[];
   slots: Record<string, SlotState>;
+  /** 1.35: festgeschriebene Schwerpunkte, die „Automatisch“ entsprechen, einmal zurück auf automatisch */
+  autoSlots?: boolean;
   sessions: Session[];
   beastTimes: Record<string, BeastTime[]>;
   /** 1RM je Übung, selbst eingetragen (sonst geschätzt aus dem Log) */

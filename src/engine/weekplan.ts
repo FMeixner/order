@@ -4,7 +4,7 @@
    und Pausen um 15 s gekürzt. Schwere Grundübungen bleiben unangetastet.
    Fünf Tage: Der Zusatztag (Rolle außerhalb von week_4, meist „bonus“) kommt zwischen die schweren Tage.
    Harlequin: Orden mit "medley" nehmen jede Woche einen anderen Orden. */
-import { SWAP_GROUPS } from "../data";
+import { KLAMMERN, SWAP_GROUPS } from "../data";
 import type { AppState, BeastClass, Block, Focus, PlanBlock, Role, Section, Slot, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { skipDay } from "./skipweek";
@@ -300,11 +300,44 @@ export function taperShape(f: Focus): Focus {
   return { ...f, roles };
 }
 
+const medMemo = new WeakMap<AppState, Map<string, string[]>>();
+/** Harlequin (Orden mit „medley“): Zu Beginn jeder Phase wählt die App so viele Orden, wie die Phase Wochen hat –
+    zuerst die, die in früheren Harlequin-Phasen am längsten nicht (oder nie) dran waren, bei Gleichstand die, die zum
+    Zeichen der Phase passen (früh/spät in klammern.json), dann die Reihenfolge der Liste. Gespielt wird in der Reihenfolge
+    der Liste, damit die gewollte Abwechslung bleibt. So wiederholt sich nichts, auch wenn die Phasen kurz sind. */
+export function medleySequence(state: AppState, b: PlanBlock): string[] {
+  const base = blockFocus(b);
+  const list = base?.medley ?? [];
+  if (!list.length) return [];
+  let m = medMemo.get(state);
+  if (!m) medMemo.set(state, (m = new Map()));
+  const key = `${b.id}|${b.start}|${b.end}|${b.klammer ?? ""}`;
+  const hit = m.get(key);
+  if (hit) return hit;
+  // Frühere Phasen desselben Ordens: wann welcher Orden zuletzt dran war (laufender Wochenzähler)
+  const prior = state.plan.filter((x) => x.focusId === b.focusId && x.id !== b.id && x.start < b.start).sort((x, y) => x.start.localeCompare(y.start));
+  const last = new Map<string, number>();
+  let t = 0;
+  for (const p of prior) {
+    const seq = medleySequence(state, p);
+    const n = blockWeeks(p);
+    for (let w = 0; w < n; w++) last.set(seq[w % seq.length], t++);
+  }
+  const k = KLAMMERN.find((x) => x.id === b.klammer);
+  const fit = (id: string) => (k && [...(k.early ?? []), ...(k.late ?? [])].includes(id) ? 1 : 0);
+  const n = Math.max(1, Math.min(list.length, blockWeeks(b)));
+  const chosen = [...list].sort((x, y) => (last.get(x) ?? -1) - (last.get(y) ?? -1) || fit(y) - fit(x) || list.indexOf(x) - list.indexOf(y)).slice(0, n);
+  const out = list.filter((id) => chosen.includes(id));
+  m.set(key, out);
+  return out;
+}
+
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {
   const base = blockFocus(b);
   if (!base) return null;
   const bw = blockInWeek(state, b, week);
-  const f = highLoadFinish(highLoadShape(base.medley?.length ? blockFocus(b, base.medley[(week - 1) % base.medley.length]) ?? base : base, bw, week), bw);
+  const med = base.medley?.length ? medleySequence(state, b) : null;
+  const f = highLoadFinish(highLoadShape(med?.length ? blockFocus(b, med[(week - 1) % med.length]) ?? base : base, bw, week), bw);
   const n = trainingDays(state, b).length;
   let shaped = shapeFocus(f, n);
   // Kurz: gekürzte Rolle (die vier Kernübungen, Bestie eine Klasse kürzer, Schwertübungen einen Satz weniger, Ziel 35 Minuten); an jedem Tag möglich.

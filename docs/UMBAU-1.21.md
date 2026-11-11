@@ -6,6 +6,9 @@ beschrieben, erst den Nutzer fragen.
 
 ## Arbeitsweise
 
+- **Seit 11.11.2026: Sammelupdates.** Änderungen werden lokal gesammelt und erst nach der Besprechung gemeinsam als eine
+  Version veröffentlicht (Wunsch des Nutzers), nicht jede Änderung einzeln.
+
 - Ein Paket = ein Release (Reihenfolge unten). Nach jedem Paket: `CHANGELOG.md`, `npm version`, `npm run build`,
   `npx vitest run`, `npm run e2e`, Commit, Push auf `main`, CI und Pages prüfen (Ablauf in `AGENTS.md`).
 - Nie committen, solange ein Test rot ist. Keine zwei Pakete in einem Commit.
@@ -70,7 +73,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P10~~ | 1.32.0 ✓ | Explosives vor Ausdauer (Prüfung der Orden) — **gebaut 11.11.2026** |
 | ~~P11~~ | 1.33.0 ✓ | Schätzwerte lernen aus dem Log — **gebaut 11.11.2026** |
 | ~~P12~~ | 1.34.0 ✓ | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung — **gebaut 11.11.2026** — Labels **verworfen** 11.11.2026: schmale Wochentagsknöpfe, darunter eine Fokuszeile mit Ort und Ausrüstung (1.34.3) |
-| PH | 1.35.0 | Harlekin: Wiederholung nach 12 Wochen, bei kürzeren Blöcken 4-Wochen-Häppchen (Lösung offen) |
+| ~~PH~~ | 1.35.0 ✓ | Harlekin: Variante B — Auswahl je Phase (am längsten nicht dran, dann Passung zum Zeichen), `medleySequence` in `weekplan.ts`; mit „Mehr vom Ordensziel“ und Schwerpunkt-Fixes |
 | ~~PG~~ | 1.32.1 ✓ | Bestienpool: neun neue Bestien (Band, Sandsack, Stange, Ringe) — **gebaut 11.11.2026**; 1.34.1 mutierte Lastbestie |
 
 1.21.0 ist vergeben (Orden Gladiator, 10.11.2026). Die Versionen unten folgen dieser Tabelle; wo im Text noch eine
