@@ -4,7 +4,7 @@ import { EXERCISES } from "../../data";
 import { type Feedback, FEEDBACK_LABEL, type Finish, type Session, type SessionEntry, type SetEntry } from "../../types";
 import { snapDown, snapNearest } from "../../engine/loads";
 import { daysBetween } from "../../engine/plan";
-import { backoffLoad, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
+import { backoffLoad, estimateEnv, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
 import { parseReps, type Resolved, swapKey, swapOptions } from "../../engine/resolve";
 import { WARM_REST, warmupSets } from "../../engine/warmup";
 import { fmt, useTimer } from "../Timer";
@@ -67,7 +67,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
   const t = useTimer();
   const [swapOpen, setSwapOpen] = useState(false);
   const canSwap = r.kind === "strength" || r.kind === "hold";
-  const st = sharedState(ctx.state.slots, r);
+  const st = sharedState(ctx.state.slots, r, estimateEnv(ctx.state, ctx.date));
   const raw0: Suggestion = suggest(r, st, ctx.week, ctx.profile);
   // Ältere Stände zählten bei Wiederholungs-Progression vom Ziel statt vom Geschafften (2 × 20 → 16): hier nachziehen
   const lastEntry = [...ctx.state.sessions].filter((x) => x.done && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];

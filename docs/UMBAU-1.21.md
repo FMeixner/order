@@ -68,7 +68,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P8~~ | 1.30.0 ✓ | Entlastung nach Signalen — **gebaut 11.11.2026** |
 | ~~P9~~ | 1.31.0 ✓ | Zuspitzung vor der Testwoche — **gebaut 11.11.2026** |
 | ~~P10~~ | 1.32.0 ✓ | Explosives vor Ausdauer (Prüfung der Orden) — **gebaut 11.11.2026** |
-| P11 | 1.33.0 | Schätzwerte lernen aus dem Log |
+| ~~P11~~ | 1.33.0 ✓ | Schätzwerte lernen aus dem Log — **gebaut 11.11.2026** |
 | P12 | 1.34.0 | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung |
 | PH | 1.35.0 | Harlekin: Wiederholung nach 12 Wochen, bei kürzeren Blöcken 4-Wochen-Häppchen (Lösung offen) |
 | PG | — | Bestienpool: Lücken der Kombinatorik schließen (Rücken, Rumpf ohne Oberkörper …), neue Bestien entwerfen |
@@ -612,6 +612,20 @@ unberührt.
 `progression.ts`: `ownRatios(slots): Record<string, number>` (je Familie relativ zum Anker, aus
 `weight × (1 + target/30)`); `estimateFrom` nutzt sie und danach die Brücken. Tests in `handover.test.ts`:
 Rangfolge, Abschläge, Dips mit Körpergewicht → Trizeps-Schätzung, keine Brücke ohne Körpergewicht.
+
+**Annahmen (Agent, 11.11.2026):**
+- Gemessenes Verhältnis: Haben ≥ 2 Übungen einer Familie eigene Stände aus 12 Wochen, schätzt die App über den
+  gemessenen Bezug (Anker, sonst die jüngste gemessene Übung) mit dessen hinterlegtem Verhältnis zum Ziel, Abschlag 10 %.
+  `ownRatios` liefert je Familie die Liste „hinterlegt → gemessen“ für die Anzeige.
+- Brücken-Startwerte in `transfer.json` (`bridges`, `bodyweight`, `discounts`) sind grobe Erfahrungswerte ohne
+  belastbare Normen (Evidenzlücke, offen benannt in `_bridges`). Zusätzlich Push-Up → Drücken (Anteil 0,65 stand im
+  Text, eine Brücke dafür nicht). „Enges Bankdrücken“ gibt es in `exercises.json` nicht; keine Brücke.
+- Weighted Chin-Up heißt in den Daten „Chin-Up“ (mit Zusatzlast steigerbar); Zusatzlast zählt zur Leistung.
+- Körpergewicht: neues optionales Feld `user.bodyweight` (Setup › Deine Verhältnisse), sonst der letzte Wert aus der
+  Testwoche (`t-bodyweight`).
+- Gelernte Brücken: Hat der Nutzer beide Seiten, liefert die Familie schon eine Schätzung höheren Rangs; die gelernte
+  Brücke greift deshalb nur, wenn die Familienmitglieder keinen Stand mit Gewicht haben, und steht vor allem in der
+  Anzeige. „Deine Verhältnisse“ steht als eigener Aufklapper direkt unter „Können“.
 
 ---
 

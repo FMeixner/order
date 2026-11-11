@@ -24,5 +24,23 @@
     "Fly": { "DB Fly": 1.0, "Cable Chest Fly": 0.8, "Cable Fly (tief nach hoch)": 0.6 },
     "Beinbeuger": { "Lying Leg Curl": 1.0, "Seated Leg Curl": 1.15 },
     "Waden": { "Standing Calf Raise": 1.0, "Seated Calf Raise": 0.6 }
-  }
+  },
+  "_bridges": "Entfernte Überträge (1.33) zwischen Familien, damit auch Isolationsübungen nicht bei null starten: ratio = Leistung der Ankerübung der Zielfamilie ÷ Leistung der Quelle, Leistung = Gewicht × (1 + Wdh/30). Grobe Erfahrungswerte ohne belastbare Normen (Evidenzlücke), darum 25 % Abschlag und nur, wenn die Familie selbst nichts liefert. Körpergewichtsübungen zählen mit Körpergewicht × Anteil (bodyweight) plus Zusatzlast; ohne Körpergewicht keine Brücke aus ihnen.",
+  "bridges": [
+    { "from": "Seated Cable Row", "to": "Bizeps", "ratio": 0.45 },
+    { "from": "Barbell Row", "to": "Bizeps", "ratio": 0.47 },
+    { "from": "Double DB Row", "to": "Bizeps", "ratio": 1.1 },
+    { "from": "Chin-Up", "to": "Bizeps", "ratio": 0.45 },
+    { "from": "Pull-Up", "to": "Bizeps", "ratio": 0.4 },
+    { "from": "Dip", "to": "Trizeps", "ratio": 0.4 },
+    { "from": "Ring Dip", "to": "Trizeps", "ratio": 0.4 },
+    { "from": "Bench Press", "to": "Trizeps", "ratio": 0.35 },
+    { "from": "Bench Press", "to": "Seitheben", "ratio": 0.14 },
+    { "from": "Overhead Press", "to": "Seitheben", "ratio": 0.22 },
+    { "from": "Push-Up", "to": "Drücken", "ratio": 0.9 },
+    { "from": "Back Squat", "to": "Beinbeuger", "ratio": 0.42 },
+    { "from": "Back Squat", "to": "Waden", "ratio": 0.9 }
+  ],
+  "bodyweight": { "Dip": 0.9, "Ring Dip": 0.9, "Chin-Up": 0.95, "Pull-Up": 0.95, "Push-Up": 0.65 },
+  "discounts": { "measured": 0.9, "family": 0.85, "bridge": 0.75 }
 }

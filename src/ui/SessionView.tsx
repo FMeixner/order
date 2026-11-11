@@ -6,7 +6,7 @@ import { estimateRole } from "../engine/duration";
 import { swapRunBeast } from "../engine/cardio";
 import { asWeaponBlock, isWeaponModule, MODULE_LABEL, moduleDrills, pathLevel, pathNext, PATHS, coolDrills, roleAt, roleDrills, shortSwordDrills, weekdayOf } from "../engine/plan";
 import { dayMods } from "../engine/dayadj";
-import { advance, sharedState, suggest } from "../engine/progression";
+import { advance, estimateEnv, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
 import { warmupKeys } from "../engine/warmup";
@@ -38,8 +38,9 @@ export function SessionView(ctx: SessionCtx) {
   const id = sessionId(block.id, week, roleKey);
   const session = state.sessions.find((s) => s.id === id);
   const items = useMemo(() => collectItems(ctx).filter((it) => !it.sword || it.drills || it.resolved.length), [ctx]);
+  const env = useMemo(() => estimateEnv(state, ctx.date), [state, ctx.date]);
   // Aufwärmsätze nach Last und Risiko (erste schwere Übung je Körperhälfte), Gewicht aus dem Vorschlag
-  const warmMap = useMemo(() => warmupKeys(items.flatMap((it) => it.resolved), (r) => { const x = r as Resolved; return suggest(x, sharedState(state.slots, x), week, ctx.profile).weight ?? null; }), [items, state.slots, week, ctx.profile]);
+  const warmMap = useMemo(() => warmupKeys(items.flatMap((it) => it.resolved), (r) => { const x = r as Resolved; return suggest(x, sharedState(state.slots, x, env), week, ctx.profile).weight ?? null; }), [items, state.slots, week, ctx.profile, env]);
   const warm = roleDrills(role, "wu", ctx.profile, state.user, week);
   const cool = coolDrills(role, ctx.profile, state.user, week, dayMods(state, block, week, roleKey, weekdayOf(ctx.date)).short);
   const [feeling, setFeeling] = useState<number | null>(null);
@@ -62,7 +63,7 @@ export function SessionView(ctx: SessionCtx) {
       for (const it of items) for (const r of it.resolved) {
         const e = cur.entries[r.key];
         if (!e || !e.sets.some((x) => x.done)) continue;
-        slots[r.key] = advance(r, sharedState(slots, r), e, ctx.profile, ctx.date);
+        slots[r.key] = advance(r, sharedState(slots, r, estimateEnv(st, ctx.date)), e, ctx.profile, ctx.date);
       }
       const beastTimes = { ...st.beastTimes };
       const load = (r: BeastResult) => ({ ...(r.kg != null ? { kg: r.kg } : {}), ...(r.band ? { band: r.band } : {}), ...(r.tech ? { tech: r.tech } : {}) });

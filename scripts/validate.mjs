@@ -122,6 +122,18 @@ const focusIds = new Set();
 const allFoci = files.map((f) => [f, read(join("orders", f))]);
 for (const [f, d] of allFoci) focusIds.add(d.id);
 
+// Schätzwerte (1.33): Brücken und Körpergewichtsanteile in transfer.json
+{
+  const tr = read(join("modules", "transfer.json"));
+  for (const b of tr.bridges ?? []) {
+    if (!exercises[b.from]) err("transfer.json", `Brücke: Quelle "${b.from}" fehlt in exercises.json`);
+    if (!tr.families[b.to]) err("transfer.json", `Brücke: Familie "${b.to}" gibt es nicht`);
+    if (!(b.ratio > 0)) err("transfer.json", `Brücke ${b.from} → ${b.to}: ratio fehlt`);
+  }
+  for (const [n, v] of Object.entries(tr.bodyweight ?? {})) { if (!exercises[n]) err("transfer.json", `bodyweight: "${n}" fehlt in exercises.json`); if (!(v > 0 && v <= 1)) err("transfer.json", `bodyweight: Anteil ${n} muss zwischen 0 und 1 liegen`); }
+  for (const f of Object.values(tr.families)) for (const n of Object.keys(f)) if (!exercises[n]) err("transfer.json", `"${n}" fehlt in exercises.json`);
+}
+
 // Explosives vor Ausdauer (1.32): kein Lauf-, Intervall- oder Bestienblock vor Sprung, Wurf oder Sprint — in allen Orden.
 // Bekannte Fälle stehen in scripts/explosive.mjs (KNOWN) und warten auf die Entscheidung des Nutzers.
 {

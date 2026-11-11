@@ -102,7 +102,7 @@ export const EMPTY_STATE: SlotState = { weight: null, target: null, stage: 0, fb
 
 /** Gewichtsdaten einer Übung: gleiche Übung, gleiche Daten, egal ob regulär oder als Ersatz an anderer Stelle.
     Es zählt der jüngste Stand dieser Übung. Leitern und Übungen ohne Gewicht bleiben an ihrer Stelle. */
-export function sharedState(slots: Record<string, SlotState>, r: Resolved): SlotState | undefined {
+export function sharedState(slots: Record<string, SlotState>, r: Resolved, env: EstimateEnv = {}): SlotState | undefined {
   const own = slots[r.key];
   if (!r.loadable || r.ladder) return own;
   let best = own;
@@ -110,7 +110,7 @@ export function sharedState(slots: Record<string, SlotState>, r: Resolved): Slot
     if (k === r.key || k.slice(k.indexOf("|") + 1) !== r.name || st.weight == null) continue;
     if (!best || (st.updated ?? "") > (best.updated ?? "")) best = st;
   }
-  if (!best || best.weight == null) return estimateFrom(slots, r) ?? best;
+  if (!best || best.weight == null) return estimateFrom(slots, r, env) ?? best;
   if (best === own) return best;
   // Stufe (Leiter) gehört zur Stelle, Gewicht und Wiederholungsziel zur Übung
   const borrowed = { ...best, stage: own?.stage ?? 0 };
@@ -122,26 +122,126 @@ export function sharedState(slots: Record<string, SlotState>, r: Resolved): Slot
   return own?.weight != null ? own : shifted;
 }
 
-/** Startgewicht aus einer verwandten Übung schätzen (1.19): Chest Press aus Bench Press, Front Squat aus Back Squat.
-    Verhältnisse je Familie in data/modules/transfer.json (Erfahrungswerte), Wiederholungen nach Epley umgerechnet,
-    dann 15 % Abschlag: Lieber eine leichte erste Einheit als ein Fehlstart. Es zählt der jüngste Stand der Familie.
-    Der eigene Stand der Übung ersetzt die Schätzung nach der ersten Einheit. */
-export function estimateFrom(slots: Record<string, SlotState>, r: Resolved): SlotState | undefined {
-  if (!r.loadable || r.ladder || (r.prog !== "double" && r.prog !== "weight" && r.prog !== "topset")) return undefined;
-  const fam = Object.values(TRANSFER.families).find((f) => f[r.name] != null);
-  const rp = parseReps(r.reps);
-  if (!fam || rp.lo == null || rp.amrap) return undefined;
-  let src: { name: string; st: SlotState } | undefined;
+/* ---------- Schätzwerte (1.19, lernend seit 1.33) ---------- */
+
+/** Was die Schätzung braucht, aber nicht in den Slots steht: Körpergewicht (für Körpergewichtsübungen als Quelle) und heute */
+export interface EstimateEnv { bodyweight?: number | null; today?: string }
+/** Körpergewicht: eigener Eintrag, sonst der letzte Wert aus der Testwoche (Balmung-Cup) */
+export function bodyweightOf(state: Pick<AppState, "user" | "tests">): number | null {
+  const bw = state.user.bodyweight;
+  if (bw) return bw;
+  const t = state.tests["t-bodyweight"] ?? [];
+  return t[t.length - 1]?.value ?? null;
+}
+export const estimateEnv = (state: Pick<AppState, "user" | "tests">, today?: string): EstimateEnv => ({ bodyweight: bodyweightOf(state), today });
+
+/** Gemessen zählt, was in den letzten 12 Wochen aktualisiert wurde */
+const RECENT_DAYS = 84;
+const recent = (st: SlotState, today: string) => !!st.updated && st.updated >= addDaysIso(today, -RECENT_DAYS);
+const addDaysIso = (iso: string, n: number) => { const d = new Date(`${iso}T12:00:00`); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+const todayIso = () => new Date().toISOString().slice(0, 10);
+
+/** Leistung eines Stands: Gewicht × (1 + Wdh/30); Körpergewichtsübungen mit Körpergewicht × Anteil plus Zusatzlast */
+export function perfOf(name: string, st: SlotState, bw?: number | null): number | null {
+  if (st.target == null) return null;
+  const share = TRANSFER.bodyweight?.[name];
+  if (share != null) return bw ? (bw * share + (st.weight ?? 0)) * (1 + st.target / 30) : null;
+  return st.weight != null ? st.weight * (1 + st.target / 30) : null;
+}
+
+/** Jüngster eigener Stand je Übungsname (über alle Stellen) */
+function latestByName(slots: Record<string, SlotState>): Map<string, SlotState> {
+  const out = new Map<string, SlotState>();
   for (const [k, st] of Object.entries(slots)) {
     const name = k.slice(k.indexOf("|") + 1);
-    if (name === r.name || fam[name] == null || st.weight == null || st.target == null) continue;
-    if (!src || (st.updated ?? "") > (src.st.updated ?? "")) src = { name, st };
+    const cur = out.get(name);
+    if (st.target == null || (st.weight == null && TRANSFER.bodyweight?.[name] == null)) continue;
+    if (!cur || (st.updated ?? "") > (cur.updated ?? "")) out.set(name, st);
   }
-  if (!src) return undefined;
+  return out;
+}
+
+export interface FamilyMeasure { family: string; ref: string; ratios: Record<string, { stored: number; measured: number }> }
+/** Eigene Verhältnisse je Familie: Haben mindestens zwei Übungen einer Familie eigene Stände aus den letzten 12 Wochen,
+    gilt dein Verhältnis statt des hinterlegten. Bezug ist der Anker der Familie, wenn gemessen, sonst die jüngste
+    gemessene Übung (mit ihrem hinterlegten Wert). */
+export function ownRatios(slots: Record<string, SlotState>, today = todayIso()): FamilyMeasure[] {
+  const latest = latestByName(slots);
+  const out: FamilyMeasure[] = [];
+  for (const [family, fam] of Object.entries(TRANSFER.families)) {
+    const m = Object.keys(fam).filter((n) => { const st = latest.get(n); return !!st && st.weight != null && recent(st, today); })
+      .sort((a, b) => (latest.get(b)!.updated ?? "").localeCompare(latest.get(a)!.updated ?? ""));
+    if (m.length < 2) continue;
+    const anchor = Object.keys(fam).find((n) => fam[n] === 1);
+    const ref = anchor && m.includes(anchor) ? anchor : m[0];
+    const pRef = perfOf(ref, latest.get(ref)!)!;
+    const ratios: FamilyMeasure["ratios"] = {};
+    for (const n of m) ratios[n] = { stored: fam[n], measured: Math.round((fam[ref] * perfOf(n, latest.get(n)!)! / pRef) * 100) / 100 };
+    out.push({ family, ref, ratios });
+  }
+  return out;
+}
+
+export interface BridgeMeasure { from: string; to: string; stored: number; measured: number }
+/** Auch Brücken lernen: Hast du die Quelle und eine Übung der Zielfamilie selbst (12 Wochen), gilt dein Verhältnis.
+    In der Schätzung greift die Brücke nur, wenn die Familie selbst nichts liefert. */
+export function ownBridges(slots: Record<string, SlotState>, env: EstimateEnv = {}): BridgeMeasure[] {
+  const today = env.today ?? todayIso();
+  const latest = latestByName(slots);
+  const out: BridgeMeasure[] = [];
+  for (const b of TRANSFER.bridges ?? []) {
+    const src = latest.get(b.from);
+    const pSrc = src && recent(src, today) ? perfOf(b.from, src, env.bodyweight) : null;
+    if (!pSrc) continue;
+    const fam = TRANSFER.families[b.to] ?? {};
+    const member = Object.keys(fam).map((n) => ({ n, st: latest.get(n) })).filter((x) => x.st && x.st.weight != null && recent(x.st, today))
+      .sort((a, c) => (c.st!.updated ?? "").localeCompare(a.st!.updated ?? ""))[0];
+    if (!member) continue;
+    const anchorPerf = perfOf(member.n, member.st!)! / fam[member.n];
+    out.push({ from: b.from, to: b.to, stored: b.ratio, measured: Math.round((anchorPerf / pSrc) * 100) / 100 });
+  }
+  return out;
+}
+
+/** Startgewicht aus einer verwandten Übung schätzen (1.19, lernend 1.33). Rangfolge: eigener Stand (gar keine Schätzung)
+    > gemessenes Verhältnis in der Familie (10 % Abschlag) > hinterlegtes Verhältnis (15 %) > Brücke aus einer anderen
+    Familie (25 %). Wiederholungen nach Epley umgerechnet. Der eigene Stand ersetzt die Schätzung nach der ersten Einheit. */
+export function estimateFrom(slots: Record<string, SlotState>, r: Resolved, env: EstimateEnv = {}): SlotState | undefined {
+  if (!r.loadable || r.ladder || (r.prog !== "double" && r.prog !== "weight" && r.prog !== "topset")) return undefined;
+  const entry = Object.entries(TRANSFER.families).find(([, f]) => f[r.name] != null);
+  const rp = parseReps(r.reps);
+  if (!entry || rp.lo == null || rp.amrap) return undefined;
+  const [family, fam] = entry;
+  const today = env.today ?? todayIso();
   const hi = rp.hi ?? rp.lo;
-  const cap = src.st.weight! * (1 + src.st.target! / 30) * (fam[r.name] / fam[src.name]);
-  const weight = Math.round((cap / (1 + hi / 30)) * TRANSFER.discount * 100) / 100;
-  return { ...EMPTY_STATE, weight, target: rp.lo, estimated: { from: src.name, kg: src.st.weight!, reps: src.st.target! } };
+  const D = TRANSFER.discounts ?? { measured: 0.9, family: TRANSFER.discount, bridge: 0.75 };
+  const make = (cap: number, discount: number, from: string, st: SlotState, how: "measured" | "family" | "bridge"): SlotState => ({
+    ...EMPTY_STATE, weight: Math.round((cap / (1 + hi / 30)) * discount * 100) / 100, target: rp.lo,
+    estimated: { from, kg: st.weight ?? 0, reps: st.target!, how, ...(TRANSFER.bodyweight?.[from] != null ? { bw: true } : {}) },
+  });
+  const latest = latestByName(slots);
+  latest.delete(r.name);
+  // 1. gemessenes Verhältnis: über den gemessenen Bezug der Familie
+  const meas = ownRatios(slots, today).find((x) => x.family === family && !x.ratios[r.name]);
+  if (meas) {
+    const st = latest.get(meas.ref)!;
+    return make(perfOf(meas.ref, st)! * (fam[r.name] / fam[meas.ref]), D.measured, meas.ref, st, "measured");
+  }
+  // 2. hinterlegtes Verhältnis: jüngster Stand der Familie
+  const src = Object.keys(fam).filter((n) => latest.get(n)?.weight != null).sort((a, b) => (latest.get(b)!.updated ?? "").localeCompare(latest.get(a)!.updated ?? ""))[0];
+  if (src) {
+    const st = latest.get(src)!;
+    return make(perfOf(src, st)! * (fam[r.name] / fam[src]), D.family, src, st, "family");
+  }
+  // 3. Brücke aus einer anderen Familie (jüngste Quelle); gelernte Brücke vor hinterlegter
+  const learned = new Map(ownBridges(slots, env).map((b) => [`${b.from}>${b.to}`, b.measured]));
+  const cands = (TRANSFER.bridges ?? []).filter((b) => b.to === family).map((b) => ({ b, st: latest.get(b.from) }))
+    .filter((x) => x.st && perfOf(x.b.from, x.st, env.bodyweight) != null)
+    .sort((a, c) => (c.st!.updated ?? "").localeCompare(a.st!.updated ?? ""));
+  const best = cands[0];
+  if (!best) return undefined;
+  const ratio = learned.get(`${best.b.from}>${best.b.to}`) ?? best.b.ratio;
+  return make(perfOf(best.b.from, best.st!, env.bodyweight)! * ratio * fam[r.name], D.bridge, best.b.from, best.st!, "bridge");
 }
 
 /** Gewicht in einen anderen Wiederholungsbereich umrechnen. Leistung = Gewicht × (1 + Wdh/30) (Epley, 1985).
@@ -228,7 +328,11 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
   const weight = r.loadable ? s.weight : null;
   const backoff: number | null = null; // Back-off-Last rechnet backoffLoad() mit dem Profil
   if (weight == null && r.loadable) hint = "Startgewicht wählen";
-  if (s.estimated && weight != null) hint = `Schätzung aus ${s.estimated.from} (${fmtKg(s.estimated.kg)} kg × ${s.estimated.reps}), vorsichtig angesetzt. Passt es nicht, trag dein Gewicht ein.`;
+  if (s.estimated && weight != null) {
+    const e = s.estimated;
+    const src = e.bw ? `${e.from} mit Körpergewicht${e.kg ? ` + ${fmtKg(e.kg)} kg` : ""} × ${e.reps}` : `${e.from} (${fmtKg(e.kg)} kg × ${e.reps})`;
+    hint = `Schätzung aus ${src}${e.how === "measured" ? ", nach deinem gemessenen Verhältnis" : e.how === "bridge" ? ", entfernt verwandt" : ""}, vorsichtig angesetzt. Passt es nicht, trag dein Gewicht ein.`;
+  }
   if (s.shifted && weight != null) hint = `Neuer Bereich: umgerechnet aus ${fmtKg(s.shifted.kg)} kg × ${s.shifted.reps}. Vorsichtig angesetzt, die Rückmeldung justiert.`;
 
   let seconds: number | null = null;

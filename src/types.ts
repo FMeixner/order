@@ -318,6 +318,8 @@ export interface UserProfile {
   level?: "einsteiger" | "fortgeschritten" | "erfahren" | null;
   /** Eigener Richtwert Sätze pro Muskel und Woche, statt des Werts nach Erfahrung */
   volumeRange?: [number, number] | null;
+  /** Körpergewicht in kg (1.33, für Schätzungen aus Körpergewichtsübungen); fehlt: letzter Wert der Testwoche */
+  bodyweight?: number | null;
   /** Konditionsminuten je Woche (Spanne), sonst nach Niveau */
   cardioRange?: [number, number] | null;
   /** Skills trainieren: Bestien mit fehlenden Skills kommen als hexed-Variante */
@@ -346,7 +348,7 @@ export interface SlotState {
   topHits: number;
   updated: string;
   /** Nur zur Laufzeit: Gewicht ist aus einer verwandten Übung geschätzt (nie gespeichert) */
-  estimated?: { from: string; kg: number; reps: number };
+  estimated?: { from: string; kg: number; reps: number; how?: "measured" | "family" | "bridge"; bw?: boolean };
   /** Nur zur Laufzeit: Gewicht wurde aus einem anderen Wiederholungsbereich umgerechnet (nie gespeichert) */
   shifted?: { kg: number; reps: number };
   /** Übung ohne Gewicht hat die Wiederholungsgrenze erreicht: weiter mit Zusatzlast */

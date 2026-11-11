@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.33.0] – 2026-11-11
+
+### Neu
+- **Schätzwerte lernen aus deinem Log:** Trainierst du zwei Übungen einer Familie selbst (beide in den letzten 12 Wochen), rechnet die App mit deinem Verhältnis statt mit dem hinterlegten — automatisch, ohne Rückfrage. Beispiel: Bench Press und Chest Press gemessen, Incline Bench Press nicht: Die Schätzung geht über deine Bench Press und setzt 10 % tiefer an statt 15 %.
+- **Entfernte Überträge:** Auch Isolationsübungen starten nicht mehr bei null — Rudern und Klimmzüge → Curls, Dips und Bankdrücken → Trizeps, Bank- und Schulterdrücken → Seitheben, Kniebeuge → Beinbeuger und Waden, Push-ups → Drücken. Nur wenn die Familie selbst nichts hat, mit 25 % Abschlag; aus Körpergewichtsübungen nur mit Körpergewicht. Die Übung sagt, woher die Schätzung kommt („Schätzung aus Dip mit Körpergewicht × 12, entfernt verwandt“).
+- **Setup › Deine Verhältnisse:** was die App gelernt hat (hinterlegt → gemessen), dazu ein Feld fürs Körpergewicht (sonst gilt der Wert aus der Testwoche).
+
 ## [1.32.1] – 2026-11-11
 
 ### Neu

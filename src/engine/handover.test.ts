@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS } from "../store";
 import type { SlotState } from "../types";
-import { advance, estimateFrom, rangeShift, sharedState, suggest } from "./progression";
+import { advance, estimateFrom, ownBridges, ownRatios, rangeShift, sharedState, suggest } from "./progression";
 import type { Resolved } from "./resolve";
 
 const gym = EQUIPMENT_PRESETS[0].make();
@@ -72,5 +72,52 @@ describe("Schätzung aus verwandten Übungen", () => {
     const r = r2("Chest Press Machine", "8-12");
     const next = advance(r, sharedState({ "a|Bench Press": st(80, 8, "2026-11-01") }, r), { feedback: "ok", sets: [{ done: true, reps: 10, weight: 55 }] } as never, gym, "2026-11-10");
     expect(next.estimated).toBeUndefined();
+  });
+});
+
+describe("Schätzwerte lernen (1.33)", () => {
+  const T = "2026-11-11";
+  const r3 = (name: string, reps: string, equip = "machine"): Resolved => ({ ...res(`x|${name}`, reps), name, equip } as Resolved);
+  const cap = (kg: number, reps: number) => kg * (1 + reps / 30);
+  it("gemessenes Verhältnis: Incline über den gemessenen Anker Bench Press, 10 % Abschlag", () => {
+    // Bench 80 × 8 und Chest Press 90 × 10 gemessen (hinterlegt wäre 0,9, gemessen ≈ 1,18)
+    const slots = { "a|Bench Press": st(80, 8, "2026-11-01"), "c|Chest Press Machine": st(90, 10, "2026-11-08") };
+    const s = estimateFrom(slots, r3("Incline Bench Press", "8-12", "barbell"), { today: T })!;
+    expect(s.estimated).toMatchObject({ from: "Bench Press", how: "measured" });
+    expect(s.weight!).toBeCloseTo((cap(80, 8) * 0.82 / (1 + 12 / 30)) * 0.9, 1);
+    const ratios = ownRatios(slots, T);
+    expect(ratios[0].family).toBe("Drücken");
+    expect(ratios[0].ratios["Chest Press Machine"].measured).toBeCloseTo(cap(90, 10) / cap(80, 8), 2);
+  });
+  it("nur hinterlegt: jüngster Stand der Familie, 15 % Abschlag; alte Stände zählen nicht als gemessen", () => {
+    const slots = { "a|Bench Press": st(80, 8, "2026-06-01"), "c|Chest Press Machine": st(90, 10, "2026-11-08") };
+    const s = estimateFrom(slots, r3("Incline Bench Press", "8-12", "barbell"), { today: T })!;
+    expect(s.estimated).toMatchObject({ from: "Chest Press Machine", how: "family" });
+    expect(s.weight!).toBeCloseTo((cap(90, 10) * (0.82 / 0.9) / (1 + 12 / 30)) * 0.85, 1);
+  });
+  it("Brücke: Dips mit Körpergewicht → Trizeps, 25 % Abschlag; ohne Körpergewicht keine Brücke", () => {
+    const slots = { "d|Dip": { ...st(0, 12, "2026-11-05"), weight: null } };
+    const r = r3("Rope Pushdown", "10-15", "cable");
+    expect(estimateFrom(slots, r, { today: T })).toBeUndefined();
+    const s = estimateFrom(slots, r, { today: T, bodyweight: 80 })!;
+    expect(s.estimated).toMatchObject({ from: "Dip", how: "bridge", bw: true });
+    expect(s.weight!).toBeCloseTo((80 * 0.9 * (1 + 12 / 30) * 0.4 / (1 + 15 / 30)) * 0.75, 1);
+    const sug = suggest(r, s, 1, gym);
+    expect(sug.hint).toMatch(/Schätzung aus Dip mit Körpergewicht × 12, entfernt verwandt/);
+  });
+  it("Rangfolge: Familie vor Brücke, eigener Stand vor allem", () => {
+    const slots = { "d|Dip": { ...st(0, 12, "2026-11-05"), weight: null }, "o|DB Overhead Triceps Extension": st(14, 10, "2026-10-01") };
+    const r = r3("Rope Pushdown", "10-15", "cable");
+    expect(estimateFrom(slots, r, { today: T, bodyweight: 80 })!.estimated?.how).toBe("family");
+    const own = { ...slots, "p|Rope Pushdown": st(30, 12, "2026-11-01") };
+    expect(sharedState(own, r, { today: T, bodyweight: 80 })!.estimated).toBeUndefined();
+  });
+  it("Rudern → Curls, gelernte Brücke gilt, wenn beide Seiten gemessen sind", () => {
+    const slots = { "r|Seated Cable Row": st(70, 10, "2026-11-05") };
+    const s = estimateFrom(slots, r3("Barbell Curl", "8-12", "barbell"), { today: T })!;
+    expect(s.estimated).toMatchObject({ from: "Seated Cable Row", how: "bridge" });
+    const both = { ...slots, "c|Barbell Curl": st(40, 10, "2026-11-06") };
+    const b = ownBridges(both, { today: T }).find((x) => x.from === "Seated Cable Row")!;
+    expect(b.measured).toBeCloseTo(cap(40, 10) / cap(70, 10), 2);
   });
 });
