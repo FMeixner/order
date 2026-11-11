@@ -105,14 +105,14 @@ export default function App() {
               </div>
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} sections={state.sections} today={today}
                 deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} aims={state.yearAims} gymDays={gymDaysOf(state)} steer={steer}
-                onKlammer={() => setWizard(3)}
+                onKlammer={() => setWizard(3)} yearView={state.yearView ?? "year"} onYearView={(yearView) => update((s) => ({ ...s, yearView }))}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
           {wizard !== null && (
             <YearWizard state={state} update={update} today={today} aim={yearAimOf(state, deficits)} deficits={deficits} steer={steer} clocks={clocks} startAt={wizard} fromTest={fromTest ? deficitNames : undefined} onClose={() => { setWizard(null); setFromTest(false); }} />
           )}
-          {tab === "stand" && <Dashboard state={state} today={today} clocks={clocks} onOptimize={() => { setFromTest(true); setWizard(0); }} goPlan={() => setTab("plan")} />}
+          {tab === "stand" && <Dashboard state={state} update={update} today={today} clocks={clocks} onOptimize={() => { setFromTest(true); setWizard(0); }} goPlan={() => setTab("plan")} />}
           {tab === "almanach" && <Almanac state={state} update={update} today={today} />}
           {tab === "setup" && <Setup state={state} update={update} replace={replace} restartOnboarding={() => update((s) => ({ ...s, onboarded: false }))} />}
         </main>

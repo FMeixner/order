@@ -17,7 +17,7 @@ import { Bereiche } from "./Bereiche";
 import { OrderMark } from "./OrderIcon";
 import { AimsPicker, SectionList } from "./SectionsCard";
 import { KlammerIcon, Sign } from "./Signs";
-import { YearPicture } from "./YearPicture";
+import { YearTimeline } from "./YearPicture";
 import { unpinBeasts } from "./session/items";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -118,7 +118,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
               </div>
             )}
             <div className="field-label">Zeichen darüber</div>
-            <YearPicture plan={draft} sections={sections} today={today} />
+            <YearTimeline plan={draft} sections={sections} today={today} view={state.yearView ?? "year"} onView={(yearView) => update((s) => ({ ...s, yearView }))} />
             <div className="stack">
               {future.map((k, i) => {
                 const wi = i; // Fenster-Index im Generator: künftige Klammern in Reihenfolge
@@ -151,6 +151,7 @@ export function YearWizard({ state, update, today, aim: aim0, deficits, steer, c
               <span><Sign kind="bind-lead" size={12} />trägt das Ziel</span><span><Sign kind="bind-accept" size={12} />teilweise</span><span><Sign kind="bind-none" size={12} />nicht</span>
               <span><Sign kind="deficit" size={12} /><Sign kind="maintenance" size={12} /><Sign kind="surplus" size={12} />Kalorien</span><span><Sign kind="pin" size={12} />von Hand</span>
             </div>
+            <YearTimeline plan={draft} sections={sections} today={today} balance view={state.yearView ?? "year"} onView={(yearView) => update((s) => ({ ...s, yearView }))} />
             {future.map((k) => (
               <div key={k.meso} className={`kl-card kl-${k.kind}`}>
                 <div className="kl-head"><KlammerIcon id={k.kind} /> {klammerName(k.kind)}<span className="block-dates">{fmtDate(k.start)} – {fmtDate(k.end)}</span></div>

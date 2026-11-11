@@ -394,6 +394,8 @@ export interface Session {
 }
 
 export interface AppState {
+  /** Zeitstrahl (1.23): ganzes Jahr oder ab heute */
+  yearView?: "year" | "ahead";
   /** Eigene Päckchengrößen je Bestienübung (Wiederholungen am Stück = ein halber Satz) */
   packets?: Record<string, number>;
   /** Ansage-Drill: Sprache und Schrift, nur Sprache oder nur Schrift */

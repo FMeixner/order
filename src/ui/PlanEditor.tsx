@@ -15,7 +15,8 @@ import { FocusDetail } from "./FociBrowser";
 import { PlanStack } from "./PlanStack";
 import { rankFor, type Aim } from "../engine/sequence";
 import { aimsOf, bindOf, FLAG_TEXT, flagsOf, rankInKlammer, klammerName, type AimPrio, type KlammerView } from "../engine/klammer";
-import { YearPicture } from "./YearPicture";
+import { YearTimeline } from "./YearPicture";
+import type { YearView } from "../engine/yearview";
 import { KlammerIcon, Sign } from "./Signs";
 import { KLAMMER_BY_ID } from "../data";
 import { mergeNext, nextOf, setTestWeek, splitBlock, testAfter } from "../engine/stack";
@@ -238,19 +239,28 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, sections, deficits, slotInfo, onChange, today, aim: aimIn, steer, onKlammer, aims, gymDays }: { plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none"; onKlammer?: (k: KlammerView) => void; aims?: AimPrio[]; gymDays?: number }) {
+export function PlanList({ plan, profiles, days, user, sections, deficits, slotInfo, onChange, today, aim: aimIn, steer, onKlammer, aims, gymDays, yearView, onYearView }: { yearView?: YearView; onYearView?: (v: YearView) => void; plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none"; onKlammer?: (k: KlammerView) => void; aims?: AimPrio[]; gymDays?: number }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
   const [view, setView] = useState<PlanBlock | null>(null);
   const [testView, setTestView] = useState<PlanBlock | null>(null);
   const sorted = [...plan].sort((a, b) => a.start.localeCompare(b.start));
+  const open = (b: PlanBlock) => (blockFocus(b) ? setView(b) : setEdit(b));
+  // Zeitstrahl › Detailstreifen: zur Karte der Phase springen und sie kurz hervorheben (die Liste bleibt der Ort zum Bearbeiten)
+  const jump = (b: PlanBlock) => {
+    const el = document.querySelector<HTMLElement>(`[data-block="${b.id}"]`);
+    if (!el) { open(b); return; }
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+    window.setTimeout(() => el.classList.remove("flash"), 1500);
+  };
   const gaps: string[] = [];
   for (let i = 1; i < sorted.length; i++) if (addDays(sorted[i - 1].end, 1) < sorted[i].start) gaps.push(`${fmtDate(addDays(sorted[i - 1].end, 1))}–${fmtDate(addDays(sorted[i].start, -1))}`);
   for (let i = 1; i < sorted.length; i++) if (sorted[i].start <= sorted[i - 1].end) gaps.push(`Überschneidung bei ${fmtDate(sorted[i].start)}`);
   return (
     <div className="stack">
-      <YearPicture plan={plan} sections={sections} today={today} onBlock={(b) => (blockFocus(b) ? setView(b) : setEdit(b))} onKlammer={onKlammer} onTest={(b) => setTestView(b)} />
+      <YearTimeline plan={plan} sections={sections} today={today} view={yearView} onView={onYearView} onBlock={open} onJump={jump} onKlammer={onKlammer} onTest={(b) => setTestView(b)} />
       <PlanStack plan={plan} today={today} sections={sections} onChange={onChange} onKlammer={onKlammer}
         onView={(b) => setView(b)} onEdit={(b) => setEdit(b)} testView={testView} setTestView={setTestView} />
       {gaps.length > 0 && <div className="note warn row"><Sign kind="warn" /> {gaps.join("; ")}</div>}

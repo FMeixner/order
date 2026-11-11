@@ -11,7 +11,7 @@ import { Collapse, Modal } from "./common";
 import { Evaluation } from "./Evaluation";
 import { GOAL_LABEL } from "./PlanEditor";
 import { ProgressView, VolumeView } from "./Progress";
-import { YearPicture } from "./YearPicture";
+import { YearTimeline } from "./YearPicture";
 
 const WATCH = { gut: "ok", bald: "soon", fehlt: "due" } as const;
 const ARROW = { better: "↑", same: "→", worse: "↓" } as const;
@@ -21,7 +21,7 @@ const detail = (r: StandRow) => [
   r.def.required ? `${String(r.weeks).replace(".", ",")} Wochen im nächsten halben Jahr (Richtwert 4)` : null,
 ].filter(Boolean).join(" · ");
 
-export function Dashboard({ state, today, clocks, onOptimize, goPlan }: { state: AppState; today: string; clocks: ResidualClock[]; onOptimize: () => void; goPlan: () => void }) {
+export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: { state: AppState; update: (fn: (s: AppState) => AppState) => void; today: string; clocks: ResidualClock[]; onOptimize: () => void; goPlan: () => void }) {
   const st = useMemo(() => standOf(state, today, clocks), [state, today, clocks]);
   const [evalOpen, setEvalOpen] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export function Dashboard({ state, today, clocks, onOptimize, goPlan }: { state:
     <div className="stack dash">
       <section className="card stack">
         <div className="row between"><h2>Dein Jahr</h2><button className="btn ghost small" onClick={goPlan}>Plan öffnen</button></div>
-        <YearPicture plan={state.plan} sections={state.sections} today={today} />
+        <YearTimeline plan={state.plan} sections={state.sections} today={today} balance view={state.yearView ?? "year"} onView={(yearView) => update((s) => ({ ...s, yearView }))} />
       </section>
 
       <section className="card stack">

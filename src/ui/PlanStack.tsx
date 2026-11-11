@@ -70,7 +70,7 @@ export function PlanStack({ plan, today, sections, onChange, onView, onEdit, onK
                 <span className="block-dates">{fmtDate(head.start)} – {fmtDate(head.end)}</span>
               </button>
             )}
-            <div className={`stack-card ${now ? "now" : ""} ${past ? "past" : ""} ${k ? "in-kl" : ""}`} style={{ ["--c" as string]: goalColor(b.focusId) }}>
+            <div data-block={b.id} className={`stack-card ${now ? "now" : ""} ${past ? "past" : ""} ${k ? "in-kl" : ""}`} style={{ ["--c" as string]: goalColor(b.focusId) }}>
               <OrderMark id={b.focusId} />
               <div className="sc-text">
                 {(b.label || (!k && b.kcal) || flags.length > 0) && (

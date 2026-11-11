@@ -396,3 +396,30 @@ test("Stand: Dashboard zeigt Jahr, Bereiche und Testwoche; Setup liegt oben rech
   await page.getByRole("button", { name: "Setup", exact: true }).click();
   await expect(page.getByText("Equipment-Profile")).toBeVisible();
 });
+
+test.describe("Zeitstrahl", () => {
+  test.use({ colorScheme: "dark", viewport: { width: 390, height: 844 } });
+  test("ganzes Jahr ohne Scrollen, Ab heute gemerkt, Zeichen antippen zeigt Details, Stand zeigt die Jahresbilanz", async ({ page }) => {
+    const st = fixture();
+    st.plan = st.plan.map((b) => ({ ...b, meso: "m1", klammer: "muskel", kcal: "deficit" }));
+    await seed(page, st);
+    await page.goto("./");
+    await page.getByRole("button", { name: "Plan" }).click();
+    const yp = page.locator(".yp").first();
+    await expect(yp).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    expect(await yp.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
+    await page.screenshot({ path: "test-results/timeline-plan.png" });
+    await page.getByRole("radio", { name: "Ab heute" }).first().click();
+    expect((await stored(page)).yearView).toBe("ahead");
+    await page.locator(".yp-kl").first().click();
+    await expect(page.locator(".yp-detail")).toContainText("Bär · Masse");
+    await expect(page.locator(".yp-detail")).toContainText("Defizit");
+    await page.locator(".yp-chip").first().click();
+    await expect(page.locator(".stack-card.flash")).toHaveCount(1);
+    await page.getByRole("button", { name: "Stand", exact: true }).click();
+    await expect(page.getByLabel("Jahresbilanz")).toContainText("Bär · Masse");
+    await expect(page.getByLabel("Jahresbilanz")).toContainText("10 Wo.");
+    await page.screenshot({ path: "test-results/timeline-stand.png", fullPage: true });
+  });
+});

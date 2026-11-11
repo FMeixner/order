@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.23.0] – 2026-11-11
+
+### Neu
+- **Zeitstrahl:** Das Jahr passt ohne Scrollen auf den Bildschirm. „Jahr“ zeigt das ganze Trainingsjahr mit allem, was hinter dir liegt (blasser, aber farbig), „Ab heute“ zwei Wochen zurück bis ein halbes Jahr voraus; die Wahl bleibt gemerkt. Drei Bahnen: Last je Woche (Dauerlast schraffiert), Zeichen mit Kalorien und Orden; Testwochen als Kerbe, heute als Strich mit Datum, darüber die Monate.
+- **Detailstreifen:** Ein Zeichen antippen zeigt darunter Zeitraum, Wochen, Kalorien, seine Orden und die Lebensabschnitte mit ihrer Last. Im Plan springt ein Orden dort zu seiner Karte und hebt sie kurz hervor.
+- **Jahresbilanz** im Stand und in „Jahr planen“ (Schritt 4): je Zeichen die Wochen im Jahr, hinter dir und vor dir. In einer Defizit- oder Reisephase steht darunter, was das Jahr sonst trägt („Dieses Jahr: 18 Wochen Masse, 6 Wochen Explosiv. Das Nächste: …“).
+
+### Geändert
+- Die Namen der Lebensabschnitte stehen nicht mehr im Bild, sondern im Detailstreifen; die Last zeigt die schmale oberste Bahn.
+
 ## [1.22.2] – 2026-11-11
 
 ### Geändert
