@@ -16,5 +16,10 @@ jobs:
       - run: npm run validate
       - run: npm test
       - run: npm run build
-      - run: npx playwright install --with-deps chromium
+      # Der Runner hat Google Chrome vorinstalliert: kein apt-Download (Ubuntu-Spiegel fallen gelegentlich aus).
+      # Nur wenn Chrome fehlt, Playwrights Chromium nachinstallieren.
+      - name: Browser
+        run: |
+          if [ -x /usr/bin/google-chrome ]; then echo "PW_CHROMIUM=/usr/bin/google-chrome" >> "$GITHUB_ENV"
+          else npx playwright install --with-deps chromium; fi
       - run: npm run e2e
