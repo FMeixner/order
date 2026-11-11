@@ -2,7 +2,7 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
-## [Unveröffentlicht]
+## [1.35.0] – 2026-11-11
 
 ### Geändert
 - **Mehr vom Ordensziel:** Findet „Automatisch“ keinen Schwerpunkt, legt die App an einem Tag etwas vom Hauptziel nach (Muskel: 2–3 Sätze für die größte Lücke; Kraft: ein schwerer Satz; Kondition: 10 Min Grundlage; Schnellkraft: zwei frische Sätze Sprünge; Skill und Beweglichkeit: eine Runde mehr im Flow) – nur, wenn es kein Junk-Volumen wäre. Auch kurze Orden ohne Schwerpunkt-Slot bekommen es.
