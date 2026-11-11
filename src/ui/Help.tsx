@@ -107,6 +107,7 @@ export function Help() {
         <li>Übergabe zwischen Orden: Dieselbe Übung nimmt ihr Gewicht mit. Wechselt der Wiederholungsbereich (Bench Press 4 × 8–12 im Aufbau, dann 4 × 4–6 im Kraft-Orden), rechnet die App das Gewicht um, vorsichtig für das obere Ende des neuen Bereichs (Formel nach Epley, 1985). Der Hinweis steht an der Übung; deine Rückmeldung justiert in ein, zwei Einheiten.</li>
         <li>Die Entlastung zählt über das ganze Zeichen: ab der fünften Woche alle vier Wochen, auch wenn ein Orden darin kürzer läuft.</li>
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Orden vor der Testwoche misst sie die Testwoche nicht mehr im Vollbesitz.</li>
+        <li><strong>Explosives vor Ausdauer</strong>: Sprünge, Würfe und Sprints stehen in jeder Einheit vor Läufen, Intervallen und Bestien. Ausdauertraining stört Muskelaufbau und Maximalkraft kaum, die Explosivkraft aber schon (Schumann et al., 2022) — also frisch springen, danach schwitzen. Im Falken kommt am Tag nach einem Sprint- oder Sprungtag keine uralte oder verfluchte Bestie.</li>
       </ul>
 
       <h3>Stand: dein Dashboard</h3>

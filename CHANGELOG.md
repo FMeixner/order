@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.32.0] – 2026-11-11
+
+### Geändert
+- **Gladiator „Spiel“: Explosives frisch, Intervalle als Ausklang.** Neue Reihenfolge: 5-10-5 Shuttle → Pogo Hops + Skater Jumps → Medizinball-Brustpass → Sprint oder Seilspringen 10 × 30 s. Laufende Gladiator-Phasen übernehmen das erst mit „Übernehmen“ im Plan.
+- **Falke:** Am Tag nach einem Sprint- oder Sprungtag wählt die App keine uralte oder verfluchte Bestie.
+- Quelle Schumann et al. (2022) mit allen Autorinnen und Autoren, Band und Seiten.
+
+### Intern
+- Neue Datenprüfung „Explosives vor Ausdauer“ für alle Orden: kein Lauf-, Intervall- oder Bestienblock vor Sprung, Wurf oder Sprint. Vier bekannte Fälle (Huntsman, Olympian, Scout, Skirmisher) sind gelistet und warten auf deine Entscheidung.
+
 ## [1.31.0] – 2026-11-11
 
 ### Geändert

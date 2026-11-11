@@ -67,7 +67,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P7~~ | 1.29.0 ✓ | Ausklang nach Bestie und Finisher — **gebaut 11.11.2026** |
 | ~~P8~~ | 1.30.0 ✓ | Entlastung nach Signalen — **gebaut 11.11.2026** |
 | ~~P9~~ | 1.31.0 ✓ | Zuspitzung vor der Testwoche — **gebaut 11.11.2026** |
-| P10 | 1.32.0 | Explosives vor Ausdauer (Prüfung der Orden) |
+| ~~P10~~ | 1.32.0 ✓ | Explosives vor Ausdauer (Prüfung der Orden) — **gebaut 11.11.2026** |
 | P11 | 1.33.0 | Schätzwerte lernen aus dem Log |
 | P12 | 1.34.0 | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung |
 | PH | 1.35.0 | Harlekin: Wiederholung nach 12 Wochen, bei kürzeren Blöcken 4-Wochen-Häppchen (Lösung offen) |
@@ -558,6 +558,30 @@ Gleichzeitiges Ausdauertraining stört Muskel und Maximalkraft kaum, Explosivkra
 Quelle: Schumann, M., Feuerbacher, J. F., Sünkeler, M., Freitag, N., Rønnestad, B. R., Doma, K., & Lundberg, T. R.
 (2022). Compatibility of concurrent aerobic and strength training for skeletal muscle size and function: An updated
 systematic review and meta-analysis. *Sports Medicine, 52*(3), 601–612.
+
+### Gebaut (11.11.2026)
+- Prüfung `scripts/explosive.mjs` (`explosiveViolations`), eingebunden in `validate.mjs` und `explosive.test.ts`, für
+  **alle** Orden (Entscheidung des Nutzers), je Rolle und A/B-Woche, auch Hochlast-Rollen. Als Ausdauer zählen Bestien,
+  Finisher-Supersets, Intervalle und Läufe/Rudern/Rad; als explosiv Übungen mit Sätzen, deren Name Sprung, Wurf, Sprint
+  oder Shuttle nennt. Neue Verstöße sind Fehler; bekannte stehen in `KNOWN` und erscheinen als Hinweis.
+- Gladiator „Spiel“ umgestellt wie entschieden: 5-10-5 Shuttle → Pogo Hops + Skater Jumps → Medicine Ball Chest Pass →
+  Sprint oder Seilspringen 10 × 30 s.
+- Falke (`klammer: "athletik"`): am Tag nach einem Tag mit Sprung-, Wurf- oder Sprintübung keine Bestie der Klassen
+  uralte/verfluchte (`afterExplosiveDay` in `plan.ts`, wirkt in `pickWith`; uralte/verfluchte werden zu ungeheuer).
+
+### Verstöße zur Entscheidung des Nutzers (nicht umgestellt, Ordensinhalt kuratiert der Nutzer)
+| Orden | Rolle | Befund | Möglicher Umbau |
+|---|---|---|---|
+| Huntsman | Zufallsbestie (`bestie_rotation`) | Bestie vor Shuttle Runs 6 × 20 m | Shuttle Runs vor die Bestie |
+| Olympian | Bonus: Seil und Füße (`bonus`) | Seilspringen (Intervall) vor Pogo Hops | Pogo Hops zuerst, Seil danach |
+| Scout | Seilsprints (`seil`) | Seilsprints (Intervall) vor Pogo Hops | Pogo Hops vor die Seilsprints |
+| Skirmisher | Bonus: Bestie (`bonus`) | Bestie vor Pogo Hops | Pogo Hops vor die Bestie |
+
+Grenzfall, nicht als Verstoß gewertet: Huntsman „Freie Linie“ — 25 Min freie Linie durchs Gelände (Zeitblock, Parkour)
+vor Goblet Squat + Squat Jump. Zeitblöcke zählen nur als Ausdauer, wenn ihr Name Lauf, Rudern, Rad oder Grundlage nennt.
+
+**Annahme (Agent):** „Im Falken“ = Phasen im Zeichen Falke (`klammer: "athletik"`); Orden ohne Zeichen bleiben
+unberührt.
 
 ---
 

@@ -62,12 +62,12 @@
       "warmup": ["short_base", "run_prep", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
         {"type": "single", "slot": {"id": "gl-sp-1", "name": "5-10-5 Shuttle", "sets": 4, "reps": "1", "prog": "none", "rest": 120, "note": "auf Zeit, besserer Lauf zählt — die Tafel merkt es sich"}},
-        {"type": "single", "slot": {"id": "gl-sp-2", "name": "Sprint oder Seilspringen 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 45, "rounds": 10}, "prog": "none"}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "gl-sp-3a", "name": "Pogo Hops", "sets": 3, "reps": "10", "prog": "none"},
           {"id": "gl-sp-3b", "name": "Skater Jumps", "sets": 3, "reps": "10/Seite", "prog": "none"}
         ]},
-        {"type": "single", "slot": {"id": "gl-sp-4", "name": "Medicine Ball Chest Pass", "home": "Clap Push-Up", "sets": 3, "reps": "8", "prog": "none", "rest": 90, "note": "Explosiv-Ausleitung: Werfen mit Ganzkörperdrehung"}}
+        {"type": "single", "slot": {"id": "gl-sp-4", "name": "Medicine Ball Chest Pass", "home": "Clap Push-Up", "sets": 3, "reps": "8", "prog": "none", "rest": 90, "note": "Explosiv-Ausleitung: Werfen mit Ganzkörperdrehung"}},
+        {"type": "single", "slot": {"id": "gl-sp-2", "name": "Sprint oder Seilspringen 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 45, "rounds": 10}, "prog": "none"}}
       ]
     },
     "bonus": {

@@ -3,6 +3,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { explosiveViolations, KNOWN as KNOWN_EXPLOSIVE } from "./explosive.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "data");
 const read = (p) => JSON.parse(readFileSync(join(root, p), "utf8"));
@@ -120,6 +121,15 @@ const files = readdirSync(join(root, "orders")).filter((f) => f.endsWith(".json"
 const focusIds = new Set();
 const allFoci = files.map((f) => [f, read(join("orders", f))]);
 for (const [f, d] of allFoci) focusIds.add(d.id);
+
+// Explosives vor Ausdauer (1.32): kein Lauf-, Intervall- oder Bestienblock vor Sprung, Wurf oder Sprint — in allen Orden.
+// Bekannte Fälle stehen in scripts/explosive.mjs (KNOWN) und warten auf die Entscheidung des Nutzers.
+{
+  const found = allFoci.flatMap(([, d]) => explosiveViolations(d).map((v) => `${d.id} | ${v.key}`));
+  for (const v of found) if (!KNOWN_EXPLOSIVE.includes(v)) err("Explosives vor Ausdauer", v);
+  for (const k of KNOWN_EXPLOSIVE) if (!found.includes(k)) err("Explosives vor Ausdauer", `bekannter Fall erledigt, aus KNOWN streichen: ${k}`);
+  for (const k of KNOWN_EXPLOSIVE) warn("Explosives vor Ausdauer (bekannt, Nutzer fragen)", k);
+}
 
 for (const [f, d] of allFoci) {
   if (d.schema !== 1) err(f, "schema muss 1 sein");

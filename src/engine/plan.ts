@@ -9,6 +9,7 @@ import { BEAST_BY_ID, BEASTS, DM_VARIANTS, DRILL_LISTS, EXERCISES, FLOWS, FOCUS_
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, Role, UserProfile, Weekday, WeaponModule } from "../types";
 import { WEEKDAYS } from "../types";
 import { beastOk, beastSkills, hexFor, hexWith } from "./skills";
+import { EXPLOSIVE } from "../../scripts/explosive.mjs";
 
 /* ---------- Datum ---------- */
 export function isoDate(d: Date): string {
@@ -584,6 +585,23 @@ export function beastBudget(block: Extract<Block, { type: "beast" }>, opts: Beas
   return cap + sword - (e.total - blockSeconds(block, opts.profile, false, boost) / 60);
 }
 
+/** Liegt der Bestienblock im Falken (Zeichen Athletik) am Tag nach einem Sprint- oder Sprungtag? (Rolle des Vortags
+    über `dayRoleMap`; Montag schaut auf den Sonntag derselben Wochenfolge) */
+export function afterExplosiveDay(state: AppState, pb: PlanBlock, week: number, blockId: string): boolean {
+  if (pb.klammer !== "athletik") return false;
+  const f = weekFocus(state, pb, week);
+  if (!f) return false;
+  const days = dayRoleMap(state, pb, f, week);
+  const own = days.find((d) => f.roles[d.role]?.blocks.some((b) => (b.type === "beast" && b.id === blockId) || (b.type === "superset" && `fin-${b.slots[0]?.id}` === blockId)));
+  if (!own) return false;
+  const prev = WEEKDAYS[(WEEKDAYS.indexOf(own.day) + 6) % 7];
+  const role = days.find((d) => d.day === prev);
+  const r = role && f.roles[role.role];
+  if (!r) return false;
+  const slots = r.blocks.flatMap((b) => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : []));
+  return slots.some((s) => s.kind !== "interval" && s.kind !== "timer" && EXPLOSIVE.test(s.name));
+}
+
 function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avoid: Set<string>): Beast | null {
   const { profile, state } = opts;
   const pb = state.plan.find((p) => p.id === opts.blockId);
@@ -593,6 +611,8 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   if (opts.downgrade) classes = classes.map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]);
   if (opts.reduced) classes = ["plage"];
   else if (opts.boost && !block.pool?.length) classes = classes.map(boostClass);
+  // Falke (1.32): am Tag nach einem Sprint- oder Sprungtag keine uralte oder verfluchte Bestie
+  if (pb && afterExplosiveDay(state, pb, opts.week, block.id)) classes = [...new Set(classes.map((c) => (c === "uralte" || c === "verfluchte" ? "ungeheuer" : c)))];
   let lo = Math.min(...classes.map((c) => CLASS_RANGE[c][0])), hi = Math.max(...classes.map((c) => CLASS_RANGE[c][1]));
   // Zeitbudget: die Bestie darf die Dauer des Tages nicht reißen (Rest der Einheit geschätzt, inkl. Aufwärmsätzen)
   const budget = beastBudget(block, opts);
