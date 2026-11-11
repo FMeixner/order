@@ -33,6 +33,7 @@
       "blocks": [
         {"type": "single", "slot": {"id": "sc-s-1", "name": "Seilsprints", "kind": "interval", "interval": {"work": 20, "rest": 40, "rounds": 8}, "prog": "none"}},
         {"type": "single", "slot": {"id": "sc-s-2", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 60}},
+        {"type": "single", "slot": {"id": "sc-s-r1", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30}},
         {"type": "single", "slot": {"id": "sc-s-3", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
         {"type": "beast", "id": "sc-s-bst", "classes": ["plage"]}
       ]
@@ -44,7 +45,8 @@
         {"type": "module", "module": "sword", "variant": "intervalle", "fallbackFlow": "mobility"},
         {"type": "module", "module": "call", "variant": "klinge"},
         {"type": "single", "slot": {"id": "sc-w-2", "name": "Landmine Rotational Press", "home": "KB Half-Kneeling Press", "reise": {"name": "Band Rotational Press", "prog": "reps"}, "sets": 3, "reps": "6/Seite", "prog": "double", "rest": 90}},
-        {"type": "single", "slot": {"id": "sc-w-pp", "name": "Pike Push-Up", "sets": 3, "reps": "6-12", "prog": "reps", "rest": 75, "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve."}}
+        {"type": "single", "slot": {"id": "sc-w-pp", "name": "Pike Push-Up", "sets": 3, "reps": "6-12", "prog": "reps", "rest": 75, "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve."}},
+        {"type": "single", "slot": {"id": "sc-w-r1", "name": "Band Woodchopper", "sets": 3, "reps": "12/Seite", "prog": "reps", "rest": 45}}
       ]
     },
     "kraft": {
@@ -54,7 +56,10 @@
         {"type": "single", "slot": {"id": "sc-k-1", "name": "Hang Power Clean", "reise": {"name": "KB Swing", "prog": "none"}, "sets": 4, "reps": "3", "prog": "none", "rest": 120, "cluster": {"size": 1, "rest": 20}}},
         {"type": "single", "slot": {"id": "sc-k-2", "core": true, "name": "Back Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "5", "prog": "double", "rest": 180}},
         {"type": "single", "slot": {"id": "sc-k-3", "name": "Romanian Deadlift", "reise": {"name": "Band Romanian Deadlift", "prog": "reps"}, "sets": 3, "reps": "6-8", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "sc-k-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"], "rest": 120}},
+        {"type": "superset", "rest": 120, "slots": [
+          {"id": "sc-k-4", "name": "Nordic Curl Negative", "sets": 3, "reps": "3-6", "prog": "ladder", "ladder": ["Nordic Curl Negative", "Nordic Curl"]},
+          {"id": "sc-k-r1", "name": "Hanging Leg Raise", "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "8-12", "prog": "reps"}
+        ]},
         {"type": "superset", "rest": 75, "slots": [
           {"id": "sc-k-5a", "name": "Push-Up", "sets": 4, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"], "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."},
           {"id": "sc-k-5b", "name": "Pull-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 4, "reps": "5-8", "prog": "reps"}

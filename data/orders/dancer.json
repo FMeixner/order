@@ -20,7 +20,10 @@
       "name": "Hüfte", "location": "home", "minutes": 35,
       "warmup": ["hip9090", "gentle"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": {"id": "dc-h-1", "name": "KB Cossack Squat", "sets": 3, "reps": "8/Seite", "prog": "reps", "rest": 90}},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "dc-h-1", "name": "KB Cossack Squat", "sets": 3, "reps": "8/Seite", "prog": "reps"},
+          {"id": "dc-h-r1", "name": "Copenhagen Plank", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "note": "pro Seite"}
+        ]},
         {"type": "single", "slot": {"id": "dc-h-2", "name": "Pancake mit Last", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "max": 60, "step": 5, "rest": 60}},
         {"type": "single", "slot": {"id": "dc-h-3", "name": "Jefferson Curl (ohne Last)", "sets": 3, "reps": "8", "prog": "ladder", "ladder": ["Jefferson Curl (ohne Last)", "Jefferson Curl"], "rest": 90}},
         {"type": "single", "slot": {"id": "dc-h-4", "name": "Hüftbeuger-Halt mit KB", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "max": 60, "step": 5, "rest": 45, "note": "pro Seite"}},
@@ -33,7 +36,10 @@
       "blocks": [
         {"type": "single", "slot": {"id": "dc-s-1", "name": "DB Pullover", "sets": 3, "reps": "10", "prog": "weight", "rest": 90}},
         {"type": "single", "slot": {"id": "dc-s-2", "name": "Deficit Push-Up", "sets": 4, "reps": "8", "prog": "reps", "rest": 90}},
-        {"type": "single", "slot": {"id": "dc-s-c", "name": "Chin-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 3, "reps": "5-8", "prog": "reps", "rest": 90, "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."}},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "dc-s-c", "name": "Chin-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 3, "reps": "5-8", "prog": "reps", "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."},
+          {"id": "dc-s-r1", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold"}
+        ]},
         {"type": "single", "slot": {"id": "dc-s-3", "name": "Brücken-Leiter", "kind": "hold", "hold": 20, "sets": 3, "prog": "hold", "max": 45, "step": 5, "rest": 60}},
         {"type": "single", "slot": {"id": "dc-s-4", "name": "German Hang", "kind": "hold", "hold": 20, "sets": 4, "prog": "hold", "max": 45, "step": 5, "rest": 60, "note": "An den Ringen, Last langsam erhöhen."}},
         {"type": "single", "slot": {"id": "dc-s-5", "name": "KB Windmill", "sets": 3, "reps": "6/Seite", "prog": "weight", "rest": 90}},

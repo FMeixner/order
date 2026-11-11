@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.22.2] – 2026-11-11
+
+### Geändert
+- **Rumpf in 13 Orden ergänzt:** Knight, Scout, Pilgrim, Troubadour, Herald, Monk, Magician, Dancer, Huntsman, Assassin, Barbarian, Gladiator und Mercenary bekommen je Woche eine bis drei Rumpfübungen, fast immer als Superset in einer vorhandenen Pause (Hollow Hold, Dead Bug, Hanging Leg Raise, Ab Wheel, Pallof Press, Copenhagen Plank, Russian Twist, Windshield Wipers, Band Woodchopper). Damit erreichen alle Orden das Rumpfziel oder liegen knapp darunter.
+- **Side Planks ersetzt** durch dynamische, wechselseitige Übungen für die seitliche Rumpfmuskulatur: Russian Twist (Monk, King) und Lying Windshield Wipers (Pugilist).
+- **Halten zählt:** Haltepositionen (Hollow Hold, Copenhagen Plank …) zählen in der Planung als Sätze, wie schon im Log und in den Bestien.
+- **Dauer:** Sechs Einheiten sind durch das Rumpf-Superset 5 Minuten länger angegeben (Pilgrim Intervalle und Kraft kurz, Herald Flash B, Monk Kraft A, Huntsman Kraft/Sprung und freie Linie).
+
+### Behoben
+- Eine mutierte Bestie in einer Serie (Teil „~hex“) ließ die Einheit abstürzen, wenn einer ihrer Skills keinen Ersatz hat; sie wird jetzt mit den tauschbaren Skills gefunden.
+
 ## [1.22.1] – 2026-11-11
 
 ### Geändert

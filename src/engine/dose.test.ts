@@ -162,3 +162,10 @@ describe("Wahl und feste Konditionsslots", () => {
     expect(rounds(6)).toBe(base);
   });
 });
+
+describe("Ids", () => {
+  it("„~hex“ findet die Bestie auch, wenn ein Skill keinen Ersatz hat", async () => {
+    const { beastById } = await import("./plan");
+    expect(beastById("ng-aslaug~hex")).not.toBeNull();
+  });
+});

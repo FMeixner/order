@@ -29,7 +29,10 @@
           {"id": "mg-e-1", "core": true, "name": "Goblet Squat", "sets": 4, "reps": "6-10", "prog": "double", "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."},
           {"id": "mg-e-2", "core": true, "name": "Chin-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 4, "reps": "5-8", "prog": "reps"}
         ]},
-        {"type": "single", "slot": {"id": "mg-e-3", "core": true, "name": "DB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "prog": "reps", "reps": "10-15/Seite"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 90}},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "mg-e-3", "core": true, "name": "DB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "prog": "reps", "reps": "10-15/Seite"}, "sets": 4, "reps": "8-10", "prog": "double"},
+          {"id": "mg-a-r1", "name": "Band Pallof Press", "sets": 3, "reps": "12/Seite", "prog": "reps"}
+        ]},
         {"type": "single", "slot": {"id": "mg-a-3", "name": "Resonanzatmung (6 pro Minute)", "kind": "timer", "minutes": 6, "max": 12, "step": 1, "prog": "minutes"}}
       ]
     },
@@ -41,7 +44,10 @@
           {"id": "mg-h-pp-a", "core": true, "name": "DB Pullover", "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "10-12", "prog": "double"},
           {"id": "mg-h-pp-b", "core": true, "name": "Deficit Push-Up", "sets": 4, "reps": "6-12", "prog": "reps"}
         ]},
-        {"type": "single", "slot": {"id": "mg-h-atg", "core": true, "name": "ATG Split Squat", "sets": 3, "reps": "6-10/Seite", "prog": "reps", "rest": 60, "note": "erst eine Seite komplett, dann die andere"}},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "mg-h-atg", "core": true, "name": "ATG Split Squat", "sets": 3, "reps": "6-10/Seite", "prog": "reps", "note": "erst eine Seite komplett, dann die andere"},
+          {"id": "mg-h-pp-r1", "name": "Lying Windshield Wipers", "sets": 3, "reps": "8/Seite", "prog": "reps"}
+        ]},
         {"type": "superset", "rest": 45, "slots": [
           {"id": "mg-h-1a", "core": true, "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "reps"},
           {"id": "mg-h-1b", "name": "Prone Y-T-W", "sets": 3, "reps": "6", "prog": "reps", "note": "je Buchstabe"}

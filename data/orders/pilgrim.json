@@ -45,18 +45,19 @@
   },
   "roles": {
     "intervalle": {
-      "name": "Intervalle", "location": "reise", "minutes": 45,
+      "name": "Intervalle", "location": "reise", "minutes": 50,
       "warmup": ["short_base", "run_prep", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "rh-i-1", "name": "Intervalle 4 × 4 Min", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none", "note": "85–95 % der maximalen Herzfrequenz. Lauf, Rad oder Rudern."}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "rh-i-2a", "name": "Bodyweight Squat", "sets": 2, "reps": "15-30", "prog": "ladder", "ladder": ["Bodyweight Squat", "Squat Jump"]},
-          {"id": "rh-i-2b", "name": "Push-Up", "sets": 2, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
+          {"id": "rh-i-2b", "name": "Push-Up", "sets": 2, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]},
+          {"id": "rh-i-r1", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold"}
         ]}
       ]
     },
     "kraft_kurz": {
-      "name": "Kraft-Erhaltung", "location": "home", "minutes": 55,
+      "name": "Kraft-Erhaltung", "location": "home", "minutes": 60,
       "warmup": ["short_base", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "rh-k-1", "core": true, "name": "Single-Leg RDL", "sets": 4, "reps": "10-15/Seite", "prog": "reps", "rest": 60}},
@@ -65,7 +66,10 @@
           {"id": "rh-k-pu", "name": "Push-Up", "sets": 4, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"], "note": "Erhaltung: schwer genug, 2 Wiederholungen Reserve. Hält Kraft und Muskel, auch wenn der Orden anderes betont."}
         ]},
         {"type": "single", "slot": {"id": "rh-k-3", "core": true, "name": "Pistol Squat (Box)", "sets": 3, "reps": "6-15/Seite", "prog": "ladder", "ladder": ["Pistol Squat (Box)", "Pistol Squat (Gegengewicht)", "Pistol Squat"], "rest": 75}},
-        {"type": "single", "slot": {"id": "rh-k-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 2, "reps": "40 m", "prog": "weight", "rest": 60}},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "rh-k-4", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 2, "reps": "40 m", "prog": "weight"},
+          {"id": "rh-k-r1", "name": "Russian Twist", "sets": 3, "reps": "10/Seite", "prog": "reps"}
+        ]},
         {"type": "single", "slot": {"id": "rh-k-6", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps", "rest": 45}},
         {"type": "single", "slot": {"id": "rh-k-5", "name": "Lockeres Ausfahren", "kind": "timer", "minutes": 8, "prog": "none"}}
       ]

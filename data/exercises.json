@@ -946,7 +946,12 @@
     "equip": "cardio"
   },
   "Russian Twist": {
-    "equip": "bodyweight"
+    "equip": "bodyweight",
+    "desc": "Sitz, Oberkörper leicht zurückgelehnt, Füße am Boden oder angehoben. Schultern abwechselnd nach rechts und links drehen, die Hände tippen neben der Hüfte. Schwerer mit Gewicht."
+  },
+  "Lying Windshield Wipers": {
+    "equip": "bodyweight",
+    "desc": "Rückenlage, Arme seitlich ausgestreckt, Beine angewinkelt angehoben. Knie kontrolliert abwechselnd zu einer Seite ablegen und zurück, Schultern bleiben am Boden. Schwerer mit gestreckten Beinen."
   },
   "Safety Vault, Step Vault, Lazy Vault": {
     "equip": "skill"

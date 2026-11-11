@@ -37,7 +37,10 @@
       "blocks": [
         {"type": "single", "slot": {"id": "kas-fp", "core": true, "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 4, "reps": "12-15", "prog": "double", "rest": 60, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
         {"type": "single", "slot": {"id": "kas-icc", "core": true, "name": "Incline Cable Curl", "home": "Incline DB Curl", "reise": {"name": "Band Curl", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
-        {"type": "single", "slot": {"id": "kb-3", "core": true, "name": "Chest Press Machine", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
+        {"type": "superset", "rest": 120, "slots": [
+          {"id": "kb-3", "core": true, "name": "Chest Press Machine", "home": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double"},
+          {"id": "kas-r1", "name": "Ab Wheel Rollout", "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "8-12", "prog": "reps"}
+        ]},
         {"type": "single", "slot": {"id": "kas-csr", "core": true, "name": "Chest-Supported Row Machine", "home": "Chest-Supported Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "ka-3", "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 90, "finish": {"kind": "drop"}}}
       ]
@@ -56,7 +59,10 @@
       "warmup": ["short_base", "lat_box", "dislocate", "hip9090"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "single", "slot": {"id": "kb-1", "core": true, "name": "KB Swing", "home": "KB Swing", "reise": {"name": "Band Pull-Through", "reps": "15-20", "prog": "reps"}, "sets": 4, "reps": "15", "prog": "double", "rest": 60, "note": "zuerst, solange die Technik frisch ist"}},
-        {"type": "single", "slot": {"id": "kas-7", "core": true, "name": "Dip", "load": "plate", "home": {"name": "Ring Dip", "reps": "6-10"}, "reise": {"name": "Deficit Push-Up", "reps": "AMRAP"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120, "note": "tief bis die Brust dehnt"}},
+        {"type": "superset", "rest": 120, "slots": [
+          {"id": "kas-7", "core": true, "name": "Dip", "load": "plate", "home": {"name": "Ring Dip", "reps": "6-10"}, "reise": {"name": "Deficit Push-Up", "reps": "AMRAP"}, "sets": 4, "reps": "6-8", "prog": "double", "note": "tief bis die Brust dehnt"},
+          {"id": "kb-r1", "name": "Hanging Leg Raise", "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "8-12", "prog": "reps"}
+        ]},
         {"type": "single", "slot": {"id": "kb-4", "core": true, "name": "Lat Pulldown (V-Griff)", "home": {"name": "Pull-Up (Close Grip)", "reps": "AMRAP", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "ka-5", "name": "Cable Chest Fly", "home": "DB Fly", "reise": {"name": "Band Fly", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60, "finish": {"kind": "drop"}}},
         {"type": "superset", "rest": 45, "sameStation": true, "label": "eine Station, Rolle unten", "slots": [

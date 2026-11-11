@@ -314,7 +314,9 @@ export function beastById(id: string): Beast | null {
     const [base, hex] = u.split("~hex");
     const b = BEAST_BY_ID[base];
     // „a~hex“ (alle fehlenden Skills getauscht) oder alt „a~hex:skill,skill“
-    const full = b && hex !== undefined ? hexWith(b, hex.startsWith(":") ? hex.slice(1).split(",") : beastSkills(b)) ?? undefined : b;
+    // „~hex“ ohne Liste: alle tauschbaren Skills; Skills ohne Ersatz bleiben (sonst fände sich die Bestie nicht wieder)
+    const hexable = (x: Beast) => beastSkills(x).filter((id) => hexWith(x, [id]));
+    const full = b && hex !== undefined ? hexWith(b, hex.startsWith(":") ? hex.slice(1).split(",") : hexable(b)) ?? b : b;
     return full && rm ? shortBeast(full, parseInt(rm[2])) ?? undefined : full;
   };
   const parts = id.split("+").map((p) => { const m = p.match(/^(.*)×(\d)$/); return m ? [unit(m[1]), parseInt(m[2])] : [unit(p), 1]; }) as [Beast | undefined, number][];
@@ -474,7 +476,7 @@ const DOSE_K = 2;
 type Share = Record<string, number>;
 const addTo = (a: Share, b: Share, f = 1) => { for (const [m, v] of Object.entries(b)) a[m] = (a[m] ?? 0) + v * f; };
 const weekSetsMemo = new WeakMap<AppState, Map<string, Share>>();
-/** Feste Sätze einer Ordenswoche je Muskel (Kraft-Übungen aller Trainingstage) */
+/** Feste Sätze einer Ordenswoche je Muskel (Kraft-Übungen und Haltepositionen aller Trainingstage; das Log zählt Halten ebenso) */
 function plannedWeekSets(state: AppState, pb: PlanBlock, week: number): Share {
   let m = weekSetsMemo.get(state);
   if (!m) weekSetsMemo.set(state, (m = new Map()));
@@ -488,7 +490,7 @@ function plannedWeekSets(state: AppState, pb: PlanBlock, week: number): Share {
     const role = f.roles[d.role] && roleAt(f.roles[d.role], prof);
     if (!prof || !role) continue;
     const ab = isAWeek(week) ? "A" : "B";
-    for (const r of roleSlots(role.blocks.filter((b) => !b.rotation || b.rotation === ab), prof)) if (r.kind === "strength") addTo(out, musclesOf(r.name), r.sets);
+    for (const r of roleSlots(role.blocks.filter((b) => !b.rotation || b.rotation === ab), prof)) if (r.kind === "strength" || r.kind === "hold") addTo(out, musclesOf(r.name), r.sets);
   }
   m.set(key, out);
   return out;

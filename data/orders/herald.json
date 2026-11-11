@@ -27,12 +27,13 @@
         ]},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "fl-a-2a", "core": true, "name": "DB Bench Press", "reise": {"name": "Push-Up", "reps": "AMRAP-1", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"},
-          {"id": "fl-a-2b", "name": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"}
+          {"id": "fl-a-2b", "name": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"},
+          {"id": "fl-a-r1", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold"}
         ]}
       ]
     },
     "flash_b": {
-      "name": "Herald B", "location": "home", "minutes": 20,
+      "name": "Herald B", "location": "home", "minutes": 25,
       "warmup": ["short_base", "stab_prep", "lower_prep"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
@@ -41,7 +42,8 @@
         ]},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "fl-b-2a", "core": true, "name": "KB Cossack Squat", "reise": {"name": "Cossack Squat", "reps": "8-10/Seite", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double"},
-          {"id": "fl-b-2b", "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"}
+          {"id": "fl-b-2b", "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
+          {"id": "fl-b-r1", "name": "Russian Twist", "sets": 3, "reps": "10/Seite", "prog": "reps"}
         ]}
       ]
     },
@@ -55,7 +57,8 @@
         ]},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "fl-c-2a", "core": true, "name": "Incline DB Press", "reise": {"name": "Push-Up", "reps": "AMRAP-1", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"},
-          {"id": "fl-c-2b", "name": "DB Hip Thrust", "reise": {"name": "Single-Leg Glute Bridge", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"}
+          {"id": "fl-c-2b", "name": "DB Hip Thrust", "reise": {"name": "Single-Leg Glute Bridge", "prog": "reps"}, "sets": 3, "reps": "8-12", "prog": "double"},
+          {"id": "fl-c-r1", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"}
         ]}
       ]
     },

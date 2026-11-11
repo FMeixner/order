@@ -107,7 +107,7 @@
       "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "beast", "id": "bx-ki-bst", "classes": ["ungeheuer"], "pace": "easy"},
-        {"type": "single", "slot": {"id": "bx-ki-s", "name": "Side Plank", "kind": "hold", "hold": 30, "sets": 2, "prog": "hold", "rest": 30, "max": 60, "step": 5, "note": "pro Seite"}}
+        {"type": "single", "slot": {"id": "bx-ki-s", "name": "Russian Twist", "sets": 2, "reps": "10/Seite", "prog": "reps", "rest": 30}}
       ]
     }
   }

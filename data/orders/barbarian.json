@@ -25,7 +25,10 @@
         {"type": "single", "slot": {"id": "ba-oa-0", "name": "Band Fly", "sets": 2, "reps": "15-20", "prog": "reps", "rest": 45, "note": "Zum Einstieg: wärmt vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen.", "finish": {"kind": "myo"}}},
         {"type": "single", "slot": {"id": "ba-oa-1", "core": true, "name": "Deficit Push-Up", "sets": 4, "reps": "AMRAP-2", "prog": "reps", "rest": 90, "note": "tief in die Dehnung, unten kurz halten", "finish": {"kind": "mech", "chain": ["Deficit Push-Up", "Push-Up", "Incline Push-Up"]}}},
         {"type": "single", "slot": {"id": "ba-oa-2", "core": true, "name": "Pull-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 4, "reps": "6-10", "prog": "reps", "rest": 120, "finish": {"kind": "mech", "chain": ["Pull-Up", "Chin-Up", "Negative Chin-Up"]}}},
-        {"type": "single", "slot": {"id": "ba-oa-3", "core": true, "name": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps", "reps": "12-15"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "ba-oa-3", "core": true, "name": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps", "reps": "12-15"}, "sets": 3, "reps": "10-12", "prog": "double"},
+          {"id": "ba-oa-r1", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"}
+        ]},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "ba-oa-4a", "name": "Klingen-Seitheben", "sets": 3, "reps": "12-15", "prog": "reps", "note": "mit Handgelenkgewicht schwerer"},
           {"id": "ba-oa-4b", "name": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"}
@@ -50,7 +53,10 @@
       "blocks": [
         {"type": "single", "slot": {"id": "ba-ob-0", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 2, "reps": "15-20", "prog": "double", "rest": 45, "note": "Zum Einstieg: wärmt vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen.", "finish": {"kind": "drop"}}},
         {"type": "single", "slot": {"id": "ba-ob-1", "core": true, "name": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "prog": "reps", "reps": "6-12"}, "sets": 3, "reps": "8-12", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "ba-ob-2", "core": true, "name": "Chin-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 4, "reps": "6-10", "prog": "reps", "rest": 120}},
+        {"type": "superset", "rest": 120, "slots": [
+          {"id": "ba-ob-2", "core": true, "name": "Chin-Up", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "12-15"}, "sets": 4, "reps": "6-10", "prog": "reps"},
+          {"id": "ba-ob-r1", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold"}
+        ]},
         {"type": "single", "slot": {"id": "ba-ob-3", "core": true, "name": "Archer Push-Up", "sets": 3, "reps": "5-10/Seite", "prog": "reps", "rest": 90, "finish": {"kind": "mech", "chain": ["Archer Push-Up", "Push-Up", "Knee Push-Up"]}}},
         {"type": "single", "slot": {"id": "ba-ob-4", "name": "DB Pullover", "reise": {"name": "Band Pulldown", "prog": "reps", "reps": "15-20"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 75, "note": "tief über den Kopf in die Dehnung", "finish": {"kind": "myo"}}},
         {"type": "superset", "rest": 60, "slots": [

@@ -24,7 +24,10 @@
         {"type": "single", "slot": {"id": "cl-ua-4", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
         {"type": "single", "slot": {"id": "cl-ua-1", "core": true, "name": "Incline DB Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP-2", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "cl-ua-2", "core": true, "name": "Lat Pulldown", "home": {"name": "Pull-Up", "reps": "AMRAP-2", "prog": "reps"}, "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "cl-ua-3", "core": true, "name": "Seated Cable Row", "home": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 90}},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "cl-ua-3", "core": true, "name": "Seated Cable Row", "home": "Double DB Row", "reise": {"name": "Band Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
+          {"id": "cl-ua-r1", "name": "Band Pallof Press", "sets": 3, "reps": "12/Seite", "prog": "reps"}
+        ]},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "cl-ua-5a", "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"},
           {"id": "cl-ua-5b", "name": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double"}

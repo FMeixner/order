@@ -36,7 +36,10 @@
         {"type": "single", "slot": {"id": "me-b-0", "name": "DB Rear Delt Fly", "sets": 2, "reps": "12-15", "prog": "double", "rest": 45, "note": "Zum Einstieg: hintere Schulter warm, Griff und Rücken bleiben frisch.", "finish": {"kind": "myo"}}},
         {"type": "single", "slot": {"id": "me-b-1", "core": true, "name": "Pull-Up", "sets": 4, "reps": "4-8", "prog": "ladder", "ladder": ["Pull-Up", "Archer Pull-Up"], "rest": 150, "note": "Skill: ab acht sauberen Wiederholungen als Archer Pull-Up, je Seite."}},
         {"type": "single", "slot": {"id": "me-b-2", "core": true, "name": "Staggered Stance DB RDL", "sets": 4, "reps": "6-8/Seite", "prog": "double", "rest": 120, "note": "erst eine Seite komplett, dann die andere"}},
-        {"type": "single", "slot": {"id": "me-b-3", "name": "Double DB Row", "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}}
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "me-b-3", "name": "Double DB Row", "sets": 3, "reps": "8-10", "prog": "double"},
+          {"id": "me-b-r1", "name": "Ab Wheel Rollout (Knie)", "reise": {"name": "Hollow Hold", "kind": "hold", "hold": 30, "prog": "hold"}, "sets": 3, "reps": "8-12", "prog": "reps"}
+        ]}
       ]
     },
     "power_skill": {
@@ -59,7 +62,10 @@
       "blocks": [
         {"type": "single", "slot": {"id": "me-d-0", "name": "Lying Leg Curl", "home": {"name": "Slider Leg Curl", "prog": "reps"}, "sets": 2, "reps": "10-12", "prog": "double", "rest": 60, "note": "Zum Einstieg: Kniebeuger warm, der vordere Oberschenkel bleibt frisch."}},
         {"type": "single", "slot": {"id": "me-d-1", "core": true, "name": "Bulgarian Split Squat", "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90, "note": "erst eine Seite komplett, dann die andere"}},
-        {"type": "single", "slot": {"id": "me-d-2", "core": true, "name": "Incline DB Press", "sets": 3, "reps": "6-8", "prog": "double", "rest": 120}},
+        {"type": "superset", "rest": 120, "slots": [
+          {"id": "me-d-2", "core": true, "name": "Incline DB Press", "sets": 3, "reps": "6-8", "prog": "double"},
+          {"id": "me-d-r1", "name": "Russian Twist", "sets": 3, "reps": "10/Seite", "prog": "reps"}
+        ]},
         {"type": "single", "slot": {"id": "me-d-3", "name": "Double DB Row", "sets": 3, "reps": "8-10", "prog": "double", "rest": 90}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "me-d-4a", "name": "Hammer Curl", "sets": 2, "reps": "10-12", "prog": "double"},

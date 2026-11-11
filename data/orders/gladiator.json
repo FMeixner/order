@@ -50,7 +50,10 @@
       "blocks": [
         {"type": "single", "slot": {"id": "gl-ei-1", "name": "Hang Power Clean", "sets": 4, "reps": "3", "prog": "none", "rest": 150, "note": "Techniktag-Echo: sauber vor schwer, keine Ermüdungsjagd"}},
         {"type": "single", "slot": {"id": "gl-ei-2", "name": "Back Squat", "sets": 3, "reps": "5", "prog": "double", "rest": 180}},
-        {"type": "single", "slot": {"id": "gl-ei-3", "name": "Romanian Deadlift", "sets": 3, "reps": "8", "prog": "double", "rest": 120}},
+        {"type": "superset", "rest": 120, "slots": [
+          {"id": "gl-ei-3", "name": "Romanian Deadlift", "sets": 3, "reps": "8", "prog": "double"},
+          {"id": "gl-ei-r1", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"}
+        ]},
         {"type": "single", "slot": {"id": "gl-ei-4", "name": "Rudern 6 × 250 m", "kind": "interval", "interval": {"work": 60, "rest": 60, "rounds": 6}, "prog": "none", "note": "aerobe Uhr nebenbei: zügig, nicht investiert"}}
       ]
     },

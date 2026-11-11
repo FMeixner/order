@@ -66,7 +66,7 @@
         ]},
         {"type": "single", "slot": {"id": "fi-n-3", "core": true, "name": "Turkish Get-Up", "reise": {"name": "Turkish Get-Up (ohne Last)", "prog": "reps"}, "sets": 3, "reps": "2/Seite", "prog": "weight", "rest": 60}},
         {"type": "single", "slot": {"id": "fi-n-4", "core": true, "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
-        {"type": "single", "slot": {"id": "fi-n-5", "name": "Side Plank", "kind": "hold", "hold": 30, "max": 60, "step": 5, "sets": 2, "prog": "hold", "rest": 30, "note": "pro Seite"}}
+        {"type": "single", "slot": {"id": "fi-n-5", "name": "Lying Windshield Wipers", "sets": 2, "reps": "8/Seite", "prog": "reps", "rest": 30}}
       ]
     },
     "bonus": {
