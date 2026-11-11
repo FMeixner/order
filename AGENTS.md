@@ -23,7 +23,7 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
   - `affect.ts` (Befinden 1.24: Feeling Scale −5 … +5 nach jeder Einheit in `state.feeling`; `affectSummary` für die Stand-Karte: Mittel 4 Wochen, je Rolle der laufenden Phase die letzten sechs Werte, Hinweis bei drei zähen Werten in Folge. Die King-Regel `affectDowngrade` bleibt an `affect_rule`)
   - `volume.ts` Soll-Ist (1.25): `plannedVolume`/`volumeNow` über `plannedRoles` in `plan.ts` (feste Slots wie das Log, Bestien per `pickBeast` nach Päckchen, Konditionsminuten); Karte `src/ui/VolumeCard.tsx` im Stand, wertneutral, keine Warnung über dem Band
   - `weekreview.ts` (Wochenrückblick 1.27: `reviewWeek` wählt die geschaffte laufende oder die vorige Woche, `weekReview` zählt Einheiten, verdichtet/entfallen (nie „verpasst“), Befinden, gesteigert über `bestProduct`; Karte „Letzte Woche“ im Stand)
-  - `progression.ts` (`suggest`, `advance`)
+  - `progression.ts` (`suggest`, `advance`; Trend 1.28: `bestProduct`, `trendOf` up/held/down, `slippingCore` = Kernübung zweimal in Folge runter)
   - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
   - `warmup.ts`, `duration.ts`, `saga.ts` (Erzähler „Aschekurier“)
   - `cardio.ts` (Laufen ersetzen nach Belastungszeit, `swapRunBeast`; Ortsregel `mixesStations`/`spreadOut`, wirkt in `beastFits`), `beaststeps.ts` (Bestie als Schrittfolge für den Ablauf in `BeastCard.tsx`)

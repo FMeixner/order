@@ -63,7 +63,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P3~~ | 1.25.0 ✓ | Volumen Soll-Ist im Stand — **gebaut 11.11.2026** |
 | ~~P4~~ | 1.26.0 ✓ | Ideenparkplatz (ohne Sperre oder Rückfrage) — **gebaut 11.11.2026** |
 | ~~P5~~ | 1.27.0 ✓ | Wochenrückblick (im Stand) — **gebaut 11.11.2026** |
-| P6 | 1.28.0 | Defizit-Phasen: „gehalten“ zählt als Erfolg |
+| ~~P6~~ | 1.28.0 ✓ | Defizit-Phasen: „gehalten“ zählt als Erfolg — **gebaut 11.11.2026** |
 | P7 | 1.29.0 | Ausklang nach Bestie und Finisher |
 | P8 | 1.30.0 | Entlastung nach Signalen |
 | P9 | 1.31.0 | Zuspitzung vor der Testwoche |
@@ -458,6 +458,10 @@ Die Angst vor Leistungsverlust im Defizit ist Abbruchgrund Nr. 1 des Nutzers. Im
 ### Technik
 `progression.ts`: `trendOf(prev: SessionEntry, cur: SessionEntry): "up" | "held" | "down"` (bestes Satzprodukt
 Gewicht × (1 + Wdh/30)). Tests für alle drei Fälle.
+
+**Annahme (Agent, 11.11.2026):** „gehalten“ steht an der eingeklappten Karte nach dem Abschluss der Übung. Der Hinweis
+„<Übung> gibt nach“ steht im Stand in der Karte „Volumen diese Woche“, nur in Defizit-Phasen und nur, wenn der zweite
+Rückgang in den letzten 14 Tagen lag (`slippingCore` in `progression.ts`; P8 nutzt dieselbe Funktion als Signal).
 
 ---
 

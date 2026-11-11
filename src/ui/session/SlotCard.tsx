@@ -4,7 +4,7 @@ import { EXERCISES } from "../../data";
 import { type Feedback, FEEDBACK_LABEL, type Finish, type Session, type SessionEntry, type SetEntry } from "../../types";
 import { snapDown, snapNearest } from "../../engine/loads";
 import { daysBetween } from "../../engine/plan";
-import { backoffLoad, sharedState, suggest, type Suggestion } from "../../engine/progression";
+import { backoffLoad, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
 import { parseReps, type Resolved, swapKey, swapOptions } from "../../engine/resolve";
 import { WARM_REST, warmupSets } from "../../engine/warmup";
 import { fmt, useTimer } from "../Timer";
@@ -191,6 +191,8 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
   const missedOpen = entry.feedback === "zuschwer" && askable && (askValue == null || askValue >= (target ?? 0));
   const complete = sets.every((x) => x.done) && (!needsFb || !!entry.feedback) && !missedOpen;
   const [folded, setFolded] = useState<boolean>(complete);
+  // Defizit (1.28): gleiches Gewicht, gleiche Wiederholungen wie beim letzten Mal zählt als Erfolg
+  const held = complete && ctx.block.kcal === "deficit" && !!last && trendOf(last, entry) === "held";
   const [typing, setTyping] = useState(false);
   useEffect(() => {
     if (!complete) { setFolded(false); return; }
@@ -204,7 +206,7 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
       <button className="slot slot-done" onClick={() => setFolded(false)} aria-label={`${sug.name} erledigt, aufklappen`}>
         <span className="slot-done-check" aria-hidden>✓</span>
         <span className="slot-name">{sug.name}</span>
-        <span className="muted small">{entry.feedback ? FEEDBACK_LABEL[entry.feedback] : ""}</span>
+        <span className="muted small">{held && <span className="tag teal">gehalten</span>}{entry.feedback ? FEEDBACK_LABEL[entry.feedback] : ""}</span>
       </button>
     );
   }

@@ -821,3 +821,4 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shado
 .review-row:first-child { border-top: 0; }
 .review-row .mono:last-child { text-align: right; }
 .review-row .mono { font-family: var(--mono); }
+.held-line { color: var(--teal); }

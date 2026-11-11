@@ -51,3 +51,15 @@ describe("Wochenrückblick", () => {
     expect(reviewWeek(st, addDays(MON, 10))).toMatchObject({ week: 2 });
   });
 });
+
+describe("Wochenrückblick im Defizit", () => {
+  it("zählt gehaltene Übungen", () => {
+    let st = base();
+    st = { ...st, plan: [{ ...st.plan[0], kcal: "deficit" }] };
+    const roles = dayRoleMap(st, st.plan[0], focusFor(st, st.plan[0], 1)!, 1).map((d) => d.role);
+    st = { ...st, sessions: [sess(1, roles[0], 0, 60), sess(2, roles[0], 7, 60)] };
+    const r = weekReview(st, st.plan[0], 2)!;
+    expect(r.held).toEqual(["Bench Press"]);
+    expect(reviewLine(r)).toContain("1 Übung gehalten");
+  });
+});

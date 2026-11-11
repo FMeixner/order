@@ -3,6 +3,8 @@
 import type { AppState, PlanBlock, SessionEntry } from "../types";
 import { addDays, blockAt, dayRoleMap, isTestBlock, mondayOf, weekdayOf, weekInBlock } from "./plan";
 import { focusFor } from "./weekplan";
+import { bestProduct, trendOf } from "./progression";
+export { bestProduct };
 
 export interface ReviewSession { role: string; name: string; day: string; date: string; minutes: number | null; feeling: number | null }
 export interface WeekReview {
@@ -14,13 +16,8 @@ export interface WeekReview {
   up: string[];
   /** Übungen, die das Satzprodukt der Einheit davor gehalten haben */
   held: string[];
-}
-
-/** Bestes Satzprodukt einer Übung: Gewicht × (1 + Wdh/30); ohne Gewicht die Wiederholungen, ohne beides die Sekunden */
-export function bestProduct(e: SessionEntry): number | null {
-  const done = e.sets.filter((x) => x.done);
-  if (!done.length) return null;
-  return Math.max(...done.map((x) => (x.weight ? x.weight * (1 + (x.reps ?? 0) / 30) : x.reps ? x.reps : x.seconds ?? 0)));
+  /** Phase im Defizit: Halten ist das Ziel und zählt mit */
+  deficit: boolean;
 }
 
 /** Vergleich mit der Einheit davor, in der dieselbe Übung vorkam: up, held oder down (null ohne Vorlauf) */
@@ -31,8 +28,7 @@ export function trendAgainstPrev(state: AppState, sessionDate: string, sessionId
     .sort((a, b) => b.date.localeCompare(a.date))[0];
   if (!prev) return null;
   const pe = Object.values(prev.entries).find((x) => x.name === e.name && x.sets.some((y) => y.done))!;
-  const p = bestProduct(pe)!;
-  return cur > p + 1e-6 ? "up" : Math.abs(cur - p) <= 1e-6 ? "held" : "down";
+  return trendOf(pe, e);
 }
 
 const allDone = (state: AppState, b: PlanBlock, week: number): boolean => {
@@ -79,7 +75,7 @@ export function weekReview(state: AppState, block: PlanBlock, week: number): Wee
     block, week, monday: addDays(mondayOf(block.start), 7 * (week - 1)),
     planned: days.length, done: sess.length, condensed, dropped,
     feeling: fs.length ? Math.round((fs.reduce((a, b) => a + b, 0) / fs.length) * 10) / 10 : null,
-    sessions, up: [...up], held: [...held],
+    sessions, up: [...up], held: [...held], deficit: block.kcal === "deficit",
   };
 }
 
@@ -91,6 +87,7 @@ export function reviewLine(r: WeekReview): string {
     r.condensed ? `${r.condensed} verdichtet` : null,
     r.dropped ? `${r.dropped} entfallen` : null,
     r.feeling != null ? `Befinden ${sign(r.feeling)}` : null,
-    r.up.length ? `${r.up.length} ${r.up.length === 1 ? "Gewicht" : "Gewichte"} gesteigert` : null,
+    r.deficit && r.held.length ? `${r.held.length} ${r.held.length === 1 ? "Übung" : "Übungen"} gehalten` : null,
+    r.up.length ? (r.deficit ? `${r.up.length} gesteigert` : `${r.up.length} ${r.up.length === 1 ? "Gewicht" : "Gewichte"} gesteigert`) : null,
   ].filter(Boolean).join(" · ");
 }

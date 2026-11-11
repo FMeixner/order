@@ -6,7 +6,7 @@ import { mesoBalance } from "../engine/bilanz";
 import { standOf, type StandRow } from "../engine/dashboard";
 import { reviewLine, reviewWeek, weekReview } from "../engine/weekreview";
 import { AFFECT_MIN, affectSummary, affectTone, affectWord } from "../engine/affect";
-import { addDays, daysBetween, fmtDate } from "../engine/plan";
+import { addDays, blockAt, daysBetween, fmtDate } from "../engine/plan";
 import type { ResidualClock } from "../engine/residual";
 import type { AppState } from "../types";
 import { Collapse, Modal } from "./common";
@@ -103,7 +103,7 @@ export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: 
 
       <VolumeCard state={state} today={today} />
 
-      <Collapse title="Verlauf" meta="Gewichte und Bestzeiten">
+      <Collapse title="Verlauf" meta={blockAt(state.plan, today)?.kcal === "deficit" ? "Defizit-Phase: Halten ist das Ziel." : "Gewichte und Bestzeiten"}>
         <ProgressView state={state} />
       </Collapse>
 
@@ -166,6 +166,7 @@ function ReviewCard({ state, today }: { state: AppState; today: string }) {
             ))}
           </div>
           {r.up.length > 0 && <div className="small"><strong>Gesteigert:</strong> {r.up.join(", ")}</div>}
+          {r.deficit && r.held.length > 0 && <div className="small"><strong>Gehalten:</strong> {r.held.join(", ")}</div>}
         </div>
       )}
     </section>

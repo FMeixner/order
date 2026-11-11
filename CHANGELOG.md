@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.28.0] – 2026-11-11
+
+### Neu
+- **Defizit: „gehalten“ zählt.** In Phasen mit Kaloriendefizit zeigt eine Übung nach dem Abschluss ein grünes „gehalten“, wenn Gewicht und Wiederholungen so stehen wie beim letzten Mal. Der Wochenrückblick zählt mit („4 Übungen gehalten · 1 gesteigert“), Volumen und Verlauf im Stand tragen die Zeile „Defizit-Phase: Halten ist das Ziel.“
+- **Hinweis bei Rückgang:** Gibt eine Kernübung zweimal in Folge nach, steht im Stand ein sachlicher Hinweis (Eiweiß und Schlaf, sonst eine Woche ohne Defizit). Einzelne schwache Tage bleiben still; die App ändert nichts von selbst.
+
 ## [1.27.0] – 2026-11-11
 
 ### Neu

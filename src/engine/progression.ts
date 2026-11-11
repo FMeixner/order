@@ -16,7 +16,7 @@
    - weight/topset: Sprung über 7,5 % → erst +1 bis +2 Wiederholungen, dann die nächste Last.
    Anderes Profil (Studio → Zuhause): Gibt es das Gewicht dort nicht, rechnet die App über die Leistung (Epley)
    auf die Stufen des Profils um. Stand zuletzt »leicht« an, darf es dabei die nächsthöhere Stufe sein. */
-import type { EquipmentProfile, Feedback, SessionEntry, SlotState } from "../types";
+import type { AppState, EquipmentProfile, Feedback, Focus, SessionEntry, SlotState } from "../types";
 import { EXERCISES, TRANSFER } from "../data";
 import { loadScale, snapDown, snapNearest, stepLoad } from "./loads";
 import { musclesOf } from "./volume";
@@ -367,4 +367,41 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
     }
   }
   return s;
+}
+
+/* ---------- Trend (1.28): steigt, hält oder gibt nach ---------- */
+
+/** Bestes Satzprodukt einer Übung: Gewicht × (1 + Wdh/30); ohne Gewicht die Wiederholungen, ohne beides die Sekunden */
+export function bestProduct(e: SessionEntry): number | null {
+  const done = e.sets.filter((x) => x.done);
+  if (!done.length) return null;
+  return Math.max(...done.map((x) => (x.weight ? x.weight * (1 + (x.reps ?? 0) / 30) : x.reps ? x.reps : x.seconds ?? 0)));
+}
+
+/** Vergleich zweier Einheiten derselben Übung über das beste Satzprodukt */
+export function trendOf(prev: SessionEntry, cur: SessionEntry): "up" | "held" | "down" {
+  const p = bestProduct(prev) ?? 0, c = bestProduct(cur) ?? 0;
+  return c > p + 1e-6 ? "up" : c < p - 1e-6 ? "down" : "held";
+}
+
+/** Kernübungen (Slots mit `core`), die in zwei Einheiten nacheinander nachgegeben haben (Gewicht oder Wiederholungen
+    runter). Einzelne schwache Tage bleiben still. `since`: nur Einheiten ab diesem Datum zählen für den letzten Rückgang. */
+export function slippingCore(state: AppState, focus: Focus, since?: string): string[] {
+  const core = new Set<string>();
+  for (const r of Object.values(focus.roles)) for (const b of r.blocks) {
+    const slots = b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : [];
+    for (const sl of slots) if (sl.core) core.add(sl.id);
+  }
+  const out: string[] = [];
+  const hist = new Map<string, { date: string; e: SessionEntry }[]>();
+  for (const s of state.sessions) if (s.done) for (const e of Object.values(s.entries)) {
+    if (!core.has(e.slotId) || e.prog === "none" || !e.sets.some((x) => x.done)) continue;
+    hist.set(e.name, [...(hist.get(e.name) ?? []), { date: s.date, e }]);
+  }
+  for (const [name, h] of hist) {
+    const xs = h.sort((a, b) => a.date.localeCompare(b.date)).slice(-3);
+    if (xs.length < 3 || (since && xs[2].date < since)) continue;
+    if (trendOf(xs[0].e, xs[1].e) === "down" && trendOf(xs[1].e, xs[2].e) === "down") out.push(name);
+  }
+  return out;
 }

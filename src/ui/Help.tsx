@@ -137,6 +137,7 @@ export function Help() {
       <ul>
         <li>Jedes Zeichen trägt einen Kalorien-Modus. Die Rangfolge: Last zuerst — kein Defizit bei hoher Last, und mittlere Last zählt nach acht Wochen ohne ruhigen Abschnitt als hohe (Dauerlast). Dann der Kalender: im Winter Überschuss für Aufbau, im Sommer Defizit-Fenster. Auf Reisen Erhaltung, kohlenhydratbetont — dazu passt Athletik. Zuletzt der Grundmodus des Zeichens.</li>
         <li>Du kannst den Modus je Zeichen im Assistenten oder je Phase im Phasenblatt ändern; die App zeigt Konflikte als Symbol, sie sperrt nichts.</li>
+        <li><strong>Im Defizit ist Halten das Ziel.</strong> Schaffst du eine Übung mit demselben Gewicht und denselben Wiederholungen wie beim letzten Mal, steht an der Karte ein grünes „gehalten“; der Wochenrückblick zählt gehaltene Übungen mit. Gibt eine Kernübung zweimal in Folge nach, steht im Stand ein sachlicher Hinweis — einzelne schwache Tage bleiben still, und die App ändert nichts von selbst.</li>
       </ul>
 
       <h3>Schwerpunkt: ein Slot je Orden, im Jahr verteilt</h3>
