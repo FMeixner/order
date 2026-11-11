@@ -423,3 +423,17 @@ test.describe("Zeitstrahl", () => {
     await page.screenshot({ path: "test-results/timeline-stand.png", fullPage: true });
   });
 });
+
+test("Befinden: Einheit mit +3 abschließen speichert den Wert, Stand zeigt die Karte", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Unterkörper" }).click();
+  await page.getByRole("button", { name: "Satz 1" }).first().click();
+  await page.getByRole("radiogroup", { name: "Befinden" }).getByRole("radio", { name: "+3" }).click();
+  await page.getByRole("button", { name: "Einheit abschließen" }).click();
+  const st = await stored(page);
+  expect(st.feeling.map((f) => f.value)).toEqual([3]);
+  await page.getByRole("button", { name: "Stand", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Befinden" })).toBeVisible();
+  await expect(page.getByText("Noch zu wenige Einheiten mit Befinden.")).toBeVisible();
+});

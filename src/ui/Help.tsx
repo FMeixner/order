@@ -114,6 +114,13 @@ export function Help() {
         <li>Setup liegt jetzt oben rechts hinter dem Regler-Symbol.</li>
       </ul>
 
+      <h3>Befinden</h3>
+      <ul>
+        <li>Am Ende jeder Einheit fragt die App: „Wie hat sich die Einheit angefühlt?“ — auf der Feeling Scale von −5 (sehr schlecht) über 0 (neutral) bis +5 (sehr gut) (Hardy &amp; Rejeski, 1989). Freiwillig; ohne Wahl wird nichts gespeichert. Wie sich Training anfühlt, sagt das Dabeibleiben besser voraus als jeder Vorsatz (Ekkekakis et al., 2011).</li>
+        <li>Im Stand zeigt die Karte „Befinden“ das Mittel der letzten vier Wochen (unter −1 zäh, bis +1 neutral, darüber gut) und je Tag der laufenden Phase die letzten sechs Werte. Fühlt sich ein Tag dreimal in Folge zäh an, steht ein Hinweis da. Die App ändert dabei nichts von selbst; kürzen oder tauschen kannst du unter „Anpassen“.</li>
+        <li>Im King wirkt das Befinden zusätzlich: Zweimal hintereinander −1 oder schlechter, und die nächste Bestie fällt eine Klasse leichter aus.</li>
+      </ul>
+
       <h3>Bereiche: im Blick</h3>
       <ul>
         <li>Neun Bereiche — Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill — mit einem Zustand: <strong>gut</strong>, <strong>bald</strong> oder <strong>fehlt</strong>. Zu finden im Reiter „Stand“ und in „Jahr planen“, Schritt 3; das Symbol links neben „Jahr planen“ zählt „bald“ und „fehlt“ und führt zum Stand.</li>

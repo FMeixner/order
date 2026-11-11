@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { balanceOf } from "../engine/balance";
 import { mesoBalance } from "../engine/bilanz";
 import { standOf, type StandRow } from "../engine/dashboard";
+import { AFFECT_MIN, affectSummary, affectTone, affectWord } from "../engine/affect";
 import { addDays, daysBetween, fmtDate } from "../engine/plan";
 import type { ResidualClock } from "../engine/residual";
 import type { AppState } from "../types";
@@ -75,6 +76,8 @@ export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: 
         )}
       </section>
 
+      <AffectCard state={state} today={today} />
+
       <section className="card stack">
         <h2>Testwoche</h2>
         {st.test ? (
@@ -101,5 +104,34 @@ export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: 
 
       {evalOpen && st.test && <Modal title="Auswertung der Testwoche" onClose={() => setEvalOpen(false)} wide><Evaluation state={state} blockId={st.test.blockId} defaultOpen /></Modal>}
     </div>
+  );
+}
+
+const signed = (x: number) => (x > 0 ? `+${String(x).replace(".", ",")}` : String(x).replace(".", ",").replace("-", "−"));
+
+/** Befinden (1.24): Mittel der letzten vier Wochen, je Tagestyp die letzten Werte, Hinweis bei zähen Tagen */
+function AffectCard({ state, today }: { state: AppState; today: string }) {
+  const a = useMemo(() => affectSummary(state, today), [state, today]);
+  return (
+    <section className="card stack" aria-label="Befinden">
+      <div className="row between wrap">
+        <h2>Befinden</h2>
+        {a.n >= AFFECT_MIN && a.mean4w != null && <span className="aff-mean"><b>{signed(a.mean4w)}</b> {affectWord(a.mean4w)} <span className="muted small">· 4 Wochen</span></span>}
+      </div>
+      {a.n < AFFECT_MIN ? <div className="muted small">Noch zu wenige Einheiten mit Befinden.</div> : <>
+        {a.byRole.length > 0 && (
+          <div className="aff-list">
+            {a.byRole.map((r) => (
+              <div key={r.role} className="aff-row">
+                <span className="aff-name">{r.name}</span>
+                <span className="aff-dots" aria-label={`letzte Werte: ${r.values.map(signed).join(", ")}`}>{r.values.map((v, i) => <i key={i} className={affectTone(v)} title={signed(v)} />)}</span>
+                <span className="aff-val">{signed(r.mean)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {a.flag && <div className="note small">{a.flag}</div>}
+      </>}
+    </section>
   );
 }

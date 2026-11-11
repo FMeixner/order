@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.24.0] – 2026-11-11
+
+### Neu
+- **Befinden nach jeder Einheit:** Die Abschlusskarte fragt in jedem Orden „Wie hat sich die Einheit angefühlt?“ auf der Feeling Scale von −5 (sehr schlecht) bis +5 (sehr gut). Freiwillig; ein zweiter Tipp nimmt die Wahl zurück. Bisher fragte nur der King, und nur nach harten Tagen.
+- **Stand › Befinden:** Mittel der letzten vier Wochen als Zahl und Wort (zäh, neutral, gut), je Tag der laufenden Phase die letzten sechs Werte als Punkte, vom besten zum schwächsten. Fühlt sich ein Tag dreimal in Folge zäh an, steht ein Hinweis da — die App ändert nichts von selbst.
+
+### Geändert
+- Quelle der Feeling Scale (Hardy & Rejeski, 1989) mit Band, Seiten und DOI.
+
 ## [1.23.0] – 2026-11-11
 
 ### Neu

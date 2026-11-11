@@ -42,7 +42,6 @@ export function SessionView(ctx: SessionCtx) {
   const warm = roleDrills(role, "wu", ctx.profile, state.user, week);
   const cool = roleDrills(role, "cd", ctx.profile, state.user, week);
   const [feeling, setFeeling] = useState<number | null>(null);
-  const hard = items.some((it) => it.beast || it.resolved.some((r) => r.kind === "interval"));
 
   const mut = (fn: (s: Session) => Session) =>
     update((st) => {
@@ -100,14 +99,15 @@ export function SessionView(ctx: SessionCtx) {
       <DrillSection kind="cd" drills={cool} ctx={ctx} session={session} mut={mut} />
 
       <div className="card finish">
-        {focus.affect_rule && hard && !session?.done && (
-          <div className="stack">
-            <div className="small">Wie hat sich die Einheit angefühlt? (−5 sehr schlecht, +5 sehr gut)</div>
-            <div className="fs-scale">
+        {!session?.done && (
+          <div className="stack fs">
+            <div className="small">Wie hat sich die Einheit angefühlt?</div>
+            <div className="fs-scale" role="radiogroup" aria-label="Befinden">
               {[-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5].map((v) => (
-                <button key={v} className={feeling === v ? "on" : ""} onClick={() => setFeeling(v)}>{v > 0 ? `+${v}` : v}</button>
+                <button key={v} role="radio" aria-checked={feeling === v} className={feeling === v ? "on" : ""} onClick={() => setFeeling(feeling === v ? null : v)}>{v > 0 ? `+${v}` : v}</button>
               ))}
             </div>
+            <div className="fs-ends muted" aria-hidden><span>sehr schlecht</span><span>neutral</span><span>sehr gut</span></div>
           </div>
         )}
         <textarea placeholder="Notiz zur Einheit (optional)" value={session?.note ?? ""} onChange={(e) => mut((s) => ({ ...s, note: e.target.value }))} rows={2} />

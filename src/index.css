@@ -781,3 +781,15 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shado
 .ybal-line { margin-top: 2px; }
 @keyframes flash { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 20%, 70% { box-shadow: 0 0 0 2px var(--teal); } }
 .flash { animation: flash 1.5s ease-out; }
+
+/* Befinden (1.24) */
+.fs-ends { display: flex; justify-content: space-between; font-size: 11.5px; }
+.aff-mean b { font-family: var(--mono); font-size: 18px; }
+.aff-list { display: flex; flex-direction: column; }
+.aff-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 3em; gap: 10px; align-items: center; padding: 7px 0; border-top: 1px solid var(--border); font-size: 14px; }
+.aff-row:first-child { border-top: 0; }
+.aff-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aff-dots { display: inline-flex; gap: 4px; }
+.aff-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+.aff-dots i.low { background: var(--red); } .aff-dots i.high { background: var(--teal); }
+.aff-val { text-align: right; font-family: var(--mono); font-size: 13px; color: var(--muted); }
