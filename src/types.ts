@@ -433,6 +433,8 @@ export interface AppState {
   drillEdits?: Record<string, DrillEdits>;
   /** Testwoche: abgehakte Warm-up- und Cool-down-Übungen je Testtag (Schlüssel `<blockId>:<Ort>`) */
   testDrills?: Record<string, Record<string, boolean[]>>;
+  /** Bewusst ausgelassene Tests (ohne Material), Schlüssel `${blockId}:${testId}` */
+  testSkips?: Record<string, true>;
   /** Tagesanpassung je Einheit (Session-Id): eigene Wahl für Kurz, Leicht, Leise; fehlt sie, gilt das Gemerkte */
   dayAdj?: Record<string, { short?: boolean; quiet?: boolean; tight?: boolean; skip?: boolean; grow?: boolean }>;
   /** Je Wochentag gemerkt, gilt in allen Phasen: Kurz (höchstens ein Tag) und Leise */
@@ -483,6 +485,8 @@ export interface TestDef {
   swc?: number;
   /** Varianten, zwischen denen man beim Test wählt (z. B. Kniebeuge oder Beinpresse) */
   variants?: { id: string; name: string }[];
+  /** Timer (1.36): hold = Zeit läuft bis Stopp, fixed = feste Dauer mit Autostopp; beide mit 4 s in Position */
+  timer?: { mode: "hold" } | { mode: "fixed"; seconds: number };
 }
 
 /** Norm für einen Test, gültig für ein Geschlecht und eine Altersspanne.

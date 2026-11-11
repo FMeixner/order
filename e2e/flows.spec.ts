@@ -521,3 +521,42 @@ test("Schwerpunkt: „Für diesen Orden entfernen“ schaltet ihn für die Phase
   expect((await stored(page)).plan.some((b: { sharpen?: string }) => b.sharpen === "off")).toBe(true);
   await expect(page.getByText(/^Schwerpunkt:|^Mehr vom Ordensziel/)).toHaveCount(0);
 });
+
+test("Testwoche: ein Versuch, Timer mit 4 s in Position, Korrektur, Auslassen, Cup erst komplett verdient", async ({ page }) => {
+  const st = fixture();
+  const start = st.plan[0].start;
+  const d = new Date(`${start}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 6);
+  st.plan = [{ id: "t1", focusId: "test", label: "Testwoche", start, end: d.toISOString().slice(0, 10), load: "medium", travel: false }];
+  await seed(page, st);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Zuhause" }).click();
+  const durendal = page.locator(".collapse").filter({ hasText: "Durendal-Cup" }).first();
+  // Ein Feld je Test
+  await expect(page.locator(".test-row").filter({ hasText: "Sit and Reach" }).locator("input")).toHaveCount(1);
+  // Timer beim Dead Hang: Start → In Position → Stopp füllt das Feld
+  const hang = page.locator(".test-row").filter({ hasText: "Dead Hang" });
+  await hang.getByRole("button", { name: "▶ Timer" }).click();
+  await expect(hang.locator(".test-timer-num")).toContainText("In Position");
+  await page.waitForTimeout(5200);
+  await hang.getByRole("button", { name: "Stopp" }).click();
+  await expect(hang.locator("input")).not.toHaveValue("");
+  await hang.getByRole("button", { name: "Speichern" }).click();
+  // Ein Test reicht nicht für den Cup
+  await expect(durendal.locator(".collapse-head")).not.toContainText("✓");
+  // Korrektur: aufklappen, neuer Wert ersetzt den alten
+  await page.getByRole("button", { name: "Dead Hang erledigt, aufklappen" }).click({ timeout: 6000 });
+  await hang.locator("input").fill("75");
+  await hang.getByRole("button", { name: "Korrigieren" }).click();
+  let s = await stored(page);
+  expect(s.tests["t-deadhang"].filter((r: { blockId: string }) => r.blockId === "t1").map((r: { value: number }) => r.value)).toEqual([75]);
+  // Rest des Cups: Werte oder Auslassen, dann ist er verdient
+  for (const name of ["Sit and Reach", "Schulter: Stock-Durchführen", "Klimmzüge", "Liegestütze", "Crunches, Takt 40 BPM"]) {
+    const row = page.locator(".test-row").filter({ hasText: name });
+    await row.locator("input").fill("10");
+    await row.getByRole("button", { name: "Speichern" }).click();
+  }
+  await page.locator(".test-row").filter({ hasText: "Wall Sit" }).getByRole("button", { name: "Auslassen" }).click();
+  s = await stored(page);
+  expect(s.testSkips?.["t1:t-wallsit"]).toBe(true);
+  await expect(page.locator(".collapse-head").filter({ hasText: "Durendal-Cup ✓" })).toHaveCount(1);
+});

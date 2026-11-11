@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.36.0] – 2026-11-11
+
+### Neu
+- **Timer für Tests auf Zeit:** Start, 4 s, um in Position zu kommen, dann läuft die Zeit. Dead Hang und Wall Sit: Stopp tippen, die Sekunden stehen im Feld. Burpees 1 Min und Cooper 12 Min: stoppt von selbst mit Signal.
+- **Korrigieren:** Ein gespeicherter Testwert lässt sich ersetzen (ein Wert je Test und Testwoche); bei der Bestie auf Zeit korrigiert erneutes Speichern die Zeit dieser Woche.
+- **Auslassen:** Tests ohne Material lassen sich bewusst auslassen.
+
+### Geändert
+- **Ein Versuch je Test**, überall: Sit and Reach eingrooven und werten, was 2 s hält; Dead Hang und Wall Sit einmal, aufgewärmt ist der erste der beste. Sprints, Sprünge und Würfe vorher im Warm-up locker.
+- **Ein Cup ist erst verdient, wenn er vollständig ist** (jeder Test mit Wert oder ausgelassen, im Joyeuse-Cup auch der WHO-5). Vorher gab es Haken und Urteil schon nach dem ersten Test.
+- **Erledigte Tests klappen ein** wie Übungen in einer Einheit; antippen öffnet sie wieder.
+
 ## [1.35.0] – 2026-11-11
 
 ### Geändert

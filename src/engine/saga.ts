@@ -4,6 +4,7 @@
    Der Wurf allein trifft nie: Erst die volle Woche danach ist die Antwort und trifft umso härter.
    Ein- und Ausschalten verliert also nichts, und die Geschichte ändert sich nicht beim Neuladen.
    Texte und Welt stehen in data/narrative/generic.json. Eigene Welten ersetzen Teile davon. */
+import { cupDone } from "./testweek";
 import { allRuns, isHunt, runGroups } from "./runs";
 import genericJson from "../../data/narrative/generic.json";
 import { FOCUS_BY_ID, TESTWEEK } from "../data";
@@ -408,7 +409,8 @@ export function tournamentOf(state: AppState, b: PlanBlock, today: string): { in
   const cups: CupLine[] = TESTWEEK.cups.map((c, i) => {
     const res = c.tests.map((t) => byTest[t.id]).filter(Boolean);
     const klinge = c.name.replace(/-Cup$/, "");
-    if (!res.length) return { cupId: c.id, cup: c.name, focus: c.focus, text: null, result: null };
+    // Erst verdient, wenn der Cup vollständig ist (jeder Test mit Wert oder ausgelassen) – oder die Woche vorbei ist
+    if (!res.length || (!cupDone(state, b, c) && today <= b.end)) return { cupId: c.id, cup: c.name, focus: c.focus, text: null, result: null };
     const ch = res.map((r) => r.change);
     const result = ch.every((x) => x == null) ? "first" : ch.includes("better") ? "better" : ch.includes("same") || ch.includes(null) ? "same" : "worse";
     return { cupId: c.id, cup: c.name, focus: c.focus, result, text: fill(deck(pack.tables[`cup_${result}`], `${seed}:${result}`, i), { ...hv, klinge }) };

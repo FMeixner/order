@@ -9,6 +9,8 @@ import { WEEKDAYS } from "../types";
 import { Collapse, Desc } from "./common";
 import { allDrillsDone, DrillList } from "./session/Drills";
 import { fmt } from "./Timer";
+import { TestTimer } from "./TestTimer";
+import { cupDone } from "../engine/testweek";
 import { Evaluation } from "./Evaluation";
 import { RavenCup, RavenLines, ravenOn } from "./Raven";
 import { evaluateBlock, type TestEval } from "../engine/norms";
@@ -30,17 +32,37 @@ function show(v: number, unit: string): string {
   return `${String(v).replace(".", ",")} ${u[unit] ?? ""}`;
 }
 
-function TestRow({ t, state, block, onSave, preview = false }: { t: TestDef; state: AppState; block: PlanBlock; onSave: (value: number, raw: string, variant?: string) => void; preview?: boolean }) {
-  const [vals, setVals] = useState<string[]>(Array(t.attempts).fill(""));
+/** Ein Test, ein Versuch (1.36). Gespeichert oder ausgelassen klappt die Zeile nach kurzer Zeit ein wie eine Übungskarte;
+    antippen öffnet sie wieder, „Korrigieren“ ersetzt den Wert dieser Testwoche. Tests auf Zeit haben einen Timer. */
+function TestRow({ t, state, block, onSave, onSkip, preview = false }: { t: TestDef; state: AppState; block: PlanBlock; onSave: (value: number, raw: string, variant?: string) => void; onSkip?: (on: boolean) => void; preview?: boolean }) {
+  const [val, setVal] = useState("");
   const all = state.tests[t.id] ?? [];
   const [variant, setVariant] = useState<string>(all[all.length - 1]?.variant ?? t.variants?.[0]?.id ?? "");
   const hist = t.variants ? all.filter((h) => (h.variant ?? "") === variant) : all;
   const thisBlock = hist.filter((h) => h.blockId === block.id);
   const prev = hist.filter((h) => h.blockId !== block.id);
   const best = (arr: { value: number }[]) => arr.length ? (t.better === "higher" ? Math.max(...arr.map((x) => x.value)) : Math.min(...arr.map((x) => x.value))) : null;
-  const parsed = vals.map((v) => parseValue(v, t.unit)).filter((x): x is number => x != null);
-  const bestNow = best(parsed.map((value) => ({ value })));
+  const saved = thisBlock.length ? thisBlock[thisBlock.length - 1] : null;
+  const skipped = !saved && !!state.testSkips?.[`${block.id}:${t.id}`];
+  const done = !preview && (!!saved || skipped);
   const prevBest = best(prev);
+  const parsed = parseValue(val, t.unit);
+  const [folded, setFolded] = useState(done);
+  const [was, setWas] = useState(done);
+  useEffect(() => {
+    if (done && !was) { const id = setTimeout(() => setFolded(true), 2500); setWas(true); return () => clearTimeout(id); }
+    if (!done && was) { setWas(false); setFolded(false); }
+  }, [done]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (done && folded) {
+    return (
+      <button className="slot-done test-done" onClick={() => setFolded(false)} aria-label={`${t.name} erledigt, aufklappen`}>
+        <span className="slot-done-check" aria-hidden>{skipped ? "–" : "✓"}</span>
+        <span className="slot-name">{t.name}</span>
+        <span className="muted small">{saved ? show(saved.value, t.unit) : "ausgelassen"}</span>
+      </button>
+    );
+  }
+  const save = () => { onSave(parsed!, val, t.variants ? variant : undefined); setVal(""); };
   return (
     <div className="test-row">
       <div className="slot-title"><span className="slot-name">{t.name}</span><Desc text={t.desc} /></div>
@@ -50,18 +72,18 @@ function TestRow({ t, state, block, onSave, preview = false }: { t: TestDef; sta
         </select>
       )}
       {t.variants && <div className="muted small">{variantHint(state, block, t.id)}</div>}
-      {!preview && (
+      {!preview && t.timer && !skipped && <TestTimer spec={t.timer} onResult={(sec) => { if (t.timer?.mode === "hold") setVal(String(sec).replace(".", ",")); }} />}
+      {!preview && !skipped && (
         <div className="row wrap">
-          {vals.map((v, i) => (
-            <input key={i} type="text" inputMode="decimal" className="test-in" placeholder={t.attempts > 1 ? `Versuch ${i + 1}` : t.unit === "mmss" ? "m.ss.z" : "Wert"}
-              value={v} onChange={(e) => setVals(vals.map((x, k) => (k === i ? e.target.value : x)))} />
-          ))}
-          <button className="btn small" disabled={bestNow == null} onClick={() => { onSave(bestNow!, vals.filter(Boolean).join(" / "), t.variants ? variant : undefined); setVals(Array(t.attempts).fill("")); }}>Speichern</button>
+          <input type="text" inputMode="decimal" className="test-in" placeholder={saved ? `${show(saved.value, t.unit)} korrigieren` : t.unit === "mmss" ? "m.ss.z" : "Wert"}
+            value={val} onChange={(e) => setVal(e.target.value)} />
+          <button className="btn small" disabled={parsed == null} onClick={save}>{saved ? "Korrigieren" : "Speichern"}</button>
+          {!saved && onSkip && <button className="btn ghost small" onClick={() => onSkip(true)}>Auslassen</button>}
         </div>
       )}
+      {skipped && onSkip && <div className="row wrap"><span className="muted small">Ausgelassen (z. B. ohne Material).</span><button className="btn ghost small" onClick={() => onSkip(false)}>Doch testen</button></div>}
       <div className="muted small">
-        {preview && t.attempts > 1 ? `${t.attempts} Versuche. ` : ""}
-        {thisBlock.length ? <>Gespeichert: <strong>{show(best(thisBlock)!, t.unit)}</strong></> : "Noch kein Wert"}
+        {saved ? <>Gespeichert: <strong>{show(saved.value, t.unit)}</strong></> : skipped ? null : "Noch kein Wert"}
         {prevBest != null && <> · vorheriger Bestwert {show(prevBest, t.unit)}</>}
       </div>
     </div>
@@ -92,7 +114,7 @@ function Who5({ state, update, block }: { state: AppState; update: Update; block
   );
 }
 
-function Benchmark({ cup, state, update, preview = false }: { cup: Cup; state: AppState; update: Update; preview?: boolean }) {
+function Benchmark({ cup, state, update, block, preview = false }: { cup: Cup; state: AppState; update: Update; block: PlanBlock; preview?: boolean }) {
   const [manual, setManual] = useState("");
   if (!cup.benchmark) return null;
   const withHist = cup.benchmark.pool.filter((id) => (state.beastTimes[id] ?? []).length);
@@ -111,11 +133,13 @@ function Benchmark({ cup, state, update, preview = false }: { cup: Cup; state: A
             const p = parseClock(manual);
             if (p == null) { alert(`„${manual}“ verstehe ich nicht. Bitte so: 12.34 oder 12:34.`); return; }
             const sec = Math.round(p);
-            update((st) => ({ ...st, beastTimes: { ...st.beastTimes, [id]: [...(st.beastTimes[id] ?? []), { date: new Date().toISOString().slice(0, 10), seconds: sec }] } }));
+            // Ein Wert je Testwoche: ein zweites Speichern korrigiert die Zeit dieser Woche
+            update((st) => ({ ...st, beastTimes: { ...st.beastTimes, [id]: [...(st.beastTimes[id] ?? []).filter((x) => !(x.date >= block.start && x.date <= block.end)), { date: new Date().toISOString().slice(0, 10), seconds: sec }] } }));
             setManual("");
           }}>Speichern</button>
         </div>
       )}
+      {(() => { const wk = times.filter((x) => x.date >= block.start && x.date <= block.end).pop(); return wk ? <div className="muted small">Diese Woche: <strong>{fmt(wk.seconds)}</strong> · erneut speichern korrigiert</div> : null; })()}
       <div className="muted small">{pr ? `Bestzeit ${fmt(pr)}` : "Noch keine Zeit"}</div>
     </div>
   );
@@ -139,16 +163,26 @@ export function testDays(state: AppState, block: PlanBlock): { place: string; da
 }
 
 export function TestWeek({ state, update, block, today, preview = false, onPlan }: { state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean; onPlan?: () => void }) {
+  // Ein Wert je Test und Testwoche: Speichern ersetzt (Korrektur), Auslassen hebt sich damit auf
   const saveTest = (t: TestDef, value: number, raw: string, variant?: string) =>
-    update((st) => ({ ...st, tests: { ...st.tests, [t.id]: [...(st.tests[t.id] ?? []), { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } }));
+    update((st) => {
+      const keep = (st.tests[t.id] ?? []).filter((r) => !(r.blockId === block.id && (r.variant ?? "") === (variant ?? "")));
+      const { [`${block.id}:${t.id}`]: _drop, ...skips } = st.testSkips ?? {};
+      return { ...st, testSkips: skips, tests: { ...st.tests, [t.id]: [...keep, { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } };
+    });
+  const skipTest = (t: TestDef, on: boolean) =>
+    update((st) => {
+      const { [`${block.id}:${t.id}`]: _drop, ...rest } = st.testSkips ?? {};
+      return { ...st, testSkips: on ? { ...rest, [`${block.id}:${t.id}`]: true } : rest };
+    });
   const days = testDays(state, block);
   // Gewählter Testtag: angetippt, sonst heute, sonst der nächste offene, sonst der erste
   const [pick, setPick] = useState<string | null>(null);
-  const openDay = days.find((t) => !TESTWEEK.cups.filter((c) => c.place === t.place).every((c) => c.tests.every((x) => (state.tests[x.id] ?? []).some((r) => r.blockId === block.id))));
+  const openDay = days.find((t) => !TESTWEEK.cups.filter((c) => c.place === t.place).every((c) => cupDone(state, block, c)));
   const sel = days.find((t) => t.place === pick) ?? days.find((t) => t.date === today) ?? openDay ?? days[0];
   // Fertig: an jedem Testtag hat jeder Cup mindestens einen Wert (Tests ohne Material dürfen fehlen), oder die Woche ist vorbei
   const has = (id: string) => (state.tests[id] ?? []).some((r) => r.blockId === block.id);
-  const allDone = !preview && (days.every((t) => TESTWEEK.cups.filter((c) => c.place === t.place).every((c) => c.tests.some((x) => has(x.id)))) || (today > block.end && TESTWEEK.cups.some((c) => c.tests.some((x) => has(x.id)))));
+  const allDone = !preview && (days.every((t) => TESTWEEK.cups.filter((c) => c.place === t.place).every((c) => cupDone(state, block, c))) || (today > block.end && TESTWEEK.cups.some((c) => c.tests.some((x) => has(x.id)))));
   return (
     <div className="stack">
       {/* Hinweise und Erzähler hinter Symbolen, wie bei jedem Orden */}
@@ -160,10 +194,10 @@ export function TestWeek({ state, update, block, today, preview = false, onPlan 
       {!preview && <IdeasWaiting ideas={state.ideas} />}
       {allDone && <TestSummary state={state} block={block} today={today} onPlan={onPlan} />}
       {/* Wie jede andere Woche: Tage oben, der gewählte Tag zeigt seine Cups */}
-      <div className="days">
+      <div className="days wide">
         {days.map((t) => {
           const cups = TESTWEEK.cups.filter((c) => c.place === t.place);
-          const done = cups.every((c) => c.tests.every((x) => (state.tests[x.id] ?? []).some((r) => r.blockId === block.id)));
+          const done = cups.every((c) => cupDone(state, block, c));
           return (
             <button key={t.place} className={`day-btn ${sel?.place === t.place ? "on" : ""} ${done ? "done" : ""} ${t.date === today ? "today" : ""}`} onClick={() => setPick(t.place)}>
               <span className="day">{t.day}</span>
@@ -173,7 +207,7 @@ export function TestWeek({ state, update, block, today, preview = false, onPlan 
           );
         })}
       </div>
-      {sel && <TestDay state={state} update={update} block={block} today={today} place={sel.place} preview={preview} saveTest={saveTest} />}
+      {sel && <TestDay state={state} update={update} block={block} today={today} place={sel.place} preview={preview} saveTest={saveTest} skipTest={skipTest} />}
       <Evaluation state={state} blockId={block.id} update={preview ? undefined : update} defaultOpen={false} />
       <div className="muted small">{preview ? "Vorschau der Testwoche. " : "Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. "}Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
     </div>
@@ -182,9 +216,10 @@ export function TestWeek({ state, update, block, today, preview = false, onPlan 
 
 /** Ein Testtag wie eine Einheit: ein Warm-up zum Abhaken mit Timer (der zweite Cup am Ort braucht keins),
     dann die Cups, am Ende des Tages das Cool-down. */
-function TestDay({ state, update, block, today, place, preview, saveTest }: {
+function TestDay({ state, update, block, today, place, preview, saveTest, skipTest }: {
   state: AppState; update: Update; block: PlanBlock; today: string; place: string; preview: boolean;
   saveTest: (t: TestDef, value: number, raw: string, variant?: string) => void;
+  skipTest: (t: TestDef, on: boolean) => void;
 }) {
   const cups = TESTWEEK.cups.filter((c) => c.place === place);
   // Warm-up einmal für den Tag: die Listen aller Cups am Ort, ohne Doppelte, in Reihenfolge des ersten Cups
@@ -210,10 +245,10 @@ function TestDay({ state, update, block, today, place, preview, saveTest }: {
       </AutoCollapse>
       {cups.map((cup) => (
         <AutoCollapse key={`${place}:${cup.id}`} title={cup.name} meta={cup.focus} tone="teal" defaultOpen
-          done={!preview && cup.tests.every((t) => (state.tests[t.id] ?? []).some((r) => r.blockId === block.id))}>
+          done={!preview && cupDone(state, block, cup)}>
           {cup.who5 && !preview && <Who5 state={state} update={update} block={block} />}
-          {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} preview={preview} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} />)}
-          <Benchmark cup={cup} state={state} update={update} preview={preview} />
+          {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} preview={preview} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} onSkip={(on) => skipTest(t, on)} />)}
+          <Benchmark cup={cup} state={state} update={update} block={block} preview={preview} />
           {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
         </AutoCollapse>
       ))}
