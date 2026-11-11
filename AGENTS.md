@@ -22,6 +22,7 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
   - `deload.ts` (Entlastungswoche: Empfehlung nach Rhythmus oder Signalen in `deloadAdvice`, Wochenentscheid in `AppState.deload` („ja“/„nein“), Umformung `deloadShape` greift in `focusFor`: halbe Sätze, keine Bestien und Finisher)
   - `affect.ts` (Befinden 1.24: Feeling Scale −5 … +5 nach jeder Einheit in `state.feeling`; `affectSummary` für die Stand-Karte: Mittel 4 Wochen, je Rolle der laufenden Phase die letzten sechs Werte, Hinweis bei drei zähen Werten in Folge. Die King-Regel `affectDowngrade` bleibt an `affect_rule`)
   - `volume.ts` Soll-Ist (1.25): `plannedVolume`/`volumeNow` über `plannedRoles` in `plan.ts` (feste Slots wie das Log, Bestien per `pickBeast` nach Päckchen, Konditionsminuten); Karte `src/ui/VolumeCard.tsx` im Stand, wertneutral, keine Warnung über dem Band
+  - `weekreview.ts` (Wochenrückblick 1.27: `reviewWeek` wählt die geschaffte laufende oder die vorige Woche, `weekReview` zählt Einheiten, verdichtet/entfallen (nie „verpasst“), Befinden, gesteigert über `bestProduct`; Karte „Letzte Woche“ im Stand)
   - `progression.ts` (`suggest`, `advance`)
   - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
   - `warmup.ts`, `duration.ts`, `saga.ts` (Erzähler „Aschekurier“)

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { balanceOf } from "../engine/balance";
 import { mesoBalance } from "../engine/bilanz";
 import { standOf, type StandRow } from "../engine/dashboard";
+import { reviewLine, reviewWeek, weekReview } from "../engine/weekreview";
 import { AFFECT_MIN, affectSummary, affectTone, affectWord } from "../engine/affect";
 import { addDays, daysBetween, fmtDate } from "../engine/plan";
 import type { ResidualClock } from "../engine/residual";
@@ -79,6 +80,8 @@ export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: 
 
       <AffectCard state={state} today={today} />
 
+      <ReviewCard state={state} today={today} />
+
       <section className="card stack">
         <h2>Testwoche</h2>
         {st.test ? (
@@ -134,6 +137,37 @@ function AffectCard({ state, today }: { state: AppState; today: string }) {
         )}
         {a.flag && <div className="note small">{a.flag}</div>}
       </>}
+    </section>
+  );
+}
+
+/** Wochenrückblick (1.27): eine Zeile, antippen zeigt die Einheiten und was gestiegen ist. Keine Pflicht, kein Zähler. */
+function ReviewCard({ state, today }: { state: AppState; today: string }) {
+  const r = useMemo(() => { const t = reviewWeek(state, today); return t ? weekReview(state, t.block, t.week) : null; }, [state, today]);
+  const [open, setOpen] = useState(false);
+  if (!r || (!r.done && !r.condensed)) return null;
+  return (
+    <section className="card stack" aria-label="Letzte Woche">
+      <button className="review-head" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <span className="review-title"><h2>Letzte Woche</h2><span className="muted small">ab {fmtDate(r.monday)}</span></span>
+        <span className="review-line">{reviewLine(r)}</span>
+        <span className={`chev ${open ? "open" : ""}`} aria-hidden>›</span>
+      </button>
+      {open && (
+        <div className="stack tight">
+          <div className="review-list">
+            {r.sessions.map((s) => (
+              <div key={s.role + s.date} className="review-row">
+                <span className="mono small">{s.day}</span>
+                <span>{s.name}</span>
+                <span className="muted small">{s.minutes != null ? `${s.minutes} Min` : ""}</span>
+                <span className="mono small">{s.feeling != null ? signed(s.feeling) : ""}</span>
+              </div>
+            ))}
+          </div>
+          {r.up.length > 0 && <div className="small"><strong>Gesteigert:</strong> {r.up.join(", ")}</div>}
+        </div>
+      )}
     </section>
   );
 }

@@ -62,7 +62,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P2~~ | 1.24.0 ✓ | Befinden (Feeling Scale) nach jeder Einheit, Auswertung im Stand — **gebaut 11.11.2026** |
 | ~~P3~~ | 1.25.0 ✓ | Volumen Soll-Ist im Stand — **gebaut 11.11.2026** |
 | ~~P4~~ | 1.26.0 ✓ | Ideenparkplatz (ohne Sperre oder Rückfrage) — **gebaut 11.11.2026** |
-| P5 | 1.27.0 | Wochenrückblick (im Stand) |
+| ~~P5~~ | 1.27.0 ✓ | Wochenrückblick (im Stand) — **gebaut 11.11.2026** |
 | P6 | 1.28.0 | Defizit-Phasen: „gehalten“ zählt als Erfolg |
 | P7 | 1.29.0 | Ausklang nach Bestie und Finisher |
 | P8 | 1.30.0 | Entlastung nach Signalen |
@@ -434,6 +434,10 @@ Entscheidung (10.11.2026): **keine neue Karte auf Heute.** Der Rückblick lebt i
 `src/engine/weekreview.ts`: `weekReview(state, block, week)`. Gesteigert = Übung, deren bestes Satzprodukt
 (Gewicht × (1 + Wdh/30)) über dem der vorigen Einheit derselben Übung liegt. Karte in `Dashboard.tsx`.
 Tests mit zwei aufeinanderfolgenden Wochen (gesteigert, entfallen, verdichtet).
+
+**Annahme (Agent, 11.11.2026):** Dauer je Einheit aus den Zeitstempeln der abgehakten Sätze (erster bis letzter);
+ohne zwei Zeitstempel bleibt sie leer. Ohne Gewicht zählt im Satzprodukt die Wiederholungszahl, ohne beides die
+Sekunden. Die Karte steht unter „Befinden“, vor „Testwoche“.
 
 ---
 

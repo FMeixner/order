@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.27.0] – 2026-11-11
+
+### Neu
+- **Stand › Letzte Woche:** die zuletzt abgeschlossene Trainingswoche in einer Zeile, etwa „3 von 4 Einheiten · 1 verdichtet · Befinden +2 · 2 Gewichte gesteigert“; die laufende Woche erscheint, sobald sie geschafft ist. Ausgefallenes heißt „verdichtet“ (Fällt aus mit Ausgleich) oder „entfallen“. Antippen zeigt jede Einheit mit Tag, Dauer und Befinden und die gesteigerten Übungen. Keine Pflicht, nichts zum Wegklicken; auf Heute ändert sich nichts.
+
 ## [1.26.0] – 2026-11-11
 
 ### Neu
