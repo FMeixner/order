@@ -442,3 +442,25 @@ test("Befinden: Einheit mit +3 abschließen speichert den Wert, Stand zeigt die 
   await expect(vol.locator(".vol-planned").first()).toBeAttached();
   await vol.screenshot({ path: "test-results/volume-card.png" });
 });
+
+test("Ideenparkplatz: Idee notieren, abhaken, in der Testwoche sichtbar", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Plan" }).click();
+  await page.getByRole("button", { name: "Idee notieren" }).click();
+  await page.getByLabel("Idee").fill("Kettlebell-Sport ausprobieren");
+  await page.getByLabel("Idee").press("Enter");
+  await page.getByRole("button", { name: "Idee notieren" }).click();
+  await page.getByLabel("Idee").fill("Kletterblock im Sommer");
+  await page.getByRole("button", { name: "Merken" }).click();
+  await page.getByRole("button", { name: /Ideen für später/ }).click();
+  await page.getByRole("checkbox", { name: "Kettlebell-Sport ausprobieren" }).check();
+  let st = await stored(page);
+  expect(st.ideas?.map((i) => [i.text, !!i.done])).toEqual([["Kettlebell-Sport ausprobieren", true], ["Kletterblock im Sommer", false]]);
+  // Testwoche: die offene Idee wartet
+  st = { ...st, plan: st.plan.map((b) => ({ ...b, focusId: "test" })) };
+  await page.evaluate((s) => localStorage.setItem("order:v1", s), JSON.stringify(st));
+  await page.reload();
+  await expect(page.getByText("1 Idee wartet.")).toBeVisible();
+  await expect(page.getByText("Kletterblock im Sommer")).toBeVisible();
+});

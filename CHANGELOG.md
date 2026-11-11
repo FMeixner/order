@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.26.0] – 2026-11-11
+
+### Neu
+- **Ideenparkplatz:** Im Plan neben „+ Phase anhängen“ steht „Idee notieren“. Neue Ideen warten unter „Ideen für später“ (abhaken, löschen) und melden sich in der Testwoche („2 Ideen warten. Jetzt ist der Moment, sie einzuplanen.“) und in „Jahr planen“, Schritt 4, als aufklappbare Liste. Keine Sperre, keine Rückfrage: Laufende Phasen bleiben frei änderbar.
+
 ## [1.25.0] – 2026-11-11
 
 ### Neu

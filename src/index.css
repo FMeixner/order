@@ -801,3 +801,12 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shado
 .vol-planned { position: absolute; top: 1px; bottom: 1px; left: 0; border: 1.5px solid color-mix(in srgb, var(--teal) 70%, transparent); border-radius: 4px; }
 .vol-fill.under { background: var(--amber); }
 .vol-cardio { padding-top: 6px; border-top: 1px solid var(--border); }
+
+/* Ideenparkplatz (1.26) */
+.idea-new { flex: 1 1 100%; gap: 8px; }
+.idea-new input { flex: 1; min-width: 0; }
+.idea-list { display: flex; flex-direction: column; }
+.idea-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; padding: 4px 0; border-top: 1px solid var(--border); }
+.idea-row:first-child { border-top: 0; }
+.idea-row.done .check span { text-decoration: line-through; color: var(--muted); }
+.idea-wait ul { margin: 6px 0 0; padding-left: 18px; }

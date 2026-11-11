@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useState } from "react";
+import { IdeasWaiting } from "./Ideas";
 import { BEAST_BY_ID, TESTWEEK } from "../data";
 import { addDays, expandDrills, fmtDate, mondayOf, scheduleFor, trainingDays } from "../engine/plan";
 import { variantHint } from "../engine/norms";
@@ -156,6 +157,7 @@ export function TestWeek({ state, update, block, today, preview = false, onPlan 
         <Desc text={`Drei Testtage, jeder frisch; Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, Tests ohne Material auslassen. Die Woche davor läuft mit −1 Satz.${preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}`} />
         {ravenOn(state) && <RavenTournamentBadge state={state} block={block} today={today} />}
       </div>
+      {!preview && <IdeasWaiting ideas={state.ideas} />}
       {allDone && <TestSummary state={state} block={block} today={today} onPlan={onPlan} />}
       {/* Wie jede andere Woche: Tage oben, der gewählte Tag zeigt seine Cups */}
       <div className="days">

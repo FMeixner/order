@@ -16,6 +16,7 @@ import { PlanStack } from "./PlanStack";
 import { rankFor, type Aim } from "../engine/sequence";
 import { aimsOf, bindOf, FLAG_TEXT, flagsOf, rankInKlammer, klammerName, type AimPrio, type KlammerView } from "../engine/klammer";
 import { YearTimeline } from "./YearPicture";
+import { IdeaNote, IdeasList, type Idea } from "./Ideas";
 import type { YearView } from "../engine/yearview";
 import { KlammerIcon, Sign } from "./Signs";
 import { KLAMMER_BY_ID } from "../data";
@@ -239,7 +240,7 @@ export function newBlock(plan: PlanBlock[]): PlanBlock {
   return { id: uid("b"), focusId: "", label: "", start, end: addDays(start, 7 * 10 - 1), load: "medium", travel: false };
 }
 
-export function PlanList({ plan, profiles, days, user, sections, deficits, slotInfo, onChange, today, aim: aimIn, steer, onKlammer, aims, gymDays, yearView, onYearView }: { yearView?: YearView; onYearView?: (v: YearView) => void; plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none"; onKlammer?: (k: KlammerView) => void; aims?: AimPrio[]; gymDays?: number }) {
+export function PlanList({ plan, profiles, days, user, sections, deficits, slotInfo, onChange, today, aim: aimIn, steer, onKlammer, aims, gymDays, yearView, onYearView, ideas, onIdeas }: { ideas?: Idea[]; onIdeas?: (x: Idea[]) => void; yearView?: YearView; onYearView?: (v: YearView) => void; plan: PlanBlock[]; profiles: EquipmentProfile[]; days?: number; user?: UserProfile; sections?: Section[]; deficits?: DeficitWeights; deficitNames?: string[]; slotInfo?: (b: PlanBlock) => SlotsPlan; onChange: (p: PlanBlock[]) => void; today: string; aim?: Aim; steer?: DeficitWeights; testPolicy?: "each" | "twice" | "none"; onKlammer?: (k: KlammerView) => void; aims?: AimPrio[]; gymDays?: number }) {
   const aim: Aim = aimIn ?? (deficits?.length ? "deficits" : "allround");
   const [edit, setEdit] = useState<PlanBlock | null>(null);
   // Antippen zeigt erst, was der Orden abbildet; Bearbeiten ist der zweite Schritt
@@ -266,7 +267,9 @@ export function PlanList({ plan, profiles, days, user, sections, deficits, slotI
       {gaps.length > 0 && <div className="note warn row"><Sign kind="warn" /> {gaps.join("; ")}</div>}
       <div className="row wrap">
         <button className="btn ghost small" onClick={() => { const nb = newBlock(plan); const p = [...plan, nb]; const top = rankFor(p, nb.id, aim, deficits ?? [], steer)[0]; onChange(top ? p.map((x) => (x.id === nb.id ? { ...x, focusId: top.f.id } : x)) : p); }}>+ Phase anhängen</button>
+        {onIdeas && <IdeaNote onAdd={(t) => onIdeas([...(ideas ?? []), { date: isoDate(new Date()), text: t }])} />}
       </div>
+      {onIdeas && ideas && <IdeasList ideas={ideas} onChange={onIdeas} />}
       {view && blockFocus(view) && (
         <Modal title={focusName(view.focusId)} onClose={() => setView(null)} wide>
           <div className="stack">

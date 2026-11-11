@@ -396,6 +396,8 @@ export interface Session {
 export interface AppState {
   /** Zeitstrahl (1.23): ganzes Jahr oder ab heute */
   yearView?: "year" | "ahead";
+  /** Ideenparkplatz (1.26): Ideen für später, ohne Sperre; offene erscheinen in der Testwoche und in „Jahr planen“ */
+  ideas?: { date: string; text: string; done?: boolean }[];
   /** Eigene Päckchengrößen je Bestienübung (Wiederholungen am Stück = ein halber Satz) */
   packets?: Record<string, number>;
   /** Ansage-Drill: Sprache und Schrift, nur Sprache oder nur Schrift */

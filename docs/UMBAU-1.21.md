@@ -61,7 +61,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P1~~ | 1.23.0 ✓ | Zeitstrahl: ganzes Jahr und ab heute, Jahresbilanz der Zeichen — **gebaut 11.11.2026** |
 | ~~P2~~ | 1.24.0 ✓ | Befinden (Feeling Scale) nach jeder Einheit, Auswertung im Stand — **gebaut 11.11.2026** |
 | ~~P3~~ | 1.25.0 ✓ | Volumen Soll-Ist im Stand — **gebaut 11.11.2026** |
-| P4 | 1.26.0 | Ideenparkplatz (ohne Sperre oder Rückfrage) |
+| ~~P4~~ | 1.26.0 ✓ | Ideenparkplatz (ohne Sperre oder Rückfrage) — **gebaut 11.11.2026** |
 | P5 | 1.27.0 | Wochenrückblick (im Stand) |
 | P6 | 1.28.0 | Defizit-Phasen: „gehalten“ zählt als Erfolg |
 | P7 | 1.29.0 | Ausklang nach Bestie und Finisher |
@@ -410,6 +410,10 @@ an dem sie warten können.
 ### Technik
 `types.ts` (`ideas`), `PlanEditor.tsx` bzw. Plan-Liste (Knopf und Liste), `TestWeek.tsx` (`TestSummary`) und
 `YearWizard.tsx` (Schritt 4). Test: e2e Idee notieren, abhaken, in der Testwoche sichtbar.
+
+**Annahme (Agent, 11.11.2026):** Der Hinweis auf offene Ideen steht in der Testwoche oben über den Testtagen, nicht erst
+in der Auswertung (`TestSummary` erscheint erst, wenn alle Cups Werte haben — dann käme die Erinnerung zu spät).
+Komponenten in `src/ui/Ideas.tsx`.
 
 ---
 

@@ -106,6 +106,7 @@ export default function App() {
               <PlanList plan={state.plan} profiles={state.equipment} days={trainingDays(state).length} user={state.user} sections={state.sections} today={today}
                 deficits={deficits} deficitNames={deficitNames} slotInfo={(b) => slotsFor(state, b)} aim={yearAimOf(state, deficits)} aims={state.yearAims} gymDays={gymDaysOf(state)} steer={steer}
                 onKlammer={() => setWizard(3)} yearView={state.yearView ?? "year"} onYearView={(yearView) => update((s) => ({ ...s, yearView }))}
+                ideas={state.ideas ?? []} onIdeas={(ideas) => update((s) => ({ ...s, ideas }))}
                 onChange={(plan) => update((s) => ({ ...s, plan }))} />
             </div>
           )}
