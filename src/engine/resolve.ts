@@ -103,6 +103,8 @@ export function available(name: string, p: EquipmentProfile, skills?: SkillSet):
     if (n === "dip" && !p.has.dip) return false;
     if (n === "wheel" && !p.has.wheel) return false;
     if (n === "sword" && !p.has.sword) return false;
+    // Springseil: fehlt der Eintrag im Profil, gilt es als vorhanden
+    if (n === "rope" && p.has.rope === false) return false;
     // Defizit: Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln als Griffe
     if (n === "deficit" && !p.has.handles && !p.has.rings && !p.dumbbells.length) return false;
   }

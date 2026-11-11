@@ -32,10 +32,10 @@
       "warmup": ["short_base", "run_prep", "jump_prep", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "sc-s-1", "name": "Seilsprints", "kind": "interval", "interval": {"work": 20, "rest": 40, "rounds": 8}, "prog": "none"}},
-        {"type": "single", "slot": {"id": "sc-s-2", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 60}},
         {"type": "single", "slot": {"id": "sc-s-r1", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30}},
         {"type": "single", "slot": {"id": "sc-s-3", "name": "Tibialis Raise", "sets": 3, "reps": "15-25", "prog": "reps", "rest": 45}},
-        {"type": "beast", "id": "sc-s-bst", "classes": ["plage"]}
+        {"type": "beast", "id": "sc-s-bst", "classes": ["plage"]},
+        {"type": "single", "slot": {"id": "sc-s-2", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 60}}
       ]
     },
     "schwert": {

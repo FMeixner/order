@@ -532,6 +532,11 @@
     "equip": "machine",
     "desc": "Rücken an das Polster, Becken gegen den Gurt nach oben strecken, oben kurz halten."
   },
+  "High Knees auf der Stelle": {
+    "equip": "bodyweight",
+    "loud": true,
+    "desc": "Auf der Stelle laufen, Knie abwechselnd bis Hüfthöhe, schnell und leicht auf den Fußballen, Arme schwingen mit."
+  },
   "Hollow Hold": {
     "equip": "bodyweight",
     "desc": "Rückenlage, unterer Rücken am Boden, Arme und Beine leicht angehoben. Spannung halten."
@@ -592,7 +597,19 @@
     ]
   },
   "Intervalle: Burpees oder Seilspringen": {
-    "equip": "bodyweight"
+    "equip": "bodyweight",
+    "needs": [
+      "rope"
+    ],
+    "instead": [
+      {
+        "name": "Intervalle: Burpees"
+      }
+    ]
+  },
+  "Intervalle: Burpees": {
+    "equip": "bodyweight",
+    "loud": true
   },
   "Jefferson Curl": {
     "equip": "kettlebell",
@@ -1018,7 +1035,13 @@
     "desc": "Locker aus den Sprunggelenken, Ellbogen nah am Körper, das Seil kommt aus den Handgelenken. Fortgeschritten: Wechselschritt, Kreuzen, Doppelsprünge.",
     "loud": true,
     "space": true,
+    "needs": [
+      "rope"
+    ],
     "instead": [
+      {
+        "name": "Pogo Hops"
+      },
       {
         "name": "Mountain Climber"
       }
@@ -1029,7 +1052,18 @@
   },
   "Seilsprints": {
     "equip": "cardio",
-    "desc": "20 Sekunden maximale Drehzahl auf dem Platz, 40 Sekunden locker weiterhüpfen. Der Antritt kommt aus den Sprunggelenken, nicht aus den Knien."
+    "desc": "20 Sekunden maximale Drehzahl auf dem Platz, 40 Sekunden locker weiterhüpfen. Der Antritt kommt aus den Sprunggelenken, nicht aus den Knien.",
+    "needs": [
+      "rope"
+    ],
+    "instead": [
+      {
+        "name": "High Knees auf der Stelle"
+      },
+      {
+        "name": "Mountain Climber"
+      }
+    ]
   },
   "Shoulder Press Machine": {
     "equip": "machine"
@@ -1101,7 +1135,20 @@
     "equip": "dumbbell"
   },
   "Sprint oder Seilspringen 10 × 30 s": {
-    "equip": "bodyweight"
+    "equip": "bodyweight",
+    "needs": [
+      "rope"
+    ],
+    "instead": [
+      {
+        "name": "Sprints 10 × 30 s"
+      }
+    ]
+  },
+  "Sprints 10 × 30 s": {
+    "equip": "cardio",
+    "run": true,
+    "desc": "30 Sekunden schnell laufen, dann gehend oder locker zurück. Fehlt die Strecke: High Knees auf der Stelle."
   },
   "Squat Jump": {
     "equip": "bodyweight",

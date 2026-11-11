@@ -32,8 +32,8 @@
       "name": "Zufallsbestie", "location": "home", "minutes": 35,
       "warmup": ["short_base", "jump_prep", "full_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "beast", "id": "hu-b-1", "classes": ["bestie", "ungeheuer"]},
-        {"type": "single", "slot": {"id": "hu-b-2", "name": "Shuttle Runs 6 × 20 m", "sets": 1, "reps": "6 × 20 m", "prog": "none"}}
+        {"type": "single", "slot": {"id": "hu-b-2", "name": "Shuttle Runs 6 × 20 m", "sets": 1, "reps": "6 × 20 m", "prog": "none"}},
+        {"type": "beast", "id": "hu-b-1", "classes": ["bestie", "ungeheuer"]}
       ]
     },
     "kraft_sprung": {

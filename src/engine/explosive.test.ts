@@ -13,6 +13,16 @@ describe("Explosives vor Ausdauer (1.32)", () => {
     const found = FOCI.flatMap((f) => explosiveViolations(f).map((v) => `${f.id} | ${v.key}`));
     expect(found.sort()).toEqual([...KNOWN].sort());
   });
+  it("kraftvolles Ende: kurzes Explosives ganz am Schluss nur bei explosivem Beginn, höchstens eine Rolle je Orden (Scout Seil)", () => {
+    expect(FOCUS_BY_ID.scout.roles.seil.blocks.map((b) => (b.type === "single" ? b.slot.name : b.type))).toEqual(["Seilsprints", "Hollow Hold", "Tibialis Raise", "beast", "Pogo Hops"]);
+    const jump = { type: "single", slot: { id: "j", name: "Pogo Hops", sets: 3, reps: "20" } };
+    const beast = { type: "beast", id: "x" };
+    const mk = (roles: Record<string, unknown[]>) => ({ ...FOCUS_BY_ID.knight, high_load: undefined, roles: Object.fromEntries(Object.entries(roles).map(([k, blocks]) => [k, { name: k, location: "home", minutes: 30, blocks }])) }) as unknown as Focus;
+    expect(explosiveViolations(mk({ a: [jump, beast, jump] }))).toEqual([]);
+    expect(explosiveViolations(mk({ a: [beast, jump] })).length).toBe(1);
+    expect(explosiveViolations(mk({ a: [jump, beast, { ...jump, slot: { ...jump.slot, sets: 5 } }] })).length).toBe(1);
+    expect(explosiveViolations(mk({ a: [jump, beast, jump], b: [jump, beast, jump] })).length).toBe(1);
+  });
   it("erkennt Bestie, Intervall und Lauf vor Sprung, Wurf oder Sprint, je A/B-Woche", () => {
     const f = { ...FOCUS_BY_ID.knight, roles: {
       a: { name: "A", location: "home", minutes: 30, blocks: [{ type: "beast", id: "x" }, { type: "single", slot: { id: "j", name: "Box Jump", sets: 3, reps: "5" } }] },

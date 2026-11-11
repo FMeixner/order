@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.34.2] – 2026-11-11
+
+### Geändert
+- **Explosives nach vorn** in vier Orden: Huntsman (Shuttle Runs vor die Bestie), Olympian Bonus (Pogo Hops vor das Seil), Skirmisher Bonus (Pogo Hops vor die Bestie), Scout „Seil“ (Seilsprints vorn, Pogo Hops als kraftvolles Ende).
+- **Kraftvolles Ende:** Ein kurzes Sprungstück ganz am Schluss ist erlaubt, wenn die Einheit explosiv beginnt – höchstens eine Rolle je Orden. Die Prüfung kennt keine Ausnahmen mehr.
+
+### Neu
+- **Ohne Springseil:** Jede Seilübung hat einen festen Ersatz (Seilsprints → High Knees auf der Stelle, Seilspringen → Pogo Hops bzw. leise Mountain Climber, Mischformen → die seilfreie Hälfte). In Bestien werden Single Unders zu Pogo Hops (mutiert).
+
 ## [1.34.1] – 2026-11-11
 
 ### Neu

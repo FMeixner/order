@@ -67,8 +67,8 @@
       "name": "Bonus: Bestie", "location": "reise", "minutes": 30,
       "warmup": ["short_base", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "beast", "id": "bx-sk-bst", "classes": ["bestie"]},
-        {"type": "single", "slot": {"id": "bx-sk-p", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 45}}
+        {"type": "single", "slot": {"id": "bx-sk-p", "name": "Pogo Hops", "sets": 3, "reps": "20", "prog": "none", "rest": 45}},
+        {"type": "beast", "id": "bx-sk-bst", "classes": ["bestie"]}
       ]
     }
   }

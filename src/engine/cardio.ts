@@ -63,6 +63,8 @@ export function swapRunBeast(b: Beast, to: CardioSub | undefined): Beast {
 const ROW_S_PER_CAL = 4.5;
 const ROW_RX = /(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)*)\s?(m|c)\s+row\b/gi;
 const BIKE_RX = /(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)*)\s?(m|k)\s+bike\b/gi;
+/** Seilsprünge in Bestien („100 Single Unders“): ohne Seil gleich viele Pogo Hops (gleicher Sprungrhythmus) */
+const ROPE_RX = /(\d+(?:\/\d+)*)\s+(?:single|double) unders\b/gi;
 /** Ziel eines ersetzten Elements: „run“ zählt dazu, denn auch eine Laufstrecke kann fehlen */
 export type LocSub = "run" | CardioSub;
 const subAvail = (p: EquipmentProfile, t: LocSub): boolean =>
@@ -106,6 +108,7 @@ export function swapLocText(work: string, p: EquipmentProfile): string | null {
     if (!to) return null;
     out = out.replace(BIKE_RX, (_m, n: string, unit: string) => secsToTarget(n.split("/").map(Number).map((x) => meters(x, unit) * BIKE_S_PER_M), to));
   }
+  if (p.has.rope === false && new RegExp(ROPE_RX.source, "i").test(work)) out = out.replace(ROPE_RX, (_m, n: string) => `${n} Pogo Hops`);
   return out;
 }
 /** Steht in der Bestie ein Cardio-Element, das der Ort nicht hergibt? */
@@ -113,7 +116,8 @@ export const hasLocText = (work: string, p: EquipmentProfile): boolean =>
   (!p.has.sprint && new RegExp(SPRINT_RX.source, "i").test(work)) ||
   (!p.has.run && new RegExp(RUN_RX.source, "i").test(work)) ||
   (!p.has.rower && new RegExp(ROW_RX.source, "i").test(work)) ||
-  (!p.has.bike && new RegExp(BIKE_RX.source, "i").test(work));
+  (!p.has.bike && new RegExp(BIKE_RX.source, "i").test(work)) ||
+  (p.has.rope === false && new RegExp(ROPE_RX.source, "i").test(work));
 
 /** Bestie am Ort: Was der Ort nicht hergibt (Strecke für Läufe und Sprints, Rudergerät, Rad), wird nur bei diesen Elementen
     umgerechnet, der Rest bleibt. Die Bestie zählt als mutiert („X mutiert“, Id auf die hexed-Form) und teilt sich mit allen

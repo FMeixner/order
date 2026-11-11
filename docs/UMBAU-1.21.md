@@ -25,8 +25,8 @@ beschrieben, erst den Nutzer fragen.
   festen Ersatz ohne Seil (`instead`): Seilsprints → High Knees auf der Stelle, Seilspringen/Single Unders →
   Pogo Hops (Sprungrhythmus, gleiche Zeit), Mischübungen → die seilfreie Hälfte (Sprints bzw. Burpees). In Bestien
   ersetzt die Verhex-Logik nicht; dort gilt dieselbe `instead`-Zuordnung. Validator: jede Übung mit `needs: rope` hat
-  `instead`. Mit PB oder vorher als kleines Paket bauen. Stand 11.11.: `has.rope` existiert bereits im
-  Equipment-Profil; offen sind nur `needs`/`instead` an den Seilübungen.
+  `instead`. **Gebaut 11.11.2026 (1.34.2)**: `needs: ["rope"]` + `instead` an allen Seilübungen, Single Unders in Bestien
+  ohne Seil als Pogo Hops (mutiert), Validator prüft den Ersatz.
 - 10.11.2026 · P2 Befinden: Feeling Scale −5 bis +5 für alle Orden (statt fünf Stufen).
 - 10.11.2026 · P3 Volumen: Anzeige neutral, kein Hinweis über dem Band. Überschießen wird stattdessen **by design
   verhindert**: Die Dosis wird zu Beginn jedes Ordens als Trajektorie geplant, die exakt machbar ist, und die
@@ -569,7 +569,11 @@ systematic review and meta-analysis. *Sports Medicine, 52*(3), 601–612.
 - Falke (`klammer: "athletik"`): am Tag nach einem Tag mit Sprung-, Wurf- oder Sprintübung keine Bestie der Klassen
   uralte/verfluchte (`afterExplosiveDay` in `plan.ts`, wirkt in `pickWith`; uralte/verfluchte werden zu ungeheuer).
 
-### Verstöße zur Entscheidung des Nutzers (nicht umgestellt, Ordensinhalt kuratiert der Nutzer)
+### Verstöße zur Entscheidung des Nutzers — **umgestellt 11.11.2026 (1.34.2) nach Freigabe**
+Regel des Nutzers dazu: Explosives nach vorn; gibt es mehrere explosive Teile und ist eines sehr kurz, darf es ans Ende
+(„kraftvolles Ende“, höchstens einmal je Orden und Woche). Scout „Seil“: Seilsprints vorn, Pogo Hops zum Schluss.
+
+(Befund vor dem Umbau:)
 | Orden | Rolle | Befund | Möglicher Umbau |
 |---|---|---|---|
 | Huntsman | Zufallsbestie (`bestie_rotation`) | Bestie vor Shuttle Runs 6 × 20 m | Shuttle Runs vor die Bestie |

@@ -174,7 +174,7 @@ export function Help() {
         <li>Übergabe zwischen Orden: Dieselbe Übung nimmt ihr Gewicht mit. Wechselt der Wiederholungsbereich (Bench Press 4 × 8–12 im Aufbau, dann 4 × 4–6 im Kraft-Orden), rechnet die App das Gewicht um, vorsichtig für das obere Ende des neuen Bereichs (Formel nach Epley, 1985). Der Hinweis steht an der Übung; deine Rückmeldung justiert in ein, zwei Einheiten.</li>
         <li>Die Entlastung zählt über das ganze Zeichen: ab der fünften Woche alle vier Wochen, auch wenn ein Orden darin kürzer läuft.</li>
         <li>Warnung am letzten Teil: Sprungkraft und Schnelligkeit klingen ohne Reiz in wenigen Wochen ab — im letzten Orden vor der Testwoche misst sie die Testwoche nicht mehr im Vollbesitz.</li>
-        <li><strong>Explosives vor Ausdauer</strong>: Sprünge, Würfe und Sprints stehen in jeder Einheit vor Läufen, Intervallen und Bestien. Ausdauertraining stört Muskelaufbau und Maximalkraft kaum, die Explosivkraft aber schon (Schumann et al., 2022) — also frisch springen, danach schwitzen. Im Falken kommt am Tag nach einem Sprint- oder Sprungtag keine uralte oder verfluchte Bestie.</li>
+        <li><strong>Explosives vor Ausdauer</strong>: Sprünge, Würfe und Sprints stehen in jeder Einheit vor Läufen, Intervallen und Bestien. Ausdauertraining stört Muskelaufbau und Maximalkraft kaum, die Explosivkraft aber schon (Schumann et al., 2022) — also frisch springen, danach schwitzen. Ausnahme, höchstens einmal je Orden und Woche: ein kurzes Sprungstück ganz am Schluss als kraftvolles Ende, wenn die Einheit schon explosiv begonnen hat (Scout: Seilsprints vorn, Pogo Hops zum Schluss). Im Falken kommt am Tag nach einem Sprint- oder Sprungtag keine uralte oder verfluchte Bestie.</li>
       </ul>
 
       </Sec>
@@ -228,7 +228,7 @@ export function Help() {
       <Sec title="Orte">
       <ul>
         <li>Ein Ort ist ein Name plus das, was dort steht. Eine Kategorie gibt es nicht: Die App nimmt die Übung des Ordens, wenn das Equipment reicht, sonst die nächste Variante aus dem Orden, und erst dann einen Ersatz aus der Bibliothek.</li>
-        <li>„Laufen möglich“, „Sprints möglich“ und „Springseil“ sagen, was an diesem Ort geht (Vorgabe: Laufen ja, Sprints nein, Springseil ja). Sie steuern die Bestien: Fehlt die Strecke, das Rudergerät oder das Rad, werden nur die betroffenen Cardio-Elemente umgerechnet — Details unter Bestien.</li>
+        <li>„Laufen möglich“, „Sprints möglich“ und „Springseil“ sagen, was an diesem Ort geht (Vorgabe: Laufen ja, Sprints nein, Springseil ja). Sie steuern die Bestien: Fehlt die Strecke, das Rudergerät oder das Rad, werden nur die betroffenen Cardio-Elemente umgerechnet — Details unter Bestien. Ohne Springseil hat jede Seilübung einen festen Ersatz: Seilsprints → High Knees auf der Stelle, Seilspringen → Pogo Hops (leise: Mountain Climber), „Sprint oder Seilspringen“ → Sprints, „Burpees oder Seilspringen“ → Burpees; in Bestien werden Single Unders zu Pogo Hops (mutiert).</li>
         <li>Fehlen Weste oder Scheiben, läuft die Übung ohne Zusatzlast, außer der Orden sieht dafür eine eigene Fassung vor (etwa Klimmzüge bis kurz vor Schluss statt schwerer Fünfer).</li>
       </ul>
 
