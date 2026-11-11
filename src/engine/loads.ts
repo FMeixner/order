@@ -41,7 +41,7 @@ export function loadScale(p: EquipmentProfile, equip: Equip): { list: number[] }
     case "machine":
       return p.has.machines ? { step: p.machineStep || 5 } : null;
     case "sandbag":
-      return p.has.sandbag ? { step: 5 } : null;
+      return p.has.sandbag ? (p.sandbags?.length ? { list: [...p.sandbags].sort((a, b) => a - b) } : { step: 5 }) : null;
     default:
       return null;
   }

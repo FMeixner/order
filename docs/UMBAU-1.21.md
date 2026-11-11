@@ -71,7 +71,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P11~~ | 1.33.0 ✓ | Schätzwerte lernen aus dem Log — **gebaut 11.11.2026** |
 | ~~P12~~ | 1.34.0 ✓ | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung — **gebaut 11.11.2026** (Labels als Entwurf, Einbau nach Freigabe) |
 | PH | 1.35.0 | Harlekin: Wiederholung nach 12 Wochen, bei kürzeren Blöcken 4-Wochen-Häppchen (Lösung offen) |
-| PG | — | Bestienpool: Lücken der Kombinatorik schließen (Rücken, Rumpf ohne Oberkörper …), neue Bestien entwerfen |
+| ~~PG~~ | 1.32.1 ✓ | Bestienpool: neun neue Bestien (Band, Sandsack, Stange, Ringe) — **gebaut 11.11.2026**; 1.34.1 mutierte Lastbestie |
 
 1.21.0 ist vergeben (Orden Gladiator, 10.11.2026). Die Versionen unten folgen dieser Tabelle; wo im Text noch eine
 alte Nummer steht, gilt die Tabelle.

@@ -66,7 +66,7 @@ export function SessionView(ctx: SessionCtx) {
         slots[r.key] = advance(r, sharedState(slots, r, estimateEnv(st, ctx.date)), e, ctx.profile, ctx.date);
       }
       const beastTimes = { ...st.beastTimes };
-      const load = (r: BeastResult) => ({ ...(r.kg != null ? { kg: r.kg } : {}), ...(r.band ? { band: r.band } : {}), ...(r.tech ? { tech: r.tech } : {}) });
+      const load = (r: BeastResult) => ({ ...(r.kg != null ? { kg: r.kg } : {}), ...(r.band ? { band: r.band } : {}), ...(r.tech ? { tech: r.tech } : {}), ...(r.adj ? { adj: r.adj } : {}) });
       for (const r of allRuns(cur)) if (r.seconds && !r.easy) beastTimes[r.id] = [...(beastTimes[r.id] ?? []), { date: ctx.date, seconds: r.seconds, ...load(r) }];
       const feelingLog = feeling != null ? [...st.feeling, { date: ctx.date, sessionId: id, value: feeling }] : st.feeling;
       // Jede gezeigte Bestie merken, auch ohne Zeit: zählt für die Rotation

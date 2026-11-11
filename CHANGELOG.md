@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.34.1] – 2026-11-11
+
+### Neu
+- **Mutierte Lastbestie:** Passt das vorhandene Gewicht nicht zum Vorschlag (mehr als 10 % daneben), passt die App die Wiederholungen der Lastübungen an – schwerer Sack, weniger Wiederholungen, leichter, mehr. Mutierte Läufe zählen nicht als Rekord und steuern die Progression nicht.
+- **Sandsäcke im Equipment-Profil:** eigene Gewichte eintragen (z. B. 15; 25). Ohne Liste wie bisher beliebig in 5-kg-Schritten.
+
+### Geändert
+- **King steigt bei den Muskeln** (statt sanft); Kondition bleibt sanft. Die langen Bestien passen damit ins Ziel statt darüber.
+- **Tiamat:** keine Übung mehr doppelt; jetzt Bent-Over Row · Romanian Deadlift · Ground-to-Shoulder.
+
+### Intern
+- Stichprobe zur Obergrenze rechnet Entlastungswochen wie die App (reduziert); King wieder unter 15 %.
+
 ## [1.34.0] – 2026-11-11
 
 ### Neu

@@ -55,6 +55,11 @@ export function ProfileForm({ p, onChange, onDelete }: { p: EquipmentProfile; on
           {p.has.machines && <Field label="Maschinen: Schritt (kg)"><input type="number" inputMode="decimal" step="0.5" value={p.machineStep} onChange={(e) => set({ machineStep: parseFloat(e.target.value) || 5 })} /></Field>}
         </div>
       )}
+      {p.has.sandbag && (
+        <Field label="Sandsäcke (kg)" hint="Leer lassen: beliebig in 5-kg-Schritten. Passt kein Sack zum Vorschlag, mutiert die Bestie (Wiederholungen angepasst).">
+          <ListInput value={p.sandbags ?? []} onChange={(sandbags) => set({ sandbags })} placeholder="z. B. 15; 25" />
+        </Field>
+      )}
       <Field label="Gewichtsweste (kg)" hint="Leer lassen, wenn keine vorhanden">
         <ListInput value={p.vest} onChange={(vest) => set({ vest })} placeholder="z. B. 5; 10; 15; 20" />
       </Field>

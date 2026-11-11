@@ -64,7 +64,7 @@ describe("Modus je Achse", () => {
     expect(doseMode(FOCUS_BY_ID.knight)).toEqual({ muscle: "progress", cardio: "maintain" });
     expect(doseMode(FOCUS_BY_ID.gladiator)).toEqual({ muscle: "progress", cardio: "progress" });
     expect(doseMode(FOCUS_BY_ID.pilgrim)).toEqual({ muscle: "maintain", cardio: "progress" });
-    expect(doseMode(FOCUS_BY_ID.king)).toEqual({ muscle: "soft", cardio: "soft" });
+    expect(doseMode(FOCUS_BY_ID.king)).toEqual({ muscle: "progress", cardio: "soft" });
     expect(doseMode(FOCUS_BY_ID.alchemist)).toEqual({ muscle: "maintain", cardio: "soft" });
     expect(doseMode(FOCUS_BY_ID.monk, { klammer: "regeneration" } as PlanBlock)).toEqual({ muscle: "maintain", cardio: "maintain" });
   });
@@ -132,7 +132,7 @@ describe("Wahl und feste Konditionsslots", () => {
         const sum: Record<string, number> = {};
         for (const day of dayRoleMap(st, b, f)) {
           const profile = st.equipment.find((e) => e.id === day.profileId)!;
-          for (const it of collectItems({ state: st, block: b, focus: f, week: w, roleKey: day.role, profile, date: "2026-10-01", reduced: false } as never)) {
+          for (const it of collectItems({ state: st, block: b, focus: f, week: w, roleKey: day.role, profile, date: "2026-10-01", reduced: d.deload } as never)) {
             if (!it.beast) continue;
             for (const [m, v] of Object.entries(beastDose(it.beast, st.user, st))) sum[m] = (sum[m] ?? 0) + v;
           }
@@ -143,9 +143,9 @@ describe("Wahl und feste Konditionsslots", () => {
           if (ms.reduce((x, mu) => x + (sum[mu] ?? 0), 0) > room + 0.6) over++;
         }
       }
-      // Grenzfälle erlaubt (Varianz geht vor, dann der kleinste Überhang), aber selten. King: nur zwei Bestienplätze,
-      // beide lang (Ungeheuer), und sanfte Ziele – das Zeitfenster geht vor der Obergrenze, daher öfter knapp darüber.
-      expect(over / n, fid).toBeLessThan(fid === "king" ? 0.25 : 0.15);
+      // Entlastungswochen wie in der App: reduziert (Bestie der Klasse Plage). Grenzfälle erlaubt (Varianz geht vor,
+      // dann der kleinste Überhang), aber selten
+      expect(over / n, fid).toBeLessThan(0.15);
     }
   });
   it("Pilgrim: Intervalle wachsen in der Welle, nach der Entlastung zurück, nie über das Zeitlimit", () => {

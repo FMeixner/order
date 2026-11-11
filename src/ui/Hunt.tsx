@@ -28,7 +28,7 @@ export function startHunt(update: Update, today: string, beastId: string): strin
   return id;
 }
 
-const loadOf = (r: BeastResult) => ({ ...(r.kg != null ? { kg: r.kg } : {}), ...(r.band ? { band: r.band } : {}), ...(r.tech ? { tech: r.tech } : {}) });
+const loadOf = (r: BeastResult) => ({ ...(r.kg != null ? { kg: r.kg } : {}), ...(r.band ? { band: r.band } : {}), ...(r.tech ? { tech: r.tech } : {}), ...(r.adj ? { adj: r.adj } : {}) });
 
 export function Hunt({ state, update, today, id, onClose }: { state: AppState; update: Update; today: string; id: string; onClose: () => void }) {
   const session = state.sessions.find((s) => s.id === id);

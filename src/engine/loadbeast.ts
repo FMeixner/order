@@ -62,7 +62,7 @@ const bandRank = (band: string, p?: EquipmentProfile) => {
 export function loadRecord(b: Beast, times: BeastTime[] | undefined): BeastTime | null {
   const cap = capOf(b);
   if (cap == null) return null;
-  const ok = (times ?? []).filter((t) => t.seconds <= cap * 60 && (t.kg != null || t.band));
+  const ok = (times ?? []).filter((t) => t.seconds <= cap * 60 && (t.kg != null || t.band) && !t.adj);
   if (!ok.length) return null;
   return ok.reduce((a, c) => ((c.kg ?? -1) > (a.kg ?? -1) || (c.band && a.band && bandRank(c.band) > bandRank(a.band)) ? c : a), ok[0]);
 }
@@ -72,10 +72,11 @@ const EQUIP_OF: Record<Exclude<LoadKind, "band">, "barbell" | "dumbbell" | "kett
 /** Vorschlag fürs Gewicht, immer auf ein am Ort vorhandenes Gewicht gelegt:
     nach dem letzten Lauf eine Stufe höher (Technik gut, im Timecap), eine tiefer (Technik schlecht oder Timecap gerissen), sonst gleich.
     Ohne Lauf: Prozent vom 1RM, dann Startwert der Bestie. null = selbst festlegen. */
-export function suggestLoad(state: AppState, b: Beast, p: EquipmentProfile): { kg?: number; band?: string; why: string } | null {
+export function suggestLoad(state: AppState, b: Beast, p: EquipmentProfile): { kg?: number; band?: string; why: string; /** Wunschgewicht vor dem Anlegen an die vorhandenen Gewichte */ want?: number } | null {
   const kind = loadKind(b);
   if (!kind) return null;
-  const last = [...(state.beastTimes[b.id] ?? [])].reverse().find((t) => t.kg != null || t.band);
+  // Angepasste Läufe (anderes Gewicht, andere Wiederholungen) steuern die Progression nicht
+  const last = [...(state.beastTimes[b.id] ?? [])].reverse().find((t) => (t.kg != null || t.band) && !t.adj);
   const cap = capOf(b) ?? 99;
   const dir = !last ? 0 : last.seconds > cap * 60 || last.tech === "schlecht" ? -1 : last.tech === "gut" ? 1 : 0;
   const why = dir > 0 ? "eine Stufe höher: Technik gut, im Timecap" : dir < 0 ? (last!.seconds > cap * 60 ? "eine Stufe leichter: Timecap gerissen" : "eine Stufe leichter: Technik noch nicht sauber") : "wie zuletzt";
@@ -93,11 +94,36 @@ export function suggestLoad(state: AppState, b: Beast, p: EquipmentProfile): { k
   }
   const eq = EQUIP_OF[kind];
   const snap = (kg: number) => snapNearest(p, eq, kg);
-  if (last?.kg != null) return { kg: dir ? stepLoad(p, eq, snap(last.kg), dir) : snap(last.kg), why };
+  if (last?.kg != null) { const want = dir ? stepLoad(p, eq, snap(last.kg), dir) : last.kg; return { kg: snap(want), why, want }; }
   const pl = pctLift(b);
   if (pl) {
     const rm = oneRM(state, pl.exercise);
-    return rm ? { kg: snap(rm.kg * pl.pct), why: `${Math.round(pl.pct * 100)} % von ${rm.kg} kg (1RM ${pl.exercise})` } : null;
+    return rm ? { kg: snap(rm.kg * pl.pct), why: `${Math.round(pl.pct * 100)} % von ${rm.kg} kg (1RM ${pl.exercise})`, want: rm.kg * pl.pct } : null;
   }
-  return start?.kg != null ? { kg: snap(start.kg), why: "Startwert" } : null;
+  return start?.kg != null ? { kg: snap(start.kg), why: "Startwert", want: start.kg } : null;
+}
+
+const LOAD_NEEDS = ["sandbag", "barbell", "kb_db"] as const;
+/** Mutierte Lastbestie: Liegt das Gewicht am Ort (oder das eingetragene) mehr als 10 % neben dem Wunschgewicht, skaliert
+    die App die Wiederholungen der Lastübungen gegenläufig (schwerer Sack → weniger, leichter → mehr), so dass Gewicht ×
+    Wiederholungen etwa gleich bleibt; Faktor 0,5 bis 1,5. Faustregel ohne eigene Studienlage. Timecap bleibt; solche
+    Läufe zählen nicht als Rekord und steuern die Progression nicht. */
+export function loadAdjust(state: AppState, b: Beast, p: EquipmentProfile, kg?: number): { factor: number; work: string; want: number; kg: number } | null {
+  const kind = loadKind(b);
+  if (!kind || kind === "band") return null;
+  const sug = suggestLoad(state, b, p);
+  const use = kg ?? sug?.kg;
+  const want = sug?.want;
+  if (!want || !use || Math.abs(use - want) / want <= 0.1) return null;
+  const factor = Math.min(1.5, Math.max(0.5, want / use));
+  const work = b.work.split(" · ").map((part) => {
+    const n = beastNeeds({ ...b, id: `${b.id}|part`, work: part });
+    if (!LOAD_NEEDS.some((x) => n.has(x))) return part;
+    const even = /ground-to-shoulder/i.test(part);
+    return part.replace(/^((?:Buy-(?:in|out):\s*)?)([\d/]+)(?=\s)/i, (_m, pre: string, nums: string) => pre + nums.split("/").map((x) => {
+      const v = Math.max(1, Math.round(parseInt(x) * factor));
+      return String(even ? Math.max(2, Math.round(v / 2) * 2) : v);
+    }).join("/"));
+  }).join(" · ");
+  return { factor: Math.round(factor * 100) / 100, work, want, kg: use };
 }

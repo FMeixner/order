@@ -238,6 +238,8 @@ export interface EquipmentProfile {
   cableStep: number;
   machineStep: number;
   vest: number[];
+  /** Sandsäcke (kg); leer oder fehlt = beliebig in 5-kg-Schritten */
+  sandbags?: number[];
   bands: string[];
   has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean; run: boolean; sprint: boolean; rope: boolean; roll?: boolean; ball?: boolean };
   /** Alt (bis 0.45): Schweißfrei am Ort; wird beim Laden zu „Leise“ an den Wochentagen dieses Orts */
@@ -373,9 +375,9 @@ export interface SessionEntry {
 }
 
 /** Ergebnis einer Bestie in einer Einheit. Lastbestien: Gewicht (kg, je Hantel) oder Band, dazu die Zeit im Timecap. */
-export interface BeastResult { id: string; seconds: number | null; easy?: boolean; kg?: number; band?: string; tech?: "gut" | "schlecht" }
+export interface BeastResult { id: string; seconds: number | null; easy?: boolean; kg?: number; band?: string; tech?: "gut" | "schlecht"; /** Wiederholungen an ein anderes Gewicht angepasst (Faktor), zählt nicht als Rekord */ adj?: number }
 export interface BeastRun { beast?: BeastResult; parts?: BeastResult[] }
-export interface BeastTime { date: string; seconds: number; kg?: number; band?: string; tech?: "gut" | "schlecht" }
+export interface BeastTime { date: string; seconds: number; kg?: number; band?: string; tech?: "gut" | "schlecht"; adj?: number }
 
 export interface Session {
   id: string;

@@ -5,7 +5,7 @@ import { type BeastStep, beastSteps } from "../../engine/beaststeps";
 import { type CardioSub, SUB_LABEL, swapRunBeast } from "../../engine/cardio";
 import type { Beast, BeastResult, BeastRun, Session } from "../../types";
 import { parseClock } from "../../engine/clock";
-import { capOf, isLoadBeast, loadKind, loadRecord, pctLift, suggestLoad } from "../../engine/loadbeast";
+import { capOf, isLoadBeast, loadAdjust, loadKind, loadRecord, pctLift, suggestLoad } from "../../engine/loadbeast";
 import { beastById, beastMinutes, COMBO_REST } from "../../engine/plan";
 import { fmt, useTimer } from "../Timer";
 import { kg, Seg } from "../common";
@@ -128,6 +128,7 @@ function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: BeastCtx;
   const cap = capOf(beast)!;
   const over = cur?.seconds != null && cur.seconds > cap * 60;
   const pl = pctLift(beast);
+  const adj = loadAdjust(ctx.state, beast, ctx.profile, cur?.kg);
   return (
     <div className="stack small">
       {kind === "band" ? (
@@ -141,6 +142,7 @@ function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: BeastCtx;
       )}
       {pl && !sug && <div className="muted">1RM {pl.exercise} noch unbekannt: Gewicht selbst festlegen.</div>}
       {sug && cur?.kg == null && !cur?.band && <div className="muted">Vorschlag: {sug.kg != null ? kg(sug.kg) : sug.band} ({sug.why})</div>}
+      {adj && <div className="muted">Mutiert für {kg(adj.kg)} statt {kg(adj.want)}: Wiederholungen der Lastübungen {adj.factor < 1 ? "weniger" : "mehr"} (× {String(adj.factor).replace(".", ",")}). Zählt nicht als Rekord.</div>}
       {rec && <div className="muted">Rekord: {rec.kg != null ? kg(rec.kg) : rec.band}</div>}
       {over && <div className="warn">Über dem Timecap: zählt nicht als Rekord, nächstes Mal eine Stufe leichter.</div>}
       {cur?.seconds != null && !over && (
@@ -182,8 +184,8 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, eas
     if (!session?.done || easy) return;
     ctx.update((st) => {
       const list = (st.beastTimes[id] ?? []).filter((x) => !(x.date === session.date && x.seconds === old));
-      const { kg: k, band, tech } = load ?? {};
-      return { ...st, beastTimes: { ...st.beastTimes, [id]: [...list, { date: session.date, seconds: sec, ...(k != null ? { kg: k } : {}), ...(band ? { band } : {}), ...(tech ? { tech } : {}) }] } };
+      const { kg: k, band, tech, adj } = load ?? {};
+      return { ...st, beastTimes: { ...st.beastTimes, [id]: [...list, { date: session.date, seconds: sec, ...(k != null ? { kg: k } : {}), ...(band ? { band } : {}), ...(tech ? { tech } : {}), ...(adj ? { adj } : {}) }] } };
     });
   };
   // Ergebnis dieses Bestien-Blocks (alte Einheiten: beast/beastParts)
@@ -193,7 +195,8 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, eas
   const loadOf = (b: Beast, r?: BeastResult) => {
     if (!isLoadBeast(b)) return {};
     const sg = suggestLoad(ctx.state, b, ctx.profile);
-    return { kg: r?.kg ?? sg?.kg, band: r?.band ?? sg?.band, tech: r?.tech };
+    const adj = loadAdjust(ctx.state, b, ctx.profile, r?.kg)?.factor;
+    return { kg: r?.kg ?? sg?.kg, band: r?.band ?? sg?.band, tech: r?.tech, ...(adj ? { adj } : {}) };
   };
   // Technik oder Gewicht nachträglich geändert, Einheit schon abgeschlossen: Eintrag in den Bestzeiten mitziehen
   const syncTime = (id: string, sec: number | null | undefined, patch: Partial<BeastResult>) => {
@@ -229,6 +232,11 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, eas
     if (u < parts.length - 1) t.rest(`Pause, dann ${parts[u + 1].name}`, COMBO_REST);
     else if (nextBeast) t.rest(`Pause, dann ${nextBeast}`, COMBO_REST);
   };
+  // Mutierte Lastbestie: Wiederholungen an das vorhandene Gewicht angepasst
+  const adjWork = <T extends { work: string }>(b: Beast, shown: T, r?: BeastResult): T => {
+    const a = isLoadBeast(b) ? loadAdjust(ctx.state, b, ctx.profile, r?.kg) : null;
+    return a ? { ...shown, work: a.work } : shown;
+  };
   const work = (b: { id?: string; work: string; rounds: number; times?: number; repeat?: number; name?: string }) => {
     const k = b.times ?? b.repeat ?? 1;
     return (
@@ -260,17 +268,17 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, eas
           {parts.map((pt, u) => (
             <div key={u} className="stack">
               <div className="small"><strong>{u + 1}. {pt.name}</strong></div>
-              {work(pt)}
+              {work(adjWork(beastById(pt.id)!, pt, curPart(u)))}
               {isLoadBeast(beastById(pt.id)!) && <LoadField beast={beastById(pt.id)!} ctx={ctx} cur={curPart(u)} onChange={(l) => { syncTime(pt.id, curPart(u)?.seconds, l); patchUnit(u, l); }} />}
-              <BeastTimer times={isLoadBeast(beastById(pt.id)!) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={curPart(u)?.seconds ?? null} steps={beastSteps(pt)} rounds={pt.rounds} title={pt.name} watchKey={`${watchBase}:${blockId}:${u}:${pt.id}`} onSave={(sec) => saveUnit(u, sec)} onStart={() => mut((s) => s)} />
+              <BeastTimer times={isLoadBeast(beastById(pt.id)!) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={curPart(u)?.seconds ?? null} steps={beastSteps(adjWork(beastById(pt.id)!, pt, curPart(u)))} rounds={pt.rounds} title={pt.name} watchKey={`${watchBase}:${blockId}:${u}:${pt.id}`} onSave={(sec) => saveUnit(u, sec)} onStart={() => mut((s) => s)} />
             </div>
           ))}
         </>
       ) : (
         <>
-          {work(beast)}
+          {work(adjWork(beast, beast, cur))}
           {isLoadBeast(beast) && <LoadField beast={beast} ctx={ctx} cur={cur} onChange={setLoadSingle} />}
-          <BeastTimer times={isLoadBeast(beast) ? [] : ctx.state.beastTimes[beast.id] ?? []} saved={cur?.seconds ?? null} steps={beastSteps(beast)} rounds={beast.rounds} title={beast.name} watchKey={`${watchBase}:${blockId}:${beast.id}`} onSave={saveSingle} onStart={() => mut((s) => s)} />
+          <BeastTimer times={isLoadBeast(beast) ? [] : ctx.state.beastTimes[beast.id] ?? []} saved={cur?.seconds ?? null} steps={beastSteps(adjWork(beast, beast, cur))} rounds={beast.rounds} title={beast.name} watchKey={`${watchBase}:${blockId}:${beast.id}`} onSave={saveSingle} onStart={() => mut((s) => s)} />
         </>
       )}
       {cardio && beast !== beast0 && <div className="muted small">Laufen ersetzt durch {SUB_LABEL[cardio]}, umgerechnet nach Belastungszeit.</div>}

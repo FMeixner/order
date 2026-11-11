@@ -5,7 +5,7 @@
   "tagline": "Wer führt, ist auf Wechsel vorbereitet.",
   "description": "Für alle, die vor Leuten stehen: harte, wechselnde Bestien im Stil des Chaos-Trainings mit Kraft dazwischen — und ein Teil der Woche für Rede und Haltung mit Atmung, Stab, Ansage-Drill und Dehnung für Brust, Nacken und Kiefer. Ausdauer und Kraft werden beide besser, behutsam, Woche für Woche. Wer trainiert ist, reagiert im Rede-Stresstest mit weniger Cortisol, Puls und Angst.",
   "goals": {"primary": "conditioning", "secondary": ["wellbeing", "strength"]},
-  "dose": {"muscle": "soft", "cardio": "soft"},
+  "dose": {"muscle": "progress", "cardio": "soft"},
   "nutrition": "any",
   "load_fit": "high",
   "level": "intermediate",
