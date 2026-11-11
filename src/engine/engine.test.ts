@@ -358,7 +358,7 @@ describe("Bestien-Serien", () => {
     expect(b2.id).not.toBe(b.id);
     // Reihenfolge der Paare wechselt: über viele Wochen kommt jede Bestie auch mal zuerst
     const firsts = new Set<string>(), seconds = new Set<string>();
-    for (let w = 1; w <= 60; w++) { const x = pickBeast(blk, { blockId: "b1", week: w, profile: gym, state: s, reduced: false, downgrade: false })!; if (x.parts?.length === 2) { firsts.add(x.parts[0].id); seconds.add(x.parts[1].id); } }
+    for (let w = 1; w <= 120; w++) { const x = pickBeast(blk, { blockId: "b1", week: w, profile: gym, state: s, reduced: false, downgrade: false })!; if (x.parts?.length === 2) { firsts.add(x.parts[0].id); seconds.add(x.parts[1].id); } }
     expect([...seconds].some((id) => firsts.has(id))).toBe(true);
   });
 });
@@ -749,8 +749,8 @@ describe("Nord und Süd", () => {
   it("Morgenlandbestien haben externen Widerstand, Nordbestien nicht, und die Namen passen", async () => {
     const { beastRegion } = await import("./plan");
     const sued = BEASTS.filter((b) => beastRegion(b) === "sued").map((b) => b.name).sort();
-    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Div", "Edimmu", "Ghaddar", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Mantikor", "Marid", "Pazuzu", "Peri", "Qarin", "Rabisu", "Roch", "Schahmaran", "Schedu", "Simurgh", "Sirrusch", "Ugallu", "Zahhak"]);
-    expect(BEASTS.filter((b) => beastRegion(b) === "nord").length).toBe(56);
+    expect(sued).toEqual(["Anzu", "Asag", "Bahamut", "Bakhtak", "Div", "Edimmu", "Ghaddar", "Ghul", "Girtablullu", "Gugalanna", "Huma", "Humbaba", "Ifrit", "Karkadann", "Kingu", "Kusarikku", "Lamaschtu", "Lamassu", "Lilitu", "Mantikor", "Marid", "Nasnas", "Pazuzu", "Peri", "Qarin", "Rabisu", "Roch", "Schahmaran", "Schedu", "Sila", "Simurgh", "Sirrusch", "Tiamat", "Ugallu", "Utukku", "Zahhak"]);
+    expect(BEASTS.filter((b) => beastRegion(b) === "nord").length).toBe(59);
     expect(beastRegion(BEASTS.find((b) => b.name === "Undine")!)).toBe("nord");
   });
 });

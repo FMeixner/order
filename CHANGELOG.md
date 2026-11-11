@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.32.1] – 2026-11-11
+
+### Neu
+- **Neun neue Bestien gegen Lücken im Pool**, vor allem für unterwegs und für Zugarbeit ohne Studio:
+  - nur Band: Bakhtak (kurz), Nasnas (Rumpf und Zug), Utukku (Zug und Beine), Lilitu (erste Bestie mit Beinbeugern als Schwerpunkt), Sila (langer Chipper);
+  - Sandsack: Tiamat (Rudern und Hüftbeuge);
+  - Stange: Draugr und Fossegrim (Klimmzüge);
+  - Ringe: Myling (Ring Rows).
+
+### Intern
+- Stichprobe zur Obergrenze über 12 statt 8 Wochen; King liegt dabei öfter knapp über der Obergrenze (zwei lange Bestienplätze, sanfte Ziele, das Zeitfenster geht vor).
+
 ## [1.32.0] – 2026-11-11
 
 ### Geändert

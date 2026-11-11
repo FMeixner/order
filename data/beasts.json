@@ -84,5 +84,14 @@
   {"id":"ng-verdandi","name":"Edimmu","orig":"Verdandi","rounds":5,"minutes":14,"equipment":["sandbag"],"work":"20/18/16/14/12 Sandbag Squat · 10 Sandbag Ground-to-Shoulder · Rest 60s","cap":18,"start":{"kg":20}},
   {"id":"ng-urd","name":"Rabisu","orig":"Urd","rounds":3,"minutes":17,"equipment":["sandbag"],"work":"21/15/9 Sandbag Deadlift · 21/15/9 Sandbag Bent-Over Row · 21/15/9 Sandbag Squat","cap":21,"start":{"kg":20}},
   {"id":"ng-eir","name":"Div","orig":"Eir","rounds":4,"minutes":12,"equipment":["sandbag"],"work":"15 Sandbag Squat · 12 Sandbag Romanian Deadlift · 10 Sandbag Ground-to-Shoulder · Rest 60s","cap":15,"start":{"kg":20}},
-  {"id":"ng-grid","name":"Ghaddar","orig":"Grid","rounds":2,"minutes":10,"equipment":["sandbag"],"work":"10 Sandbag Deadlift · 10 Sandbag Ground-to-Shoulder · 10 Sandbag Bent-Over Row · Rest 60s","cap":13,"start":{"kg":20}}
+  {"id":"ng-grid","name":"Ghaddar","orig":"Grid","rounds":2,"minutes":10,"equipment":["sandbag"],"work":"10 Sandbag Deadlift · 10 Sandbag Ground-to-Shoulder · 10 Sandbag Bent-Over Row · Rest 60s","cap":13,"start":{"kg":20}},
+  {"id":"pg-utukku","name":"Utukku","orig":"Utukku","rounds":4,"minutes":14,"equipment":["band"],"work":"20 Band Bent-Over Rows · 20 Reverse Lunges · 15 Band Straight-Arm Pulldowns · 20 Glute Bridges","start":{"band":"mittel"}},
+  {"id":"pg-lilitu","name":"Lilitu","orig":"Lilitu","rounds":4,"minutes":14,"equipment":["band"],"work":"12 Single-Leg RDL · 15 Band Rows · 20 Band RDL · 15 Band Face Pulls","start":{"band":"mittel"}},
+  {"id":"pg-nasnas","name":"Nasnas","orig":"Nasnas","rounds":4,"minutes":11,"equipment":["band"],"work":"30s Hollow Hold · 20 Russian Twists · 15 Band Pallof Press · 20 Band Rows","start":{"band":"leicht"}},
+  {"id":"pg-bakhtak","name":"Bakhtak","orig":"Bakhtak","rounds":3,"minutes":8,"equipment":["band"],"work":"20 Band Rows · 20 Squats · 20 Band Pull-Aparts","start":{"band":"leicht"}},
+  {"id":"pg-sila","name":"Sila","orig":"Sila","rounds":1,"minutes":22,"equipment":["band"],"work":"100 Band Rows · 50 Single-Leg RDL · 100 Band Pull-Aparts · 50 Pushups · 100 Band Rows","start":{"band":"leicht"},"noShort":true},
+  {"id":"pg-tiamat","name":"Tiamat","orig":"Tiamat","rounds":4,"minutes":14,"equipment":["sandbag"],"work":"15 Sandbag Bent-Over Row · 10 Sandbag Romanian Deadlift · 15 Sandbag Bent-Over Row","start":{"kg":20}},
+  {"id":"pg-draugr","name":"Draugr","orig":"Draugr","rounds":5,"minutes":14,"equipment":["bar_or_rings"],"work":"5 Pullups · 10 Pike Pushups · 5 Chin-Ups · 20 Reverse Lunges"},
+  {"id":"pg-fossegrim","name":"Fossegrim","orig":"Fossegrim","rounds":5,"minutes":13,"equipment":["bar_or_rings"],"work":"10/8/6/4/2 Pullups · 10/8/6/4/2 Hanging Leg Raises · 20/16/12/8/4 Pushups"},
+  {"id":"pg-myling","name":"Myling","orig":"Myling","rounds":4,"minutes":13,"equipment":["bar_or_rings"],"work":"15 Ring Rows · 20 Split Lunges · 15 Ring Rows · 30s Hollow Hold"}
 ]
