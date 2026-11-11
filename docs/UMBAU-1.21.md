@@ -69,7 +69,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P9~~ | 1.31.0 ✓ | Zuspitzung vor der Testwoche — **gebaut 11.11.2026** |
 | ~~P10~~ | 1.32.0 ✓ | Explosives vor Ausdauer (Prüfung der Orden) — **gebaut 11.11.2026** |
 | ~~P11~~ | 1.33.0 ✓ | Schätzwerte lernen aus dem Log — **gebaut 11.11.2026** |
-| P12 | 1.34.0 | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung |
+| ~~P12~~ | 1.34.0 ✓ | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung — **gebaut 11.11.2026** (Labels als Entwurf, Einbau nach Freigabe) |
 | PH | 1.35.0 | Harlekin: Wiederholung nach 12 Wochen, bei kürzeren Blöcken 4-Wochen-Häppchen (Lösung offen) |
 | PG | — | Bestienpool: Lücken der Kombinatorik schließen (Rücken, Rumpf ohne Oberkörper …), neue Bestien entwerfen |
 
@@ -653,6 +653,19 @@ Rangfolge, Abschläge, Dips mit Körpergewicht → Trizeps-Schätzung, keine Br�
   - Auch in Bestien? Nein, nur an Übungskarten (`SlotCard`). Nicht im Warm-up/Cool-down.
   - Export/Import der Daten nimmt `exNotes` mit; keine Anzeige im Log.
   - Test: e2e Notiz anlegen, Seite neu laden, Notiz steht noch; anderes Profil zeigt sie nicht.
+
+### Gebaut (11.11.2026)
+- Tagesknöpfe: `Role.short` (≤ 10 Zeichen, `validate.mjs` prüft) wird angezeigt, voller Name im Tooltip; ohne `short`
+  der volle Name ohne Silbentrennung (`hyphens: manual`). **Die Labels selbst stehen nur als Vorschlag in
+  `docs/TAGESLABELS-ENTWURF.md`** (109 Rollen) — eingebaut wird nach Freigabe durch den Nutzer.
+- Hilfe: Suchfeld oben, Abschnitte als `<details>` (alle zu), Suche filtert nach Überschrift und Text, öffnet Treffer,
+  zählt sie und markiert sie über die CSS Custom Highlight API (ältere Browser: ohne Markierung). Die Literaturliste
+  steht direkt im Abschnitt, damit sie mit durchsucht wird.
+- Notiz an der Übung: ✎ in der Kopfzeile von `SlotCard`, `AppState.exNotes` mit Schlüssel `${profileId}|${Name}`,
+  max. 80 Zeichen, Enter/Verlassen speichert, leer löscht. Mit Notiz verschwindet der Stift, die graue Zeile ist der
+  Knopf zum Bearbeiten. Export/Import nehmen sie mit (ganzer Zustand).
+
+**Annahme (Agent):** Mit Notiz kein Stift mehr („ohne Stift-Rahmen; Antippen bearbeitet“).
 
 ---
 

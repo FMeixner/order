@@ -100,6 +100,8 @@ export type WeaponModule = "sword" | "longsword" | "stab";
 
 export interface Role {
   name: string;
+  /** Kurzes Label für die Tagesknöpfe (höchstens 10 Zeichen, 1.34); die volle Bezeichnung bleibt überall sonst */
+  short?: string;
   location: Tier;
   minutes: number;
   /** Obergrenze des Tages in Minuten (Zeitbudget der Bestie), sonst Dauer bzw. Richtwert des Ordens */
@@ -400,6 +402,8 @@ export interface AppState {
   yearView?: "year" | "ahead";
   /** Ideenparkplatz (1.26): Ideen für später, ohne Sperre; offene erscheinen in der Testwoche und in „Jahr planen“ */
   ideas?: { date: string; text: string; done?: boolean }[];
+  /** Notiz an der Übung (1.34), z. B. Sitzhöhe: Schlüssel `${profileId}|${Übungsname}`, gilt über alle Orden und Wochen */
+  exNotes?: Record<string, string>;
   /** Eigene Päckchengrößen je Bestienübung (Wiederholungen am Stück = ein halber Satz) */
   packets?: Record<string, number>;
   /** Ansage-Drill: Sprache und Schrift, nur Sprache oder nur Schrift */

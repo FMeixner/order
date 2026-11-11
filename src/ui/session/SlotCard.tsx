@@ -191,6 +191,16 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
   const missedOpen = entry.feedback === "zuschwer" && askable && (askValue == null || askValue >= (target ?? 0));
   const complete = sets.every((x) => x.done) && (!needsFb || !!entry.feedback) && !missedOpen;
   const [folded, setFolded] = useState<boolean>(complete);
+  // Notiz an der Übung (1.34): je Ort und Übung, über alle Orden und Wochen
+  const noteKey = `${ctx.profile.id}|${sug.name}`;
+  const note = ctx.state.exNotes?.[noteKey] ?? "";
+  const [noteOpen, setNoteOpen] = useState(false);
+  const saveNote = (v: string) => {
+    const t = v.trim().slice(0, 80);
+    setNoteOpen(false);
+    if (t === note) return;
+    ctx.update((st) => { const exNotes = { ...(st.exNotes ?? {}) }; if (t) exNotes[noteKey] = t; else delete exNotes[noteKey]; return { ...st, exNotes }; });
+  };
   // Defizit (1.28): gleiches Gewicht, gleiche Wiederholungen wie beim letzten Mal zählt als Erfolg
   const held = complete && ctx.block.kcal === "deficit" && !!last && trendOf(last, entry) === "held";
   const [typing, setTyping] = useState(false);
@@ -225,10 +235,15 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
           {r.cluster && <span className="tag teal" title="Cluster-Satz">Cluster</span>}
         </div>
         <div className="slot-icons">
+          {!note && !noteOpen && <button className="note-btn" onClick={() => setNoteOpen(true)} aria-label="Notiz zur Übung" title="Notiz zur Übung, z. B. Sitzhöhe">✎</button>}
           <Desc text={desc} />
           {canSwap && <button className="info-btn swap-btn" onClick={() => setSwapOpen(true)} aria-label="Übung tauschen" title="Übung tauschen">⇄</button>}
         </div>
       </div>
+      {noteOpen
+        ? <input className="ex-note-input" type="text" autoFocus maxLength={80} defaultValue={note} placeholder="z. B. Sitz 4, Rolle auf Loch 6" aria-label="Notiz zur Übung"
+            onBlur={(e) => saveNote(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); if (e.key === "Escape") setNoteOpen(false); }} />
+        : note && <button className="ex-note" onClick={() => setNoteOpen(true)} aria-label={`Notiz bearbeiten: ${note}`}>{note}</button>}
       <button className="slot-dose" onClick={() => setMore((o) => !o)} aria-expanded={more} title="Details">
         {concrete ? <strong>{doseLabel}</strong> : doseLabel}
         {(lastLine || concrete || detailGap || r.why || r.note || r.regressedFrom || r.swapped) && <span className="muted small"> {more ? "▴" : "▾"}</span>}

@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.34.0] – 2026-11-11
+
+### Neu
+- **Notiz an der Übung:** Ein kleiner Stift neben dem Übungsnamen nimmt eine Zeile auf, die du beim nächsten Mal wieder brauchst („Sitz 4“, „Rolle auf Loch 6“). Sie steht grau unter dem Namen, gilt je Übung und Ort über alle Orden und Wochen; leer speichern löscht sie.
+- **Hilfe mit Suche:** Suchfeld oben, Abschnitte aufklappbar und anfangs zu; die Suche öffnet die Treffer, blendet den Rest aus und markiert die Fundstellen. Die Quellenliste wird mit durchsucht.
+
+### Geändert
+- **Tagesknöpfe:** können ein kurzes Label tragen (höchstens 10 Zeichen, die volle Bezeichnung steht im Tooltip); lange Namen werden nicht mehr getrennt, notfalls zweizeilig. Die Labels für alle Orden liegen als Vorschlag zur Durchsicht bereit (`docs/TAGESLABELS-ENTWURF.md`) und kommen nach deiner Freigabe in die Orden.
+
 ## [1.33.0] – 2026-11-11
 
 ### Neu

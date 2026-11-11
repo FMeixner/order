@@ -464,3 +464,44 @@ test("Ideenparkplatz: Idee notieren, abhaken, in der Testwoche sichtbar", async 
   await expect(page.getByText("1 Idee wartet.")).toBeVisible();
   await expect(page.getByText("Kletterblock im Sommer")).toBeVisible();
 });
+
+test("Notiz an der Übung: anlegen, bleibt nach dem Neuladen, gilt nur am eigenen Ort", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.locator(".day-btn").filter({ hasText: "Unterkörper" }).click();
+  const slot = page.locator(".slot").first();
+  const name = (await slot.locator(".slot-name").textContent())!;
+  await slot.getByRole("button", { name: "Notiz zur Übung" }).click();
+  await slot.getByRole("textbox", { name: "Notiz zur Übung" }).fill("Sitz 4");
+  await slot.getByRole("textbox", { name: "Notiz zur Übung" }).press("Enter");
+  await expect(slot.locator(".ex-note")).toHaveText("Sitz 4");
+  await expect(slot.getByRole("button", { name: "Notiz zur Übung" })).toHaveCount(0);
+  await page.reload();
+  await page.locator(".day-btn").filter({ hasText: "Unterkörper" }).click();
+  await expect(page.locator(".slot").first().locator(".ex-note")).toHaveText("Sitz 4");
+  const st = await stored(page);
+  const key = Object.keys(st.exNotes ?? {})[0];
+  const pid = key.split("|")[0];
+  expect(key).toBe(`${pid}|${name}`);
+  expect(["g", "h"]).toContain(pid);
+  // Anderes Profil: die Notiz gehört dort nicht hin
+  await page.evaluate((s) => localStorage.setItem("order:v1", s), JSON.stringify({ ...st, exNotes: { [`${pid === "g" ? "h" : "g"}|${name}`]: "Sitz 4" } }));
+  await page.reload();
+  await page.locator(".day-btn").filter({ hasText: "Unterkörper" }).click();
+  await expect(page.locator(".ex-note")).toHaveCount(0);
+});
+
+test("Hilfe: Abschnitte zu, Suche öffnet Treffer und blendet den Rest aus", async ({ page }) => {
+  await seed(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Anleitung" }).click();
+  const dlg = page.getByRole("dialog");
+  await expect(dlg.locator("details.help-sec[open]")).toHaveCount(0);
+  await dlg.getByRole("searchbox", { name: "Anleitung durchsuchen" }).fill("Zuspitzung");
+  await expect(dlg.locator("details.help-sec[open]").first()).toContainText("Zuspitzung");
+  await expect(dlg.locator("details.help-sec:not([hidden])")).toHaveCount(await dlg.locator("details.help-sec[open]").count());
+  await expect(dlg.locator(".help-search span")).toHaveText(/Abschnitt/);
+  await dlg.getByRole("searchbox", { name: "Anleitung durchsuchen" }).fill("");
+  await expect(dlg.locator("details.help-sec[open]")).toHaveCount(0);
+  await expect(dlg.locator("details.help-sec[hidden]")).toHaveCount(0);
+});

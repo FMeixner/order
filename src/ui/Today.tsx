@@ -340,7 +340,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
               return (
                 <button key={d.day} className={`day-btn ${sel?.day === d.day ? "on" : ""} ${done ? "done" : ""} ${isCur && inWeek && d.day === todayWd ? "today" : ""}`} onClick={() => setPick(d.day)}>
                   <span className="day">{d.day}</span>
-                  <span className="day-role">{r?.name ?? d.role}</span>
+                  <span className="day-role" title={r?.short ? r.name : undefined}>{r?.short ?? r?.name ?? d.role}</span>
                   <span className="muted small">{r?.skipped ? "fällt aus" : `${p?.name ?? "?"}${r && weaponTag(r.blocks) ? ` · ${weaponTag(r.blocks)}` : ""}${done ? " · ✓" : ""}`}</span>
                 </button>
               );

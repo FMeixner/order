@@ -217,7 +217,7 @@ button.stack-card { text-align: left; font: inherit; color: inherit; cursor: poi
 .progress > div { height: 100%; background: var(--teal); }
 
 .days { display: grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap: 6px; }
-.day-btn .day-role { overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; }
+.day-btn .day-role { overflow-wrap: break-word; hyphens: manual; -webkit-hyphens: manual; }
 .day-btn { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; cursor: pointer; }
 .day-btn .day { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
 .day-btn .day-role { font-size: 13.5px; font-weight: 500; }
@@ -827,3 +827,22 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shado
 .ratio-row { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid var(--border); font-size: 14px; }
 .ratio-row:first-child { border-top: 0; }
 .ratio-row .mono { font-family: var(--mono); white-space: nowrap; }
+
+/* Hilfe mit Suche (1.34) */
+.help-search { position: sticky; top: -1px; z-index: 2; display: flex; align-items: center; gap: 10px; background: var(--bg); padding: 4px 0 8px; }
+.help-search input { flex: 1; min-width: 0; }
+.help-sec { border-top: 1px solid var(--border); }
+.help-sec[hidden] { display: none; }
+.help-sec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 0; }
+.help-sec > summary::-webkit-details-marker { display: none; }
+.help-sec > summary::after { content: "›"; color: var(--muted); font-size: 18px; transition: transform 0.15s; }
+.help-sec[open] > summary::after { transform: rotate(90deg); }
+.help-sec > summary h3 { font-size: 15.5px; margin: 0; }
+.help-body.stack { gap: 0; }
+.help-sec-body { padding-bottom: 10px; }
+::highlight(help-hit) { background-color: var(--amber-dim); color: var(--amber); }
+
+/* Notiz an der Übung (1.34) */
+.note-btn { width: 28px; height: 28px; border: 0; background: none; color: var(--muted); font-size: 15px; cursor: pointer; padding: 0; flex-shrink: 0; }
+.ex-note { display: block; background: none; border: 0; padding: 0; margin: -2px 0 2px; color: var(--muted); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.ex-note-input { width: 100%; margin: 0 0 4px; padding: 6px 10px; font-size: 14px; }

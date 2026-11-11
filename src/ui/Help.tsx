@@ -1,11 +1,61 @@
-/* Kurze Anleitung, erreichbar über das ? oben rechts. */
+/* Kurze Anleitung, erreichbar über das ? oben rechts. Seit 1.34 mit Suche: Abschnitte sind aufklappbar (alle zu),
+   die Suche filtert nach Überschrift und Text, öffnet die Treffer und markiert sie (CSS Custom Highlight API). */
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import REFS from "../../data/modules/references.json";
-import { Collapse } from "./common";
-export function Help() {
+
+function Sec({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="stack help-body">
-      <h3>Der Ablauf</h3>
+    <details className="help-sec" data-sec={title}>
+      <summary><h3>{title}</h3></summary>
+      <div className="help-sec-body">{children}</div>
+    </details>
+  );
+}
+
+export function Help() {
+  const [q, setQ] = useState("");
+  const root = useRef<HTMLDivElement>(null);
+  const count = useRef<HTMLSpanElement>(null);
+  // Suche: Abschnitte filtern, Treffer öffnen und markieren. Läuft direkt am DOM (open/hidden), React rendert nur den Text.
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const needle = q.trim().toLowerCase();
+    const secs = [...el.querySelectorAll<HTMLDetailsElement>("details[data-sec]")];
+    const hl = (globalThis as { CSS?: { highlights?: Map<string, unknown> } }).CSS?.highlights;
+    hl?.delete("help-hit");
+    let n = 0;
+    const ranges: Range[] = [];
+    for (const s of secs) {
+      const hit = !!needle && (s.textContent ?? "").toLowerCase().includes(needle);
+      s.hidden = !!needle && !hit;
+      s.open = hit;
+      if (!hit) continue;
+      n++;
+      const walk = document.createTreeWalker(s, NodeFilter.SHOW_TEXT);
+      for (let t = walk.nextNode(); t; t = walk.nextNode()) {
+        const txt = (t.textContent ?? "").toLowerCase();
+        for (let i = txt.indexOf(needle); i >= 0; i = txt.indexOf(needle, i + needle.length)) {
+          const r = document.createRange();
+          r.setStart(t, i); r.setEnd(t, i + needle.length);
+          ranges.push(r);
+        }
+      }
+    }
+    const H = (globalThis as { Highlight?: new (...r: Range[]) => unknown }).Highlight;
+    if (hl && H && ranges.length) hl.set("help-hit", new H(...ranges));
+    if (count.current) count.current.textContent = needle ? (n ? `${n} ${n === 1 ? "Abschnitt" : "Abschnitte"}` : "nichts gefunden") : "";
+    return () => { hl?.delete("help-hit"); };
+  }, [q]);
+  return (
+    <div className="stack help-body" ref={root}>
+      <div className="help-search">
+        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Suchen: Bestie, Entlastung, Kurz …" aria-label="Anleitung durchsuchen" />
+        <span className="muted small" ref={count} aria-live="polite" />
+      </div>
+      <Sec title="Der Ablauf">
       <ul>
+        <li>Oben im Fenster durchsucht das Suchfeld die ganze Anleitung; Treffer klappen auf und sind markiert.</li>
         <li><strong>Heute</strong> zeigt die Einheit des Tages. Oben wählst du den Trainingstag der Woche. Mit ‹ › neben der Wochenzahl blätterst du: künftige Wochen als Vorschau, vergangene zum Nachtragen. Tage mit Schwert tragen „Schwert“ im Tagesknopf. Die Vorschau zeigt den Schwertblock auch, wenn das Profil des Tages kein Schwert hat, darunter den Ersatz (meist der Mobility-Flow für Hüfte und Schulter). So siehst du, welchen Tag du auf zuhause legen solltest.</li>
         <li><strong>Plan</strong>: oben der Zeitstrahl, ohne Scrollen auf die Breite gepasst. „Jahr“ zeigt das ganze Trainingsjahr mit dem, was hinter dir liegt (blasser, aber farbig), „Ab heute“ zwei Wochen zurück bis ein halbes Jahr voraus. Drei Bahnen: Last je Woche (grün niedrig, gelb mittel, rot hoch, schraffiert Dauerlast), Zeichen (Ziel und Kalorien) und Orden; Testwochen sind die gelben Kerben, der Strich mit Datum ist heute. Ein Zeichen antippen öffnet darunter die Details mit seinen Orden und Abschnitten; ein Orden dort springt zu seiner Karte. Einen Orden im Bild antippen öffnet ihn. Darunter der Stapel, nach Zeichen gruppiert: − / + ändert die Länge wochenweise, der Stift öffnet das Phasenblatt, das Testwochen-Symbol am Orden zeigt die Cups. Weit Voraus liegt hinter „Später“. „Jahr planen“ führt durch den Assistenten, das Symbol links daneben zeigt rote Uhren und Lücken. Symbole: ▲ Hinweis, ⦸ passt nicht, Schloss = von Hand gesetzt, ↑ = ↓ Überschuss, Erhaltung, Defizit, ● ◐ ○ trägt das Ziel des Zeichens ganz, teilweise, nicht. Text steht im Tooltip und im Phasenblatt.</li>
         <li><strong>Almanach</strong>: Orden (alle Programme), Bestien (mit Bestzeiten, zum freien Jagen), Übungen (Arbeitsgewicht, 1RM, Verlauf) und das Log.</li>
@@ -15,7 +65,8 @@ export function Help() {
         <li><strong>Setup</strong>: Profil, Equipment, Können, Sicherung.</li>
       </ul>
 
-      <h3>Eine Übung eintragen</h3>
+      </Sec>
+      <Sec title="Eine Übung eintragen">
       <ul>
         <li>Die Vorgabe ist konkret, etwa „3 × 13 · 25 kg“. Gewicht einmal pro Übung eintragen (oder den Vorschlag lassen), nach jedem Satz den Kreis antippen: Das heißt „Ziel geschafft“, die Pause startet. Nur bei AMRAP trägst du die Zahl ein.</li>
         <li>Antippen der Vorgabe zeigt die Details: den Bereich dahinter (oben angekommen steigt das Gewicht), was du zuletzt geschafft hast und was als Nächstes kommt.</li>
@@ -27,7 +78,8 @@ export function Help() {
         <li>Aufwärmsatz: hängt von der Last und dem Risiko ab, nicht von den Wiederholungen. Langhantel ab 50 kg ein Satz, ab 80 kg zwei; Maschine ab 80 kg ein Satz; Kurzhantel oder Kettlebell ab 24 kg je Hantel ein Satz. Kabel, Körpergewicht und schwungvolle Übungen wie Swings brauchen keinen, dafür reicht das allgemeine Warm-up. Je Körperhälfte bekommt nur die erste so schwere Übung des Tages einen, erkennbar am gestrichelten Kreis „0“ vor den Sätzen. Dosis: 8 Wiederholungen mit der Hälfte des Arbeitsgewichts, bei zwei Sätzen 50 % × 5 und 75 % × 3. Abhaken wie einen Satz, danach 30 s bis zum ersten Arbeitssatz.</li>
       </ul>
 
-      <h3>So steigert die App</h3>
+      </Sec>
+      <Sec title="So steigert die App">
       <ul>
         <li>Bei einem Bereich wie 8–10 arbeitest du dich erst in den Wiederholungen hoch. Schaffst du in allen Sätzen 10, kommt die nächste Gewichtsstufe, die es in deinem Profil gibt.</li>
         <li>„OK“ und „Leicht“ bringen je eine Stufe mehr, „Sehr leicht“ zwei. „Schwer“ hält das Gewicht. Zweimal hintereinander „Schwer“ nimmt 5 % weg.</li>
@@ -38,14 +90,16 @@ export function Help() {
         <li>In der ersten Woche wählst du die Startgewichte selbst: so, dass am Ende noch 2–3 Wiederholungen gegangen wären.</li>
       </ul>
 
-      <h3>Körpergewicht zählt</h3>
+      </Sec>
+      <Sec title="Körpergewicht zählt">
       <ul>
         <li>Liegestütz, Klimmzug oder Pistol Squat sind vollwertiges Krafttraining, wenn die Sätze nah ans Muskelversagen gehen. Für Einsteiger reichen wenige Wiederholungen, für Geübte sind 20–30 fordernd. Liegestütze in Stufen brachten in Studien ähnliche Kraftzuwächse wie Bankdrücken (Calatayud et al., 2015; Kotarsky et al., 2018), bei vergleichbarer Belastung auch ähnliches Muskelwachstum (Kikuchi &amp; Nakazato, 2017). Bei leichter Last entscheidet die Nähe zum Versagen (Refalo et al., 2023).</li>
         <li>Orden mit Kondition oder Reise setzen deshalb auf Stufen mit Körpergewicht: ohne Aufbau, überall gleich. Orden für maximalen Muskelaufbau und Maximalkraft bleiben beim Eisen.</li>
         <li>Stufen steigen, wenn alle Sätze zweimal am oberen Ende liegen, zum Beispiel Liegestütz → Deficit → Archer.</li>
       </ul>
 
-      <h3>Dosis: Bestien zählen wie Sätze</h3>
+      </Sec>
+      <Sec title="Dosis: Bestien zählen wie Sätze">
       <ul>
         <li>Bestien laufen nicht neben dem Training her, sie zählen genauso. Eine Bestie zählt so, wie du sie brichst: Schaffst du 25 Push-ups am Stück, sind 50 Push-ups zwei Päckchen, und ein Päckchen ist ein halber Satz. Halb, weil Bestienrunden oft weit vor dem Muskelversagen enden. Venus mit vier Runden aus 50 Push-ups, 20 Crunches und 50 Squats bringt so 4 Sätze Drücken, 2 Rumpf und 2 Beine — verteilt über die Muskeln wie jede Übung im Studio. Halten und Strecken zählen ein Päckchen je Runde, Laufen und Rudern zählen als Kondition.</li>
         <li>Die Päckchengröße startet nach deinem Niveau. Push-ups und Klimmzüge folgen nach jeder Testwoche deinem Testwert (60 % des Maximums). Unter Setup › Päckchen trägst du eigene Werte ein. Wer stärker wird, braucht weniger Päckchen für dieselbe Bestie — dann wählt die App mehr Runden oder härtere Bestien.</li>
@@ -56,7 +110,8 @@ export function Help() {
         <li>Rumpf hat in jedem Orden ein festes Ziel (unterer Richtwert deines Niveaus), unabhängig von Welle und Modus: Rumpfarbeit ermüdet wenig und passt gut ins Superset. Was weder feste Übungen noch Bestienplätze erreichen können, senkt das Ziel, damit es erreichbar bleibt.</li>
       </ul>
 
-      <h3>Bestien</h3>
+      </Sec>
+      <Sec title="Bestien">
       <ul>
         <li>Zwei Familien: <strong>Morgenlandbestien</strong> (Namen aus Mesopotamien, Persien und Arabien: Humbaba, Lamassu, Simurgh, Ifrit …) arbeiten gegen externen Widerstand, also Hanteln, Kettlebell, Langhantel, Band oder Sandsack. <strong>Nordbestien</strong> (Volkssagen aus Wald, Moor und Gebirge: Kobold, Undine, Kelpie …) nur mit dem eigenen Körper; Stange, Ringe oder Rudergerät können dazugehören.</li>
         <li>Lastbestien (Morgenland) brauchen genau ein Item (Langhantel, Kurzhantel, Kettlebell, Band oder Sandsack) und haben einen festen Timecap. Alle Lastübungen laufen mit demselben Gewicht bzw. Band. Der Rekord ist das schwerste Gewicht (oder stärkste Band), mit dem du die Bestie im Timecap bezwingst. „Bench Press 50 %“ heißt 50 % deines 1RM; ist es noch unbekannt, legst du das Gewicht selbst fest.</li>
@@ -74,20 +129,30 @@ export function Help() {
         <li>Bestienwahl in allen Orden: Einzelbestie, Doppel (×2) und Serie aus zwei Bestien sind gleichrangig. Die Dauer passt zum Zeitfenster des Tages, das Ziel des Ordens gewichtet (Kraft, Kondition, Ausdauer, Beweglichkeit). Vorrang hat Abwechslung: Was in der Phase schon dran war, kommt erst wieder, wenn alles Passende durch ist. Ist eine Bestie für den Slot zu lang, kommt sie als Kurzform mit weniger Runden (eigene Bestzeit): Leitern behalten die ersten Stufen (16/12/8/4 → 16/12), Buy-in und Buy-out bleiben, gekürzt wird der Innenteil. Die Bestie passt immer in die Zeit, die vom Tag übrig ist. Über den ganzen Orden bevorzugt die Wahl Bestien für Muskeln, die die festen Übungen wenig treffen.</li>
       </ul>
 
-      <h3>Anderer Ort heute</h3>
+      </Sec>
+      <Sec title="Anderer Ort heute">
       <ul>
         <li>Unter ⚙ Anpassen (neben dem Namen der Einheit auf <em>Heute</em>) wählst du den Ort für diese Einheit, zum Beispiel Zuhause statt Studio. Die App nimmt dann die Übungen und Gewichtsstufen dieses Profils. Der Wochenplan bleibt unverändert.</li>
         <li>Gibt es dort dein Gewicht nicht, rechnet die App um: leichter mit mehr Wiederholungen, höchstens 30 (KB Swing 24 kg × 15 im Studio wird zuhause mit 20 kg zu 24 Wiederholungen), schwerer mit weniger. Passt es nicht, korrigiert deine Rückmeldung das nächste Ziel.</li>
       </ul>
 
-      <h3>Übung tauschen</h3>
+      </Sec>
+      <Sec title="Übung tauschen">
       <ul>
         <li>Passt dir eine Übung nicht (Gerät besetzt, zwickt, keine Lust): auf <strong>⇄</strong> neben dem Namen tippen und eine Alternative mit ähnlichem Bewegungsmuster wählen.</li>
         <li>Der Tausch gilt für diese Stelle, getrennt je Ort, und bleibt bei Updates erhalten. Die neue Übung bekommt ihre eigenen Gewichte.</li>
         <li>Zurücktauschen: wieder auf ⇄, oder unter Setup › Getauschte Übungen.</li>
       </ul>
+      </Sec>
 
-      <h3>Testwoche</h3>
+      <Sec title="Notiz an der Übung">
+      <ul>
+        <li>Für Einstellungen, die du beim nächsten Mal wieder brauchst („Sitz 4“, „Defizit −3“, „Rolle auf Loch 6“): auf <strong>✎</strong> neben dem Namen tippen, eine Zeile schreiben, Enter. Ein leeres Feld löscht die Notiz.</li>
+        <li>Die Notiz steht als graue Zeile unter dem Namen und gilt je Übung und Ort — die Beinpresse im Studio hat eine andere als die im Labor —, über alle Orden und Wochen. Tauschst du die Übung, gilt die Notiz der neuen.</li>
+      </ul>
+
+      </Sec>
+      <Sec title="Testwoche">
       <ul>
         <li>Ein Testtag läuft wie eine Einheit: ein Warm-up zum Abhaken für den ganzen Tag, die Cups, am Ende das Cool-down. Hinweise (i) und der Erzähler (Feder) liegen hinter Symbolen.</li>
         <li>Unter jedem Testtag steht die Tagesbilanz, sobald ein Wert gespeichert ist: Wert, Punkte gegen die Altersnorm (0–100, etwa ein Perzentil) und der Vergleich mit deinem letzten Test. So weißt du schon nach dem Kraft-Cup, wo du stehst.</li>
@@ -97,7 +162,8 @@ export function Help() {
         <li>Für den Normvergleich braucht die App Geburtsjahr und Geschlecht (Setup › Profil) und dein Körpergewicht aus dem Balmung-Cup. Normen gibt es noch nicht für jedes Alter; dann zählt nur dein eigener Verlauf.</li>
       </ul>
 
-      <h3>Zeichen</h3>
+      </Sec>
+      <Sec title="Zeichen">
       <ul>
         <li>Ein Zeichen hält ein Ziel über 8–16 Wochen und endet mit der Testwoche: Bär (Muskelzuwachs), Stier (Kraft), Falke (Athletik), Fuchs (Skill: Turnen, Parkour, Kampfsport), Wolf (Allround und Kondition) oder Hirsch (Erneuerung). Der Hirsch ist eine Atempause von 4–6 Wochen: Wie ein Hirsch sein Geweih abwirft und ein größeres nachschiebt, macht er Gelenke, Sehnen, Beweglichkeit und Kopf fit für das nächste Zeichen, das direkt danach kommt und mit der Testwoche endet. Jeder Hirsch-Orden hält mit einem Erhaltungsblock Kraft und Muskel (mindestens 4 harte Sätze pro großem Muskel und Woche), und der Schwerpunkt-Slot hält dein wichtigstes Ziel warm. Nur wenn Beweglichkeit oder Erholung dein wichtigstes Ziel ist, bleibt der Hirsch ein volles Zeichen. Darin laufen ein bis drei Orden — bis 8 Wochen einer, bis 12 zwei, darüber drei. Das Zeichen bindet das Ziel, die Orden bringen die Variation.</li>
         <li>Zeichen rasten an den Grenzen deiner Lebensabschnitte ein, mit ein bis zwei Wochen Spielraum; sie dürfen Abschnitte überspannen, ein langer Abschnitt trägt zwei.</li>
@@ -110,7 +176,8 @@ export function Help() {
         <li><strong>Explosives vor Ausdauer</strong>: Sprünge, Würfe und Sprints stehen in jeder Einheit vor Läufen, Intervallen und Bestien. Ausdauertraining stört Muskelaufbau und Maximalkraft kaum, die Explosivkraft aber schon (Schumann et al., 2022) — also frisch springen, danach schwitzen. Im Falken kommt am Tag nach einem Sprint- oder Sprungtag keine uralte oder verfluchte Bestie.</li>
       </ul>
 
-      <h3>Stand: dein Dashboard</h3>
+      </Sec>
+      <Sec title="Stand: dein Dashboard">
       <ul>
         <li>Der Reiter „Stand“ bündelt, was vorher verteilt war: oben dein Jahr als Zeitstrahl mit der <strong>Jahresbilanz</strong>: wie viele Wochen jedes Zeichen im Jahr hat, hinter dir (voll) und vor dir (blass). Steckst du im Defizit oder bist auf Reisen, steht darunter, wie viel Masse, Kraft oder Explosives das Jahr schon hatte und was als Nächstes kommt. Dann jeder Bereich in einer Zeile mit <strong>Test</strong> (Punkte ≈ Perzentil der Altersnorm aus der letzten Testwoche, ~ ist eine Schätzung, der Pfeil zeigt die Richtung seit dem Test davor) und <strong>Zustand</strong> (gut, bald, fehlt). Ein Dreieck markiert Schwachstellen aus den Tests. Antippen zeigt die Zahlen dahinter.</li>
         <li>Darunter: woran der Schwerpunkt-Slot gerade arbeitet, die Waage Spezialist ↔ Allrounder, die Bilanz der letzten Testwoche mit „Auswertung“ und „Orden nach Schwachstellen optimieren“, und aufklappbar der Verlauf deiner Gewichte und Bestzeiten.</li>
@@ -119,14 +186,16 @@ export function Help() {
         <li>Setup liegt jetzt oben rechts hinter dem Regler-Symbol.</li>
       </ul>
 
-      <h3>Befinden</h3>
+      </Sec>
+      <Sec title="Befinden">
       <ul>
         <li>Am Ende jeder Einheit fragt die App: „Wie hat sich die Einheit angefühlt?“ — auf der Feeling Scale von −5 (sehr schlecht) über 0 (neutral) bis +5 (sehr gut) (Hardy &amp; Rejeski, 1989). Freiwillig; ohne Wahl wird nichts gespeichert. Wie sich Training anfühlt, sagt das Dabeibleiben besser voraus als jeder Vorsatz (Ekkekakis et al., 2011).</li>
         <li>Im Stand zeigt die Karte „Befinden“ das Mittel der letzten vier Wochen (unter −1 zäh, bis +1 neutral, darüber gut) und je Tag der laufenden Phase die letzten sechs Werte. Fühlt sich ein Tag dreimal in Folge zäh an, steht ein Hinweis da. Die App ändert dabei nichts von selbst; kürzen oder tauschen kannst du unter „Anpassen“.</li>
         <li>Im King wirkt das Befinden zusätzlich: Zweimal hintereinander −1 oder schlechter, und die nächste Bestie fällt eine Klasse leichter aus.</li>
       </ul>
 
-      <h3>Bereiche: im Blick</h3>
+      </Sec>
+      <Sec title="Bereiche: im Blick">
       <ul>
         <li>Neun Bereiche — Kraft, Muskel, Spritzigkeit, Kraftausdauer, Intervalle, Grundausdauer, Beweglichkeit, Sehnen, Skill — mit einem Zustand: <strong>gut</strong>, <strong>bald</strong> oder <strong>fehlt</strong>. Zu finden im Reiter „Stand“ und in „Jahr planen“, Schritt 3; das Symbol links neben „Jahr planen“ zählt „bald“ und „fehlt“ und führt zum Stand.</li>
         <li>Dahinter stehen zwei Messungen (Antippen zeigt beide): wie lange der letzte Reiz her ist (Spritzigkeit hält etwa eine Woche, Kraftausdauer und Intervalle zwei, Grundausdauer, Beweglichkeit und Sehnen drei, Kraft und Muskel einen Monat) und wie viele Wochen das nächste halbe Jahr den Bereich trägt (Hauptziel voll, Nebenziel halb, Schwerpunkt-Slot halb; Richtwert vier).</li>
@@ -135,14 +204,16 @@ export function Help() {
         <li>Abwechslung: Kein Hauptziel mehr als zweimal in Folge (ein Zeichen zählt als eins) — Harlequin unterbricht die Reihe. Die Waage zeigt, ob das nächste halbe Jahr eher Spezialist oder Allrounder ist. Alles bleibt Hinweis, nichts wird gesperrt.</li>
       </ul>
 
-      <h3>Kalorien: Energie zur Last passen</h3>
+      </Sec>
+      <Sec title="Kalorien: Energie zur Last passen">
       <ul>
         <li>Jedes Zeichen trägt einen Kalorien-Modus. Die Rangfolge: Last zuerst — kein Defizit bei hoher Last, und mittlere Last zählt nach acht Wochen ohne ruhigen Abschnitt als hohe (Dauerlast). Dann der Kalender: im Winter Überschuss für Aufbau, im Sommer Defizit-Fenster. Auf Reisen Erhaltung, kohlenhydratbetont — dazu passt Athletik. Zuletzt der Grundmodus des Zeichens.</li>
         <li>Du kannst den Modus je Zeichen im Assistenten oder je Phase im Phasenblatt ändern; die App zeigt Konflikte als Symbol, sie sperrt nichts.</li>
         <li><strong>Im Defizit ist Halten das Ziel.</strong> Schaffst du eine Übung mit demselben Gewicht und denselben Wiederholungen wie beim letzten Mal, steht an der Karte ein grünes „gehalten“; der Wochenrückblick zählt gehaltene Übungen mit. Gibt eine Kernübung zweimal in Folge nach, steht im Stand ein sachlicher Hinweis — einzelne schwache Tage bleiben still, und die App ändert nichts von selbst.</li>
       </ul>
 
-      <h3>Schwerpunkt: ein Slot je Orden, im Jahr verteilt</h3>
+      </Sec>
+      <Sec title="Schwerpunkt: ein Slot je Orden, im Jahr verteilt">
       <ul>
         <li>Jeder Orden (ab 45 Minuten) hat einen Schwerpunkt-Slot — eine kleine Zusatzdosis, höchstens ein Viertel der Wochenzeit. Befüllt wird er in der Jahresgesamtschau: Nicht jede Phase muss alles schaffen, das Jahr muss stimmen.</li>
         <li>Vier Zwecke, in dieser Rangfolge: <strong>Testdefizit</strong> (deutlich unter der Norm oder schlechter geworden, und der Orden trainiert es nicht selbst) · <strong>Double down</strong> im Zeichen deines wichtigsten Ziels (der Orden trainiert den Bereich selbst, der Slot legt nach) · <strong>Erhalt</strong> (der Plan ließe den Bereich sonst verfallen — je länger vernachlässigt, desto eher) · <strong>Sekundärziel</strong> des Ordens.</li>
@@ -152,14 +223,16 @@ export function Help() {
         <li>Im Phasenblatt steht der Schwerpunkt mit Zweck; „Automatisch“, eine eigene Wahl oder „Aus“. Im Assistenten (Schritt 4) steht er unter jedem Orden, in Schritt 3 zählt er halb für die Wochen im Plan.</li>
       </ul>
 
-      <h3>Orte</h3>
+      </Sec>
+      <Sec title="Orte">
       <ul>
         <li>Ein Ort ist ein Name plus das, was dort steht. Eine Kategorie gibt es nicht: Die App nimmt die Übung des Ordens, wenn das Equipment reicht, sonst die nächste Variante aus dem Orden, und erst dann einen Ersatz aus der Bibliothek.</li>
         <li>„Laufen möglich“, „Sprints möglich“ und „Springseil“ sagen, was an diesem Ort geht (Vorgabe: Laufen ja, Sprints nein, Springseil ja). Sie steuern die Bestien: Fehlt die Strecke, das Rudergerät oder das Rad, werden nur die betroffenen Cardio-Elemente umgerechnet — Details unter Bestien.</li>
         <li>Fehlen Weste oder Scheiben, läuft die Übung ohne Zusatzlast, außer der Orden sieht dafür eine eigene Fassung vor (etwa Klimmzüge bis kurz vor Schluss statt schwerer Fünfer).</li>
       </ul>
 
-      <h3>Der Aschekurier (Erzähler)</h3>
+      </Sec>
+      <Sec title="Der Aschekurier (Erzähler)">
       <ul>
         <li>Unter Setup › Erzähler einschalten. Ein Flugblatt berichtet über jeden Orden: ein Widersacher als Endgegner, die Bestien sind sein Gefolge. Die Ausgabe der Woche öffnet das kleine Feder-Logo in der Ordenskarte auf <em>Heute</em> (ein Punkt heißt: neue Ausgabe), alle Ausgaben stehen im Log, am Ende eine Sonderausgabe.</li>
         <li>Einheiten treffen den Widersacher. Volle Wochen, Bestzeiten und mehr Gewicht treffen zusätzlich, einer davon doppelt (die Schwachstelle). Den W20 wirfst du selbst für den Widersacher und trägst ihn in der Wochenausgabe ein; die Zahl bleibt stehen. Der Wurf allein trifft nie: Erst die volle Woche danach ist die Antwort – nach einer Zwanzig trifft sie doppelt so hart. Besiegte Widersacher stehen in der Galerie im Log, entkommene kehren in einem späteren Orden derselben Szene zurück.</li>
@@ -168,26 +241,30 @@ export function Help() {
         <li>Eigene Welt: eine JSON-Datei im Aufbau von <code>data/narrative/generic.json</code> unter Setup › Erzähler laden. Sie bleibt auf dem Gerät und in deiner Sicherung.</li>
       </ul>
 
-      <h3>Können</h3>
+      </Sec>
+      <Sec title="Können">
       <ul>
         <li>Unter Setup › Können hakst du ab, was sauber sitzt: Klimmzug, Pistol Squat, Muscle-Up und mehr. Fehlt ein Skill, nimmt die App eine leichtere Variante (Hinweis „leichter“), und Bestien mit dieser Übung kommen mutiert.</li>
         <li>Übungsleitern bleiben der Lernweg zum Skill. Mit abgehaktem Skill starten sie auf der passenden Stufe.</li>
         <li>Schwert: Was du übst, hängt von deinem Können ab, nicht vom Orden. Der Lernweg hat sechs Stufen: Hiebe, Kombiformen, Drehhau, Klingentanz (Drehungen, tiefe Hiebe, Formen am Stück), Doppelmesser (zwei kurze Stöcke), Wanderflechte mit Heaven Six. Sitzt der Test einer Stufe, hakst du sie unter Schwert ab; ab der nächsten Einheit kommt die nächste Stufe. Ab Stufe 2 beginnt jeder Schwertblock mit kurzen Basics (Zorn-, Zwerch-, Scheitelhau) zum Einnorden; der Tag wird dadurch etwas länger, die Bestie bleibt. Der Orden bestimmt nur das Format, etwa 5 Minuten als Klammer oder 20 Minuten Lernweg. Geübt wird ohne Zusatzgewicht.</li>
       </ul>
 
-      <h3>Pausen</h3>
+      </Sec>
+      <Sec title="Pausen">
       <ul>
         <li>Die App kürzt die Pausen aus den Orden um 15 s: schwere Grundübungen nie unter 2 Minuten, alles andere nie unter 60 s. Für Muskelaufbau macht das kaum einen Unterschied, solange die Pause über etwa 60–90 s liegt (Singer et al., 2024); für Maximalkraft sind längere Pausen besser, deshalb die Untergrenze (Grgic et al., 2018). Kontrastpaare behalten ihre 3 Minuten.</li>
               <li>Nach dem letzten Satz einer Übung läuft kein Timer, du gehst direkt zur nächsten.</li>
       </ul>
 
-      <h3>Drei oder fünf Tage</h3>
+      </Sec>
+      <Sec title="Drei oder fünf Tage">
       <ul>
         <li>Vier Tage sind die Basis. Bei drei Tagen arbeitet die App das Wichtigste aus dem vierten Tag in die anderen ein: doppelte Bewegungsmuster fallen weg, der Rest läuft dichter mit Supersets und kürzeren Pausen.</li>
         <li>Bei fünf Tagen kommt ein Zusatztag zwischen die schweren Tage: eine Bestie plus etwas, das es nur dann gibt, je nach Orden zum Beispiel Unterarme, Nacken, Füße, Seilspringen oder Qigong.</li>
       </ul>
 
-      <h3>Ansage-Drill</h3>
+      </Sec>
+      <Sec title="Ansage-Drill">
       <ul>
         <li>Die App ist dein Partner: Sie ruft zufällig eine Richtung, einen Hieb oder einen Schlag, per Sprache und in großer Schrift (wählbar: beides, nur Ton, nur Schrift). Du entscheidest im Moment und bewegst dich. Der Abstand zwischen den Ansagen ist zufällig, damit nichts vorhersehbar wird. Feste Farben: links blau, rechts orange, vor grün, zurück bernstein, „Nicht …!“ rot.</li>
         <li>Varianten: Richtung (Scout), Antritt draußen (Skirmisher), Klinge (Scout, mit Schwert oder Stock; ohne kommen Richtungen), Schattenboxen (Pugilist), Stab (King, ruhig und genau statt schnell; ohne Stock entfällt er).</li>
@@ -195,7 +272,8 @@ export function Help() {
         <li>Kurztag: halb so viele Runden. Entlastungs- und leichtere Wochen: eine Runde weniger.</li>
         <li>Warum: Bewegung mit Denkanforderung ist eine plausible Brücke zur kognitiven Fitness (Tomporowski & Pesce, 2019), und Training wirkt messbar, wenn auch klein, auf die Kognition (Ludyga et al., 2020). Dass gerade dieses Format mehr bringt als normales Training, ist nicht direkt belegt. Darum heißt es hier „Entscheiden unter Zeitdruck“, nicht Gehirntraining.</li>
       </ul>
-      <h3>Tagesanpassung: Kurz · Intensiv · Leise · Kein Platz · Fällt aus</h3>
+      </Sec>
+      <Sec title="Tagesanpassung: Kurz · Intensiv · Leise · Kein Platz · Fällt aus">
       <ul>
         <li>Unter ⚙ Anpassen neben dem Namen der Einheit. Kurz, Leise und Kein Platz lassen sich kombinieren, Intensiv steht allein. Die Zahl am Zahnrad zeigt, wie viele Anpassungen aktiv sind.</li>
         <li><strong>Kurz:</strong> verdichtet statt zu streichen. Bis zu fünf Übungen (Kernübungen zuerst), Gegenspieler laufen als Superset (Brust und Rücken, Quadrizeps und Beinbeuger, Bizeps und Trizeps), Bestie eine Klasse und jede Schwertübung einen Satz kürzer, Ziel 30 Minuten. Reicht das nicht, gehen die Sätze gleichmäßig runter: erst bis zwei, dann fällt die fünfte Übung, dann bis einer. Grundlagen- und Ausdauertage ohne Kraftübungen behalten ihren Inhalt und laufen kürzer. In einer Entlastungswoche gilt die Entlastung; Kurz kürzt dann nur noch auf die vier Kernübungen, ohne Supersets und ohne Ausgleich. Für Wochen, in denen du absehbar wenig Zeit hast, gibt es Herald: ein Orden, der auf 25 Minuten ausgelegt ist. Das ist kein Deload, sondern Zeit und Tagesform: Das Leben geht vor, und eine kurze Einheit ist ein echter Erfolg. Ausgeglichen wird nur, wenn das Ziel des Ordens leidet: Muskeln, die der Orden aufbaut, bleiben an der unteren Grenze deines Volumenbereichs, alle anderen bei der Erhaltung (4 Sätze pro Woche). Erst kommt ein Satz mehr an passenden Übungen dazu, dann wandern weggefallene Kernübungen auf einen anderen Tag, und wenn die Zeit knapp wird, laufen Übungen als Superset. Kein Ausgleichstag überschreitet sein Zeitlimit und wächst höchstens 15 Minuten über seine normale Dauer — drei kurze Tage machen also keinen langen vierten. Spontan gleichen nur die Tage danach aus; ist es der letzte Tag der Woche, entfällt der Ausgleich. Der Grund steht in den Details der betroffenen Übung (Dosis antippen).</li>
@@ -207,7 +285,8 @@ export function Help() {
         <li>Deficit Push-Ups brauchen Liegestützgriffe, Yoga-Blöcke, Ringe oder Kurzhanteln (Setup › Equipment). Fehlt das am Ort, kommen Banded Push-Ups, ohne Band normale Push-Ups mit einem Satz mehr.</li>
       </ul>
 
-      <h3>Entlastungswoche</h3>
+      </Sec>
+      <Sec title="Entlastungswoche">
       <ul>
         <li>Vorschlag der App, wenn es Zeit ist: halbe Sätze, mindestens zwei, und keine Bestien. Gewichte, Übungen und Trainingstage bleiben, wie sie sind. Angenommen oder abgelehnt wird direkt in der Einblendung; über „Weiter normal trainieren“ jederzeit widerrufbar. Ein „nein“ gilt nur für die eine Woche.</li>
         <li>Der Rhythmus — in Phasen ab acht Wochen ab der fünften Woche alle vier Wochen — ist ein Angebot: Geht es dir gut, steht nur die leise Frage „Entlastung wäre dran. Dir geht es gut: weiter, oder trotzdem entlasten?“ mit zwei gleichrangigen Knöpfen. Empfohlen wird die Entlastung nach Signalen der letzten zwei Wochen: dreimal „zu schwer“, Befinden im Mittel unter −1 (mindestens drei Werte), zwei Kernübungen mit Rückgang, hohe Last der Woche. In der Rhythmus-Woche reicht eines davon, sonst braucht es zwei; die Empfehlung nennt sie in Worten. Die Dosis-Welle wendet zur geplanten Zeit auch ohne Entlastung. Nie in oder direkt vor einer Testwoche — die Woche davor spitzt ohnehin zu, jedes Mal gleich, damit die Testwerte vergleichbar bleiben; eine volle Entlastung würde sie schönen —, und nie dicht nach der letzten Entlastung. Liegt ein Ordenswechsel bis zu zwei Wochen neben dem Rhythmus, kommt die Entlastung in die erste Woche des neuen Ordens.</li>
@@ -215,7 +294,8 @@ export function Help() {
         <li>Warum die leichte Woche besser ist als gar nicht trainieren: Beinkraft hält drei bis fünf Tage Pause aus, die Kraft oben war nach fünf Tagen schon messbar leichter (Travis et al., 2022). Weitertrainieren mit halber Last schlägt das Aussetzen.</li>
       </ul>
 
-      <h3>Alltagslast</h3>
+      </Sec>
+      <Sec title="Alltagslast">
       <ul>
         <li>Dauerlast: Mittlere Last über viele Wochen wirkt wie hohe. Der erste Orden eines mittleren Abschnitts läuft normal; ein Orden, der nach fünf oder mehr Wochen mittlerer Last beginnt, wechselt auf geführt wie in einer Phase mit hoher Last. Läuft ein Orden acht Wochen oder länger in hoher Last, kommt ab seiner Mitte noch eine geführte Übung dazu. Umgestellt wird nie alles: Der erste freie Lift des Tages bleibt frei.</li>
         <li>Neue Übung, bekanntes Gewicht: Hat eine Übung noch kein Gewicht, schätzt die App es aus einer verwandten (Chest Press aus Bench Press, Front Squat aus Back Squat, Kurzhantel aus Langhantel). Die Verhältnisse sind Erfahrungswerte, Maschinen unterscheiden sich stark. Darum startet die Schätzung 15 % tiefer und steht als Schätzung an der Übung.</li>
@@ -229,27 +309,30 @@ export function Help() {
         <li>Warm-up und Cool-down anpassen: in der Einheit aufklappen, „✎ Bearbeiten“. Mit ✕ fliegt eine Übung raus, über „+ Übung hinzufügen“ kommt eine aus dem Katalog dazu. Das gilt dauerhaft für diesen Tag des Ordens, auch in späteren Phasen. „Auf Vorgabe des Ordens zurücksetzen“ macht es rückgängig. Das Training selbst bleibt fest.</li>
       </ul>
 
-      <h3>Timer</h3>
+      </Sec>
+      <Sec title="Timer">
       <ul>
         <li>Zeitübungen starten mit 4 Sekunden Vorlauf, die letzten 5 Sekunden piepen. Der Ton braucht einmal einen Fingertipp auf die Seite.</li>
         <li>Übungen für links und rechts: Nach Ablauf der linken Seite startet die rechte von selbst, wieder mit 4 Sekunden Vorlauf.</li>
       </ul>
 
-      <h3>Literatur</h3>
-      <Collapse title="Quellen der App" meta={`${REFS.refs.length} · geprüft ${REFS.checked.split("-").reverse().join(".")}`}>
-        <ul className="refs small">
-          {REFS.refs.map((r) => <li key={r.short}>{r.text} <a href={r.url} target="_blank" rel="noreferrer">Link</a></li>)}
-        </ul>
-      </Collapse>
+      </Sec>
+      <Sec title="Literatur">
+      <p className="muted small">Quellen der App: {REFS.refs.length} · geprüft {REFS.checked.split("-").reverse().join(".")}</p>
+      <ul className="refs small">
+        {REFS.refs.map((r) => <li key={r.short}>{r.text} <a href={r.url} target="_blank" rel="noreferrer">Link</a></li>)}
+      </ul>
 
-      <h3>Deine Daten</h3>
+      </Sec>
+      <Sec title="Deine Daten">
       <ul>
         <li>Alles bleibt auf diesem Gerät, in diesem Browser. Öffne die App immer auf demselben Weg (am besten über das Symbol auf dem Startbildschirm).</li>
-        <li>Im Log: „Wochenüberblick“ zählt harte Sätze pro Muskel, als Richtwert ohne Wertung: das helle Feld ist der Wachstumsbereich, die schmale Linie zeigt, wo in etwa die Erhaltung beginnt. „Verlauf“ zeigt jede Übung und Bestie über die Zeit.</li>
+        <li>Im Stand: „Volumen diese Woche“ zählt harte Sätze pro Muskel, geplant und erledigt, als Richtwert ohne Wertung: das helle Feld ist der Wachstumsbereich, die schmale Linie zeigt, wo in etwa die Erhaltung beginnt. „Verlauf“ zeigt jede Übung und Bestie über die Zeit.</li>
         <li>Nach 10 Tagen oder mehr ohne Training läuft die erste Woche automatisch mit −1 Satz und etwas leichteren Gewichten.</li>
         <li>Automatische Sicherung (Setup › Sichern und Wiederherstellen, Standard wöchentlich): Nach einer abgeschlossenen Einheit legt die App order-sicherung.json in den Download-Ordner. Am Rechner kannst du stattdessen eine feste Datei wählen, die bei jeder Einheit überschrieben wird. Browserdaten löschen trifft diese Dateien nicht.</li>
         <li>Wiederherstellen: Einrichtung › „Schon mal eingerichtet?“ › Sicherung laden, dann die neueste Datei wählen.</li>
       </ul>
+      </Sec>
     </div>
   );
 }
