@@ -519,6 +519,41 @@ function plannedCardio(state: AppState, pb: PlanBlock, week: number): number {
   }
   return min;
 }
+/** Geplante Woche je Rolle (1.25, Volumen Soll-Ist): Sätze je Muskel aus festen Slots (gleiche Zählung wie das Log)
+    und Bestien (Päckchen), dazu Konditionsminuten (Intervalle und Zeitblöcke, „locker“ zur Hälfte, Bestien ganz). */
+export interface PlannedRole { role: string; sets: Share; cardio: number; beasts: { id: string; min: number }[] }
+export function plannedRoles(state: AppState, pb: PlanBlock, week: number): PlannedRole[] {
+  const f = weekFocus(state, pb, week);
+  if (!f) return [];
+  const ab = isAWeek(week) ? "A" : "B";
+  return dayRoleMap(state, pb, f, week).flatMap((d) => {
+    const pid = state.profileFor?.[`${pb.id}:${week}:${d.role}`] ?? d.profileId;
+    const p0 = state.equipment.find((e) => e.id === pid);
+    const prof = p0 && withDay(p0, dayMods(state, pb, week, d.role, d.day));
+    const role = f.roles[d.role] && roleAt(f.roles[d.role], prof);
+    if (!prof || !role) return [];
+    const sets: Share = {};
+    let cardio = 0;
+    const blocks = role.blocks.filter((b) => !b.rotation || b.rotation === ab);
+    for (const r of roleSlots(blocks, prof)) {
+      if (r.kind === "strength" || r.kind === "hold") addTo(sets, musclesOf(r.name), r.sets);
+      else if (r.kind === "interval" && r.interval) cardio += (r.interval.rounds * (r.interval.work + r.interval.rest)) / 60;
+      else if (r.kind === "timer") cardio += (r.minutes ?? 10) * (/locker|ausfahren|auslaufen|grundlage|gehen/i.test(r.name) ? 0.5 : 1);
+    }
+    const beasts: { id: string; min: number }[] = [];
+    for (const b of blocks.map((x) => finisherBlock(x, week) ?? x)) {
+      if (b.type !== "beast") continue;
+      const beast = pickBeast(b, { blockId: pb.id, week, profile: prof, state, reduced: false, downgrade: false });
+      if (!beast) continue;
+      addTo(sets, beastDose(beast, state.user, state));
+      const min = beastMinutes(beast, state.beastTimes[beast.id]).min;
+      beasts.push({ id: beast.id, min });
+      if (b.pace !== "easy") cardio += min;
+    }
+    return [{ role: d.role, sets, cardio, beasts }];
+  });
+}
+
 /** Dosis dieser Ordenswoche (dose.ts): Ziel je Muskel und Kondition, Obergrenze, Stufe der Welle */
 export function doseAt(state: AppState, pb: PlanBlock, week: number): DoseWeek | null {
   return doseWeek(state, pb, week, { fixedSets: plannedWeekSets, fixedCardio: plannedCardio, beastSlots: (st, p, w) => weekBeastBlocks(st, p, w).length });

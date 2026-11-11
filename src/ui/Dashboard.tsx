@@ -11,7 +11,8 @@ import type { AppState } from "../types";
 import { Collapse, Modal } from "./common";
 import { Evaluation } from "./Evaluation";
 import { GOAL_LABEL } from "./PlanEditor";
-import { ProgressView, VolumeView } from "./Progress";
+import { ProgressView } from "./Progress";
+import { VolumeCard } from "./VolumeCard";
 import { YearTimeline } from "./YearPicture";
 
 const WATCH = { gut: "ok", bald: "soon", fehlt: "due" } as const;
@@ -97,8 +98,9 @@ export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: 
         {st.nextTest && <div className="muted small">Nächste Testwoche: ab {fmtDate(st.nextTest.start)}{st.nextTest.start > today ? ` (in ${Math.ceil(daysBetween(today, st.nextTest.start) / 7)} Wochen)` : " — läuft"}.</div>}
       </section>
 
-      <Collapse title="Volumen und Verlauf" meta="Sätze je Muskel, Gewichte">
-        <VolumeView state={state} today={today} />
+      <VolumeCard state={state} today={today} />
+
+      <Collapse title="Verlauf" meta="Gewichte und Bestzeiten">
         <ProgressView state={state} />
       </Collapse>
 

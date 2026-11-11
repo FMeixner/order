@@ -793,3 +793,11 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shado
 .aff-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
 .aff-dots i.low { background: var(--red); } .aff-dots i.high { background: var(--teal); }
 .aff-val { text-align: right; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+/* Volumen Soll-Ist (1.25) */
+.vol-plan { grid-template-columns: 88px 1fr 4.6em; }
+.vol-plan .mono { white-space: nowrap; }
+.vol-plan .vol-track { overflow: visible; }
+.vol-planned { position: absolute; top: 1px; bottom: 1px; left: 0; border: 1.5px solid color-mix(in srgb, var(--teal) 70%, transparent); border-radius: 4px; }
+.vol-fill.under { background: var(--amber); }
+.vol-cardio { padding-top: 6px; border-top: 1px solid var(--border); }

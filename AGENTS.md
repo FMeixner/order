@@ -21,6 +21,7 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
   - `cardio.ts` („Laufen ersetzen“ je Einheit; und Cardio am Ort: fehlt „Laufen möglich“/„Sprints möglich“/„Springseil“/Rudergerät/Rad, werden nur diese Elemente in Bestien umgerechnet — die Bestie zählt als mutiert; füllt der Ort eine Lücke durch kein Gerät, wird sie dort gar nicht gewählt. `beastLocSub` greift in `serve` in `plan.ts`)
   - `deload.ts` (Entlastungswoche: Empfehlung nach Rhythmus oder Signalen in `deloadAdvice`, Wochenentscheid in `AppState.deload` („ja“/„nein“), Umformung `deloadShape` greift in `focusFor`: halbe Sätze, keine Bestien und Finisher)
   - `affect.ts` (Befinden 1.24: Feeling Scale −5 … +5 nach jeder Einheit in `state.feeling`; `affectSummary` für die Stand-Karte: Mittel 4 Wochen, je Rolle der laufenden Phase die letzten sechs Werte, Hinweis bei drei zähen Werten in Folge. Die King-Regel `affectDowngrade` bleibt an `affect_rule`)
+  - `volume.ts` Soll-Ist (1.25): `plannedVolume`/`volumeNow` über `plannedRoles` in `plan.ts` (feste Slots wie das Log, Bestien per `pickBeast` nach Päckchen, Konditionsminuten); Karte `src/ui/VolumeCard.tsx` im Stand, wertneutral, keine Warnung über dem Band
   - `progression.ts` (`suggest`, `advance`)
   - `resolve.ts` (Übung am Ort: Hauptübung, dann Varianten des Slots, dann `instead`-Ersatz; Orte haben keine Kategorie; Tausch je Ort; geführte Varianten)
   - `warmup.ts`, `duration.ts`, `saga.ts` (Erzähler „Aschekurier“)

@@ -110,7 +110,8 @@ export function Help() {
       <h3>Stand: dein Dashboard</h3>
       <ul>
         <li>Der Reiter „Stand“ bündelt, was vorher verteilt war: oben dein Jahr als Zeitstrahl mit der <strong>Jahresbilanz</strong>: wie viele Wochen jedes Zeichen im Jahr hat, hinter dir (voll) und vor dir (blass). Steckst du im Defizit oder bist auf Reisen, steht darunter, wie viel Masse, Kraft oder Explosives das Jahr schon hatte und was als Nächstes kommt. Dann jeder Bereich in einer Zeile mit <strong>Test</strong> (Punkte ≈ Perzentil der Altersnorm aus der letzten Testwoche, ~ ist eine Schätzung, der Pfeil zeigt die Richtung seit dem Test davor) und <strong>Zustand</strong> (gut, bald, fehlt). Ein Dreieck markiert Schwachstellen aus den Tests. Antippen zeigt die Zahlen dahinter.</li>
-        <li>Darunter: woran der Schwerpunkt-Slot gerade arbeitet, die Waage Spezialist ↔ Allrounder, die Bilanz der letzten Testwoche mit „Auswertung“ und „Orden nach Schwachstellen optimieren“, und aufklappbar Volumen und Verlauf.</li>
+        <li>Darunter: woran der Schwerpunkt-Slot gerade arbeitet, die Waage Spezialist ↔ Allrounder, die Bilanz der letzten Testwoche mit „Auswertung“ und „Orden nach Schwachstellen optimieren“, und aufklappbar der Verlauf deiner Gewichte und Bestzeiten.</li>
+        <li><strong>Volumen diese Woche</strong>: je Muskel die harten Sätze der laufenden Woche, geplant als Umriss, erledigt gefüllt, dahinter dein Richtwert als helles Feld und die Erhaltung als Linie; darunter die Konditionsminuten. Unter der Erhaltung färbt sich der Balken bernsteinfarben, sonst grün. Mehr als das Feld ist keine Warnung wert: Die Planung lässt die Bestien gar nicht weit darüber schießen. Im Defizit reicht das Feld von der Erhaltung bis zum unteren Richtwert, in Entlastungs- und Testwochen zählt das Volumen nicht.</li>
         <li>Setup liegt jetzt oben rechts hinter dem Regler-Symbol.</li>
       </ul>
 

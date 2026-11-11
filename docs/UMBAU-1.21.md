@@ -60,7 +60,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~PT~~ | 1.22.0 ✓ | Neue Ordensbeschreibungen — **mit PB gebaut** (Texte ohne Tage, Rep-Bereiche, Studio-Nuancen) |
 | ~~P1~~ | 1.23.0 ✓ | Zeitstrahl: ganzes Jahr und ab heute, Jahresbilanz der Zeichen — **gebaut 11.11.2026** |
 | ~~P2~~ | 1.24.0 ✓ | Befinden (Feeling Scale) nach jeder Einheit, Auswertung im Stand — **gebaut 11.11.2026** |
-| P3 | 1.25.0 | Volumen Soll-Ist im Stand |
+| ~~P3~~ | 1.25.0 ✓ | Volumen Soll-Ist im Stand — **gebaut 11.11.2026** |
 | P4 | 1.26.0 | Ideenparkplatz (ohne Sperre oder Rückfrage) |
 | P5 | 1.27.0 | Wochenrückblick (im Stand) |
 | P6 | 1.28.0 | Defizit-Phasen: „gehalten“ zählt als Erfolg |

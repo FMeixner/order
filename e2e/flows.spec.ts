@@ -436,4 +436,9 @@ test("Befinden: Einheit mit +3 abschließen speichert den Wert, Stand zeigt die 
   await page.getByRole("button", { name: "Stand", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Befinden" })).toBeVisible();
   await expect(page.getByText("Noch zu wenige Einheiten mit Befinden.")).toBeVisible();
+  // Volumen Soll-Ist: geplant als Umriss, erledigt gefüllt
+  const vol = page.getByLabel("Volumen diese Woche");
+  await expect(vol.getByRole("heading", { name: "Volumen diese Woche" })).toBeVisible();
+  await expect(vol.locator(".vol-planned").first()).toBeAttached();
+  await vol.screenshot({ path: "test-results/volume-card.png" });
 });

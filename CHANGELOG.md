@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.25.0] – 2026-11-11
+
+### Neu
+- **Stand › Volumen diese Woche:** je Muskel die harten Sätze der laufenden Woche — geplant als Umriss, erledigt gefüllt —, dahinter dein Richtwert als Feld und die Erhaltung als Linie, rechts „erledigt / geplant“. Darunter die Konditionsminuten der Woche. Wertneutral: unter der Erhaltung bernstein, sonst grün, über dem Feld keine Warnung (die Planung verhindert das Überschießen). Im Defizit reicht das Feld von der Erhaltung bis zum unteren Richtwert („Im Defizit hält weniger Volumen den Stand.“); in Entlastungs- und Testwochen zählt das Volumen nicht.
+
+### Geändert
+- Der Aufklapper im Stand heißt jetzt „Verlauf“ und zeigt Gewichte und Bestzeiten; der Wochenüberblick des Volumens ist in die neue Karte gewandert.
+
 ## [1.24.0] – 2026-11-11
 
 ### Neu
