@@ -812,6 +812,25 @@ export function drillPool(kind: "wu" | "cd", p?: EquipmentProfile): Drill[] {
 }
 
 /** Warm-up oder Cool-down eines Tages: Listen der Rolle, ohne Entferntes, plus eigene Ergänzungen */
+/** Ausklang (1.29): Endet der Trainingsteil hart — Bestie, Finisher statt Superset oder Satzende-Technik —, beginnt
+    das Cool-down mit zwei Minuten lockerem Gehen. Sinkt die Intensität zum Ende, wird die Einheit angenehmer
+    erinnert (Hutchinson et al., 2020). */
+export const CD_WALK: Drill = { id: "cd-walk", name: "Locker gehen, Atem beruhigen", mode: "hold", value: 120 };
+export function isHardEnd(role: Role, week: number): boolean {
+  const ab = isAWeek(week) ? "A" : "B";
+  const last = role.blocks.filter((b) => !b.rotation || b.rotation === ab).pop();
+  if (!last) return false;
+  if (last.type === "beast") return true;
+  if (last.type === "single") return !!last.slot.finish;
+  if (last.type === "superset") return !!finisherBlock(last, week) || !!last.slots[last.slots.length - 1]?.finish;
+  return false;
+}
+/** Cool-down einer Einheit, mit Ausklang nach hartem Ende (nicht am Kurztag) */
+export function coolDrills(role: Role, p: EquipmentProfile | undefined, user: UserProfile, week: number, short = false): DrillView[] {
+  const cd = roleDrills(role, "cd", p, user, week);
+  return isHardEnd(role, week) && !short ? [drillView(CD_WALK, week), ...cd] : cd;
+}
+
 export function roleDrills(role: Role, kind: "wu" | "cd", p: EquipmentProfile | undefined, user: UserProfile, week: number): DrillView[] {
   const lists = kind === "wu" ? (role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || !!p?.has.sword) : role.cooldown ?? ["cd_general"];
   const ed = role.drillEdit?.[kind];

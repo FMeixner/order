@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { DRILL_LISTS, FOCUS_BY_ID } from "../data";
 import { EQUIPMENT_PRESETS, emptyState } from "../store";
-import { roleDrills } from "./plan";
+import type { Role } from "../types";
+import { coolDrills, isHardEnd, roleDrills } from "./plan";
 import { warmupKeys } from "./warmup";
 import { halfOf } from "./warmup";
 import { isStrength } from "./slots";
@@ -48,5 +49,33 @@ describe("Isolation zum Einstieg", () => {
     expect(warmupKeys([row], () => 60).get("row")).toBe(1);
     expect(warmupKeys([curl, row], () => 60).get("row")).toBeUndefined();
     expect(warmupKeys([curl, row], () => 90).get("row")).toBe(1);
+  });
+});
+
+describe("Ausklang (1.29)", () => {
+  const user = emptyState().user;
+  const p = EQUIPMENT_PRESETS[0].make();
+  const slot = { id: "s1", name: "Bench Press", sets: 3, reps: "8-10" };
+  const role = (blocks: Role["blocks"]): Role => ({ name: "Test", location: "gym", minutes: 45, cooldown: ["cd_upper"], blocks });
+  it("nach Bestie, Finisher oder Satzende: 2 Minuten locker gehen zuerst", () => {
+    for (const r of [
+      role([{ type: "single", slot }, { type: "beast", id: "x" }]),
+      role([{ type: "single", slot: { ...slot, finish: { kind: "myo" } } }]),
+      role([{ type: "superset", slots: [slot, { ...slot, id: "s2" }], finisher: { pool: ["huldra"] } }]),
+    ]) {
+      const cd = coolDrills(r, p, user, 1);
+      expect(cd[0]).toMatchObject({ id: "cd-walk", mode: "hold", value: 120 });
+      expect(cd.length).toBe(roleDrills(r, "cd", p, user, 1).length + 1);
+      expect(isHardEnd(r, 1)).toBe(true);
+    }
+  });
+  it("normales Ende und Kurztag: kein Zusatzpunkt", () => {
+    expect(coolDrills(role([{ type: "beast", id: "x" }, { type: "single", slot }]), p, user, 1)[0]?.id).not.toBe("cd-walk");
+    expect(coolDrills(role([{ type: "beast", id: "x" }]), p, user, 1, true)[0]?.id).not.toBe("cd-walk");
+  });
+  it("Finisher nur in seiner Woche (only: A)", () => {
+    const r = role([{ type: "superset", slots: [slot, { ...slot, id: "s2" }], finisher: { pool: ["huldra"], only: "A" } }]);
+    expect(isHardEnd(r, 1)).toBe(true);
+    expect(isHardEnd(r, 2)).toBe(false);
   });
 });

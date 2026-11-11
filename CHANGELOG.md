@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.29.0] – 2026-11-11
+
+### Neu
+- **Ausklang:** Endet eine Einheit mit einer Bestie, einem Finisher oder einem verlängerten letzten Satz, heißt das Cool-down „Ausklang“ und beginnt mit zwei Minuten lockerem Gehen und ruhigem Atmen (Timer), danach die gewohnten Dehnungen. Sinkt die Intensität zum Ende, bleibt die Einheit angenehmer in Erinnerung (Hutchinson et al., 2020). Am Kurztag entfällt der Zusatzpunkt; sonst kommt nichts hinzu.
+
 ## [1.28.0] – 2026-11-11
 
 ### Neu

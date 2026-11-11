@@ -64,7 +64,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P4~~ | 1.26.0 ✓ | Ideenparkplatz (ohne Sperre oder Rückfrage) — **gebaut 11.11.2026** |
 | ~~P5~~ | 1.27.0 ✓ | Wochenrückblick (im Stand) — **gebaut 11.11.2026** |
 | ~~P6~~ | 1.28.0 ✓ | Defizit-Phasen: „gehalten“ zählt als Erfolg — **gebaut 11.11.2026** |
-| P7 | 1.29.0 | Ausklang nach Bestie und Finisher |
+| ~~P7~~ | 1.29.0 ✓ | Ausklang nach Bestie und Finisher — **gebaut 11.11.2026** |
 | P8 | 1.30.0 | Entlastung nach Signalen |
 | P9 | 1.31.0 | Zuspitzung vor der Testwoche |
 | P10 | 1.32.0 | Explosives vor Ausdauer (Prüfung der Orden) |

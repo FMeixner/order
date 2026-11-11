@@ -43,7 +43,7 @@ export function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" |
   const add = (id: string) => setEd((e) => (e.off.includes(id) ? { ...e, off: e.off.filter((x) => x !== id) } : { ...e, add: [...e.add, id] }));
   const shown = new Set(drills.map((d) => d.id));
   const pool = drillPool(kind, ctx.profile).filter((d) => !shown.has(d.id));
-  const title = kind === "wu" ? "Warm-up" : "Cool-down";
+  const title = kind === "wu" ? "Warm-up" : drills[0]?.id === "cd-walk" ? "Ausklang" : "Cool-down";
   // Fertig: alles abgehakt — dann klappt die Karte nach kurzer Zeit ein wie eine Übungskarte
   const allDone = allDrillsDone(drills, session?.drills ?? {}, kind);
   useEffect(() => {

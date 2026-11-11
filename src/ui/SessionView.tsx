@@ -4,7 +4,8 @@ import { FLOWS, SHARPEN } from "../data";
 import type { BeastResult, Block, Session, WeaponModule } from "../types";
 import { estimateRole } from "../engine/duration";
 import { swapRunBeast } from "../engine/cardio";
-import { asWeaponBlock, isWeaponModule, MODULE_LABEL, moduleDrills, pathLevel, pathNext, PATHS, roleAt, roleDrills, shortSwordDrills } from "../engine/plan";
+import { asWeaponBlock, isWeaponModule, MODULE_LABEL, moduleDrills, pathLevel, pathNext, PATHS, coolDrills, roleAt, roleDrills, shortSwordDrills, weekdayOf } from "../engine/plan";
+import { dayMods } from "../engine/dayadj";
 import { advance, sharedState, suggest } from "../engine/progression";
 import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
@@ -40,7 +41,7 @@ export function SessionView(ctx: SessionCtx) {
   // Aufwärmsätze nach Last und Risiko (erste schwere Übung je Körperhälfte), Gewicht aus dem Vorschlag
   const warmMap = useMemo(() => warmupKeys(items.flatMap((it) => it.resolved), (r) => { const x = r as Resolved; return suggest(x, sharedState(state.slots, x), week, ctx.profile).weight ?? null; }), [items, state.slots, week, ctx.profile]);
   const warm = roleDrills(role, "wu", ctx.profile, state.user, week);
-  const cool = roleDrills(role, "cd", ctx.profile, state.user, week);
+  const cool = coolDrills(role, ctx.profile, state.user, week, dayMods(state, block, week, roleKey, weekdayOf(ctx.date)).short);
   const [feeling, setFeeling] = useState<number | null>(null);
 
   const mut = (fn: (s: Session) => Session) =>
@@ -205,7 +206,7 @@ export function SessionPreview(ctx: SessionCtx) {
   const role = roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile);
   const items = collectItems(ctx);
   const warm = roleDrills(role, "wu", ctx.profile, ctx.state.user, ctx.week);
-  const cool = roleDrills(role, "cd", ctx.profile, ctx.state.user, ctx.week);
+  const cool = coolDrills(role, ctx.profile, ctx.state.user, ctx.week, dayMods(ctx.state, ctx.block, ctx.week, ctx.roleKey, weekdayOf(ctx.date)).short);
   return (
     <div className="stack session">
       <div className="session-head">
