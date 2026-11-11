@@ -723,3 +723,9 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shado
 .sec-row .sec-top input { background: var(--surface); }
 .dash-row { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(70px, auto); }
 .dash-name { font-size: 14px; overflow-wrap: normal; hyphens: auto; }
+
+/* Päckchen-Tabelle (Setup) */
+.packet-list { display: flex; flex-direction: column; }
+.packet-row { display: grid; grid-template-columns: minmax(0, 1fr) 76px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--border); font-size: 14px; }
+.packet-row:first-child { border-top: 0; }
+.packet-row input { text-align: right; padding: 6px 10px; }

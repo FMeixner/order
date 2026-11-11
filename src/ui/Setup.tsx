@@ -6,6 +6,7 @@ import type { AppState, UserProfile } from "../types";
 import { Collapse, Field, Seg } from "./common";
 import { NarrativeSettings } from "./Raven";
 import { EquipmentEditor } from "./EquipmentEditor";
+import { PacketEditor } from "./PacketEditor";
 import { WeekCard } from "./WeekCard";
 import { isoDate } from "../engine/plan";
 
@@ -113,6 +114,7 @@ export function Setup({ state, update, replace, restartOnboarding }: { state: Ap
           ? <div className="stack"><p className="muted small">Noch kein Skillcheck: Alle Übungen und Bestien sind offen, auch Muscle-Ups und Pistol Squats.</p><button className="btn" onClick={() => update((st) => ({ ...st, user: { ...st.user, skills: [] } }))}>Skillcheck machen</button></div>
           : <SkillEditor user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} />}
       </Collapse>
+      <PacketEditor state={state} update={update} />
       <SwapList state={state} update={update} />
       <Collapse title="Equipment-Profile" meta={`${state.equipment.length}`}>
         <EquipmentEditor list={state.equipment} onChange={(equipment) => update((st) => ({ ...st, equipment }))} />

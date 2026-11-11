@@ -3,7 +3,7 @@
   "id": "mercenary",
   "name": "Mercenary", "name_w": "Mercenary",
   "tagline": "Kurzhanteln gibt es überall. Kraft auch.",
-  "description": "Kraft mit dem, was überall steht — zu Hause, im Studio, im Hotel-Gym: etwa 70 % Kurzhantel (DB Bench Press, Goblet Reverse Lunge, Staggered Stance RDL, Schulterdrücken, Rudern), 30 % Skill-Kraft mit dem eigenen Körper (Archer Pull-Ups, Archer Push-Ups, Pistol Squats) und ein Power-Tag mit DB Snatches. Keine schwere Last vom Boden, darum auch in vollen Wochen gut verträglich. Einseitige Kraftübungen erst eine Seite komplett, dann die andere; Snatches im Wechsel.",
+  "description": "Kraft mit dem, was überall steht: zum größten Teil Kurzhantel, gewürzt mit Körperkraft-Skills wie Archer Pull-Ups, Archer Push-Ups und Pistols, dazu explosive Snatches. Keine schwere Last vom Boden, darum auch in vollen Wochen gut verträglich.",
   "goals": {"primary": "strength", "secondary": ["skill", "hypertrophy"]},
   "nutrition": "any",
   "load_fit": "high",

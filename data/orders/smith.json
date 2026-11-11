@@ -3,7 +3,7 @@
   "id": "smith",
   "name": "Smith",
   "tagline": "Schwer, ehrlich, Maximalkraft.",
-  "description": "Vier Ganzkörpertage, kein Hauptlift zweimal pro Woche in derselben Form. Hauptlifts als Top-Satz plus drei Back-off-Sätze mit −10 %, gesteuert über das Feedback. Woche 5 Entlastung. Ohne Langhantel verliert der Fokus seinen Zweck, deshalb keine Reisevariante.",
+  "description": "Maximalkraft mit der Langhantel: Hauptlifts als Top-Satz mit Back-off-Sätzen, gesteuert über deine Rückmeldung, und kein Hauptlift zweimal pro Woche in derselben Form. Ohne Langhantel verliert der Orden seinen Sinn, darum gibt es keine Reisefassung.",
   "goals": {"primary": "strength", "secondary": ["hypertrophy"]},
   "nutrition": "maintenance",
   "load_fit": "high",

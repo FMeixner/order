@@ -661,11 +661,13 @@ describe("Bestien: Ausrüstung und Wochenvolumen", () => {
     expect(undine!.id).toBe("ng-nanna~hex");
     expect(undine!.work).toContain("Seilspringen");
   });
-  it("Bestien zählen halb: Undine (1 Runde, 20 Muscle-Ups, 100 Squats) gibt je Übung einen halben Satz", async () => {
+  it("Bestien zählen nach Päckchen: Undine (10 Muscle-Ups · 100 Squats · 10 Muscle-Ups · Rudern)", async () => {
     const { beastSets } = await import("./volume");
+    // Fortgeschritten: Muscle-Ups 3 am Stück → je 4 Päckchen, zweimal = 8 halbe Sätze; Squats 40 → 3 Päckchen
     const v = beastSets("ng-nanna");
-    expect(v.Rücken).toBeCloseTo(1); // zweimal Muscle-Ups × 0,5
-    expect(v.Quadrizeps).toBeCloseTo(0.5);
+    const mu = (await import("./volume")).musclesOf("Muscle-Ups");
+    expect(v.Rücken).toBeCloseTo(8 * 0.5 * (mu.Rücken ?? 0));
+    expect(v.Quadrizeps).toBeCloseTo(3 * 0.5 * ((await import("./volume")).musclesOf("Squats").Quadrizeps ?? 0));
     expect(v.Brust ?? 0).toBe(0); // Rudern zählt nicht
   });
 });

@@ -44,6 +44,16 @@ export function Help() {
         <li>Stufen steigen, wenn alle Sätze zweimal am oberen Ende liegen, zum Beispiel Liegestütz → Deficit → Archer.</li>
       </ul>
 
+      <h3>Dosis: Bestien zählen wie Sätze</h3>
+      <ul>
+        <li>Bestien laufen nicht neben dem Training her, sie zählen genauso. Eine Bestie zählt so, wie du sie brichst: Schaffst du 25 Push-ups am Stück, sind 50 Push-ups zwei Päckchen, und ein Päckchen ist ein halber Satz. Halb, weil Bestienrunden oft weit vor dem Muskelversagen enden. Venus mit vier Runden aus 50 Push-ups, 20 Crunches und 50 Squats bringt so 4 Sätze Drücken, 2 Rumpf und 2 Beine — verteilt über die Muskeln wie jede Übung im Studio. Halten und Strecken zählen ein Päckchen je Runde, Laufen und Rudern zählen als Kondition.</li>
+        <li>Die Päckchengröße startet nach deinem Niveau. Push-ups und Klimmzüge folgen nach jeder Testwoche deinem Testwert (60 % des Maximums). Unter Setup › Päckchen trägst du eigene Werte ein. Wer stärker wird, braucht weniger Päckchen für dieselbe Bestie — dann wählt die App mehr Runden oder härtere Bestien.</li>
+        <li>Zwei Achsen je Orden: Muskel (harte Sätze je Muskel und Woche) und Kondition (Minuten). Jede steigt, steigt sanft oder bleibt stark — je nach Ziel des Ordens. Pilgrim baut Ausdauer auf, King steigt sanft auf beiden, Magician steigt sanft in der Ausdauer.</li>
+        <li>Die Welle: Zwischen zwei Entlastungen steigt das Ziel Woche für Woche, vom unteren zum oberen Richtwert deines Niveaus. Danach wird es schwerer (Stufe 2 bevorzugt Bestien mit Archer, Clapping oder Muscle-Ups, Stufe 3 auch Lastbestien) und das Volumen beginnt wieder unten. Die Welle wendet auch, wenn du die Entlastung auslässt. Mehr Volumen bringt mit abnehmendem Ertrag mehr (Pelland et al., 2024); ständig steigendes Volumen war bei Trainierten einem gleichbleibenden nicht überlegen (Aube et al., 2022) — darum Wellen statt einer endlosen Treppe.</li>
+        <li>Geplant wird zu Beginn des Ordens: Was die Bestienplätze nicht erreichen können, senkt die ganze Welle gleichmäßig. Die Bestienwahl füllt auf, was die festen Übungen nicht abdecken, und schiebt keinen Muskel mehr als 15 % über das Ziel, wo es anders geht; Abwechslung geht vor, ein Überhang von höchstens einem Satz ist der Preis dafür. Intervalle wachsen mit der Welle um bis zu zwei Runden, nie über das Zeitlimit des Tages. Für die Ausdauer zählt vor allem die Intensität (Hickson et al., 1985).</li>
+        <li>An jeder Bestie steht, was sie zur Woche beiträgt.</li>
+      </ul>
+
       <h3>Bestien</h3>
       <ul>
         <li>Zwei Familien: <strong>Morgenlandbestien</strong> (Namen aus Mesopotamien, Persien und Arabien: Humbaba, Lamassu, Simurgh, Ifrit …) arbeiten gegen externen Widerstand, also Hanteln, Kettlebell, Langhantel, Band oder Sandsack. <strong>Nordbestien</strong> (Volkssagen aus Wald, Moor und Gebirge: Kobold, Undine, Kelpie …) nur mit dem eigenen Körper; Stange, Ringe oder Rudergerät können dazugehören.</li>

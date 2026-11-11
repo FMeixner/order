@@ -3,7 +3,7 @@
   "id": "monk",
   "name": "Monk",
   "tagline": "Kraft und Ruhe im Gleichgewicht.",
-  "description": "Zwei Ganzkörper-Krafttage, zwei Tage Yoga mit Meditation. Yoga und Krafttraining gehören zu den wirksamsten Bewegungsformen gegen depressive Symptome. Die Wirkung hängt an durchgehender Bewegung über Wochen, nicht an einem Orden: Im Jahresplan läuft sie ohnehin das ganze Jahr. Monk passt deshalb auch als kurze Atempause im Hirsch (4–6 Wochen) und als langer Block bis 12 Wochen.",
+  "description": "Kraft und Yoga mit Meditation zu gleichen Teilen. Yoga und Krafttraining gehören zu den wirksamsten Bewegungsformen gegen depressive Symptome; die Wirkung hängt an Bewegung über Wochen, nicht an einem einzelnen Orden. Darum passt Monk als kurze Atempause ebenso wie als langer Block.",
   "goals": {"primary": "wellbeing", "secondary": ["strength", "mobility"]},
   "nutrition": "maintenance",
   "load_fit": "high",

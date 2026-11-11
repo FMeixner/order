@@ -132,7 +132,7 @@ export function VolumeView({ state, today }: { state: AppState; today: string })
             );
           })}
         </div>
-        <p className="muted small">Harte Sätze pro Muskel, mitbeteiligte Muskeln zählen halb. Bestien zählen ebenfalls halb: jede Übung je Runde ein halber Satz, Laufen und Rudern nicht. Das helle Feld ist der Wachstumsbereich ({lo}–{hi}), kein Soll: Wie viele Tage in eine Woche passen, entscheidet der Alltag, und jede Woche, die stattfindet, bringt dich weiter. Die schmale Linie bei {String(maint).replace(".", ",")} zeigt, wo in etwa die Erhaltung von Kraft und Masse beginnt: Darunter wird es meist knapp, zwischen Linie und Feld reicht es zum Halten. Den Richtwert kannst du unter Setup › Profil anpassen.</p>
+        <p className="muted small">Harte Sätze pro Muskel, mitbeteiligte Muskeln zählen halb. Bestien zählen nach Päckchen: so viele Wiederholungen, wie du am Stück schaffst, sind ein halber Satz (Setup › Päckchen); Laufen und Rudern nicht. Das helle Feld ist der Wachstumsbereich ({lo}–{hi}), kein Soll: Wie viele Tage in eine Woche passen, entscheidet der Alltag, und jede Woche, die stattfindet, bringt dich weiter. Die schmale Linie bei {String(maint).replace(".", ",")} zeigt, wo in etwa die Erhaltung von Kraft und Masse beginnt: Darunter wird es meist knapp, zwischen Linie und Feld reicht es zum Halten. Den Richtwert kannst du unter Setup › Profil anpassen.</p>
       </div>
     </Collapse>
   );

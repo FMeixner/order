@@ -122,6 +122,8 @@ export type DrillEdits = { wu?: DrillEdit; cd?: DrillEdit };
 
 export interface Focus {
   schema: 1;
+  /** Dosis je Achse (1.22): überschreibt, was aus den Zielen folgt (progress | soft | maintain) */
+  dose?: { muscle?: "progress" | "soft" | "maintain"; cardio?: "progress" | "soft" | "maintain" };
   id: string;
   name: string;
   tagline: string;
@@ -316,6 +318,8 @@ export interface UserProfile {
   level?: "einsteiger" | "fortgeschritten" | "erfahren" | null;
   /** Eigener Richtwert Sätze pro Muskel und Woche, statt des Werts nach Erfahrung */
   volumeRange?: [number, number] | null;
+  /** Konditionsminuten je Woche (Spanne), sonst nach Niveau */
+  cardioRange?: [number, number] | null;
   /** Skills trainieren: Bestien mit fehlenden Skills kommen als hexed-Variante */
   /** @deprecated entfernt in 0.23, nur noch für alte Sicherungen */
   skillTraining?: boolean;
@@ -390,6 +394,8 @@ export interface Session {
 }
 
 export interface AppState {
+  /** Eigene Päckchengrößen je Bestienübung (Wiederholungen am Stück = ein halber Satz) */
+  packets?: Record<string, number>;
   /** Ansage-Drill: Sprache und Schrift, nur Sprache oder nur Schrift */
   callMode?: "both" | "sound" | "text";
   version: 1;

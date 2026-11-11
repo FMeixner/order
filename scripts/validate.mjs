@@ -159,6 +159,7 @@ for (const [f, d] of allFoci) {
   // Hohe Alltagslast: Ersatzrollen müssen eine Rolle des Ordens ersetzen und werden geprüft wie jede Rolle
   const hl = Object.entries({ ...Object.fromEntries(Object.entries(d.high_load?.odd || {}).map(([k, v]) => [`${k} (hohe Last, ungerade)`, v])), ...Object.fromEntries(Object.entries(d.high_load?.even || {}).map(([k, v]) => [`${k} (hohe Last, gerade)`, v])) });
   for (const k of [...Object.keys(d.high_load?.odd || {}), ...Object.keys(d.high_load?.even || {})]) if (!d.roles[k]) err(f, `high_load: Rolle "${k}" fehlt in roles`);
+  if (d.dose) for (const [ax, v] of Object.entries(d.dose)) if (!["muscle", "cardio"].includes(ax) || !["progress", "soft", "maintain"].includes(v)) err(f, `dose: ${ax}=${v} (Achse muscle/cardio, Modus progress/soft/maintain)`);
   for (const [rk, r] of [...Object.entries(d.roles || {}), ...hl]) {
     const ctx = `${rk}`;
     if (!TIERS.has(r.location)) err(f, `${ctx}: location muss gym, home oder reise sein`);
@@ -228,6 +229,13 @@ for (const [f, d] of allFoci) {
     seen.add(n);
   }
   if (!(tr.discount > 0 && tr.discount <= 1)) err("transfer.json", "discount zwischen 0 und 1");
+}
+
+// Päckchengrößen: Regeln gültig, drei Werte je Niveau, Familien mit bekanntem Test
+{
+  const pk = read("modules/packets.json");
+  for (const [rx, v] of pk.rules) { try { new RegExp(rx, "i"); } catch { err("packets.json", `Regel ${rx}: kein gültiger Ausdruck`); } if (!Array.isArray(v) || v.length !== 3 || v.some((x) => !(x >= 1))) err("packets.json", `Regel ${rx}: drei Werte ≥ 1`); }
+  for (const [k, fam] of Object.entries(pk.families)) if (!testIds.has(fam.test)) err("packets.json", `Familie ${k}: Test ${fam.test} fehlt`);
 }
 
 for (const w of warns) console.log("Hinweis:", w);

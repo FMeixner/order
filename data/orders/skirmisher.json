@@ -3,7 +3,7 @@
   "id": "skirmisher",
   "name": "Skirmisher", "name_w": "Skirmisher",
   "tagline": "Leicht, schnell, draußen.",
-  "description": "Sprungkraft und Antritt im Freien, mit dem eigenen Körper, Band und Klimmzugstange; ein Tag mit Kettlebell, die im Urlaub oft dabei ist. Sprünge, Sprints, Richtungswechsel und explosives Ziehen und Drücken — wenige Wiederholungen, volle Pausen, nie ausbelastet. Darum auch in vollen Wochen verträglich. Nordic Curls schützen die hinteren Oberschenkel.",
+  "description": "Sprungkraft und Antritt im Freien, mit dem eigenen Körper, Band, Klimmzugstange und einer Kettlebell, die oft mit auf Reisen geht. Sprünge, Sprints, Richtungswechsel auf Ansage und explosives Ziehen und Drücken — wenige Wiederholungen, volle Pausen, nie ausbelastet. Darum auch in vollen Wochen verträglich.",
   "goals": {"primary": "power", "secondary": ["speed", "skill"]},
   "nutrition": "any",
   "load_fit": "high",

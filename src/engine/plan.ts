@@ -1,9 +1,10 @@
 /* Jahresplan, Blockwochen, Rollen auf Trainingstage, Orden-Vorschläge, Bestien-Auswahl, Warm-up-Dosis. */
+import { beastDose, DOSE_MUSCLES, doseWeek, isAdvancedBeast, type DoseWeek } from "./dose";
 import { beastLocSub, hasLocText, mixesStations } from "./cardio";
 import { dayMods, withDay } from "./dayadj";
 import { allRuns } from "./runs";
 import { blockSeconds, boostClass, estimateRole, roleSlots, weaponSeconds } from "./duration";
-import { beastSets, musclesOf } from "./volume";
+import { musclesOf } from "./volume";
 import { BEAST_BY_ID, BEASTS, DM_VARIANTS, DRILL_LISTS, EXERCISES, FLOWS, FOCUS_BY_ID, LS_VARIANTS, SB_VARIANTS, SHARPEN, SKILLS, STAB, SWORD, LONGSWORD } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, Role, UserProfile, Weekday, WeaponModule } from "../types";
 import { WEEKDAYS } from "../types";
@@ -468,6 +469,8 @@ const GOAL_W: Partial<Record<Goal, { cardio: number; core: number; strength: num
    Nur ein Gewicht bei der Wahl, kein Zwang: Abwechslung bleibt vorrangig. */
 const BAL_TARGET: Record<string, number> = { Brust: 1, Rücken: 1, Schultern: 0.8, Quadrizeps: 1, Gesäß: 1, Beinbeuger: 0.7, Bizeps: 0.5, Trizeps: 0.5 };
 const BAL_K = 2;
+/** Gewicht der Dosis bei der Bestienwahl (nach Zeitfenster, Obergrenze und Varianz) */
+const DOSE_K = 2;
 type Share = Record<string, number>;
 const addTo = (a: Share, b: Share, f = 1) => { for (const [m, v] of Object.entries(b)) a[m] = (a[m] ?? 0) + v * f; };
 const weekSetsMemo = new WeakMap<AppState, Map<string, Share>>();
@@ -497,9 +500,30 @@ function muscleDeficit(have: Share): Share {
   if (!mean) return {};
   return Object.fromEntries(Object.entries(norm).map(([m, v]) => [m, Math.max(0, 1 - v / mean)]));
 }
+/** Feste Konditionsminuten einer Ordenswoche: Intervalle ganz, Zeitblöcke (Läufe, Rudern) ganz, „locker“ zur Hälfte */
+function plannedCardio(state: AppState, pb: PlanBlock, week: number): number {
+  const f = weekFocus(state, pb, week);
+  let min = 0;
+  if (f) for (const d of dayRoleMap(state, pb, f, week)) {
+    const p0 = state.equipment.find((e) => e.id === d.profileId);
+    const prof = p0 && withDay(p0, dayMods(state, pb, week, d.role, d.day));
+    const role = f.roles[d.role] && roleAt(f.roles[d.role], prof);
+    if (!prof || !role) continue;
+    const ab = isAWeek(week) ? "A" : "B";
+    for (const r of roleSlots(role.blocks.filter((b) => !b.rotation || b.rotation === ab), prof)) {
+      if (r.kind === "interval" && r.interval) min += (r.interval.rounds * (r.interval.work + r.interval.rest)) / 60;
+      else if (r.kind === "timer") min += (r.minutes ?? 10) * (/locker|ausfahren|auslaufen|grundlage|gehen/i.test(r.name) ? 0.5 : 1);
+    }
+  }
+  return min;
+}
+/** Dosis dieser Ordenswoche (dose.ts): Ziel je Muskel und Kondition, Obergrenze, Stufe der Welle */
+export function doseAt(state: AppState, pb: PlanBlock, week: number): DoseWeek | null {
+  return doseWeek(state, pb, week, { fixedSets: plannedWeekSets, fixedCardio: plannedCardio, beastSlots: (st, p, w) => weekBeastBlocks(st, p, w).length });
+}
 /** Anteil einer Bestie, der auf unterversorgte Muskeln fällt (0…1) */
-function balanceScore(b: Beast, deficit: Share): number {
-  const sh = beastSets(b.id);
+function balanceScore(b: Beast, deficit: Share, user: UserProfile): number {
+  const sh = beastDose(b, user);
   let hit = 0, tot = 0;
   for (const [m, v] of Object.entries(sh)) { if (!(m in BAL_TARGET)) continue; tot += v; hit += v * (deficit[m] ?? 0); }
   return tot ? hit / tot : 0;
@@ -565,7 +589,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
     if (w1) beastFamily(w1.id).forEach((x) => avoid.add(x));
   }
   // Kandidaten (Serien erst zusammensetzen, wenn sie gewählt sind)
-  type Cand = { kind: BeastKind; units: Beast[]; fam: string[] };
+  type Cand = { kind: BeastKind; units: Beast[]; fam: string[]; k?: number; split?: number };
   // Eigener Pool (z. B. Arm-Finisher): nur diese Bestien, sie wechseln sich ab. Passt keine zum Ort, der allgemeine Pool.
   const own = block.pool?.length ? BEASTS.filter((b) => block.pool!.includes(b.id) && ok(b)) : [];
   if (block.strict && !own.length) return null;
@@ -576,7 +600,21 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   for (const b of singles) {
     const m = mins.get(b.id)!, f = [fam1.get(b.id)!];
     if (inSlot(m)) cands.push({ kind: "single", units: [b], fam: f });
-    if (inSlot(m * 2)) cands.push({ kind: "double", units: [b], fam: f });
+    if (inSlot(m * 2)) cands.push({ kind: "double", units: [b], fam: f, k: 2 });
+    // Triple (1.22): dreimal am Stück, wenn es ins Fenster passt
+    if (inSlot(m * 3)) cands.push({ kind: "double", units: [b], fam: f, k: 3 });
+    // Partials (1.22): jede Rundenzahl ab 1, die ins Fenster passt — die Feinheit der Dosis.
+    // Zusammen wiegen sie so viel wie eine Form, damit Bestien mit vielen Runden den Pool nicht fluten.
+    if (m <= hi && canShorten(b)) {
+      const parts: Cand[] = [];
+      for (let k = 1; k < b.rounds; k++) {
+        const sb = shortBeast(b, k);
+        if (!sb) break;
+        const mm = sb.minutes * (m / b.minutes);
+        if (inSlot(mm)) { mins.set(sb.id, mm); parts.push({ kind: "single", units: [sb], fam: f }); }
+      }
+      for (const c of parts) cands.push({ ...c, split: parts.length + 1 });
+    }
     // Zu lang fürs Fenster: Kurzform mit so vielen Runden, wie hineinpassen (zählt als Einzelbestie)
     if (m > hi && canShorten(b)) {
       // Längste Kurzform, die passt (Leitern: die ersten Stufen, Buy-in und Buy-out bleiben)
@@ -598,7 +636,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
     const pair = hash(seed + short[i].id + short[j].id) % 2 ? [short[i], short[j]] : [short[j], short[i]];
     cands.push({ kind: "pair", units: pair, fam: pair.map((x) => fam1.get(x.id)!) });
   }
-  const build = (c: Cand): Beast => (c.kind === "single" ? c.units[0] : c.kind === "double" ? composeBeast([[c.units[0], 2]]) : composeBeast(c.units.map((x) => [x, 1] as [Beast, number])));
+  const build = (c: Cand): Beast => (c.kind === "single" ? c.units[0] : c.kind === "double" ? composeBeast([[c.units[0], c.k ?? 2]]) : composeBeast(c.units.map((x) => [x, 1] as [Beast, number])));
   const freshC = (c: Cand) => !c.fam.some((x) => avoid.has(x));
   if (!cands.length) {
     // Nichts passt ins Fenster: die Einzelbestie mit der nächstliegenden Dauer
@@ -609,6 +647,9 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   // Varianz im Orden: wann war welche Bestie zuletzt dran (alle Tage dieser Phase, geplant und geloggt)
   const lastUsed = new Map<string, number>();
   const beastVol: Share = {};
+  // Diese Woche schon vergeben (Bestienplätze davor, in Tagesreihenfolge): Restziel der Dosis
+  const weekDose: Share = {};
+  let weekMin = 0;
   const mark = (id: string, w: number) => beastFamily(id).forEach((f) => lastUsed.set(f, Math.max(lastUsed.get(f) ?? 0, w)));
   if (pb) {
     for (let k = 1; k <= opts.week; k++) {
@@ -617,7 +658,7 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
       for (let i = 0; i < Math.max(0, upto); i++) {
         const [b, prof] = targets[i];
         const x = pickBeast(b, { ...opts, boost: false, week: k, profile: prof, reduced: false });
-        if (x) { mark(x.id, k); addTo(beastVol, beastSets(x.id)); }
+        if (x) { mark(x.id, k); const d = beastDose(x, state.user, state); addTo(beastVol, d); if (k === opts.week) { addTo(weekDose, d); weekMin += min(x); } }
       }
       // Block, der nicht im Wochenplan steht (z. B. Test oder Sonderfall): eigene Vorwochen zählen trotzdem
       if (k < opts.week && !targets.some(([b]) => b.id === block.id)) {
@@ -629,11 +670,40 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
     for (const se of state.sessions) if (se.blockId === opts.blockId && se.week < opts.week) allRuns(se).forEach((r) => mark(r.id, se.week));
   }
   const age = (c: Cand) => Math.max(0, ...c.fam.map((f) => lastUsed.get(f) ?? 0)); // 0 = noch nie
+  // Dosis (1.22): Rangfolge Zeitfenster > Obergrenze > Varianz > Dosis.
+  const dw = pb ? doseAt(state, pb, opts.week) : null;
+  const unitDose = (u: Beast) => beastDose(u, state.user, state);
+  const candDose = (c: Cand): Share => { const o: Share = {}; for (const u of c.units) addTo(o, unitDose(u), c.kind === "double" ? c.k ?? 2 : 1); return o; };
+  const candMin = (c: Cand) => c.units.reduce((s0, u) => s0 + (mins.get(u.id) ?? min(u)), 0) * (c.kind === "double" ? c.k ?? 2 : 1);
+  const over = (c: Cand): number => {
+    if (!dw) return 0;
+    const d = candDose(c);
+    let o = 0;
+    for (const mu of DOSE_MUSCLES) {
+      const room = (dw.cap[mu] ?? Infinity) - (dw.fixed[mu] ?? 0) - (weekDose[mu] ?? 0);
+      o += Math.max(0, (d[mu] ?? 0) - Math.max(0, room));
+    }
+    return o;
+  };
+  // Rangfolge: Zeitfenster > Varianz > Obergrenze > Dosis. Varianz im Orden bleibt vorrangig (nie dieselbe Bestie wie
+  // letzte Woche, erst alle anderen); unter den gleich frischen Kandidaten schiebt keiner einen Muskel über die
+  // Obergrenze, solange einer es nicht tut — sonst gewinnt der kleinste Überhang.
   let pool = cands.filter(freshC);
   if (!pool.length && block.strict) return null; // Finisher: lieber das Superset als dieselbe Bestie wie letzte Woche
   if (!pool.length) pool = cands;
-  const oldest = Math.min(...pool.map(age));
-  pool = pool.filter((c) => age(c) === oldest);
+  // Varianz zuerst: die am längsten nicht gelaufenen Bestien. Darin bleibt eine unter der Obergrenze, wenn es geht;
+  // sonst der kleinste Überhang, solange er höchstens einen Satz beträgt. Erst bei mehr weicht die Wahl auf die nächste
+  // Altersklasse aus, die unter der Obergrenze bleibt. Nie die Vorwoche (oben ausgeschlossen).
+  const ages = [...new Set(pool.map(age))].sort((a0, c0) => a0 - c0);
+  const ov = new Map(dw ? pool.map((c) => [c, over(c)]) : []);
+  const under = (c: Cand) => !dw || ov.get(c)! <= 0.01;
+  const first = pool.filter((c) => age(c) === ages[0]);
+  if (!dw || first.some(under)) pool = first.filter(under);
+  else {
+    const least = Math.min(...first.map((c) => ov.get(c)!));
+    const okAge = least > 1 ? ages.find((a0) => pool.some((c) => age(c) === a0 && under(c))) : undefined;
+    pool = okAge != null ? pool.filter((c) => age(c) === okAge && under(c)) : first.filter((c) => ov.get(c)! <= least + 0.01);
+  }
 
   // Form gleichrangig: erst Einzel, Doppel oder Serie (je gleich wahrscheinlich), dann die Bestie nach Ziel gewichtet
   const r = (salt: string) => hash(`${seed}:${opts.week}:${salt}`) / 4294967296;
@@ -647,7 +717,25 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   const have: Share = { ...beastVol };
   if (pb) for (let k = 1; k <= opts.week; k++) addTo(have, plannedWeekSets(state, pb, k));
   const deficit = muscleDeficit(have);
-  const weight = (c: Cand) => c.units.reduce((sum, u) => { const m = mixOf(u); return sum + (0.2 + m.cardio * gw.cardio + m.core * gw.core + m.strength * gw.strength) * (1 + BAL_K * balanceScore(u, deficit)); }, 0) / c.units.length;
+  const base = (c: Cand) => c.units.reduce((sum, u) => { const m = mixOf(u); return sum + (0.2 + m.cardio * gw.cardio + m.core * gw.core + m.strength * gw.strength) * (1 + BAL_K * balanceScore(u, deficit, state.user)); }, 0) / c.units.length;
+  // Dosis-Gewicht: Abdeckung des Restziels (Muskel und Kondition), Stufen-Bonus; Partials teilen sich ihr Gewicht
+  const doseMult = (c: Cand): number => {
+    if (!dw) return 1;
+    const d = candDose(c);
+    let need = 0, hit = 0;
+    for (const mu of DOSE_MUSCLES) {
+      const rest = Math.max(0, (dw.muscle[mu] ?? 0) - (dw.fixed[mu] ?? 0) - (weekDose[mu] ?? 0));
+      need += rest; hit += Math.min(rest, d[mu] ?? 0);
+    }
+    const cRest = Math.max(0, dw.cardio - dw.fixedCardio - weekMin);
+    const mCover = need > 0 ? hit / need : 0, cCover = cRest > 0 ? Math.min(1, candMin(c) / cRest) : 0;
+    const wm = dw.modes.muscle === "maintain" ? 0.5 : 1, wc = dw.modes.cardio === "maintain" ? 0.5 : 1;
+    let mult = 1 + DOSE_K * (wm * mCover + wc * cCover) / (wm + wc);
+    if (dw.stage >= 2 && c.units.some(isAdvancedBeast)) mult *= 1.3;
+    if (dw.stage >= 3 && c.units.some((u) => beastRegion(u) === "sued")) mult *= 1.3;
+    return mult;
+  };
+  const weight = (c: Cand) => (base(c) * doseMult(c)) / Math.sqrt(c.split ?? 1);
   const ws = list.map((c) => weight(c) ** 2);
   let u = r("pick") * ws.reduce((x, y) => x + y, 0);
   for (let i = 0; i < list.length; i++) { u -= ws[i]; if (u <= 0) return build(list[i]); }

@@ -8,6 +8,7 @@ import { SWAP_GROUPS } from "../data";
 import type { AppState, Block, Focus, Load, PlanBlock, Role, Section, Slot, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { skipDay } from "./skipweek";
+import { doseMode, wavePos } from "./dose";
 import { isHeavy, isStrength, planMinutes } from "./slots";
 import { addDays, applyDrillEdits, blockFocus, blockWeeks, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { pairToFit, shortDay, shortDeload } from "./shortday";
@@ -247,6 +248,33 @@ export const blockInWeek = (state: Pick<AppState, "sections">, b: PlanBlock, wee
   return load === b.load ? b : { ...b, load };
 };
 
+/** Feste Konditionsslots wachsen mit der Welle (1.22): Intervalle bekommen bis zu zwei Runden mehr, Schritt für Schritt
+    über die Welle, nach der Entlastung wieder die kuratierte Zahl. Nur wenn die Kondition steigt (progress oder soft),
+    nicht in Entlastungs- oder Hochlastwochen, und nie über das Zeitlimit des Tages. Zeitblöcke (Grundlage) steigen
+    schon über ihre eigene Progression (Minuten). */
+function growIntervals(state: AppState, b: PlanBlock, week: number, f: Focus): Focus {
+  if (doseMode(f, b).cardio === "maintain" || isDeloaded(state, b, week) || weekLoad(state.sections, b, week) === "high") return f;
+  const w = wavePos(state.plan, b, week);
+  if (w.deload || w.len < 2) return f;
+  const extra = Math.round((2 * w.pos) / (w.len - 1));
+  if (!extra) return f;
+  let changed = false;
+  const roles: Record<string, Role> = {};
+  for (const [k, r] of Object.entries(f.roles)) {
+    if (!r.blocks.some((x) => x.type === "single" && x.slot.kind === "interval" && x.slot.interval)) { roles[k] = r; continue; }
+    const limit = Math.max(r.cap ?? Math.max(r.minutes, f.session_min), planMinutes(r));
+    let best = r;
+    for (let e = extra; e >= 1; e--) {
+      const cand: Role = { ...r, blocks: r.blocks.map((x) => (x.type === "single" && x.slot.kind === "interval" && x.slot.interval
+        ? { ...x, slot: { ...x.slot, interval: { ...x.slot.interval, rounds: x.slot.interval.rounds + e }, name: x.slot.name.replace(/^(Intervalle )(\d+)( ×)/, (_m, a: string, n: string, c: string) => `${a}${Number(n) + e}${c}`), why: [...(x.slot.why ?? []), `Die Kondition steigt mit der Welle: +${e} ${e === 1 ? "Runde" : "Runden"} diese Woche.`] } }
+        : x)) };
+      if (planMinutes(cand) <= limit + 0.5) { best = cand; changed = true; break; }
+    }
+    roles[k] = best;
+  }
+  return changed ? { ...f, roles } : f;
+}
+
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {
   const base = blockFocus(b);
   if (!base) return null;
@@ -275,6 +303,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
     }
     shaped = quietMoves(state, b, week, shaped, days, shortened);
   } else if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
+  shaped = growIntervals(state, b, week, shaped);
   shaped = applySkips(state, b, week, shaped, n);
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.
   return applyDrillEdits(applySlots(shaped, state, b), state.drillEdits);

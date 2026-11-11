@@ -3,6 +3,11 @@
   "checked": "2026-10-20",
   "refs": [
     {
+      "short": "Aube et al., 2022",
+      "text": "Aube, D., Wadhi, T., Rauch, J., Anand, A., Barakat, C., Pearson, J., Bradshaw, J., Zazzo, S., Ugrinowitsch, C., & De Souza, E. O. (2022). Progressive resistance training volume: Effects on muscle thickness, mass, and strength adaptations in resistance-trained individuals. Journal of Strength and Conditioning Research, 36(3), 600–607.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32058362/"
+    },
+    {
       "short": "Bickel et al., 2011",
       "text": "Bickel, C. S., Cross, J. M., & Bamman, M. M. (2011). Exercise dosing to retain resistance training adaptations in young and older adults. Medicine & Science in Sports & Exercise, 43(7), 1177–1187.",
       "url": "https://pubmed.ncbi.nlm.nih.gov/21131862/"
@@ -66,6 +71,11 @@
       "short": "Helms et al., 2016",
       "text": "Helms, E. R., Cronin, J., Storey, A., & Zourdos, M. C. (2016). Application of the repetitions in reserve-based rating of perceived exertion scale for resistance training. Strength and Conditioning Journal.",
       "url": "https://openrepository.aut.ac.nz/items/92cefeac-7c32-44f1-bfbc-f48f4a5dd8cf/full"
+    },
+    {
+      "short": "Hickson et al., 1985",
+      "text": "Hickson, R. C., Foster, C., Pollock, M. L., Galassi, T. M., & Rich, S. (1985). Reduced training intensities and loss of aerobic power, endurance, and cardiac growth. Journal of Applied Physiology, 58(2), 492–499.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3156841/"
     },
     {
       "short": "Hoffmann et al., 2019",
@@ -146,6 +156,11 @@
       "short": "Pancar et al., 2026",
       "text": "Pancar, Z., Ilhan, M. T., Darendeli, M. K., et al. (2026). Effects of deload periods in resistance training on muscle hypertrophy and strength endurance in untrained young men using a randomized within subject design. Scientific Reports, 16, 10299.",
       "url": "https://doi.org/10.1038/s41598-026-40612-5"
+    },
+    {
+      "short": "Pelland et al., 2024",
+      "text": "Pelland, J. C., Remmert, J. F., Robinson, Z. P., Hinson, S. R., & Zourdos, M. C. (2024). The resistance training dose-response: Meta-regressions exploring the effects of weekly volume and frequency on muscle hypertrophy and strength gain [Preprint]. SportRxiv.",
+      "url": "https://sportrxiv.org/index.php/server/preprint/view/537"
     },
     {
       "short": "Refalo et al., 2023",

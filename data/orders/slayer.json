@@ -3,7 +3,7 @@
   "id": "slayer",
   "name": "Slayer", "name_w": "Amazon",
   "tagline": "Masse oben, Athletik unten, Schwert in der Hand.",
-  "description": "Muskelaufbau mit leichtem Überschuss für den Oberkörper: Brust, Rücken, Schultern und Arme mit etwa 11–14 harten Sätzen pro Woche, Übungen mit Betonung der Dehnposition. Die Beine laufen athletisch: Freitag schwer und explosiv mit Kontrastpaaren im A/B-Wechsel (30 s vom schweren zum explosiven Satz, 3 Min bis zum nächsten Paar), Kraftausdauer über die Bestien. Donnerstag 20 Minuten Schwert auf deiner Stufe im Lernweg. Bis zu fünfzehn Wochen: Läuft eine Körpergewichts-Übung aus (etwa 20+ saubere Liegestütze in der Tiefe), wechselt sie zur Gewichtsweste und progressiert mit ihr weiter — Weste, Gürtel oder Rucksack mit Scheiben, je nachdem, was das Profil hergibt.",
+  "description": "Klarer Fokus auf Muskelaufbau im Oberkörper, mit Betonung der Dehnposition. Die Beine laufen athletisch: schwer und explosiv in Kontrastpaaren, Kraftausdauer über die Bestien. Ein Teil der Woche gehört dem Schwert auf deiner Stufe im Lernweg. Läuft eine Körpergewichtsübung aus, wechselt sie zur Weste und steigt mit ihr weiter.",
   "goals": {"primary": "hypertrophy", "secondary": ["strength", "power", "skill"]},
   "nutrition": "surplus",
   "load_fit": "high",

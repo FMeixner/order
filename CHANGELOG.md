@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.22.0] – 2026-11-11
+
+### Neu
+- **Dosis: Bestien zählen wie Sätze.** Eine Bestie zählt so, wie du sie brichst: Wiederholungen am Stück ergeben ein Päckchen, ein Päckchen ist ein halber Satz. Bisher zählte jede Übung je Runde gleich, egal ob 5 oder 50 Wiederholungen; Bestien mit vielen Wiederholungen waren damit stark unterschätzt. Volumen-Anzeige, Erhaltungsprüfung und Bestienwahl rechnen jetzt mit denselben Zahlen.
+- **Päckchen in Setup:** Startwerte nach Niveau, Push-ups und Klimmzüge folgen nach jeder Testwoche deinem Testwert, eigene Werte schlagen beides.
+- **Zwei Achsen je Orden:** Muskel und Kondition steigen, steigen sanft oder bleiben stark, je nach Ziel. Pilgrim: Ausdauer steigt, King: beides sanft, Magician: Ausdauer sanft.
+- **Welle:** Zwischen zwei Entlastungen steigt das Ziel Woche für Woche vom unteren zum oberen Richtwert; danach eine Stufe schwerer (fortgeschrittene Bestien, dann Lastbestien) und zurück auf den Start. Geplant wird zu Beginn des Ordens; Unerreichbares senkt die Welle gleichmäßig.
+- **Bestienwahl nach Dosis:** Die Bestien füllen auf, was die festen Übungen nicht abdecken, mit allen Formen (Partials ab einer Runde, Doppel, Triple, Serien), und schieben keinen Muskel mehr als 15 % über das Ziel, wo es anders geht. Abwechslung bleibt vorrangig. An jeder Bestie steht, was sie zur Woche beiträgt.
+- **Intervalle wachsen mit:** In Orden, deren Kondition steigt, bekommen Intervalle über die Welle bis zu zwei Runden mehr, nie über das Zeitlimit des Tages.
+
+### Geändert
+- **Neue Ordenstexte:** Alle 23 Orden haben neue Taglines und Beschreibungen: Inhalte und ihr Verhältnis zueinander statt Tagen, Wiederholungsbereichen und Studio-Details.
+
 ## [1.21.1] – 2026-11-10
 
 ### Geändert

@@ -3,13 +3,13 @@
   "id": "gladiator",
   "name": "Gladiator", "name_w": "Gladiatrix",
   "tagline": "Die Grube vergisst keine Zeit.",
-  "description": "Kondition als Sport vor Zeugen, nicht als Hintergrundlärm: vier Events die Woche. „Lasten“ hebt die Sandsack-Familie — Ground-to-Shoulder, Squat, Bent-Over Row — und trägt; das Gewicht lebt, der Rumpf lernt das Segeln. „Runde“ mischt Seilsprints und Burpee-Intervalle im A/B-Wechsel mit Swing-Supersets, „Eisen“ hält die Kraftachse mit Langhantel und Rudern, „Spiel“ misst Shuttle, Sprints und Sprünge. Die Bestie sitzt als Finisher hinter den Lasten — dieselbe Klasse wie der Tag: kurz und hämisch. Wer keinen Sandsack hat, bekommt automatisch Kurzhantel- und Band-Varianten angezeigt; draußen läuft die Woche mit Widerstandsbändern. In der Testwoche zeigt die Grube, was messbar geworden ist.",
-  "goals": { "primary": "conditioning", "secondary": ["strength", "endurance"] },
+  "description": "Kondition als Wettkampf, nicht als Hintergrundrauschen. Die Sandsack-Familie hebt und trägt — das Gewicht lebt, der Rumpf lernt mitzugehen. Seil, Burpees und Swing-Supersets jagen den Puls, Langhantel und Rudern halten die Kraft, Antritt, Sprung und Wurf werden gemessen. Ausdauer und Kraft werden besser; die Bestie hinter den Lasten bleibt kurz und gemein.",
+  "goals": {"primary": "conditioning", "secondary": ["strength", "endurance"]},
   "nutrition": "maintenance",
   "load_fit": "medium",
   "level": "intermediate",
   "session_min": 45,
-  "weeks": { "min": 8, "max": 10 },
+  "weeks": {"min": 8, "max": 10},
   "test_week": true,
   "travel": true,
   "modules": ["correctives", "beast"],
@@ -22,10 +22,10 @@
       "name": "Lasten", "location": "gym", "minutes": 45,
       "warmup": ["short_base", "lower_prep"], "cooldown": ["cd_lower", "cd_stab"],
       "blocks": [
-        {"type": "single", "slot": { "id": "gl-la-1", "name": "Sandbag Ground-to-Shoulder", "home": { "name": "DB Snatch", "prog": "double" }, "reise": { "name": "Band Pull-Through", "prog": "reps" }, "sets": 5, "reps": "6/Seite", "prog": "weight", "rest": 90, "note": "alternierend links/rechts, Zahl je Runde gerade" }},
-        {"type": "single", "slot": { "id": "gl-la-2", "name": "Sandbag Squat", "home": "Goblet Reverse Lunge", "reise": "Split Squat", "sets": 4, "reps": "8", "prog": "weight", "rest": 90 }},
-        {"type": "single", "slot": { "id": "gl-la-3", "name": "Sandbag Bent-Over Row", "home": { "name": "1-Arm DB Row", "prog": "double" }, "reise": { "name": "Band Row", "prog": "reps" }, "sets": 4, "reps": "10", "prog": "weight", "rest": 75 }},
-        {"type": "single", "slot": { "id": "gl-la-4", "name": "Suitcase Carry", "home": "Farmer's Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60, "note": "pro Seite, ruhig gehen" }},
+        {"type": "single", "slot": {"id": "gl-la-1", "name": "Sandbag Ground-to-Shoulder", "home": {"name": "DB Snatch", "prog": "double"}, "reise": {"name": "Band Pull-Through", "prog": "reps"}, "sets": 5, "reps": "6/Seite", "prog": "weight", "rest": 90, "note": "alternierend links/rechts, Zahl je Runde gerade"}},
+        {"type": "single", "slot": {"id": "gl-la-2", "name": "Sandbag Squat", "home": "Goblet Reverse Lunge", "reise": "Split Squat", "sets": 4, "reps": "8", "prog": "weight", "rest": 90}},
+        {"type": "single", "slot": {"id": "gl-la-3", "name": "Sandbag Bent-Over Row", "home": {"name": "1-Arm DB Row", "prog": "double"}, "reise": {"name": "Band Row", "prog": "reps"}, "sets": 4, "reps": "10", "prog": "weight", "rest": 75}},
+        {"type": "single", "slot": {"id": "gl-la-4", "name": "Suitcase Carry", "home": "Farmer's Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60, "note": "pro Seite, ruhig gehen"}},
         {"type": "beast", "id": "gl-la-5", "classes": ["plage", "bestie"]}
       ]
     },
@@ -33,38 +33,38 @@
       "name": "Runde", "location": "home", "minutes": 45,
       "warmup": ["short_base", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "single", "rotation": "A", "slot": { "id": "gl-ru-1a", "name": "Seilsprints", "kind": "interval", "interval": { "work": 20, "rest": 40, "rounds": 8 }, "prog": "none" }},
-        {"type": "single", "rotation": "B", "slot": { "id": "gl-ru-1b", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": { "work": 30, "rest": 30, "rounds": 10 }, "prog": "none", "note": "hohe Alltagslast: Seilspringen statt Burpees, mittlerer Puls" }},
+        {"type": "single", "rotation": "A", "slot": {"id": "gl-ru-1a", "name": "Seilsprints", "kind": "interval", "interval": {"work": 20, "rest": 40, "rounds": 8}, "prog": "none"}},
+        {"type": "single", "rotation": "B", "slot": {"id": "gl-ru-1b", "name": "Intervalle: Burpees oder Seilspringen", "kind": "interval", "interval": {"work": 30, "rest": 30, "rounds": 10}, "prog": "none", "note": "hohe Alltagslast: Seilspringen statt Burpees, mittlerer Puls"}},
         {"type": "superset", "rest": 60, "slots": [
-          { "id": "gl-ru-2a", "name": "KB Swing", "reise": { "name": "Band Pull-Through", "prog": "reps" }, "sets": 4, "reps": "15", "prog": "weight" },
-          { "id": "gl-ru-2b", "name": "Push-Up", "sets": 4, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"] }
+          {"id": "gl-ru-2a", "name": "KB Swing", "reise": {"name": "Band Pull-Through", "prog": "reps"}, "sets": 4, "reps": "15", "prog": "weight"},
+          {"id": "gl-ru-2b", "name": "Push-Up", "sets": 4, "reps": "10-25", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"]}
         ]},
-        {"type": "single", "slot": { "id": "gl-ru-3", "name": "Sandbag Push Press", "home": { "name": "DB Shoulder Press", "prog": "double" }, "reise": { "name": "Band Rotational Press", "prog": "reps" }, "sets": 3, "reps": "5/Seite", "prog": "weight", "rest": 75 }},
-        {"type": "single", "slot": { "id": "gl-ru-4", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30 }},
-        {"type": "single", "slot": { "id": "gl-ru-5", "name": "Lockeres Auslaufen", "kind": "timer", "minutes": 5, "prog": "none", "note": "Sprechtempo: ganze Sätze gehen noch" }}
+        {"type": "single", "slot": {"id": "gl-ru-3", "name": "Sandbag Push Press", "home": {"name": "DB Shoulder Press", "prog": "double"}, "reise": {"name": "Band Rotational Press", "prog": "reps"}, "sets": 3, "reps": "5/Seite", "prog": "weight", "rest": 75}},
+        {"type": "single", "slot": {"id": "gl-ru-4", "name": "Hollow Hold", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 30}},
+        {"type": "single", "slot": {"id": "gl-ru-5", "name": "Lockeres Auslaufen", "kind": "timer", "minutes": 5, "prog": "none", "note": "Sprechtempo: ganze Sätze gehen noch"}}
       ]
     },
     "eisen": {
       "name": "Eisen", "location": "gym", "minutes": 50,
       "warmup": ["short_base", "lower_prep", "shoulder_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "single", "slot": { "id": "gl-ei-1", "name": "Hang Power Clean", "sets": 4, "reps": "3", "prog": "none", "rest": 150, "note": "Techniktag-Echo: sauber vor schwer, keine Ermüdungsjagd" }},
-        {"type": "single", "slot": { "id": "gl-ei-2", "name": "Back Squat", "sets": 3, "reps": "5", "prog": "double", "rest": 180 }},
-        {"type": "single", "slot": { "id": "gl-ei-3", "name": "Romanian Deadlift", "sets": 3, "reps": "8", "prog": "double", "rest": 120 }},
-        {"type": "single", "slot": { "id": "gl-ei-4", "name": "Rudern 6 × 250 m", "kind": "interval", "interval": { "work": 60, "rest": 60, "rounds": 6 }, "prog": "none", "note": "aerobe Uhr nebenbei: zügig, nicht investiert" }}
+        {"type": "single", "slot": {"id": "gl-ei-1", "name": "Hang Power Clean", "sets": 4, "reps": "3", "prog": "none", "rest": 150, "note": "Techniktag-Echo: sauber vor schwer, keine Ermüdungsjagd"}},
+        {"type": "single", "slot": {"id": "gl-ei-2", "name": "Back Squat", "sets": 3, "reps": "5", "prog": "double", "rest": 180}},
+        {"type": "single", "slot": {"id": "gl-ei-3", "name": "Romanian Deadlift", "sets": 3, "reps": "8", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "gl-ei-4", "name": "Rudern 6 × 250 m", "kind": "interval", "interval": {"work": 60, "rest": 60, "rounds": 6}, "prog": "none", "note": "aerobe Uhr nebenbei: zügig, nicht investiert"}}
       ]
     },
     "spiel": {
       "name": "Spiel", "location": "home", "minutes": 45,
       "warmup": ["short_base", "run_prep", "jump_prep"], "cooldown": ["cd_calm"],
       "blocks": [
-        {"type": "single", "slot": { "id": "gl-sp-1", "name": "5-10-5 Shuttle", "sets": 4, "reps": "1", "prog": "none", "rest": 120, "note": "auf Zeit, besserer Lauf zählt — die Tafel merkt es sich" }},
-        {"type": "single", "slot": { "id": "gl-sp-2", "name": "Sprint oder Seilspringen 10 × 30 s", "kind": "interval", "interval": { "work": 30, "rest": 45, "rounds": 10 }, "prog": "none" }},
+        {"type": "single", "slot": {"id": "gl-sp-1", "name": "5-10-5 Shuttle", "sets": 4, "reps": "1", "prog": "none", "rest": 120, "note": "auf Zeit, besserer Lauf zählt — die Tafel merkt es sich"}},
+        {"type": "single", "slot": {"id": "gl-sp-2", "name": "Sprint oder Seilspringen 10 × 30 s", "kind": "interval", "interval": {"work": 30, "rest": 45, "rounds": 10}, "prog": "none"}},
         {"type": "superset", "rest": 60, "slots": [
-          { "id": "gl-sp-3a", "name": "Pogo Hops", "sets": 3, "reps": "10", "prog": "none" },
-          { "id": "gl-sp-3b", "name": "Skater Jumps", "sets": 3, "reps": "10/Seite", "prog": "none" }
+          {"id": "gl-sp-3a", "name": "Pogo Hops", "sets": 3, "reps": "10", "prog": "none"},
+          {"id": "gl-sp-3b", "name": "Skater Jumps", "sets": 3, "reps": "10/Seite", "prog": "none"}
         ]},
-        {"type": "single", "slot": { "id": "gl-sp-4", "name": "Medicine Ball Chest Pass", "home": "Clap Push-Up", "sets": 3, "reps": "8", "prog": "none", "rest": 90, "note": "Explosiv-Ausleitung: Werfen mit Ganzkörperdrehung" }}
+        {"type": "single", "slot": {"id": "gl-sp-4", "name": "Medicine Ball Chest Pass", "home": "Clap Push-Up", "sets": 3, "reps": "8", "prog": "none", "rest": 90, "note": "Explosiv-Ausleitung: Werfen mit Ganzkörperdrehung"}}
       ]
     },
     "bonus": {
@@ -72,8 +72,8 @@
       "warmup": ["short_base"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "beast", "id": "gl-bo-1", "classes": ["ungeheuer"], "pace": "easy"},
-        {"type": "single", "slot": { "id": "gl-bo-2", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60 }},
-        {"type": "single", "slot": { "id": "gl-bo-3", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5 }}
+        {"type": "single", "slot": {"id": "gl-bo-2", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 60}},
+        {"type": "single", "slot": {"id": "gl-bo-3", "name": "Dead Hang", "kind": "hold", "hold": 30, "sets": 3, "prog": "hold", "rest": 60, "max": 90, "step": 5}}
       ]
     }
   }

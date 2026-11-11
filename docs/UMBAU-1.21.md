@@ -25,7 +25,8 @@ beschrieben, erst den Nutzer fragen.
   festen Ersatz ohne Seil (`instead`): Seilsprints → High Knees auf der Stelle, Seilspringen/Single Unders →
   Pogo Hops (Sprungrhythmus, gleiche Zeit), Mischübungen → die seilfreie Hälfte (Sprints bzw. Burpees). In Bestien
   ersetzt die Verhex-Logik nicht; dort gilt dieselbe `instead`-Zuordnung. Validator: jede Übung mit `needs: rope` hat
-  `instead`. Mit PB oder vorher als kleines Paket bauen.
+  `instead`. Mit PB oder vorher als kleines Paket bauen. Stand 11.11.: `has.rope` existiert bereits im
+  Equipment-Profil; offen sind nur `needs`/`instead` an den Seilübungen.
 - 10.11.2026 · P2 Befinden: Feeling Scale −5 bis +5 für alle Orden (statt fünf Stufen).
 - 10.11.2026 · P3 Volumen: Anzeige neutral, kein Hinweis über dem Band. Überschießen wird stattdessen **by design
   verhindert**: Die Dosis wird zu Beginn jedes Ordens als Trajektorie geplant, die exakt machbar ist, und die
@@ -55,7 +56,8 @@ beschrieben, erst den Nutzer fragen.
 
 | Paket | Version | Inhalt |
 |---|---|---|
-| **PB** | **1.22.0** | **Dosis: Bestien und Sätze in einer Währung, alle Orden, Muskel und Kondition — Vorrang** |
+| ~~PB~~ | 1.22.0 ✓ | Dosis: Bestien und Sätze in einer Währung, alle Orden, Muskel und Kondition — **gebaut 11.11.2026** |
+| ~~PT~~ | 1.22.0 ✓ | Neue Ordensbeschreibungen — **mit PB gebaut** (Texte ohne Tage, Rep-Bereiche, Studio-Nuancen) |
 | P1 | 1.23.0 | Zeitstrahl: ganzes Jahr und ab heute, Jahresbilanz der Zeichen |
 | P2 | 1.24.0 | Befinden (Feeling Scale) nach jeder Einheit, Auswertung im Stand |
 | P3 | 1.25.0 | Volumen Soll-Ist im Stand |
@@ -68,7 +70,8 @@ beschrieben, erst den Nutzer fragen.
 | P10 | 1.32.0 | Explosives vor Ausdauer (Prüfung der Orden) |
 | P11 | 1.33.0 | Schätzwerte lernen aus dem Log |
 | P12 | 1.34.0 | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung |
-| PT | 1.35.0 | Neue Ordensbeschreibungen (nach Freigabe des Entwurfs; Texte, die PB voraussetzen) |
+| PH | 1.35.0 | Harlekin: Wiederholung nach 12 Wochen, bei kürzeren Blöcken 4-Wochen-Häppchen (Lösung offen) |
+| PG | — | Bestienpool: Lücken der Kombinatorik schließen (Rücken, Rumpf ohne Oberkörper …), neue Bestien entwerfen |
 
 1.21.0 ist vergeben (Orden Gladiator, 10.11.2026). Die Versionen unten folgen dieser Tabelle; wo im Text noch eine
 alte Nummer steht, gilt die Tabelle.
@@ -199,6 +202,11 @@ Heute zählt `beastSets` je Runde und Übung einen halben Satz, egal ob 5 oder 5
   Partials ab einer Runde ist das fast immer der Fall. Gibt es keinen, gewinnt der kleinste Überhang, und das `why`
   sagt es.
 - Rangfolge damit: Zeitfenster > Obergrenze > Varianz > Dosis.
+- **So gebaut (11.11.2026):** Zeitfenster > Varianz > Obergrenze > Dosis. Varianz zuerst, weil die harte Grenze
+  sonst frische Bestien verdrängt und Wiederholungen erzwingt. Überhang bis 1 Satz wird in der ältesten Altersklasse
+  toleriert; darüber springt die Wahl zur nächsten Altersklasse, die unter der Grenze bleibt (nie die Vorwoche).
+  Ziel je Muskel = max(Welle, feste Sätze): King hat 10,5 feste Sätze Schultern, über dem sanften Gipfel 10.
+  Test: < 15 % der Muskelwochen über Obergrenze + 0,6.
 - `doseWeight(cand, rest)`: Abdeckung der Muskel-Fehlbeträge (gewichtet nach Fehlbetrag), Abdeckung der
   Konditionsminuten, Stufen-Bonus. Wird nach Zeitfenster, Obergrenze und Varianz addiert; `weekbeasts.test.ts`
   bleibt grün.

@@ -1,0 +1,28 @@
+{
+  "_info": "Päckchengröße je Bestienübung (1.22): so viele Wiederholungen am Stück ergeben ein Päckchen = einen halben Satz. Drei Werte je Niveau [Einsteiger, Fortgeschritten, Erfahren]. Erste passende Regel gilt (Groß/Klein egal). Startwerte sind Schätzungen; nach jeder Testwoche schärft die App die Familien Push-up und Klimmzug aus deinen Testwerten nach (60 % des Maximums), eigene Werte in Setup › Können schlagen alles.",
+  "rules": [
+    ["muscle-?ups?", [1, 3, 5]],
+    ["handstand push", [2, 5, 8]],
+    ["clapping pull", [1, 3, 5]],
+    ["dragon flag", [2, 5, 8]],
+    ["one-arm|archer|clapping push|clap push", [4, 8, 12]],
+    ["commando", [3, 6, 10]],
+    ["pull-?ups?|chin-?ups?|chest-to-bar", [3, 8, 12]],
+    ["toes-to-bar|knees-to-elbow|leg raises?|windshield", [5, 12, 15]],
+    ["dips?\\b", [5, 12, 20]],
+    ["pistol|shrimp", [2, 6, 10]],
+    ["push-?ups?|pushups", [10, 20, 25]],
+    ["jumps?\\b|froggers|skater|standups|burpees?|sprawls", [10, 15, 20]],
+    ["lunges?|cossack|step-?ups?|split", [16, 24, 30]],
+    ["squats?", [25, 40, 50]],
+    ["sit-?ups|situps|crunch|v-ups|tuck-ups|jackknives|hollow rock|russian twist|mountain climbers", [15, 25, 30]],
+    ["swings?|snatch|thruster|clean|deadlift|good morning|ground-to-shoulder|press|row|curl|raise|extension|fly|flies|skull|shrug|halo", [10, 15, 20]],
+    ["supermen|back extension|hip raises|bridge|calf", [15, 20, 25]]
+  ],
+  "default": [10, 15, 20],
+  "families": {
+    "pushup": { "test": "t-pushups", "rx": "^(push-?ups?|pushups|diamond push|ring push|deficit push)" },
+    "pullup": { "test": "t-pullups", "rx": "^(pull-?ups?|chin-?ups?|chest-to-bar)" }
+  },
+  "advanced": ["archer", "clapping", "commando", "one-arm", "muscle-?up", "handstand push", "dragon flag", "pistol", "l-sit", "front lever"]
+}
