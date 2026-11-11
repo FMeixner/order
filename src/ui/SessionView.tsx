@@ -27,6 +27,7 @@ import { allDrillsDone, DrillList, DrillSection, toggleDrill } from "./session/D
 import { SlotCard, WarmCtx } from "./session/SlotCard";
 import { boostOf, type SessionCtx, sessionId } from "./session/ctx";
 import { collectItems, type Item, pinBeasts } from "./session/items";
+import { dayGear } from "./session/gear";
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
 const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile), ctx.profile, ctx.state.user, ctx.week, ctx.reduced, boostOf(ctx)).total / 5) * 5);
@@ -82,7 +83,7 @@ export function SessionView(ctx: SessionCtx) {
   return (
     <div className="stack session">
       <div className="session-head">
-        {/* Name und Ort stehen schon im Tagesknopf darüber */}
+        <FocusLine role={role} ctx={ctx} items={items} />
         <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.modsLabel ? ` · ${ctx.modsLabel}` : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
         {role.note && <p className="note">{role.note}</p>}
@@ -203,6 +204,17 @@ function previewDose(r: Resolved): string {
 }
 const BLOCK_TITLE: Partial<Record<Block["type"], string>> = { superset: "Superset", contrast: "Kontrastpaar" };
 
+/** Fokus der Einheit und was der Tag an Ausrüstung braucht (zwischen Tagesknöpfen und Warm-up) */
+function FocusLine({ role, ctx, items }: { role: { name: string }; ctx: SessionCtx; items: Item[] }) {
+  const gear = dayGear(items);
+  return (
+    <div className="session-focus">
+      <strong>{role.name}</strong>
+      <span className="muted small">{ctx.profile.name}{gear.length ? ` · ${gear.join(", ")}` : " · nur Körpergewicht"}</span>
+    </div>
+  );
+}
+
 export function SessionPreview(ctx: SessionCtx) {
   const role = roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile);
   const items = collectItems(ctx);
@@ -211,7 +223,7 @@ export function SessionPreview(ctx: SessionCtx) {
   return (
     <div className="stack session">
       <div className="session-head">
-        {/* Name und Ort stehen schon im Tagesknopf darüber */}
+        <FocusLine role={role} ctx={ctx} items={items} />
         <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.modsLabel ? ` · ${ctx.modsLabel}` : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
       </div>

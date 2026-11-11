@@ -100,8 +100,6 @@ export type WeaponModule = "sword" | "longsword" | "stab";
 
 export interface Role {
   name: string;
-  /** Kurzes Label für die Tagesknöpfe (höchstens 10 Zeichen, 1.34); die volle Bezeichnung bleibt überall sonst */
-  short?: string;
   location: Tier;
   minutes: number;
   /** Obergrenze des Tages in Minuten (Zeitbudget der Bestie), sonst Dauer bzw. Richtwert des Ordens */

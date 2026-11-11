@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.34.3] – 2026-11-11
+
+### Geändert
+- **Tagesknöpfe schmal, nur mit Wochentag** (✓ erledigt, × fällt aus). Darunter eine **Fokuszeile**: der Fokus der Einheit, der Ort und die Ausrüstung, die der Tag braucht (aus den Übungen am Ort, den Bestien und dem Waffenblock).
+- Die Kurzlabels aus 1.34.0 sind verworfen; der Entwurf ist entfernt.
+
 ## [1.34.2] – 2026-11-11
 
 ### Geändert
