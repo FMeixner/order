@@ -36,6 +36,19 @@ beschrieben, erst den Nutzer fragen.
 - 10.11.2026 · P6: wie geplant — „gehalten“ sichtbar; Hinweis nur nach zwei Einheiten in Folge mit Rückgang und nur an Kernübungen, einzelne schwache Tage bleiben still.
 - 10.11.2026 · P7: Ausklang wie geplant (2 Min locker gehen mit Atemfokus nach hartem Ende; Kurztag ohne).
 - 10.11.2026 · P8: Entlastung nach Signalen wie geplant. Die Dosis-Welle (PB) wendet zur geplanten Zeit auch ohne Entlastungswoche (Stufe + 1, Volumen zurück); nur die halbierte Woche entfällt.
+- 10.11.2026 · P9: deutlich zuspitzen wie geplant (Sätze auf 60 %, Intensität halten).
+- 10.11.2026 · P10: Prüfung gilt für **alle** Orden mit Sprüngen, Würfen oder Sprints, nicht nur Falke. Verstöße
+  listet der Bau auf und fragt vor dem Umstellen (Kuration des Nutzers); Gladiator „Spiel“ ist schon entschieden.
+- 10.11.2026 · P11: gemessene Verhältnisse **automatisch** übernehmen (Setup › Können zeigt sie nur). Neu:
+  **entfernte Überträge** zwischen Familien (Rudern/Chin-ups → Curls, Dips → Trizeps), mit eigenem Abschlag.
+- 10.11.2026 · P12 Tagesknöpfe: **keine 2 × 2-Matrix** (die Wochenfolge muss lesbar bleiben). Stattdessen kurze
+  Tageslabels. Der Bau schlägt sie für alle Orden vor; der Nutzer sieht sie durch, bevor sie eingebaut werden.
+- 10.11.2026 · King, Pilgrim, Magician: kein Umbau, keine neue Runde jetzt. Die Orden fühlten sich in ihren alten
+  Fassungen leicht an („lockeres Joggen, Tai Chi, ein bisschen Turnen“); mit PB steigen sie messbar. Neu bewerten, wenn
+  der Nutzer einen davon macht; ein Neuanfang mit neuem Namen bleibt möglich.
+- 10.11.2026 · Ordensbeschreibungen: **alle** Orden bekommen neue Texte (eleganter; manche Orden haben ihren Ansatz
+  verändert; King, Pilgrim, Magician nennen die Steigerung statt des Haltens). Entwurf in
+  `docs/ORDENSTEXTE-ENTWURF.md`, der Nutzer sieht ihn durch; eingebaut wird erst nach seiner Freigabe (Paket PT).
 - 10.11.2026 · Notiz an der Übung (neu, in P12): kleiner Stift, nur bei Bedarf, z. B. Sitzhöhe oder Einstellung am Gerät.
 
 ## Reihenfolge
@@ -54,7 +67,8 @@ beschrieben, erst den Nutzer fragen.
 | P9 | 1.31.0 | Zuspitzung vor der Testwoche |
 | P10 | 1.32.0 | Explosives vor Ausdauer (Prüfung der Orden) |
 | P11 | 1.33.0 | Schätzwerte lernen aus dem Log |
-| P12 | 1.34.0 | Kleines an der Oberfläche: Tagesknöpfe, Hilfe mit Suche |
+| P12 | 1.34.0 | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung |
+| PT | 1.35.0 | Neue Ordensbeschreibungen (nach Freigabe des Entwurfs; Texte, die PB voraussetzen) |
 
 1.21.0 ist vergeben (Orden Gladiator, 10.11.2026). Die Versionen unten folgen dieser Tabelle; wo im Text noch eine
 alte Nummer steht, gilt die Tabelle.
@@ -519,19 +533,37 @@ systematic review and meta-analysis. *Sports Medicine, 52*(3), 601–612.
   Familie eigene Stände (beide in den letzten 12 Wochen aktualisiert), gilt sein Verhältnis statt des hinterlegten.
 - Kette: Bench Press ↔ Chest Press gemessen, Incline nur hinterlegt → Incline wird über den gemessenen Anker
   geschätzt. Abschlag 15 % bleibt, bei gemessenem Verhältnis 10 %.
-- Setup › Können: aufklappbar „Deine Verhältnisse“ (Liste: Übung, Verhältnis hinterlegt → gemessen). Nur Anzeige.
+- Setup › Können: aufklappbar „Deine Verhältnisse“ (Liste: Übung, Verhältnis hinterlegt → gemessen). Nur Anzeige;
+  übernommen wird automatisch (Entscheidung des Nutzers), ohne Bestätigung.
+- **Entfernte Überträge** (Entscheidung des Nutzers): Neben den Familien (nahe Verwandte) gibt es Brücken zwischen
+  Familien, damit auch Isolationsübungen nicht bei null starten. In `transfer.json` → `bridges`:
+  `{ "from": "Weighted Chin-Up", "to": "Bizeps", "ratio": … }`, Startliste:
+  Rudern (Seated Cable Row, Barbell Row, Double DB Row) und Chin-ups/Weighted Chin-ups → Bizeps-Familie;
+  Dips (auch mit Körpergewicht) und enges Bankdrücken → Trizeps-Familie; Bench/Overhead Press → Seitheben;
+  Back Squat → Beinbeuger/Waden nur, wenn sonst nichts da ist.
+- Körpergewichtsübungen als Quelle: Leistung = (Körpergewicht × Anteil + Zusatzlast) × (1 + Wdh/30), Anteil aus
+  `transfer.json` (Dips 0,9, Chin-ups/Pull-ups 0,95, Push-ups 0,65); Körpergewicht aus `user.bodyweight`. Ohne
+  Körpergewicht keine Brücke aus Körpergewichtsübungen.
+- **Rangfolge**: eigener Stand > gemessenes Verhältnis in der Familie > hinterlegtes Verhältnis in der Familie >
+  Brücke. Abschläge: gemessen 10 %, Familie 15 %, Brücke 25 %. Das `why` nennt die Quelle („Schätzung aus Dips
+  mit Körpergewicht, vorsichtig angesetzt“).
+- Auch Brücken lernen: Hat der Nutzer beide Seiten selbst, gilt sein Verhältnis.
 
 ### Technik
 `progression.ts`: `ownRatios(slots): Record<string, number>` (je Familie relativ zum Anker, aus
-`weight × (1 + target/30)`); `estimateFrom` nutzt sie. Tests in `handover.test.ts`.
+`weight × (1 + target/30)`); `estimateFrom` nutzt sie und danach die Brücken. Tests in `handover.test.ts`:
+Rangfolge, Abschläge, Dips mit Körpergewicht → Trizeps-Schätzung, keine Brücke ohne Körpergewicht.
 
 ---
 
 ## P12 · Kleines an der Oberfläche (1.34.0)
 
-- **Tagesknöpfe** (Heute): Bei vier Tagen und Bildschirmbreite unter 420 px zwei Reihen zu je zwei Knöpfen
-  (`.days` → `grid-template-columns: repeat(2, 1fr)` per Containerabfrage), Rollenname ohne Trennung, Ort in
-  derselben Zeile wie der Wochentag. Bei drei Tagen bleibt eine Reihe.
+- **Tagesknöpfe** (Heute): bleiben **eine Reihe** in Wochenfolge (keine Matrix, Entscheidung des Nutzers). Jede Rolle
+  bekommt ein optionales Feld `short` (höchstens 10 Zeichen, z. B. „Beine“ statt „Unterkörper“, „Oben“, „Chaos A“),
+  das die Tagesknöpfe zeigen; die volle Bezeichnung bleibt überall sonst. Ohne `short` wie heute, aber ohne
+  Silbentrennung (`hyphens: manual`), notfalls zwei Zeilen.
+  **Vorgehen:** Der Bau erstellt zuerst `docs/TAGESLABELS-ENTWURF.md` (Tabelle Orden · Rolle · heutiger Name ·
+  Vorschlag) und wartet auf die Freigabe des Nutzers; erst dann kommen die Labels in die Orden.
 - **Hilfe**: Suchfeld oben (filtert Abschnitte nach Überschrift und Text, Treffer hervorgehoben); Abschnitte
   aufklappbar, alle zu, außer es wird gesucht. Kein Text geht verloren.
 - **Plan-Liste**: „Später · n Orden“ zeigt aufgeklappt die Zeichen als Gruppen wie bisher; kein Umbau über P1 hinaus.
