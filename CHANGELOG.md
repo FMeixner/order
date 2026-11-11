@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.31.0] – 2026-11-11
+
+### Geändert
+- **Zuspitzung vor der Testwoche:** Die Woche davor läuft nicht mehr mit −1 Satz, sondern spitzt deutlich zu: Sätze auf etwa 60 % (aufgerundet, mindestens zwei), Gewichte und Wiederholungen bleiben, keine Satzende-Techniken, Bestien eine Klasse kürzer. Sprünge, Würfe und Sprints bleiben vollständig — wenige, frische Versuche. Auf Heute steht „Zuspitzung vor der Testwoche“. Gilt in jeder Phase gleich, damit Testwochen vergleichbar bleiben (Bosquet et al., 2007).
+
 ## [1.30.0] – 2026-11-11
 
 ### Geändert

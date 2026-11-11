@@ -5,12 +5,12 @@
    Fünf Tage: Der Zusatztag (Rolle außerhalb von week_4, meist „bonus“) kommt zwischen die schweren Tage.
    Harlequin: Orden mit "medley" nehmen jede Woche einen anderen Orden. */
 import { SWAP_GROUPS } from "../data";
-import type { AppState, Block, Focus, PlanBlock, Role, Section, Slot, Weekday } from "../types";
+import type { AppState, BeastClass, Block, Focus, PlanBlock, Role, Section, Slot, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { skipDay } from "./skipweek";
 import { doseMode, wavePos } from "./dose";
 import { isHeavy, isStrength, planMinutes } from "./slots";
-import { applyDrillEdits, blockFocus, blockWeeks, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { applyDrillEdits, blockFocus, blockWeeks, CLASS_ORDER, followedByTest, isTestBlock, isTestWeek, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { pairToFit, shortDay, shortDeload } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlots } from "./sharpen";
@@ -268,6 +268,38 @@ function growIntervals(state: AppState, b: PlanBlock, week: number, f: Focus): F
   return changed ? { ...f, roles } : f;
 }
 
+/* ---------- Zuspitzung vor der Testwoche (1.31) ---------- */
+/** Sprünge, Würfe und Sprints: bleiben in der Zuspitzung vollständig (wenige, frische Versuche) */
+export const POWER = /jump|sprung|sprint|shuttle|throw|wurf|slam|hop|bound|clap|plyo|skater|medball|medizinball|brustpass|chest pass|broad|depth/i;
+/** Woche direkt vor einer Testwoche (eigene Testwoche dahinter oder Testwoche im Orden) */
+export function isTaperWeek(state: Pick<AppState, "plan">, b: PlanBlock, week: number): boolean {
+  const f = blockFocus(b);
+  if (!f || isTestBlock(b)) return false;
+  return followedByTest(state.plan, b) ? week === blockWeeks(b) : isTestWeek(f, b, week + 1);
+}
+/** Sätze auf etwa 60 % (aufgerundet, mindestens zwei, nie mehr als vorher); Gewichte und Wiederholungen bleiben */
+const taperSets = (n: number | undefined) => (n == null ? n : Math.min(n, Math.max(2, Math.ceil(n * 0.6))));
+const taperChoice = (c: Slot["home"]): Slot["home"] => (typeof c === "object" && c ? { ...c, sets: taperSets(c.sets) } : c);
+const taperSlot = (s: Slot): Slot => (POWER.test(s.name) || s.kind === "timer" || s.kind === "interval"
+  ? s
+  : { ...s, sets: taperSets(s.sets), home: taperChoice(s.home), reise: taperChoice(s.reise), finish: undefined });
+const shorter = (cs: BeastClass[]) => cs.map((c) => CLASS_ORDER[Math.max(0, CLASS_ORDER.indexOf(c) - 1)]);
+/** Zuspitzung (Bosquet et al., 2007): Volumen runter, Intensität halten. Satzende-Techniken aus, Bestien eine Klasse
+    kürzer, Sprünge und Sprints unverändert. */
+export function taperShape(f: Focus): Focus {
+  const roles: Record<string, Role> = {};
+  for (const [k, r] of Object.entries(f.roles)) roles[k] = { ...r, blocks: r.blocks.map((b): Block => {
+    switch (b.type) {
+      case "single": return { ...b, slot: taperSlot(b.slot) };
+      case "superset": return { ...b, slots: b.slots.map(taperSlot), ...(b.finisher ? { finisher: { ...b.finisher, classes: shorter(b.finisher.classes ?? ["plage", "bestie"]) } } : {}) };
+      case "contrast": return { ...b, heavy: taperSlot(b.heavy) };
+      case "beast": return { ...b, classes: shorter(b.classes?.length ? b.classes : ["bestie", "ungeheuer"]) };
+      default: return b;
+    }
+  }) };
+  return { ...f, roles };
+}
+
 export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | null {
   const base = blockFocus(b);
   if (!base) return null;
@@ -296,6 +328,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
     }
     shaped = quietMoves(state, b, week, shaped, days, shortened);
   } else if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
+  if (isTaperWeek(state, b, week) && !isDeloaded(state, b, week)) shaped = taperShape(shaped);
   shaped = growIntervals(state, b, week, shaped);
   shaped = applySkips(state, b, week, shaped, n);
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.

@@ -124,7 +124,8 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   const firstThis = state.sessions.filter((s) => s.done && s.date >= weekStart).map((s) => s.date).sort()[0] ?? today;
   const pauseDays = lastBefore ? daysBetween(lastBefore, firstThis) : 0;
   const comeback = isCur && pauseDays >= 10;
-  const sysReduced = deload || beforeTest || comeback;
+  // Vor der Testwoche (1.31): keine −1 Satz mehr, sondern die Zuspitzung in focusFor (taperShape)
+  const sysReduced = deload || comeback;
   const days = dayRoleMap(state, block, focus, week);
   const todayWd = weekdayOf(today);
   const doneRoles = new Set(state.sessions.filter((s) => s.blockId === block.id && s.week === week && s.done).map((s) => s.role));
@@ -160,7 +161,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   const runSub = sel ? runSubOf(state, sid) : undefined;
   const canAdjust = !!role0 && !future;
   // Intensiv: nur mit Bestie oder Schwert am Tag und nicht in Wochen, die ohnehin leichter laufen
-  const canBoost = canAdjust && !sysReduced && !entlastet
+  const canBoost = canAdjust && !sysReduced && !beforeTest && !entlastet
     // Der Tag, wie der Orden ihn vorsieht (Leise kann eine Bestie verschieben, Intensiv soll trotzdem wählbar bleiben)
     && ((baseFocus.medley ? undefined : baseFocus.roles[sel!.role]) ?? role0!).blocks.some((b) => b.type === "beast" || (b.type === "module" && isWeaponModule(b.module) && !!profile0?.has.sword));
   const chips: { k: DayKey | "intense"; label: string; on: boolean; disabled?: boolean; info: string }[] = mods ? [
@@ -312,7 +313,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
           {test && <span className="tag teal">Testwoche</span>}
           {entlastet && <span className="tag teal">Entlastungswoche</span>}
           {deload && <span className="tag">Entlastung −1 Satz</span>}
-          {!deload && beforeTest && <span className="tag">vor der Testwoche −1 Satz</span>}
+          {!deload && beforeTest && !entlastet && <span className="tag">Zuspitzung vor der Testwoche</span>}
         </div>}
         {comeback && <div className="note small">Willkommen zurück. Nach {pauseDays} Tagen Pause läuft diese Woche mit −1 Satz, und Gewichte starten etwas leichter. Ab nächster Woche geht es normal weiter.</div>}
         {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}

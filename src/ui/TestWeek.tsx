@@ -154,7 +154,7 @@ export function TestWeek({ state, update, block, today, preview = false, onPlan 
       {/* Hinweise und Erzähler hinter Symbolen, wie bei jedem Orden */}
       <div className="row tw-head">
         <span className="muted small">Drei Testtage, jeder frisch</span>
-        <Desc text={`Drei Testtage, jeder frisch; Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, Tests ohne Material auslassen. Die Woche davor läuft mit −1 Satz.${preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}`} />
+        <Desc text={`Drei Testtage, jeder frisch; Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, Tests ohne Material auslassen. Die Woche davor spitzt zu: weniger Sätze, gleiche Gewichte.${preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}`} />
         {ravenOn(state) && <RavenTournamentBadge state={state} block={block} today={today} />}
       </div>
       {!preview && <IdeasWaiting ideas={state.ideas} />}

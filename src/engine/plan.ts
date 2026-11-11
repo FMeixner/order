@@ -77,7 +77,7 @@ export function refreeze(b: PlanBlock, today: string): PlanBlock {
 let female = false;
 export const setOrderNames = (u: Pick<UserProfile, "sex" | "orderNames">) => { female = u.sex === "w" && (u.orderNames ?? "auto") === "auto"; };
 export const focusName = (id: string) => (id === TEST_BLOCK ? "Testwoche" : (female && FOCUS_BY_ID[id]?.name_w) || FOCUS_BY_ID[id]?.name || "Orden fehlt");
-/** Folgt direkt eine eigene Testwoche? Dann entfällt die Testwoche im Orden, die letzte Woche läuft mit −1 Satz. */
+/** Folgt direkt eine eigene Testwoche? Dann entfällt die Testwoche im Orden, die letzte Woche spitzt zu (taperShape). */
 export function followedByTest(plan: PlanBlock[], b: PlanBlock): boolean {
   return plan.some((x) => isTestBlock(x) && x.start === addDays(b.end, 1));
 }

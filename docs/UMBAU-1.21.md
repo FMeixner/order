@@ -66,7 +66,7 @@ beschrieben, erst den Nutzer fragen.
 | ~~P6~~ | 1.28.0 ✓ | Defizit-Phasen: „gehalten“ zählt als Erfolg — **gebaut 11.11.2026** |
 | ~~P7~~ | 1.29.0 ✓ | Ausklang nach Bestie und Finisher — **gebaut 11.11.2026** |
 | ~~P8~~ | 1.30.0 ✓ | Entlastung nach Signalen — **gebaut 11.11.2026** |
-| P9 | 1.31.0 | Zuspitzung vor der Testwoche |
+| ~~P9~~ | 1.31.0 ✓ | Zuspitzung vor der Testwoche — **gebaut 11.11.2026** |
 | P10 | 1.32.0 | Explosives vor Ausdauer (Prüfung der Orden) |
 | P11 | 1.33.0 | Schätzwerte lernen aus dem Log |
 | P12 | 1.34.0 | Kleines an der Oberfläche: kurze Tageslabels, Hilfe mit Suche, Notiz an der Übung |
@@ -534,6 +534,12 @@ one-week deload period during supervised resistance training on muscular adaptat
 `weekplan.ts`: `taperShape(f)` neben `deloadShape`; greift in `focusFor`, wo heute die Vorwoche behandelt wird
 (`beforeTest` in `Today.tsx`, `sysReduced`). Tests: Sätze 60 %, Power-Slots (`kind`/Name in `BALLISTIC`) unverändert.
 Hilfe anpassen (Abschnitt Testwoche).
+
+**Annahmen (Agent, 11.11.2026):** Quelle Bosquet et al. (2007) eingetragen (Meta-Analyse, überwiegend
+Ausdauersport; die Hilfe nennt die Lücke für Krafttests). Unverändert bleiben Slots, deren Name Sprung, Wurf oder
+Sprint nennt (`POWER` in `weekplan.ts`), dazu Zeit- und Intervallblöcke; im Kontrastpaar nur der schwere Teil.
+Slots mit einem Satz bleiben bei einem. Die Woche läuft nicht mehr zusätzlich mit −1 Satz; „Intensiv“ ist in ihr
+nicht wählbar. In einer angenommenen Entlastungswoche gilt die Entlastung.
 
 ---
 

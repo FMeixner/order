@@ -109,7 +109,7 @@ export function rhythmWeeks(plan: PlanBlock[], b: PlanBlock, total: number): num
   for (let w = 5; w <= total; ) {
     const snap = starts.find((s) => Math.abs(s - w) <= 2 && s >= 4 && (out.length === 0 || s - out[out.length - 1] >= 4));
     const at = snap ?? w;
-    // Nie direkt vor der Testwoche: Dort läuft schon −1 Satz (immer gleich, vergleichbar); eine volle Entlastung würde die Werte schönen
+    // Nie direkt vor der Testwoche: Dort läuft schon die Zuspitzung (immer gleich, vergleichbar); eine volle Entlastung würde die Werte schönen
     if (hasTest && at >= total) break;
     out.push(at);
     w = at + 4;
