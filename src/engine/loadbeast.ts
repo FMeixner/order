@@ -5,6 +5,7 @@ import { BANDS, BEAST_BY_ID } from "../data";
 import type { AppState, Beast, BeastTime, EquipmentProfile } from "../types";
 import { beastFamily, beastNeeds, beastRegion } from "./plan";
 import { snapNearest, stepLoad } from "./loads";
+import { testLog } from "./testweek";
 
 export type LoadKind = "barbell" | "kettlebell" | "dumbbell" | "band" | "sandbag";
 export const LOAD_LABEL: Record<LoadKind, string> = { barbell: "Langhantel", kettlebell: "Kettlebell", dumbbell: "Kurzhantel", band: "Band", sandbag: "Sandsack" };
@@ -49,6 +50,11 @@ export function oneRM(state: AppState, exercise: string): { kg: number; source: 
       const est = epley(x.weight, x.reps);
       if (!best || est > best.kg) best = { kg: Math.round(est * 2) / 2, date: s.date };
     }
+  }
+  // Testwoche: 5RM zählt wie ein Satz im Log
+  for (const e of testLog(state)) if (e.exercise === exercise) for (const x of e.sets) if (x.weight && x.reps && x.reps <= 12) {
+    const est = epley(x.weight, x.reps);
+    if (!best || est > best.kg) best = { kg: Math.round(est * 2) / 2, date: e.date };
   }
   return best ? { ...best, source: "geschätzt" } : null;
 }

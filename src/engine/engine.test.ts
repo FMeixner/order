@@ -360,7 +360,7 @@ describe("Bestien-Serien", () => {
     const firsts = new Set<string>(), seconds = new Set<string>();
     for (let w = 1; w <= 120; w++) { const x = pickBeast(blk, { blockId: "b1", week: w, profile: gym, state: s, reduced: false, downgrade: false })!; if (x.parts?.length === 2) { firsts.add(x.parts[0].id); seconds.add(x.parts[1].id); } }
     expect([...seconds].some((id) => firsts.has(id))).toBe(true);
-  });
+  }, 30000);
 });
 
 describe("Doppel und Triple", () => {

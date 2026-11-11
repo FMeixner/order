@@ -64,7 +64,7 @@ export function LogView({ state, today }: { state: AppState; today: string }) {
             {allTests.filter((t) => state.tests[t.id]?.length).map((t) => (
               <li key={t.id}>{t.name}: {state.tests[t.id].map((r) => `${fmtDate(r.date)} ${r.raw}${r.variant ? ` (${t.variants?.find((v) => v.id === r.variant)?.name ?? r.variant})` : ""}`).join(" · ")}</li>
             ))}
-            {state.who5.map((w, i) => <li key={i}>WHO-5 {fmtDate(w.date)}: {w.score}</li>)}
+            {state.who5.filter((w) => w.score >= 0).map((w, i) => <li key={i}>WHO-5 {fmtDate(w.date)}: {w.score}</li>)}
           </ul>
         </Collapse>
       )}

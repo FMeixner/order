@@ -1,10 +1,11 @@
+import { weekDone } from "../engine/who5";
 import { useState } from "react";
 import { compassOf } from "../engine/compass";
 import { klammerName } from "../engine/klammer";
 import { KCAL_LABEL } from "../engine/kcal";
 import { KlammerIcon, Sign } from "./Signs";
 import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, isWeaponModule, weaponTag, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
-import type { AppState, PlanBlock, Weekday } from "../types";
+import type { AppState, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { SessionPreview, SessionView } from "./SessionView";
 import { runSubOf, sessionId } from "./session/ctx";
@@ -24,16 +25,6 @@ import { RavenBadge, ravenOn } from "./Raven";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
-/** Alle Trainingstage dieser Woche erledigt? */
-function weekDone(state: AppState, b: PlanBlock, week: number): boolean {
-  if (isTestBlock(b)) return false;
-  const f = focusFor(state, b, week);
-  if (!f) return false;
-  const days = dayRoleMap(state, b, f, week);
-  const done = new Set(state.sessions.filter((s) => s.blockId === b.id && s.week === week && s.done).map((s) => s.role));
-  // Ausgefallene Einheiten zählen als erledigt: Ihr Wichtigstes steckt in den Tagen danach
-  return days.length > 0 && days.every((d) => done.has(d.role) || !!f.roles[d.role]?.skipped);
-}
 
 export function Today({ state, update, today, goPlan, onOptimize }: { state: AppState; update: Update; today: string; goPlan: () => void; onOptimize?: () => void }) {
   // Woche(n) geschafft: Jede voll erledigte Woche vor der heutigen zählt als vorbei — auch mehrere hintereinander
@@ -49,7 +40,12 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
     anchor = nm;
   }
   const ahead = anchor !== today;
-  const block = blockAt(state.plan, anchor);
+  const here = blockAt(state.plan, anchor);
+  // In der Testwoche: › zeigt die erste Woche des nächsten Ordens als Vorschau (1.37)
+  const [peek, setPeek] = useState(false);
+  const after = here && isTestBlock(here) ? nextBlock(state.plan, here.end) : null;
+  const peeking = peek && !!after && !isTestBlock(after);
+  const block = peeking ? after : here;
   const [pick, setPick] = useState<Weekday | null>(null);
   const [showTraining, setShowTraining] = useState(false);
   const [view, setView] = useState<{ id: string; w: number } | null>(null);
@@ -69,19 +65,28 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   if (isTestBlock(block)) return (
     <div className="stack">
       <div className="card hero">
-        <div className="hero-top"><div><div className="hero-focus">Testwoche</div><div className="muted small">{fmtDate(block.start)} – {fmtDate(block.end)}</div></div></div>
+        <div className="hero-top">
+          <div><div className="hero-focus">Testwoche</div><div className="muted small">{fmtDate(block.start)} – {fmtDate(block.end)}</div></div>
+          {after && !isTestBlock(after) && (
+            <div className="week-nav">
+              <button disabled aria-label="Vorige Woche">‹</button>
+              <div className="hero-week">Test</div>
+              <button onClick={() => { setPeek(true); setPick(null); }} aria-label={`Nächste Woche: ${focusName(after.focusId)}`} title={`Danach: ${focusName(after.focusId)}`}>›</button>
+            </div>
+          )}
+        </div>
       </div>
       <TestWeek state={state} update={update} block={block} today={today} onPlan={onOptimize} />
     </div>
   );
   const baseFocus = blockFocus(block);
   if (!baseFocus) return <div className="card">Der Orden dieser Phase fehlt. <button className="btn small" onClick={goPlan}>Plan öffnen</button></div>;
-  const curWeek = weekInBlock(block, anchor);
+  const curWeek = peeking ? 0 : weekInBlock(block, anchor);
   const total = blockWeeks(block);
   const extTest = followedByTest(state.plan, block);
   // Folgt auf diesen Orden direkt eine Testwoche, öffnet der Pfeil in der letzten Woche die Vorschau
   const testBlock = extTest ? state.plan.find((x) => isTestBlock(x) && x.start === addDays(block.end, 1)) ?? null : null;
-  const week = view?.id === block.id ? view.w : curWeek;
+  const week = view?.id === block.id ? view.w : peeking ? 1 : curWeek;
   const compass = compassOf(state, block, Math.min(week, total));
   const isCur = week === curWeek;
   const future = week > curWeek;
@@ -301,7 +306,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
             </div>
           </div>
           <div className="week-nav">
-            <button onClick={() => go(week - 1)} disabled={week <= 1} aria-label="Vorige Woche">‹</button>
+            <button onClick={() => (peeking && week <= 1 ? (setPeek(false), setView(null)) : go(week - 1))} disabled={week <= 1 && !peeking} aria-label={peeking && week <= 1 ? "Zurück zur Testwoche" : "Vorige Woche"}>‹</button>
             <div className="hero-week" aria-label={`Woche ${Math.min(week, total)} von ${total}`}><span className="wk-word">Woche </span>{Math.min(week, total)}<span className="muted">/{total}</span></div>
             <button onClick={() => go(week + 1)} disabled={week >= (testBlock ? total + 1 : total)} aria-label="Nächste Woche">›</button>
           </div>
@@ -316,7 +321,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
           {!deload && beforeTest && !entlastet && <span className="tag">Zuspitzung vor der Testwoche</span>}
         </div>}
         {comeback && <div className="note small">Willkommen zurück. Nach {pauseDays} Tagen Pause läuft diese Woche mit −1 Satz, und Gewichte starten etwas leichter. Ab nächster Woche geht es normal weiter.</div>}
-        {!isCur && <button className="btn ghost small back-now" onClick={() => go(curWeek)}>Zur aktuellen Woche</button>}
+        {!isCur && <button className="btn ghost small back-now" onClick={() => (peeking ? (setPeek(false), setView(null)) : go(curWeek))}>{peeking ? "Zurück zur Testwoche" : "Zur aktuellen Woche"}</button>}
       </div>
 
 

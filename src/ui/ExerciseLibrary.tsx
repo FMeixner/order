@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { EXERCISES } from "../data";
 import { epley, oneRM } from "../engine/loadbeast";
+import { testLog } from "../engine/testweek";
 import { fmtDate } from "../engine/plan";
 import type { AppState } from "../types";
 import { Collapse, kg, Seg } from "./common";
@@ -18,15 +19,18 @@ export function ExerciseLibrary({ state, update, today }: { state: AppState; upd
   const [only, setOnly] = useState<"alle" | "mit">("mit");
   // Verlauf je Übung aus dem Log
   const hist = useMemo(() => {
-    const m = new Map<string, { date: string; sets: { reps?: number; weight?: number | null; seconds?: number }[] }[]>();
-    for (const s of [...state.sessions].filter((x) => x.done).sort((a, b) => b.date.localeCompare(a.date)))
+    const m = new Map<string, { date: string; sets: { reps?: number; weight?: number | null; seconds?: number }[]; test?: string }[]>();
+    for (const s of state.sessions.filter((x) => x.done))
       for (const e of Object.values(s.entries)) {
         const sets = e.sets.filter((x) => x.done);
         if (!sets.length) continue;
         m.set(e.name, [...(m.get(e.name) ?? []), { date: s.date, sets }]);
       }
+    // Testwoche: Max-Wiederholungen, Haltezeiten und 5RM ziehen in den Verlauf ein
+    for (const e of testLog(state)) m.set(e.exercise, [...(m.get(e.exercise) ?? []), { date: e.date, sets: e.sets, test: e.test }]);
+    for (const [k, v] of m) m.set(k, v.sort((a, b) => b.date.localeCompare(a.date)));
     return m;
-  }, [state.sessions]);
+  }, [state.sessions, state.tests]);
   // Aktuelles Arbeitsgewicht: jüngster Stand dieser Übung
   const working = (name: string) => Object.entries(state.slots).filter(([k, st]) => k.slice(k.indexOf("|") + 1) === name && st.weight != null)
     .sort((a, b) => (b[1].updated ?? "").localeCompare(a[1].updated ?? ""))[0]?.[1];
@@ -76,7 +80,7 @@ export function ExerciseLibrary({ state, update, today }: { state: AppState; upd
                       const best = Math.max(0, ...x.sets.filter((y) => y.weight && y.reps && y.reps <= 12).map((y) => epley(y.weight!, y.reps!)));
                       return (
                         <tr key={i}>
-                          <td>{fmtDate(x.date)}</td>
+                          <td>{fmtDate(x.date)}{x.test ? <span className="tag amber" title={x.test}>Test</span> : null}</td>
                           <td>{x.sets.map((y) => (y.seconds ? `${y.seconds}s` : `${y.reps ?? "?"}${y.weight != null ? `×${String(y.weight).replace(".", ",")}` : ""}`)).join(" · ")}</td>
                           {loaded && <td>{best ? kg(Math.round(best * 2) / 2) : "–"}</td>}
                         </tr>

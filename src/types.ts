@@ -425,7 +425,7 @@ export interface AppState {
   /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
   deload?: Record<string, "ja" | "nein">;
   tests: Record<string, TestResult[]>;
-  who5: { date: string; blockId: string; score: number }[];
+  who5: { date: string; blockId: string; score: number; /** Woche im Orden (1.37: alle zwei Wochen) */ week?: number }[];
   feeling: { date: string; sessionId: string; value: number }[];
   /** Eigene Übungswahl: "slotId:Stufe" → Übungsname. Überlebt Updates der Orden-Dateien. */
   swaps: Record<string, string>;
@@ -487,6 +487,8 @@ export interface TestDef {
   variants?: { id: string; name: string }[];
   /** Timer (1.36): hold = Zeit läuft bis Stopp, fixed = feste Dauer mit Autostopp; beide mit 4 s in Position */
   timer?: { mode: "hold" } | { mode: "fixed"; seconds: number };
+  /** Verlauf (1.37): in welche Übung der Wert einzieht; reps = 5RM-Gewicht als Satz mit so vielen Wiederholungen */
+  log?: { reps?: number; exercise: string | Record<string, string> };
 }
 
 /** Norm für einen Test, gültig für ein Geschlecht und eine Altersspanne.

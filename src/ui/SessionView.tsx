@@ -29,6 +29,8 @@ import { boostOf, type SessionCtx, sessionId } from "./session/ctx";
 import { collectItems, type Item, pinBeasts } from "./session/items";
 import { PURPOSE_LABEL, slotsFor } from "../engine/sharpen";
 import { dayGear } from "./session/gear";
+import { who5Due } from "../engine/who5";
+import { Who5 } from "./Who5";
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
 const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile), ctx.profile, ctx.state.user, ctx.week, ctx.reduced, boostOf(ctx)).total / 5) * 5);
@@ -119,6 +121,7 @@ export function SessionView(ctx: SessionCtx) {
           ? <button className="btn primary wide" onClick={() => { if (!session) mut((s) => s); finish(); }}>Einheit abschließen</button>
           : <button className="btn ghost wide" onClick={() => update((st) => ({ ...st, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: false } : s)) }))}>Wieder öffnen</button>}
       </div>
+      {session?.done && who5Due(state, block, week) && <Who5 update={update} block={block} week={week} today={ctx.date} />}
     </div>
   );
 }

@@ -2,6 +2,16 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.37.0] – 2026-11-11
+
+### Neu
+- **Testwerte im Verlauf:** 5RM (als Satz mit fünf Wiederholungen, schätzt auch das 1RM), Max-Wiederholungen bei Klimmzügen und Liegestützen sowie Dead Hang und Wall Sit ziehen in den Verlauf der Übungen ein, markiert als „Test“.
+- **Blick über die Testwoche hinaus:** › oben in der Testwoche zeigt die erste Woche des nächsten Ordens als Vorschau; ‹ führt zurück.
+- **„Testtag geschafft“**, sobald alle Cups des Tages durch sind. Abschließen musst du einen Testtag nicht, jeder Wert ist sofort gespeichert.
+
+### Geändert
+- **Wohlbefinden (WHO-5) ist kein Cup mehr**, sondern kommt alle zwei Wochen am Ende der Trainingswoche (Woche 2, 4, … eines Ordens) unter der letzten Einheit; „Diesmal nicht“ überspringt. Die Auswertung der Testwoche nimmt den jüngsten Wert der vier Wochen davor.
+
 ## [1.36.0] – 2026-11-11
 
 ### Neu

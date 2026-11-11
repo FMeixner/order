@@ -1,4 +1,5 @@
 /* Auswertung der Testwoche gegen Normen. Die Normen selbst stehen in data/modules/norms.json. */
+import { who5For } from "./who5";
 import { DOMAINS, FOCI, FOCUS_BY_ID, NORMS, TESTWEEK } from "../data";
 import type { AppState, Focus, Norm, PlanBlock, TestDef, TestResult } from "../types";
 
@@ -155,8 +156,7 @@ export function evaluateBlock(state: AppState, blockId: string): Evaluation {
   }
   const scoredDomains = domains.filter((d) => d.score != null);
   const weakest = scoredDomains.length >= 2 ? scoredDomains.reduce((a, b) => (b.score! < a.score! ? b : a)) : null;
-  const who5List = state.who5.filter((w) => w.blockId === blockId);
-  const who5 = who5List.length ? who5List[who5List.length - 1].score : null;
+  const who5 = who5For(state, state.plan.find((b) => b.id === blockId), blockId);
 
   // Vorschlag: niedriges Wohlbefinden zuerst, sonst die schwächste Domäne
   const goal = who5 != null && who5 < 52 ? "wellbeing" : weakest ? DOMAINS.find((d) => d.id === weakest.id)!.goal : null;

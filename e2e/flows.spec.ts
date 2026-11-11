@@ -560,3 +560,21 @@ test("Testwoche: ein Versuch, Timer mit 4 s in Position, Korrektur, Auslassen, C
   expect(s.testSkips?.["t1:t-wallsit"]).toBe(true);
   await expect(page.locator(".collapse-head").filter({ hasText: "Durendal-Cup ✓" })).toHaveCount(1);
 });
+
+test("Testwoche: › zeigt die erste Woche des nächsten Ordens als Vorschau, ‹ führt zurück", async ({ page }) => {
+  const st = fixture();
+  const start = st.plan[0].start;
+  const d = new Date(`${start}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 6);
+  const end = d.toISOString().slice(0, 10);
+  const n = new Date(`${start}T12:00:00Z`); n.setUTCDate(n.getUTCDate() + 7);
+  const nEnd = new Date(n); nEnd.setUTCDate(nEnd.getUTCDate() + 27);
+  st.plan = [{ id: "t1", focusId: "test", label: "Testwoche", start, end, load: "medium", travel: false },
+    { id: "b2", focusId: "slayer", label: "", start: n.toISOString().slice(0, 10), end: nEnd.toISOString().slice(0, 10), load: "medium", travel: false }];
+  await seed(page, st);
+  await page.goto("./");
+  await page.getByRole("button", { name: /Nächste Woche: Slayer/ }).click();
+  await expect(page.locator(".hero-focus")).toContainText("Slayer");
+  await expect(page.locator(".tag").filter({ hasText: "Vorschau" })).toHaveCount(1);
+  await page.getByRole("button", { name: "Zurück zur Testwoche" }).first().click();
+  await expect(page.locator(".hero-focus")).toContainText("Testwoche");
+});

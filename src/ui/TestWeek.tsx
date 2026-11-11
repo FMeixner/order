@@ -90,30 +90,6 @@ function TestRow({ t, state, block, onSave, onSkip, preview = false }: { t: Test
   );
 }
 
-function Who5({ state, update, block }: { state: AppState; update: Update; block: PlanBlock }) {
-  const [a, setA] = useState<(number | null)[]>([null, null, null, null, null]);
-  const saved = state.who5.filter((w) => w.blockId === block.id).pop();
-  const complete = a.every((x) => x != null);
-  const score = complete ? (a as number[]).reduce((s, x) => s + x, 0) * 4 : null;
-  return (
-    <div className="test-row">
-      <div className="slot-name">WHO-5 Wohlbefinden</div>
-      <div className="muted small">{TESTWEEK.who5_intro} …</div>
-      {TESTWEEK.who5.map((q, i) => (
-        <div key={i} className="who5-q">
-          <div className="small">{q}</div>
-          <select value={a[i] ?? ""} onChange={(e) => setA(a.map((x, k) => (k === i ? (e.target.value === "" ? null : parseInt(e.target.value)) : x)))}>
-            <option value="">–</option>
-            {TESTWEEK.who5_scale.map((l, v) => <option key={v} value={v}>{v} · {l}</option>)}
-          </select>
-        </div>
-      ))}
-      <button className="btn small" disabled={!complete} onClick={() => update((st) => ({ ...st, who5: [...st.who5, { date: new Date().toISOString().slice(0, 10), blockId: block.id, score: score! }] }))}>Speichern</button>
-      {saved && <div className="muted small">Gespeichert: {saved.score} von 100. Werte unter 52 gelten als Hinweis auf eingeschränktes Wohlbefinden; dann lohnt sich ein Gespräch mit der Hausärztin oder dem Hausarzt.</div>}
-    </div>
-  );
-}
-
 function Benchmark({ cup, state, update, block, preview = false }: { cup: Cup; state: AppState; update: Update; block: PlanBlock; preview?: boolean }) {
   const [manual, setManual] = useState("");
   if (!cup.benchmark) return null;
@@ -246,12 +222,12 @@ function TestDay({ state, update, block, today, place, preview, saveTest, skipTe
       {cups.map((cup) => (
         <AutoCollapse key={`${place}:${cup.id}`} title={cup.name} meta={cup.focus} tone="teal" defaultOpen
           done={!preview && cupDone(state, block, cup)}>
-          {cup.who5 && !preview && <Who5 state={state} update={update} block={block} />}
           {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} preview={preview} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} onSkip={(on) => skipTest(t, on)} />)}
           <Benchmark cup={cup} state={state} update={update} block={block} preview={preview} />
           {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
         </AutoCollapse>
       ))}
+      {!preview && cups.every((c) => cupDone(state, block, c)) && <div className="note ok small">Testtag geschafft ✓ {cool.length ? "– noch das Cool-down, dann ist der Tag durch." : "– der Tag ist durch."} Jeder Wert ist schon gespeichert; abschließen musst du nichts.</div>}
       {!preview && <DaySummary state={state} block={block} cups={cups} />}
       {cool.length > 0 && (
         <AutoCollapse title="Cool-down" meta={`${cool.length} Übungen`} tone="amber" done={allDrillsDone(cool, done, "cd")}>
