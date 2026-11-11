@@ -181,7 +181,7 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
         </Field>
       )}
 
-      {f && slotEligible(f) && b.end >= day && (
+      {f && !f.medley?.length && b.end >= day && (
         <SlotField f={f} label="Schwerpunkt" value={b.sharpen} auto={slotInfo?.({ ...b, sharpen: undefined }).s1} hint="Ein Slot je Orden, im Jahr verteilt: Testdefizit, Erhalt, Double down oder Sekundärziel." onChange={(sharpen) => setB({ ...b, sharpen })} />
       )}
 
@@ -224,10 +224,11 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
 /** Schwerpunkt-Slot einer Phase: automatisch (Testwoche bzw. Sekundärziel), fester Bereich oder aus */
 function SlotField({ f, label, hint, value, auto, onChange }: { f: Focus; label: string; hint: string; value?: string; auto?: SlotPlan; onChange: (v: string | undefined) => void }) {
   return (
-    <Field label={label} hint={value ? (value === "off" ? "Kein Slot, der Orden bekommt die volle Zeit." : SHARPEN[value]?.why) : auto?.reason || hint}>
+    <Field label={label} hint={value ? (value === "off" ? "Kein Slot und kein Auffüllen, der Orden bleibt, wie er ist." : SHARPEN[value]?.why) : !slotEligible(f) ? "Kurzer Orden ohne Slot: an einem Tag mehr vom Ordensziel, wenn es kein Junk-Volumen wäre." : auto?.reason || hint}>
       <select value={value ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
         <option value="">Automatisch{auto?.domain ? `: ${domainName(auto.domain)}${auto.purpose ? ` · ${PURPOSE_LABEL[auto.purpose]}` : ""}` : slotEligible(f) ? ": mehr vom Ordensziel" : " (derzeit keiner)"}</option>
-        {Object.entries(SHARPEN).map(([id, d]) => <option key={id} value={id} disabled={interferes(f, id as DomainId)}>{d.name}{interferes(f, id as DomainId) ? " (stört das Ziel dieses Ordens)" : ""}</option>)}
+        {/* Kurze Orden (unter 45 Min) haben keinen Slot: nur Automatisch (mehr vom Ordensziel) oder Aus */}
+        {slotEligible(f) && Object.entries(SHARPEN).map(([id, d]) => <option key={id} value={id} disabled={interferes(f, id as DomainId)}>{d.name}{interferes(f, id as DomainId) ? " (stört das Ziel dieses Ordens)" : ""}</option>)}
         <option value="off">Aus</option>
       </select>
     </Field>

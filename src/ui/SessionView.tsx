@@ -136,6 +136,22 @@ function PathLevel({ module, skills }: { module: WeaponModule; skills: string[] 
   );
 }
 
+/** Schwerpunkt oder „Mehr vom Ordensziel“ für diesen Orden (diese Phase) entfernen – wie ein Übungstausch, nur ohne Ersatz.
+    Zurück: Plan › Phase › Schwerpunkt „Automatisch“. */
+function DropSlot({ ctx }: { ctx: SessionCtx }) {
+  const [ask, setAsk] = useState(false);
+  const drop = () => ctx.update((st) => ({ ...st, plan: st.plan.map((x) => (x.id === ctx.block.id ? { ...x, sharpen: "off" } : x)) }));
+  return ask ? (
+    <div className="row wrap small">
+      <span className="muted">Für {ctx.focus.name} in dieser Phase entfernen? Zurückholen im Plan unter Schwerpunkt.</span>
+      <button className="btn small" onClick={drop}>Entfernen</button>
+      <button className="btn ghost small" onClick={() => setAsk(false)}>Abbrechen</button>
+    </div>
+  ) : (
+    <button className="btn ghost small drop-slot" onClick={() => setAsk(true)}>Für diesen Orden entfernen</button>
+  );
+}
+
 /** Überschrift der Schwerpunkt-Karte mit dem echten Zweck (Testdefizit, Erhalt, Double down, Sekundärziel, selbst gewählt) */
 function sharpenTitle(ctx: SessionCtx, variant: string): string {
   const s1 = slotsFor(ctx.state, ctx.block).s1;
@@ -165,6 +181,7 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
       {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
       {isWeaponModule(b.module) && PATHS[b.module].leveled.includes(b.variant) && <PathLevel module={b.module} skills={ctx.state.user.skills} />}
       <DrillList drills={drills} done={session?.drills ?? {}} prefix={prefix} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
+      {(b.module === "sharpen" || it.fill) && <DropSlot ctx={ctx} />}
     </Collapse>
   );
 }
@@ -199,7 +216,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
   if (b.type === "module") {
     return <section className="card">{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={() => {}} />)}</section>;
   }
-  return <section className="card">{it.fill && <div className="block-label amber">{it.fill}</div>}{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}</section>;
+  return <section className="card">{it.fill && <div className="block-label amber">{it.fill}</div>}{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}{it.fill && <DropSlot ctx={ctx} />}</section>;
 }
 
 

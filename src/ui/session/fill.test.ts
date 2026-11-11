@@ -14,15 +14,18 @@ const mk = (focusId: string, extra: Partial<PlanBlock> = {}) => {
 const markers = (f: ReturnType<typeof applySlots>) => Object.values(f.roles).flatMap((r) => r.blocks).filter((x) => x.type === "module" && x.module === "sharpen" && x.variant === "ordensziel").length;
 
 describe("Mehr vom Ordensziel", () => {
-  it("nur, wenn Automatisch keinen Schwerpunkt findet: nicht bei „Aus“, nicht bei eigenem Schwerpunkt, nicht bei kurzen Orden oder Harlequin", () => {
+  it("nur, wenn Automatisch keinen Schwerpunkt findet: nicht bei „Aus“, nicht bei eigenem Schwerpunkt, auch bei kurzen Orden, nicht bei Harlequin", () => {
     const { st, b } = mk("knight");
     expect(markers(applySlots(FOCUS_BY_ID.knight, st, b))).toBe(0); // Automatisch findet einen Schwerpunkt
     const off = mk("knight", { sharpen: "off" });
     expect(markers(applySlots(FOCUS_BY_ID.knight, off.st, off.b))).toBe(0);
     const h = mk("harlequin");
     expect(markers(applySlots(FOCUS_BY_ID.smith, h.st, h.b))).toBe(0);
+    // Kurze Orden ohne Slot: ein Platzhalter; mit „Aus“ (auch über „Für diesen Orden entfernen“) keiner
     const k = mk("king");
-    expect(markers(applySlots(FOCUS_BY_ID.king, k.st, k.b))).toBe(0);
+    expect(markers(applySlots(FOCUS_BY_ID.king, k.st, k.b))).toBe(1);
+    const koff = mk("king", { sharpen: "off" });
+    expect(markers(applySlots(FOCUS_BY_ID.king, koff.st, koff.b))).toBe(0);
   });
   it("Junk-Grenze: Platzhalter ohne Inhalt fällt aus der Einheit; mit Inhalt trägt die Karte die Überschrift", () => {
     const { st, b } = mk("knight");

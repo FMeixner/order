@@ -5,7 +5,8 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ## [Unveröffentlicht]
 
 ### Geändert
-- **Mehr vom Ordensziel:** Findet „Automatisch“ keinen Schwerpunkt, legt die App an einem Tag etwas vom Hauptziel nach (Muskel: 2–3 Sätze für die größte Lücke; Kraft: ein schwerer Satz; Kondition: 10 Min Grundlage; Schnellkraft: zwei frische Sätze Sprünge; Skill und Beweglichkeit: eine Runde mehr im Flow) – nur, wenn es kein Junk-Volumen wäre.
+- **Mehr vom Ordensziel:** Findet „Automatisch“ keinen Schwerpunkt, legt die App an einem Tag etwas vom Hauptziel nach (Muskel: 2–3 Sätze für die größte Lücke; Kraft: ein schwerer Satz; Kondition: 10 Min Grundlage; Schnellkraft: zwei frische Sätze Sprünge; Skill und Beweglichkeit: eine Runde mehr im Flow) – nur, wenn es kein Junk-Volumen wäre. Auch kurze Orden ohne Schwerpunkt-Slot bekommen es.
+- **„Für diesen Orden entfernen“** an Schwerpunkt- und Auffüll-Karte: schaltet beides für die Phase ab (wie ein Übungstausch, nur ohne Ersatz); zurück im Plan unter Schwerpunkt „Automatisch“.
 - **Schwerpunkt-Karte nennt den echten Zweck** (Testdefizit, Erhalt, Double down, Sekundärziel, selbst gewählt) statt immer „Erhaltung“.
 - **Schwerpunkt bleibt automatisch:** „Übernehmen“ in der Auswertung schreibt nichts mehr fest; einmalig gehen festgeschriebene Schwerpunkte, die ohnehin der automatischen Wahl entsprechen, zurück auf „Automatisch“.
 - **Harlequin wählt je Phase:** Zu Beginn jeder Harlequin-Phase nimmt die App so viele Orden, wie die Phase Wochen hat – zuerst die, die in früheren Harlequin-Phasen am längsten nicht oder nie dran waren, bei Gleichstand die, die zum Zeichen passen. Bisher begann jede Phase wieder mit denselben vier Orden.

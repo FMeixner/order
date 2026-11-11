@@ -217,8 +217,9 @@ export function slotsFor(state: AppState, b: PlanBlock): SlotsPlan {
     sonst kürzt die Leiter erst die Tage von Slot 2, dann Slot 2 selbst, dann die Tage von Slot 1. */
 export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
   const plan = slotsFor(state, b);
-  // Kein Schwerpunkt, obwohl automatisch: an einem Tag „Mehr vom Ordensziel“ (Inhalt und Junk-Grenze in ui/session/fill.ts)
-  if (!plan.s1.domain && !plan.s2.domain) return plan.s1.source === "none" && slotEligible(blockFocus(b) ?? f) && !b.sharpen ? withFill(f, state, b) : f;
+  // Kein Schwerpunkt, obwohl automatisch (auch kurze Orden ohne Slot): an einem Tag „Mehr vom Ordensziel“ (Inhalt und
+  // Junk-Grenze in ui/session/fill.ts). Nicht bei „Aus“ und nicht bei Harlequin (dessen Wochen gehören anderen Orden).
+  if (!plan.s1.domain && !plan.s2.domain) return plan.s1.source === "none" && !(blockFocus(b) ?? f).medley?.length && !b.sharpen ? withFill(f, state, b) : f;
   const roles = rolesFor(state, b, f);
   const p = state.equipment[0];
   const weekOf = (ff: Focus): number =>
