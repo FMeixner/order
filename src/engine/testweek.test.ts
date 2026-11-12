@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { emptyState } from "../store";
 import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock } from "../types";
-import { TEST_BLOCK } from "./plan";
-import { cupDone, openCupTarget, saveTestResult, skipTestResult, testDone } from "./testweek";
+import { TEST_BLOCK, blockAt } from "./plan";
+import { closeTestWeek, cupDone, openCupTarget, saveTestResult, skipTestResult, testDone } from "./testweek";
 
 const T = "2026-11-12";
 const block = (id: string, start: string, end: string): PlanBlock =>
@@ -72,5 +72,53 @@ describe("Testwoche und Nachholen (1.38)", () => {
     // die laufende Testwoche zählt als jüngste offene
     s = { ...emptyState(), plan: [block("laufend", "2026-11-09", "2026-11-15")] };
     expect(openCupTarget(s, T)?.id).toBe("laufend");
+  });
+});
+
+describe("Testwoche abschließen (1.39)", () => {
+  const order = (id: string, start: string, end: string): PlanBlock =>
+    ({ id, focusId: "slayer", label: "x", start, end, load: "medium", travel: false });
+
+  it("beendet die Testwoche gestern und lässt den folgenden Orden heute beginnen", () => {
+    const tw = block("tw", "2026-11-09", "2026-11-15");
+    const slayer = order("slayer", "2026-11-16", "2026-12-13");
+    const s = closeTestWeek({ ...emptyState(), plan: [tw, slayer] }, tw, T); // T = 2026-11-12, Donnerstag
+    expect(s.plan[0]).toMatchObject({ id: "tw", end: "2026-11-11" });
+    expect(s.plan[1]).toMatchObject({ id: "slayer", start: "2026-11-12" });
+    // heute gehört schon dem Slayer — dessen Woche 1 ist die Anlaufwoche
+    expect(blockAt(s.plan, T)?.id).toBe("slayer");
+    expect(blockAt(s.plan, "2026-11-11")?.id).toBe("tw");
+  });
+
+  it("ohne folgenden Orden endet nur die Testwoche früher", () => {
+    const tw = block("tw", "2026-11-09", "2026-11-15");
+    const s = closeTestWeek({ ...emptyState(), plan: [tw] }, tw, T);
+    expect(s.plan).toHaveLength(1);
+    expect(s.plan[0]).toMatchObject({ id: "tw", end: "2026-11-11" });
+  });
+
+  it("Abschluss am Starttag lässt die Woche bis heute gelten; der Folge-Orden beginnt morgen", () => {
+    const tw = block("tw", "2026-11-09", "2026-11-15");
+    const slayer = order("slayer", "2026-11-16", "2026-12-13");
+    const s = closeTestWeek({ ...emptyState(), plan: [tw, slayer] }, tw, "2026-11-09");
+    expect(s.plan[0]).toMatchObject({ id: "tw", end: "2026-11-09" });
+    expect(s.plan[1]).toMatchObject({ id: "slayer", start: "2026-11-10" });
+  });
+
+  it("außerhalb der Testwoche ändert sich nichts, eine folgende Testwoche wird nicht vorgezogen", () => {
+    const tw = block("tw", "2026-11-09", "2026-11-15");
+    const tw2 = block("tw2", "2026-11-16", "2026-11-22");
+    const s0 = { ...emptyState(), plan: [tw, tw2] };
+    expect(closeTestWeek(s0, tw, "2026-11-20")).toEqual(s0); // heute liegt nicht in dieser Testwoche
+    const s1 = closeTestWeek(s0, tw, T);
+    expect(s1.plan[0]).toMatchObject({ id: "tw", end: "2026-11-11" });
+    expect(s1.plan[1]).toMatchObject({ id: "tw2", start: "2026-11-16" }); // Testwoche bleibt am Montag
+  });
+
+  it("offene Cups bleiben nachholbar: die abgeschlossene Testwoche bleibt Ziel des Nachholens", () => {
+    const tw = block("tw", "2026-11-09", "2026-11-15");
+    const slayer = order("slayer", "2026-11-16", "2026-12-13");
+    const s = closeTestWeek({ ...emptyState(), plan: [tw, slayer] }, tw, T);
+    expect(openCupTarget(s, T)?.id).toBe("tw");
   });
 });

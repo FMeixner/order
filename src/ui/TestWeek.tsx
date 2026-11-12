@@ -1,7 +1,7 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { IdeasWaiting } from "./Ideas";
 import { BEAST_BY_ID, TESTWEEK } from "../data";
-import { addDays, expandDrills, fmtDate, mondayOf, scheduleFor, trainingDays } from "../engine/plan";
+import { addDays, expandDrills, fmtDate, focusName, isTestBlock, mondayOf, scheduleFor, trainingDays } from "../engine/plan";
 import { variantHint } from "../engine/norms";
 import { parseClock } from "../engine/clock";
 import type { AppState, Cup, PlanBlock, TestDef, Weekday } from "../types";
@@ -10,7 +10,7 @@ import { Collapse, Desc } from "./common";
 import { allDrillsDone, DrillList } from "./session/Drills";
 import { fmt } from "./Timer";
 import { TestTimer } from "./TestTimer";
-import { cupDone, saveTestResult, skipTestResult } from "../engine/testweek";
+import { cupDone, closeTestWeek, saveTestResult, skipTestResult } from "../engine/testweek";
 import { Evaluation } from "./Evaluation";
 import { RavenCup, RavenLines, ravenOn } from "./Raven";
 import { evaluateBlock, type TestEval } from "../engine/norms";
@@ -182,8 +182,30 @@ export function TestWeek({ state, update, block, today, preview = false, onPlan 
       </div>
       {sel && <TestDay state={state} update={update} block={block} today={today} place={sel.place} preview={preview} saveTest={saveTest} skipTest={skipTest} />}
       <Evaluation state={state} blockId={block.id} update={preview ? undefined : update} defaultOpen={false} />
+      {!preview && today >= block.start && today <= block.end && <CloseWeek state={state} block={block} today={today} update={update} />}
       <div className="muted small">{preview ? "Vorschau der Testwoche. " : "Die Auswertung füllt sich, sobald du Werte speicherst. Alle Ergebnisse stehen auch im Log. "}Block {fmtDate(block.start)}–{fmtDate(block.end)}.</div>
     </div>
+  );
+}
+
+/** Testwoche abschließen (1.39): Cups verdient oder ausgelassen, aber die Woche läuft noch — der Knopf beendet
+    sie vorfristig. Der folgende Orden beginnt heute, als Anlaufwoche mit den Einheiten ab heute; offene Cups
+    bleiben im Almanach nachholbar, das Urteil des Turniers bleibt der Testwoche selbst vorbehalten. */
+function CloseWeek({ state, block, today, update }: { state: AppState; block: PlanBlock; today: string; update: Update }) {
+  const next = state.plan.filter((b) => b.start > block.end && !isTestBlock(b)).sort((a, b) => a.start.localeCompare(b.start))[0];
+  const open = TESTWEEK.cups.filter((c) => !cupDone(state, block, c)).length;
+  return (
+    <section className="card">
+      <div className="row between"><strong>Testwoche abschließen</strong><span className="muted small">{open ? `${open} von ${TESTWEEK.cups.length} Cups offen` : "Alle Cups verdient"}</span></div>
+      <div className="muted small">
+        {next
+          ? `Beendet die Testwoche gestern und lässt ${focusName(next.focusId)} heute beginnen — als Anlaufwoche mit den Einheiten ab heute, der Orden endet wie geplant.`
+          : "Beendet die Testwoche gestern. Einen folgenden Orden kannst du ab heute ansetzen."}
+        {open > 0 && " Offene Cups lassen sich im Almanach unter „Cups“ nachholen; das Urteil des Turniers gibt es nur in der Testwoche."}
+        {" Datumänderungen lassen sich im Phasenblatt jederzeit zurücknehmen."}
+      </div>
+      <button className="btn" onClick={() => update((st) => closeTestWeek(st, block, today))}>Testwoche abschließen</button>
+    </section>
   );
 }
 

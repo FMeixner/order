@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.39.0] – 2026-11-12
+
+### Neu
+- **Testwoche abschließen:** „Testwoche abschließen“ am Ende der Testwoche beendet sie vorfristig — die Woche endet gestern, der folgende Orden beginnt sofort als Anlaufwoche (die Einheiten ab heute, der Orden endet wie geplant). Stehen noch Cups aus, zeigt der Knopf die Zahl an; sie bleiben im Almanach nachholbar, das Urteil des Turniers bleibt der Testwoche selbst vorbehalten.
+
 ## [1.38.0] – 2026-11-12
 
 ### Neu
