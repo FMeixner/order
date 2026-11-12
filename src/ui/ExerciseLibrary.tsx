@@ -9,10 +9,10 @@ import { Collapse, kg, Seg } from "./common";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 const EQUIP: Record<string, string> = {
-  barbell: "Langhantel", dumbbell: "Kurzhantel", kettlebell: "Kettlebell", cable: "Kabel", machine: "Maschine", band: "Band",
+  barbell: "Langhantel", dumbbell: "Kurzhantel", kettlebell: "Kettlebell", cable: "Kabel", machine: "Maschine", smith: "Multipresse", band: "Band",
   bodyweight: "Körpergewicht", bar: "Stange", rings: "Ringe", vest: "Weste", sandbag: "Sandsack", medball: "Medizinball", none: "ohne",
 };
-const LOADED = new Set(["barbell", "dumbbell", "kettlebell", "cable", "machine", "vest", "sandbag"]);
+const LOADED = new Set(["barbell", "dumbbell", "kettlebell", "cable", "machine", "smith", "vest", "sandbag"]);
 
 export function ExerciseLibrary({ state, update, today }: { state: AppState; update: Update; today: string }) {
   const [q, setQ] = useState("");

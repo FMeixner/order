@@ -30,6 +30,8 @@
     "Tragen": {"Unterarme": 1, "Rumpf": 0.5}
   },
   "exercises": {
+    "Smith Machine Shoulder Press": {"Schultern": 1, "Trizeps": 0.5},
+    "Smith Machine Close-Grip Bench Press": {"Trizeps": 1, "Brust": 0.5, "Schultern": 0.5},
     "Klingen-Seitheben": {"Schultern": 1},
     "Schwert-Hebeln": {"Unterarme": 1},
     "Klingen-Außenrotation": {"Schultern": 0.5},

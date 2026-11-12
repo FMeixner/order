@@ -94,6 +94,7 @@
       "DB Shoulder Press",
       "Seated DB Shoulder Press",
       "Shoulder Press Machine",
+      "Smith Machine Shoulder Press",
       "KB Half-Kneeling Press",
       "Pike Push-Up"
     ],
@@ -160,7 +161,8 @@
       "DB Kickback",
       "Rope Pushdown",
       "Band Pushdown",
-      "Diamond Push-Up"
+      "Diamond Push-Up",
+      "Smith Machine Close-Grip Bench Press"
     ],
     "Rotation": [
       "Landmine Rotational Press",

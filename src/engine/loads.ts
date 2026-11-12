@@ -1,7 +1,7 @@
 /* Gewichtsstufen je Equipment-Profil. Jede Steigerung landet auf einer Last, die es wirklich gibt. */
 import type { Equip, EquipmentProfile } from "../types";
 
-export const LOADABLE: Equip[] = ["barbell", "dumbbell", "kettlebell", "cable", "machine", "plate", "vest", "sandbag"];
+export const LOADABLE: Equip[] = ["barbell", "dumbbell", "kettlebell", "cable", "machine", "smith", "plate", "vest", "sandbag"];
 
 export function isLoadable(e: Equip): boolean {
   return LOADABLE.includes(e);
@@ -38,6 +38,9 @@ export function loadScale(p: EquipmentProfile, equip: Equip): { list: number[] }
       return p.vest.length ? { list: [0, ...p.vest.filter((v) => v > 0)].sort((a, b) => a - b) } : { list: [0] };
     case "cable":
       return p.has.cable ? { step: p.cableStep || 2.5 } : null;
+    case "smith":
+      // Multipresse: eigenes Gerät (z. B. Hochschule ohne andere Maschinen); ohne Angabe da, wo Maschinen stehen
+      return (p.has.smith ?? p.has.machines) ? { step: 2.5 } : null;
     case "machine":
       return p.has.machines ? { step: p.machineStep || 5 } : null;
     case "sandbag":

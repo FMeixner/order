@@ -76,7 +76,7 @@ export function equipOf(name: string): Equip {
 function finishFor(slot: Slot, name: string, kind: SlotKind, loadable: boolean, equip: Equip): Finish | undefined {
   const f = slot.finish;
   if (!f || kind !== "strength") return undefined;
-  if (f.kind === "drop") return loadable && ["dumbbell", "kettlebell", "machine", "cable", "barbell"].includes(equip) ? f : undefined;
+  if (f.kind === "drop") return loadable && ["dumbbell", "kettlebell", "machine", "smith", "cable", "barbell"].includes(equip) ? f : undefined;
   if (f.kind === "mech") {
     const i = (f.chain ?? []).indexOf(name);
     return i >= 0 && i < (f.chain ?? []).length - 1 ? { kind: "mech", chain: f.chain!.slice(i) } : undefined;

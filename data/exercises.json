@@ -821,6 +821,14 @@
   "Overhead Press": {
     "equip": "barbell"
   },
+  "Smith Machine Shoulder Press": {
+    "equip": "smith",
+    "desc": "Bank fast senkrecht unter die Multipresse, Stange auf Höhe des Kinns starten. Nach oben drücken, ohne die Ellbogen ganz zu blockieren, kontrolliert bis knapp unter das Kinn."
+  },
+  "Smith Machine Close-Grip Bench Press": {
+    "equip": "smith",
+    "desc": "Flachbank unter der Multipresse, Griff schulterbreit, Ellbogen nah am Körper. Stange zur unteren Brust senken, mit dem Trizeps hochdrücken."
+  },
   "Pike Push-Up": {
     "equip": "bodyweight",
     "desc": "Gesäß hoch, Körper als umgekehrtes V, Kopf zwischen den Händen Richtung Boden senken."

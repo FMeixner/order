@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unveröffentlicht]
+
+### Geändert
+- **Slayer Dienstag neu (Schultern und Arme):** vier Supersets statt acht Blöcken, für Multipresse und Kurzhanteln: Seitheben + Band Face Pull (an der Multipresse), Schulterdrücken an der Multipresse + Dead Bug, enges Bankdrücken an der Multipresse + Incline Curl, Overhead Triceps Extension + Hammer Curl (gleiches Gewicht). Reverse Curl, Upright Row und der Arm-Finisher fallen weg.
+- **Schwerpunkte überarbeitet (Auswahl des Nutzers):** Sprungkraft jetzt Strecksprünge + Pogo Hops (auf der Stelle); Kraftausdauer jetzt die Testübungen (je ein Satz Liegestütze und Klimmzüge bis 2 vor Schluss, Wall Sit 60 s, Dead Hang); Anaerob 6 × 15 s hart / 45 s locker. Schnelligkeit, Beweglichkeit und Ausdauer bleiben.
+
+### Neu
+- **Multipresse** als eigenes Gerät im Equipment-Profil (Hochschule ohne andere Maschinen); zwei neue Übungen: Schulterdrücken und enges Bankdrücken an der Multipresse.
+
 ## [1.37.0] – 2026-11-11
 
 ### Neu

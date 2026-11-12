@@ -32,19 +32,24 @@
       ]
     },
     "arme_kurz": {
-      "name": "Schultern und Arme", "location": "gym", "minutes": 55,
+      "name": "Schultern und Arme", "location": "gym", "minutes": 50,
       "warmup": ["short_base", "thoracic_standing", "windmill", "shoulder_prep"], "cooldown": ["cd_di"],
       "blocks": [
-        {"type": "single", "slot": {"id": "w-di-4", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
-        {"type": "single", "slot": {"id": "w-di-2", "core": true, "name": "Cable Overhead Triceps Extension", "home": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60, "note": "Zum Einstieg: wärmt das Gelenk vor und ermüdet den Muskel leicht vor, die Grundübung danach braucht weniger Aufwärmen."}},
-        {"type": "single", "slot": {"id": "w-fr-5", "core": true, "name": "Overhead Press", "home": "DB Shoulder Press", "reise": {"name": "Pike Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "w-di-1", "core": true, "name": "Cable Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "w-di-3", "name": "Face Pull", "home": {"name": "Band Face Pull", "prog": "reps"}, "sets": 2, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "single", "slot": {"id": "w-di-5", "name": "Cable Reverse Curl", "home": "DB Reverse Curl", "reise": {"name": "Band Reverse Curl", "prog": "reps"}, "sets": 2, "reps": "12-15", "prog": "double", "rest": 60, "note": "Unterarm und Griff"}},
-        {"type": "single", "slot": {"id": "w-di-6", "name": "Cable Crunch", "home": {"name": "Ab Wheel Rollout", "reps": "8-12", "prog": "reps"}, "reise": {"name": "Reverse Crunch", "prog": "reps"}, "sets": 3, "reps": "10-15", "prog": "double", "rest": 60}},
-        {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-magnisson", "ng-fjalar", "ng-ubba", "ng-nott", "ng-garm", "ng-mani"], "note": "Arm-Finisher statt Curl + Upright Row."}, "slots": [
-          {"id": "w-fr-6a", "name": "Barbell Curl", "home": "DB Biceps Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "proposal": true},
-          {"id": "w-fr-6b", "name": "Upright Row", "home": "DB Upright Row", "reise": {"name": "Band Upright Row", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "proposal": true}
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "w-di-4", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "note": "Zum Einstieg: wärmt die Schulter vor."},
+          {"id": "w-di-3", "name": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "reps", "note": "Band an der Multipresse auf Augenhöhe befestigen."}
+        ]},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "w-fr-5", "core": true, "name": "Smith Machine Shoulder Press", "home": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
+          {"id": "w-di-6", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"}
+        ]},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "w-di-7", "core": true, "name": "Smith Machine Close-Grip Bench Press", "home": "DB Floor Press", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
+          {"id": "w-di-8", "name": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"}
+        ]},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "w-di-2", "core": true, "name": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "note": "Gleiches Kurzhantelgewicht wie der Hammer Curl, wenn es passt."},
+          {"id": "w-di-1", "core": true, "name": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"}
         ]}
       ]
     },
