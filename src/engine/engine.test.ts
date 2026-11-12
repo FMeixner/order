@@ -4,7 +4,7 @@ import { EQUIPMENT_PRESETS, emptyState, migrate } from "../store";
 import type { AppState } from "../types";
 import type { EquipmentProfile, PlanBlock, SessionEntry, Slot } from "../types";
 import { parseWeightList, snapDown, stepLoad } from "./loads";
-import { advance, suggest } from "./progression";
+import { advance, EMPTY_STATE, packetStage, suggest } from "./progression";
 import { parseReps, resolveSlot } from "./resolve";
 import { blockAt, dayRoleMap, defaultRoles, expandDrills, isTestWeek, pickBeast, weekInBlock } from "./plan";
 
@@ -142,6 +142,24 @@ describe("Progression", () => {
     const b = advance(lr, a, e, home, "d2");
     expect(b.stage).toBe(1);
     expect(suggest(lr, b).name).toBe("Knee Push-Up");
+  });
+  it("Päckchen-Anker: frische Leiter startet eine Stufe höher", () => {
+    const ls: Slot = { id: "pr", name: "Incline Push-Up", sets: 3, reps: "8-12", prog: "ladder", ladder: ["Incline Push-Up", "Knee Push-Up", "Push-Up"] };
+    const lr = resolveSlot(ls, home)!;
+    expect(packetStage(lr, undefined, { "Incline Push-Up": 15 })).toBe(1);
+    expect(packetStage(lr, undefined, { "Incline Push-Up": 12 })).toBeNull(); // Päckchen noch im Bereich
+    expect(packetStage(lr, { ...EMPTY_STATE, target: 8 }, { "Incline Push-Up": 15 })).toBeNull(); // eigener Stand bleibt
+    const seeded = suggest(lr, { ...EMPTY_STATE, stage: 1 }, 1, home);
+    expect(seeded.name).toBe("Knee Push-Up");
+    expect(seeded.targetReps).toBe(8);
+  });
+  it("Päckchen-Anker: advance übernimmt die gezeigte Stufe", () => {
+    const ls: Slot = { id: "pr", name: "Incline Push-Up", sets: 3, reps: "8-12", prog: "ladder", ladder: ["Incline Push-Up", "Knee Push-Up", "Push-Up"] };
+    const lr = resolveSlot(ls, home)!;
+    const e: SessionEntry = { key: lr.key, slotId: "pr", name: "Knee Push-Up", prog: "ladder", stage: 1, sets: [8, 8, 8].map((x) => ({ done: true, reps: x })) };
+    const s = advance(lr, undefined, e, home, "d1");
+    expect(s.stage).toBe(1);
+    expect(suggest(lr, s).name).toBe("Knee Push-Up");
   });
 });
 

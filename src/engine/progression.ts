@@ -304,6 +304,18 @@ export function transferState(r: Resolved, st: SlotState, p: EquipmentProfile): 
   return { ...st, weight: down, target: Math.min(t, repCap) };
 }
 
+/** Päckchen-Anker (1.42): Ein Leiter-Slot ohne eigenen Stand startet eine Stufe höher, wenn das eigene
+    Päckchen über dem Wiederholungsbereich liegt (etwa Ring Row, Päckchen 15, Bereich 8–10).
+    Gilt nur frisch — was jemand an der Leiter schon geleistet hat, bleibt, wo es ist. */
+export function packetStage(r: Resolved, st: SlotState | undefined, packets?: Record<string, number>): number | null {
+  if (r.prog !== "ladder" || !r.ladder || r.ladder.length < 2 || st?.target != null) return null;
+  const n = packets?.[r.name];
+  const rp = parseReps(r.reps);
+  const hi = rp.hi ?? rp.lo;
+  if (!n || hi == null || n <= hi) return null;
+  return Math.min((r.ladderStart ?? 0) + 1, r.ladder.length - 1);
+}
+
 export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1, p?: EquipmentProfile): Suggestion {
   const s = st0 && p ? transferState(r, st0, p) : st0 ?? EMPTY_STATE;
   const rp = parseReps(r.reps);
@@ -372,6 +384,7 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
   delete s.shifted;
   delete s.estimated;
   if (r.ladder && (r.ladderStart ?? 0) > s.stage) s.stage = r.ladderStart!; // Skillcheck: Leiter startet höher
+  if (r.ladder && entry.stage != null && entry.stage > s.stage) s.stage = Math.min(entry.stage, r.ladder.length - 1); // Päckchen-Anker (1.42): die gezeigte Stufe zählt
   const fb0: Feedback = entry.feedback ?? "ok";
   // „Zu schwer“ wirkt wie „Schwer“; die verfehlte Zahl steckt in den Sätzen (letzter Satz nachgefragt)
   const fb: Feedback = fb0 === "zuschwer" ? "schwer" : fb0;

@@ -22,7 +22,7 @@
       "name": "Power Beine", "location": "gym", "minutes": 50,
       "warmup": ["short_base", "jump_prep"], "cooldown": ["cd_lower"],
       "blocks": [
-        {"type": "contrast", "transfer": 30, "rest": 180, "heavy": {"id": "at-u-2", "core": true, "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 4, "reps": "4-5", "prog": "double"}, "explosive": {"id": "at-u-2x", "name": "Squat Jump", "reise": "Split Jump", "sets": 4, "reps": "5", "prog": "none"}},
+        {"type": "contrast", "transfer": 20, "rest": 150, "heavy": {"id": "at-u-2", "core": true, "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 4, "reps": "4-5", "prog": "double"}, "explosive": {"id": "at-u-2x", "name": "Squat Jump", "reise": "Split Jump", "sets": 4, "reps": "5", "prog": "none"}},
         {"type": "single", "slot": {"id": "at-u-3", "core": true, "name": "Bulgarian Split Squat", "reise": {"name": "Bulgarian Split Squat", "prog": "reps"}, "sets": 3, "reps": "6-8/Seite", "prog": "double", "rest": 90}},
         {"type": "single", "slot": {"id": "at-u-4", "name": "Copenhagen Plank", "kind": "hold", "hold": 20, "max": 45, "step": 5, "sets": 3, "prog": "hold", "rest": 45, "note": "pro Seite"}},
         {"type": "single", "slot": {"id": "at-u-5", "core": true, "name": "Hip Thrust", "home": "DB Hip Thrust", "sets": 3, "reps": "6-8", "prog": "double", "rest": 120}},

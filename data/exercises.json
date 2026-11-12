@@ -915,18 +915,21 @@
   },
   "Ring Row": {
     "equip": "bodyweight",
+    "weighted": true,
     "needs": [
       "rings"
     ]
   },
   "Ring Row (Füße erhöht)": {
     "equip": "bodyweight",
+    "weighted": true,
     "needs": [
       "rings"
     ]
   },
   "Archer Ring Row": {
     "equip": "bodyweight",
+    "weighted": true,
     "needs": [
       "rings"
     ],

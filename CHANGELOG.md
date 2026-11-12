@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.42.0] – 2026-11-12
+
+### Neu
+- **Päckchen-Anker für Leitern:** Startet ein Leiter-Slot ohne eigenen Stand und liegt dein eigenes Päckchen über dem Wiederholungsbereich, beginnt die Leiter gleich eine Stufe höher (Ring Row mit Päckchen 15 und Bereich 8–10 startet bei „Füße erhöht" statt bei der Grundstufe). Die gezeigte Stufe wird mit der Einheit übernommen; verdiente Stände bleiben unberührt.
+- **Ring-Row-Leitern enden in der Weste:** Ring Row, Ring Row (Füße erhöht) und Archer Ring Row gelten jetzt als vestenfähig. Zweimal am oberen Ende der letzten Stufe angelangt, läuft die Übung mit Weste oder Gürtel weiter wie eine Hantelübung.
+
+### Geändert
+- **Kontrastpaare überall gleich:** Übergang 20 Sekunden, Pause bis zum nächsten Paar 2:30 Minuten — jetzt in allen Orden (Huntsman und Olympian angeglichen, Slayer seit 1.41).
+
 ## [1.41.1] – 2026-11-12
 
 ### Behoben
