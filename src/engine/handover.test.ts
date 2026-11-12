@@ -27,6 +27,22 @@ describe("Übergabe zwischen Wiederholungsbereichen", () => {
     expect(s.weight!).toBeGreaterThan(75);
     expect(s.target).toBe(8);
   });
+  it("Lückenleiter-Ziel über dem neuen Bereich (Back Squat 5–6, Ziel 7) wird umgerechnet statt übernommen (1.40)", () => {
+    const slots = { "a|Bench Press": st(40, 7, "2026-11-01") };
+    const r = res("b|Bench Press", "5-6");
+    const s = sharedState(slots, r)!;
+    expect(s.shifted).toEqual({ kg: 40, reps: 7 });
+    expect(s.target).toBe(5);
+    const sug = suggest(r, s, 1, gym);
+    expect(sug.targetReps!).toBeLessThanOrEqual(6);
+    expect(sug.hint).toMatch(/umgerechnet/);
+  });
+  it("Ziel am oberen Ende des neuen Bereichs (6 in 5–6) bleibt, wie er ist", () => {
+    const s = rangeShift(res("b|Bench Press", "5-6"), st(40, 6, "2026-11-01"));
+    expect(s.shifted).toBeUndefined();
+    expect(s.weight).toBe(40);
+    expect(s.target).toBe(6);
+  });
   it("gleicher Bereich: Stand wird geteilt wie bisher", () => {
     const slots = { "a|Bench Press": st(60, 10, "2026-11-01") };
     const s = sharedState(slots, res("b|Bench Press", "8-12"))!;

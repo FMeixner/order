@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.40.0] – 2026-11-12
+
+### Neu
+- **Begründung der geführten Übungen einklappbar:** In der Einheit zeigt statt des Textklotzes nur noch das Lastsymbol (der Balken) an, dass heute an Maschine oder Kabel trainiert wird — ein Tippen klappt die Begründung auf.
+
+### Behoben
+- **Back Squat startet im Wiederholungsbereich:** Ein übernommener Stand mit Ziel über dem neuen Bereich (etwa 7 aus der Lückenleiter eines älteren Ordens bei „5–6“) startet umgerechnet im Bereich statt darüber — die Lückenleiter selbst bleibt unangetastet, nur der ordensfremde Start wird vorsichtig umgerechnet.
+
+### Entfernt
+- **Anlaufwochen-Hinweis in „Heute“:** Der Tag „Anlaufwoche · Tage ab …“ entfällt; die Woche zeigt ohnehin nur die Einheiten ab dem Beginntag.
+
 ## [1.39.0] – 2026-11-12
 
 ### Neu

@@ -247,13 +247,15 @@ export function estimateFrom(slots: Record<string, SlotState>, r: Resolved, env:
 /** Gewicht in einen anderen Wiederholungsbereich umrechnen. Leistung = Gewicht × (1 + Wdh/30) (Epley, 1985).
     Vorsichtig: Das neue Gewicht ist für das obere Ende des neuen Bereichs gerechnet, gestartet wird am unteren —
     die erste Einheit ist machbar, die Rückmeldung holt den Rest in ein, zwei Einheiten auf.
-    Greift nur, wenn das alte Ziel klar außerhalb liegt (mehr als 2 darüber oder mehr als 1 darunter). */
+    Greift, wenn das alte Ziel außerhalb liegt (darüber oder mehr als 1 darunter): Ein geborrigtes Ziel über dem
+    neuen Bereich stammt aus einem anderen Ordenskontext (etwa einer Lückenleiter) und wird umgerechnet,
+    statt den neuen Bereich von oben her zu eröffnen (1.40). */
 export function rangeShift(r: Resolved, st: SlotState): SlotState {
   if (st.weight == null || st.target == null || !r.loadable || (r.prog !== "double" && r.prog !== "weight" && r.prog !== "topset")) return st;
   const rp = parseReps(r.reps);
   if (rp.lo == null || rp.amrap) return st;
   const lo = rp.lo, hi = rp.hi ?? rp.lo;
-  if (st.target <= hi + 2 && st.target >= lo - 1) return st;
+  if (st.target <= hi && st.target >= lo - 1) return st;
   const cap = st.weight * (1 + st.target / 30);
   const weight = Math.round((cap / (1 + hi / 30)) * 100) / 100;
   return { ...st, weight, target: lo, fb: [], topHits: 0, shifted: { kg: st.weight, reps: st.target } };
