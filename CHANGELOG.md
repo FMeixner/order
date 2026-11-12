@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.41.0] – 2026-11-12
+
+### Geändert
+- **Slayer-Kontrastpaare:** Der Übergang zwischen schwerer und explosiver Übung dauert 20 Sekunden, die Pause bis zum nächsten Paar 2:30 Minuten (zuvor 30 s / 3 Min).
+- **Umrechnung am anderen Ort nie aufgebläht:** Gibt es das gespeicherte Gewicht am Ort nicht, rechnet die App wie bisher nach Epley um — aber nie über die Bereichsobergrenze hinaus (höchstens die Lücken-Obergrenze, 15/20 Wiederholungen). Passt keine Stufe in den Bereich, nimmt sie lieber die nächstschwerere Stufe und setzt die Wiederholungen etwas unter den Bereich, als leichteres Gewicht mit aufgeblähten Zahlen (DB Lateral Raise 3 × 27 war das Extrem). Nach einer harten Einheit bleibt es bei der leichteren Stufe.
+
+### Entfernt
+- **Dosiszeile unter der Bestie:** In der Einheit steht unter der Bestie nur noch der Hinweis des Tages. Was die Bestien zur Woche beitragen, steht unter Stand — dort bleibt es, und es zählt genauso weiter.
+
 ## [1.40.0] – 2026-11-12
 
 ### Neu

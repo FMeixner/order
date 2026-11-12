@@ -38,8 +38,6 @@ export interface Suggestion {
 
 /** Größte Zahl an Wiederholungen, auf die der Bereich bei großen Sprüngen angehoben wird */
 export const GAP_CAP = 15;
-/** Ortswechsel auf leichtere Last: höchstens so viele Wiederholungen */
-export const MOVE_CAP = 30;
 /** Ab diesem Sprung gilt die Lückenregel bei festen Wiederholungen */
 export const FIXED_GAP = 0.075;
 const RIR: Record<Feedback, number> = { zuschwer: 0, schwer: 0, ok: 1, leicht: 3, sehrleicht: 4 };
@@ -262,29 +260,43 @@ export function rangeShift(r: Resolved, st: SlotState): SlotState {
 }
 
 /** Stand auf ein Profil übertragen, in dem es das gespeicherte Gewicht nicht gibt.
-    Leistung = Gewicht × (1 + Wdh/30). Gewählt wird die schwerste Stufe, bei der die nötigen Wiederholungen
-    noch im Bereich liegen. War die letzte Rückmeldung »leicht« oder das Ziel am oberen Ende, darf man wie bei
-    einem normalen Sprung bis zu 3 Wiederholungen unter dem Bereich landen. */
+    Leistung = Gewicht × (1 + Wdh/30). Gewählt wird die schwerste Stufe, deren Wiederholungen im Bereich liegen —
+    höchstens bis zur Lücken-Obergrenze (15/20), nie darüber (1.41). Passt keine Stufe in den Bereich, kommt lieber
+    die nächstschwerere Stufe mit Wiederholungen knapp unter dem Bereich, als leichteres Gewicht mit aufgeblähten
+    Zahlen — dieselbe Leistung, höheres Gewicht. War die letzte Rückmeldung »leicht« oder das Ziel am oberen Ende,
+    darf man wie bei einem normalen Sprung bis zu 3 Wiederholungen unter dem Bereich landen. */
 export function transferState(r: Resolved, st: SlotState, p: EquipmentProfile): SlotState {
   const w = st.weight;
   if (w == null || !r.loadable || (r.prog !== "double" && r.prog !== "weight" && r.prog !== "topset")) return st;
   if (Math.abs(snapDown(p, r.equip, w) - w) < 1e-9) return st; // Gewicht gibt es hier
   const rp = parseReps(r.reps);
   if (rp.lo == null || rp.amrap) return { ...st, weight: snapDown(p, r.equip, w) };
-  const lo = rp.lo;
+  const lo = rp.lo, hi = rp.hi ?? lo;
   const t = st.target ?? lo;
-  const cap = w * (1 + t / 30);
+  const perf = w * (1 + t / 30);
+  // Obergrenze der Umrechnung: Bereichsoberende, großzügigst die Lücken-Obergrenze — nie aufgeblähte Zahlen (1.41)
+  const repCap = Math.max(hi, GAP_CAP);
   const lastFb = st.fb[st.fb.length - 1];
-  const ready = lastFb === "leicht" || lastFb === "sehrleicht" || t >= (rp.hi ?? lo);
+  const ready = lastFb === "leicht" || lastFb === "sehrleicht" || t >= hi;
   const floor = r.prog === "double" && ready ? Math.max(1, lo - 3) : lo;
   const down = snapDown(p, r.equip, w);
   const cands = [stepLoad(p, r.equip, w, 2), stepLoad(p, r.equip, w, 1), down].filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => b - a);
+  const need = (c: number) => Math.ceil(30 * (perf / c) - 30 - 1e-9);
+  // Erst eine Stufe, deren Wiederholungen im Bereich (bis zur Obergrenze) liegen — schwerste zuerst
   for (const c of cands) {
     if (c > w && !ready) continue;
-    const need = Math.ceil(30 * (cap / c) - 30 - 1e-9);
-    if (need >= floor) return { ...st, weight: c, target: r.prog === "double" ? need : lo };
+    const n = need(c);
+    if (n >= floor && (r.prog !== "double" || n <= repCap)) return { ...st, weight: c, target: r.prog === "double" ? n : lo };
   }
-  return { ...st, weight: down };
+  // Dann lieber die nächstschwerere Stufe knapp unter dem Bereich als leichteres Gewicht mit mehr Wiederholungen
+  // als der Obergrenze: dieselbe Leistung, höheres Gewicht. Mindestens das halbe untere Bereichsende, und nicht
+  // nach einer harten Einheit (Friedrich, 1.41).
+  if (r.prog === "double" && lastFb !== "schwer") {
+    const under = cands.filter((c) => c > w).find((c) => { const n = need(c); return n >= Math.max(1, Math.round(lo / 2)) && n < floor; });
+    if (under != null) return { ...st, weight: under, target: need(under) };
+  }
+  // Nichts passt: schwerste Stufe unterhalb, Ziel an der Obergrenze — vorsichtig, die Rückmeldung justiert
+  return { ...st, weight: down, target: Math.min(t, repCap) };
 }
 
 export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1, p?: EquipmentProfile): Suggestion {
@@ -302,8 +314,8 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
     if (rp.lo !== null) {
       const hi = rp.hi ?? rp.lo;
       // Anderer Ort mit leichterer Last (z. B. Studio 24 kg, zuhause nur 20 kg): mehr Wiederholungen statt gleicher Zahl.
-      // Höchstens MOVE_CAP Wiederholungen; passt es nicht, korrigiert die Rückmeldung beim nächsten Mal.
-      const moved = st0 && s !== st0 && st0.weight != null && w0 != null && w0 < st0.weight && (s.target ?? 0) > hi ? Math.min(s.target!, Math.max(hi, MOVE_CAP)) : 0;
+      // Höchstens Bereichsoberende, großzügigst die Lücken-Obergrenze (15/20); passt es nicht, korrigiert die Rückmeldung (1.41).
+      const moved = st0 && s !== st0 && st0.weight != null && w0 != null && w0 < st0.weight && (s.target ?? 0) > hi ? Math.min(s.target!, Math.max(hi, GAP_CAP)) : 0;
       const ceil = Math.max(moved, p && w0 != null && r.prog === "double" ? gapCeiling(p, r.equip, w0, rp.lo, hi) : hi);
       targetReps = Math.min(ceil, Math.max(Math.max(1, rp.lo - 3), s.target ?? rp.lo));
       const from = Math.min(rp.lo, targetReps);

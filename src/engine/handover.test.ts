@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS } from "../store";
 import type { SlotState } from "../types";
-import { advance, estimateFrom, ownBridges, ownRatios, rangeShift, sharedState, suggest } from "./progression";
+import { advance, estimateFrom, ownBridges, ownRatios, rangeShift, sharedState, suggest, transferState } from "./progression";
 import type { Resolved } from "./resolve";
 
 const gym = EQUIPMENT_PRESETS[0].make();
@@ -59,6 +59,29 @@ describe("Übergabe zwischen Wiederholungsbereichen", () => {
     const s = sharedState({ "a|Bench Press": st(60, 12, "2026-11-01") }, r)!;
     const next = advance(r, s, { feedback: "ok", sets: [{ done: true, reps: 5, weight: 67.5 }] } as never, gym, "2026-11-10");
     expect(next.shifted).toBeUndefined();
+  });
+});
+
+describe("Ortswechsel der Stände (1.41)", () => {
+  const home = EQUIPMENT_PRESETS[1].make(); // Zuhause: Kurzhanteln in 2-kg-Schritten (5 kg gibt es dort nicht)
+  const rd = (reps: string): Resolved => ({ ...res(`x|DB Lateral Raise`, reps), name: "DB Lateral Raise", equip: "dumbbell" } as unknown as Resolved);
+  it("5 kg × 15 zuhause: lieber 6 kg × 8 (Epley-Äquivalent) als 4 kg mit 27 Wiederholungen", () => {
+    const s = transferState(rd("12-15"), st(5, 15, "2026-11-01"), home)!;
+    expect(s.weight).toBe(6);
+    expect(s.target).toBe(8);
+  });
+  it("nach einer harten Einheit: vorsichtig leichtere Stufe, Ziel an der Obergrenze statt darüber (Cap 15)", () => {
+    const s = transferState(rd("12-15"), { ...st(5, 15, "2026-11-01"), fb: ["schwer"] }, home)!;
+    expect(s.weight).toBe(4);
+    expect(s.target!).toBeLessThanOrEqual(15);
+  });
+  it("vorgeschlagen wird nie über der Obergrenze: borrowter Stand 5 × 15 schlägt mit 6 kg unter dem Bereich an", () => {
+    const r = rd("12-15");
+    const s = sharedState({ "a|DB Lateral Raise": st(5, 15, "2026-11-01") }, r)!;
+    const sug = suggest(r, s, 1, home);
+    expect(sug.weight).toBe(6);
+    expect(sug.targetReps!).toBeLessThanOrEqual(12 - 3);
+    expect(sug.targetReps!).toBeGreaterThanOrEqual(6);
   });
 });
 

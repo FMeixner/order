@@ -15,15 +15,6 @@ import { Collapse } from "./common";
 import { Sign } from "./Signs";
 import { BeastCard } from "./session/BeastCard";
 import { CallCard } from "./session/CallCard";
-import { doseAt } from "../engine/plan";
-import { beastDose, doseLine } from "../engine/dose";
-import type { Beast } from "../types";
-
-/** Was die Bestie zur Dosis der Woche beiträgt (1.22) */
-function beastDoseLine(ctx: SessionCtx, b: Beast): string | null {
-  const dw = doseAt(ctx.state, ctx.block, ctx.week);
-  return dw ? doseLine(dw, beastDose(b, ctx.state.user, ctx.state), b.minutes) : null;
-}
 import { allDrillsDone, DrillList, DrillSection, toggleDrill } from "./session/Drills";
 import { SlotCard, WarmCtx } from "./session/SlotCard";
 import { boostOf, type SessionCtx, sessionId } from "./session/ctx";
@@ -206,7 +197,7 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
 function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
-  if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} cardio={it.cardio} ctx={ctx} session={session} mut={mut} note={[b.note, it.beast ? beastDoseLine(ctx, it.beast) : null].filter(Boolean).join(" · ") || undefined} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
+  if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} cardio={it.cardio} ctx={ctx} session={session} mut={mut} note={b.note || undefined} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
   if (b.type === "module" && it.call) return <CallCard call={it.call} ctx={ctx} session={session} mut={mut} />;
   if (b.type === "module" && it.drills) return <ModuleCard it={it} ctx={ctx} session={session} mut={mut} />;
   if (b.type === "contrast") {
