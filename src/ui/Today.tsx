@@ -97,6 +97,8 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   const test = !extTest && isTestWeek(baseFocus, block, week);
   const deload = isDeloadWeek(baseFocus, week);
   const entlastet = isDeloaded(state, block, week);
+  // Anlaufwoche (1.38): Orden mittendrin begonnen — Woche 1 zeigt nur die Tage ab dem Beginn
+  const anlauf = week === 1 && mondayOf(block.start) !== block.start;
   const beforeTest = extTest ? week === total : isTestWeek(baseFocus, block, week + 1);
   // Folgende Testwoche: ab dem Wochenende davor (oder wenn die Woche geschafft ist) echt geplant, vorher Vorschau
   const testLive = !!testBlock && (today >= addDays(testBlock.start, -2) || weekDone(state, block, total));
@@ -312,8 +314,9 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
           </div>
         </div>
         <div className="progress"><div style={{ width: `${Math.min(100, (100 * week) / total)}%` }} /></div>
-        {(!isCur || ahead || test || deload || beforeTest || entlastet) && <div className="tags">
+        {(!isCur || ahead || test || deload || beforeTest || entlastet || anlauf) && <div className="tags">
           {isCur && ahead && <span className="tag teal">Vorwoche geschafft · weiter ab {fmtDate(weekStart)}</span>}
+          {isCur && anlauf && <span className="tag amber">Anlaufwoche · Tage ab {fmtDate(block.start)}</span>}
           {!isCur && <span className="tag amber">{future ? "Vorschau" : "vergangen"} · ab {fmtDate(weekStart)}</span>}
           {test && <span className="tag teal">Testwoche</span>}
           {entlastet && <span className="tag teal">Entlastungswoche</span>}

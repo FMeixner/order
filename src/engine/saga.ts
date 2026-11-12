@@ -162,7 +162,8 @@ function huntsOfWeek(state: AppState, b: PlanBlock, week: number): Session[] {
 }
 function plannedOf(state: AppState, b: PlanBlock, week: number): number {
   const f = focusFor(state, b, week) ?? blockFocus(b);
-  return f ? dayRoleMap(state, b, f).length : 0;
+  // mit week: Anlaufwoche und End-Kürzung zählen mit (1.38)
+  return f ? dayRoleMap(state, b, f, week).length : 0;
 }
 /** Bestzeiten dieser Einheiten: nur echte Verbesserungen gegen frühere Zeiten derselben Bestie */
 function prsOf(state: AppState, list: Session[]): string[] {

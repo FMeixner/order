@@ -208,6 +208,9 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
             <Field label="Beginn"><input type="date" value={b.start} onChange={(e) => setB({ ...b, start: e.target.value })} /></Field>
             <Field label="Ende"><input type="date" value={b.end} onChange={(e) => setB({ ...b, end: e.target.value })} /></Field>
           </div>
+          {b.start !== mondayOf(b.start) && (
+            <div className="muted small">Beginn mittendrin — Woche 1 wird die Anlaufwoche: gezählt werden nur die Tage ab {fmtDate(b.start)}, der Orden endet wie geplant.</div>
+          )}
           <Check checked={ownWeek} onChange={(v) => { setOwnWeek(v); if (!v) setB({ ...b, schedule: undefined }); }} label="Eigener Wochenplan für diese Phase" />
           {ownWeek && <WeekEditor schedule={b.schedule ?? {}} profiles={profiles} onChange={(schedule) => setB({ ...b, schedule })} allowEmpty />}
         </div>

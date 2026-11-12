@@ -140,20 +140,25 @@ export function dayRoleMap(state: AppState, b: PlanBlock, focus?: Focus, week?: 
   const roles = rolesFor(state, b, focus);
   const base = days.map((day, i) => ({ day, role: roles[i], profileId: sch[day] as string })).filter((x) => !!x.role);
   if (week == null) return base;
+  // Anlaufwoche (1.38): Tage vor dem Beginn und nach dem Ende gehören nicht zum Orden. Wer mittendrin beginnt,
+  // dessen Woche 1 führt nur die Einheiten, die laut Wochenplan noch vor ihm liegen — die Woche zählt trotzdem
+  // als volle Woche 1, der Orden endet wie geplant (symmetrisch zum Ende bei früherem Abschluss).
+  const wk = addDays(mondayOf(b.start), (week - 1) * 7);
+  const live = base.filter((x) => { const d = addDays(wk, WEEKDAYS.indexOf(x.day)); return d >= b.start && d <= b.end; });
   // Angebrochene Woche: Erledigtes bleibt an seinem Tag, der Rest folgt in geplanter Reihenfolge auf die freien Tage.
   // So landet ein spontaner fünfter Tag am Sonntag nach den vier erledigten, nicht in der Wochenmitte.
-  const done = state.sessions.filter((x) => x.blockId === b.id && x.week === week && x.done && base.some((d) => d.role === x.role));
-  if (!done.length) return base;
+  const done = state.sessions.filter((x) => x.blockId === b.id && x.week === week && x.done && live.some((d) => d.role === x.role));
+  if (!done.length) return live;
   const out = new Map<Weekday, string>();
   for (const x of [...done].sort((p, q) => p.date.localeCompare(q.date))) {
     const wd = weekdayOf(x.date);
-    const day = base.some((d) => d.day === wd) && !out.has(wd) ? wd : base.find((d) => !out.has(d.day))?.day;
+    const day = live.some((d) => d.day === wd) && !out.has(wd) ? wd : live.find((d) => !out.has(d.day))?.day;
     if (day) out.set(day, x.role);
   }
   const used = new Set(out.values());
-  const rest = base.map((d) => d.role).filter((r) => !used.has(r));
-  for (const d of base) if (!out.has(d.day)) out.set(d.day, rest.shift()!);
-  return base.map((d) => ({ ...d, role: out.get(d.day)! })).filter((x) => !!x.role);
+  const rest = live.map((d) => d.role).filter((r) => !used.has(r));
+  for (const d of live) if (!out.has(d.day)) out.set(d.day, rest.shift()!);
+  return live.map((d) => ({ ...d, role: out.get(d.day)! })).filter((x) => !!x.role);
 }
 
 /* ---------- Orden-Vorschlag für einen Block ---------- */

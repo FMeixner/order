@@ -10,7 +10,7 @@ import { Collapse, Desc } from "./common";
 import { allDrillsDone, DrillList } from "./session/Drills";
 import { fmt } from "./Timer";
 import { TestTimer } from "./TestTimer";
-import { cupDone } from "../engine/testweek";
+import { cupDone, saveTestResult, skipTestResult } from "../engine/testweek";
 import { Evaluation } from "./Evaluation";
 import { RavenCup, RavenLines, ravenOn } from "./Raven";
 import { evaluateBlock, type TestEval } from "../engine/norms";
@@ -33,8 +33,9 @@ function show(v: number, unit: string): string {
 }
 
 /** Ein Test, ein Versuch (1.36). Gespeichert oder ausgelassen klappt die Zeile nach kurzer Zeit ein wie eine Übungskarte;
-    antippen öffnet sie wieder, „Korrigieren“ ersetzt den Wert dieser Testwoche. Tests auf Zeit haben einen Timer. */
-function TestRow({ t, state, block, onSave, onSkip, preview = false }: { t: TestDef; state: AppState; block: PlanBlock; onSave: (value: number, raw: string, variant?: string) => void; onSkip?: (on: boolean) => void; preview?: boolean }) {
+    antippen öffnet sie wieder, „Korrigieren“ ersetzt den Wert dieser Testwoche. Tests auf Zeit haben einen Timer.
+    Exportiert für das Nachholen im Almanach (1.38). */
+export function TestRow({ t, state, block, onSave, onSkip, preview = false }: { t: TestDef; state: AppState; block: PlanBlock; onSave: (value: number, raw: string, variant?: string) => void; onSkip?: (on: boolean) => void; preview?: boolean }) {
   const [val, setVal] = useState("");
   const all = state.tests[t.id] ?? [];
   const [variant, setVariant] = useState<string>(all[all.length - 1]?.variant ?? t.variants?.[0]?.id ?? "");
@@ -90,9 +91,12 @@ function TestRow({ t, state, block, onSave, onSkip, preview = false }: { t: Test
   );
 }
 
-function Benchmark({ cup, state, update, block, preview = false }: { cup: Cup; state: AppState; update: Update; block: PlanBlock; preview?: boolean }) {
+/** Bestie auf Zeit als Benchmark eines Cups (1.36): ein Wert je Testwoche, erneutes Speichern korrigiert.
+    `today` weitet das Fenster beim Nachholen (1.38): Eine Zeit nach dem Ende der Testwoche zählt zu ihr. */
+export function Benchmark({ cup, state, update, block, today, preview = false }: { cup: Cup; state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean }) {
   const [manual, setManual] = useState("");
   if (!cup.benchmark) return null;
+  const winEnd = today > block.end ? today : block.end;
   const withHist = cup.benchmark.pool.filter((id) => (state.beastTimes[id] ?? []).length);
   const id = (withHist.length ? withHist : cup.benchmark.pool)[0];
   const b = BEAST_BY_ID[id];
@@ -109,13 +113,14 @@ function Benchmark({ cup, state, update, block, preview = false }: { cup: Cup; s
             const p = parseClock(manual);
             if (p == null) { alert(`„${manual}“ verstehe ich nicht. Bitte so: 12.34 oder 12:34.`); return; }
             const sec = Math.round(p);
-            // Ein Wert je Testwoche: ein zweites Speichern korrigiert die Zeit dieser Woche
-            update((st) => ({ ...st, beastTimes: { ...st.beastTimes, [id]: [...(st.beastTimes[id] ?? []).filter((x) => !(x.date >= block.start && x.date <= block.end)), { date: new Date().toISOString().slice(0, 10), seconds: sec }] } }));
+            // Ein Wert je Testwoche: ein zweites Speichern korrigiert die Zeit dieser Woche (beim Nachholen zählt
+            // auch eine spätere Zeit zur Testwoche, deshalb das Fenster bis heute geweitet)
+            update((st) => ({ ...st, beastTimes: { ...st.beastTimes, [id]: [...(st.beastTimes[id] ?? []).filter((x) => !(x.date >= block.start && x.date <= winEnd)), { date: new Date().toISOString().slice(0, 10), seconds: sec }] } }));
             setManual("");
           }}>Speichern</button>
         </div>
       )}
-      {(() => { const wk = times.filter((x) => x.date >= block.start && x.date <= block.end).pop(); return wk ? <div className="muted small">Diese Woche: <strong>{fmt(wk.seconds)}</strong> · erneut speichern korrigiert</div> : null; })()}
+      {(() => { const wk = times.filter((x) => x.date >= block.start && x.date <= winEnd).pop(); return wk ? <div className="muted small">Diese Testwoche: <strong>{fmt(wk.seconds)}</strong> · erneut speichern korrigiert</div> : null; })()}
       <div className="muted small">{pr ? `Bestzeit ${fmt(pr)}` : "Noch keine Zeit"}</div>
     </div>
   );
@@ -139,18 +144,10 @@ export function testDays(state: AppState, block: PlanBlock): { place: string; da
 }
 
 export function TestWeek({ state, update, block, today, preview = false, onPlan }: { state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean; onPlan?: () => void }) {
-  // Ein Wert je Test und Testwoche: Speichern ersetzt (Korrektur), Auslassen hebt sich damit auf
+  // Ein Wert je Test und Testwoche: Speichern ersetzt (Korrektur), Auslassen hebt sich damit auf (Engine, 1.38)
   const saveTest = (t: TestDef, value: number, raw: string, variant?: string) =>
-    update((st) => {
-      const keep = (st.tests[t.id] ?? []).filter((r) => !(r.blockId === block.id && (r.variant ?? "") === (variant ?? "")));
-      const { [`${block.id}:${t.id}`]: _drop, ...skips } = st.testSkips ?? {};
-      return { ...st, testSkips: skips, tests: { ...st.tests, [t.id]: [...keep, { date: new Date().toISOString().slice(0, 10), blockId: block.id, value, raw, ...(variant ? { variant } : {}) }] } };
-    });
-  const skipTest = (t: TestDef, on: boolean) =>
-    update((st) => {
-      const { [`${block.id}:${t.id}`]: _drop, ...rest } = st.testSkips ?? {};
-      return { ...st, testSkips: on ? { ...rest, [`${block.id}:${t.id}`]: true } : rest };
-    });
+    update((st) => saveTestResult(st, block.id, t.id, value, raw, new Date().toISOString().slice(0, 10), variant));
+  const skipTest = (t: TestDef, on: boolean) => update((st) => skipTestResult(st, block.id, t.id, on));
   const days = testDays(state, block);
   // Gewählter Testtag: angetippt, sonst heute, sonst der nächste offene, sonst der erste
   const [pick, setPick] = useState<string | null>(null);
@@ -223,7 +220,7 @@ function TestDay({ state, update, block, today, place, preview, saveTest, skipTe
         <AutoCollapse key={`${place}:${cup.id}`} title={cup.name} meta={cup.focus} tone="teal" defaultOpen
           done={!preview && cupDone(state, block, cup)}>
           {cup.tests.map((t) => <TestRow key={t.id} t={t} state={state} block={block} preview={preview} onSave={(v, raw, variant) => saveTest(t, v, raw, variant)} onSkip={(on) => skipTest(t, on)} />)}
-          <Benchmark cup={cup} state={state} update={update} block={block} preview={preview} />
+          <Benchmark cup={cup} state={state} update={update} block={block} today={today} preview={preview} />
           {ravenOn(state) && <RavenCup state={state} block={block} today={today} cupId={cup.id} />}
         </AutoCollapse>
       ))}

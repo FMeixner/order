@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.38.0] – 2026-11-12
+
+### Neu
+- **Cups nachholen:** Im Almanach unter „Cups“ lassen sich versäumte Tests jederzeit nachholen — die jüngste Testwoche mit offenen Cups, ohne Warm-up und Cool-down, unter Alltagsbedingungen. Ein Wert ersetzt wie in der Testwoche den alten („Korrigieren“), „Auslassen“ gilt auch hier; WHO-5 und das Urteil des Turniers bleiben der Testwoche selbst vorbehalten. Bei der Bestie auf Zeit zählt auch eine nachträglich gespeicherte Zeit zur Testwoche.
+- **Anlaufwoche:** Beginnt ein Orden mitten in der Woche, zählt die Woche als volle Woche 1 — angezeigt und verbucht werden nur die Einheiten ab dem Beginntag („Anlaufwoche“ in „Heute“, Hinweis im Phasenblatt). Der Orden endet wie geplant; ein früher gesetztes Ende kürzt die letzte Woche symmetrisch. Flugblatt, WHO-5 und Wochenrückbuchung rechnen mit der kleineren Woche.
+
+### Geändert
+- Speichern und Auslassen von Testwerten läuft über eine gemeinsame Stelle in der Engine (Testwoche und Nachholen nutzen dieselben Regeln: ein Wert je Test, Variante und Testwoche).
+
 ## [1.37.0] – 2026-11-11
 
 ### Neu
