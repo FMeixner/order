@@ -35,11 +35,17 @@ describe("Anlaufwoche (1.38): dayRoleMap schneidet Tage außerhalb des Ordens", 
   });
 
   it("Ende mittendrin kürzt die letzte Woche symmetrisch", () => {
-    const s = st({ start: "2026-09-21", end: "2026-10-07" }); // Mi in Woche 2
+    // Ende Do: blockWeeks rundet auf 3 auf, die Restwoche (Mo–Do) zählt als Woche 3
+    const s = st({ start: "2026-09-21", end: "2026-10-08" });
     const b = s.plan[0]!;
-    expect(blockWeeks(b)).toBe(2);
-    const f = focusFor(s, b, 2)!;
-    expect(dayRoleMap(s, b, f, 2).map((d) => d.day)).toEqual(["Mo", "Di"]);
+    expect(blockWeeks(b)).toBe(3);
+    const f = focusFor(s, b, 3)!;
+    expect(dayRoleMap(s, b, f, 3).map((d) => d.day)).toEqual(["Mo", "Di", "Do"]);
+    // Ende Mi (drei Tage Restwoche, blockWeeks rundet ab): letzte volle Woche bleibt vollständig
+    const s2 = st({ start: "2026-09-21", end: "2026-10-07" });
+    const b2 = s2.plan[0]!;
+    expect(blockWeeks(b2)).toBe(2);
+    expect(dayRoleMap(s2, b2, focusFor(s2, b2, 2)!, 2).map((d) => d.day)).toEqual(["Mo", "Di", "Do", "Fr"]);
   });
 
   it("ohne week bleibt die Karte ungeschnitten (z. B. Vorschau der Rollen)", () => {
