@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.41.1] – 2026-11-12
+
+### Behoben
+- **Pausenanzeige bei Kontrastpaaren:** 2:30 Minuten Pause stand als „3 Min" da (kaufmännisch gerundet) — jetzt steht „2:30 Min", ganze Minuten bleiben „3 Min".
+
 ## [1.41.0] – 2026-11-12
 
 ### Geändert

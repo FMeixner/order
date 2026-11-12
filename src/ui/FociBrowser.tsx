@@ -32,7 +32,7 @@ function BlockLines({ b, c }: { b: Block; c: Ctx }) {
   switch (b.type) {
     case "single": { const l = slotLine(b.slot, c); return l ? <li>{l}{rot}</li> : null; }
     case "superset": return <li>Im Wechsel{rot}: <ul>{b.slots.map((s) => { const l = slotLine(s, c); return l ? <li key={s.id}>{l}</li> : null; })}</ul></li>;
-    case "contrast": return <li>Kontrast{rot}: {slotLine(b.heavy, c)} → {b.transfer ?? 30} s → {b.explosive.name} {b.explosive.reps}, {Math.round((b.rest ?? 180) / 60)} Min Pause</li>;
+    case "contrast": return <li>Kontrast{rot}: {slotLine(b.heavy, c)} → {b.transfer ?? 30} s → {b.explosive.name} {b.explosive.reps}, {(b.rest ?? 180) % 60 === 0 ? `${(b.rest ?? 180) / 60} Min` : `${Math.floor((b.rest ?? 180) / 60)}:${String((b.rest ?? 180) % 60).padStart(2, "0")} Min`} Pause</li>;
     case "beast": return <li>Bestie{rot}: {b.pool ? `aus ${b.pool.length} festgelegten` : (b.classes ?? []).map((x) => CLASS_LABEL[x]).join(" oder ")}{b.pace === "easy" ? ", ruhiges Grundlagentempo" : ""}{b.benchmark_every ? `, jede ${b.benchmark_every}. Woche Wiederholung` : ""}</li>;
     case "module":
       if (b.module === "call") return <li>{CALLS[b.variant]?.name ?? b.variant}{rot}: {CALLS[b.variant]?.rounds} Runden à {CALLS[b.variant]?.work} s, Ansagen: {(CALLS[b.variant]?.levels ?? []).map((l) => l.name).join(" → ")}</li>;

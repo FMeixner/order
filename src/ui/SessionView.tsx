@@ -194,6 +194,9 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
   );
 }
 
+/** Pausenangabe: ganze Minuten als „X Min", dazwischen mit Sekunden (2:30 Min) — 2:30 rundet sich sonst zu „3 Min" */
+const pauseLabel = (s: number) => s % 60 === 0 ? `${s / 60} Min` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")} Min`;
+
 function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
@@ -205,7 +208,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
     const transfer = b.transfer ?? 30, rest = b.rest ?? 180;
     return (
       <section className="card contrast">
-        <div className="block-label amber">Kontrastpaar · {transfer} s Übergang · {Math.round(rest / 60)} Min Pause</div>
+        <div className="block-label amber">Kontrastpaar · {transfer} s Übergang · {pauseLabel(rest)} Pause</div>
         {heavy && <SlotCard r={heavy} ctx={ctx} session={session} mut={mut} onSetDone={() => expl && t.rest(`Gleich: ${expl.name}`, transfer)} />}
         <div className="arrow muted small">↓ {transfer} s, dann explosiv</div>
         {expl && <SlotCard r={expl} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest("Pause bis zum nächsten Paar", rest); }} />}
