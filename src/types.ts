@@ -270,6 +270,8 @@ export interface PlanBlock {
   sharpen?: string;
   /** 1.47: automatische Wahl, festgehalten, sobald die Phase läuft (bleibt stabil, auch wenn Tests oder Training die Uhren verschieben) */
   sharpenAuto?: { domain: string | null; purpose?: string; reason: string };
+  /** Bereiche, die in dieser Phase per Checkpoint frei wurden (1.47) — die automatische Wahl überspringt sie */
+  sharpenReleased?: string[];
   /** Schwerpunkt-Slot 2 (Vertiefung): Bereich oder "off". Fehlt: automatisch — Vertiefung des Sekundärziels, beim Allrounder stattdessen das zweite Defizit. */
   sharpen2?: string;
   /** Mesozyklus: gleiche Id = Teile eines Mesozyklus (zwei à 4–6 Wochen oder drei à 5). Testwoche am Meso-Ende, jeder Teil folgt aus den Successors des vorherigen. */
@@ -429,6 +431,8 @@ export interface AppState {
   /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
   deload?: Record<string, "ja" | "nein">;
   tests: Record<string, TestResult[]>;
+  /** Checkpoints (1.47): ein Versuch in der Schwerpunkt-Karte, alle vier Wochen; blockId = Phase */
+  checkpoints?: Record<string, TestResult[]>;
   who5: { date: string; blockId: string; score: number; /** Woche im Orden (1.37: alle zwei Wochen) */ week?: number }[];
   feeling: { date: string; sessionId: string; value: number }[];
   /** Eigene Übungswahl: "slotId:Stufe" → Übungsname. Überlebt Updates der Orden-Dateien. */

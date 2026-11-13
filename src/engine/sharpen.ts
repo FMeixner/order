@@ -20,6 +20,7 @@ import { addDays, blockFocus, dayRoleMap, daysBetween, focusName, isTestBlock, i
 import { WEEKDAYS } from "../types";
 import { evaluateBlock } from "./norms";
 import { CLOCKS, residualClocks, type ClockId } from "./residual";
+import { checkpointRelease } from "./fitness";
 
 export type DomainId = "speed" | "power" | "strength" | "ke" | "anaerob" | "aerob" | "skill" | "mobility";
 export interface Deficit { id: DomainId; name: string; score: number | null; kind: "norm" | "trend" | "estimate" }
@@ -146,7 +147,7 @@ export function yearSlots(state: AppState, today: string = isoDate(new Date())):
     const defs = deficitsBefore(state, b.start)?.list ?? [];
     let best: { d: DomainId; s: number; purpose: SlotPurpose; reason: string } | null = null;
     for (const d of Object.keys(SHARPEN) as DomainId[]) {
-      if (interferes(f, d)) continue;
+      if (interferes(f, d) || b.sharpenReleased?.includes(d)) continue;
       let sc = 0, purpose: SlotPurpose = "sekundaer", reason = "";
       const def = defs.find((x) => x.id === d);
       const c = clockOfDomain(d);
@@ -277,7 +278,18 @@ export function pinAutoSlots(state: AppState, today: string = isoDate(new Date()
   const ys = yearSlots(state, today);
   let changed = false;
   const plan = state.plan.map((b) => {
-    if (b.sharpenAuto || isTestBlock(b) || b.start > today || b.end < today) return b;
+    if (isTestBlock(b) || b.start > today || b.end < today) return b;
+    // Checkpoint (1.47): Ist der festgehaltene Bereich zweimal in Folge besser geworden, wird er frei und der nächste rückt nach
+    const dom = b.sharpenAuto?.domain;
+    const why = dom ? checkpointRelease(state, b.id, b.start, dom) : null;
+    if (b.sharpenAuto && dom && why) {
+      const released = [...(b.sharpenReleased ?? []), dom];
+      const tmp = { ...b, sharpen: undefined, sharpenAuto: undefined, sharpenReleased: released };
+      const y = yearSlots({ ...state, plan: state.plan.map((x) => (x.id === b.id ? tmp : x)) }, today).get(b.id);
+      changed = true;
+      return { ...b, sharpenReleased: released, sharpenAuto: { domain: y?.domain ?? null, ...(y?.purpose ? { purpose: y.purpose } : {}), reason: `${why} ${y?.reason ?? ""}`.trim() } };
+    }
+    if (b.sharpenAuto) return b;
     // Echte automatische Wahl, auch wenn gerade eine eigene Wahl oder „Aus“ gilt (für den Fall, dass du zurückschaltest)
     const y = b.sharpen ? yearSlots({ ...state, plan: state.plan.map((x) => (x.id === b.id ? { ...x, sharpen: undefined } : x)) }, today).get(b.id) : ys.get(b.id);
     if (!y) return b;

@@ -19,7 +19,7 @@ import { YearTimeline } from "./YearPicture";
 const WATCH = { gut: "ok", bald: "soon", fehlt: "due" } as const;
 const ARROW = { better: "↑", same: "→", worse: "↓" } as const;
 const detail = (r: StandRow) => [
-  r.score != null ? `${r.est ? "Schätzung " : ""}${r.score} Punkte (≈ Perzentil der Altersnorm)` : "noch kein Testwert",
+  r.score != null ? `${r.est ? "Schätzung " : ""}${r.score} Punkte (≈ Perzentil der Altersnorm)` : r.live ? "ohne Norm, gegen deinen eigenen Bestwert" : "noch kein Wert",
   r.days != null ? `letzter Reiz vor ${r.days} Tagen, hält etwa ${r.budget}` : null,
   r.def.required ? `${String(r.weeks).replace(".", ",")} Wochen im nächsten halben Jahr (Richtwert 4)` : null,
 ].filter(Boolean).join(" · ");
@@ -45,7 +45,7 @@ export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: 
           <span className="muted small">{attention.length ? `${attention.length} brauchen Aufmerksamkeit` : "alles im Lot"}</span>
         </div>
         <div className="dash-grid" role="table" aria-label="Bereiche">
-          <div className="dash-row dash-head" role="row"><span role="columnheader">Bereich</span><span role="columnheader">Test</span><span role="columnheader">Zustand</span></div>
+          <div className="dash-row dash-head" role="row"><span role="columnheader">Bereich</span><span role="columnheader">Stand</span><span role="columnheader">Zustand</span></div>
           {st.rows.map((r) => (
             <div key={r.def.id} className="dash-item">
               <button className="dash-row" role="row" aria-expanded={open === r.def.id} onClick={() => setOpen(open === r.def.id ? null : r.def.id)}>
@@ -54,15 +54,15 @@ export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: 
                   {r.score != null ? <>
                     <span className="bar-track"><span className={`bar-fill ${r.est ? "est" : r.score < 40 ? "low" : r.score >= 70 ? "high" : ""}`} style={{ width: `${r.score}%` }} /></span>
                     <span className="dash-score">{r.est ? "~" : ""}{r.score}{r.change && <em className={r.change}>{ARROW[r.change]}</em>}</span>
-                  </> : <span className="muted">–</span>}
+                  </> : r.live && r.change ? <span className="dash-score">Log<em className={r.change}>{ARROW[r.change]}</em></span> : <span className="muted">–</span>}
                 </span>
                 <span role="cell" className={`ber-pill ${WATCH[r.watch]}`}><i />{r.watch === "gut" ? "gut" : r.why}</span>
               </button>
-              {open === r.def.id && <div className="dash-detail muted small">{r.def.hint}. {detail(r)}.</div>}
+              {open === r.def.id && <div className="dash-detail muted small">{r.def.hint}. {detail(r)}.{r.live && <> Laufend aus dem Log (Schätzung): {r.live.join(" · ")}.</>}</div>}
             </div>
           ))}
         </div>
-        {anyScore && <div className="muted small">Test: Punkte ≈ Perzentil deiner Altersnorm, 50 ist der Durchschnitt. <i className="dash-weak inline" /> Schwachstelle · ~ Schätzung · ↑↓ gegenüber dem Test davor.</div>}
+        {(anyScore || st.rows.some((r) => r.live)) && <div className="muted small">Test: Punkte ≈ Perzentil deiner Altersnorm, 50 ist der Durchschnitt. <i className="dash-weak inline" /> Schwachstelle · ~ Schätzung · ↑↓ gegenüber dem Test davor bzw. den 6 Wochen davor (Log).</div>}
         {(st.weak.length > 0 || st.slot) && (
           <div className="note small">
             {st.weak.length > 0 && <div><strong>Schwachstellen:</strong> {st.weak.join(", ")}</div>}

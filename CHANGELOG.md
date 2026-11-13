@@ -8,6 +8,9 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 - **Schlanke Testwoche:** Getestet wird nur noch, was das Training nicht selbst misst. Weg sind die 5RM-Tests, Klimmzüge, Liegestütze, Crunches, Dead Hang, Wall Sit, Sit and Reach, Stock-Durchführen und der Stichtest (mit ihnen der Durendal-Cup). Es bleiben: im Park Sprint, 5-10-5, Standweitsprung, Hochsprung, Medizinballwurf und der Cooper-Test; im Studio Körpergewicht, Burpees und 500 m Rudern; zuhause die Bestie auf Zeit. Draußen und Rudergerät liegen nie am selben Tag. Alte Werte bleiben im Verlauf.
 - **Medizinballwurf nach Ausrüstung:** Ohne Medizinball im Profil des Park-Tags entfällt der Test von selbst und blockiert den Cup nicht.
 - **Bestie auf Zeit als eigener Cup:** Arondight ist verdient, sobald die Zeit dieser Testwoche steht – oder du lässt ihn aus.
+- **Laufender Stand statt Testwoche für Kraft und Kraftausdauer:** Nach jeder Einheit schätzt die App aus dem Log dein Maximum je Übung mit Gewicht (gegen deinen eigenen Bestwert) und deine Maximalwiederholungen in Liegestütz- und Klimmzug-Äquivalenten (mit Norm). Die Reserve kommt aus deiner Bewertung je Übung. Zu sehen im Stand, Spalte „Stand“ und aufgeklappt.
+- **Päckchen aus dem Log:** Die Päckchengröße für Liegestütze und Klimmzüge in Bestien folgt laufend diesem Stand (60 %), nicht mehr nur der Testwoche.
+- **Checkpoints im Schwerpunkt:** Bei Sprungkraft oder Schnelligkeit steht alle vier Wochen ein Versuch in der Schwerpunkt-Karte. Zweimal in Folge besser, dann wird der Schwerpunkt frei und der nächste Bereich rückt nach – mitten in der Phase, ohne hin- und herzuspringen.
 - **Schwerpunkte nur noch, wo sie etwas bringen:** Schnelligkeit, Sprungkraft, Anaerob und Ausdauer. Kraftausdauer trainiert fast jeder Orden mit, Beweglichkeit halten Warm-up und Cool-down (aufbauen: Paladin oder Dancer). Eine laufende Phase mit einem dieser beiden bekommt automatisch eine neue Wahl.
 
 ### Behoben

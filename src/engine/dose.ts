@@ -3,8 +3,9 @@
      Päckchengröße⌉, ein Päckchen = ein halber Satz (Bestienrunden enden oft weit vor 1–3 Wiederholungen in Reserve).
      Verteilt über die Muskelanteile wie jede klassische Übung. Halten, Strecken, Zeiten: ein Päckchen je Runde.
      Laufen, Rudern, Rad, Seil, Pausen zählen nicht als Sätze, sondern als Konditionsminuten.
-   - Päckchengröße: data/modules/packets.json je Niveau; Push-up- und Klimmzug-Familie aus dem letzten Testwert
-     (60 % des Maximums, ändert sich also nur nach Testwochen); eigene Werte (state.packets) schlagen alles.
+   - Päckchengröße: data/modules/packets.json je Niveau; Push-up- und Klimmzug-Familie seit 1.47 aus dem laufenden
+     Stand im Log (fitness.ts, 60 % der geschätzten Maximalwiederholungen), sonst aus dem letzten Testwert; eigene
+     Werte (state.packets) schlagen alles.
    - Zwei Achsen je Orden: Muskel (harte Sätze je Muskel und Woche) und Kondition (Minuten). Modus je Achse:
      progress (Welle vom unteren zum oberen Richtwert), soft (von Erhalt bis zum unteren Richtwert), maintain.
    - Welle: zwischen zwei geplanten Entlastungen (Rhythmus des Zeichens) steigt das Ziel Woche für Woche; danach
@@ -17,6 +18,7 @@ import packetsJson from "../../data/modules/packets.json";
 import { BEASTS } from "../data";
 import type { AppState, Beast, Focus, PlanBlock, UserProfile } from "../types";
 import { klammerWeek, rhythmWeeks } from "./deload";
+import { loggedPacket } from "./fitness";
 import { beastPartName, blockFocus, blockWeeks, isDeloadWeek, isTestBlock } from "./plan";
 import { maintenanceVolume, musclesOf, volumeRange } from "./volume";
 
@@ -56,11 +58,14 @@ export const coreTarget = (u: UserProfile) => volumeRange(u)[0];
 const levelIx = (u: UserProfile) => (u.level === "einsteiger" ? 0 : u.level === "erfahren" ? 2 : 1);
 
 /** Wiederholungen am Stück, die ein Päckchen ergeben */
-export function packetSize(name: string, user: UserProfile, state?: Pick<AppState, "packets" | "tests">): number {
+export function packetSize(name: string, user: UserProfile, state?: Pick<AppState, "packets" | "tests"> & Partial<Pick<AppState, "sessions" | "user">>): number {
   const own = state?.packets?.[name];
   if (own && own > 0) return own;
   for (const f of FAMS) {
     if (!f.rx.test(name)) continue;
+    // Laufender Stand aus dem Log (1.47) vor dem letzten Testwert
+    const logged = state?.sessions ? loggedPacket(state as Parameters<typeof loggedPacket>[0], f.test, new Date().toISOString().slice(0, 10)) : null;
+    if (logged) return logged;
     const res = state?.tests?.[f.test];
     const last = res?.length ? [...res].sort((a, b) => a.date.localeCompare(b.date))[res.length - 1] : undefined;
     if (last && last.value > 0) return Math.max(1, Math.round(last.value * 0.6));

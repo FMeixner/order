@@ -10,6 +10,7 @@ import { evaluateBlock } from "./norms";
 import { isTestBlock } from "./plan";
 import type { ResidualClock } from "./residual";
 import { deficitsOf, domainName, latestTest, PURPOSE_LABEL, yearSlots } from "./sharpen";
+import { liftStand, repStand } from "./fitness";
 
 export interface StandRow extends BereichRow {
   /** Punkte 0–100 aus der letzten Testwoche; null ohne Test */
@@ -20,6 +21,8 @@ export interface StandRow extends BereichRow {
   change: "better" | "same" | "worse" | null;
   /** Defizit aus den Tests */
   weak: boolean;
+  /** Laufender Stand aus dem Log (1.47, Kraft und Kraftausdauer): Klartext je Übung bzw. Familie */
+  live?: string[];
 }
 
 export interface Stand {
@@ -48,6 +51,23 @@ export function standOf(state: AppState, today: string, clocks?: ResidualClock[]
     const change = !ch.length ? null : ch.includes("better") && !ch.includes("worse") ? "better" : ch.includes("worse") && !ch.includes("better") ? "worse" : "same";
     return { ...r, score: real.length ? avg(real) : avg(ests), est: !real.length && ests.length > 0, change, weak: r.def.domains.some((d) => weakIds.has(d)) };
   });
+  // Laufender Stand aus dem Log (1.47): Kraft und Kraftausdauer misst das Training selbst, nicht die Testwoche
+  const lifts = liftStand(state, today);
+  const reps = repStand(state, today);
+  const fmtN = (n: number) => String(n).replace(".", ",");
+  const trend = (cs: (string | null)[]): StandRow["change"] => { const c = cs.filter(Boolean); return !c.length ? null : c.includes("better") && !c.includes("worse") ? "better" : c.includes("worse") && !c.includes("better") ? "worse" : "same"; };
+  for (const row of rows) {
+    if (row.def.id === "kraft" && lifts.length) {
+      row.change = trend(lifts.map((l) => l.change));
+      row.live = lifts.map((l) => `${l.name} ~${l.now} kg (${Math.round((l.now / l.best) * 100)} % vom Bestwert)`);
+    }
+    if (row.def.id === "ke" && reps.length) {
+      const sc = reps.map((x) => x.norm).filter((n) => n && !n.noScore).map((n) => n!.score);
+      if (sc.length) { row.score = avg(sc); row.est = false; }
+      row.change = trend(reps.map((x) => x.change));
+      row.live = reps.map((x) => `${x.name} ~${fmtN(x.reps)} Wdh am Stück${x.norm ? ` (${x.norm.label})` : ""}`);
+    }
+  }
   const all = (ev?.domains ?? []).flatMap((d) => d.tests);
   const cur = state.plan.find((b) => b.start <= today && today <= b.end && !isTestBlock(b));
   const ys = cur ? yearSlots(state, today).get(cur.id) : undefined;

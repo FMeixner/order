@@ -21,6 +21,8 @@ import { boostOf, type SessionCtx, sessionId } from "./session/ctx";
 import { collectItems, type Item, pinBeasts } from "./session/items";
 import { PURPOSE_LABEL, slotsFor } from "../engine/sharpen";
 import { dayGear } from "./session/gear";
+import { Checkpoint } from "./session/Checkpoint";
+import { checkpointDue } from "../engine/fitness";
 import { who5Due } from "../engine/who5";
 import { Who5 } from "./Who5";
 
@@ -183,10 +185,11 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
     return () => clearTimeout(id);
   }, [allDone]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <Collapse title={title} meta={`${drills.length} Übungen`} tone="amber" open={open} onOpenChange={setOpen}>
+    <Collapse title={title} meta={`${drills.length} Übungen${b.module === "sharpen" && !it.fill && checkpointDue(ctx.state, ctx.block.start, b.variant, ctx.date) ? " · Checkpoint" : ""}`} tone="amber" open={open} onOpenChange={setOpen}>
       {it.sword && <div className="muted small">Statt {MODULE_LABEL[it.sword.module]}: „{ctx.profile.name}“ hat kein Schwert und keinen Stock. Mit Stock kommt hier dein {MODULE_LABEL[it.sword.module]}-Block.</div>}
       {b.module === "flow" && <div className="muted small">Jede Zeile ist eine Kette: einmal durch ist eine Wiederholung. Erst alle Wiederholungen einer Seite, dann die andere.</div>}
       {b.module === "sharpen" && <div className="muted small">{SHARPEN[b.variant]?.why}</div>}
+      {b.module === "sharpen" && !it.fill && <Checkpoint ctx={ctx} domain={b.variant} />}
       {isWeaponModule(b.module) && PATHS[b.module].leveled.includes(b.variant) && <PathLevel module={b.module} skills={ctx.state.user.skills} />}
       <DrillList drills={drills} done={session?.drills ?? {}} prefix={prefix} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))} />
       {(b.module === "sharpen" || it.fill) && <DropSlot ctx={ctx} />}
