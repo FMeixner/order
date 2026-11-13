@@ -3,6 +3,7 @@
    Prozentangaben (Bench Press 50 %) beziehen sich auf das 1RM der Übung: selbst eingetragen oder aus dem Log geschätzt. */
 import { BANDS, BEAST_BY_ID } from "../data";
 import type { AppState, Beast, BeastTime, EquipmentProfile } from "../types";
+import { hasBands } from "../types";
 import { beastFamily, beastNeeds, beastRegion } from "./plan";
 import { snapNearest, stepLoad } from "./loads";
 import { testLog } from "./testweek";
@@ -88,7 +89,7 @@ export function suggestLoad(state: AppState, b: Beast, p: EquipmentProfile): { k
   const why = dir > 0 ? "eine Stufe höher: Technik gut, im Timecap" : dir < 0 ? (last!.seconds > cap * 60 ? "eine Stufe leichter: Timecap gerissen" : "eine Stufe leichter: Technik noch nicht sauber") : "wie zuletzt";
   const start = base(b).start;
   if (kind === "band") {
-    if (!p.bands.length) return null;
+    if (!hasBands(p)) return null;
     if (last?.band) {
       const i = Math.max(0, p.bands.indexOf(last.band));
       return { band: p.bands[Math.min(p.bands.length - 1, Math.max(0, i + dir))], why };

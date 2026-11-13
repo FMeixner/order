@@ -63,7 +63,7 @@ export function Help() {
         <li><strong>Idee notieren</strong> (im Plan neben „+ Phase anhängen“): Lust auf etwas Neues? Schreib es auf, statt den laufenden Orden umzuwerfen. Die Ideen warten unter „Ideen für später“ (abhaken, löschen) und melden sich in der Testwoche und in „Jahr planen“, Schritt 4 — dann ist der Moment, sie einzuplanen. Laufende Phasen bleiben trotzdem jederzeit änderbar, ohne Rückfrage.</li>
         <li>Eine Phase behält den Stand ihres Ordens ab ihrem Start. Ändert sich ein Orden durch ein Update, steht im Plan „Neue Fassung verfügbar“; erst mit „Übernehmen“ gilt sie für die laufende Phase.</li>
         <li><strong>Anlaufwoche</strong>: Beginnt ein Orden mitten in der Woche, zählt die Woche trotzdem als volle Woche 1 — angezeigt und verbucht werden nur die Einheiten ab dem Beginntag. Der Orden endet wie geplant; ein früheres Ende spiegelt das am Schluss genauso.</li>
-        <li><strong>Setup</strong>: Profil, Equipment, Können, Sicherung.</li>
+        <li><strong>Setup</strong>: Profil, Equipment, Können, Sicherung. Widerstandsbänder sind im Equipment ein eigenes Häkchen wie Ringe oder Kabelzug (seit 1.48): Ohne Häkchen schlägt die App an diesem Ort keine Bandübungen und keine Band-Bestien vor, sondern den Ersatz (etwa Kurzhantel-Curl statt Band Curl).</li>
       </ul>
 
       </Sec>

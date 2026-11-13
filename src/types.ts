@@ -239,7 +239,7 @@ export interface EquipmentProfile {
   /** Sandsäcke (kg); leer oder fehlt = beliebig in 5-kg-Schritten */
   sandbags?: number[];
   bands: string[];
-  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean; run: boolean; sprint: boolean; rope: boolean; roll?: boolean; ball?: boolean; /** Multipresse (1.38); fehlt: vorhanden, wenn das Profil Maschinen hat */ smith?: boolean };
+  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean; run: boolean; sprint: boolean; rope: boolean; roll?: boolean; ball?: boolean; /** Multipresse (1.38); fehlt: vorhanden, wenn das Profil Maschinen hat */ smith?: boolean; /** Bänder (1.48): abhakbar; fehlt: vorhanden, wenn Stärken eingetragen sind */ bands?: boolean };
   /** Alt (bis 0.45): Schweißfrei am Ort; wird beim Laden zu „Leise“ an den Wochentagen dieses Orts */
   sweatFree?: boolean;
   /** Stationen weit auseinander (Studio): keine Bestien, die Laufband/Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen. Fehlt: ja, wenn das Profil Maschinen hat. */
@@ -249,6 +249,9 @@ export interface EquipmentProfile {
   /** Nur zur Laufzeit: Kein Platz an diesem Tag (Bestien und Übungen ohne Strecke) */
   tight?: boolean;
 }
+
+/** Bänder im Profil (1.48): abgehakt (oder alt: Stärken eingetragen) und mindestens eine Stärke */
+export const hasBands = (p: Pick<EquipmentProfile, "has" | "bands">): boolean => p.has.bands !== false && p.bands.length > 0;
 
 export interface Section { id: string; name: string; start: string; end: string; load: Load; travel?: boolean }
 

@@ -2,12 +2,13 @@ import { useState } from "react";
 import { formatWeightList, parseWeightList } from "../engine/loads";
 import { EQUIPMENT_PRESETS } from "../store";
 import type { EquipmentProfile } from "../types";
+import { hasBands } from "../types";
 import { Check, Field } from "./common";
 
 const HAS_LABEL: Record<keyof EquipmentProfile["has"], string> = {
   bar: "Klimmzugstange", rings: "Ringe", bench: "Bank", rower: "Rudergerät", bike: "Rad/Ergometer",
   box: "Box/Stufe", sandbag: "Sandsack", cable: "Kabelzug", machines: "Maschinen", smith: "Multipresse", medball: "Medizinball 2 kg", sword: "Schwert oder Stock", handles: "Liegestützgriffe oder Yoga-Blöcke", dip: "Dip-Barren", wheel: "Bauchroller", roll: "Black Roll", ball: "Black-Roll-Ball",
-  run: "Laufen möglich", sprint: "Sprints möglich", rope: "Springseil",
+  run: "Laufen möglich", sprint: "Sprints möglich", rope: "Springseil", bands: "Widerstandsbänder",
 };
 
 function ListInput({ value, onChange, placeholder }: { value: number[]; onChange: (v: number[]) => void; placeholder: string }) {
@@ -45,7 +46,8 @@ export function ProfileForm({ p, onChange, onDelete }: { p: EquipmentProfile; on
       )}
       <div className="grid-checks">
         {(Object.keys(HAS_LABEL) as (keyof EquipmentProfile["has"])[]).map((k) => (
-          <Check key={k} checked={k === "smith" ? (p.has.smith ?? !!p.has.machines) : (p.has[k] ?? true)} onChange={(v) => set({ has: { ...p.has, [k]: v } })} label={HAS_LABEL[k]} />
+          <Check key={k} checked={k === "smith" ? (p.has.smith ?? !!p.has.machines) : k === "bands" ? hasBands(p) : (p.has[k] ?? true)}
+            onChange={(v) => set(k === "bands" ? { has: { ...p.has, bands: v }, ...(v && !p.bands.length ? { bands: ["leicht", "mittel", "schwer"] } : {}) } : { has: { ...p.has, [k]: v } })} label={HAS_LABEL[k]} />
         ))}
       </div>
       <Check checked={p.spread ?? !!p.has.machines} onChange={(v) => set({ spread: v })} label="Stationen weit auseinander (Studio): keine Bestien, die Laufband oder Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen" />
@@ -63,9 +65,11 @@ export function ProfileForm({ p, onChange, onDelete }: { p: EquipmentProfile; on
       <Field label="Gewichtsweste (kg)" hint="Leer lassen, wenn keine vorhanden">
         <ListInput value={p.vest} onChange={(vest) => set({ vest })} placeholder="z. B. 5; 10; 15; 20" />
       </Field>
-      <Field label="Bänder" hint="Stärken, leicht nach schwer, mit Semikolon getrennt">
-        <input type="text" defaultValue={p.bands.join("; ")} onBlur={(e) => set({ bands: e.target.value.split(";").map((x) => x.trim()).filter(Boolean) })} placeholder="leicht; mittel; schwer" />
-      </Field>
+      {hasBands(p) && (
+        <Field label="Bänder: Stärken" hint="Leicht nach schwer, mit Semikolon getrennt">
+          <input type="text" defaultValue={p.bands.join("; ")} onBlur={(e) => { const bands = e.target.value.split(";").map((x) => x.trim()).filter(Boolean); set(bands.length ? { bands } : { bands, has: { ...p.has, bands: false } }); }} placeholder="leicht; mittel; schwer" />
+        </Field>
+      )}
       {onDelete && <button className="btn danger small" onClick={onDelete}>Profil löschen</button>}
     </div>
   );
@@ -104,6 +108,6 @@ function summary(p: EquipmentProfile): string {
   if (p.kettlebells.length) parts.push(`KB bis ${Math.max(...p.kettlebells)} kg`);
   if (p.has.cable) parts.push("Kabel");
   if (p.has.machines) parts.push("Maschinen");
-  if (p.bands.length) parts.push("Bänder");
+  if (hasBands(p)) parts.push("Bänder");
   return parts.join(" · ") || "Körpergewicht";
 }

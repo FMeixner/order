@@ -88,7 +88,15 @@
     "equip": "barbell"
   },
   "Band Curl": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "DB Biceps Curl"
+      },
+      {
+        "name": "Cable Curl"
+      }
+    ]
   },
   "Band Deadlift": {
     "equip": "band"
@@ -98,7 +106,15 @@
     "desc": "Ellbogen am Körper, 90° gebeugt, Unterarm gegen das Band nach außen drehen. Schulterblatt bleibt ruhig."
   },
   "Band Face Pull": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Face Pull"
+      },
+      {
+        "name": "DB Rear Delt Fly"
+      }
+    ]
   },
   "Band Fly": {
     "equip": "band"

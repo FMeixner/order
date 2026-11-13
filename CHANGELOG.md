@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.48.0] – 2026-11-13
+
+### Geändert
+- **Bänder wieder echtes Equipment:** Unter Setup › Equipment sind Widerstandsbänder ein Häkchen wie Ringe oder Kabelzug; die Stärken stehen darunter, sobald es gesetzt ist. Ohne Häkchen gibt es am Ort keine Bandübungen und keine Band-Bestien. Ein Profil, das Stärken aus einer Vorlage geerbt hat, zeigt das Häkchen gesetzt – einmal abwählen genügt.
+- **Ersatz ohne Bänder:** Band Curl wird zum Kurzhantel-Curl (oder Kabel-Curl), Band Face Pull zum Face Pull am Kabel (oder Kurzhantel-Reverse-Fly).
+
 ## [1.47.0] – 2026-11-13
 
 ### Geändert

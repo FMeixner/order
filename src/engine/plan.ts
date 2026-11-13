@@ -7,7 +7,7 @@ import { blockSeconds, boostClass, estimateRole, roleSlots, weaponSeconds } from
 import { musclesOf } from "./volume";
 import { BEAST_BY_ID, BEASTS, DM_VARIANTS, DRILL_LISTS, EXERCISES, FLOWS, FOCUS_BY_ID, LS_VARIANTS, SB_VARIANTS, SHARPEN, SKILLS, STAB, SWORD, LONGSWORD } from "../data";
 import type { AppState, Beast, BeastClass, Block, Drill, EquipmentProfile, Focus, Goal, Load, PlanBlock, Role, UserProfile, Weekday, WeaponModule } from "../types";
-import { WEEKDAYS } from "../types";
+import { hasBands, WEEKDAYS } from "../types";
 import { beastOk, beastSkills, hexFor, hexWith } from "./skills";
 import { EXPLOSIVE } from "../../scripts/explosive.mjs";
 
@@ -256,7 +256,7 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
     switch (t) {
       case "bodyweight_only": case "wall_or_open": return true;
       case "bar_or_rings": return p.has.bar || p.has.rings;
-      case "band": return p.bands.length > 0;
+      case "band": return hasBands(p);
       case "kb_db": return p.dumbbells.length > 0 || p.kettlebells.length > 0;
       // Rudergerät und Rad schließen die Bestie nicht aus: Fehlt das Gerät, werden nur die Row-/Bike-Elemente ersetzt (Bestie zählt als mutiert)
       case "rower": case "bike": return true;
@@ -272,8 +272,8 @@ export function beastFits(b: Beast, p: EquipmentProfile): boolean {
   for (const n of beastNeeds(b)) {
     const ok = n === "rings" ? p.has.rings
       : n === "bar" ? p.has.bar || p.has.rings
-      : n === "band" ? p.bands.length > 0
-      : n === "band_or_cable" ? p.bands.length > 0 || p.has.cable
+      : n === "band" ? hasBands(p)
+      : n === "band_or_cable" ? hasBands(p) || p.has.cable
       : n === "barbell" ? !!p.barbell
       : n === "kb_db" ? p.dumbbells.length > 0 || p.kettlebells.length > 0
       : n === "sandbag" ? p.has.sandbag

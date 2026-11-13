@@ -1,6 +1,7 @@
 /* Wählt für einen Slot die konkrete Übung passend zum Equipment-Profil des Tages. */
 import { EXERCISES, GUIDED, SWAP_GROUPS } from "../data";
 import type { Choice, Equip, EquipmentProfile, Finish, Prog, Slot, SlotKind, Tier } from "../types";
+import { hasBands } from "../types";
 import { isLoadable, loadScale } from "./loads";
 import { ladderStart, regressions, skillOk, type SkillSet } from "./skills";
 
@@ -92,7 +93,7 @@ export function available(name: string, p: EquipmentProfile, skills?: SkillSet):
   const ex = EXERCISES[name];
   if (!ex) return true;
   const e = ex.equip;
-  if (e === "band" && !p.bands.length) return false;
+  if (e === "band" && !hasBands(p)) return false;
   if (isLoadable(e) && e !== "vest" && !loadScale(p, e)) return false;
   for (const n of ex.needs ?? []) {
     if (n === "bar" && !p.has.bar) return false;
