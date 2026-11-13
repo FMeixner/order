@@ -18,14 +18,14 @@ import { Modal } from "./common";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
-function parseValue(raw: string, unit: string): number | null {
+export function parseValue(raw: string, unit: string): number | null {
   const s = raw.trim().replace(",", ".");
   if (!s) return null;
   if (unit === "mmss") return parseClock(raw);
   const v = parseFloat(s);
   return isNaN(v) ? null : v;
 }
-function show(v: number, unit: string): string {
+export function show(v: number, unit: string): string {
   if (unit === "mmss") return `${Math.floor(v / 60)}:${(v % 60).toFixed(1).padStart(4, "0")}`;
   const u: Record<string, string> = { s: "s", cm: "cm", m: "m", reps: "Wdh", kg: "kg", bpm: "bpm", ml: "ml/kg/min" };
   return `${String(v).replace(".", ",")} ${u[unit] ?? ""}`;

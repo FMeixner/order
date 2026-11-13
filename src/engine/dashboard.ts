@@ -4,6 +4,7 @@
    - Schwachstelle: Ist er ein Defizit aus den Tests (sharpen.ts)?
    Dazu: woran die laufende Phase im Schwerpunkt-Slot arbeitet, und die Bilanz der letzten Testwoche.
    Hier wird nur zusammengeführt; gerechnet wird in norms.ts, bereiche.ts, sharpen.ts. */
+import { DOMAINS, TESTWEEK } from "../data";
 import type { AppState, PlanBlock } from "../types";
 import { bereiche, type BereichRow } from "./bereiche";
 import { evaluateBlock } from "./norms";
@@ -56,6 +57,14 @@ export function standOf(state: AppState, today: string, clocks?: ResidualClock[]
   const reps = repStand(state, today);
   const fmtN = (n: number) => String(n).replace(".", ",");
   const trend = (cs: (string | null)[]): StandRow["change"] => { const c = cs.filter(Boolean); return !c.length ? null : c.includes("better") && !c.includes("worse") ? "better" : c.includes("worse") && !c.includes("better") ? "worse" : "same"; };
+  // Checkpoints und freie Tests (1.49): neuer als der letzte Testwochenwert, dann als laufender Wert
+  const TDEF = Object.fromEntries(TESTWEEK.cups.flatMap((c) => c.tests).map((t) => [t.id, t]));
+  for (const row of rows) for (const dom of row.def.domains) for (const id of DOMAINS.find((d) => d.id === dom)?.tests ?? []) {
+    const cp = (state.checkpoints?.[id] ?? []).filter((r) => r.date <= today).sort((a, b) => a.date.localeCompare(b.date)).pop();
+    const tw = (state.tests[id] ?? []).map((r) => r.date).sort().pop();
+    if (!cp || (tw && tw >= cp.date) || !TDEF[id]) continue;
+    (row.live ??= []).push(`${TDEF[id].name} ${fmtN(cp.value)} (${cp.date.slice(8, 10)}.${cp.date.slice(5, 7)}., ${cp.blockId === "frei" ? "frei" : "Checkpoint"})`);
+  }
   for (const row of rows) {
     if (row.def.id === "kraft" && lifts.length) {
       row.change = trend(lifts.map((l) => l.change));

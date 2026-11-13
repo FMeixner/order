@@ -164,7 +164,8 @@ export function checkpointRelease(state: AppState, blockId: string, blockStart: 
   const id = CHECKPOINT[domain];
   const t = id ? TEST[id] : undefined;
   if (!id || !t) return null;
-  const cps = (state.checkpoints?.[id] ?? []).filter((r) => r.blockId === blockId);
+  // Checkpoints der Phase und freie Tests aus dem Almanach (1.49) in ihrem Zeitraum
+  const cps = (state.checkpoints?.[id] ?? []).filter((r) => r.blockId === blockId || (r.blockId === "frei" && r.date >= blockStart));
   if (cps.length < 2) return null;
   const before = (state.tests[id] ?? []).filter((r) => r.date <= blockStart).sort((a, b) => a.date.localeCompare(b.date)).pop();
   const ref = before ?? cps[0];

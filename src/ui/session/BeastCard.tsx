@@ -156,7 +156,7 @@ function LoadField({ beast, ctx, cur, onChange }: { beast: Beast; ctx: BeastCtx;
   );
 }
 
-export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, easy, nextBeast, watchBase, cardio }: { blockId: string; beast: Beast | null; ctx: BeastCtx; watchBase: string; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean; nextBeast?: string; /** Laufen ersetzt durch dieses Gerät (nur die Anzeige; Id und Bestzeit bleiben) */ cardio?: CardioSub }) {
+export function BeastCard({ blockId, beast: beast0, ctx, session, mut, easy, nextBeast, watchBase, cardio }: { blockId: string; beast: Beast | null; ctx: BeastCtx; watchBase: string; session?: Session; mut: (fn: (s: Session) => Session) => void; note?: string; easy?: boolean; nextBeast?: string; /** Laufen ersetzt durch dieses Gerät (nur die Anzeige; Id und Bestzeit bleiben) */ cardio?: CardioSub }) {
   const t = useTimer();
   const beast = beast0 && cardio ? swapRunBeast(beast0, cardio) : beast0;
   // Ergebnis dieses Bestien-Blocks (alte Einheiten: beast/beastParts) — vor dem Null-Fall, damit die Hooks immer laufen
@@ -282,7 +282,6 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, note, eas
         </>
       )}
       {cardio && beast !== beast0 && <div className="muted small">Laufen ersetzt durch {SUB_LABEL[cardio]}, umgerechnet nach Belastungszeit.</div>}
-      {note && <div className="muted small">{note}</div>}
     </section>
   );
 }

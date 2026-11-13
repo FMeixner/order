@@ -3,7 +3,7 @@ import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock } from "../types";
 import { TEST_BLOCK, blockAt } from "./plan";
-import { closeTestWeek, cupDone, openCupTarget, saveTestResult, skipTestResult, testDone, testMissingGear } from "./testweek";
+import { closeTestWeek, cupDone, cupMeasured, openCupTarget, saveTestResult, skipTestResult, testDone, testMissingGear } from "./testweek";
 
 const T = "2026-11-12";
 const block = (id: string, start: string, end: string): PlanBlock =>
@@ -151,5 +151,19 @@ describe("Schlanke Testwoche (1.47)", () => {
     const id = aron.benchmark!.pool[0];
     expect(cupDone({ ...s, beastTimes: { [id]: [{ date: "2026-11-18", seconds: 600 }] } }, b, aron)).toBe(true);
     expect(cupDone({ ...s, testSkips: { [`${b.id}:${aron.id}`]: true } }, b, aron)).toBe(true);
+  });
+});
+
+describe("Nachholen im Almanach (1.49)", () => {
+  it("Ausgelassenes bleibt offen, bis es einen Wert hat; die Testwoche zählt den Cup trotzdem als verdient", () => {
+    const b = block("t1", "2026-11-02", "2026-11-08");
+    const joy = TESTWEEK.cups.find((c) => c.id === "joyeuse")!;
+    let s: AppState = { ...emptyState(), plan: [b] };
+    for (const t of joy.tests) s = t.id === "t-cooper" ? skipTestResult(s, b.id, t.id, true) : saveTestResult(s, b.id, t.id, 50, "50", "2026-11-07");
+    expect(cupDone(s, b, joy)).toBe(true);
+    expect(cupMeasured(s, b, joy)).toBe(false);
+    expect(openCupTarget(s, "2026-11-13")?.id).toBe("t1");
+    s = saveTestResult(s, b.id, "t-cooper", 2600, "2600", "2026-11-13");
+    expect(cupMeasured(s, b, joy)).toBe(true);
   });
 });

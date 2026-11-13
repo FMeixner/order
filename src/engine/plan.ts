@@ -415,7 +415,7 @@ export function roleAt(role: Role, p: EquipmentProfile | undefined): Role {
 export function finisherBlock(b: Block, week: number): Extract<Block, { type: "beast" }> | null {
   if (b.type !== "superset" || !b.finisher) return null;
   if (b.finisher.only && b.finisher.only !== (isAWeek(week) ? "A" : "B")) return null;
-  return { type: "beast", id: `fin-${b.slots[0].id}`, classes: b.finisher.classes ?? ["plage", "bestie"], pool: b.finisher.pool, strict: true, note: b.finisher.note ?? `Statt Superset ${b.slots.map((s) => s.name).join(" + ")}.` };
+  return { type: "beast", id: `fin-${b.slots[0].id}`, classes: b.finisher.classes ?? ["plage", "bestie"], pool: b.finisher.pool, strict: true }; // keine Erklärzeile unter der Bestie (1.49)
 }
 export type BeastTarget = [Extract<Block, { type: "beast" }>, EquipmentProfile];
 /** Alle Bestien-Blöcke einer Woche mit dem Ort ihres Tages. Die Einheiten-Ansicht trägt die volle Fassung ein (mit „kein Laufen“). */

@@ -5,6 +5,10 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ## [Unveröffentlicht]
 
 ### Geändert
+- **Cups im Almanach ehrlich:** Ausgelassene Tests (etwa der Cooper-Test bei Eis) bleiben dort offen, bis sie einen Wert haben. Der Cup der Testwoche selbst bleibt verdient.
+- **Frei testen:** Unter Almanach › Cups lässt sich jeder Test jederzeit machen, wie eine Bestie aus dem Bestiarium. Freie Werte zählen als Checkpoint: Sie stehen im Stand und können einen Schwerpunkt freigeben, gelten aber nicht als Testwoche.
+- **Keine Erklärzeilen mehr unter Bestien und Finishern** (etwa „Rumpf-Finisher statt …“).
+- Texte zur Testwoche: vier Cups an bis zu drei Tagen.
 - **Isolationsübung ohne jeden Ersatz entfällt still:** Gibt es am Ort für einen Curl, ein Seitheben oder eine Trizepsübung gar nichts – keine Bänder, kein Kabel, keine Hanteln, keine Stange oder Ringe –, fällt sie weg und die Karte zeigt nur „entfällt (ohne Gerät)“. Mehrgelenkige Übungen bleiben mit dem Hinweis auf fehlendes Equipment stehen.
 
 ## [1.48.1] – 2026-11-13

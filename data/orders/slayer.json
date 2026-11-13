@@ -30,7 +30,7 @@
           {"id": "w-mo-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
           {"id": "w-mo-5c", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}
         ]},
-        {"type": "beast", "id": "w-mo-bst", "classes": ["plage"], "pool": ["ng-sindrar", "ng-sol", "ng-balder", "ng-hugin", "ng-tyr", "ng-mimir", "ng-fenja", "ng-odinsson", "ng-heimdall"], "note": "Kraftausdauer für die Beine."}
+        {"type": "beast", "id": "w-mo-bst", "classes": ["plage"], "pool": ["ng-sindrar", "ng-sol", "ng-balder", "ng-hugin", "ng-tyr", "ng-mimir", "ng-fenja", "ng-odinsson", "ng-heimdall"]}
       ]
     },
     "arme_kurz": {
@@ -62,7 +62,7 @@
           {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"]}
         ]},
         {"type": "single", "slot": {"id": "w-do-5c", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-munin", "ng-nidhoggr", "ng-thorsson", "ng-njord", "ng-var", "ng-lagertha"], "note": "Rumpf-Finisher statt Russian Twist + Pallof Press: Rumpf, Rotation und Griff, ohne Beine (Freitag braucht sie frisch)."}, "slots": [
+        {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-munin", "ng-nidhoggr", "ng-thorsson", "ng-njord", "ng-var", "ng-lagertha"]}, "slots": [
           {"id": "w-do-6a", "name": "KB Russian Twist", "reise": {"name": "Russian Twist", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"},
           {"id": "w-do-6b", "name": "Band Pallof Press", "sets": 3, "reps": "10/Seite", "prog": "reps"}
         ]}

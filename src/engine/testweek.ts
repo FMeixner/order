@@ -72,10 +72,21 @@ export function skipTestResult(st: AppState, blockId: string, id: string, on: bo
   return { ...st, testSkips: on ? { ...rest, [`${blockId}:${id}`]: true } : rest };
 }
 
-/** Ziel des Nachholens (1.38): die jüngste begonnene Testwoche mit offenen Cups — die laufende zählt mit,
-    ist alles verdient, gibt es nichts nachzuholen. */
+/** Für das Nachholen (1.49): Hat der Test einen Wert (oder entfällt mangels Gerät)? Ausgelassenes bleibt offen. */
+export const testMeasured = (state: AppState, block: PlanBlock, id: string): boolean =>
+  (state.tests[id] ?? []).some((r) => r.blockId === block.id)
+  || (() => { const t = CUP_OF_TEST.get(id)?.tests.find((x) => x.id === id); return !!t && !!testMissingGear(state, block, t); })();
+
+/** Cup komplett gemessen (1.49): jeder Test mit Wert; ein Cup nur aus einer Bestie mit Zeit. Für den Almanach. */
+export function cupMeasured(state: AppState, block: PlanBlock, cup: Cup, today?: string): boolean {
+  if (!cup.tests.length && cup.benchmark) return benchmarkTime(state, block, cup, today) != null;
+  return cup.tests.every((t) => testMeasured(state, block, t.id));
+}
+
+/** Ziel des Nachholens (1.38): die jüngste begonnene Testwoche mit offenen Tests — die laufende zählt mit.
+    Seit 1.49 bleibt auch Ausgelassenes offen (etwa der Cooper-Test bei Eis), bis es einen Wert hat. */
 export function openCupTarget(state: AppState, today: string): PlanBlock | null {
-  const open = state.plan.filter((b) => isTestBlock(b) && b.start <= today && TESTWEEK.cups.some((c) => !cupDone(state, b, c, today)));
+  const open = state.plan.filter((b) => isTestBlock(b) && b.start <= today && TESTWEEK.cups.some((c) => !cupMeasured(state, b, c, today)));
   return open.sort((a, b) => b.start.localeCompare(a.start))[0] ?? null;
 }
 

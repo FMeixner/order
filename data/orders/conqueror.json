@@ -29,7 +29,7 @@
         ]},
         {"type": "single", "slot": {"id": "c-s-2", "name": "Romanian Deadlift", "home": "KB Romanian Deadlift", "reise": {"name": "Single-Leg RDL", "reps": "10-12/Seite", "prog": "reps"}, "sets": 4, "reps": "6-8", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "c-s-3", "name": "Farmer's Carry", "reise": "Suitcase Carry", "sets": 3, "reps": "40 m", "prog": "weight", "rest": 90}},
-        {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-ubba", "ng-garm", "ng-fjalar", "ng-njord", "ng-mani"], "note": "Finisher statt Pike Push-Up + Hanging Leg Raise."}, "slots": [
+        {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-ubba", "ng-garm", "ng-fjalar", "ng-njord", "ng-mani"]}, "slots": [
           {"id": "c-s-5a", "name": "Pike Push-Up", "sets": 3, "reps": "6-15", "prog": "ladder", "ladder": ["Pike Push-Up", "Pike Push-Up (Füße erhöht)", "Wall Handstand Push-Up (Teilbereich)"]},
           {"id": "c-s-5b", "name": "Hanging Leg Raise", "sets": 3, "reps": "8-12", "prog": "reps"}
         ]}
@@ -41,13 +41,13 @@
       "blocks": [
         {"type": "single", "rotation": "A", "slot": {"id": "c-u-a1", "core": true, "name": "Bulgarian Split Squat", "sets": 3, "reps": "12-15/Seite", "prog": "reps", "rest": 60}},
         {"type": "single", "rotation": "A", "slot": {"id": "c-u-a2", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "8-15", "prog": "ladder", "ladder": ["Push-Up", "Deficit Push-Up", "Archer Push-Up"], "rest": 90, "finish": {"kind": "mech", "chain": ["Deficit Push-Up", "Push-Up", "Incline Push-Up"]}}},
-        {"type": "superset", "rotation": "A", "label": "Superset", "rest": 60, "finisher": {"pool": ["ng-nott", "ng-elli", "ng-thorsson", "ng-fjalar"], "note": "Band-Finisher statt Band Row + Pallof Press."}, "slots": [
+        {"type": "superset", "rotation": "A", "label": "Superset", "rest": 60, "finisher": {"pool": ["ng-nott", "ng-elli", "ng-thorsson", "ng-fjalar"]}, "slots": [
           {"id": "c-u-a3", "core": true, "name": "Band Row", "sets": 3, "reps": "12-15", "prog": "reps"},
           {"id": "c-u-a4", "name": "Band Pallof Press", "sets": 3, "reps": "12/Seite", "prog": "reps"}
         ]},
         {"type": "single", "rotation": "B", "slot": {"id": "c-u-b1", "core": true, "name": "Single-Leg RDL", "sets": 3, "reps": "10-12/Seite", "prog": "reps", "rest": 60}},
         {"type": "single", "rotation": "B", "slot": {"id": "c-u-b2", "core": true, "name": "Pike Push-Up", "sets": 3, "reps": "8-12", "prog": "ladder", "ladder": ["Pike Push-Up", "Pike Push-Up (Füße erhöht)", "Wall Handstand Push-Up (Teilbereich)"], "rest": 90, "finish": {"kind": "mech", "chain": ["Pike Push-Up", "Push-Up", "Incline Push-Up"]}}},
-        {"type": "superset", "rotation": "B", "label": "Superset", "rest": 60, "finisher": {"pool": ["ng-nott", "ng-elli", "ng-thorsson", "ng-fjalar"], "note": "Band-Finisher statt Band Pulldown + Face Pull."}, "slots": [
+        {"type": "superset", "rotation": "B", "label": "Superset", "rest": 60, "finisher": {"pool": ["ng-nott", "ng-elli", "ng-thorsson", "ng-fjalar"]}, "slots": [
           {"id": "c-u-b3", "core": true, "name": "Band Pulldown", "sets": 3, "reps": "10-12", "prog": "reps"},
           {"id": "c-u-b4", "name": "Band Face Pull", "sets": 3, "reps": "15", "prog": "reps"}
         ]},
@@ -59,7 +59,7 @@
       "warmup": ["short_base", "jump_prep", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "module", "module": "longsword", "variant": "bookend"},
-        {"type": "beast", "id": "c-w-1", "classes": ["ungeheuer"], "benchmark_every": 3, "note": "Jede dritte Woche: Bestie aus Woche 1 als Zwischenwert."}
+        {"type": "beast", "id": "c-w-1", "classes": ["ungeheuer"], "benchmark_every": 3}
       ]
     },
     "ausdauer": {
