@@ -1,5 +1,5 @@
 {
-  "_info": "Langschwert-Modul: eigener Lernweg ab null, nach dem Liechtenauer-Kanon der fünf Meisterhiebe. Beidhändig geführt; jede Übung läuft je Führungsseite (welcher Fuß vorne steht — rechts vor oder links vor). Läuft mit demselben Equipment-Profil wie das Schwert: Übungsschwert, Holzschwert oder ein langer Stock reicht. Lernweg wie beim Messer: levels sind die Stufen, jede braucht den Skill der Stufe davor aus skills.json (Gruppe langschwert); die erste ist offen. echo gibt jeder Stufe eine verdichtete Fassung für das Einnorden der späteren Stufen. Varianten in leveled zeigen den Inhalt deiner Stufe; ist die Variante selbst keine Stufe (z. B. lernweg), kommt ihr eigener Inhalt danach.",
+  "_info": "Langschwert-Modul: eigener Lernweg ab null, nach dem Liechtenauer-Kanon der fünf Meisterhiebe. Beidhändig geführt; jede Übung läuft je Führungsseite (welcher Fuß vorne steht — rechts vor oder links vor). Läuft mit demselben Equipment-Profil wie das Schwert: Übungsschwert, Holzschwert oder ein langer Stock reicht. Lernweg wie beim Messer: levels sind die Stufen, jede braucht den Skill der Stufe davor aus skills.json (Gruppe langschwert); die erste ist offen. echo gibt jeder Stufe eine verdichtete Fassung für das Einnorden der späteren Stufen. Varianten in leveled zeigen den Inhalt deiner Stufe; ist die Variante selbst keine Stufe (z. B. lernweg), kommt ihr eigener Inhalt danach. stufe: nur der Inhalt deiner Stufe, ohne freies Üben (Slayer, 1.45).",
   "levels": [
     {"name": "Grundhiebe", "variant": "grundhiebe", "echo": [
       {"id": "ls-b-zorn", "name": "Basics: Zornhau", "mode": "reps", "value": 8, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Vom Tag ausholen, diagonaler Hieb von der Schulter zur gegenüberliegenden Hüfte, abbremsen. Beide Hände bleiben am Griff."},
@@ -17,7 +17,7 @@
       {"id": "ls-b-wechsel", "name": "Basics: Wechselhau, beidhändig", "mode": "reps", "value": 5, "sides": ["rechts vor", "links vor"], "note": "ruhig · einnorden", "desc": "Kurz und sauber: Die Klinge steigt von unten am Körper entlang auf, oben kurz halten. Beide Hände führen."}
     ]}
   ],
-  "leveled": ["grundhiebe", "lernweg"],
+  "leveled": ["grundhiebe", "lernweg", "stufe"],
   "variants": {
     "grundhiebe": [
       {"id": "ls-zornhau", "name": "Zornhau, beidhändig", "mode": "reps", "value": 12, "sets": 2, "sides": ["rechts vor", "links vor"], "note": "aus der Auslage · bewusst langsam", "desc": "Der stärkste Hieb des Kanons: Aus dem Vom Tag ausholen, diagonal von der Schulter zur gegenüberliegenden Hüfte schneiden. Die Kraft kommt aus der Hüftdrehung, die hintere Hand zieht, die vordere führt. Kontrolliert abbremsen, zurück in die Auslage."},
@@ -42,6 +42,7 @@
       {"id": "ls-wendehieb", "name": "Wendehieb mit Langschwert", "mode": "reps", "value": 5, "sets": 2, "sides": ["links herum", "rechts herum"], "note": "180° · Blick an einem Punkt", "desc": "Drehschritt um 180° auf dem Fußballen, das lange Schwert eng über den Kopf geführt, Knie über dem Fuß. Der Blick bleibt so lange wie möglich an einem Punkt (Spotting). In der Landung sofort Zornhau, sauber abgebremst, dann Auslage."},
       {"id": "ls-form", "name": "Form: Schritte, Wende, Hiebe", "mode": "activity", "value": 60, "sets": 2, "weekly_step": 20, "max": 180, "note": "am Stück · +20 s pro Woche bis 3 Min", "desc": "Eine eigene Kette ohne Pause: Zufechten, Zornhau in den Zorn-Ort, Abzug, Wechselhau über den Kopf, Wendehieb, Krumphau, zurück in die Langort-Wache. Fließend wie ein Tanz, jeder Hieb abgebremst. Wird die Technik unsauber, Kette kürzer machen. Braucht etwa 3 m Platz in jede Richtung."}
     ],
+    "stufe": [],
     "lernweg": [
       {"id": "ls-frei", "name": "Freies Üben auf deiner Stufe", "mode": "activity", "value": 600, "note": "10 Minuten · ruhig, sauber", "desc": "Alles aus deiner Stufe frei verbinden, beide Führungsseiten, mit Schritten. Ruhiges Tempo; wird die Technik unsauber, kurz Pause und neu ansetzen."}
     ],

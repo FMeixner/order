@@ -53,10 +53,10 @@
       ]
     },
     "home_hypertrophie": {
-      "name": "Schwert und Oberkörper", "location": "home", "minutes": 55,
+      "name": "Schwert und Oberkörper", "location": "home", "minutes": 50,
       "warmup": ["short_base", "sword_prep", "thoracic_roller", "dislocate"], "cooldown": ["cd_mdf"],
       "blocks": [
-        {"type": "module", "module": "longsword", "variant": "lernweg", "fallbackFlow": "mobility"},
+        {"type": "module", "module": "longsword", "variant": "stufe", "fallbackFlow": "mobility"},
         {"type": "superset", "rest": 90, "slots": [
           {"id": "w-do-2", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "AMRAP", "prog": "reps", "note": "Wenn 20+ Wdh: Weste dazu"},
           {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"]}

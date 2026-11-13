@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.45.0] – 2026-11-13
+
+### Geändert
+- **Slayer Donnerstag ohne freies Üben:** Der Langschwert-Block zeigt nur noch den Inhalt deiner Stufe (auf der Meisterhieb-Stufe mit der 4-Minuten-Bahn); die 10 Minuten freies Üben fallen weg. Der Tag ist etwa 50 statt 60 Minuten lang.
+
 ## [1.44.0] – 2026-11-13
 
 ### Neu

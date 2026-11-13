@@ -98,9 +98,11 @@ describe("Langschwert-Lernweg", () => {
   });
   it("Slayer und Conqueror fechten mit dem Langschwert", () => {
     const s = FOCUS_BY_ID.slayer;
-    expect(s.roles.home_hypertrophie.blocks[0]).toMatchObject({ type: "module", module: "longsword", variant: "lernweg" });
+    expect(s.roles.home_hypertrophie.blocks[0]).toMatchObject({ type: "module", module: "longsword", variant: "stufe" });
     expect(FOCUS_BY_ID.conqueror.roles.work_capacity.blocks.some((b) => b.type === "module" && b.module === "longsword" && b.variant === "bookend")).toBe(true);
     expect(weaponSeconds("longsword", "lernweg", undefined)).toBeGreaterThan(0);
+    // Slayer (1.45): nur die Stufe, ohne die 10 Minuten freies Üben
+    expect(weaponSeconds("longsword", "lernweg", undefined) - weaponSeconds("longsword", "stufe", undefined)).toBe(600);
   });
 });
 
@@ -132,7 +134,7 @@ describe("Slayer", () => {
   const names = (role: string) => JSON.stringify(w.roles[role].blocks);
   it("Donnerstag: Langschwert-Lernweg zuerst, keine Beinübungen (Freitag braucht frische Beine)", () => {
     const b = w.roles.home_hypertrophie.blocks;
-    expect(b[0]).toMatchObject({ type: "module", module: "longsword", variant: "lernweg" });
+    expect(b[0]).toMatchObject({ type: "module", module: "longsword", variant: "stufe" });
     expect(names("home_hypertrophie")).not.toMatch(/Squat|Lunge|Swing|Deadlift|Jump/);
   });
   it("Montag ohne schwere Kniebeuge, dafür Bein-Plage", () => {
