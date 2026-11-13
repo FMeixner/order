@@ -2,7 +2,7 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
-## [Unveröffentlicht]
+## [1.47.0] – 2026-11-13
 
 ### Geändert
 - **Schlanke Testwoche:** Getestet wird nur noch, was das Training nicht selbst misst. Weg sind die 5RM-Tests, Klimmzüge, Liegestütze, Crunches, Dead Hang, Wall Sit, Sit and Reach, Stock-Durchführen und der Stichtest (mit ihnen der Durendal-Cup). Es bleiben: im Park Sprint, 5-10-5, Standweitsprung, Hochsprung, Medizinballwurf und der Cooper-Test; im Studio Körpergewicht, Burpees und 500 m Rudern; zuhause die Bestie auf Zeit. Draußen und Rudergerät liegen nie am selben Tag. Alte Werte bleiben im Verlauf.
