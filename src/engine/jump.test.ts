@@ -22,3 +22,19 @@ describe("Große Sprünge: schnell aufs höhere Gewicht, Wiederholungen darunter
     expect(advance(r, { weight: 4, target: 13, stage: 0, fb: ["ok"], topHits: 0, updated: "x" } as never, e(13), home, "d").weight).toBe(4);
   });
 });
+
+describe("Keine schwerere Hantel am Ort: weiter mit Wiederholungen statt zurück auf 12 (1.49.1)", () => {
+  const top4 = { ...EQUIPMENT_PRESETS[1].make(), id: "h4", dumbbells: [2, 4] };
+  const r = resolveSlot({ id: "w-do-5c", name: "DB Lateral Raise", sets: 3, reps: "12-15", prog: "double" } as never, top4, false)!;
+  const e = (reps: number) => ({ key: r.key, slotId: "w-do-5c", name: r.name, prog: "double", feedback: "ok", sets: [1, 2, 3].map(() => ({ done: true, reps, weight: 4 })) }) as never;
+  it("28 Wdh mit der schwersten Hantel: nächstes Ziel 29, nicht 4 kg × 12", () => {
+    const st = advance(r, { weight: 4, target: 28, stage: 0, fb: ["ok"], topHits: 0, updated: "x" } as never, e(28), top4, "d");
+    expect(st).toMatchObject({ weight: 4, target: 29 });
+    const sg = suggest(r, st, 3, top4);
+    expect(sg.targetReps).toBe(29);
+    expect(sg.gap).toMatch(/Schwerer gibt es hier nicht/);
+  });
+  it("an der Grenze von 30 bleibt es oben", () => {
+    expect(advance(r, { weight: 4, target: 30, stage: 0, fb: ["ok"], topHits: 0, updated: "x" } as never, e(30), top4, "d")).toMatchObject({ weight: 4, target: 30 });
+  });
+});

@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unveröffentlicht]
+
+### Behoben
+- **Schwerste Hantel am Ort erreicht:** Statt nach dem oberen Ende zurück auf das untere Ende zu fallen (4 kg × 28 → 4 kg × 12), steigen die Wiederholungen weiter bis 30. Die Karte sagt „Schwerer gibt es hier nicht“.
+
 ## [1.49.0] – 2026-11-13
 
 ### Geändert

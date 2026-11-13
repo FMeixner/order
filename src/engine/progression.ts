@@ -53,7 +53,8 @@ export function nextLoad(p: EquipmentProfile, equip: Resolved["equip"], w: numbe
 /** Obergrenze der Wiederholungen bei Last w: so hoch, dass man nach dem Sprung bei lo landet (Epley), gedeckelt. */
 export function gapCeiling(p: EquipmentProfile, equip: Resolved["equip"], w: number, lo: number, hi: number): number {
   const n = nextLoad(p, equip, w);
-  if (!n) return hi;
+  // Schwerer gibt es an diesem Ort nicht (1.49.1): weiter mit Wiederholungen bis MOVE_CAP, nicht zurück auf lo
+  if (!n) return w > 0 && loadScale(p, equip) ? Math.max(hi, MOVE_CAP) : hi;
   const need = Math.ceil(30 * ((n.next / w) * (1 + lo / 30)) - 30 - 1e-9);
   return Math.max(hi, Math.min(Math.max(hi, GAP_CAP), need));
 }
@@ -395,6 +396,7 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
         repsLabel = `${from}${ceil > from ? `–${ceil}` : ""}${rp.suffix}`;
         const n = ceil > hi && p && w0 != null ? nextLoad(p, r.equip, w0) : null;
         if (n) gap = `→ bis ${r.sets} × ${ceil}, dann ${fmtKg(n.next)} kg`;
+        else if (ceil > hi && p && w0 != null) gap = `Schwerer gibt es hier nicht: weiter mit Wiederholungen bis ${ceil}`;
       }
     }
   } else if ((r.prog === "weight" || r.prog === "topset") && rp.lo !== null && !rp.amrap) {
@@ -468,7 +470,8 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
         const allTop = allDone && repsDone.every((x) => x >= ceil);
         const jump = (n: number) => {
           s.weight = stepLoad(p, r.equip, usedW, n);
-          s.target = s.weight > usedW ? landingReps(usedW, minReps, fb, s.weight, lo) : lo;
+          // Keine schwerere Stufe: nicht zurück auf lo, sondern oben halten (1.49.1)
+          s.target = s.weight > usedW ? landingReps(usedW, minReps, fb, s.weight, lo) : Math.max(lo, Math.min(ceil, minReps));
         };
         // Satz deutlich verfehlt: 2 oder mehr Wiederholungen unter dem Ziel (bzw. dem unteren Ende) → eine Stufe runter
         const aim = Math.min(lo, st?.target ?? lo);
