@@ -106,15 +106,15 @@ describe("Lenkung: Blockfolge", () => {
 });
 
 describe("Lenkung: Der Schwerpunkt hält, was sonst verfällt (Jahresplan)", () => {
-  it("rote Beweglichkeits-Uhr: Slot Beweglichkeit zum Erhalt", () => {
+  it("rote Beweglichkeits-Uhr: seit 1.47 kein Beweglichkeits-Slot (Warm-up und Cool-down halten sie)", () => {
     const { plan, drillId } = slayerWithModules(["mobility"]);
     const sMob = sess({ id: "a", date: "2026-09-01", drills: { [drillId("mobility")]: [true] } }); // 34/21 Tage: rot
     const sBeast = sess({ id: "b", date: "2026-10-01", beast: { id: "ng-vidar", seconds: 600 } }); // Sprints: Sprungkraft, KE, Anaerob grün
     const state = base([sMob, sBeast], plan);
     expect(residualClocks(state, plan[0].start).find((c) => c.id === "mobility")!.over).toBe(true);
     const y = yearSlots(state, plan[0].start).get(plan[0].id)!;
-    expect(y.domain).toBe("mobility");
-    expect(y.purpose).toBe("erhalt");
+    expect(y.domain).not.toBe("mobility");
+    expect(["speed", "power", "anaerob", "aerob", null]).toContain(y.domain);
   });
 
   it("ohne erledigte Einheiten: Erhalt eines Bereichs, nie einer, der den Orden stört", () => {
