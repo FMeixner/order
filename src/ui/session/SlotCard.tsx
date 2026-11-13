@@ -85,9 +85,13 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
     : raw0;
   // Nach längerer Pause (14 Tage und mehr an dieser Übung): 10 % leichter wieder einsteigen
   const pausedDays = st?.updated && /^\d{4}-/.test(st.updated) ? daysBetween(st.updated, ctx.date) : 0;
-  const sug: Suggestion = pausedDays >= 14 && raw.weight != null && r.loadable
+  const sug0: Suggestion = pausedDays >= 14 && raw.weight != null && r.loadable
     ? { ...raw, weight: snapDown(ctx.profile, r.equip, raw.weight * 0.9), gap: `Nach ${pausedDays} Tagen Pause 10 % leichter. Danach geht es normal weiter.` }
     : raw;
+  // Weste im Superset (1.46): dieselbe Weste wie der Partner, Wiederholungen ab 6
+  const sug: Suggestion = r.vestShared
+    ? { ...sug0, ...(r.vestShared.kg != null ? { weight: r.vestShared.kg } : {}), gap: `Gleiche Weste wie bei ${r.vestShared.partner}: Wiederholungen ab 6, das bleibt Muskelaufbau.` }
+    : sug0;
   const entry: SessionEntry = session?.entries[r.key] ?? { key: r.key, slotId: r.slotId, name: sug.name, prog: r.prog, sets: [] };
   const sets: SetEntry[] = Array.from({ length: r.kind === "timer" || r.kind === "interval" ? 1 : r.sets }, (_, i) => entry.sets[i] ?? { done: false });
   const desc = EXERCISES[sug.name]?.desc ?? EXERCISES[r.name]?.desc;

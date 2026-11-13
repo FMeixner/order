@@ -59,7 +59,7 @@
         {"type": "module", "module": "longsword", "variant": "stufe", "fallbackFlow": "mobility"},
         {"type": "superset", "rest": 90, "slots": [
           {"id": "w-do-2", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "AMRAP", "prog": "reps", "note": "Wenn 20+ Wdh: Weste dazu"},
-          {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"]}
+          {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"]}
         ]},
         {"type": "single", "slot": {"id": "w-do-5c", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-munin", "ng-nidhoggr", "ng-thorsson", "ng-njord", "ng-var", "ng-lagertha"], "note": "Rumpf-Finisher statt Russian Twist + Pallof Press: Rumpf, Rotation und Griff, ohne Beine (Freitag braucht sie frisch)."}, "slots": [

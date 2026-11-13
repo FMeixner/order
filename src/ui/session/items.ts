@@ -125,10 +125,22 @@ export function collectItems(ctx: SessionCtx): Item[] {
   // Nie zwei feste Geräte (Maschine, Kabel) im Superset, auch nicht nach Tausch oder Ortswechsel: dann nacheinander.
   // Ebenso, wenn nur ein Teil des Supersets mit Weste läuft.
   const station = (r: Resolved) => r.equip === "machine" || r.equip === "cable";
-  const split = all.flatMap((it): Item[] => {
+  const split = all.flatMap((it0): Item[] => {
+    let it = it0;
     const b = it.block;
-    // Weste (1.44): nie mitten im Superset an- oder ausziehen – tragen nicht alle Übungen die Weste, läuft es nacheinander
-    const vest = it.resolved.filter((r) => r.equip === "plate").length;
+    // Weste (1.44/1.46): nie mitten im Superset an- oder ausziehen. Trägt nur ein Teil die Weste, bekommen die anderen
+    // dieselbe Weste, wenn sie Zusatzlast vertragen (Wiederholungen dann ab 6, immer noch Muskelaufbau-Bereich);
+    // sonst läuft das Superset nacheinander.
+    let vest = it.resolved.filter((r) => r.equip === "plate").length;
+    if (b.type === "superset" && vest > 0 && vest < it.resolved.length) {
+      const lead = it.resolved.find((r) => r.equip === "plate")!;
+      const kg = cur?.entries[lead.key]?.sets.find((x) => x.weight != null)?.weight ?? ctx.state.slots[lead.key]?.weight ?? null;
+      const canVest = (r: Resolved) => r.equip === "plate" || (!!EXERCISES[r.name]?.weighted && r.kind === "strength");
+      if (it.resolved.every(canVest)) {
+        it = { ...it, resolved: it.resolved.map((r) => r.equip === "plate" ? r : { ...r, equip: "plate", loadable: true, prog: "double", reps: "6-10", ladder: undefined, vestShared: { partner: lead.name, kg } }) };
+        vest = it.resolved.length;
+      }
+    }
     const vestSplit = b.type === "superset" && vest > 0 && vest < it.resolved.length;
     if (!vestSplit && (b.type !== "superset" || (b.sameStation && it.resolved.every((r) => r.equip === "cable")) || it.resolved.filter(station).length < 2)) return [it];
     if (b.type !== "superset") return [it];

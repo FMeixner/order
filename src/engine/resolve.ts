@@ -30,6 +30,8 @@ export interface Resolved {
   proposal?: boolean;
   missingEquipment: boolean;
   loadable: boolean;
+  /** Weste im Superset (1.46): dieselbe Weste wie der Partner (dessen Gewicht), Wiederholungen ab 6 */
+  vestShared?: { partner: string; kg: number | null };
   /** Geführte Variante statt freier Übung (Phase mit hoher Last) */
   guided?: boolean;
   /** Vom Nutzer getauschte Übung */

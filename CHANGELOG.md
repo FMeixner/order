@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.46.0] – 2026-11-13
+
+### Geändert
+- **Weste im Superset geteilt:** Trägt eine Übung die Weste, bekommt die Partnerübung dieselbe Weste, wenn sie Zusatzlast verträgt – mit Wiederholungen ab 6 (weiter Muskelaufbau-Bereich). So bleibt das Superset und mit ihm die Zeitersparnis; nur wenn das nicht geht, laufen beide nacheinander.
+- **Slayer Donnerstag:** Deficit Push-Ups und Ring Rows im Superset mit gleich vielen Sätzen (je 3).
+
 ## [1.45.0] – 2026-11-13
 
 ### Geändert
