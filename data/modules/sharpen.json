@@ -11,10 +11,10 @@
     },
     "power": {
       "name": "Sprungkraft", "place": "start", "days": 2,
-      "why": "Wenige maximale Sprünge halten die Explosivkraft. Qualität vor Menge.",
+      "why": "Wenige maximale Sprünge halten die Explosivkraft, Pogos die Reaktivkraft von Waden und Sehnen. Qualität vor Menge, kein Platzbedarf.",
       "drills": [
-        { "id": "sh-pw-1", "name": "Standweitsprung, maximal", "mode": "reps", "value": 3, "sets": 2, "rep_s": 25, "desc": "Stabil landen, zurückgehen, volle Pause. Weite nicht messen, nur maximal springen." },
-        { "id": "sh-pw-2", "name": "Strecksprung aus dem Stand, maximal hoch", "mode": "reps", "value": 3, "sets": 2, "rep_s": 20 }
+        { "id": "sh-pw-2", "name": "Strecksprung aus dem Stand, maximal hoch", "mode": "reps", "value": 3, "sets": 2, "rep_s": 20, "desc": "Jeder Sprung maximal, weich landen, 60 s volle Pause zwischen den Sätzen." },
+        { "id": "sh-pw-3", "name": "Pogo Hops, kurzer Bodenkontakt", "mode": "reps", "value": 10, "sets": 2, "rep_s": 1, "desc": "Nur aus den Sprunggelenken, Knie fast gestreckt, so kurz wie möglich am Boden." }
       ]
     },
     "mobility": {
@@ -28,18 +28,19 @@
     },
     "ke": {
       "name": "Kraftausdauer", "place": "end", "days": 1,
-      "why": "Einmal pro Woche reicht, um die Wiederholungszahlen zu halten.",
+      "why": "Ein harter Satz pro Woche hält die Wiederholungszahlen; die Auswahl deckt die Testübungen des Durendal-Cups.",
       "drills": [
-        { "id": "sh-ke-1", "name": "Liegestütz-Leiter 1-2-3-4-5-4-3-2-1", "mode": "reps", "value": 25, "rep_s": 3, "desc": "Zwischen den Stufen kurz stehen. Saubere Wiederholungen, Rumpf fest." },
-        { "id": "sh-ke-2", "name": "Hängen an der Stange", "mode": "hold", "value": 30, "sets": 2 },
-        { "id": "sh-ke-3", "name": "Crunch, langsam", "mode": "reps", "value": 20, "sets": 2, "rep_s": 3 }
+        { "id": "sh-ke-4", "name": "Liegestütze, 1 Satz bis 2 vor Schluss", "mode": "reps", "value": 20, "rep_s": 2.5, "desc": "Körper in einer Linie, Nase fast am Boden. Aufhören, wenn noch zwei saubere gingen." },
+        { "id": "sh-ke-5", "name": "Klimmzüge, 1 Satz bis 2 vor Schluss", "mode": "reps", "value": 8, "rep_s": 3.5, "desc": "Aus dem gestreckten Hang, Kinn über die Stange. Ohne Stange: Ring Row oder Tisch-Rudern." },
+        { "id": "sh-ke-6", "name": "Wall Sit", "mode": "hold", "value": 60, "desc": "Oberschenkel waagerecht, Rücken an der Wand, Hände frei." },
+        { "id": "sh-ke-7", "name": "Dead Hang, bis 10 s vor Schluss", "mode": "hold", "value": 45, "desc": "Aktiver Hang, Schultern unten. Ohne Stange entfällt er." }
       ]
     },
     "anaerob": {
       "name": "Anaerob", "place": "end", "days": 1,
-      "why": "Ein kurzer harter Reiz pro Woche hält die Säuretoleranz. Rad oder Rudern schont die Beine.",
+      "why": "Kurze harte Stöße mit unvollständiger Pause halten die Säuretoleranz; 6 Minuten passen ans Ende jeder Einheit. Rad oder Rudern schont die Beine.",
       "drills": [
-        { "id": "sh-an-1", "name": "Rad oder Rudern: 20 s hart, 100 s locker", "mode": "reps", "value": 5, "rep_s": 120, "desc": "Hart heißt: am Ende der 20 s kaum noch sprechen können. Locker heißt wirklich locker." }
+        { "id": "sh-an-2", "name": "Rad oder Rudern: 15 s hart, 45 s locker", "mode": "reps", "value": 6, "rep_s": 60, "desc": "Hart heißt: am Ende der 15 s kaum noch sprechen können. Ohne Gerät: Burpees in den harten 15 s." }
       ]
     },
     "aerob": {

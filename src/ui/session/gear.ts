@@ -5,11 +5,11 @@ import { beastNeeds, MODULE_LABEL } from "../../engine/plan";
 import type { Equip } from "../../types";
 import type { Item } from "./items";
 
-const EQUIP: Partial<Record<Equip, string>> = { barbell: "Langhantel", dumbbell: "Kurzhanteln", kettlebell: "Kettlebell", cable: "Kabelzug", machine: "Maschinen", band: "Band", sandbag: "Sandsack", vest: "Weste" };
+const EQUIP: Partial<Record<Equip, string>> = { barbell: "Langhantel", dumbbell: "Kurzhanteln", kettlebell: "Kettlebell", cable: "Kabelzug", machine: "Maschinen", smith: "Multipresse", band: "Band", sandbag: "Sandsack", vest: "Weste" };
 const NEED: Record<string, string> = { bar: "Stange", rings: "Ringe", bench: "Bank", box: "Box", rower: "Rudergerät", bike: "Rad", medball: "Medizinball", rope: "Springseil", dip: "Dip-Barren", wheel: "Bauchroller", sword: "Schwert" };
 const BEAST: Record<string, string> = { rings: "Ringe", bar: "Stange", band: "Band", band_or_cable: "Band", barbell: "Langhantel", kb_db: "Kurzhantel oder Kettlebell", sandbag: "Sandsack", rower: "Rudergerät", bike: "Rad" };
 /** Reihenfolge der Anzeige: große Geräte zuerst */
-const ORDER = ["Langhantel", "Kurzhanteln", "Kettlebell", "Kurzhantel oder Kettlebell", "Sandsack", "Kabelzug", "Maschinen", "Stange", "Ringe", "Dip-Barren", "Bank", "Box", "Band", "Weste", "Medizinball", "Bauchroller", "Springseil", "Rudergerät", "Rad", "Schwert", "Langschwert", "Stab"];
+const ORDER = ["Langhantel", "Kurzhanteln", "Kettlebell", "Kurzhantel oder Kettlebell", "Sandsack", "Kabelzug", "Maschinen", "Multipresse", "Stange", "Ringe", "Dip-Barren", "Bank", "Box", "Band", "Weste", "Medizinball", "Bauchroller", "Springseil", "Rudergerät", "Rad", "Schwert", "Langschwert", "Stab"];
 
 export function dayGear(items: Item[]): string[] {
   const out = new Set<string>();

@@ -159,7 +159,7 @@ export interface Focus {
 }
 
 export type Equip =
-  | "barbell" | "dumbbell" | "kettlebell" | "cable" | "machine" | "plate" | "vest"
+  | "barbell" | "dumbbell" | "kettlebell" | "cable" | "machine" | "smith" | "plate" | "vest"
   | "band" | "bodyweight" | "cardio" | "skill" | "sandbag" | "other" | "none";
 
 export interface Exercise {
@@ -239,7 +239,7 @@ export interface EquipmentProfile {
   /** Sandsäcke (kg); leer oder fehlt = beliebig in 5-kg-Schritten */
   sandbags?: number[];
   bands: string[];
-  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean; run: boolean; sprint: boolean; rope: boolean; roll?: boolean; ball?: boolean };
+  has: { bar: boolean; rings: boolean; bench: boolean; rower: boolean; bike: boolean; box: boolean; sandbag: boolean; cable: boolean; machines: boolean; medball: boolean; sword: boolean; handles: boolean; dip: boolean; wheel: boolean; run: boolean; sprint: boolean; rope: boolean; roll?: boolean; ball?: boolean; /** Multipresse (1.38); fehlt: vorhanden, wenn das Profil Maschinen hat */ smith?: boolean };
   /** Alt (bis 0.45): Schweißfrei am Ort; wird beim Laden zu „Leise“ an den Wochentagen dieses Orts */
   sweatFree?: boolean;
   /** Stationen weit auseinander (Studio): keine Bestien, die Laufband/Rudergerät mit Stange, Ringen, Langhantel oder Kasten mischen. Fehlt: ja, wenn das Profil Maschinen hat. */

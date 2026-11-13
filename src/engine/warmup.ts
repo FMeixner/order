@@ -13,7 +13,7 @@ import { parseReps } from "./resolve";
 import { snapNearest } from "./loads";
 import { musclesOf } from "./volume";
 
-const LOADED = new Set(["barbell", "dumbbell", "kettlebell", "machine", "cable"]);
+const LOADED = new Set(["barbell", "dumbbell", "kettlebell", "machine", "smith", "cable"]);
 const LOWER = new Set(["Quadrizeps", "Beinbeuger", "Gesäß", "Waden"]);
 const UPPER = new Set(["Brust", "Rücken", "Schultern", "Bizeps", "Trizeps"]);
 /** Pause zwischen Aufwärmsatz und erstem Arbeitssatz */
@@ -38,7 +38,7 @@ export function warmCount(r: Slotish, kg: number | null | undefined): number {
   if (kg === undefined) return !halfOf(r.name) ? 0 : r.equip === "barbell" && ((parseReps(r.reps).hi ?? 99) <= 6 || r.prog === "topset") ? 2 : 1;
   if (kg == null || kg <= 0) return r.equip === "barbell" && halfOf(r.name) ? 1 : 0;
   if (r.equip === "barbell") return kg >= 80 ? 2 : kg >= 50 ? 1 : 0;
-  if (r.equip === "machine") return kg >= 80 ? 1 : 0;
+  if (r.equip === "machine" || r.equip === "smith") return kg >= 80 ? 1 : 0;
   return kg >= 24 ? 1 : 0;
 }
 /** Körperhälfte für die Frage „schon warm?“: auch Übungen mit nur einem Hauptmuskel */

@@ -89,7 +89,7 @@ for (const [free, g] of Object.entries(guided)) {
   else if (!["machine", "cable"].includes(exercises[g].equip)) err("guided.json", `"${g}" ist keine Maschine und kein Kabel`);
 }
 
-const EQUIPS = new Set(["barbell", "dumbbell", "kettlebell", "cable", "machine", "plate", "vest", "band", "bodyweight", "cardio", "skill", "sandbag", "none", "other"]);
+const EQUIPS = new Set(["barbell", "dumbbell", "kettlebell", "cable", "machine", "smith", "plate", "vest", "band", "bodyweight", "cardio", "skill", "sandbag", "none", "other"]);
 const PROGS = new Set(["double", "weight", "reps", "hold", "minutes", "ladder", "topset", "none"]);
 const TIERS = new Set(["gym", "home", "reise"]);
 const CLASSES = new Set(["plage", "bestie", "ungeheuer", "uralte", "verfluchte"]);
