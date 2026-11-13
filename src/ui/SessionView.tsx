@@ -200,9 +200,12 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
 /** Pausenangabe: ganze Minuten als „X Min", dazwischen mit Sekunden (2:30 Min) — 2:30 rundet sich sonst zu „3 Min" */
 const pauseLabel = (s: number) => s % 60 === 0 ? `${s / 60} Min` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")} Min`;
 
+const Dropped = ({ it }: { it: Item }) => (it.dropped?.length ? <div className="muted small">{it.dropped.join(", ")} entfällt (ohne Gerät).</div> : null);
+
 function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
+  if (!it.resolved.length && it.dropped?.length && !it.beast && !it.drills && !it.call) return <section className="card"><Dropped it={it} /></section>;
   if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} cardio={it.cardio} ctx={ctx} session={session} mut={mut} note={b.note || undefined} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
   if (b.type === "module" && it.call) return <CallCard call={it.call} ctx={ctx} session={session} mut={mut} />;
   if (b.type === "module" && it.drills) return <ModuleCard it={it} ctx={ctx} session={session} mut={mut} />;
@@ -224,13 +227,14 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
       <section className="card superset">
         <div className="block-label teal">Im Wechsel{b.sameStation && b.label && it.resolved.every((r) => r.equip === "cable") ? ` · ${b.label}` : ""} · {b.rest ?? 60} s Pause</div>
         {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(lastSet) => { if (r === last && !lastSet) t.rest("Pause, dann nächste Runde", b.rest ?? 60); }} />)}
+        <Dropped it={it} />
       </section>
     );
   }
   if (b.type === "module") {
     return <section className="card">{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={() => {}} />)}</section>;
   }
-  return <section className="card">{it.fill && <div className="block-label amber">{it.fill}</div>}{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}{it.fill && <DropSlot ctx={ctx} />}</section>;
+  return <section className="card">{it.fill && <div className="block-label amber">{it.fill}</div>}{it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest(`Pause nach ${r.name}`, r.rest); }} />)}{it.fill && <DropSlot ctx={ctx} />}<Dropped it={it} /></section>;
 }
 
 
@@ -331,6 +335,7 @@ export function SessionPreview(ctx: SessionCtx) {
                   <span className="mono muted">{previewDose(r)}</span>
                 </div>
               ))}
+              {it.dropped?.map((n) => <div key={n} className="preview-row muted"><span>{n} entfällt (ohne Gerät)</span></div>)}
             </div>
           );
         })}

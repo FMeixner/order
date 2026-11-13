@@ -1,4 +1,5 @@
 /* Inhalte einer Einheit sammeln (Übungen, Bestien, Module) und Bestien festhalten. */
+import { musclesOf } from "../../engine/volume";
 import { callView, type CallView } from "../../engine/call";
 import { EXERCISES } from "../../data";
 import type { AppState, Beast, BeastClass, BeastRun, Block, Session, WeaponModule } from "../../types";
@@ -13,12 +14,23 @@ import { type CardioSub, SUB_EXERCISE } from "../../engine/cardio";
 import { goalFill, isFillMarker } from "./fill";
 
 /* ---------- Slots dieser Einheit sammeln ---------- */
-export interface Item { call?: CallView; block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule }; /** „Mehr vom Ordensziel“: Überschrift der Karte */ fill?: string }
+export interface Item { call?: CallView; block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule }; /** „Mehr vom Ordensziel“: Überschrift der Karte */ fill?: string; /** Isolationsübungen, für die es am Ort gar keinen Ersatz gibt (1.49): entfallen still */ dropped?: string[] }
 
-function slotsOf(b: Block, ctx: SessionCtx): Resolved[] {
+/** Isolationsübung (1.49): höchstens ein Muskel — wie halfOf in warmup.ts, nur andersherum */
+export const isIsolation = (name: string) => Object.keys(musclesOf(name)).length < 2;
+
+/** Slots des Blocks; Isolationsübungen ohne jeden Ersatz am Ort entfallen still und stehen in `dropped` */
+function slotsWithDrops(b: Block, ctx: SessionCtx): { resolved: Resolved[]; dropped?: string[] } {
+  const dropped: string[] = [];
+  const resolved = slotsOf(b, ctx, dropped);
+  return dropped.length ? { resolved, dropped } : { resolved };
+}
+
+function slotsOf(b: Block, ctx: SessionCtx, dropped: string[] = []): Resolved[] {
   const r = (s: Parameters<typeof resolveSlot>[0]) => {
     if (s.gate_week && ctx.week < s.gate_week) return null;
     const res = resolveSlot(s, ctx.profile, ctx.reduced && (s.kind ?? "strength") !== "timer", ctx.state.swaps?.[swapKey(s.id, ctx.profile.id)], skillSet(ctx.state));
+    if (res?.missingEquipment && (res.kind ?? "strength") === "strength" && isIsolation(res.name)) { dropped.push(res.name); return null; }
     // Grenze erreicht: dieselbe Übung mit Zusatzlast
     return res && loadPhase(res, ctx.state.slots[res.key], ctx.profile);
   };
@@ -108,7 +120,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
       return { block: flow, resolved: [], drills: b.short ? shortDrills(full) : full, sword: asWeaponBlock(b) };
     }
     if (b.type === "module" && isWeaponModule(b.module)) return { block: b, resolved: slotsOf(b, ctx), sword: asWeaponBlock(b) };
-    return { block: b, resolved: slotsOf(b, ctx) };
+    return { block: b, ...slotsWithDrops(b, ctx) };
   };
   const all: Item[] = role.blocks
     .filter((b) => !b.rotation || b.rotation === ab)
@@ -146,7 +158,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
     if (b.type !== "superset") return [it];
     return it.resolved.map((r, i) => ({ block: { type: "single", slot: { ...(b.slots.find((x) => x.id === r.slotId) ?? b.slots[i]), rest: b.rest ?? 60 } }, resolved: [r] }));
   });
-  const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword || it.call);
+  const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword || it.call || it.dropped?.length);
   // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
   const guided = guidedLevel(ctx.state.sections, ctx.block, ctx.week);
   if (guided) {

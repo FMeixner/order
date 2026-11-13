@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unveröffentlicht]
+
+### Geändert
+- **Isolationsübung ohne jeden Ersatz entfällt still:** Gibt es am Ort für einen Curl, ein Seitheben oder eine Trizepsübung gar nichts – keine Bänder, kein Kabel, keine Hanteln, keine Stange oder Ringe –, fällt sie weg und die Karte zeigt nur „entfällt (ohne Gerät)“. Mehrgelenkige Übungen bleiben mit dem Hinweis auf fehlendes Equipment stehen.
+
 ## [1.48.1] – 2026-11-13
 
 ### Geändert
