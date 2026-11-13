@@ -2,7 +2,7 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
-## [Unveröffentlicht]
+## [1.49.0] – 2026-11-13
 
 ### Geändert
 - **Große Gewichtssprünge: schnell hoch statt viele Wiederholungen:** Liegt die nächste Hantel weit weg (etwa 4 → 6 kg beim Seitheben) und reicht deine Leistung schon darüber hinaus, schlägt die App gleich das höhere Gewicht vor, mit Wiederholungen unter dem Bereich (aus 4 kg × 28 wird 6 kg × 9), statt beim alten Gewicht 12–15 Wiederholungen. Das gilt auch, wenn der Stand aus einem anderen Wiederholungsbereich oder Ort kommt – außer, ein leichteres Gewicht passt noch in den Bereich.
