@@ -217,8 +217,8 @@ describe("Geführte Varianten bei hoher Last", () => {
       .map(({ s, group }) => ({ r: resolveSlot(s, gym)!, contrast: false, group }));
     const keys = guidedKeys(list, gym);
     const names = list.filter((x) => keys.has(x.r.key)).map((x) => toGuided(x.r, gym)!.name);
-    // Rear Delt Fly bleibt frei: sein Superset-Partner ist schon ein Kabel
-    expect(names).toEqual(["Seated Dip Machine", "Seated Cable Row"]);
+    // Dip und Rear Delt Fly bleiben frei: ihr Superset-Partner ist schon ein Kabel (Seitheben); Bankdrücken ist der erste Lift
+    expect(names).toEqual(["Seated Cable Row"]);
     expect(guidedKeys(list, home).size).toBe(0);
   });
   it("Doppelmesser-Schalter wird zu Schwert am Heim-Profil", async () => {

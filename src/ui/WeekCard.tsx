@@ -17,6 +17,14 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
   const flags = state.dayFlags ?? {};
   const count = trainingDays(state).length;
 
+  // Schwerpunkt-Tage (1.44): an welchen Trainingstagen Schwerpunkt und „Mehr vom Ordensziel“ landen dürfen
+  const allDays = trainingDays(state);
+  const shDays = state.sharpenDays ?? allDays;
+  const toggleSharpen = (d: Weekday) => update((st) => {
+    const cur = st.sharpenDays ?? trainingDays(st);
+    const next = cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d];
+    return { ...st, sharpenDays: allDays.every((x) => next.includes(x)) ? undefined : next };
+  });
   const setPlace = (d: Weekday, pid: string) => update((st) => ({ ...st, schedule: { ...st.schedule, [d]: pid || null } }));
   // Einheit eines Tages wählen: steht sie schon an einem anderen Tag, tauschen die beiden
   const setRole = (i: number, role: string) => block && update((st) => {
@@ -42,6 +50,9 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
                   <option value="">kein Training</option>
                   {state.equipment.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </select>
+                {pid && (
+                  <button className={`mod-chip small ${shDays.includes(d) ? "on" : ""}`} aria-pressed={shDays.includes(d)} title="Schwerpunkt an diesem Tag erlaubt" onClick={() => toggleSharpen(d)}>Schwerpunkt</button>
+                )}
                 {pid && (flags[d]?.short || flags[d]?.quiet || flags[d]?.tight) && (
                   <span className="muted small week-fixed" title="Fixiert im Anpassen-Menü der Einheit">{[flags[d]?.short && "kurz", flags[d]?.quiet && "leise", flags[d]?.tight && "eng"].filter(Boolean).join(" · ")}</span>
                 )}
@@ -56,7 +67,7 @@ export function WeekCard({ state, update, today }: { state: AppState; update: Up
         })}
         <p className="muted small">
           {count < 3 ? "Die Orden brauchen mindestens 3 Trainingstage. " : ""}
-          „kurz“, „leise“ und „eng“ (kein Platz) fixierst du im Anpassen-Menü der Einheit.
+          „Schwerpunkt“: an welchen Tagen Schwerpunkt-Karte und „Mehr vom Ordensziel“ landen dürfen (z. B. nicht am kurzen Tag). „kurz“, „leise“ und „eng“ (kein Platz) fixierst du im Anpassen-Menü der Einheit.
           {focus ? ` Einheiten gelten für ${focusName(focus.id)}; wählst du eine doppelt, tauschen die Tage.` : ""}
           {own ? " Diese Phase hat einen eigenen Wochenplan (Phase antippen › Phase bearbeiten)." : ""}
         </p>

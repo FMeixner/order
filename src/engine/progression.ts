@@ -138,6 +138,7 @@ export const estimateEnv = (state: Pick<AppState, "user" | "tests">, today?: str
 /** Gemessen zählt, was in den letzten 12 Wochen aktualisiert wurde */
 const RECENT_DAYS = 84;
 const recent = (st: SlotState, today: string) => !!st.updated && st.updated >= addDaysIso(today, -RECENT_DAYS);
+const normName = (s: string) => s.toLowerCase().replace(/[^a-z]/g, "").replace(/s$/, "");
 const addDaysIso = (iso: string, n: number) => { const d = new Date(`${iso}T12:00:00`); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
@@ -309,11 +310,51 @@ export function transferState(r: Resolved, st: SlotState, p: EquipmentProfile): 
     Gilt nur frisch — was jemand an der Leiter schon geleistet hat, bleibt, wo es ist. */
 export function packetStage(r: Resolved, st: SlotState | undefined, packets?: Record<string, number>): number | null {
   if (r.prog !== "ladder" || !r.ladder || r.ladder.length < 2 || st?.target != null) return null;
-  const n = packets?.[r.name];
+  // Päckchen heißen wie in den Bestien („Ring Rows“): Name ohne Plural und Satzzeichen vergleichen
+  const n = packets?.[r.name] ?? Object.entries(packets ?? {}).find(([k]) => normName(k) === normName(r.name))?.[1];
   const rp = parseReps(r.reps);
   const hi = rp.hi ?? rp.lo;
   if (!n || hi == null || n <= hi) return null;
   return Math.min((r.ladderStart ?? 0) + 1, r.ladder.length - 1);
+}
+
+/** Übertrag auf Leitern (1.44): Zug-Vermögen in Körpergewicht (Epley-1RM) aus Klimmzug-Test, Klimmzügen im Log
+    (letzte 26 Wochen) und eigenem Päckchen einer Rudern-Stufe (Päckchen ≈ 60 % des Maximums). null ohne Daten. */
+export function pullCapacity(state: Pick<AppState, "tests" | "sessions" | "packets">, today: string): number | null {
+  const L = TRANSFER.ladders ?? {};
+  const from = addDaysIso(today, -182);
+  const caps: number[] = [];
+  const t = (state.tests["t-pullups"] ?? []).filter((x) => x.date >= from).sort((a, b) => a.date.localeCompare(b.date)).pop();
+  if (t && t.value > 0) caps.push((L["Pull-Up"] ?? 0.95) * (1 + t.value / 30));
+  for (const s of state.sessions) {
+    if (!s.done || s.date < from) continue;
+    for (const e of Object.values(s.entries)) {
+      const share = L[e.name];
+      if (share == null || e.name.includes("Ring Row")) continue;
+      for (const x of e.sets) if (x.done && x.reps && !x.weight) caps.push(share * (1 + x.reps / 30));
+    }
+  }
+  for (const [name, n] of Object.entries(state.packets ?? {})) {
+    const k = Object.keys(L).find((x) => normName(x) === normName(name));
+    if (k && n > 0) caps.push(L[k] * (1 + n / 0.6 / 30));
+  }
+  return caps.length ? Math.max(...caps) : null;
+}
+/** Stufe aus dem Zug-Vermögen: nur nach oben und nur, wenn die aktuelle Stufe klar zu leicht ist (erwartetes Maximum
+    mehr als 8 über dem Bereich). Dann die leichteste Stufe, deren Maximum höchstens 5 über dem Bereich liegt, sonst die letzte. */
+export function capStage(r: Resolved, st: SlotState | undefined, cap: number | null): { stage: number; reps: number } | null {
+  const L = TRANSFER.ladders ?? {};
+  if (cap == null || r.prog !== "ladder" || !r.ladder || r.ladder.length < 2 || !r.ladder.every((n) => L[n] != null)) return null;
+  const rp = parseReps(r.reps);
+  const hi = rp.hi ?? rp.lo;
+  if (hi == null) return null;
+  const pred = (i: number) => Math.round(30 * (cap / L[r.ladder![i]] - 1));
+  const cur = Math.min(Math.max(st?.stage ?? 0, r.ladderStart ?? 0), r.ladder.length - 1);
+  if (pred(cur) <= hi + 8) return null;
+  let i = cur + 1;
+  while (i < r.ladder.length - 1 && pred(i) > hi + 5) i++;
+  i = Math.min(i, r.ladder.length - 1);
+  return { stage: i, reps: pred(i) };
 }
 
 export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1, p?: EquipmentProfile): Suggestion {

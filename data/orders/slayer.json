@@ -18,13 +18,15 @@
   "week_3": ["kraft_a", "home_hypertrophie", "kraft_contrast"],
   "roles": {
     "kraft_a": {
-      "name": "Oberkörper schwer", "location": "gym", "minutes": 55,
+      "name": "Oberkörper schwer", "location": "gym", "minutes": 50,
       "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep"], "cooldown": ["cd_mdf"],
       "blocks": [
-        {"type": "single", "slot": {"id": "w-mo-2", "core": true, "name": "Bench Press", "home": "DB Floor Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
-        {"type": "single", "slot": {"id": "w-mo-3", "name": "Dip", "load": "plate", "home": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "single", "slot": {"id": "w-mo-4", "core": true, "name": "Barbell Row", "home": "Double DB Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 120}},
-        {"type": "superset", "rest": 60, "slots": [
+        {"type": "superset", "rest": 120, "slots": [
+          {"id": "w-mo-2", "core": true, "name": "Bench Press", "home": "DB Floor Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double"},
+          {"id": "w-mo-4", "core": true, "name": "Barbell Row", "home": "Double DB Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double"}
+        ]},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "w-mo-3", "name": "Dip", "load": "plate", "home": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
           {"id": "w-mo-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
           {"id": "w-mo-5c", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}
         ]},
@@ -55,8 +57,10 @@
       "warmup": ["short_base", "sword_prep", "thoracic_roller", "dislocate"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "module", "module": "longsword", "variant": "lernweg", "fallbackFlow": "mobility"},
-        {"type": "single", "slot": {"id": "w-do-2", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "AMRAP", "prog": "reps", "rest": 90, "note": "Wenn 20+ Wdh: Weste dazu"}},
-        {"type": "single", "slot": {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"], "rest": 90}},
+        {"type": "superset", "rest": 90, "slots": [
+          {"id": "w-do-2", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "AMRAP", "prog": "reps", "note": "Wenn 20+ Wdh: Weste dazu"},
+          {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"]}
+        ]},
         {"type": "single", "slot": {"id": "w-do-5c", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-munin", "ng-nidhoggr", "ng-thorsson", "ng-njord", "ng-var", "ng-lagertha"], "note": "Rumpf-Finisher statt Russian Twist + Pallof Press: Rumpf, Rotation und Griff, ohne Beine (Freitag braucht sie frisch)."}, "slots": [
           {"id": "w-do-6a", "name": "KB Russian Twist", "reise": {"name": "Russian Twist", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"},

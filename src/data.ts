@@ -47,6 +47,8 @@ export const TRANSFER = transferJson as unknown as {
   discount: number; families: Record<string, Record<string, number>>;
   bridges: { from: string; to: string; ratio: number }[]; bodyweight: Record<string, number>;
   discounts: { measured: number; family: number; bridge: number };
+  /** Leitern (1.44): Anteil des Körpergewichts je Stufe */
+  ladders?: Record<string, number>;
 };
 export const GUIDED = (guidedJson as unknown as { map: Record<string, string> }).map;
 export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; who5: string[]; who5_intro: string; who5_scale: string[] };

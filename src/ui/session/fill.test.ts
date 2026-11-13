@@ -39,3 +39,16 @@ describe("Mehr vom Ordensziel", () => {
     expect(items.every((x) => !(x.block.type === "module" && x.block.module === "sharpen" && x.block.variant === "ordensziel"))).toBe(true);
   });
 });
+
+describe("Schwerpunkt-Tage (1.44)", () => {
+  it("nur an erlaubten Tagen, zwei Tage = erster und mittlerer erlaubter Wochentag", async () => {
+    const { focusFor } = await import("../../engine/weekplan");
+    const { dayRoleMap } = await import("../../engine/plan");
+    const { st, b } = mk("slayer");
+    const where = (s: typeof st) => { const f = focusFor(s, b, 1)!; return dayRoleMap(s, b, f, 1).filter((d) => f.roles[d.role].blocks.some((x) => x.type === "module" && x.module === "sharpen")).map((d) => d.day); };
+    expect(where(st)).toEqual(["Mo", "Do"]);
+    expect(where({ ...st, sharpenDays: ["Mo", "Do", "Fr"] })).toEqual(["Mo", "Do"]);
+    expect(where({ ...st, sharpenDays: ["Di", "Fr"] })).toEqual(["Di", "Fr"]);
+    expect(where({ ...st, sharpenDays: [] })).toEqual([]);
+  });
+});

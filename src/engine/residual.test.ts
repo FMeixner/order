@@ -15,8 +15,10 @@ const sess = (over: Partial<Session>): Session => ({
 /** Erster Einzel-Slot der Slayer-Kraft-Rolle, als abgehakter Satz */
 const slayerEntry = (): SessionEntry => {
   const f = FOCUS_BY_ID.slayer;
-  const b = f.roles.kraft_a.blocks.find((x): x is Extract<Block, { type: "single" }> => x.type === "single")!;
-  return { key: `${b.slot.id}|${b.slot.name}`, slotId: b.slot.id, name: b.slot.name, prog: "none", sets: [{ done: true, reps: 1 }] };
+  // erste Übung der Rolle, ob einzeln oder im Superset
+  const b = f.roles.kraft_a.blocks.find((x) => x.type === "single" || x.type === "superset")!;
+  const slot = b.type === "single" ? b.slot : (b as Extract<Block, { type: "superset" }>).slots[0];
+  return { key: `${slot.id}|${slot.name}`, slotId: slot.id, name: slot.name, prog: "none", sets: [{ done: true, reps: 1 }] };
 };
 
 describe("Residual-Uhren", () => {

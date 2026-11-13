@@ -2,6 +2,19 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.44.0] – 2026-11-13
+
+### Neu
+- **Schwerpunkt-Tage selbst wählen:** Unter Plan › Deine Woche schaltest du je Trainingstag „Schwerpunkt“ an oder aus. Schwerpunkt-Karte und „Mehr vom Ordensziel“ landen nur an erlaubten Tagen; „erster und mittlerer Tag“ zählt jetzt nach Wochentagen.
+- **Übertrag auf Leitern:** Wer genug Klimmzüge kann (Test, Log oder eigenes Päckchen), rudert nicht auf der Grundstufe: Ist die aktuelle Ringrudern-Stufe klar zu leicht, setzt die App sie hoch (bei 10 Klimmzügen: Archer Ring Row) und sagt, warum. Nur nach oben; die Anteile je Stufe sind Schätzungen.
+- **Weste im Superset:** Tragen nicht alle Übungen eines Supersets die Weste, laufen sie nacheinander – kein An- und Ausziehen mitten im Superset.
+
+### Geändert
+- **Slayer verdichtet:** Montag Bankdrücken + Langhantelrudern und Dips + hinterer Delta + Seitheben als Supersets (etwa 52 statt 57 Minuten), Donnerstag Deficit Push-Ups + Ring Rows als Superset.
+
+### Behoben
+- Eigene Päckchen mit Bestien-Namen („Ring Rows“) greifen jetzt auch bei der Übung „Ring Row“.
+
 ## [1.43.0] – 2026-11-13
 
 ### Geändert

@@ -42,5 +42,7 @@
     { "from": "Back Squat", "to": "Waden", "ratio": 0.9 }
   ],
   "bodyweight": { "Dip": 0.9, "Ring Dip": 0.9, "Chin-Up": 0.95, "Pull-Up": 0.95, "Push-Up": 0.65 },
+  "_ladders": "Übertrag auf Leitern (1.44): Anteil des Körpergewichts je Stufe, geschätzt (Ringrudern Füße am Boden etwa die Hälfte, erhöht mehr, Archer fast ein Arm). Aus dem Zug-Vermögen (Klimmzug-Test, Klimmzüge im Log, eigenes Päckchen) rechnet die App mit Epley, wie viele Wiederholungen je Stufe gingen, und setzt die Stufe hoch, wenn die aktuelle klar zu leicht ist. Setzung, keine Messung.",
+  "ladders": { "Ring Row": 0.55, "Ring Row (Füße erhöht)": 0.7, "Archer Ring Row": 0.85, "Pull-Up": 0.95, "Chin-Up": 0.95 },
   "discounts": { "measured": 0.9, "family": 0.85, "bridge": 0.75 }
 }

@@ -4,7 +4,7 @@ import { EXERCISES } from "../../data";
 import { type Feedback, FEEDBACK_LABEL, type Finish, type Session, type SessionEntry, type SetEntry } from "../../types";
 import { snapDown, snapNearest } from "../../engine/loads";
 import { daysBetween } from "../../engine/plan";
-import { backoffLoad, EMPTY_STATE, estimateEnv, packetStage, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
+import { backoffLoad, capStage, EMPTY_STATE, estimateEnv, packetStage, pullCapacity, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
 import { parseReps, type Resolved, swapKey, swapOptions } from "../../engine/resolve";
 import { WARM_REST, warmupSets } from "../../engine/warmup";
 import { fmt, useTimer } from "../Timer";
@@ -70,9 +70,13 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
   const st = sharedState(ctx.state.slots, r, estimateEnv(ctx.state, ctx.date));
   let raw0: Suggestion = suggest(r, st, ctx.week, ctx.profile);
   // Päckchen-Anker (1.42): frischer Leiter-Slot startet eine Stufe höher, wenn das Päckchen über dem Bereich liegt
-  const seed = packetStage(r, st, ctx.state.packets);
-  if (seed != null)
-    raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: seed }, ctx.week, ctx.profile), gap: `Aus deinem Päckchen (${ctx.state.packets![r.name]}): eine Stufe höher angesetzt.` };
+  // Übertrag (1.44): Wer genug Klimmzüge kann, rudert nicht auf der Grundstufe – die Stufe steigt, wenn sie klar zu leicht ist
+  const cap = capStage(r, st, pullCapacity(ctx.state, ctx.date));
+  const seed = cap ? null : packetStage(r, st, ctx.state.packets);
+  if (cap)
+    raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: cap.stage, target: null }, ctx.week, ctx.profile), gap: `Aus deinem Zug-Vermögen (Klimmzüge, Päckchen): diese Stufe, erwartet etwa ${cap.reps} Wdh. am Stück.` };
+  else if (seed != null)
+    raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: seed }, ctx.week, ctx.profile), gap: "Aus deinem Päckchen: eine Stufe höher angesetzt." };
   // Ältere Stände zählten bei Wiederholungs-Progression vom Ziel statt vom Geschafften (2 × 20 → 16): hier nachziehen
   const lastEntry = [...ctx.state.sessions].filter((x) => x.done && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
   const lastMin = lastEntry && r.prog === "reps" && lastEntry.sets.every((y) => y.done && y.reps != null) ? Math.min(...lastEntry.sets.map((y) => y.reps!)) : null;

@@ -416,6 +416,8 @@ export interface AppState {
   roleOrder: Record<string, string[]>; // blockId → Rollen in Reihenfolge der Trainingstage
   plan: PlanBlock[];
   slots: Record<string, SlotState>;
+  /** 1.44: Wochentage, an denen Schwerpunkt und „Mehr vom Ordensziel“ landen dürfen; fehlt: alle Trainingstage */
+  sharpenDays?: Weekday[];
   /** 1.35: festgeschriebene Schwerpunkte, die „Automatisch“ entsprechen, einmal zurück auf automatisch */
   autoSlots?: boolean;
   sessions: Session[];

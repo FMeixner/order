@@ -16,7 +16,8 @@ import { DOMAINS, SHARPEN } from "../data";
 import type { AppState, Block, Focus, Goal, PlanBlock } from "../types";
 import type { AxisId } from "./balance";
 import { estimateRole } from "./duration";
-import { addDays, blockFocus, daysBetween, focusName, isTestBlock, isoDate, rolesFor } from "./plan";
+import { addDays, blockFocus, dayRoleMap, daysBetween, focusName, isTestBlock, isoDate, rolesFor } from "./plan";
+import { WEEKDAYS } from "../types";
 import { evaluateBlock } from "./norms";
 import { CLOCKS, residualClocks, type ClockId } from "./residual";
 
@@ -231,7 +232,7 @@ export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
     const place = (slot: SlotPlan, mode: "full" | 1 | 0): void => {
       if (!slot.domain || mode === 0) return;
       const mod = SHARPEN[slot.domain];
-      const free = roles.filter((rk) => out[rk] && !out[rk].blocks.some((x) => x.type === "module" && x.module === "sharpen"));
+      const free = slotRoles(state, b, f, roles).filter((rk) => out[rk] && !out[rk].blocks.some((x) => x.type === "module" && x.module === "sharpen"));
       if (!free.length) return;
       let idx: number[];
       if (mode === "full" && mod.days === "all") idx = free.map((_, i) => i);
@@ -275,9 +276,19 @@ export function unpinAutoSlots(state: AppState): AppState {
   return { ...state, plan, autoSlots: true };
 }
 
+/** Rollen, an denen ein Schwerpunkt landen darf: nach Wochentag sortiert (erster und mittlerer Tag sind echte
+    Wochentage), nur an den Tagen aus Setup › Deine Woche (sharpenDays; fehlt: alle Trainingstage). */
+function slotRoles(state: AppState, b: PlanBlock, f: Focus, roles: string[]): string[] {
+  const days = dayRoleMap(state, b, f);
+  const dayOf = (rk: string) => days.find((d) => d.role === rk)?.day;
+  const ok = (rk: string) => { const d = dayOf(rk); return !state.sharpenDays || (!!d && state.sharpenDays.includes(d)); };
+  const ix = (rk: string) => { const d = dayOf(rk); return d ? WEEKDAYS.indexOf(d) : 99; };
+  return roles.filter(ok).sort((x, y) => ix(x) - ix(y));
+}
+
 /** Platzhalter „Mehr vom Ordensziel“ am kürzesten Trainingstag; bei Schnellkraft und Schnelligkeit frisch am Anfang */
 function withFill(f: Focus, state: AppState, b: PlanBlock): Focus {
-  const roles = rolesFor(state, b, f).filter((rk) => f.roles[rk]);
+  const roles = slotRoles(state, b, f, rolesFor(state, b, f).filter((rk) => f.roles[rk]));
   if (!roles.length) return f;
   const rk = roles.reduce((best, x) => ((f.roles[x].minutes ?? 99) < (f.roles[best].minutes ?? 99) ? x : best), roles[0]);
   const blk: Block = { type: "module", module: "sharpen", variant: "ordensziel" };

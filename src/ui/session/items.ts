@@ -122,11 +122,16 @@ export function collectItems(ctx: SessionCtx): Item[] {
       }
       return b.type === "beast" ? { ...beastItem(b), ...(cardio ? { cardio } : {}) } : otherItem(b);
     });
-  // Nie zwei feste Geräte (Maschine, Kabel) im Superset, auch nicht nach Tausch oder Ortswechsel: dann nacheinander
+  // Nie zwei feste Geräte (Maschine, Kabel) im Superset, auch nicht nach Tausch oder Ortswechsel: dann nacheinander.
+  // Ebenso, wenn nur ein Teil des Supersets mit Weste läuft.
   const station = (r: Resolved) => r.equip === "machine" || r.equip === "cable";
   const split = all.flatMap((it): Item[] => {
     const b = it.block;
-    if (b.type !== "superset" || (b.sameStation && it.resolved.every((r) => r.equip === "cable")) || it.resolved.filter(station).length < 2) return [it];
+    // Weste (1.44): nie mitten im Superset an- oder ausziehen – tragen nicht alle Übungen die Weste, läuft es nacheinander
+    const vest = it.resolved.filter((r) => r.equip === "plate").length;
+    const vestSplit = b.type === "superset" && vest > 0 && vest < it.resolved.length;
+    if (!vestSplit && (b.type !== "superset" || (b.sameStation && it.resolved.every((r) => r.equip === "cable")) || it.resolved.filter(station).length < 2)) return [it];
+    if (b.type !== "superset") return [it];
     return it.resolved.map((r, i) => ({ block: { type: "single", slot: { ...(b.slots.find((x) => x.id === r.slotId) ?? b.slots[i]), rest: b.rest ?? 60 } }, resolved: [r] }));
   });
   const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword || it.call);
