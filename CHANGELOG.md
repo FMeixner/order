@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unveröffentlicht]
+
+### Behoben
+- **Automatischer Schwerpunkt springt nicht mehr:** Sobald eine Phase läuft, hält die App ihre automatische Wahl fest. Testwerte, Trainingseinheiten und deine eigene Auswahl verschieben die Empfehlung danach nicht mehr; wer von einer eigenen Wahl auf „Automatisch“ zurückstellt, landet wieder bei derselben Empfehlung. Vorher rechnete die App die Wahl bei jedem Öffnen aus dem aktuellen Stand neu – frische Testergebnisse oder ein früheres Ende der Testwoche konnten sie kippen.
+
 ## [1.46.0] – 2026-11-13
 
 ### Geändert

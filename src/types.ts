@@ -268,6 +268,8 @@ export interface PlanBlock {
   schedule?: Partial<Record<Weekday, string | null>>;
   /** Schwerpunkt-Slot 1 (Schwachstelle): Bereich (speed, power, mobility, ke, anaerob, aerob) oder "off". Fehlt: automatisch nach der letzten Testwoche. */
   sharpen?: string;
+  /** 1.47: automatische Wahl, festgehalten, sobald die Phase läuft (bleibt stabil, auch wenn Tests oder Training die Uhren verschieben) */
+  sharpenAuto?: { domain: string | null; purpose?: string; reason: string };
   /** Schwerpunkt-Slot 2 (Vertiefung): Bereich oder "off". Fehlt: automatisch — Vertiefung des Sekundärziels, beim Allrounder stattdessen das zweite Defizit. */
   sharpen2?: string;
   /** Mesozyklus: gleiche Id = Teile eines Mesozyklus (zwei à 4–6 Wochen oder drei à 5). Testwoche am Meso-Ende, jeder Teil folgt aus den Successors des vorherigen. */

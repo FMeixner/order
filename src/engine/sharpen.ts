@@ -163,7 +163,10 @@ export function yearSlots(state: AppState, today: string = isoDate(new Date())):
       if (sc > 0 && (!best || sc > best.s)) best = { d, s: sc, purpose, reason };
     }
     let chosen: DomainId | null = best?.d ?? null;
-    if (b.sharpen === "off") { chosen = null; out.set(b.id, { domain: null, reason: "Für diese Phase ausgeschaltet." }); }
+    // Laufende Phase: die automatische Wahl ist festgehalten (sharpenAuto) und springt nicht mehr
+    const pinned = b.sharpenAuto && !b.sharpen ? b.sharpenAuto : null;
+    if (pinned) { chosen = (pinned.domain as DomainId | null) ?? null; out.set(b.id, { domain: chosen, purpose: pinned.purpose as SlotPurpose | undefined, reason: pinned.reason }); }
+    else if (b.sharpen === "off") { chosen = null; out.set(b.id, { domain: null, reason: "Für diese Phase ausgeschaltet." }); }
     else if (b.sharpen && SHARPEN[b.sharpen]) { chosen = b.sharpen as DomainId; out.set(b.id, { domain: chosen, reason: "Selbst gewählt." }); }
     else out.set(b.id, best ? { domain: best.d, purpose: best.purpose, reason: best.reason } : { domain: null, reason: "Kein Bereich braucht hier einen Slot." });
     // Hochrechnung fortschreiben: Was Orden und Slot in dieser Phase reizen, ist zum Phasenende frisch
@@ -262,6 +265,22 @@ export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
   if (over(out)) out = build(1, 0);
   if (over(out)) out = build(0, 0);
   return out;
+}
+
+/** 1.47: Sobald eine Phase läuft, wird ihre automatische Wahl festgehalten. Testwerte, Training und Schwerpunkt-Einheiten
+    verschieben die Uhren; ohne Festhalten sprang „Automatisch“ dadurch mitten in der Phase (Schnelligkeit → Beweglichkeit). */
+export function pinAutoSlots(state: AppState, today: string = isoDate(new Date())): AppState | null {
+  const ys = yearSlots(state, today);
+  let changed = false;
+  const plan = state.plan.map((b) => {
+    if (b.sharpenAuto || isTestBlock(b) || b.start > today || b.end < today) return b;
+    // Echte automatische Wahl, auch wenn gerade eine eigene Wahl oder „Aus“ gilt (für den Fall, dass du zurückschaltest)
+    const y = b.sharpen ? yearSlots({ ...state, plan: state.plan.map((x) => (x.id === b.id ? { ...x, sharpen: undefined } : x)) }, today).get(b.id) : ys.get(b.id);
+    if (!y) return b;
+    changed = true;
+    return { ...b, sharpenAuto: { domain: y.domain, ...(y.purpose ? { purpose: y.purpose } : {}), reason: y.reason } };
+  });
+  return changed ? { ...state, plan } : null;
 }
 
 /** Einmalig (1.35): Phasen, deren Schwerpunkt fest auf genau dem steht, was „Automatisch“ ohnehin wählen würde (früher
