@@ -67,8 +67,10 @@ for (const [g, members] of Object.entries(swaps)) {
   if (new Set(members).size !== members.length) err("swaps.json", `Gruppe "${g}" enthält doppelte Übungen`);
 }
 const normsFile = read("modules/norms.json");
-const testIds = new Set(read("modules/testweek.json").cups.flatMap((c) => c.tests.map((t) => t.id)));
-const testVariants = Object.fromEntries(read("modules/testweek.json").cups.flatMap((c) => c.tests.map((t) => [t.id, (t.variants ?? []).map((v) => v.id)])));
+// Auch zurückgezogene Tests (1.47, „retired“): Normen, Päckchen und alte Testwochen beziehen sich weiter auf sie
+const allTests = (() => { const tw = read("modules/testweek.json"); return [...tw.cups.flatMap((c) => c.tests), ...(tw.retired ?? [])]; })();
+const testIds = new Set(allTests.map((t) => t.id));
+const testVariants = Object.fromEntries(allTests.map((t) => [t.id, (t.variants ?? []).map((v) => v.id)]));
 for (const n of normsFile.norms) {
   const where = `norms.json ${n.test}${n.variant ? "/" + n.variant : ""}`;
   if (!testIds.has(n.test)) err(where, "Test gibt es in testweek.json nicht");

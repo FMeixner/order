@@ -493,6 +493,8 @@ export interface TestDef {
   timer?: { mode: "hold" } | { mode: "fixed"; seconds: number };
   /** Verlauf (1.37): in welche Übung der Wert einzieht; reps = 5RM-Gewicht als Satz mit so vielen Wiederholungen */
   log?: { reps?: number; exercise: string | Record<string, string> };
+  /** Ausrüstung (1.47): fehlt sie im Profil des Testtags, entfällt der Test von selbst */
+  needs?: keyof EquipmentProfile["has"];
 }
 
 /** Norm für einen Test, gültig für ein Geschlecht und eine Altersspanne.

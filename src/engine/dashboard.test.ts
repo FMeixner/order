@@ -21,10 +21,10 @@ describe("Stand (Dashboard)", () => {
   it("mit Testwerten: Bilanz der letzten Testwoche und Punkte am Bereich", () => {
     const st = base();
     st.user = { ...st.user, sex: "m", birthYear: 1988, bodyweight: 80 } as AppState["user"];
-    st.tests = { "t-pushups": [{ blockId: "t0", date: "2026-09-20", value: 12, raw: "12" }], "t-pullups": [{ blockId: "t0", date: "2026-09-20", value: 3, raw: "3" }] } as AppState["tests"];
+    st.tests = { "t-cooper": [{ blockId: "t0", date: "2026-09-20", value: 1500, raw: "1500" }], "t-broad": [{ blockId: "t0", date: "2026-09-20", value: 170, raw: "170" }] } as AppState["tests"];
     const s = standOf(st, T);
     expect(s.test).toMatchObject({ blockId: "t0", date: "2026-09-20", tests: 2 });
-    const ke = s.rows.find((r) => r.def.id === "ke")!;
+    const ke = s.rows.find((r) => r.def.id === "aerob")!;
     expect(ke.score).not.toBeNull();
     expect(ke.score!).toBeGreaterThanOrEqual(0);
     expect(ke.score!).toBeLessThanOrEqual(100);

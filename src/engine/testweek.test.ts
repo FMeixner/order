@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { emptyState } from "../store";
+import { EQUIPMENT_PRESETS, emptyState } from "../store";
 import { TESTWEEK } from "../data";
 import type { AppState, PlanBlock } from "../types";
 import { TEST_BLOCK, blockAt } from "./plan";
-import { closeTestWeek, cupDone, openCupTarget, saveTestResult, skipTestResult, testDone } from "./testweek";
+import { closeTestWeek, cupDone, openCupTarget, saveTestResult, skipTestResult, testDone, testMissingGear } from "./testweek";
 
 const T = "2026-11-12";
 const block = (id: string, start: string, end: string): PlanBlock =>
@@ -120,5 +120,36 @@ describe("Testwoche abschließen (1.39)", () => {
     const slayer = order("slayer", "2026-11-16", "2026-12-13");
     const s = closeTestWeek({ ...emptyState(), plan: [tw, slayer] }, tw, T);
     expect(openCupTarget(s, T)?.id).toBe("tw");
+  });
+});
+
+describe("Schlanke Testwoche (1.47)", () => {
+  const b = block("t1", "2026-11-16", "2026-11-22");
+  const prof = (medball: boolean) => ({ ...EQUIPMENT_PRESETS[0].make(), id: "p", has: { ...EQUIPMENT_PRESETS[0].make().has, medball } });
+  const base = (medball: boolean): AppState => ({ ...emptyState(), equipment: [prof(medball)], schedule: { Mo: "p", Mi: "p", Sa: "p" } as AppState["schedule"], plan: [b] });
+  it("keine 5RM-, Kraftausdauer-, Beweglichkeits- oder Stichtests mehr", () => {
+    const ids = TESTWEEK.cups.flatMap((c) => c.tests.map((t) => t.id));
+    for (const gone of ["t-5rm-squat", "t-5rm-push", "t-5rm-pull", "t-pushups", "t-pullups", "t-crunches", "t-deadhang", "t-wallsit", "t-sitreach", "t-dislocate", "t-stichserie"]) expect(ids).not.toContain(gone);
+    for (const kept of ["t-cooper", "t-row500", "t-burpees", "t-broad", "t-highjump", "t-sprint30", "t-agility", "t-medball"]) expect(ids).toContain(kept);
+  });
+  it("draußen und Rudergerät nie am selben Testtag", () => {
+    const park = TESTWEEK.cups.filter((c) => c.place === "Park").flatMap((c) => c.tests.map((t) => t.id));
+    expect(park).toContain("t-cooper");
+    expect(park).not.toContain("t-row500");
+  });
+  it("Medizinballwurf entfällt ohne Medizinball im Profil des Testtags", () => {
+    const mb = TESTWEEK.cups.flatMap((c) => c.tests).find((t) => t.id === "t-medball")!;
+    expect(testMissingGear(base(false), b, mb)).toMatch(/Medizinball/);
+    expect(testDone(base(false), b, "t-medball")).toBe(true);
+    expect(testMissingGear(base(true), b, mb)).toBeNull();
+    expect(testDone(base(true), b, "t-medball")).toBe(false);
+  });
+  it("Cup nur aus einer Bestie: verdient mit Zeit dieser Woche oder Auslassen", () => {
+    const aron = TESTWEEK.cups.find((c) => c.id === "arondight")!;
+    const s = base(true);
+    expect(cupDone(s, b, aron)).toBe(false);
+    const id = aron.benchmark!.pool[0];
+    expect(cupDone({ ...s, beastTimes: { [id]: [{ date: "2026-11-18", seconds: 600 }] } }, b, aron)).toBe(true);
+    expect(cupDone({ ...s, testSkips: { [`${b.id}:${aron.id}`]: true } }, b, aron)).toBe(true);
   });
 });

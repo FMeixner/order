@@ -1,5 +1,5 @@
 /* Lädt alle Inhalte aus /data. Eine neue Datei in data/orders/ ist nach dem nächsten Build automatisch ein neuer Orden. */
-import type { Beast, CallVariant, Cup, Drill, Exercise, Focus, Goal, KlammerDef, KlammerId, Norm } from "./types";
+import type { Beast, CallVariant, Cup, Drill, Exercise, Focus, Goal, KlammerDef, KlammerId, Norm, TestDef } from "./types";
 import exercisesJson from "../data/exercises.json";
 import beastsJson from "../data/beasts.json";
 import correctivesJson from "../data/modules/correctives.json";
@@ -51,7 +51,7 @@ export const TRANSFER = transferJson as unknown as {
   ladders?: Record<string, number>;
 };
 export const GUIDED = (guidedJson as unknown as { map: Record<string, string> }).map;
-export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; who5: string[]; who5_intro: string; who5_scale: string[] };
+export const TESTWEEK = testweekJson as unknown as { cups: Cup[]; retired: TestDef[]; who5: string[]; who5_intro: string; who5_scale: string[] };
 /** Tauschgruppen: Übungen mit ähnlichem Bewegungsmuster */
 export const SWAP_GROUPS = (swapsJson as unknown as { groups: Record<string, string[]> }).groups;
 export const NORMS = (normsJson as unknown as { norms: Norm[] }).norms;

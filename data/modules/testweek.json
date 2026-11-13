@@ -1,37 +1,34 @@
 {
-  "_info": "Testwoche: fünf Cups an drei Tagen — Studio, Zuhause, Park; der zweite Cup am Ort läuft direkt im Anschluss, ohne eigenes Warm-up; das Cool-down kommt einmal am Ende des Tages (cooldown am letzten Cup des Ortes). Outdoor und Studio werden nicht gemischt. Gleiche Tests bei jedem Durchgang, damit Werte vergleichbar sind. unit: s, cm, m, reps, kg, mmss (m:ss.z), bpm. better: higher oder lower. swc: kleinste Veränderung, die über dem Messfehler liegt (Schätzung aus typischen Messfehlern, Hopkins 2000); kleinere Unterschiede zeigt die App als „gleich”.",
+  "_info": "Testwoche (1.47): nur Tests, die das Training nicht selbst misst — Schnelligkeit, Sprungkraft, Anaerob, Ausdauer. Kraft und Kraftausdauer liest die App laufend aus dem Log, Beweglichkeit halten Warm-up und Cool-down. Park-Tag: Excalibur und Joyeuse (draußen), Studio-Tag: Balmung (Rudergerät), Zuhause: Arondight (Bestie auf Zeit). Der zweite Cup am Ort läuft direkt im Anschluss, ohne eigenes Warm-up; das Cool-down kommt einmal am Ende des Tages (cooldown am letzten Cup des Ortes). Outdoor und Studio werden nicht gemischt. needs: Ausrüstung im Profil des Testtags, sonst entfällt der Test. unit: s, cm, m, reps, kg, mmss (m:ss.z), bpm. better: higher oder lower. swc: kleinste Veränderung über dem Messfehler (Hopkins 2000); kleinere Unterschiede zeigt die App als „gleich”.",
+  "_retired": "Seit 1.47 nicht mehr getestet (Kraft und Kraftausdauer misst das Log, Beweglichkeit halten Warm-up und Cool-down). Bleiben für Verlauf, Normen und alte Testwochen.",
+  "retired": [
+    {"id": "t-5rm-squat", "name": "5RM Beinpresse oder Kniebeuge", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "log": {"reps": 5, "exercise": {"legpress": "Leg Press", "squat": "Back Squat"}}, "desc": "2–3 Steigerungssätze, dann höchstens 4 Versuche bis zum 5RM, 3–5 Min Pause. Abbruch bei Technikverlust. Immer dieselbe Übung wie beim letzten Mal.", "variants": [{"id": "legpress", "name": "Beinpresse"}, {"id": "squat", "name": "Kniebeuge"}]},
+    {"id": "t-5rm-push", "name": "5RM Brustpresse oder Bankdrücken", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "log": {"reps": 5, "exercise": {"machine": "Chest Press Machine", "bench": "Bench Press"}}, "desc": "Wie oben. Übung und Einstellung notieren.", "variants": [{"id": "machine", "name": "Brustpresse"}, {"id": "bench", "name": "Bankdrücken"}]},
+    {"id": "t-5rm-pull", "name": "5RM Latziehen oder Klimmzug mit Gewicht", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "log": {"reps": 5, "exercise": {"pulldown": "Lat Pulldown"}}, "desc": "Wie oben. Bei Klimmzug: Zusatzgewicht eintragen.", "variants": [{"id": "pulldown", "name": "Latziehen"}, {"id": "pullup", "name": "Klimmzug mit Gewicht"}]},
+    {"id": "t-sitreach", "name": "Sit and Reach", "unit": "cm", "attempts": 1, "better": "higher", "swc": 2, "desc": "Beine gestreckt, Fußsohlen an einer Kiste. Hände langsam nach vorn schieben und eingrooven, bis du an der tiefsten Stelle bist; gewertet wird, was du 2 s hältst. Fingerspitzen relativ zu den Sohlen, davor negativ."},
+    {"id": "t-dislocate", "name": "Schulter: Stock-Durchführen", "unit": "cm", "attempts": 1, "better": "lower", "swc": 3, "desc": "Engster Griff, mit dem der Stock mit gestreckten Armen über den Kopf nach hinten geht. Abstand zwischen den Zeigefingern. Langsam enger werden; gewertet wird der engste saubere Durchgang."},
+    {"id": "t-pullups", "name": "Klimmzüge", "unit": "reps", "attempts": 1, "better": "higher", "swc": 1, "log": {"exercise": "Pull-Up"}, "desc": "Aus dem gestreckten Hang, Kinn über die Stange, kein Schwung. Maximale saubere Wiederholungen."},
+    {"id": "t-pushups", "name": "Liegestütze", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "log": {"exercise": "Push-Up"}, "desc": "Körper in einer Linie, bis die Nase fast den Boden berührt, je 1 s runter und hoch."},
+    {"id": "t-crunches", "name": "Crunches, Takt 40 BPM", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Rückenlage, Knie 90°, Fingerspitzen wandern 12 cm nach vorn. Ein Schlag hoch, einer runter."},
+    {"id": "t-deadhang", "name": "Dead Hang", "unit": "s", "attempts": 1, "better": "higher", "swc": 10, "log": {"exercise": "Dead Hang"}, "timer": {"mode": "hold"}, "desc": "Aktiver Hang an der Stange, gestreckte Arme, Schultern unten. Stopp, wenn die Hand öffnet oder der Griff nachlässt. Ein Versuch: aufgewärmt ist der erste der beste. Timer starten, in 4 s an die Stange, dann läuft die Zeit; Stopp tippen, wenn der Griff nachlässt."},
+    {"id": "t-wallsit", "name": "Wall Sit", "unit": "s", "attempts": 1, "better": "higher", "swc": 10, "log": {"exercise": "Wall Sit"}, "timer": {"mode": "hold"}, "desc": "Rücken an der Wand, Oberschenkel waagerecht, Knie 90°, Hände frei. Timer starten, in 4 s in die Position, dann läuft die Zeit. Stopp tippen, wenn die Hüfte abkippt oder die Hände das Bein stützen. Ein Versuch."},
+    {"id": "t-stichserie", "name": "Stichtest: Serie bis zum ersten Fehler", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Stiche durch die Ringöffnung, Ring unberührt — jeder gültige Treffer zählt. Der erste ungültige Stich (Ring berührt oder in Bewegung) beendet die Serie. Ein Versuch. Ohne Ringe: immer dieselbe feste Aufgabe, z. B. Burpee-Box-Step-Overs."}
+  ],
   "cups": [
     {
-      "id": "balmung", "name": "Balmung-Cup", "place": "Studio", "focus": "Maximalkraft, anaerob",
+      "id": "balmung", "name": "Balmung-Cup", "place": "Studio", "focus": "Anaerob",
       "warmup": ["base", "lower_prep"], "cooldown": ["cd_general"],
       "tests": [
         {"id": "t-bodyweight", "name": "Körpergewicht", "unit": "kg", "attempts": 1, "better": "lower", "swc": 1, "desc": "Morgens nüchtern, gleiche Waage — die 5RM-Norm rechnet relativ dazu."},
-        {"id": "t-5rm-squat", "name": "5RM Beinpresse oder Kniebeuge", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "log": {"reps": 5, "exercise": {"legpress": "Leg Press", "squat": "Back Squat"}}, "desc": "2–3 Steigerungssätze, dann höchstens 4 Versuche bis zum 5RM, 3–5 Min Pause. Abbruch bei Technikverlust. Immer dieselbe Übung wie beim letzten Mal.", "variants": [{"id": "legpress", "name": "Beinpresse"}, {"id": "squat", "name": "Kniebeuge"}]},
-        {"id": "t-5rm-push", "name": "5RM Brustpresse oder Bankdrücken", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "log": {"reps": 5, "exercise": {"machine": "Chest Press Machine", "bench": "Bench Press"}}, "desc": "Wie oben. Übung und Einstellung notieren.", "variants": [{"id": "machine", "name": "Brustpresse"}, {"id": "bench", "name": "Bankdrücken"}]},
-        {"id": "t-5rm-pull", "name": "5RM Latziehen oder Klimmzug mit Gewicht", "unit": "kg", "attempts": 1, "better": "higher", "swc": 2.5, "log": {"reps": 5, "exercise": {"pulldown": "Lat Pulldown"}}, "desc": "Wie oben. Bei Klimmzug: Zusatzgewicht eintragen.", "variants": [{"id": "pulldown", "name": "Latziehen"}, {"id": "pullup", "name": "Klimmzug mit Gewicht"}]},
         {"id": "t-row500", "name": "500 m Rudern, all-out", "unit": "mmss", "attempts": 1, "better": "lower", "swc": 3, "desc": "Start aus dem Stillstand. Gleiche Einstellung wie beim letzten Test. Eingabe m:ss.z, z. B. 1:42.5."},
         {"id": "t-burpees", "name": "Burpees 1 Min", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "timer": {"mode": "fixed", "seconds": 60}, "desc": "Zum Schluss, wenn alles andere schon im Kasten ist: Brust am Boden, oben Strecksprung mit Klatschen. Nur saubere Wiederholungen. Der Timer zählt 4 s herunter, dann 60 s, und stoppt von selbst."}
       ]
     },
     {
-      "id": "durendal", "name": "Durendal-Cup", "place": "Zuhause", "focus": "Beweglichkeit und Kraftausdauer",
-      "warmup": ["base"],
-      "tests": [
-        {"id": "t-sitreach", "name": "Sit and Reach", "unit": "cm", "attempts": 1, "better": "higher", "swc": 2, "desc": "Beine gestreckt, Fußsohlen an einer Kiste. Hände langsam nach vorn schieben und eingrooven, bis du an der tiefsten Stelle bist; gewertet wird, was du 2 s hältst. Fingerspitzen relativ zu den Sohlen, davor negativ."},
-        {"id": "t-dislocate", "name": "Schulter: Stock-Durchführen", "unit": "cm", "attempts": 1, "better": "lower", "swc": 3, "desc": "Engster Griff, mit dem der Stock mit gestreckten Armen über den Kopf nach hinten geht. Abstand zwischen den Zeigefingern. Langsam enger werden; gewertet wird der engste saubere Durchgang."},
-        {"id": "t-pullups", "name": "Klimmzüge", "unit": "reps", "attempts": 1, "better": "higher", "swc": 1, "log": {"exercise": "Pull-Up"}, "desc": "Aus dem gestreckten Hang, Kinn über die Stange, kein Schwung. Maximale saubere Wiederholungen."},
-        {"id": "t-pushups", "name": "Liegestütze", "unit": "reps", "attempts": 1, "better": "higher", "swc": 2, "log": {"exercise": "Push-Up"}, "desc": "Körper in einer Linie, bis die Nase fast den Boden berührt, je 1 s runter und hoch."},
-        {"id": "t-crunches", "name": "Crunches, Takt 40 BPM", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Rückenlage, Knie 90°, Fingerspitzen wandern 12 cm nach vorn. Ein Schlag hoch, einer runter."},
-        {"id": "t-deadhang", "name": "Dead Hang", "unit": "s", "attempts": 1, "better": "higher", "swc": 10, "log": {"exercise": "Dead Hang"}, "timer": {"mode": "hold"}, "desc": "Aktiver Hang an der Stange, gestreckte Arme, Schultern unten. Stopp, wenn die Hand öffnet oder der Griff nachlässt. Ein Versuch: aufgewärmt ist der erste der beste. Timer starten, in 4 s an die Stange, dann läuft die Zeit; Stopp tippen, wenn der Griff nachlässt."},
-        {"id": "t-wallsit", "name": "Wall Sit", "unit": "s", "attempts": 1, "better": "higher", "swc": 10, "log": {"exercise": "Wall Sit"}, "timer": {"mode": "hold"}, "desc": "Rücken an der Wand, Oberschenkel waagerecht, Knie 90°, Hände frei. Timer starten, in 4 s in die Position, dann läuft die Zeit. Stopp tippen, wenn die Hüfte abkippt oder die Hände das Bein stützen. Ein Versuch."}
-      ]
-    },
-    {
-      "id": "arondight", "name": "Arondight-Cup", "place": "Zuhause", "focus": "Koordination und Kraftausdauer",
+      "id": "arondight", "name": "Arondight-Cup", "place": "Zuhause", "focus": "Bestie auf Zeit",
       "warmup": ["base"], "cooldown": ["cd_general"],
       "benchmark": {"label": "Bestie auf Zeit", "pool": ["ng-garm", "ng-ubba", "ng-orvar", "ng-hel", "ng-saga", "ng-odin"]},
       "tests": [
-        {"id": "t-stichserie", "name": "Stichtest: Serie bis zum ersten Fehler", "unit": "reps", "attempts": 1, "better": "higher", "swc": 3, "desc": "Stiche durch die Ringöffnung, Ring unberührt — jeder gültige Treffer zählt. Der erste ungültige Stich (Ring berührt oder in Bewegung) beendet die Serie. Ein Versuch. Ohne Ringe: immer dieselbe feste Aufgabe, z. B. Burpee-Box-Step-Overs."}
       ]
     },
     {
@@ -42,11 +39,11 @@
         {"id": "t-sprint30", "name": "Sprint 30 m", "unit": "s", "attempts": 1, "better": "lower", "swc": 0.1, "desc": "Stehstart, Zeit per Slow-Motion-Video oder Helfer. Ein gewerteter Lauf; vorher im Warm-up ein, zwei Steigerungsläufe. Strecke einmal genau abmessen und markieren."},
         {"id": "t-broad", "name": "Standweitsprung", "unit": "cm", "attempts": 1, "better": "higher", "swc": 5, "desc": "Ohne Anlauf, beidbeiniger Absprung, gemessen bis zum nächstliegenden Abdruck. Ein gewerteter Sprung; vorher im Warm-up ein, zwei lockere."},
         {"id": "t-highjump", "name": "Hochsprung", "unit": "cm", "attempts": 1, "better": "higher", "swc": 5, "desc": "Anlauf, Sprung über die Latte — immer dieselbe Technik. Latte in 5-cm-Schritten steigern, drei Fehlversuche in Folge beenden den Versuch. Beste übersprungene Höhe zählt."},
-        {"id": "t-medball", "name": "Medizinballwurf 2 kg", "unit": "m", "attempts": 1, "better": "higher", "swc": 0.3, "desc": "Aus dem Stand, beidhändig über Kopf nach vorn, ohne Anlauf und Drehung. Ein gewerteter Wurf; vorher ein, zwei lockere."}
+        {"id": "t-medball", "name": "Medizinballwurf 2 kg", "needs": "medball", "unit": "m", "attempts": 1, "better": "higher", "swc": 0.3, "desc": "Aus dem Stand, beidhändig über Kopf nach vorn, ohne Anlauf und Drehung. Ein gewerteter Wurf; vorher ein, zwei lockere."}
       ]
     },
     {
-      "id": "joyeuse", "name": "Joyeuse-Cup", "place": "Park", "focus": "Wohlbefinden, Belastbarkeit, Ausdauer",
+      "id": "joyeuse", "name": "Joyeuse-Cup", "place": "Park", "focus": "Ausdauer",
       "warmup": ["run_prep"], "cooldown": ["cd_lower"],
       "tests": [
         {"id": "t-cooper", "name": "Cooper-Test: 12 Min Lauf", "unit": "m", "attempts": 1, "better": "higher", "swc": 100, "timer": {"mode": "fixed", "seconds": 720}, "desc": "Ebene Strecke, 12 Minuten so weit wie möglich. Immer dieselbe Runde. Der Timer läuft 12 Minuten und stoppt von selbst; dann die Strecke eintragen."},

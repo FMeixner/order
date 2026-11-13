@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { BEASTS, FOCI, FOCUS_BY_ID, SKILLS } from "../data";
 import { EQUIPMENT_PRESETS, emptyState, migrate } from "../store";
 import type { AppState } from "../types";
-import type { EquipmentProfile, PlanBlock, SessionEntry, Slot } from "../types";
+import type { EquipmentProfile, SessionEntry, Slot } from "../types";
 import { parseWeightList, snapDown, stepLoad } from "./loads";
 import { advance, EMPTY_STATE, packetStage, suggest } from "./progression";
 import { parseReps, resolveSlot } from "./resolve";
@@ -285,11 +285,11 @@ describe("Normen", () => {
     const s = sample();
     s.user = { ...s.user, sex: "m", birthYear: 1989 };
     const T = (value: number, variant?: string) => [{ date: "2026-11-25", blockId: "b1", value, raw: String(value), ...(variant ? { variant } : {}) }];
-    s.tests = { "t-bodyweight": T(84), "t-pushups": T(45), "t-pullups": T(15), "t-sitreach": T(-10), "t-5rm-squat": T(125, "legpress") };
+    s.tests = { "t-bodyweight": T(84), "t-broad": T(170), "t-highjump": T(30), "t-medball": T(5), "t-cooper": T(2600) };
     const ev = evaluateBlock(s, "b1");
-    expect(ev.weakest?.id).toBe("mobility");
+    expect(ev.weakest?.id).toBe("power");
     expect(ev.suggestions.length).toBeGreaterThan(0);
-    expect(ev.suggestions[0].goals.primary).toBe("mobility");
+    expect(ev.suggestions[0].goals.primary).toBe("power");
     const noProfile = evaluateBlock(sample(), "b1");
     expect(noProfile.missingProfile).toBe(true);
   });
@@ -845,31 +845,3 @@ describe("Zusatzlast nach der Wiederholungsgrenze", () => {
 });
 
 
-describe("5RM-Variantenempfehlung aus dem letzten Orden", () => {
-  const T: PlanBlock = { id: "t1", focusId: "test", label: "", start: "2026-12-07", end: "2026-12-13", load: "low", travel: false };
-  const B: PlanBlock = { id: "b1", focusId: "knight", label: "", start: "2026-10-05", end: "2026-12-06", load: "medium", travel: false };
-  const e = (name: string, weight?: number): SessionEntry => ({ key: `x|${name}`, slotId: "x", name, prog: "double", sets: [{ done: true, reps: 5, weight: weight ?? null }] });
-
-  it("empfiehlt die trainierte freie Variante, sonst die geführte — nie ohne Hinweis", async () => {
-    const { variantHint } = await import("./norms");
-    let s = sample();
-    s.plan = [B, T];
-    expect(variantHint(s, T, "t-agility")).toBeNull();
-    expect(variantHint(s, T, "t-5rm-squat")).toMatch(/keine der Übungen/);
-    expect(variantHint(s, T, "t-5rm-push")).toMatch(/geführte Variante/);
-    s = { ...s, sessions: [{ id: "s1", date: "2026-11-02", blockId: "b1", focusId: "knight", week: 2, role: "upper_a", profileId: "g", entries: { a: e("Back Squat"), b: e("Lat Pulldown") }, drills: {}, done: true }] };
-    expect(variantHint(s, T, "t-5rm-squat")).toMatch(/Back Squat.*dieselbe Variante/);
-    expect(variantHint(s, T, "t-5rm-pull")).toMatch(/Lat Pulldown.*geführte Variante/);
-    expect(variantHint(s, T, "t-5rm-push")).toMatch(/keine der Übungen/);
-    s = { ...s, sessions: [{ ...s.sessions[0], entries: { ...s.sessions[0].entries, c: e("Pull-Up", 10) } }] };
-    expect(variantHint(s, T, "t-5rm-pull")).toMatch(/Pull-Up.*dieselbe Variante/);
-  });
-
-  it("ohne vorangegangenen Orden: freie Wahl, sonst nichts", async () => {
-    const { variantHint } = await import("./norms");
-    const s = sample();
-    s.plan = [T];
-    expect(variantHint(s, T, "t-5rm-squat")).toMatch(/Erste Testwoche/);
-    expect(variantHint(s, T, "t-crunches")).toBeNull();
-  });
-});

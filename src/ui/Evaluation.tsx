@@ -116,7 +116,7 @@ export function Evaluation({ state, blockId, defaultOpen }: { state: AppState; b
           <details className="small muted">
             <summary>Quellen der Normen</summary>
             <ul>{sources.map(([src, tier]) => <li key={src}>{tier === "A" ? "Norm" : "Orientierung"}: {src}</li>)}</ul>
-            <p>„Gleich (im Messfehler)“: Der Unterschied zum letzten Test ist kleiner als das, was Tagesform und Messung ohnehin schwanken lassen (z. B. 0,05 s beim 10-m-Sprint, 5 cm beim Standweitsprung). Punkte entsprechen ungefähr einem Perzentil: 50 heißt, die Hälfte der Vergleichsgruppe ist besser. Sportabzeichen: Bronze 45, Silber 70, Gold 90. „Orientierung“ vergleicht mit trainierten Wettkampfsportlern, das ist ein harter Maßstab. Kraftwerte werden aus dem 5RM auf ein 1RM hochgerechnet und durch das Körpergewicht geteilt.</p>
+            <p>„Gleich (im Messfehler)“: Der Unterschied zum letzten Test ist kleiner als das, was Tagesform und Messung ohnehin schwanken lassen (z. B. 0,05 s beim 10-m-Sprint, 5 cm beim Standweitsprung). Punkte entsprechen ungefähr einem Perzentil: 50 heißt, die Hälfte der Vergleichsgruppe ist besser. Sportabzeichen: Bronze 45, Silber 70, Gold 90. „Orientierung“ vergleicht mit trainierten Wettkampfsportlern, das ist ein harter Maßstab.</p>
           </details>
         )}
       </div>

@@ -1,16 +1,15 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { IdeasWaiting } from "./Ideas";
 import { BEAST_BY_ID, TESTWEEK } from "../data";
-import { addDays, expandDrills, fmtDate, focusName, isTestBlock, mondayOf, scheduleFor, trainingDays } from "../engine/plan";
-import { variantHint } from "../engine/norms";
+import { expandDrills, fmtDate, focusName, isTestBlock } from "../engine/plan";
 import { parseClock } from "../engine/clock";
-import type { AppState, Cup, PlanBlock, TestDef, Weekday } from "../types";
-import { WEEKDAYS } from "../types";
+import type { AppState, Cup, PlanBlock, TestDef } from "../types";
 import { Collapse, Desc } from "./common";
 import { allDrillsDone, DrillList } from "./session/Drills";
 import { fmt } from "./Timer";
 import { TestTimer } from "./TestTimer";
-import { cupDone, closeTestWeek, saveTestResult, skipTestResult } from "../engine/testweek";
+import { benchmarkTime, cupDone, closeTestWeek, saveTestResult, skipTestResult, testDays, testMissingGear } from "../engine/testweek";
+export { testDays };
 import { Evaluation } from "./Evaluation";
 import { RavenCup, RavenLines, ravenOn } from "./Raven";
 import { evaluateBlock, type TestEval } from "../engine/norms";
@@ -44,7 +43,8 @@ export function TestRow({ t, state, block, onSave, onSkip, preview = false }: { 
   const prev = hist.filter((h) => h.blockId !== block.id);
   const best = (arr: { value: number }[]) => arr.length ? (t.better === "higher" ? Math.max(...arr.map((x) => x.value)) : Math.min(...arr.map((x) => x.value))) : null;
   const saved = thisBlock.length ? thisBlock[thisBlock.length - 1] : null;
-  const skipped = !saved && !!state.testSkips?.[`${block.id}:${t.id}`];
+  const noGear = saved ? null : testMissingGear(state, block, t);
+  const skipped = !saved && (!!state.testSkips?.[`${block.id}:${t.id}`] || !!noGear);
   const done = !preview && (!!saved || skipped);
   const prevBest = best(prev);
   const parsed = parseValue(val, t.unit);
@@ -59,7 +59,7 @@ export function TestRow({ t, state, block, onSave, onSkip, preview = false }: { 
       <button className="slot-done test-done" onClick={() => setFolded(false)} aria-label={`${t.name} erledigt, aufklappen`}>
         <span className="slot-done-check" aria-hidden>{skipped ? "–" : "✓"}</span>
         <span className="slot-name">{t.name}</span>
-        <span className="muted small">{saved ? show(saved.value, t.unit) : "ausgelassen"}</span>
+        <span className="muted small">{saved ? show(saved.value, t.unit) : noGear ? "entfällt" : "ausgelassen"}</span>
       </button>
     );
   }
@@ -72,7 +72,6 @@ export function TestRow({ t, state, block, onSave, onSkip, preview = false }: { 
           {t.variants.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
         </select>
       )}
-      {t.variants && <div className="muted small">{variantHint(state, block, t.id)}</div>}
       {!preview && t.timer && !skipped && <TestTimer spec={t.timer} onResult={(sec) => { if (t.timer?.mode === "hold") setVal(String(sec).replace(".", ",")); }} />}
       {!preview && !skipped && (
         <div className="row wrap">
@@ -82,7 +81,8 @@ export function TestRow({ t, state, block, onSave, onSkip, preview = false }: { 
           {!saved && onSkip && <button className="btn ghost small" onClick={() => onSkip(true)}>Auslassen</button>}
         </div>
       )}
-      {skipped && onSkip && <div className="row wrap"><span className="muted small">Ausgelassen (z. B. ohne Material).</span><button className="btn ghost small" onClick={() => onSkip(false)}>Doch testen</button></div>}
+      {noGear && <div className="muted small">{noGear}</div>}
+      {skipped && !noGear && onSkip && <div className="row wrap"><span className="muted small">Ausgelassen (z. B. ohne Material).</span><button className="btn ghost small" onClick={() => onSkip(false)}>Doch testen</button></div>}
       <div className="muted small">
         {saved ? <>Gespeichert: <strong>{show(saved.value, t.unit)}</strong></> : skipped ? null : "Noch kein Wert"}
         {prevBest != null && <> · vorheriger Bestwert {show(prevBest, t.unit)}</>}
@@ -121,26 +121,17 @@ export function Benchmark({ cup, state, update, block, today, preview = false }:
         </div>
       )}
       {(() => { const wk = times.filter((x) => x.date >= block.start && x.date <= winEnd).pop(); return wk ? <div className="muted small">Diese Testwoche: <strong>{fmt(wk.seconds)}</strong> · erneut speichern korrigiert</div> : null; })()}
+      {!preview && !cup.tests.length && benchmarkTime(state, block, cup, today) == null && (() => {
+        const k = `${block.id}:${cup.id}`;
+        const off = !!state.testSkips?.[k];
+        const set = (on: boolean) => update((st) => { const { [k]: _d, ...rest } = st.testSkips ?? {}; return { ...st, testSkips: on ? { ...rest, [k]: true } : rest }; });
+        return off
+          ? <div className="row wrap"><span className="muted small">Ausgelassen.</span><button className="btn ghost small" onClick={() => set(false)}>Doch laufen</button></div>
+          : <button className="btn ghost small" onClick={() => set(true)}>Auslassen</button>;
+      })()}
       <div className="muted small">{pr ? `Bestzeit ${fmt(pr)}` : "Noch keine Zeit"}</div>
     </div>
   );
-}
-
-/** Testtage (1.3): Die drei Testtage auf deine Trainingstage verteilt — Studio zuerst, Zuhause in der Mitte,
-    Park zuletzt (gern am Wochenende). Studio ist der Tag, dessen Ort eine Langhantel hat oder „Studio“ heißt. */
-export function testDays(state: AppState, block: PlanBlock): { place: string; day: Weekday; date: string }[] {
-  const days = trainingDays(state, block);
-  const sch = scheduleFor(state, block);
-  const prof = (d: Weekday) => state.equipment.find((p) => p.id === sch[d]);
-  const isGym = (d: Weekday) => { const p = prof(d); return !!p && (!!p.barbell || /studio|gym/i.test(p.name)); };
-  const pool: Weekday[] = days.length >= 3 ? days : (WEEKDAYS.filter((_, i) => i % 2 === 0) as Weekday[]);
-  const studio = pool.find(isGym) ?? pool[0];
-  const rest = pool.filter((d) => d !== studio);
-  const park = [...rest].reverse().find((d) => d === "Sa" || d === "So") ?? rest[rest.length - 1];
-  const home = rest.filter((d) => d !== park).find((d) => !isGym(d)) ?? rest.find((d) => d !== park) ?? rest[0];
-  const at = (d: Weekday) => addDays(mondayOf(block.start), WEEKDAYS.indexOf(d));
-  return [{ place: "Studio", day: studio, date: at(studio) }, { place: "Zuhause", day: home, date: at(home) }, { place: "Park", day: park, date: at(park) }]
-    .sort((a, b) => WEEKDAYS.indexOf(a.day) - WEEKDAYS.indexOf(b.day));
 }
 
 export function TestWeek({ state, update, block, today, preview = false, onPlan }: { state: AppState; update: Update; block: PlanBlock; today: string; preview?: boolean; onPlan?: () => void }) {
@@ -160,8 +151,8 @@ export function TestWeek({ state, update, block, today, preview = false, onPlan 
     <div className="stack">
       {/* Hinweise und Erzähler hinter Symbolen, wie bei jedem Orden */}
       <div className="row tw-head">
-        <span className="muted small">Drei Testtage, jeder frisch</span>
-        <Desc text={`Drei Testtage, jeder frisch; Erhaltungskalorien. Gleiche Bedingungen wie beim letzten Mal, Tests ohne Material auslassen. Die Woche davor spitzt zu: weniger Sätze, gleiche Gewichte.${preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}`} />
+        <span className="muted small">{days.length === 1 ? "Ein Testtag" : `${days.length} Testtage`}, jeder frisch</span>
+        <Desc text={`Draußen und Rudergerät an getrennten Tagen, jeder frisch; Erhaltungskalorien. Kraft und Kraftausdauer misst dein Log laufend mit. Gleiche Bedingungen wie beim letzten Mal, Tests ohne Material auslassen. Die Woche davor spitzt zu: weniger Sätze, gleiche Gewichte.${preview ? " Vorschau: erst ansehen — eintragen kannst du ab dem Wochenende davor." : ""}`} />
         {ravenOn(state) && <RavenTournamentBadge state={state} block={block} today={today} />}
       </div>
       {!preview && <IdeasWaiting ideas={state.ideas} />}
@@ -278,17 +269,10 @@ function DaySummary({ state, block, cups }: { state: AppState; block: PlanBlock;
   const rows = evaluateBlock(state, block.id).domains.flatMap((d) => d.tests).filter((t) => ids.has(t.test.id));
   if (!rows.length) return null;
   const better = rows.filter((r) => r.change === "better").length;
-  // Maximalkraft ohne belastbare Norm (Maschine): Schätzung aus Zuhause- und Park-Cup, sobald da
-  const strength = evaluateBlock(state, block.id).domains.find((d) => d.id === "strength");
-  const strengthHere = rows.some((r) => r.test.id.startsWith("t-5rm"));
-  const estLine = strength && strength.score == null && (strengthHere || strength.estimate)
-    ? strength.estimate ? `Maximalkraft geschätzt ~${strength.estimate.score} (aus ${strength.estimate.from.join(", ")}) — Rangfolge, kein Perzentil.` : "Maximalkraft: Maschinenwerte haben keine belastbare Norm. Eine Schätzung folgt mit Klimmzügen, Liegestützen (Zuhause) und Standweitsprung (Park)."
-    : null;
   return (
     <section className="card tw-sum">
       <div className="row between"><strong>Tagesbilanz</strong><span className="muted small">{rows.length} Tests{better ? ` · ${better} besser` : ""}</span></div>
       <ul className="slot-list">{rows.map((t) => <TestLine key={t.test.id} t={t} />)}</ul>
-      {estLine && <div className="muted small">{estLine}</div>}
     </section>
   );
 }

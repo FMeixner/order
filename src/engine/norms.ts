@@ -1,7 +1,7 @@
 /* Auswertung der Testwoche gegen Normen. Die Normen selbst stehen in data/modules/norms.json. */
 import { who5For } from "./who5";
-import { DOMAINS, FOCI, FOCUS_BY_ID, NORMS, TESTWEEK } from "../data";
-import type { AppState, Focus, Norm, PlanBlock, TestDef, TestResult } from "../types";
+import { DOMAINS, FOCI, NORMS, TESTWEEK } from "../data";
+import type { AppState, Focus, Norm, TestDef, TestResult } from "../types";
 
 export interface NormResult { score: number; label: string; tier: "A" | "B"; src: string; noScore?: boolean }
 
@@ -72,7 +72,7 @@ export function normScore(n: Norm, value: number, bodyweight: number | null): No
 }
 
 /* ---------- Auswertung eines Blocks ---------- */
-const TEST_BY_ID: Record<string, TestDef> = Object.fromEntries(TESTWEEK.cups.flatMap((c) => c.tests).map((t) => [t.id, t]));
+const TEST_BY_ID: Record<string, TestDef> = Object.fromEntries([...TESTWEEK.cups.flatMap((c) => c.tests), ...(TESTWEEK.retired ?? [])].map((t) => [t.id, t]));
 
 export interface TestEval {
   test: TestDef;
@@ -90,9 +90,9 @@ export interface DomainEval {
   estimate?: { score: number; from: string[] };
 }
 
-/** Verwandte Tests für Bereiche ohne belastbare Norm. Maximalkraft: Klimmzüge und Liegestütze (Oberkörper) und
-    Standweitsprung (Beine) hängen mäßig mit der Maximalkraft zusammen — das ergibt eine Rangfolge, kein Perzentil. */
-const ESTIMATE_FROM: Record<string, string[]> = { strength: ["t-pullups", "t-pushups", "t-broad"] };
+/** Verwandte Tests für Bereiche ohne belastbare Norm. Seit 1.47 leer: Maximalkraft liest die App laufend aus dem Log
+    (fitness.ts), die Schätzung aus Klimmzügen, Liegestützen und Sprung fällt mit diesen Tests weg. */
+const ESTIMATE_FROM: Record<string, string[]> = {};
 export interface Evaluation {
   domains: DomainEval[];
   weakest: DomainEval | null;
@@ -169,46 +169,4 @@ export function evaluateBlock(state: AppState, blockId: string): Evaluation {
         .map((x) => x.f)
     : [];
   return { domains, weakest, suggestions, who5, missingProfile };
-}
-
-/* ---------- Empfehlung der 5RM-Variante aus dem letzten Orden ----------
-   Der Test soll messen, was trainiert wurde: dieselbe Variante wie im vorangegangenen Orden.
-   Wurde keine der Übungen trainiert, ist die geführte Variante die richtige — nach Wochen ohne
-   die Übung wäre ein 5RM an der freien Variante riskant. Eine Empfehlung, keine Sperre. */
-
-/** Letzter Orden vor diesem Block (gleiche Regel wie previousOrderBlock in saga.ts, ohne Zirkelimport) */
-function prevOrder(state: AppState, b: PlanBlock): PlanBlock | null {
-  return [...state.plan]
-    .filter((x) => x.focusId !== "test" && x.start < b.start && FOCUS_BY_ID[x.focusId])
-    .sort((a, c) => c.start.localeCompare(a.start))[0] ?? null;
-}
-
-const FREE5RM: Record<string, { variant: string; rx: RegExp; needWeight?: boolean }> = {
-  "t-5rm-squat": { variant: "squat", rx: /^(Back|Front|Box) Squat$/ },
-  "t-5rm-push": { variant: "bench", rx: /Bench Press$/ },
-  "t-5rm-pull": { variant: "pullup", rx: /^(Pull-Up|Chest-to-Bar Pull-Up)$/, needWeight: true },
-};
-const GUIDED5RM: Record<string, { variant: string; rx: RegExp }> = {
-  "t-5rm-squat": { variant: "legpress", rx: /^Leg Press$/ },
-  "t-5rm-push": { variant: "machine", rx: /Chest Press Machine$/ },
-  "t-5rm-pull": { variant: "pulldown", rx: /^Lat Pulldown(\s*\(|$)/ },
-};
-
-/** Empfehlungstext für die Variantenwahl der 5RM-Tests, null wenn kein Hinweis nötig. */
-export function variantHint(state: AppState, block: PlanBlock, testId: string): string | null {
-  const free = FREE5RM[testId];
-  if (!free) return null;
-  const guided = GUIDED5RM[testId];
-  const prev = prevOrder(state, block);
-  if (!prev) return "Erste Testwoche: Variante frei wählen — danach dieselbe, sonst sind die Werte nicht vergleichbar.";
-  const done = state.sessions
-    .filter((s) => s.done && s.blockId === prev.id)
-    .flatMap((s) => Object.values(s.entries));
-  const hit = (rx: RegExp, needWeight?: boolean) =>
-    done.find((e) => rx.test(e.name) && (!needWeight || e.sets.some((x) => x.done && (x.weight ?? 0) > 0)));
-  const f = hit(free.rx, free.needWeight);
-  if (f) return `Letzter Orden: „${f.name}" trainiert — dieselbe Variante testen.`;
-  const g = hit(guided.rx);
-  if (g) return `Letzter Orden: „${g.name}" trainiert — die geführte Variante bleibt die richtige.`;
-  return "Letzter Orden: keine der Übungen trainiert — geführte Variante wählen. Nach Wochen ohne die Übung ist ein 5RM an der freien Variante riskant.";
 }

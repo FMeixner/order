@@ -76,11 +76,11 @@ describe("Erzähler", () => {
   });
   it("Turnier bezieht sich auf den letzten Orden und bewertet Cups nach Messfehler", () => {
     let s = train(base(), B, 1);
-    s = { ...s, tests: { "t-pushups": [{ date: "2026-06-01", blockId: "old", value: 30, raw: "30" }, { date: "2026-12-08", blockId: "t1", value: 31, raw: "31" }] } };
+    s = { ...s, tests: { "t-burpees": [{ date: "2026-06-01", blockId: "old", value: 30, raw: "30" }, { date: "2026-12-08", blockId: "t1", value: 31, raw: "31" }] } };
     // Ein Test macht noch keinen Cup (1.36): erst, wenn die übrigen Tests einen Wert haben oder ausgelassen sind
     expect(tournamentOf(s, T, "2026-12-08").cups.filter((c) => c.text).length).toBe(0);
-    const durendal = TESTWEEK.cups.find((c) => c.id === "durendal")!;
-    s = { ...s, testSkips: Object.fromEntries(durendal.tests.filter((x) => x.id !== "t-pushups").map((x) => [`${T.id}:${x.id}`, true as const])) };
+    const balmung = TESTWEEK.cups.find((c) => c.id === "balmung")!;
+    s = { ...s, testSkips: Object.fromEntries(balmung.tests.filter((x) => x.id !== "t-burpees").map((x) => [`${T.id}:${x.id}`, true as const])) };
     const t = tournamentOf(s, T, "2026-12-08");
     expect(t.intro).toMatch(/Klingen/);
     const withText = t.cups.filter((c) => c.text);

@@ -19,7 +19,7 @@ export function Cups({ state, update, today }: { state: AppState; update: Update
     </div>
   );
   const cups = TESTWEEK.cups;
-  const done = (c: (typeof cups)[number]) => cupDone(state, block, c);
+  const done = (c: (typeof cups)[number]) => cupDone(state, block, c, today);
   const earned = cups.filter(done).length;
   const save = (id: string, value: number, raw: string, variant?: string) =>
     update((st) => saveTestResult(st, block.id, id, value, raw, today, variant));

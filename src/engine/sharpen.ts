@@ -164,7 +164,8 @@ export function yearSlots(state: AppState, today: string = isoDate(new Date())):
     }
     let chosen: DomainId | null = best?.d ?? null;
     // Laufende Phase: die automatische Wahl ist festgehalten (sharpenAuto) und springt nicht mehr
-    const pinned = b.sharpenAuto && !b.sharpen ? b.sharpenAuto : null;
+    // Ein festgehaltener Bereich, den es als Schwerpunkt nicht mehr gibt (Kraftausdauer, Beweglichkeit seit 1.47), gilt nicht
+    const pinned = b.sharpenAuto && !(b.sharpen && b.sharpen !== "off" && SHARPEN[b.sharpen]) && b.sharpen !== "off" && pinOk(b.sharpenAuto) ? b.sharpenAuto : null;
     if (pinned) { chosen = (pinned.domain as DomainId | null) ?? null; out.set(b.id, { domain: chosen, purpose: pinned.purpose as SlotPurpose | undefined, reason: pinned.reason }); }
     else if (b.sharpen === "off") { chosen = null; out.set(b.id, { domain: null, reason: "Für diese Phase ausgeschaltet." }); }
     else if (b.sharpen && SHARPEN[b.sharpen]) { chosen = b.sharpen as DomainId; out.set(b.id, { domain: chosen, reason: "Selbst gewählt." }); }
@@ -269,7 +270,10 @@ export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
 
 /** 1.47: Sobald eine Phase läuft, wird ihre automatische Wahl festgehalten. Testwerte, Training und Schwerpunkt-Einheiten
     verschieben die Uhren; ohne Festhalten sprang „Automatisch“ dadurch mitten in der Phase (Schnelligkeit → Beweglichkeit). */
+const pinOk = (p: { domain: string | null }) => p.domain == null || !!SHARPEN[p.domain];
 export function pinAutoSlots(state: AppState, today: string = isoDate(new Date())): AppState | null {
+  // Ungültige Festlegungen (Bereich ohne Schwerpunkt-Modul) erst lösen, dann neu festhalten
+  if (state.plan.some((b) => b.sharpenAuto && !pinOk(b.sharpenAuto))) state = { ...state, plan: state.plan.map((b) => (b.sharpenAuto && !pinOk(b.sharpenAuto) ? { ...b, sharpenAuto: undefined } : b)) };
   const ys = yearSlots(state, today);
   let changed = false;
   const plan = state.plan.map((b) => {

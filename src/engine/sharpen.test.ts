@@ -16,13 +16,14 @@ function base(tests: Record<string, TestResult[]>, extra: PlanBlock[] = []): App
   const s = emptyState();
   return { ...s, onboarded: true, user: { ...s.user, sex: "m", birthYear: 1988 }, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" }, plan: [T, ...extra], tests };
 }
-const mobKe = { "t-sitreach": r(-20), "t-pushups": r(10), "t-pullups": r(2), "t-crunches": r(20) };
-const aerobKe = { "t-cooper": r(1400), "t-pushups": r(10), "t-pullups": r(2), "t-crunches": r(20) };
+// Seit 1.47 nur noch Tests, die das Training nicht selbst misst: Sprungkraft und Ausdauer als Defizite
+const mobKe = { "t-broad": r(170), "t-highjump": r(30), "t-medball": r(5), "t-cooper": r(1500) };
+const aerobKe = { "t-cooper": r(1300), "t-broad": r(170), "t-highjump": r(30), "t-medball": r(5) };
 
 describe("Schwerpunkt-Slot", () => {
   it("findet Defizite nur deutlich unter der Norm, schwächstes zuerst", () => {
     const d = deficitsBefore(base(mobKe), "2026-12-07")!;
-    expect(d.list.map((x) => x.id)).toEqual(["mobility", "ke"]);
+    expect(d.list.map((x) => x.id)).toEqual(["power", "aerob"]);
     // ohne Testwoche vor der Phase: nichts
     expect(deficitsBefore(base(mobKe), "2026-12-01")).toBeNull();
   });
@@ -36,11 +37,11 @@ describe("Schwerpunkt-Slot", () => {
   it("Testdefizit geht vor: schwächster Bereich, den der Orden nicht selbst trainiert", () => {
     const s = base(mobKe, [blk("slayer")]);
     const p = slotsFor(s, s.plan[1]);
-    expect(p.s1.domain).toBe("mobility");
+    expect(p.s1.domain).toBe("power");
     expect(p.s1.purpose).toBe("defizit");
     const s2 = base(aerobKe, [blk("pilgrim")]);
     const p2 = slotsFor(s2, s2.plan[1]);
-    expect(p2.s1.domain).toBe("ke"); // Pilgrim trainiert Ausdauer selbst
+    expect(p2.s1.domain).toBe("power"); // Pilgrim trainiert Ausdauer selbst
   });
   it("Nie gegen den Orden: Ausdauer stört Muskelaufbau und geht in die Blockfolge", () => {
     const s = base(aerobKe, [blk("slayer")]);
@@ -66,17 +67,17 @@ describe("Schwerpunkt-Slot", () => {
     for (const id of ["herald", "harlequin"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(false);
     for (const id of ["slayer", "assassin", "smith", "knight", "olympian", "conqueror"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(true);
   });
-  it("Beweglichkeit jeden Tag am Ende, Schnelligkeit zweimal am Anfang, Slot unter dem Budget", () => {
+  it("Anaerob einmal am Ende, Schnelligkeit zweimal am Anfang, Slot unter dem Budget", () => {
     const s = base(mobKe, [blk("slayer")]);
     const f = FOCUS_BY_ID.slayer;
     const roles = rolesFor(s, s.plan[1], f);
-    const withMob = applySlots(f, s, { ...s.plan[1], sharpen: "mobility" });
-    expect(roles.every((rk) => withMob.roles[rk].blocks.at(-1)?.type === "module")).toBe(true);
+    const withAn = applySlots(f, s, { ...s.plan[1], sharpen: "anaerob" });
+    expect(roles.filter((rk) => { const x = withAn.roles[rk].blocks.at(-1); return x?.type === "module" && x.module === "sharpen"; }).length).toBe(1);
     const withSpeed = applySlots(f, s, { ...s.plan[1], sharpen: "speed" });
     const first = roles.filter((rk) => { const b0 = withSpeed.roles[rk].blocks[0]; return b0.type === "module" && b0.module === "sharpen"; });
     expect(first.length).toBe(2);
     expect(SLOT_BUDGET).toBe(0.25);
-    for (const dom of ["speed", "power", "mobility", "ke", "anaerob"]) {
+    for (const dom of ["speed", "power", "anaerob"]) {
       const x = applySlots(f, s, { ...s.plan[1], sharpen: dom });
       const week = (ff: typeof f) => roles.reduce((sum, rk) => sum + estimateRole(ff.roles[rk], g).total, 0);
       const extra = (week(x) - week(f)) / week(x);

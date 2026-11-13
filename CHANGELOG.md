@@ -4,6 +4,12 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 
 ## [Unveröffentlicht]
 
+### Geändert
+- **Schlanke Testwoche:** Getestet wird nur noch, was das Training nicht selbst misst. Weg sind die 5RM-Tests, Klimmzüge, Liegestütze, Crunches, Dead Hang, Wall Sit, Sit and Reach, Stock-Durchführen und der Stichtest (mit ihnen der Durendal-Cup). Es bleiben: im Park Sprint, 5-10-5, Standweitsprung, Hochsprung, Medizinballwurf und der Cooper-Test; im Studio Körpergewicht, Burpees und 500 m Rudern; zuhause die Bestie auf Zeit. Draußen und Rudergerät liegen nie am selben Tag. Alte Werte bleiben im Verlauf.
+- **Medizinballwurf nach Ausrüstung:** Ohne Medizinball im Profil des Park-Tags entfällt der Test von selbst und blockiert den Cup nicht.
+- **Bestie auf Zeit als eigener Cup:** Arondight ist verdient, sobald die Zeit dieser Testwoche steht – oder du lässt ihn aus.
+- **Schwerpunkte nur noch, wo sie etwas bringen:** Schnelligkeit, Sprungkraft, Anaerob und Ausdauer. Kraftausdauer trainiert fast jeder Orden mit, Beweglichkeit halten Warm-up und Cool-down (aufbauen: Paladin oder Dancer). Eine laufende Phase mit einem dieser beiden bekommt automatisch eine neue Wahl.
+
 ### Behoben
 - **Automatischer Schwerpunkt springt nicht mehr:** Sobald eine Phase läuft, hält die App ihre automatische Wahl fest. Testwerte, Trainingseinheiten und deine eigene Auswahl verschieben die Empfehlung danach nicht mehr; wer von einer eigenen Wahl auf „Automatisch“ zurückstellt, landet wieder bei derselben Empfehlung. Vorher rechnete die App die Wahl bei jedem Öffnen aus dem aktuellen Stand neu – frische Testergebnisse oder ein früheres Ende der Testwoche konnten sie kippen.
 

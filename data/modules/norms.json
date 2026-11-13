@@ -36,11 +36,11 @@
   "domains": [
     {"id": "speed", "name": "Schnelligkeit", "goal": "speed", "tests": ["t-sprint30", "t-agility"]},
     {"id": "power", "name": "Sprungkraft", "goal": "power", "tests": ["t-broad", "t-medball", "t-highjump"]},
-    {"id": "strength", "name": "Maximalkraft", "goal": "strength", "tests": ["t-5rm-squat", "t-5rm-push", "t-5rm-pull"]},
-    {"id": "ke", "name": "Kraftausdauer", "goal": "conditioning", "tests": ["t-pushups", "t-pullups", "t-crunches"]},
+    {"id": "strength", "name": "Maximalkraft", "goal": "strength", "tests": []},
+    {"id": "ke", "name": "Kraftausdauer", "goal": "conditioning", "tests": []},
     {"id": "anaerob", "name": "Anaerob", "goal": "conditioning", "tests": ["t-row500", "t-burpees"]},
     {"id": "aerob", "name": "Ausdauer", "goal": "endurance", "tests": ["t-cooper", "t-rhr"]},
-    {"id": "skill", "name": "Skill", "goal": "skill", "tests": ["t-stichserie"]},
-    {"id": "mobility", "name": "Beweglichkeit", "goal": "mobility", "tests": ["t-sitreach", "t-dislocate"]}
+    {"id": "skill", "name": "Skill", "goal": "skill", "tests": []},
+    {"id": "mobility", "name": "Beweglichkeit", "goal": "mobility", "tests": []}
   ]
 }

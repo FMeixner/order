@@ -522,43 +522,41 @@ test("Schwerpunkt: „Für diesen Orden entfernen“ schaltet ihn für die Phase
   await expect(page.getByText(/^Schwerpunkt:|^Mehr vom Ordensziel/)).toHaveCount(0);
 });
 
-test("Testwoche: ein Versuch, Timer mit 4 s in Position, Korrektur, Auslassen, Cup erst komplett verdient", async ({ page }) => {
+test("Testwoche: ein Versuch, Timer mit 4 s in Position, Korrektur, Auslassen, Cup erst komplett verdient (1.47 ohne 5RM)", async ({ page }) => {
   const st = fixture();
   const start = st.plan[0].start;
   const d = new Date(`${start}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 6);
   st.plan = [{ id: "t1", focusId: "test", label: "Testwoche", start, end: d.toISOString().slice(0, 10), load: "medium", travel: false }];
   await seed(page, st);
   await page.goto("./");
-  await page.locator(".day-btn").filter({ hasText: "Zuhause" }).click();
-  const durendal = page.locator(".collapse").filter({ hasText: "Durendal-Cup" }).first();
-  // Ein Feld je Test
-  await expect(page.locator(".test-row").filter({ hasText: "Sit and Reach" }).locator("input")).toHaveCount(1);
-  // Timer beim Dead Hang: Start → In Position → Stopp füllt das Feld
-  const hang = page.locator(".test-row").filter({ hasText: "Dead Hang" });
-  await hang.getByRole("button", { name: "▶ Timer" }).click();
-  await expect(hang.locator(".test-timer-num")).toContainText("In Position");
-  await page.waitForTimeout(5200);
-  await hang.getByRole("button", { name: "Stopp" }).click();
-  await expect(hang.locator("input")).not.toHaveValue("");
-  await hang.getByRole("button", { name: "Speichern" }).click();
+  await page.locator(".day-btn").filter({ hasText: "Studio" }).click();
+  const balmung = page.locator(".collapse").filter({ hasText: "Balmung-Cup" }).first();
+  // Ein Feld je Test; keine 5RM-Tests mehr (1.47)
+  await expect(page.locator(".test-row").filter({ hasText: "Körpergewicht" }).locator("input")).toHaveCount(1);
+  await expect(page.locator(".test-row").filter({ hasText: "5RM" })).toHaveCount(0);
+  // Timer bei Burpees: Start → In Position, abbrechen geht
+  const burp = page.locator(".test-row").filter({ hasText: "Burpees 1 Min" });
+  await burp.getByRole("button", { name: "▶ Timer" }).click();
+  await expect(burp.locator(".test-timer-num")).toContainText("In Position");
+  await burp.getByRole("button", { name: "Abbrechen" }).click();
+  const bw = page.locator(".test-row").filter({ hasText: "Körpergewicht" });
+  await bw.locator("input").fill("80");
+  await bw.getByRole("button", { name: "Speichern" }).click();
   // Ein Test reicht nicht für den Cup
-  await expect(durendal.locator(".collapse-head")).not.toContainText("✓");
+  await expect(balmung.locator(".collapse-head")).not.toContainText("✓");
   // Korrektur: aufklappen, neuer Wert ersetzt den alten
-  await page.getByRole("button", { name: "Dead Hang erledigt, aufklappen" }).click({ timeout: 6000 });
-  await hang.locator("input").fill("75");
-  await hang.getByRole("button", { name: "Korrigieren" }).click();
+  await page.getByRole("button", { name: "Körpergewicht erledigt, aufklappen" }).click({ timeout: 6000 });
+  await bw.locator("input").fill("79");
+  await bw.getByRole("button", { name: "Korrigieren" }).click();
   let s = await stored(page);
-  expect(s.tests["t-deadhang"].filter((r: { blockId: string }) => r.blockId === "t1").map((r: { value: number }) => r.value)).toEqual([75]);
-  // Rest des Cups: Werte oder Auslassen, dann ist er verdient
-  for (const name of ["Sit and Reach", "Schulter: Stock-Durchführen", "Klimmzüge", "Liegestütze", "Crunches, Takt 40 BPM"]) {
-    const row = page.locator(".test-row").filter({ hasText: name });
-    await row.locator("input").fill("10");
-    await row.getByRole("button", { name: "Speichern" }).click();
-  }
-  await page.locator(".test-row").filter({ hasText: "Wall Sit" }).getByRole("button", { name: "Auslassen" }).click();
+  expect(s.tests["t-bodyweight"].filter((r: { blockId: string }) => r.blockId === "t1").map((r: { value: number }) => r.value)).toEqual([79]);
+  // Rest des Cups: Wert oder Auslassen, dann ist er verdient
+  await burp.locator("input").fill("20");
+  await burp.getByRole("button", { name: "Speichern" }).click();
+  await page.locator(".test-row").filter({ hasText: "500 m Rudern" }).getByRole("button", { name: "Auslassen" }).click();
   s = await stored(page);
-  expect(s.testSkips?.["t1:t-wallsit"]).toBe(true);
-  await expect(page.locator(".collapse-head").filter({ hasText: "Durendal-Cup ✓" })).toHaveCount(1);
+  expect(s.testSkips?.["t1:t-row500"]).toBe(true);
+  await expect(page.locator(".collapse-head").filter({ hasText: "Balmung-Cup ✓" })).toHaveCount(1);
 });
 
 test("Testwoche: › zeigt die erste Woche des nächsten Ordens als Vorschau, ‹ führt zurück", async ({ page }) => {

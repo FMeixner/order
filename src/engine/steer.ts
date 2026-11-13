@@ -21,13 +21,14 @@ export const CLOCK_AXES: Record<ClockId, AxisId[]> = {
 };
 
 /** Uhr → Schwerpunkt-Bereiche mit Slot-Modul (Stufe 2). Kraft, Sehnen und Skill haben kein Modul:
-    Sie brauchen einen Orden mit eigenen Blöcken, keinen kleinen Slot. */
+    Sie brauchen einen Orden mit eigenen Blöcken, keinen kleinen Slot. Seit 1.47 auch Kraftausdauer (trainiert fast jeder
+    Orden mit) und Beweglichkeit (Warm-up und Cool-down halten sie) nicht. */
 export const CLOCK_SHARPEN: Record<ClockId, string[]> = {
   schnellkraft: ["speed", "power"],
-  ke: ["ke"],
+  ke: [],
   anaerob: ["anaerob"],
   aerob: ["aerob"],
-  mobility: ["mobility"],
+  mobility: [],
   sehnen: [],
   kraft: [],
 };
