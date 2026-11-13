@@ -2,10 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
-## [Unveröffentlicht]
+## [1.38.0] – 2026-11-13
 
 ### Geändert
-- **Slayer Dienstag neu (Schultern und Arme):** vier Supersets statt acht Blöcken, für Multipresse und Kurzhanteln: Seitheben + Band Face Pull (an der Multipresse), Schulterdrücken an der Multipresse + Dead Bug, enges Bankdrücken an der Multipresse + Incline Curl, Overhead Triceps Extension + Hammer Curl (gleiches Gewicht). Reverse Curl, Upright Row und der Arm-Finisher fallen weg.
+- **Slayer Dienstag neu (Schultern und Arme):** drei Supersets statt acht Blöcken, für Multipresse und Kurzhanteln: Band Face Pull (an der Multipresse) + Schulterdrücken an der Multipresse + Dead Bug, enges Bankdrücken an der Multipresse + Incline Curl, Overhead Triceps Extension + Hammer Curl (gleiches Gewicht). Seitheben, Reverse Curl, Upright Row und der Arm-Finisher fallen weg; etwa 45 statt 55 Minuten.
+- **Slayer: weniger direktes Schultervolumen.** Seitheben und hinterer Delta je 6 Sätze pro Woche statt 9 (Seitheben Montag und Donnerstag, hinterer Delta Montag plus Face Pull am Dienstag); Drücken und Schwert tragen die Schulter mit.
 - **Schwerpunkte überarbeitet (Auswahl des Nutzers):** Sprungkraft jetzt Strecksprünge + Pogo Hops (auf der Stelle); Kraftausdauer jetzt die Testübungen (je ein Satz Liegestütze und Klimmzüge bis 2 vor Schluss, Wall Sit 60 s, Dead Hang); Anaerob 6 × 15 s hart / 45 s locker. Schnelligkeit, Beweglichkeit und Ausdauer bleiben.
 
 ### Neu

@@ -32,14 +32,11 @@
       ]
     },
     "arme_kurz": {
-      "name": "Schultern und Arme", "location": "gym", "minutes": 50,
+      "name": "Schultern und Arme", "location": "gym", "minutes": 45,
       "warmup": ["short_base", "thoracic_standing", "windmill", "shoulder_prep"], "cooldown": ["cd_di"],
       "blocks": [
-        {"type": "superset", "rest": 60, "slots": [
-          {"id": "w-di-4", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "note": "Zum Einstieg: wärmt die Schulter vor."},
-          {"id": "w-di-3", "name": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "reps", "note": "Band an der Multipresse auf Augenhöhe befestigen."}
-        ]},
         {"type": "superset", "rest": 90, "slots": [
+          {"id": "w-di-3", "name": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "reps", "note": "Band an der Multipresse auf Augenhöhe befestigen. Zum Einstieg: wärmt die Schulter vor."},
           {"id": "w-fr-5", "core": true, "name": "Smith Machine Shoulder Press", "home": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
           {"id": "w-di-6", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"}
         ]},
@@ -54,16 +51,13 @@
       ]
     },
     "home_hypertrophie": {
-      "name": "Schwert und Oberkörper", "location": "home", "minutes": 60,
+      "name": "Schwert und Oberkörper", "location": "home", "minutes": 55,
       "warmup": ["short_base", "sword_prep", "thoracic_roller", "dislocate"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "module", "module": "longsword", "variant": "lernweg", "fallbackFlow": "mobility"},
         {"type": "single", "slot": {"id": "w-do-2", "core": true, "name": "Deficit Push-Up", "sets": 3, "reps": "AMRAP", "prog": "reps", "rest": 90, "note": "Wenn 20+ Wdh: Weste dazu"}},
         {"type": "single", "slot": {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"], "rest": 90}},
-        {"type": "superset", "rest": 60, "slots": [
-          {"id": "w-do-5c", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
-          {"id": "w-do-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}
-        ]},
+        {"type": "single", "slot": {"id": "w-do-5c", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-munin", "ng-nidhoggr", "ng-thorsson", "ng-njord", "ng-var", "ng-lagertha"], "note": "Rumpf-Finisher statt Russian Twist + Pallof Press: Rumpf, Rotation und Griff, ohne Beine (Freitag braucht sie frisch)."}, "slots": [
           {"id": "w-do-6a", "name": "KB Russian Twist", "reise": {"name": "Russian Twist", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"},
           {"id": "w-do-6b", "name": "Band Pallof Press", "sets": 3, "reps": "10/Seite", "prog": "reps"}
