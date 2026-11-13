@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.48.1] – 2026-11-13
+
+### Geändert
+- **Ersatz für jede Bandübung:** Ohne Bänder am Ort nimmt die App der Reihe nach Kabel, Kurzhanteln, Kettlebell, Langhantel, dann Stange oder Ringe, zuletzt Körpergewicht. Beispiele: Band Curl → Cable Curl, Kurzhantel-Curl, Langhantel-Curl, Ring Curl, Chin-Up; Band Row → Kabelrudern, Kurzhantelrudern, Ring Row, Table Row; Band Pallof Press → Dead Bug; assistierte Klimmzüge → negative Chin-Ups.
+- Neue Übungen: **Ring Curl** (Bizeps an den Ringen, Körperwinkel steuert die Last) und **Außenrotation in Seitlage mit Kurzhantel** (Rotatorenmanschette).
+
 ## [1.48.0] – 2026-11-13
 
 ### Geändert

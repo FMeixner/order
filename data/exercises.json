@@ -91,19 +91,50 @@
     "equip": "band",
     "instead": [
       {
+        "name": "Cable Curl"
+      },
+      {
         "name": "DB Biceps Curl"
       },
       {
-        "name": "Cable Curl"
+        "name": "Barbell Curl"
+      },
+      {
+        "name": "Ring Curl"
+      },
+      {
+        "name": "Chin-Up"
       }
     ]
   },
   "Band Deadlift": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "DB Romanian Deadlift"
+      },
+      {
+        "name": "KB Deadlift"
+      },
+      {
+        "name": "Romanian Deadlift"
+      },
+      {
+        "name": "Single-Leg RDL"
+      }
+    ]
   },
   "Band External Rotation": {
     "equip": "band",
-    "desc": "Ellbogen am Körper, 90° gebeugt, Unterarm gegen das Band nach außen drehen. Schulterblatt bleibt ruhig."
+    "desc": "Ellbogen am Körper, 90° gebeugt, Unterarm gegen das Band nach außen drehen. Schulterblatt bleibt ruhig.",
+    "instead": [
+      {
+        "name": "Side-Lying DB External Rotation"
+      },
+      {
+        "name": "Klingen-Außenrotation"
+      }
+    ]
   },
   "Band Face Pull": {
     "equip": "band",
@@ -112,70 +143,251 @@
         "name": "Face Pull"
       },
       {
+        "name": "Cable Rear Delt Fly"
+      },
+      {
         "name": "DB Rear Delt Fly"
+      },
+      {
+        "name": "Reverse Pec Deck"
+      },
+      {
+        "name": "Prone Y-T-W"
       }
     ]
   },
   "Band Fly": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Cable Chest Fly"
+      },
+      {
+        "name": "DB Fly"
+      },
+      {
+        "name": "Push-Up"
+      }
+    ]
   },
   "Band Lateral Raise": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Cable Lateral Raise"
+      },
+      {
+        "name": "DB Lateral Raise"
+      }
+    ]
   },
   "Band Overhead Triceps Extension": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Cable Overhead Triceps Extension"
+      },
+      {
+        "name": "DB Overhead Triceps Extension"
+      },
+      {
+        "name": "Diamond Push-Up"
+      }
+    ]
   },
   "Band Pallof Press": {
     "equip": "band",
-    "desc": "Band seitlich auf Brusthöhe, Hände vor der Brust nach vorn strecken und gegen die Drehung halten."
+    "desc": "Band seitlich auf Brusthöhe, Hände vor der Brust nach vorn strecken und gegen die Drehung halten.",
+    "instead": [
+      {
+        "name": "Dead Bug"
+      }
+    ]
   },
   "Band Pull-Apart": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Cable Rear Delt Fly"
+      },
+      {
+        "name": "DB Rear Delt Fly"
+      },
+      {
+        "name": "Prone Y-T-W"
+      }
+    ]
   },
   "Band Pull-Through": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Cable Pull-Through"
+      },
+      {
+        "name": "KB Swing"
+      },
+      {
+        "name": "DB Romanian Deadlift"
+      },
+      {
+        "name": "Single-Leg RDL"
+      }
+    ]
   },
   "Band Pulldown": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Lat Pulldown"
+      },
+      {
+        "name": "Pull-Up"
+      },
+      {
+        "name": "Negative Chin-Up"
+      },
+      {
+        "name": "Ring Row"
+      }
+    ]
   },
   "Band Pushdown": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Rope Pushdown"
+      },
+      {
+        "name": "DB Overhead Triceps Extension"
+      },
+      {
+        "name": "Diamond Push-Up"
+      }
+    ]
   },
   "Band Reverse Curl": {
     "equip": "band",
-    "desc": "Wie Cable Reverse Curl, Band unter den Füßen, Obergriff."
+    "desc": "Wie Cable Reverse Curl, Band unter den Füßen, Obergriff.",
+    "instead": [
+      {
+        "name": "Cable Reverse Curl"
+      },
+      {
+        "name": "DB Reverse Curl"
+      }
+    ]
   },
   "Band Romanian Deadlift": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "DB Romanian Deadlift"
+      },
+      {
+        "name": "KB Romanian Deadlift"
+      },
+      {
+        "name": "Romanian Deadlift"
+      },
+      {
+        "name": "Single-Leg RDL"
+      }
+    ]
   },
   "Band Rotational Press": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Cable Rotational Press"
+      },
+      {
+        "name": "Landmine Rotational Press"
+      },
+      {
+        "name": "Lying Windshield Wipers"
+      }
+    ]
   },
   "Band Row": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Seated Cable Row"
+      },
+      {
+        "name": "Double DB Row"
+      },
+      {
+        "name": "Ring Row"
+      },
+      {
+        "name": "Table Row"
+      }
+    ]
   },
   "Band Upright Row": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Cable Upright Row"
+      },
+      {
+        "name": "DB Upright Row"
+      }
+    ]
   },
   "Band Woodchopper": {
-    "equip": "band"
+    "equip": "band",
+    "instead": [
+      {
+        "name": "Cable Woodchopper"
+      },
+      {
+        "name": "KB Woodchop"
+      },
+      {
+        "name": "Russian Twist"
+      }
+    ]
   },
   "Band-Assisted Chin-Up": {
     "equip": "band",
     "needs": [
       "bar"
+    ],
+    "instead": [
+      {
+        "name": "Negative Chin-Up"
+      },
+      {
+        "name": "Ring Row"
+      }
     ]
   },
   "Band-Assisted Negative Chin-Up": {
     "equip": "band",
     "needs": [
       "bar"
+    ],
+    "instead": [
+      {
+        "name": "Negative Chin-Up"
+      }
     ]
   },
   "Band-Assisted Pull-Up": {
     "equip": "band",
     "needs": [
       "bar"
+    ],
+    "instead": [
+      {
+        "name": "Negative Chin-Up"
+      },
+      {
+        "name": "Ring Row"
+      }
     ]
   },
   "Barbell Curl": {
@@ -937,6 +1149,13 @@
       "rings"
     ]
   },
+  "Ring Curl": {
+    "equip": "bodyweight",
+    "needs": [
+      "rings"
+    ],
+    "desc": "Ringe auf Brusthöhe, Untergriff, Körper schräg nach hinten gelehnt, Arme gestreckt vor dem Körper. Ellbogen bleiben vorn und hoch, nur aus dem Ellbogen beugen, bis die Hände an der Stirn sind. Steiler stehen macht es leichter."
+  },
   "Ring Row": {
     "equip": "bodyweight",
     "weighted": true,
@@ -1098,6 +1317,10 @@
   "Shuttle Runs 6 × 20 m": {
     "equip": "cardio",
     "run": true
+  },
+  "Side-Lying DB External Rotation": {
+    "equip": "dumbbell",
+    "desc": "Seitlage, oberer Ellbogen 90° gebeugt und am Körper (Handtuch dazwischen). Leichte Kurzhantel vom Bauch nach oben drehen, Schulterblatt bleibt ruhig, langsam zurück. Für die Rotatorenmanschette."
   },
   "Side Plank": {
     "equip": "bodyweight"
@@ -1396,7 +1619,12 @@
   },
   "Spanish Squat": {
     "equip": "band",
-    "desc": "Band hinter den Kniekehlen, gegen eine Wand oder einen Pfosten gespannt. Knie leicht gebeugt, Oberkörper aufrecht — die Quadrizeps-Endposition halten."
+    "desc": "Band hinter den Kniekehlen, gegen eine Wand oder einen Pfosten gespannt. Knie leicht gebeugt, Oberkörper aufrecht — die Quadrizeps-Endposition halten.",
+    "instead": [
+      {
+        "name": "Wall Sit"
+      }
+    ]
   },
   "Spagat-Übergang": {
     "equip": "bodyweight",
