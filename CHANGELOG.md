@@ -5,6 +5,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ## [Unveröffentlicht]
 
 ### Geändert
+- **Große Gewichtssprünge: schnell hoch statt viele Wiederholungen:** Liegt die nächste Hantel weit weg (etwa 4 → 6 kg beim Seitheben) und reicht deine Leistung schon darüber hinaus, schlägt die App gleich das höhere Gewicht vor, mit Wiederholungen unter dem Bereich (aus 4 kg × 28 wird 6 kg × 9), statt beim alten Gewicht 12–15 Wiederholungen. Das gilt auch, wenn der Stand aus einem anderen Wiederholungsbereich oder Ort kommt – außer, ein leichteres Gewicht passt noch in den Bereich.
 - **Cups im Almanach ehrlich:** Ausgelassene Tests (etwa der Cooper-Test bei Eis) bleiben dort offen, bis sie einen Wert haben. Der Cup der Testwoche selbst bleibt verdient.
 - **Frei testen:** Unter Almanach › Cups lässt sich jeder Test jederzeit machen, wie eine Bestie aus dem Bestiarium. Freie Werte zählen als Checkpoint: Sie stehen im Stand und können einen Schwerpunkt freigeben, gelten aber nicht als Testwoche.
 - **Keine Erklärzeilen mehr unter Bestien und Finishern** (etwa „Rumpf-Finisher statt …“).

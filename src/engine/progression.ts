@@ -289,10 +289,15 @@ export function transferState(r: Resolved, st: SlotState, p: EquipmentProfile): 
   // Erst eine Stufe, deren Wiederholungen im Bereich (bis zur Obergrenze) liegen — schwerste zuerst.
   // Über der Obergrenze nur, wenn der Ort keine schwerere Stufe hat: Dann ist die höhere Zahl die einzige
   // Form desselben Reizes (etwa eine einzelne Kettlebell zuhause) und MOVE_CAP begrenzt sie (1.41).
+  // Bei großen Sprüngen lieber schnell aufs höhere Gewicht, die Wiederholungen dafür unter dem Bereich (Friedrich, 1.49):
+  // Eine schwerere Stufe zählt, sobald die Leistung dort mindestens lo − 3 trägt, auch ohne „leicht“ zuletzt.
+  // Nur, wenn leichter nichts im Bereich bleibt — sonst zählt die leichtere Stufe mit mehr Wiederholungen (Ortswechsel).
+  const fitsBelow = cands.some((c) => c <= w && need(c) >= floor && need(c) <= hi);
+  const bigJump = (c: number) => !fitsBelow && c > w && r.prog === "double" && c / w - 1 > FIXED_GAP && need(c) >= Math.max(1, lo - 3) && lastFb !== "schwer" && lastFb !== "zuschwer";
   for (const c of cands) {
-    if (c > w && !ready) continue;
-    const n = need(c);
-    if (n >= floor && (r.prog !== "double" || n <= repCap || nextLoad(p, r.equip, c) == null)) return { ...st, weight: c, target: r.prog === "double" ? n : lo };
+    if (c > w && !ready && !bigJump(c)) continue;
+    const n = bigJump(c) ? Math.max(Math.max(1, lo - 3), Math.min(need(c), hi)) : need(c);
+    if ((n >= floor || bigJump(c)) && (r.prog !== "double" || n <= repCap || nextLoad(p, r.equip, c) == null)) return { ...st, weight: c, target: r.prog === "double" ? n : lo };
   }
   // Dann lieber die nächstschwerere Stufe knapp unter dem Bereich als leichteres Gewicht mit mehr Wiederholungen
   // als der Obergrenze: dieselbe Leistung, höheres Gewicht. Mindestens das halbe untere Bereichsende, und nicht
@@ -366,6 +371,7 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
   let repsLabel = r.reps;
   let hint = "";
   let gap: string | undefined;
+  let jumpTo: number | null = null;
   const w0 = r.loadable ? s.weight : null;
 
   if (r.prog === "double" || r.prog === "ladder") {
@@ -375,11 +381,21 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
       // Der Ort hat keine schwerere Stufe (sonst hätte die Umrechnung sie genommen), darum gilt hier MOVE_CAP.
       const moved = st0 && s !== st0 && st0.weight != null && w0 != null && w0 < st0.weight && (s.target ?? 0) > hi ? Math.min(s.target!, Math.max(hi, MOVE_CAP)) : 0;
       const ceil = Math.max(moved, p && w0 != null && r.prog === "double" ? gapCeiling(p, r.equip, w0, rp.lo, hi) : hi);
-      targetReps = Math.min(ceil, Math.max(Math.max(1, rp.lo - 3), s.target ?? rp.lo));
-      const from = Math.min(rp.lo, targetReps);
-      repsLabel = `${from}${ceil > from ? `–${ceil}` : ""}${rp.suffix}`;
-      const n = ceil > hi && p && w0 != null ? nextLoad(p, r.equip, w0) : null;
-      if (n) gap = `→ bis ${r.sets} × ${ceil}, dann ${fmtKg(n.next)} kg`;
+      // Schon über der Obergrenze (etwa 28 Wdh mit 4 kg): gleich aufs nächste Gewicht, Wiederholungen darunter (1.49)
+      const up = r.prog === "double" && p && w0 != null && !moved && (s.target ?? 0) > ceil ? nextLoad(p, r.equip, w0) : null;
+      if (up) {
+        const land = landingReps(w0!, s.target!, s.fb[s.fb.length - 1] ?? "ok", up.next, rp.lo);
+        jumpTo = up.next;
+        targetReps = land;
+        repsLabel = `${land}${hi > land ? `–${hi}` : ""}${rp.suffix}`;
+        gap = `Großer Sprung: ${fmtKg(up.next)} kg statt ${fmtKg(w0!)} kg, erst ${land} Wdh, dann zurück in den Bereich`;
+      } else {
+        targetReps = Math.min(ceil, Math.max(Math.max(1, rp.lo - 3), s.target ?? rp.lo));
+        const from = Math.min(rp.lo, targetReps);
+        repsLabel = `${from}${ceil > from ? `–${ceil}` : ""}${rp.suffix}`;
+        const n = ceil > hi && p && w0 != null ? nextLoad(p, r.equip, w0) : null;
+        if (n) gap = `→ bis ${r.sets} × ${ceil}, dann ${fmtKg(n.next)} kg`;
+      }
     }
   } else if ((r.prog === "weight" || r.prog === "topset") && rp.lo !== null && !rp.amrap) {
     const ceil = p && w0 != null ? fixedCeiling(p, r.equip, w0, rp.lo) : rp.lo;
@@ -397,7 +413,7 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
   }
 
   if (targetReps === null && rp.lo !== null && !rp.amrap) targetReps = rp.lo;
-  const weight = r.loadable ? s.weight : null;
+  const weight = r.loadable ? jumpTo ?? s.weight : null;
   const backoff: number | null = null; // Back-off-Last rechnet backoffLoad() mit dem Profil
   if (weight == null && r.loadable) hint = "Startgewicht wählen";
   if (s.estimated && weight != null) {
