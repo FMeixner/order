@@ -39,6 +39,8 @@ export interface Resolved {
   swapped?: boolean;
   /** Bewusst die freie Originalübung gewählt (1.50): bleibt frei, auch wenn der Tag geführte Varianten bekommt */
   freeChosen?: boolean;
+  /** Feste Regel des Ordens für hohe Last (Slot.guided) */
+  guideRule?: "never" | "high";
   /** Anpassungen durch die App, für die Details */
   why?: string[];
   /** Übung, die ohne Tausch dran wäre */
@@ -222,6 +224,7 @@ function resolveBase(slot: Slot, p: EquipmentProfile, reduced: boolean, skills?:
     finish: finishFor(slot, c.name, kind, loadable, equip),
     cluster: kind === "strength" && c.name === slot.name ? slot.cluster : undefined,
     proposal: slot.proposal,
+    guideRule: slot.guided,
     missingEquipment: !chosen,
     loadable,
     original: c.name,

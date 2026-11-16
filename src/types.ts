@@ -32,6 +32,9 @@ export interface Slot {
   why?: string[];
   /** Kernübung des Ordens: bleibt am Kurztag, fällt sie weg, wandert sie auf einen anderen Tag */
   core?: boolean;
+  /** Geführt bei hoher Last (1.50): „never“ bleibt immer frei, „high“ wird bei hoher Last immer geführt — auch als
+      schwerer Partner im Kontrast. Ohne Angabe entscheidet die Hälfte-Regel (guidedKeys). */
+  guided?: "never" | "high";
   /** Übung auf Stufe gym (Studio). */
   name: string;
   /** Ersatz zuhause. Fehlt: wie gym. null: entfällt. */

@@ -162,9 +162,11 @@ export function collectItems(ctx: SessionCtx): Item[] {
   // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
   const guided = guidedLevel(ctx.state.sections, ctx.block, ctx.week);
   if (guided) {
-    const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })));
+    // Feste Regeln des Ordens (Slot.guided, 1.50) gehen vor: „never“ bleibt frei, „high“ wird immer geführt
+    const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })))
+      .filter((x) => !x.r.guideRule);
     const keys = guidedKeys(all, ctx.profile, guided - 1);
-    if (keys.size) for (const it of items) it.resolved = it.resolved.map((r) => (keys.has(r.key) ? toGuided(r, ctx.profile) ?? r : r));
+    for (const it of items) it.resolved = it.resolved.map((r) => (r.freeChosen || r.swapped || r.guideRule === "never" ? r : (r.guideRule === "high" || keys.has(r.key)) ? toGuided(r, ctx.profile) ?? r : r));
   }
   return items;
 }
