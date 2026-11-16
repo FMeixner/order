@@ -5,7 +5,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ## [Unveröffentlicht]
 
 ### Geändert
-- **Slayer, Kraft Kontrast:** Die Kontrastpaare stehen in beiden Wochen am Anfang der Einheit (B-Woche: erst Kreuzheben mit Weitsprung und Rudern mit Jump Shrug, dann Kniebeuge und Bankdrücken). Bei hoher Last bleiben Kniebeuge und Bankdrücken immer frei, Kreuzheben, RDL und Rudern werden immer geführt – auch als Kontrastpartner. Gilt für eine laufende Slayer-Phase nach „Übernehmen“ im Plan.
+- **Slayer, Kraft Kontrast:** Die Kontrastpaare stehen in beiden Wochen am Anfang der Einheit (B-Woche: erst Kreuzheben mit Weitsprung und Rudern mit Jump Shrug, dann Kniebeuge und Bankdrücken). Bei hoher Last bleiben Kniebeuge und Bankdrücken immer frei, Kreuzheben und RDL werden immer zum Cable Pull-Through, Rudern zum Kabelrudern – auch als Kontrastpartner. Gilt für eine laufende Slayer-Phase nach „Übernehmen“ im Plan.
 - **Steigern ohne feste Obergrenze:** Bei der doppelten Progression steigen die Wiederholungen jetzt so weit, bis der nächste Gewichtssprung nach Epley am unteren Ende des Bereichs oder höchstens 2 darunter landet. Beim Seitheben 12–15 mit 1,5-kg-Hanteln heißt das: mit 4 kg bis 25 Wiederholungen, dann 5,5 kg ab etwa 10. Die alte Grenze von 15 Wiederholungen entfällt. Ortswechsel bleiben wie gehabt.
 
 ### Behoben

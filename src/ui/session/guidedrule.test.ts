@@ -23,6 +23,8 @@ describe("Slayer Kraft Kontrast bei hoher Last (1.50)", () => {
       expect(names).toContain("Bench Press");
       expect(names).not.toContain("Barbell Row");
       expect(names).toContain("Seated Cable Row");
+      expect(names).not.toContain("Deadlift");
+      expect(names).not.toContain("Romanian Deadlift");
     }
   });
 });
