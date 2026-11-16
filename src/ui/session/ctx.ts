@@ -1,4 +1,5 @@
 /* Kontext einer Einheit: was Ansicht, Karten und Logik gemeinsam brauchen. */
+import { starLevels } from "../../engine/stars";
 import type { ReactNode } from "react";
 import type { AppState, EquipmentProfile, Focus, PlanBlock } from "../../types";
 
@@ -30,7 +31,12 @@ export const sessionId = (blockId: string, week: number, role: string) => `${blo
 export const boostOf = (ctx: Pick<SessionCtx, "state" | "block" | "week" | "roleKey" | "reduced">) => !ctx.reduced && !!ctx.state.energy?.[sessionId(ctx.block.id, ctx.week, ctx.roleKey)];
 
 /** Skills aus dem Skillcheck; null, solange keiner gemacht wurde */
-export const skillSet = (st: AppState): Set<string> | null => (st.user.skills ? new Set(st.user.skills) : null);
+/** Können-Häkchen plus Sternstufen als Marken „star:pull:3“ (1.51) — damit starten Leitern auf deiner Sternstufe */
+export const skillSet = (st: AppState): Set<string> | null => {
+  if (!st.user.skills) return null;
+  const lv = starLevels(st);
+  return new Set([...st.user.skills, ...Object.entries(lv).map(([d, n]) => `star:${d}:${n}`)]);
+};
 
 /** Laufen ersetzen in dieser Einheit (alt: noRun = Bestie statt Lauf) */
 export const runSubOf = (st: AppState, sid: string): "row" | "bike" | "rope" | "stair" | "beast" | undefined => st.runSub?.[sid] ?? (st.noRun?.[sid] ? "beast" : undefined);

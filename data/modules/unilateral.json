@@ -1,0 +1,20 @@
+{
+  "_info": "Seiten ausgleichen (1.51, Friedrich): je Einheit und Körperhälfte wird eine beidseitige Nebenübung zur einseitigen Variante. Hauptübungen (core) bleiben beidseitig. Schwächere Seite zuerst, die stärkere macht nicht mehr Wiederholungen.",
+  "upper": {
+    "Double DB Row": "1-Arm DB Row",
+    "Chest-Supported Row": "1-Arm DB Row",
+    "Sandbag Bent-Over Row": "1-Arm DB Row",
+    "Seated Cable Row": "Single-Arm Cable Row"
+  },
+  "lower": {
+    "Romanian Deadlift": "Staggered Stance DB RDL",
+    "KB Romanian Deadlift": "Staggered Stance DB RDL",
+    "Goblet Squat": "Goblet Reverse Lunge",
+    "Sandbag Squat": "Goblet Reverse Lunge",
+    "Leg Press": "Single-Leg Leg Press",
+    "Glute Bridge": "Single-Leg Glute Bridge",
+    "Standing Calf Raise": "Single-Leg Calf Raise",
+    "Seated Leg Curl": "Single-Leg Seated Leg Curl",
+    "Lying Leg Curl": "Single-Leg Seated Leg Curl"
+  }
+}

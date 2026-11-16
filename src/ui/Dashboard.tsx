@@ -54,7 +54,7 @@ export function Dashboard({ state, update, today, clocks, onOptimize, goPlan }: 
                   {r.score != null ? <>
                     <span className="bar-track"><span className={`bar-fill ${r.est ? "est" : r.score < 40 ? "low" : r.score >= 70 ? "high" : ""}`} style={{ width: `${r.score}%` }} /></span>
                     <span className="dash-score">{r.est ? "~" : ""}{r.score}{r.change && <em className={r.change}>{ARROW[r.change]}</em>}</span>
-                  </> : r.live && r.change ? <span className="dash-score">Log<em className={r.change}>{ARROW[r.change]}</em></span> : <span className="muted">–</span>}
+                  </> : r.stars ? <span className="dash-score">{r.stars.have}★ <span className="muted small">von {r.stars.max}</span></span> : r.live && r.change ? <span className="dash-score">Log<em className={r.change}>{ARROW[r.change]}</em></span> : <span className="muted">–</span>}
                 </span>
                 <span role="cell" className={`ber-pill ${WATCH[r.watch]}`}><i />{r.watch === "gut" ? "gut" : r.why}</span>
               </button>

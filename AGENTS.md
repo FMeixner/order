@@ -38,12 +38,13 @@ Einfach zu bedienen, visuell aufgeräumt, konkret – Details nur auf Wunsch (au
 - `src/ui/YearSetup.tsx` (Onboarding-Schritt „Dein Jahr“: Abschnitte → Richtung → Testwochen → Vorschlag als Stapel; „Lieber Phasen selbst anlegen“ zeigt die Phasenliste direkt).
 - `src/ui/Ideas.tsx` (Ideenparkplatz 1.26: `AppState.ideas`, Knopf im Plan, Liste „Ideen für später“, Hinweis in Testwoche und „Jahr planen“ Schritt 4; nie eine Sperre oder Rückfrage)
 - `src/ui/WeekCard.tsx` (Plan › Deine Woche), `src/ui/OrderIcon.tsx` (Ordenssymbole, eigene Strichzeichnungen; keine fremden Marken nachbilden).
+- `src/engine/stars.ts` (Skill-Sterne 1.51: Kriterien in `data/modules/stars.json`, Stern verdient durch geloggtes Kriterium, alte Können-Häkchen zählen über `legacy`; Schwerpunkt `skill` übt die schwächste Dimension, Modul-Variante `skill` in `items.ts`)
 - `src/engine/slots.ts` – gemeinsame Helfer (`isStrength`, `isHeavy`, `planMinutes`).
 - `src/store.ts` – Zustand im `localStorage` unter `order:v1`, Migrationen für alte Stände (Testfälle in `src/fixtures/`).
 
 ## Gestaltung von Orden (Vorgaben des Nutzers, 16.10.2026)
 - Vorrang haben Übungen mit tiefer Dehnung und vollem Bewegungsumfang.
-- Bei gleichwertigen Optionen beidseitig gleichzeitig statt links/rechts im Wechsel (Double DB Row statt 1-Arm DB Row, Cable Woodchopper statt Russian Twist, KB Cossack Squat statt Bulgarian Split Squat). Einseitig nur, wenn das Ziel es verlangt.
+- Bei gleichwertigen Optionen beidseitig gleichzeitig statt links/rechts im Wechsel (Double DB Row statt 1-Arm DB Row, Cable Woodchopper statt Russian Twist, KB Cossack Squat statt Bulgarian Split Squat). Einseitig nur, wenn das Ziel es verlangt. Ausnahme „Seiten ausgleichen“ (1.51, `PlanBlock.unilateral`, Wahl im Ordensstart-Interview `src/ui/Interview.tsx`): je Einheit und Körperhälfte eine Nebenübung einseitig nach `data/modules/unilateral.json` (`src/engine/unilateral.ts`, angewandt in `items.ts`); Hauptübungen bleiben beidseitig, keine Abfrage der schwächeren Seite.
 - Lieber 4 Sätze einer Übung als 2 + 2 von zwei ähnlichen: weniger Übungswechsel spart Zeit und Kopf.
 - Einseitige Übungen nach Ziel: Kraft und Hypertrophie erst eine Seite komplett, dann die andere (schwächere Seite zuerst, Wiederholungen angleichen); Power und Kondition im Wechsel (Jumping Lunges, Skater Jumps, Bestien).
 - Favoriten des Nutzers (`data/modules/favorites.json`, mit Einteilung erste Wahl / gut / Nische) nur als Entscheidung zwischen gleichwertigen Optionen, nicht als Vorgabe. Wird ein Favorit gesetzt, wo er nicht gleichwertig ist, den Grund dazuschreiben. Neue Favoriten dort ergänzen und einordnen.

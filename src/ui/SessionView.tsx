@@ -11,7 +11,7 @@ import type { Resolved } from "../engine/resolve";
 import { allRuns } from "../engine/runs";
 import { warmupKeys } from "../engine/warmup";
 import { fmt, useTimer } from "./Timer";
-import { Collapse } from "./common";
+import { Collapse, Seg } from "./common";
 import { BeastCard } from "./session/BeastCard";
 import { CallCard } from "./session/CallCard";
 import { allDrillsDone, DrillList, DrillSection, toggleDrill } from "./session/Drills";
@@ -187,10 +187,33 @@ const pauseLabel = (s: number) => s % 60 === 0 ? `${s / 60} Min` : `${Math.floor
 
 const Dropped = ({ it }: { it: Item }) => (it.dropped?.length ? <div className="muted small">{it.dropped.join(", ")} entfällt (ohne Gerät).</div> : null);
 
+/** Bestie oder ruhige Alternative (1.51): Wahl je Einheit, gilt bis zur nächsten Änderung */
+function AltPick({ it, ctx }: { it: Item; ctx: SessionCtx }) {
+  const a = it.alt!;
+  const key = `${sessionId(ctx.block.id, ctx.week, ctx.roleKey)}|${a.blockId}`;
+  return (
+    <div className="row wrap small" style={{ gap: 8, alignItems: "center" }}>
+      <span className="muted">Heute:</span>
+      <Seg value={a.on ? "alt" : "beast"} options={[{ value: "beast", label: "Bestie" }, { value: "alt", label: a.label }]}
+        onChange={(v) => ctx.update((st) => {
+          const m = { ...(st.beastAlt ?? {}) };
+          if (v === "alt") m[key] = true; else delete m[key];
+          return { ...st, beastAlt: m };
+        })} />
+    </div>
+  );
+}
+
 function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: SessionCtx; session?: Session; mut: (fn: (s: Session) => Session) => void; nextBeast?: string }) {
   const b = it.block;
   const t = useTimer();
   if (!it.resolved.length && it.dropped?.length && !it.beast && !it.drills && !it.call) return <section className="card"><Dropped it={it} /></section>;
+  if (it.alt) return (
+    <>
+      <AltPick it={it} ctx={ctx} />
+      <ItemCard it={{ ...it, alt: undefined }} ctx={ctx} session={session} mut={mut} nextBeast={nextBeast} />
+    </>
+  );
   if (b.type === "beast") return <BeastCard blockId={b.id} beast={it.beast ?? null} cardio={it.cardio} ctx={ctx} session={session} mut={mut} note={b.note || undefined} easy={b.pace === "easy"} nextBeast={nextBeast} watchBase={sessionId(ctx.block.id, ctx.week, ctx.roleKey)} />;
   if (b.type === "module" && it.call) return <CallCard call={it.call} ctx={ctx} session={session} mut={mut} />;
   if (b.type === "module" && it.drills) return <ModuleCard it={it} ctx={ctx} session={session} mut={mut} />;
@@ -210,8 +233,10 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
     const last = it.resolved[it.resolved.length - 1];
     return (
       <section className="card superset">
+        {it.fill && <div className="block-label amber">{it.fill}</div>}
         <div className="block-label teal">Im Wechsel{b.sameStation && b.label && it.resolved.every((r) => r.equip === "cable") ? ` · ${b.label}` : ""} · {b.rest ?? 60} s Pause</div>
         {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(lastSet) => { if (r === last && !lastSet) t.rest("Pause, dann nächste Runde", b.rest ?? 60); }} />)}
+        {it.fill && <DropSlot ctx={ctx} />}
         <Dropped it={it} />
       </section>
     );

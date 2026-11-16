@@ -281,8 +281,9 @@ export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
 
 /** 1.47: Sobald eine Phase läuft, wird ihre automatische Wahl festgehalten. Testwerte, Training und Schwerpunkt-Einheiten
     verschieben die Uhren; ohne Festhalten sprang „Automatisch“ dadurch mitten in der Phase (Schnelligkeit → Beweglichkeit). */
-const pinOk = (p: { domain: string | null }, b?: PlanBlock) => {
-  if (p.domain == null) return true;
+const pinOk = (p: { domain: string | null; v?: number }, b?: PlanBlock) => {
+  // „Kein Bereich“ von vor 1.51 neu prüfen: Seitdem gibt es den Schwerpunkt Skill
+  if (p.domain == null) return (p.v ?? 0) >= 2;
   if (!SHARPEN[p.domain]) return false;
   const f = b ? FOCUS_BY_ID[b.focusId] : undefined;
   return !f || !coveredBy(f, p.domain as DomainId);
@@ -302,14 +303,14 @@ export function pinAutoSlots(state: AppState, today: string = isoDate(new Date()
       const tmp = { ...b, sharpen: undefined, sharpenAuto: undefined, sharpenReleased: released };
       const y = yearSlots({ ...state, plan: state.plan.map((x) => (x.id === b.id ? tmp : x)) }, today).get(b.id);
       changed = true;
-      return { ...b, sharpenReleased: released, sharpenAuto: { domain: y?.domain ?? null, ...(y?.purpose ? { purpose: y.purpose } : {}), reason: `${why} ${y?.reason ?? ""}`.trim() } };
+      return { ...b, sharpenReleased: released, sharpenAuto: { v: 2, domain: y?.domain ?? null, ...(y?.purpose ? { purpose: y.purpose } : {}), reason: `${why} ${y?.reason ?? ""}`.trim() } };
     }
     if (b.sharpenAuto) return b;
     // Echte automatische Wahl, auch wenn gerade eine eigene Wahl oder „Aus“ gilt (für den Fall, dass du zurückschaltest)
     const y = b.sharpen ? yearSlots({ ...state, plan: state.plan.map((x) => (x.id === b.id ? { ...x, sharpen: undefined } : x)) }, today).get(b.id) : ys.get(b.id);
     if (!y) return b;
     changed = true;
-    return { ...b, sharpenAuto: { domain: y.domain, ...(y.purpose ? { purpose: y.purpose } : {}), reason: y.reason } };
+    return { ...b, sharpenAuto: { v: 2, domain: y.domain, ...(y.purpose ? { purpose: y.purpose } : {}), reason: y.reason } };
   });
   return changed ? { ...state, plan } : null;
 }
@@ -333,7 +334,9 @@ function slotRoles(state: AppState, b: PlanBlock, f: Focus, roles: string[]): st
   const dayOf = (rk: string) => days.find((d) => d.role === rk)?.day;
   const ok = (rk: string) => { const d = dayOf(rk); return !state.sharpenDays || (!!d && state.sharpenDays.includes(d)); };
   const ix = (rk: string) => { const d = dayOf(rk); return d ? WEEKDAYS.indexOf(d) : 99; };
-  return roles.filter(ok).sort((x, y) => ix(x) - ix(y));
+  // Freiwillige Tage (z. B. Slayer am Samstag) tragen keinen Schwerpunkt, sonst fiele er mit dem Tag aus (1.51)
+  const fixed = roles.filter((rk) => !f.roles[rk]?.optional);
+  return (fixed.length ? fixed : roles).filter(ok).sort((x, y) => ix(x) - ix(y));
 }
 
 /** Platzhalter „Mehr vom Ordensziel“ am kürzesten Trainingstag; bei Schnellkraft und Schnelligkeit frisch am Anfang */

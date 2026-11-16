@@ -114,13 +114,13 @@ describe("Lenkung: Der Schwerpunkt hält, was sonst verfällt (Jahresplan)", () 
     expect(residualClocks(state, plan[0].start).find((c) => c.id === "mobility")!.over).toBe(true);
     const y = yearSlots(state, plan[0].start).get(plan[0].id)!;
     expect(y.domain).not.toBe("mobility");
-    expect(["speed", "power", "anaerob", "aerob", null]).toContain(y.domain);
+    expect(["speed", "power", "anaerob", "aerob", "skill", null]).toContain(y.domain);
   });
 
-  it("Slayer (Muskel, dazu Athletik) bekommt seit 1.50 keinen Slot: Sprungkraft und Schnelligkeit trainiert er schon, Ausdauer stört", () => {
+  it("Slayer (Muskel, dazu Athletik) bekommt seit 1.51 Skill: Sprungkraft und Schnelligkeit trainiert er schon, Ausdauer stört", () => {
     const { plan } = slayerWithModules(["mobility"]);
     const y = yearSlots(base([], plan), plan[0].start).get(plan[0].id)!;
-    expect(y.domain).toBeNull();
+    expect(y.domain).toBe("skill");
   });
 
   it("alles Slot-fähige frisch: Sekundärziel; rote Ausdauer stört Muskelaufbau und bekommt keinen Slot", () => {
@@ -130,7 +130,7 @@ describe("Lenkung: Der Schwerpunkt hält, was sonst verfällt (Jahresplan)", () 
     const sAerob = sess({ id: "d", date: "2026-08-01", drills: { [drillId("aerob")]: [true] } });
     const y = yearSlots(base([sAerob, sMob, sBeast], plan), plan[0].start).get(plan[0].id)!;
     expect(y.domain).not.toBe("aerob");
-    expect(y.domain).toBeNull(); // seit 1.50: Slayer deckt Athletik selbst ab
+    expect(y.domain).toBe("skill"); // seit 1.51: Athletik deckt Slayer selbst ab, Skill bleibt
   });
 });
 

@@ -2,6 +2,22 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.0] – 2026-11-16
+
+### Neu
+- **Skill-Sterne:** Drücken, Ziehen, Beine und Körperbeherrschung mit bis zu fünf Sternen (Drücken vier), je Stern ein oder mehrere Kriterien (z. B. Ziehen ★★: 5 Klimmzüge, Beine ★★★★: 5 Shrimp Squats, Beine ★★★★★: 5 Pistol Squats). Ein Stern ist verdient, sobald ein Kriterium im Training geloggt ist. Setup › Können zeigt Sterne und nächstes Ziel, Stand zeigt die Summe.
+- **Schwerpunkt Skill:** übt an zwei Tagen zu Beginn der Einheit die Dimension mit den wenigsten Sternen auf den nächsten Stern hin, mit einer Übung, die am Ort geht.
+- **Ordensstart:** Beim ersten Öffnen einer Phase fragt die App einmal, was mitwachsen soll (Empfehlung vorgewählt, Abgedecktes ausgegraut), und ob du die Seiten ausgleichen willst.
+- **Seiten ausgleichen:** je Einheit eine Nebenübung für Oberkörper und eine für Beine einseitig, schwächere Seite zuerst. Hauptübungen bleiben beidseitig. Auch im Plan bei der Phase schaltbar.
+- **Slayer, Samstag:** Über der Karte wählst du Bestie oder 30 Minuten lockere Grundlage. Gilt für eine laufende Slayer-Phase nach „Übernehmen“ im Plan.
+- Neue Übungen für die Sterne: Wall Handstand Push-Up, One-Arm Push-Up, Muscle-Up, One-Arm Pull-Up, Front Lever, Shrimp Squat, Crow Pose, Tuck Planche, Planche, Dragon Flag; dazu Single-Leg Seated Leg Curl.
+
+### Geändert
+- Die Können-Häkchen zählen beim Umstieg als Sterne. Schwert, Langschwert und Stab bleiben Häkchen.
+- Übungsleitern starten auf der Stufe deiner Sterne.
+- Der automatische Schwerpunkt laufender Phasen wird einmal neu bestimmt, damit Skill wählbar ist. Beim Slayer ist das Skill.
+- Freiwillige Tage (wie Slayer am Samstag) tragen keinen Schwerpunkt mehr, damit er nicht mit dem Tag ausfällt.
+
 ## [1.50.0] – 2026-11-16
 
 ### Neu

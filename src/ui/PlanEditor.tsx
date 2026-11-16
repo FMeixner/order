@@ -181,9 +181,10 @@ export function BlockForm({ block, profiles, days, user, slotInfo, onSave, onCan
         </Field>
       )}
 
-      {f && !f.medley?.length && b.end >= day && (
+      {f && !f.medley?.length && b.end >= day && (<>
         <SlotField f={f} label="Schwerpunkt" value={b.sharpen} auto={slotInfo?.({ ...b, sharpen: undefined }).s1} hint="Ein Slot je Orden, im Jahr verteilt: Testdefizit, Erhalt, Double down oder Sekundärziel." onChange={(sharpen) => setB({ ...b, sharpen })} />
-      )}
+        <label className="row small" style={{ gap: 8 }}><input type="checkbox" checked={!!b.unilateral} onChange={(e) => setB({ ...b, unilateral: e.target.checked || undefined })} /> Seiten ausgleichen: je Einheit eine Nebenübung für Oberkörper und Beine einseitig</label>
+      </>)}
 
       {plan && b.end >= day && (blockWeeks(b) >= 3 || test) && (!b.meso || lastPart) && (
         <Check checked={test} onChange={setTest} label="Testwoche am Ende (die letzte Woche wird zur Testwoche)" />

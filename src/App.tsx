@@ -1,3 +1,4 @@
+import { skillsToAdd } from "./engine/stars";
 import { pinAutoSlots, unpinAutoSlots } from "./engine/sharpen";
 import { gymDaysOf } from "./engine/klammer";
 import { useEffect, useRef, useState } from "react";
@@ -39,7 +40,9 @@ export default function App() {
   // Einmalig: festgeschriebene Schwerpunkte, die „Automatisch“ entsprechen, wieder automatisch
   useEffect(() => { if (!state.autoSlots) update((s) => unpinAutoSlots(s)); }, [state.autoSlots]); // eslint-disable-line react-hooks/exhaustive-deps
   // Laufende Phase: automatische Schwerpunkt-Wahl festhalten (1.47), damit sie nicht mitten in der Phase springt
-  useEffect(() => { const next = pinAutoSlots(state); if (next) update((s) => pinAutoSlots(s) ?? s); }, [state.plan, state.checkpoints]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { const next = pinAutoSlots(state); if (next) update((s) => pinAutoSlots(s) ?? s); }, [state.plan, state.checkpoints]);
+  // Skill-Sterne (1.51): Was das Log neu verdient, setzt die passenden Können-Häkchen (nie entfernt)
+  useEffect(() => { if (skillsToAdd(state)) update((s) => { const add = skillsToAdd(s); return add ? { ...s, user: { ...s.user, skills: [...(s.user.skills ?? []), ...add] } } : s; }); }, [state.sessions]); // eslint-disable-line react-hooks/exhaustive-deps
   // Browser bitten, die Daten nicht von sich aus zu löschen (schützt nicht vor manuellem Löschen)
   useEffect(() => { navigator.storage?.persist?.().catch(() => undefined); }, []);
   // Automatische Sicherung, sobald eine Einheit abgeschlossen wurde

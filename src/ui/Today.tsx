@@ -21,6 +21,8 @@ const DAY_NAME: Record<Weekday, string> = { Mo: "Montag", Di: "Dienstag", Mi: "M
 import { exportState } from "../store";
 import { TestWeek } from "./TestWeek";
 import { Seg } from "./common";
+import { Interview } from "./Interview";
+import { slotEligible } from "../engine/sharpen";
 import { RavenBadge, ravenOn } from "./Raven";
 
 type Update = (fn: (s: AppState) => AppState) => void;
@@ -253,6 +255,7 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   const ease = (v: "ja" | "nein") => update((st) => setDeload(st, block, week, v));
   return (
     <div className="stack">
+      {isCur && !test && !peeking && !block.interviewed && baseFocus && slotEligible(baseFocus) && <Interview state={state} block={block} update={update} />}
       {needBackup && (
         <div className="note small row between wrap">
           <span>{backupAge == null ? "Noch keine Sicherung." : `Letzte Sicherung vor ${backupAge} Tagen.`} Deine Daten liegen nur auf diesem Gerät.</span>

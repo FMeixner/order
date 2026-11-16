@@ -98,6 +98,8 @@ export type Block =
       /** Auffüllen (1.50): Bedarf geht vor Abwechslung — die Bestie, die die Lücken der Woche (Rumpf eingeschlossen) am besten
           schließt, nur nie dieselbe wie letzte Woche */
       fill?: boolean;
+      /** Wahl auf der Karte (1.51): statt der Bestie diese ruhige Einheit (z. B. 30 Min lockere Grundlage) */
+      alt?: Slot;
     }
   | { type: "module"; module: WeaponModule | "flow" | "sharpen" | "call"; variant: string; fallback?: Slot; /** Ohne Schwert und Stock: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B"; /** Kurztag: nur die erste Hälfte der Übungen */ short?: true }
 
@@ -284,7 +286,7 @@ export interface PlanBlock {
   /** Schwerpunkt-Slot 1 (Schwachstelle): Bereich (speed, power, mobility, ke, anaerob, aerob) oder "off". Fehlt: automatisch nach der letzten Testwoche. */
   sharpen?: string;
   /** 1.47: automatische Wahl, festgehalten, sobald die Phase läuft (bleibt stabil, auch wenn Tests oder Training die Uhren verschieben) */
-  sharpenAuto?: { domain: string | null; purpose?: string; reason: string };
+  sharpenAuto?: { domain: string | null; purpose?: string; reason: string; /** 2 ab 1.51 */ v?: number };
   /** Bereiche, die in dieser Phase per Checkpoint frei wurden (1.47) — die automatische Wahl überspringt sie */
   sharpenReleased?: string[];
   /** Schwerpunkt-Slot 2 (Vertiefung): Bereich oder "off". Fehlt: automatisch — Vertiefung des Sekundärziels, beim Allrounder stattdessen das zweite Defizit. */
@@ -299,6 +301,10 @@ export interface PlanBlock {
   klammer?: KlammerId;
   /** Von Hand gesetzt: Orden, Kalorien oder Klammer-Art bleiben beim Neuplanen stehen */
   pin?: { focus?: boolean; kcal?: boolean; klammer?: boolean };
+  /** Ordensstart-Interview (1.51) beantwortet: Schwerpunkt bestätigt oder gewählt, Seiten ausgleichen ja/nein */
+  interviewed?: boolean;
+  /** Seiten ausgleichen (1.51): je Einheit und Körperhälfte eine Nebenübung einseitig */
+  unilateral?: boolean;
 }
 
 /** Die übergeordneten Klammern (data/modules/klammern.json) */
@@ -478,6 +484,8 @@ export interface AppState {
   noRun?: Record<string, boolean>;
   /** Laufen ersetzen je Einheit: Gerät (skaliert) oder Bestie statt Laufblock. Löst noRun ab (noRun = "beast"). */
   runSub?: Record<string, "row" | "bike" | "rope" | "stair" | "beast">;
+  /** Bestie oder ruhige Alternative (1.51): `${Session-Id}|${Block-Id}` → true = Alternative gewählt */
+  beastAlt?: Record<string, boolean>;
   /** Anderer Trainingsort für eine Einheit (Session-Id → Equipment-Profil-ID): Übungen und Gewichtsstufen folgen dem Profil */
   profileFor?: Record<string, string>;
   /** Darstellung: automatisch nach System, hell oder dunkel */

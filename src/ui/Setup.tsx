@@ -10,6 +10,7 @@ import { PacketEditor } from "./PacketEditor";
 import { RatioList } from "./RatioList";
 import { WeekCard } from "./WeekCard";
 import { isoDate } from "../engine/plan";
+import { critText, STAR_DIMS, STARS, starLevels, starLine } from "../engine/stars";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -24,6 +25,39 @@ export function SkillEditor({ user, onChange }: { user: UserProfile; onChange: (
     <div className="stack">
       <p className="muted small">Hake ab, was du heute sauber schaffst. Übungen mit fehlendem Skill ersetzt die App durch leichtere Varianten. Bestien kommen dann mutiert: nur die betroffene Übung wird getauscht. Übungsleitern, etwa zum Pistol Squat, bleiben als Lernweg drin und starten mit abgehaktem Skill weiter oben. Jederzeit änderbar.</p>
       {SKILLS.groups.map((g) => (
+        <div key={g.id} className="stack skill-group">
+          <div className="block-label teal">{g.name}</div>
+          {SKILLS.skills.filter((x) => x.group === g.id).map((x) => (
+            <label key={x.id} className="check skill-row">
+              <input type="checkbox" checked={have.has(x.id)} onChange={(e) => toggle(x.id, e.target.checked)} />
+              <span><strong>{x.name}</strong><span className="muted small"> · {x.test}</span></span>
+            </label>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Skill-Sterne (1.51): automatisch aus dem Log, die Waffen-Lernwege bleiben Häkchen */
+function StarView({ state, update }: { state: AppState; update: Update }) {
+  const lv = starLevels(state);
+  const weapons = SKILLS.groups.filter((g) => ["schwert", "langschwert", "stab"].includes(g.id));
+  const have = new Set(state.user.skills ?? []);
+  const toggle = (id: string, on: boolean) => update((st) => { const next = new Set(st.user.skills ?? []); if (on) next.add(id); else next.delete(id); return { ...st, user: { ...st.user, skills: [...next] } }; });
+  return (
+    <div className="stack">
+      <p className="muted small">Sterne verdienst du im Training: Schaffst du ein Kriterium und trägst es ein (Wiederholungen oder Haltezeit), gilt der Stern. Fehlt ein Stern, ersetzt die App schwere Übungen durch leichtere und Bestien kommen mutiert.</p>
+      {STAR_DIMS.map((d) => {
+        const next = STARS[d][lv[d]];
+        return (
+          <div key={d} className="stack skill-group">
+            <div className="block-label teal">{starLine(d, lv[d])}</div>
+            {next?.length ? <div className="muted small">Nächster Stern: {next.map(critText).join(" oder ")}</div> : <div className="muted small">Alle Sterne.</div>}
+          </div>
+        );
+      })}
+      {weapons.map((g) => (
         <div key={g.id} className="stack skill-group">
           <div className="block-label teal">{g.name}</div>
           {SKILLS.skills.filter((x) => x.group === g.id).map((x) => (
@@ -110,10 +144,10 @@ export function Setup({ state, update, replace, restartOnboarding }: { state: Ap
           : "Allrounder: Der Schwerpunkt-Slot hält über das Jahr, was sonst verfällt (Erhalt), und legt nur im Zeichen deines wichtigsten Ziels nach. Testdefizite gehen immer vor."}</p>
       </Collapse>
       <NarrativeSettings state={state} update={update} />
-      <Collapse title="Können" meta={state.user.skills == null ? "kein Skillcheck" : `${state.user.skills.length} von ${SKILLS.skills.length}`}>
+      <Collapse title="Können" meta={state.user.skills == null ? "kein Skillcheck" : (() => { const lv = starLevels(state); return `${STAR_DIMS.reduce((x, d) => x + lv[d], 0)} Sterne`; })()}>
         {state.user.skills == null
           ? <div className="stack"><p className="muted small">Noch kein Skillcheck: Alle Übungen und Bestien sind offen, auch Muscle-Ups und Pistol Squats.</p><button className="btn" onClick={() => update((st) => ({ ...st, user: { ...st.user, skills: [] } }))}>Skillcheck machen</button></div>
-          : <SkillEditor user={state.user} onChange={(user) => update((st) => ({ ...st, user }))} />}
+          : <StarView state={state} update={update} />}
       </Collapse>
       <RatioList state={state} update={update} />
       <PacketEditor state={state} update={update} />

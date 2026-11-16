@@ -8,9 +8,19 @@
       "url": "https://pubmed.ncbi.nlm.nih.gov/32058362/"
     },
     {
+      "short": "Behm et al., 2016",
+      "text": "Behm, D. G., Blazevich, A. J., Kay, A. D., & McHugh, M. (2016). Acute effects of muscle stretching on physical performance, range of motion, and injury incidence in healthy active individuals: A systematic review. Applied Physiology, Nutrition, and Metabolism, 41(1), 1–11.",
+      "url": "https://doi.org/10.1139/apnm-2015-0235"
+    },
+    {
       "short": "Bickel et al., 2011",
       "text": "Bickel, C. S., Cross, J. M., & Bamman, M. M. (2011). Exercise dosing to retain resistance training adaptations in young and older adults. Medicine & Science in Sports & Exercise, 43(7), 1177–1187.",
       "url": "https://pubmed.ncbi.nlm.nih.gov/21131862/"
+    },
+    {
+      "short": "Bishop et al., 2018",
+      "text": "Bishop, C., Turner, A., & Read, P. (2018). Effects of inter-limb asymmetries on physical and sports performance: A systematic review. Journal of Sports Sciences, 36(10), 1135–1144.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28767317/"
     },
     {
       "short": "Bosquet et al., 2007",
@@ -63,24 +73,14 @@
       "url": "https://vuir.vu.edu.au/38537/"
     },
     {
-      "short": "Hardy & Rejeski, 1989",
-      "text": "Hardy, C. J., & Rejeski, W. J. (1989). Not what, but how one feels: The measurement of affect during exercise. Journal of Sport and Exercise Psychology, 11(3), 304–317.",
-      "url": "https://doi.org/10.1123/jsep.11.3.304"
-    },
-    {
-      "short": "Hutchinson et al., 2020",
-      "text": "Hutchinson, J. C., Zenko, Z., Santich, S., & Dalton, P. C. (2020). Increasing the pleasure and enjoyment of exercise: A novel resistance-training protocol. Journal of Sport and Exercise Psychology, 42(2), 143–152.",
-      "url": "https://doi.org/10.1123/jsep.2019-0089"
-    },
-    {
-      "short": "Behm et al., 2016",
-      "text": "Behm, D. G., Blazevich, A. J., Kay, A. D., & McHugh, M. (2016). Acute effects of muscle stretching on physical performance, range of motion, and injury incidence in healthy active individuals: A systematic review. Applied Physiology, Nutrition, and Metabolism, 41(1), 1–11.",
-      "url": "https://doi.org/10.1139/apnm-2015-0235"
-    },
-    {
       "short": "Halperin et al., 2022",
       "text": "Halperin, I., Malleron, T., Har-Nir, I., Androulakis-Korakakis, P., Wolf, M., Fisher, J., & Steele, J. (2022). Accuracy in predicting repetitions to task failure in resistance exercise: A scoping review and exploratory meta-analysis. Sports Medicine, 52(2), 377–390.",
       "url": "https://doi.org/10.1007/s40279-021-01559-x"
+    },
+    {
+      "short": "Hardy & Rejeski, 1989",
+      "text": "Hardy, C. J., & Rejeski, W. J. (1989). Not what, but how one feels: The measurement of affect during exercise. Journal of Sport and Exercise Psychology, 11(3), 304–317.",
+      "url": "https://doi.org/10.1123/jsep.11.3.304"
     },
     {
       "short": "Helgerud et al., 2007",
@@ -106,6 +106,11 @@
       "short": "Hopkins, 2000",
       "text": "Hopkins, W. G. (2000). Measures of reliability in sports medicine and science. Sports Medicine.",
       "url": "https://www.doi.org/10.2165/00007256-200030010-00001"
+    },
+    {
+      "short": "Hutchinson et al., 2020",
+      "text": "Hutchinson, J. C., Zenko, Z., Santich, S., & Dalton, P. C. (2020). Increasing the pleasure and enjoyment of exercise: A novel resistance-training protocol. Journal of Sport and Exercise Psychology, 42(2), 143–152.",
+      "url": "https://doi.org/10.1123/jsep.2019-0089"
     },
     {
       "short": "Iraki et al., 2019",
@@ -216,6 +221,11 @@
       "short": "Singer et al., 2024",
       "text": "Singer, A., et al. (2024). Give it a rest: A systematic review with Bayesian meta-analysis on the effect of inter-set rest interval duration on muscle hypertrophy. Frontiers in Sports and Active Living.",
       "url": "https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full"
+    },
+    {
+      "short": "Speirs et al., 2016",
+      "text": "Speirs, D. E., Bennett, M. A., Finn, C. V., & Turner, A. P. (2016). Unilateral vs. bilateral squat training for strength, sprints, and agility in academy rugby players. Journal of Strength and Conditioning Research, 30(2), 386–392.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26200193/"
     },
     {
       "short": "Swain et al., 2020",

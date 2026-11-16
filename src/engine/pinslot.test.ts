@@ -32,6 +32,6 @@ describe("Kraftausdauer und Beweglichkeit sind keine Schwerpunkte mehr (1.47)", 
     const st = { ...s, equipment: [g], schedule: { Mo: "g", Di: "g", Do: "g", Fr: "g" } as typeof s.schedule, plan: [b] };
     expect(slotsFor(st, b).s1.domain).not.toBe("mobility");
     const next = pinAutoSlots(st, "2026-11-20")!;
-    expect(["speed", "power", "anaerob", "aerob", null]).toContain(next.plan[0].sharpenAuto?.domain);
+    expect(["speed", "power", "anaerob", "aerob", "skill", null]).toContain(next.plan[0].sharpenAuto?.domain);
   });
 });

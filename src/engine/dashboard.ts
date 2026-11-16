@@ -12,6 +12,7 @@ import { isTestBlock } from "./plan";
 import type { ResidualClock } from "./residual";
 import { deficitsOf, domainName, latestTest, PURPOSE_LABEL, yearSlots } from "./sharpen";
 import { liftStand, repStand } from "./fitness";
+import { maxStar, STAR_DIMS, starLevels, starLine } from "./stars";
 
 export interface StandRow extends BereichRow {
   /** Punkte 0–100 aus der letzten Testwoche; null ohne Test */
@@ -24,6 +25,8 @@ export interface StandRow extends BereichRow {
   weak: boolean;
   /** Laufender Stand aus dem Log (1.47, Kraft und Kraftausdauer): Klartext je Übung bzw. Familie */
   live?: string[];
+  /** Skill-Sterne gesamt (1.51) */
+  stars?: { have: number; max: number };
 }
 
 export interface Stand {
@@ -69,6 +72,12 @@ export function standOf(state: AppState, today: string, clocks?: ResidualClock[]
     if (row.def.id === "kraft" && lifts.length) {
       row.change = trend(lifts.map((l) => l.change));
       row.live = lifts.map((l) => `${l.name} ~${l.now} kg (${Math.round((l.now / l.best) * 100)} % vom Bestwert)`);
+    }
+    if (row.def.id === "skill") {
+      // Skill-Sterne (1.51): je Dimension, aus Log und Können-Häkchen
+      const lv = starLevels(state);
+      row.live = STAR_DIMS.map((d) => starLine(d, lv[d]));
+      row.stars = { have: STAR_DIMS.reduce((a, d) => a + lv[d], 0), max: STAR_DIMS.reduce((a, d) => a + maxStar(d), 0) };
     }
     if (row.def.id === "ke" && reps.length) {
       const sc = reps.map((x) => x.norm).filter((n) => n && !n.noScore).map((n) => n!.score);

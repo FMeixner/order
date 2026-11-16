@@ -2,19 +2,21 @@
 import { musclesOf } from "../../engine/volume";
 import { callView, type CallView } from "../../engine/call";
 import { EXERCISES } from "../../data";
-import type { AppState, Beast, BeastClass, BeastRun, Block, Session, WeaponModule } from "../../types";
+import type { AppState, Beast, BeastClass, BeastRun, Block, Session, Slot, WeaponModule } from "../../types";
 import { dayMods, withDay } from "../../engine/dayadj";
 import { blockSeconds } from "../../engine/duration";
 import { affectDowngrade, asWeaponBlock, beastById, beastForDay, type BeastTarget, dayRoleMap, type DrillView, finisherBlock, isAWeek, isWeaponModule, moduleDrills, pickBeast, roleAt, setWeekBeastBlocks, shortDrills, shortSwordDrills } from "../../engine/plan";
 import { loadPhase } from "../../engine/progression";
-import { guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../../engine/resolve";
+import { available, guidedKeys, type Resolved, resolveSlot, swapKey, toGuided } from "../../engine/resolve";
+import { UNI_NOTE, uniFor } from "../../engine/unilateral";
 import { focusFor, guidedLevel } from "../../engine/weekplan";
 import { boostOf, runSubOf, type SessionCtx, sessionId, skillSet } from "./ctx";
 import { type CardioSub, SUB_EXERCISE } from "../../engine/cardio";
 import { goalFill, isFillMarker } from "./fill";
+import { critText, practiceFor, practiceSlot, starLevels, starLine, weakestDims, type StarDim } from "../../engine/stars";
 
 /* ---------- Slots dieser Einheit sammeln ---------- */
-export interface Item { call?: CallView; block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule }; /** „Mehr vom Ordensziel“: Überschrift der Karte */ fill?: string; /** Isolationsübungen, für die es am Ort gar keinen Ersatz gibt (1.49): entfallen still */ dropped?: string[] }
+export interface Item { /** Bestie mit ruhiger Alternative (1.51): Block-Id, gewählt ja/nein, Name der Alternative */ alt?: { blockId: string; on: boolean; label: string }; call?: CallView; block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule }; /** „Mehr vom Ordensziel“: Überschrift der Karte */ fill?: string; /** Isolationsübungen, für die es am Ort gar keinen Ersatz gibt (1.49): entfallen still */ dropped?: string[] }
 
 /** Isolationsübung (1.49): höchstens ein Muskel — wie halfOf in warmup.ts, nur andersherum */
 export const isIsolation = (name: string) => Object.keys(musclesOf(name)).length < 2;
@@ -61,7 +63,7 @@ setWeekBeastBlocks((state, pb, week) => {
     return (f.roles[d.role] ? roleAt(f.roles[d.role], profile).blocks : [])
       .filter((b) => !b.rotation || b.rotation === ab)
       .map((b) => (noRun && isRunBlock(b) ? runToBeast(b, ctx) : finisherBlock(b, week) ?? b))
-      .filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast")
+      .filter((b): b is Extract<Block, { type: "beast" }> => b.type === "beast" && !(b.alt && state.beastAlt?.[`${sessionId(pb.id, week, d.role)}|${b.id}`]))
       .map((b) => [b, profile] as BeastTarget);
   });
 });
@@ -106,6 +108,8 @@ export function collectItems(ctx: SessionCtx): Item[] {
   const otherItem = (b: Block): Item => {
     // Mehr vom Ordensziel: nur, wenn es kein Junk-Volumen wäre (sonst fällt der Platzhalter weg)
     if (isFillMarker(b)) { const g = goalFill(ctx, b); return g ? { ...g.item, fill: g.title } : { block: b, resolved: [] }; }
+    // Schwerpunkt Skill (1.51): die schwächste(n) Dimension(en) auf den nächsten Stern hin, als echte Übung zum Loggen
+    if (b.type === "module" && b.module === "sharpen" && b.variant === "skill") return skillItem(ctx, b);
     if (b.type === "module" && b.module === "call") return { block: b, resolved: [], call: callView(b, ctx.state.user, ctx.week, ctx.profile, { deload: ctx.reduced }) ?? undefined };
     if (b.type === "module" && b.module !== "call" && (b.module === "flow" || b.module === "sharpen" || ctx.profile.has.sword)) {
       const full = moduleDrills(b.variant, ctx.state.user, ctx.week, b.module);
@@ -131,6 +135,16 @@ export function collectItems(ctx: SessionCtx): Item[] {
       if (fb && (pinned ? pinned[fb.id] : !done)) {
         const it = beastItem(fb);
         if (it.beast) return cardio ? { ...it, cardio } : it;
+      }
+      if (b.type === "beast" && b.alt) {
+        // Bestie oder ruhige Alternative (1.51): die Wahl steht auf der Karte
+        const on = !!ctx.state.beastAlt?.[`${sessionId(ctx.block.id, ctx.week, ctx.roleKey)}|${b.id}`];
+        const label = `${b.alt.minutes ?? ""} Min ${b.alt.name}`.trim();
+        if (on) {
+          const alt: Block = { type: "single", slot: b.alt, rotation: b.rotation };
+          return { ...otherItem(cardio && isRunBlock(alt) ? runToDevice(alt, cardio) : alt), alt: { blockId: b.id, on, label } };
+        }
+        return { ...beastItem(b), ...(cardio ? { cardio } : {}), alt: { blockId: b.id, on, label } };
       }
       return b.type === "beast" ? { ...beastItem(b), ...(cardio ? { cardio } : {}) } : otherItem(b);
     });
@@ -158,6 +172,7 @@ export function collectItems(ctx: SessionCtx): Item[] {
     if (b.type !== "superset") return [it];
     return it.resolved.map((r, i) => ({ block: { type: "single", slot: { ...(b.slots.find((x) => x.id === r.slotId) ?? b.slots[i]), rest: b.rest ?? 60 } }, resolved: [r] }));
   });
+  if (ctx.block.unilateral) unilateralize(split, ctx);
   const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword || it.call || it.dropped?.length);
   // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
   const guided = guidedLevel(ctx.state.sections, ctx.block, ctx.week);
@@ -169,6 +184,27 @@ export function collectItems(ctx: SessionCtx): Item[] {
     for (const it of items) it.resolved = it.resolved.map((r) => (r.freeChosen || r.swapped || r.guideRule === "never" ? r : (r.guideRule === "high" || keys.has(r.key)) ? toGuided(r, ctx.profile) ?? r : r));
   }
   return items;
+}
+
+/** Seiten ausgleichen (1.51): je Körperhälfte die erste beidseitige Nebenübung mit einseitiger Variante tauschen,
+    sofern die Variante am Ort geht. Hauptübungen, Kontrastpaare und selbst getauschte Übungen bleiben. */
+function unilateralize(items: Item[], ctx: SessionCtx) {
+  const used = new Set<string>();
+  for (const it of items) {
+    const b = it.block;
+    if (b.type !== "single" && b.type !== "superset") continue;
+    const slots = b.type === "single" ? [b.slot] : b.slots;
+    it.resolved = it.resolved.map((r) => {
+      const slot = slots.find((x) => x.id === r.slotId);
+      const u = uniFor(r.name);
+      if (!slot || slot.core || r.swapped || r.freeChosen || !u || used.has(u.half) || !EXERCISES[u.name] || !available(u.name, ctx.profile)) return r;
+      const bw = EXERCISES[u.name].equip === "bodyweight";
+      const res = resolveSlot({ ...slot, name: u.name, home: undefined, reise: undefined, ...(bw ? { prog: "reps", reps: slot.reps && /AMRAP/.test(slot.reps) ? slot.reps : "8-15" } : {}) } as Slot, ctx.profile, ctx.reduced, undefined, skillSet(ctx.state));
+      if (!res) return r;
+      used.add(u.half);
+      return { ...(loadPhase(res, ctx.state.slots[res.key], ctx.profile)), freeChosen: true, note: [UNI_NOTE, slot.note].filter(Boolean).join(" ") };
+    });
+  }
 }
 
 /** Gezeigte Bestien festhalten, sobald die Einheit angefangen ist: spätere Änderungen am Zustand würfeln sie nicht neu */
@@ -202,4 +238,17 @@ export function pinBeasts(s: Session, items: Item[]): Session {
   const runs = { ...(s.beastRuns ?? {}) };
   for (const m of missing) runs[m.id] = runFor(m.beast);
   return { ...s, beastRuns: runs };
+}
+
+/** Schwerpunkt Skill (1.51): Übung(en) für den nächsten Stern der schwächsten Dimension; bei Gleichstand zwei im Wechsel */
+function skillItem(ctx: SessionCtx, b: Block): Item {
+  const lv = starLevels(ctx.state);
+  const weak = weakestDims(lv, ctx.week);
+  const dims = weak.length > 1 && lv[weak[0]] === lv[weak[1]] ? weak.slice(0, 2) : weak.slice(0, 1);
+  const slots = dims.map((d) => ({ d, s: practiceSlot(d, lv[d], ctx.profile, ctx.roleKey) })).filter((x): x is { d: StarDim; s: Slot } => !!x.s);
+  if (!slots.length) return { block: b, resolved: [] };
+  const resolved = slots.map((x) => resolveSlot(x.s, ctx.profile, false)).filter((r): r is Resolved => !!r);
+  const title = `Schwerpunkt: Skill · ${slots.map((x) => `${starLine(x.d, lv[x.d])} → ${critText(practiceFor(x.d, lv[x.d], ctx.profile)!.crit)}`).join(" · ")}`;
+  const block: Block = slots.length > 1 ? { type: "superset", rest: 90, slots: slots.map((x) => x.s) } : { type: "single", slot: slots[0].s };
+  return { block, resolved, fill: title };
 }

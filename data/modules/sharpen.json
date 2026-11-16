@@ -1,34 +1,101 @@
 {
-  "_info": "Schwerpunkt-Slot: kleine Erhaltungsdosis für einen Bereich, der im laufenden Orden zu kurz kommt. Einer pro Phase, höchstens etwa 15 % der Wochenzeit. place: start (nach dem Warm-up, frisch), end (vor dem Cool-down). days: all (jeder Trainingstag), 1 (am kürzesten Tag) oder 2 (erster und mittlerer Tag). drills wie bei den Flows: mode reps (value Wiederholungen, rep_s Sekunden je Wiederholung für die Zeitschätzung) oder hold (Sekunden). Nicht als Slot (1.47): Maximalkraft und Skill (brauchen eigene Blöcke), Kraftausdauer (trainiert fast jeder Orden mit) und Beweglichkeit (Warm-up und Cool-down halten sie, Paladin und Dancer bauen sie auf), aerob und anaerob in Orden mit Kraft-, Muskel- oder Schnellkraftziel (Interferenz). Die kommen stattdessen in den Vorschlag für die Blockfolge.",
+  "_info": "Schwerpunkt-Slot: kleine Erhaltungsdosis für einen Bereich, der im laufenden Orden zu kurz kommt. Einer pro Phase, höchstens etwa 15 % der Wochenzeit. place: start (nach dem Warm-up, frisch), end (vor dem Cool-down). days: all (jeder Trainingstag), 1 (am kürzesten Tag) oder 2 (erster und mittlerer Tag). drills wie bei den Flows: mode reps (value Wiederholungen, rep_s Sekunden je Wiederholung für die Zeitschätzung) oder hold (Sekunden). Skill (1.51): dynamisch aus den Skill-Sternen (stars.json), die Übungen stehen nur für die Zeitschätzung. Nicht als Slot (1.47): Maximalkraft (braucht eigene Blöcke), Kraftausdauer (trainiert fast jeder Orden mit) und Beweglichkeit (Warm-up und Cool-down halten sie, Paladin und Dancer bauen sie auf), aerob und anaerob in Orden mit Kraft-, Muskel- oder Schnellkraftziel (Interferenz). Die kommen stattdessen in den Vorschlag für die Blockfolge.",
   "domains": {
     "speed": {
-      "name": "Schnelligkeit", "place": "start", "days": 2,
+      "name": "Schnelligkeit",
+      "place": "start",
+      "days": 2,
       "why": "Schnelligkeit baut ohne Reiz am schnellsten ab. Kurz, frisch, volle Geschwindigkeit.",
       "drills": [
-        { "id": "sh-sp-1", "name": "Skippings, so schnell wie möglich", "mode": "hold", "value": 10, "sets": 3 },
-        { "id": "sh-sp-2", "name": "Fliegende 20 m, volle Geschwindigkeit (drinnen: Rad-Sprint 6 s)", "mode": "reps", "value": 4, "rep_s": 110, "desc": "20 m Anlauf, dann 20 m voll. Zwei Minuten gehen zwischen den Läufen. Jeder Lauf frisch, sonst aufhören." }
+        {
+          "id": "sh-sp-1",
+          "name": "Skippings, so schnell wie möglich",
+          "mode": "hold",
+          "value": 10,
+          "sets": 3
+        },
+        {
+          "id": "sh-sp-2",
+          "name": "Fliegende 20 m, volle Geschwindigkeit (drinnen: Rad-Sprint 6 s)",
+          "mode": "reps",
+          "value": 4,
+          "rep_s": 110,
+          "desc": "20 m Anlauf, dann 20 m voll. Zwei Minuten gehen zwischen den Läufen. Jeder Lauf frisch, sonst aufhören."
+        }
       ]
     },
     "power": {
-      "name": "Sprungkraft", "place": "start", "days": 2,
+      "name": "Sprungkraft",
+      "place": "start",
+      "days": 2,
       "why": "Wenige maximale Sprünge halten die Explosivkraft, Pogos die Reaktivkraft von Waden und Sehnen. Qualität vor Menge, kein Platzbedarf.",
       "drills": [
-        { "id": "sh-pw-2", "name": "Strecksprung aus dem Stand, maximal hoch", "mode": "reps", "value": 3, "sets": 2, "rep_s": 20, "desc": "Jeder Sprung maximal, weich landen, 60 s volle Pause zwischen den Sätzen." },
-        { "id": "sh-pw-3", "name": "Pogo Hops, kurzer Bodenkontakt", "mode": "reps", "value": 10, "sets": 2, "rep_s": 1, "desc": "Nur aus den Sprunggelenken, Knie fast gestreckt, so kurz wie möglich am Boden." }
+        {
+          "id": "sh-pw-2",
+          "name": "Strecksprung aus dem Stand, maximal hoch",
+          "mode": "reps",
+          "value": 3,
+          "sets": 2,
+          "rep_s": 20,
+          "desc": "Jeder Sprung maximal, weich landen, 60 s volle Pause zwischen den Sätzen."
+        },
+        {
+          "id": "sh-pw-3",
+          "name": "Pogo Hops, kurzer Bodenkontakt",
+          "mode": "reps",
+          "value": 10,
+          "sets": 2,
+          "rep_s": 1,
+          "desc": "Nur aus den Sprunggelenken, Knie fast gestreckt, so kurz wie möglich am Boden."
+        }
       ]
     },
     "anaerob": {
-      "name": "Anaerob", "place": "end", "days": 1,
+      "name": "Anaerob",
+      "place": "end",
+      "days": 1,
       "why": "Kurze harte Stöße mit unvollständiger Pause halten die Säuretoleranz; 6 Minuten passen ans Ende jeder Einheit. Rad oder Rudern schont die Beine.",
       "drills": [
-        { "id": "sh-an-2", "name": "Rad oder Rudern: 15 s hart, 45 s locker", "mode": "reps", "value": 6, "rep_s": 60, "desc": "Hart heißt: am Ende der 15 s kaum noch sprechen können. Ohne Gerät: Burpees in den harten 15 s." }
+        {
+          "id": "sh-an-2",
+          "name": "Rad oder Rudern: 15 s hart, 45 s locker",
+          "mode": "reps",
+          "value": 6,
+          "rep_s": 60,
+          "desc": "Hart heißt: am Ende der 15 s kaum noch sprechen können. Ohne Gerät: Burpees in den harten 15 s."
+        }
       ]
     },
     "aerob": {
-      "name": "Ausdauer", "place": "end", "days": 1,
+      "name": "Ausdauer",
+      "place": "end",
+      "days": 1,
       "why": "Locker und regelmäßig. Hält die Grundlage, ohne Erholung zu kosten.",
       "drills": [
-        { "id": "sh-ae-1", "name": "Rad oder Rudern im Sprechtempo", "mode": "hold", "value": 900, "desc": "Du kannst in ganzen Sätzen reden. Wer mag, geht stattdessen zügig spazieren." }
+        {
+          "id": "sh-ae-1",
+          "name": "Rad oder Rudern im Sprechtempo",
+          "mode": "hold",
+          "value": 900,
+          "desc": "Du kannst in ganzen Sätzen reden. Wer mag, geht stattdessen zügig spazieren."
+        }
+      ]
+    },
+    "skill": {
+      "name": "Skill",
+      "place": "start",
+      "days": 2,
+      "why": "Übt die Dimension mit den wenigsten Sternen (Drücken, Ziehen, Beine, Körperbeherrschung) auf den nächsten Stern hin. Deine Eingabe zählt: Schaffst du das Kriterium, ist der Stern verdient.",
+      "drills": [
+        {
+          "id": "sh-sk-1",
+          "name": "Skill-Übung nach Sternen",
+          "mode": "reps",
+          "value": 5,
+          "sets": 3,
+          "rep_s": 40,
+          "desc": "Wird in der Einheit durch die Übung für deinen nächsten Stern ersetzt."
+        }
       ]
     }
   }

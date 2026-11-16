@@ -7,6 +7,7 @@ const NEEDS: Record<string, string> = {};
 for (const s of SKILLS.skills) for (const e of s.exercises) NEEDS[e] = s.id;
 const BEAST_RX = SKILLS.skills.filter((s) => s.beast).map((s) => ({ id: s.id, rx: new RegExp(s.beast, "i") }));
 
+import { STARS, type StarDim } from "./stars";
 export type SkillSet = ReadonlySet<string> | null | undefined;
 
 /** Ohne Skillcheck (null) ist alles erlaubt */
@@ -36,6 +37,13 @@ export function beastOk(b: Beast, skills: SkillSet): boolean {
 export function ladderStart(ladder: string[], skills: SkillSet): number {
   if (!skills) return 0;
   let start = 0;
+  // Sternstufe (1.51): Was als Kriterium eines erreichten Sterns schon geloggt sein kann, ist der Einstieg
+  for (const m of skills) {
+    const x = /^star:(\w+):(\d)$/.exec(m);
+    if (!x) continue;
+    const lv = +x[2];
+    (STARS[x[1] as StarDim] ?? []).slice(0, lv).forEach((crits) => crits.forEach((c) => { const i = ladder.indexOf(c.name); if (i > start) start = i; }));
+  }
   for (const s of SKILLS.skills) if (skills.has(s.id)) for (const n of s.start ?? []) {
     const i = ladder.indexOf(n);
     if (i > start) start = i;

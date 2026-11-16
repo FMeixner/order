@@ -80,10 +80,10 @@
       ]
     },
     "wochenende_kondition": {
-      "name": "Wochenend-Kondition", "location": "home", "minutes": 30, "optional": true, "note": "Freiwillig.",
+      "name": "Wochenend-Kondition", "location": "home", "minutes": 30, "optional": true, "note": "Freiwillig. Auf der Karte wählst du: Bestie oder 30 Min lockere Grundlage.",
       "warmup": ["short_base", "run_prep", "full_prep"], "cooldown": ["cd_general"],
       "blocks": [
-        {"type": "beast", "id": "w-sa-beast", "classes": ["bestie", "ungeheuer"]}
+        {"type": "beast", "id": "w-sa-beast", "classes": ["bestie", "ungeheuer"], "alt": {"id": "w-sa-run", "name": "Lockerer Lauf", "kind": "timer", "minutes": 30, "prog": "none", "note": "Sprechtempo: ganze Sätze sprechen können."}}
       ]
     }
   }

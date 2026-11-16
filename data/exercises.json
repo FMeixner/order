@@ -575,6 +575,10 @@
     "equip": "bodyweight",
     "weighted": true
   },
+  "Crow Pose": {
+    "equip": "bodyweight",
+    "desc": "Hände schulterbreit am Boden, Knie auf die Rückseite der Oberarme legen, Gewicht nach vorn verlagern, bis die Füße abheben. Halten."
+  },
   "DB Bench Press": {
     "equip": "dumbbell",
     "needs": [
@@ -677,6 +681,13 @@
     "equip": "dumbbell",
     "desc": "Mit beiden Kurzhanteln gleichzeitig: Hüfte zurück, Oberkörper etwa 45° vorgeneigt, Rücken lang. Hanteln zur Hüfte ziehen, unten die Schulterblätter weit nach vorn gleiten lassen (Dehnung)."
   },
+  "Dragon Flag": {
+    "equip": "bodyweight",
+    "needs": [
+      "bench"
+    ],
+    "desc": "Rückenlage auf der Bank, hinter dem Kopf festhalten. Körper gestreckt bis auf die Schultern anheben und langsam ganz absenken, ohne abzuknicken."
+  },
   "Einbeinstand, Augen zu": {
     "equip": "bodyweight",
     "desc": "Auf einem Bein stehen, Knie weich, Augen schließen. Mit offenen Augen beginnen, wenn es zu wackelig ist."
@@ -711,6 +722,13 @@
   },
   "Freier Handstand (Versuche)": {
     "equip": "bodyweight"
+  },
+  "Front Lever": {
+    "equip": "bodyweight",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Im Hang den gestreckten Körper waagerecht halten, Arme gestreckt, Schulterblätter nach unten gezogen."
   },
   "Front Lever (Advanced Tuck)": {
     "equip": "bodyweight",
@@ -1023,6 +1041,13 @@
     "equip": "skill",
     "desc": "Ruhiger Durchgang für Hüfte, Brustwirbelsäule und Schultern, je Übung 6–8 langsame Wiederholungen oder 30–45 s: 90/90-Wechsel, weltbeste Dehnung, Hüftbeuger kniend, Thorax-Rotation im Vierfüßler, Stock-Ausschultern, tiefe Hocke, Wandengel. Zweimal durch."
   },
+  "Muscle-Up": {
+    "equip": "bodyweight",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Aus dem Hang explosiv hochziehen, über die Stange (oder Ringe) wechseln und in den Stütz drücken. Sauber, ohne Kipping."
+  },
   "Muscle-Up-Übergang (Band)": {
     "equip": "bodyweight",
     "needs": [
@@ -1058,6 +1083,17 @@
     "equip": "bodyweight",
     "desc": "Kniend, Füße fixiert. Oberkörper gerade so langsam wie möglich nach vorn absenken, mit den Händen abfangen."
   },
+  "One-Arm Pull-Up": {
+    "equip": "bodyweight",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Einarmig aus dem gestreckten Hang, bis das Kinn über der Stange ist. Die freie Hand berührt nichts. Je Seite zählen."
+  },
+  "One-Arm Push-Up": {
+    "equip": "bodyweight",
+    "desc": "Füße weit auseinander, eine Hand unter der Schulter, die andere auf dem Rücken. Körper gerade, Brust bis kurz über den Boden. Je Seite zählen."
+  },
   "Overhead Press": {
     "equip": "barbell"
   },
@@ -1085,6 +1121,10 @@
   },
   "Pistol Squat (Gegengewicht)": {
     "equip": "bodyweight"
+  },
+  "Planche": {
+    "equip": "bodyweight",
+    "desc": "Stütz mit gestreckten Armen, Körper waagerecht über dem Boden, Schultern weit vor den Händen. Gegrätscht zählt."
   },
   "Plate Pinch": {
     "equip": "bodyweight",
@@ -1330,6 +1370,10 @@
   "Shoulder Press Machine": {
     "equip": "machine"
   },
+  "Shrimp Squat": {
+    "equip": "bodyweight",
+    "desc": "Einbeinig stehen, das andere Bein hinten am Fuß festhalten. Langsam beugen, bis das hintere Knie den Boden berührt, wieder hoch. Je Seite zählen."
+  },
   "Shuttle Runs 6 × 20 m": {
     "equip": "cardio",
     "run": true
@@ -1369,6 +1413,7 @@
   "Single-Leg Glute Bridge": {
     "equip": "bodyweight"
   },
+  "Single-Leg Seated Leg Curl": {"equip": "machine", "desc": "Beinbeuger sitzend mit einem Bein, langsam ablassen. Schwächere Seite zuerst."},
   "Single-Leg Leg Press": {
     "equip": "machine",
     "desc": "Beinpresse mit einem Bein, Fuß mittig auf der Platte, tief und kontrolliert."
@@ -1479,6 +1524,10 @@
       }
     ]
   },
+  "Tuck Planche": {
+    "equip": "bodyweight",
+    "desc": "Stütz auf Händen oder Griffen, Knie eng an die Brust, Schultern weit vor die Hände, Füße in der Luft. Arme gestreckt."
+  },
   "Turkish Get-Up": {
     "equip": "kettlebell",
     "desc": "Aus dem Liegen mit der Kettlebell über Kopf in mehreren Zwischenschritten aufstehen und zurück."
@@ -1503,6 +1552,10 @@
   },
   "Wall Handstand (Zehen weg)": {
     "equip": "bodyweight"
+  },
+  "Wall Handstand Push-Up": {
+    "equip": "bodyweight",
+    "desc": "Handstand mit dem Rücken zur Wand, Hände schulterbreit. Kopf kontrolliert bis zum Boden (Kissen), wieder ganz hoch drücken."
   },
   "Wall Handstand Push-Up (Teilbereich)": {
     "equip": "bodyweight"
