@@ -53,3 +53,10 @@ describe("Skill-Sterne (1.51)", () => {
     expect(ladderStart(ladder, new Set(["star:pull:0"]))).toBe(0);
   });
 });
+
+describe("Händisch abhaken (1.51.4)", () => {
+  it("abgehakte Kriterien zählen wie eingetragene", () => {
+    expect(starLevels(st([], ["crit:Knee Push-Up:10"])).push).toBe(1);
+    expect(starLevels(st([], ["crit:Hollow Hold:30s", "crit:Crow Pose:10s"])).control).toBe(1);
+  });
+});

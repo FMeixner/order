@@ -367,6 +367,8 @@ export function capStage(r: Resolved, st: SlotState | undefined, cap: number | n
   let i = cur + 1;
   while (i < r.ladder.length - 1 && pred(i) > hi + 5) i++;
   i = Math.min(i, r.ladder.length - 1);
+  // Schon auf der höchsten Stufe: nichts umstellen, der eigene Stand gilt (1.51.4; vorher sprang das Ziel auf den Bereichsanfang)
+  if (i <= cur) return null;
   return { stage: i, reps: pred(i) };
 }
 
@@ -388,7 +390,9 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
       // Anderer Ort mit leichterer Last (z. B. Studio 24 kg, zuhause nur 20 kg): mehr Wiederholungen statt gleicher Zahl.
       // Der Ort hat keine schwerere Stufe (sonst hätte die Umrechnung sie genommen), darum gilt hier MOVE_CAP (1.41).
       const moved = st0 && s !== st0 && st0.weight != null && w0 != null && w0 < st0.weight && (s.target ?? 0) > hi ? Math.min(s.target!, Math.max(hi, MOVE_CAP)) : 0;
-      const ceil = Math.max(moved, p && w0 != null && r.prog === "double" ? gapCeiling(p, r.equip, w0, rp.lo, hi) : hi);
+      // Letzte Leiterstufe ohne Zusatzlast: weiter mit Wiederholungen, ohne Obergrenze (1.51.4, wie 1.50 bei Hanteln)
+      const lastRung = r.prog === "ladder" && !!r.ladder && stage >= r.ladder.length - 1 && !(EXERCISES[name]?.weighted && p && loadScale(p, "plate"));
+      const ceil = lastRung ? Infinity : Math.max(moved, p && w0 != null && r.prog === "double" ? gapCeiling(p, r.equip, w0, rp.lo, hi) : hi);
       // Schon über der Obergrenze (etwa 28 Wdh mit 4 kg): gleich aufs nächste Gewicht, Wiederholungen darunter (1.49)
       const up = r.prog === "double" && p && w0 != null && !moved && (s.target ?? 0) > ceil ? nextLoad(p, r.equip, w0) : null;
       if (up) {
@@ -549,7 +553,8 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
           // Letzte Stufe zweimal oben: dieselbe Übung mit Zusatzlast
           s.loaded = true; s.topHits = 0; s.weight = firstLoad(p); s.target = rp.lo;
         }
-        else s.target = top;
+        // Letzte Stufe ohne Zusatzlast: vom Geschafften weiter, keine Obergrenze (1.51.4)
+        else s.target = s.stage >= r.ladder.length - 1 && !(EXERCISES[r.ladder[s.stage]]?.weighted && loadScale(p, "plate")) ? Math.max(top, minReps + (fb === "sehrleicht" ? 2 : 1)) : top;
       } else {
         s.topHits = 0;
         if (rp.lo !== null) s.target = Math.min(top, Math.max(rp.lo, minReps + 1));

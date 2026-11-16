@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EQUIPMENT_PRESETS } from "../store";
 import { resolveSlot } from "./resolve";
-import { advance, sharedState, suggest } from "./progression";
+import { advance, capStage, sharedState, suggest } from "./progression";
 
 // Doppelte Progression seit 1.50 (Friedrich): nach Epley hochzählen, bis der nächste Gewichtssprung am unteren Ende
 // des Bereichs oder höchstens 2 darunter landet. Keine feste Obergrenze.
@@ -48,5 +48,21 @@ describe("Keine schwerere Hantel am Ort: weiter mit Wiederholungen, ohne Obergre
   });
   it("auch über 30 geht es weiter", () => {
     expect(advance(r, { weight: 4, target: 30, stage: 0, fb: ["ok"], topHits: 0, updated: "x" } as never, e(30), top4, "d")).toMatchObject({ weight: 4, target: 31 });
+  });
+});
+
+describe("Archer Ring Row auf der höchsten Stufe (1.51.4)", () => {
+  const gym = EQUIPMENT_PRESETS[0].make();
+  const L = ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"];
+  const r = { ...resolveSlot({ id: "w-do-rr", name: "Ring Row", sets: 3, reps: "8-10", prog: "ladder", ladder: L } as never, gym, false)!, ladder: L, prog: "ladder" } as never;
+  it("das Zug-Vermögen setzt das Ziel nicht mehr auf den Bereichsanfang zurück", () => {
+    expect(capStage(r, { weight: null, target: 10, stage: 2, fb: [], topHits: 1, updated: "x" } as never, 3)).toBeNull();
+  });
+  it("3 × 12: Ziel bleibt oben (10), nach zweimal oben geht es mit Zusatzlast weiter", () => {
+    const e = { key: "k", slotId: "w-do-rr", name: "Archer Ring Row", prog: "ladder", stage: 2, feedback: "ok", sets: [12, 12, 12].map((reps) => ({ done: true, reps })) } as never;
+    const one = advance(r, { weight: null, target: 10, stage: 2, fb: ["ok"], topHits: 0, updated: "x" } as never, e, gym, "d");
+    expect(suggest(r, one, 1, gym).targetReps).toBe(10);
+    const two = advance(r, one, e, gym, "d");
+    expect(two.loaded).toBe(true);
   });
 });

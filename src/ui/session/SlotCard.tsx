@@ -80,9 +80,11 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
     raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: seed }, ctx.week, ctx.profile)};
   // Ältere Stände zählten bei Wiederholungs-Progression vom Ziel statt vom Geschafften (2 × 20 → 16): hier nachziehen
   const lastEntry = [...ctx.state.sessions].filter((x) => x.done && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
-  const lastMin = lastEntry && r.prog === "reps" && lastEntry.sets.every((y) => y.done && y.reps != null) ? Math.min(...lastEntry.sets.map((y) => y.reps!)) : null;
+  // Auch die letzte Leiterstufe ohne Obergrenze (1.51.4): zuletzt 3 × 12 auf derselben Stufe → heute 13
+  const topRung = r.prog === "ladder" && !!r.ladder && raw0.stage >= r.ladder.length - 1 && lastEntry?.name === raw0.name && raw0.repsLabel.endsWith("+");
+  const lastMin = lastEntry && (r.prog === "reps" || topRung) && lastEntry.sets.every((y) => y.done && y.reps != null) ? Math.min(...lastEntry.sets.map((y) => y.reps!)) : null;
   const raw: Suggestion = lastMin != null && raw0.targetReps != null && lastMin >= raw0.targetReps
-    ? { ...raw0, targetReps: lastMin + (/schwer/.test(lastEntry!.feedback ?? "") ? 0 : 1), repsLabel: `${lastMin + (/schwer/.test(lastEntry!.feedback ?? "") ? 0 : 1)}${parseReps(r.reps).suffix}` }
+    ? { ...raw0, targetReps: lastMin + (/schwer/.test(lastEntry!.feedback ?? "") ? 0 : 1), repsLabel: topRung ? raw0.repsLabel : `${lastMin + (/schwer/.test(lastEntry!.feedback ?? "") ? 0 : 1)}${parseReps(r.reps).suffix}` }
     : raw0;
   // Nach längerer Pause (14 Tage und mehr an dieser Übung): 10 % leichter wieder einsteigen
   const pausedDays = st?.updated && /^\d{4}-/.test(st.updated) ? daysBetween(st.updated, ctx.date) : 0;

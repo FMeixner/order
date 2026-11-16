@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.4] – 2026-11-16
+
+### Neu
+- **Sterne händisch abhaken:** Unter Setup › Können lässt sich jedes Kriterium abhaken, das du schon kannst. Eingetragene bleiben fest abgehakt.
+
+### Behoben
+- Leitern auf der höchsten Stufe (etwa Archer Ring Row): Die Schätzung aus dem Zug-Vermögen setzte das Ziel jedes Mal auf den Bereichsanfang (8) zurück. Jetzt gilt dein Stand: oben im Bereich, nach zweimal oben mit Zusatzlast. Letzte Stufen ohne Zusatzlast steigern ohne Obergrenze weiter.
+
 ## [1.51.3] – 2026-11-16
 
 ### Neu

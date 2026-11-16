@@ -10,7 +10,7 @@ import { PacketEditor } from "./PacketEditor";
 import { RatioList } from "./RatioList";
 import { WeekCard } from "./WeekCard";
 import { isoDate } from "../engine/plan";
-import { critMet, critText, pathOf, STAR_DIMS, STARS, starLevels, starLine, starLog } from "../engine/stars";
+import { critKey, critMet, critText, loggedMet, pathOf, STAR_DIMS, STARS, starLevels, starLine, starLog } from "../engine/stars";
 
 type Update = (fn: (s: AppState) => AppState) => void;
 
@@ -47,10 +47,9 @@ function StarView({ state, update }: { state: AppState; update: Update }) {
   const weapons = SKILLS.groups.filter((g) => ["schwert", "langschwert", "stab"].includes(g.id));
   const have = new Set(state.user.skills ?? []);
   const toggle = (id: string, on: boolean) => update((st) => { const next = new Set(st.user.skills ?? []); if (on) next.add(id); else next.delete(id); return { ...st, user: { ...st.user, skills: [...next] } }; });
-  const mark = (ok: boolean) => <span className={ok ? "teal" : "muted"}>{ok ? "✓" : "○"}</span>;
   return (
     <div className="stack">
-      <p className="muted small">Ein Stern gilt, wenn du alle seine Übungen geschafft und eingetragen hast. Tipp auf einen Bereich, um zu sehen, was hinter den Sternen steckt. Fehlt ein Stern, ersetzt die App schwere Übungen durch leichtere und Bestien kommen mutiert.</p>
+      <p className="muted small">Ein Stern gilt, wenn du alle seine Übungen geschafft hast: im Training eingetragen oder hier abgehakt. Tipp auf einen Bereich, um zu sehen, was hinter den Sternen steckt. Fehlt ein Stern, ersetzt die App schwere Übungen durch leichtere und Bestien kommen mutiert.</p>
       {STAR_DIMS.map((d) => (
         <details key={d} className="skill-group">
           <summary className="block-label teal">{starLine(d, lv[d])}</summary>
@@ -60,10 +59,14 @@ function StarView({ state, update }: { state: AppState; update: Update }) {
                 <div><b>{"★".repeat(i + 1)}</b>{i + 1 <= lv[d] ? <span className="muted"> · erreicht</span> : null}</div>
                 {crits.map((c) => {
                   const done = critMet(c, log, ticks);
+                  const logged = loggedMet(c, log);
                   const steps = i === lv[d] && !done ? pathOf(c).slice(0, -1) : [];
                   return (
                     <div key={c.name} style={{ marginLeft: 12 }}>
-                      {mark(done)} {critText(c)}
+                      <label className="check">
+                        <input type="checkbox" checked={done} disabled={logged} onChange={(e) => toggle(critKey(c), e.target.checked)} />
+                        <span>{critText(c)}{logged ? <span className="muted"> · eingetragen</span> : null}</span>
+                      </label>
                       {steps.length ? <div className="muted" style={{ marginLeft: 16 }}>Weg dahin: {steps.map((x, j) => <span key={j}>{j ? " → " : ""}{critMet(x, log, new Set()) ? "✓ " : ""}{critText(x)}</span>)}</div> : null}
                     </div>
                   );

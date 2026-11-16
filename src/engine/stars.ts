@@ -39,8 +39,11 @@ export function starLog(state: Pick<AppState, "sessions">, excludeId?: string): 
 }
 const loggedMet = (c: StarCrit, log: Log) =>
   (log.get(c.name) ?? []).some((x) => x.done && (c.seconds != null ? (x.seconds ?? 0) >= c.seconds : (x.reps ?? 0) >= (c.reps ?? Infinity)));
-/** Kriterium geschafft: geloggt oder per Können-Häkchen */
-export const critMet = (c: StarCrit, log: Log, ticks: Set<string>) => loggedMet(c, log) || (!!c.skill && ticks.has(c.skill));
+/** Häkchen eines Kriteriums in user.skills: Können-Id, sonst „crit:Name:Ziel“ (händisch, 1.51.4) */
+export const critKey = (c: StarCrit) => c.skill ?? `crit:${c.name}:${c.seconds != null ? `${c.seconds}s` : c.reps}`;
+export { loggedMet };
+/** Kriterium geschafft: geloggt oder händisch abgehakt */
+export const critMet = (c: StarCrit, log: Log, ticks: Set<string>) => loggedMet(c, log) || ticks.has(critKey(c));
 
 /** Geloggte Kriterien mit Häkchen (zum Nachtragen in user.skills) */
 export function loggedStars(state: Pick<AppState, "sessions">): { level: Record<StarDim, number>; skills: Set<string> } {
