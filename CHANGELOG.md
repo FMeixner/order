@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.1] – 2026-11-16
+
+### Geändert
+- **Slayer, Montag:** Bankdrücken mit Kurzhanteln statt Langhantel. Tiefere Dehnung, und das schwere Langhantel-Bankdrücken bleibt dem Freitag im Kontrastpaar. Das Startgewicht schätzt die App aus deinem Bankdrücken. Gilt für die laufende Phase nach „Übernehmen“ im Plan.
+
 ## [1.51.0] – 2026-11-16
 
 ### Neu

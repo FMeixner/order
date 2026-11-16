@@ -22,7 +22,7 @@
       "name": "Oberkörper schwer", "location": "gym", "minutes": 55,
       "warmup": ["auto", "speed_finish"], "cooldown": ["cd_mdf"],
       "blocks": [
-        {"type": "single", "slot": {"id": "w-mo-2", "core": true, "name": "Bench Press", "home": "DB Floor Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "w-mo-2", "core": true, "name": "DB Bench Press", "home": "DB Floor Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "w-mo-4c", "core": true, "name": "Close-Grip Chin-Up", "load": "plate", "guided": "high", "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "6-10", "prog": "double", "rest": 150}},
         {"type": "single", "slot": {"id": "w-mo-3", "name": "Dip", "load": "plate", "home": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
         {"type": "single", "slot": {"id": "w-mo-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
