@@ -5,11 +5,11 @@ import { suggest } from "./progression";
 
 describe("Ortswechsel auf leichtere Last", () => {
   const p = { ...EQUIPMENT_PRESETS[1].make(), kettlebells: [20] } as never;
-  it("KB Swing im Studio, zuhause nur 20 kg: 24 × 15 → 20 × 24, 28 × 15 → 20 × 30 (Grenze)", () => {
+  it("KB Swing im Studio, zuhause nur 20 kg: 24 × 15 → 20 × 24, 28 × 15 → 20 × 33 (seit 1.50 ohne feste Grenze)", () => {
     const r = resolveSlot({ id: "kb-1", name: "KB Swing", sets: 4, reps: "15", prog: "double" }, p)!;
     const at = (w: number) => suggest(r, { weight: w, target: 15, fb: ["ok"], stage: 0, topHits: 0, updated: "" }, 4, p);
     expect([at(24).weight, at(24).targetReps]).toEqual([20, 24]);
-    expect([at(28).weight, at(28).targetReps]).toEqual([20, 30]);
+    expect([at(28).weight, at(28).targetReps]).toEqual([20, 33]);
   });
   it("Goblet Squat 24 × 10 → 20 × 18", () => {
     const r = resolveSlot({ id: "x", name: "Goblet Squat", sets: 3, reps: "8-10", prog: "double" }, p)!;

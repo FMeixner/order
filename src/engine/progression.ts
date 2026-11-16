@@ -36,10 +36,13 @@ export interface Suggestion {
   gap?: string;
 }
 
-/** Größte Zahl an Wiederholungen, auf die der Bereich bei großen Sprüngen angehoben wird */
-export const GAP_CAP = 15;
-/** Ortswechsel auf leichtere Last: höchstens so viele Wiederholungen — gilt, wo der Ort keine schwerere Stufe hat */
-export const MOVE_CAP = 30;
+/** Doppelte Progression ohne feste Obergrenze (1.50, Friedrich): Die Wiederholungen steigen, bis der nächste
+    Gewichtssprung nach Epley am unteren Ende des Bereichs landet oder höchstens so viele darunter. */
+export const LAND_BELOW = 2;
+/** Ortswechsel (1.41, unverändert): leichtere Last am anderen Ort höchstens bis zu dieser Zahl, sonst lieber schwerer
+    knapp unter dem Bereich; ohne schwerere Stufe am Ort höchstens MOVE_CAP. Gilt nur für den Wechsel, nicht fürs Steigern. */
+const TRANSFER_CAP = 15;
+const MOVE_CAP = 30;
 /** Ab diesem Sprung gilt die Lückenregel bei festen Wiederholungen */
 export const FIXED_GAP = 0.075;
 const RIR: Record<Feedback, number> = { zuschwer: 0, schwer: 0, ok: 1, leicht: 3, sehrleicht: 4 };
@@ -53,17 +56,18 @@ export function nextLoad(p: EquipmentProfile, equip: Resolved["equip"], w: numbe
 /** Obergrenze der Wiederholungen bei Last w: so hoch, dass man nach dem Sprung bei lo landet (Epley), gedeckelt. */
 export function gapCeiling(p: EquipmentProfile, equip: Resolved["equip"], w: number, lo: number, hi: number): number {
   const n = nextLoad(p, equip, w);
-  // Schwerer gibt es an diesem Ort nicht (1.49.1): weiter mit Wiederholungen bis MOVE_CAP, nicht zurück auf lo
-  if (!n) return w > 0 && loadScale(p, equip) ? Math.max(hi, MOVE_CAP) : hi;
-  const need = Math.ceil(30 * ((n.next / w) * (1 + lo / 30)) - 30 - 1e-9);
-  return Math.max(hi, Math.min(Math.max(hi, GAP_CAP), need));
+  // Schwerer gibt es an diesem Ort nicht: weiter mit Wiederholungen, ohne Obergrenze, nie zurück auf lo
+  if (!n) return w > 0 && loadScale(p, equip) ? Number.POSITIVE_INFINITY : hi;
+  const land = Math.max(1, lo - LAND_BELOW);
+  const need = Math.ceil(30 * ((n.next / w) * (1 + land / 30)) - 30 - 1e-9);
+  return Math.max(hi, need);
 }
 
 /** Zielwiederholungen nach einem Sprung von w auf next, geschätzt aus der Leistung vorher (gleiche Reserve). */
 export function landingReps(w: number, reps: number, fb: Feedback, next: number, lo: number): number {
   const eff = reps + RIR[fb];
   const r = Math.floor(30 * ((w / next) * (1 + eff / 30)) - 30 - RIR.ok + 1e-9);
-  return Math.min(lo, Math.max(Math.max(1, lo - 3), r));
+  return Math.min(lo, Math.max(Math.max(1, lo - LAND_BELOW), r));
 }
 
 /** Obergrenze bei festen Wiederholungen (weight/topset): +1 bis +2, wenn der Sprung groß ist */
@@ -279,11 +283,11 @@ export function transferState(r: Resolved, st: SlotState, p: EquipmentProfile): 
   const lo = rp.lo, hi = rp.hi ?? lo;
   const t = st.target ?? lo;
   const perf = w * (1 + t / 30);
-  // Obergrenze der Umrechnung: Bereichsoberende, großzügigst die Lücken-Obergrenze — nie aufgeblähte Zahlen (1.41)
-  const repCap = Math.max(hi, GAP_CAP);
+  // Obergrenze der Umrechnung: Bereichsoberende, großzügigst TRANSFER_CAP — nie aufgeblähte Zahlen (1.41)
+  const repCap = Math.max(hi, TRANSFER_CAP);
   const lastFb = st.fb[st.fb.length - 1];
   const ready = lastFb === "leicht" || lastFb === "sehrleicht" || t >= hi;
-  const floor = r.prog === "double" && ready ? Math.max(1, lo - 3) : lo;
+  const floor = r.prog === "double" && ready ? Math.max(1, lo - LAND_BELOW) : lo;
   const down = snapDown(p, r.equip, w);
   const cands = [stepLoad(p, r.equip, w, 2), stepLoad(p, r.equip, w, 1), down].filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => b - a);
   const need = (c: number) => Math.ceil(30 * (perf / c) - 30 - 1e-9);
@@ -294,10 +298,10 @@ export function transferState(r: Resolved, st: SlotState, p: EquipmentProfile): 
   // Eine schwerere Stufe zählt, sobald die Leistung dort mindestens lo − 3 trägt, auch ohne „leicht“ zuletzt.
   // Nur, wenn leichter nichts im Bereich bleibt — sonst zählt die leichtere Stufe mit mehr Wiederholungen (Ortswechsel).
   const fitsBelow = cands.some((c) => c <= w && need(c) >= floor && need(c) <= hi);
-  const bigJump = (c: number) => !fitsBelow && c > w && r.prog === "double" && c / w - 1 > FIXED_GAP && need(c) >= Math.max(1, lo - 3) && lastFb !== "schwer" && lastFb !== "zuschwer";
+  const bigJump = (c: number) => !fitsBelow && c > w && r.prog === "double" && c / w - 1 > FIXED_GAP && need(c) >= Math.max(1, lo - LAND_BELOW) && lastFb !== "schwer" && lastFb !== "zuschwer";
   for (const c of cands) {
     if (c > w && !ready && !bigJump(c)) continue;
-    const n = bigJump(c) ? Math.max(Math.max(1, lo - 3), Math.min(need(c), hi)) : need(c);
+    const n = bigJump(c) ? Math.max(Math.max(1, lo - LAND_BELOW), Math.min(need(c), hi)) : need(c);
     if ((n >= floor || bigJump(c)) && (r.prog !== "double" || n <= repCap || nextLoad(p, r.equip, c) == null)) return { ...st, weight: c, target: r.prog === "double" ? n : lo };
   }
   // Dann lieber die nächstschwerere Stufe knapp unter dem Bereich als leichteres Gewicht mit mehr Wiederholungen
@@ -379,7 +383,7 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
     if (rp.lo !== null) {
       const hi = rp.hi ?? rp.lo;
       // Anderer Ort mit leichterer Last (z. B. Studio 24 kg, zuhause nur 20 kg): mehr Wiederholungen statt gleicher Zahl.
-      // Der Ort hat keine schwerere Stufe (sonst hätte die Umrechnung sie genommen), darum gilt hier MOVE_CAP.
+      // Der Ort hat keine schwerere Stufe (sonst hätte die Umrechnung sie genommen), darum gilt hier MOVE_CAP (1.41).
       const moved = st0 && s !== st0 && st0.weight != null && w0 != null && w0 < st0.weight && (s.target ?? 0) > hi ? Math.min(s.target!, Math.max(hi, MOVE_CAP)) : 0;
       const ceil = Math.max(moved, p && w0 != null && r.prog === "double" ? gapCeiling(p, r.equip, w0, rp.lo, hi) : hi);
       // Schon über der Obergrenze (etwa 28 Wdh mit 4 kg): gleich aufs nächste Gewicht, Wiederholungen darunter (1.49)
@@ -391,12 +395,12 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
         repsLabel = `${land}${hi > land ? `–${hi}` : ""}${rp.suffix}`;
         gap = `Großer Sprung: ${fmtKg(up.next)} kg statt ${fmtKg(w0!)} kg, erst ${land} Wdh, dann zurück in den Bereich`;
       } else {
-        targetReps = Math.min(ceil, Math.max(Math.max(1, rp.lo - 3), s.target ?? rp.lo));
+        targetReps = Math.min(ceil, Math.max(Math.max(1, rp.lo - LAND_BELOW), s.target ?? rp.lo));
         const from = Math.min(rp.lo, targetReps);
-        repsLabel = `${from}${ceil > from ? `–${ceil}` : ""}${rp.suffix}`;
+        repsLabel = `${from}${!Number.isFinite(ceil) ? "+" : ceil > from ? `–${ceil}` : ""}${rp.suffix}`;
         const n = ceil > hi && p && w0 != null ? nextLoad(p, r.equip, w0) : null;
         if (n) gap = `→ bis ${r.sets} × ${ceil}, dann ${fmtKg(n.next)} kg`;
-        else if (ceil > hi && p && w0 != null) gap = `Schwerer gibt es hier nicht: weiter mit Wiederholungen bis ${ceil}`;
+        else if (ceil > hi && p && w0 != null) gap = "Schwerer gibt es hier nicht: weiter mit Wiederholungen";
       }
     }
   } else if ((r.prog === "weight" || r.prog === "topset") && rp.lo !== null && !rp.amrap) {
@@ -483,7 +487,7 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
         else if (!extended && fb === "leicht") jump(1);
         // Wiederholungsphase: „OK“ und „Leicht“ +1, „Sehr leicht“ +2, „Schwer“ gleiches Ziel
         else if (extended && (fb === "leicht" || fb === "sehrleicht")) s.target = Math.min(ceil, Math.max(lo, minReps + (fb === "sehrleicht" ? 2 : 1)));
-        else if (rp.lo !== null) s.target = Math.min(ceil, Math.max(Math.max(1, lo - 3), minReps + (fb === "schwer" ? 0 : 1)));
+        else if (rp.lo !== null) s.target = Math.min(ceil, Math.max(Math.max(1, lo - LAND_BELOW), minReps + (fb === "schwer" ? 0 : 1)));
       }
       break;
     }

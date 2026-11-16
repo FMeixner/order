@@ -37,6 +37,8 @@ export interface Resolved {
   guided?: boolean;
   /** Vom Nutzer getauschte Übung */
   swapped?: boolean;
+  /** Bewusst die freie Originalübung gewählt (1.50): bleibt frei, auch wenn der Tag geführte Varianten bekommt */
+  freeChosen?: boolean;
   /** Anpassungen durch die App, für die Details */
   why?: string[];
   /** Übung, die ohne Tausch dran wäre */
@@ -135,7 +137,8 @@ function slotNames(slot: Slot): string[] {
 
 export function resolveSlot(slot: Slot, p: EquipmentProfile, reduced = false, swap?: string, skills?: SkillSet): Resolved | null {
   const base = resolveBase(slot, p, reduced, skills);
-  if (!base || !swap || swap === base.name) return base;
+  if (!base || !swap) return base;
+  if (swap === base.name) return { ...base, freeChosen: true };
   if (!available(swap, p, skills)) return { ...base, swapUnavailable: swap };
   const equip = equipOf(swap);
   let prog: Prog = base.prog;
@@ -243,7 +246,8 @@ export function swapOptions(r: Resolved, p: EquipmentProfile, skills?: SkillSet)
   for (const members of Object.values(SWAP_GROUPS)) if (members.some((m) => seeds.has(m))) members.forEach((m) => out.add(m));
   for (const s of seeds) if (GUIDED[s]) out.add(GUIDED[s]);
   out.delete(r.name);
-  out.delete(r.original);
+  // Geführt (etwa Seated Dip Machine statt Dip): das freie Original bleibt wählbar (1.50)
+  if (!r.guided) out.delete(r.original);
   return [...out]
     .map((name) => ({ name, available: available(name, p, skills) }))
     .sort((a, b) => Number(b.available) - Number(a.available) || a.name.localeCompare(b.name));
@@ -274,7 +278,7 @@ export function guidedKeys(list: { r: Resolved; contrast: boolean; group?: numbe
   const strength = list.filter((x) => x.r.kind === "strength");
   const n = Math.max(0, Math.round(strength.length / 2) + extra - strength.filter((x) => station(x.r)).length);
   if (!n) return new Set();
-  const cands = free.slice(1).filter((x) => !x.contrast && !x.r.swapped && !partnerStation(x) && toGuided(x.r, p));
+  const cands = free.slice(1).filter((x) => !x.contrast && !x.r.swapped && !x.r.freeChosen && !partnerStation(x) && toGuided(x.r, p));
   const out = new Set<string>();
   const taken = new Set<number>();
   for (const x of cands.slice().reverse()) {

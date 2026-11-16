@@ -4,8 +4,12 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 
 ## [Unveröffentlicht]
 
+### Geändert
+- **Steigern ohne feste Obergrenze:** Bei der doppelten Progression steigen die Wiederholungen jetzt so weit, bis der nächste Gewichtssprung nach Epley am unteren Ende des Bereichs oder höchstens 2 darunter landet. Beim Seitheben 12–15 mit 1,5-kg-Hanteln heißt das: mit 4 kg bis 25 Wiederholungen, dann 5,5 kg ab etwa 10. Die alte Grenze von 15 Wiederholungen entfällt. Ortswechsel bleiben wie gehabt.
+
 ### Behoben
-- **Schwerste Hantel am Ort erreicht:** Statt nach dem oberen Ende zurück auf das untere Ende zu fallen (4 kg × 28 → 4 kg × 12), steigen die Wiederholungen weiter bis 30. Die Karte sagt „Schwerer gibt es hier nicht“.
+- **Dip wieder wählbar, wenn die App die Dip-Maschine vorschlägt:** Ist eine Stelle an einem Tag mit hoher Last geführt, steht das freie Original im Tauschen-Menü. Wählst du es, bleibt es frei.
+- **Schwerste Hantel am Ort erreicht:** Statt nach dem oberen Ende zurück auf das untere Ende zu fallen (4 kg × 28 → 4 kg × 12), steigen die Wiederholungen weiter, ohne Obergrenze. Die Karte sagt „Schwerer gibt es hier nicht“.
 
 ## [1.49.0] – 2026-11-13
 

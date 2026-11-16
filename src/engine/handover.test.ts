@@ -80,7 +80,7 @@ describe("Ortswechsel der Stände (1.41)", () => {
     const s = sharedState({ "a|DB Lateral Raise": st(5, 15, "2026-11-01") }, r)!;
     const sug = suggest(r, s, 1, home);
     expect(sug.weight).toBe(6);
-    expect(sug.targetReps!).toBeLessThanOrEqual(12 - 3);
+    expect(sug.targetReps!).toBeLessThanOrEqual(12 - 2); // höchstens 2 unter dem Bereich (1.50)
     expect(sug.targetReps!).toBeGreaterThanOrEqual(6);
   });
 });

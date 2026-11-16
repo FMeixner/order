@@ -24,7 +24,8 @@ function SwapDialog({ r, ctx, onClose }: { r: Resolved; ctx: SessionCtx; onClose
   const set = (name: string | null) => {
     ctx.update((st) => {
       const sw = { ...(st.swaps ?? {}) };
-      if (name == null || name === r.original) delete sw[key]; else sw[key] = name;
+      // Geführt und das freie Original gewählt: ausdrücklich merken, sonst käme wieder die Maschine (1.50)
+      if (name == null || (name === r.original && !r.guided)) delete sw[key]; else sw[key] = name;
       return { ...st, swaps: sw };
     });
     onClose();
