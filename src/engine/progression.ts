@@ -84,12 +84,15 @@ const fmtKg = (n: number) => String(n).replace(".", ",");
    Nacken, Schienbein, Waden bis 30 Wiederholungen, Rumpf und Beine bis 25, Oberkörper bis 20.
    Danach dieselbe Übung mit Weste oder Gürtel, unteres Ende eines neuen Bereichs, Steigerung wie bei Hanteln. */
 export function repCap(name: string): number {
+  const own = EXERCISES[name]?.repCap;
+  if (own) return own;
   const m = Object.entries(musclesOf(name)).sort((a, b) => b[1] - a[1])[0]?.[0];
   if (m === "Nacken" || m === "Waden") return 30;
   if (m && ["Brust", "Rücken", "Schultern", "Bizeps", "Trizeps"].includes(m)) return 20;
   return 25;
 }
 export function loadedRange(name: string): string {
+  if (EXERCISES[name]?.loadedReps) return EXERCISES[name].loadedReps!;
   const c = repCap(name);
   return c >= 30 ? "15-20" : c >= 25 ? "12-15" : "8-12";
 }

@@ -509,14 +509,6 @@
         "mode": "hold",
         "value": 45,
         "desc": "Bauchlage, Hände neben der Brust, Oberkörper langsam aufrichten, Becken bleibt am Boden."
-      },
-      {
-        "id": "cd-doorway",
-        "name": "Doorway Stretch",
-        "mode": "hold",
-        "value": 45,
-        "sides": true,
-        "desc": "Unterarm in 90° an den Türrahmen, Körper langsam nach vorn drehen."
       }
     ],
     "cd_di": [
@@ -761,6 +753,27 @@
           "mode": "reps",
           "value": 15,
           "desc": "Aus dem Stand so hoch wie möglich springen, Knie zur Brust, weich landen, sofort wieder ab. 15 Sprünge."
+        }
+      }
+    ],
+    "cd_trap": [
+      {
+        "id": "cd-trap-duo",
+        "name": "Duoball: oberer Trapez an der Wand",
+        "mode": "activity",
+        "value": 60,
+        "sides": true,
+        "needs": [
+          "ball"
+        ],
+        "desc": "Rücken zur Wand, Duoball auf dem oberen Trapez zwischen Hals und Schulterblatt, die Kugeln links und rechts der Wirbelsäule. Langsam in die Knie gehen und wieder hoch, dabei den Arm der Seite kreisen. Lockerer Nacken, ruhig ausatmen.",
+        "instead": {
+          "id": "cd-trap-stretch",
+          "name": "Trapez-Dehnung mit Anspannen und Loslassen",
+          "mode": "reps",
+          "value": 3,
+          "sides": true,
+          "desc": "Sitzen, eine Hand unter den Oberschenkel klemmen. Ohr zur anderen Schulter, Kinn leicht nach unten. 5 s die Schulter gegen den Widerstand hochziehen, loslassen und 20 s tiefer in die Dehnung sinken. 3 Runden je Seite."
         }
       }
     ]

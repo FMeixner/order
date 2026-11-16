@@ -182,8 +182,6 @@ function ModuleCard({ it, ctx, session, mut }: { it: Item; ctx: SessionCtx; sess
   );
 }
 
-/** Pausenangabe: ganze Minuten als „X Min", dazwischen mit Sekunden (2:30 Min) — 2:30 rundet sich sonst zu „3 Min" */
-const pauseLabel = (s: number) => s % 60 === 0 ? `${s / 60} Min` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")} Min`;
 
 const Dropped = ({ it }: { it: Item }) => (it.dropped?.length ? <div className="muted small">{it.dropped.join(", ")} entfällt (ohne Gerät).</div> : null);
 
@@ -222,9 +220,9 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
     const transfer = b.transfer ?? 30, rest = b.rest ?? 180;
     return (
       <section className="card contrast">
-        <div className="block-label amber">Kontrastpaar · {transfer} s Übergang · {pauseLabel(rest)} Pause</div>
+        <div className="block-label amber">Kontrastpaar</div>
         {heavy && <SlotCard r={heavy} ctx={ctx} session={session} mut={mut} onSetDone={() => expl && t.rest(`Gleich: ${expl.name}`, transfer)} />}
-        <div className="arrow muted small">↓ {transfer} s, dann explosiv</div>
+        <div className="arrow muted small">↓ dann explosiv</div>
         {expl && <SlotCard r={expl} ctx={ctx} session={session} mut={mut} onSetDone={(last) => { if (!last) t.rest("Pause bis zum nächsten Paar", rest); }} />}
       </section>
     );
@@ -234,7 +232,7 @@ function ItemCard({ it, ctx, session, mut, nextBeast }: { it: Item; ctx: Session
     return (
       <section className="card superset">
         {it.fill && <div className="block-label amber">{it.fill}</div>}
-        <div className="block-label teal">Im Wechsel{b.sameStation && b.label && it.resolved.every((r) => r.equip === "cable") ? ` · ${b.label}` : ""} · {b.rest ?? 60} s Pause</div>
+        <div className="block-label teal">Im Wechsel{b.sameStation && b.label && it.resolved.every((r) => r.equip === "cable") ? ` · ${b.label}` : ""}</div>
         {it.resolved.map((r) => <SlotCard key={r.key} r={r} ctx={ctx} session={session} mut={mut} onSetDone={(lastSet) => { if (r === last && !lastSet) t.rest("Pause, dann nächste Runde", b.rest ?? 60); }} />)}
         {it.fill && <DropSlot ctx={ctx} />}
         <Dropped it={it} />

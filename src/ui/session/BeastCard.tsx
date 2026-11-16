@@ -246,6 +246,35 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, easy, nex
       </>
     );
   };
+  // Zwei Bestien in einem Slot (1.51.3, Friedrich): je Bestie eine eigene Karte mit Dauer, Timer, Runden und Bestzeit
+  if (parts.length) return (
+    <>
+      {parts.map((pt, u) => {
+        const pb = beastById(pt.id)!;
+        const sec = curPart(u)?.seconds;
+        if (folded && sec != null) return (
+          <button key={u} className="slot slot-done" onClick={() => setFolded(false)} aria-label={`${pt.name} erledigt, aufklappen`}>
+            <span className="slot-done-check" aria-hidden>✓</span>
+            <span className="slot-name">{pt.name}</span>
+            <span className="muted small">{fmt(sec)}</span>
+          </button>
+        );
+        const known = (ctx.state.beastTimes[pt.id] ?? []).length > 0;
+        const min = beastMinutes(pb, ctx.state.beastTimes[pt.id]).min;
+        return (
+          <section key={u} className="card beast">
+            <div className="block-label amber">{capOf(pb) != null ? `Lastbestie · Timecap ${capOf(pb)} Min` : `Bestie · ${known ? "" : "~"}${Math.round(min)} Min`}</div>
+            <div className="beast-name">{pt.name}</div>
+            {easy && <div className="muted small">Grundlagentempo, zählt nicht für die Bestzeit.</div>}
+            {work(adjWork(pb, pt, curPart(u)))}
+            {isLoadBeast(pb) && <LoadField beast={pb} ctx={ctx} cur={curPart(u)} onChange={(l) => { syncTime(pt.id, curPart(u)?.seconds, l); patchUnit(u, l); }} />}
+            <BeastTimer times={isLoadBeast(pb) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={sec ?? null} steps={beastSteps(adjWork(pb, pt, curPart(u)))} rounds={pt.rounds} title={pt.name} watchKey={`${watchBase}:${blockId}:${u}:${pt.id}`} onSave={(x) => saveUnit(u, x)} onStart={() => mut((s) => s)} />
+            {cardio && beast !== beast0 && <div className="muted small">Laufen ersetzt durch {SUB_LABEL[cardio]}, umgerechnet nach Belastungszeit.</div>}
+          </section>
+        );
+      })}
+    </>
+  );
   if (folded && done) {
     const times = beast.parts
       ? beast.parts.map((pt, u) => { const sec = run.parts?.[u]?.id === pt.id ? run.parts[u].seconds : null; return sec != null ? fmt(sec) : "–"; }).join(" · ")
@@ -263,18 +292,7 @@ export function BeastCard({ blockId, beast: beast0, ctx, session, mut, easy, nex
       <div className="block-label amber">{capOf(beast) != null ? `Lastbestie · Timecap ${capOf(beast)} Min` : `Bestie · ${measured ? "" : "~"}${Math.round(effMin)} Min`}</div>
       <div className="beast-name">{beast.name}</div>
       {easy && <div className="muted small">Grundlagentempo, zählt nicht für die Bestzeit.</div>}
-      {parts.length ? (
-        <>
-          {parts.map((pt, u) => (
-            <div key={u} className="stack">
-              <div className="small"><strong>{u + 1}. {pt.name}</strong></div>
-              {work(adjWork(beastById(pt.id)!, pt, curPart(u)))}
-              {isLoadBeast(beastById(pt.id)!) && <LoadField beast={beastById(pt.id)!} ctx={ctx} cur={curPart(u)} onChange={(l) => { syncTime(pt.id, curPart(u)?.seconds, l); patchUnit(u, l); }} />}
-              <BeastTimer times={isLoadBeast(beastById(pt.id)!) ? [] : ctx.state.beastTimes[pt.id] ?? []} saved={curPart(u)?.seconds ?? null} steps={beastSteps(adjWork(beastById(pt.id)!, pt, curPart(u)))} rounds={pt.rounds} title={pt.name} watchKey={`${watchBase}:${blockId}:${u}:${pt.id}`} onSave={(sec) => saveUnit(u, sec)} onStart={() => mut((s) => s)} />
-            </div>
-          ))}
-        </>
-      ) : (
+      {(
         <>
           {work(adjWork(beast, beast, cur))}
           {isLoadBeast(beast) && <LoadField beast={beast} ctx={ctx} cur={cur} onChange={setLoadSingle} />}

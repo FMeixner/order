@@ -40,7 +40,7 @@
       ]
     },
     "schwert": {
-      "name": "Klinge schnell", "location": "home", "minutes": 40,
+      "name": "Klinge schnell", "location": "home", "minutes": 45,
       "warmup": ["short_base", "shoulder_prep", "sword_prep"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "module", "module": "sword", "variant": "intervalle", "fallbackFlow": "mobility"},

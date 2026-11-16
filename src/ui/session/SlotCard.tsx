@@ -75,9 +75,9 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
   const cap = capStage(r, st, pullCapacity(ctx.state, ctx.date));
   const seed = cap ? null : packetStage(r, st, ctx.state.packets);
   if (cap)
-    raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: cap.stage, target: null }, ctx.week, ctx.profile), gap: `Aus deinem Zug-Vermögen (Klimmzüge, Päckchen): diese Stufe, erwartet etwa ${cap.reps} Wdh. am Stück.` };
+    raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: cap.stage, target: null }, ctx.week, ctx.profile)};
   else if (seed != null)
-    raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: seed }, ctx.week, ctx.profile), gap: "Aus deinem Päckchen: eine Stufe höher angesetzt." };
+    raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: seed }, ctx.week, ctx.profile)};
   // Ältere Stände zählten bei Wiederholungs-Progression vom Ziel statt vom Geschafften (2 × 20 → 16): hier nachziehen
   const lastEntry = [...ctx.state.sessions].filter((x) => x.done && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
   const lastMin = lastEntry && r.prog === "reps" && lastEntry.sets.every((y) => y.done && y.reps != null) ? Math.min(...lastEntry.sets.map((y) => y.reps!)) : null;

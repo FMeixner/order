@@ -38,3 +38,16 @@ describe("Warm-up bei Überkopfdrücken (1.51.2)", () => {
     expect(autoWarmLists(FOCUS_BY_ID.slayer.roles.kraft_a, 1)).not.toContain("lat_box");
   });
 });
+
+describe("Jede Einheit endet mit Trapez lösen (1.51.3)", () => {
+  it("Duoball, ohne Ball die Dehnung; Slayer ohne Türrahmen am Ende", async () => {
+    const { coolDrills } = await import("./plan");
+    const { emptyState } = await import("../store");
+    const u = emptyState().user;
+    const cd = coolDrills(FOCUS_BY_ID.slayer.roles.kraft_a, { ...g, has: { ...g.has, ball: true } }, u, 1);
+    expect(cd[cd.length - 1].name).toMatch(/Duoball/);
+    expect(cd.some((d) => /Doorway/.test(d.name))).toBe(false);
+    const noBall = coolDrills(FOCUS_BY_ID.slayer.roles.kraft_a, { ...g, has: { ...g.has, ball: false } }, u, 1);
+    expect(noBall[noBall.length - 1].name).toMatch(/Trapez-Dehnung/);
+  });
+});

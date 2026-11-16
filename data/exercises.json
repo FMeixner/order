@@ -53,7 +53,9 @@
   },
   "Archer Pull-Up": {
     "equip": "bodyweight",
-    "needs": ["bar"],
+    "needs": [
+      "bar"
+    ],
     "desc": "Weiter Griff, zu einer Hand ziehen, der andere Arm bleibt fast gestreckt und hilft nur so viel wie nötig. Seiten im Wechsel oder eine Seite komplett."
   },
   "Staggered Stance DB RDL": {
@@ -914,20 +916,41 @@
   },
   "Klingen-Seitheben": {
     "equip": "bodyweight",
-    "needs": ["sword"],
-    "instead": [{"name": "DB Lateral Raise"}, {"name": "Band Lateral Raise"}],
+    "needs": [
+      "sword"
+    ],
+    "instead": [
+      {
+        "name": "DB Lateral Raise"
+      },
+      {
+        "name": "Band Lateral Raise"
+      }
+    ],
     "desc": "Schwert oder Stock am Griff, Klinge waagerecht nach vorn. Arm seitlich bis Schulterhöhe heben, oben kurz halten, langsam senken. Der lange Hebel macht aus wenig Gewicht viel Arbeit für die seitliche Schulter; schwerer mit Handgelenkgewicht."
   },
   "Schwert-Hebeln": {
     "equip": "bodyweight",
-    "needs": ["sword"],
-    "instead": [{"name": "Wrist Curl"}],
+    "needs": [
+      "sword"
+    ],
+    "instead": [
+      {
+        "name": "Wrist Curl"
+      }
+    ],
     "desc": "Schwert oder Stock senkrecht vor dem Körper am Griff, Arm locker gestreckt. Die Spitze nur aus dem Handgelenk nach vorn senken und wieder heben, dann mit der Spitze nach hinten. Kräftigt Unterarme und Handgelenke; je weiter die Hand vom Gewicht, desto schwerer."
   },
   "Klingen-Außenrotation": {
     "equip": "bodyweight",
-    "needs": ["sword"],
-    "instead": [{"name": "Band External Rotation"}],
+    "needs": [
+      "sword"
+    ],
+    "instead": [
+      {
+        "name": "Band External Rotation"
+      }
+    ],
     "desc": "Oberarm am Körper, Ellbogen 90°, Schwert oder Stock waagerecht in der Hand. Den Unterarm nach außen drehen, Ellbogen bleibt am Körper, langsam zurück. Für die Rotatorenmanschette; mit Handgelenkgewicht schwerer."
   },
   "Knee Push-Up": {
@@ -1385,10 +1408,25 @@
   "Side Plank": {
     "equip": "bodyweight"
   },
+  "Side Hyperextension": {
+    "equip": "bodyweight",
+    "weighted": true,
+    "needs": [
+      "machines"
+    ],
+    "repCap": 24,
+    "loadedReps": "20-24",
+    "desc": "Seitlich auf der 45°-Bank (Roman Chair): Hüfte auf dem Polster, Füße fixiert, Hände an der Brust. Seitlich absenken und über die seitliche Rumpfmuskulatur aufrichten, ohne Schwung. Wiederholungen beider Seiten zusammen (24 = 12 je Seite): erst eine Seite komplett, dann die andere. Später mit Scheibe vor der Brust.",
+    "instead": [
+      {
+        "name": "Suitcase Side Bend"
+      }
+    ]
+  },
   "Skipping Jumps": {
     "equip": "bodyweight",
     "loud": true,
-    "desc": "Wie Seilspringen ohne Seil (mit Seil, wenn eins da ist): kleine, schnelle Sprünge auf den Fußballen, Knie locker. 30 Sprünge so schnell wie möglich.",
+    "desc": "Skipping wie im Lauf-ABC, auf der Stelle: Knie schnell bis etwa Hüfthöhe, kurze Bodenkontakte auf dem Ballen, Arme wie beim Sprint. 30 Bodenkontakte so schnell wie möglich.",
     "instead": [
       {
         "name": "High Knees auf der Stelle"
@@ -1413,7 +1451,10 @@
   "Single-Leg Glute Bridge": {
     "equip": "bodyweight"
   },
-  "Single-Leg Seated Leg Curl": {"equip": "machine", "desc": "Beinbeuger sitzend mit einem Bein, langsam ablassen. Schwächere Seite zuerst."},
+  "Single-Leg Seated Leg Curl": {
+    "equip": "machine",
+    "desc": "Beinbeuger sitzend mit einem Bein, langsam ablassen. Schwächere Seite zuerst."
+  },
   "Single-Leg Leg Press": {
     "equip": "machine",
     "desc": "Beinpresse mit einem Bein, Fuß mittig auf der Platte, tief und kontrolliert."
@@ -1728,5 +1769,130 @@
   "Freier Mobility-Flow": {
     "equip": "bodyweight",
     "desc": "Wohin der Körper heute will: fließend durch Positionen wandern, ohne Plan und ohne Zwang."
+  },
+  "Dip Negative": {
+    "equip": "bodyweight",
+    "needs": [
+      "dip"
+    ],
+    "desc": "Oben in den Stütz springen, in 5 Sekunden tief absenken, bis die Brust dehnt. Unten absteigen, wieder hoch springen."
+  },
+  "Incline Archer Push-Up": {
+    "equip": "bodyweight",
+    "desc": "Archer-Liegestütz mit den Händen erhöht (Bank, Box): zu einer Hand absenken, der andere Arm bleibt gestreckt. Je Seite zählen."
+  },
+  "Ring Support Hold": {
+    "equip": "bodyweight",
+    "needs": [
+      "rings"
+    ],
+    "desc": "Gestreckter Stütz in den Ringen, Ringe nah am Körper, Schultern tief, Daumen nach außen drehen."
+  },
+  "Ring Dip Negative": {
+    "equip": "bodyweight",
+    "needs": [
+      "rings"
+    ],
+    "desc": "Aus dem Ringstütz in 5 Sekunden tief absenken, Ringe nah am Körper. Unten absteigen, wieder hoch."
+  },
+  "Wall Handstand Push-Up Negative": {
+    "equip": "bodyweight",
+    "desc": "Im Handstand an der Wand in 5 Sekunden kontrolliert absenken, bis der Kopf den Boden (oder ein Kissen) berührt. Unten abrollen oder absteigen."
+  },
+  "Incline One-Arm Push-Up": {
+    "equip": "bodyweight",
+    "desc": "Einarmiger Liegestütz mit der Hand erhöht (Bank, Tisch, Box), Beine weit gegrätscht, Hüfte gerade. Je tiefer die Auflage, desto schwerer. Je Seite zählen."
+  },
+  "Muscle-Up Negative": {
+    "equip": "bodyweight",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Über der Stange in den Stütz springen, langsam über den Übergang in den Hang absenken. Den Übergang bewusst führen."
+  },
+  "Archer Pull-Up Negative": {
+    "equip": "bodyweight",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Oben seitlich an einer Hand ankommen (hochspringen oder normal hochziehen), in 5 Sekunden absenken, der andere Arm bleibt fast gestreckt. Je Seite zählen."
+  },
+  "Band-Assisted One-Arm Chin-Up": {
+    "equip": "band",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Einarmiger Klimmzug im Untergriff mit starkem Band unter dem Fuß oder Knie. Mit dünnerem Band weiter. Je Seite zählen.",
+    "instead": [
+      {
+        "name": "One-Arm Chin-Up (Finger-Hilfe)"
+      }
+    ]
+  },
+  "One-Arm Chin-Up (Finger-Hilfe)": {
+    "equip": "bodyweight",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Einarmig im Untergriff ziehen, die andere Hand hilft nur mit Fingern an der Stange: erst vier, dann drei, zwei, einer. Je Seite zählen."
+  },
+  "One-Arm Chin-Up Negative": {
+    "equip": "bodyweight",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Oben einarmig im Untergriff ankommen (mit beiden Händen hochziehen), in 5 Sekunden absenken. Je Seite zählen."
+  },
+  "One-Arm Chin-Up": {
+    "equip": "bodyweight",
+    "needs": [
+      "bar"
+    ],
+    "desc": "Einarmiger Klimmzug im Untergriff aus dem gestreckten Hang, die freie Hand berührt nichts. Je Seite zählen."
+  },
+  "Shrimp Squat (mit Hilfe)": {
+    "equip": "bodyweight",
+    "desc": "Shrimp Squat mit einer Hand an Wand oder Stange zur Hilfe, hinteres Knie sanft ab bis auf ein Kissen. Je Seite zählen."
+  },
+  "Pike Hold": {
+    "equip": "bodyweight",
+    "needs": [
+      "box"
+    ],
+    "desc": "Hände am Boden, Füße auf der Box, Hüfte über den Schultern, Arme gestreckt, Ohren zwischen den Armen. Halten."
+  },
+  "Support Hold": {
+    "equip": "bodyweight",
+    "desc": "Gestreckter Stütz an Barren, Dip-Griffen oder zwei stabilen Stühlen, Schultern tief, Körper ruhig. Halten."
+  },
+  "Planche Lean": {
+    "equip": "bodyweight",
+    "desc": "Liegestützposition, Finger nach außen oder hinten, Schultern weit vor die Hände schieben, Arme gestreckt, Körper gespannt. Halten."
+  },
+  "Advanced Tuck Planche": {
+    "equip": "bodyweight",
+    "desc": "Wie Tuck Planche, aber Rücken flach und Hüfte auf Schulterhöhe, Knie weg von der Brust. Arme gestreckt."
+  },
+  "Pseudo Planche Push-Up": {
+    "equip": "bodyweight",
+    "desc": "Liegestütz mit den Händen auf Hüfthöhe, Finger nach außen, Schultern bleiben die ganze Zeit vor den Händen. Langsam."
+  },
+  "Straddle Planche": {
+    "equip": "bodyweight",
+    "desc": "Planche mit weit gegrätschten Beinen, Körper waagerecht, Arme gestreckt."
+  },
+  "Dragon Flag Negative": {
+    "equip": "bodyweight",
+    "needs": [
+      "bench"
+    ],
+    "desc": "Oben in der Kerze auf der Bank starten, Körper gestreckt in 5 Sekunden bis knapp über die Bank absenken."
+  },
+  "Tuck Dragon Flag": {
+    "equip": "bodyweight",
+    "needs": [
+      "bench"
+    ],
+    "desc": "Dragon Flag mit angezogenen Knien: Hüfte gestreckt, Körper bis auf die Schultern anheben und langsam absenken."
   }
 }

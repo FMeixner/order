@@ -20,7 +20,7 @@
   "week_3": ["stab_atem", "haltung_kraft", "grundlage"],
   "roles": {
     "stab_atem": {
-      "name": "Stab und Atem", "location": "home", "minutes": 55,
+      "name": "Stab und Atem", "location": "home", "minutes": 60,
       "warmup": ["short_base", "shake_out"], "cooldown": ["cd_speaker"],
       "blocks": [
         {"type": "module", "module": "flow", "variant": "stab"},

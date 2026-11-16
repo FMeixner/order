@@ -1,40 +1,520 @@
 {
-  "_info": "Skill-Sterne (1.51, Friedrich): vier Dimensionen, je bis zu fünf Sterne. Ein Stern gilt, sobald eines seiner Kriterien im Training geloggt ist (Wiederholungen eines Satzes bzw. Haltezeit). Höhere Sterne schließen die niedrigeren ein. skill: Können-Häkchen (skills.json), das dieses Kriterium mit erfüllt. legacy: Können-Häkchen → Stern beim Umstieg. train: Reihenfolge der Kriterien ist auch die Reihenfolge, in der die Schwerpunkt-Karte übt (erstes verfügbares am Ort).",
-  "dims": { "push": "Drücken", "pull": "Ziehen", "legs": "Beine", "control": "Körperbeherrschung" },
-  "stars": {
-    "push": [
-      [{ "name": "Knee Push-Up", "reps": 10 }],
-      [{ "name": "Push-Up", "reps": 20 }, { "name": "Deficit Push-Up", "reps": 10 }, { "name": "Dip", "reps": 5, "skill": "dip" }],
-      [{ "name": "Archer Push-Up", "reps": 5 }, { "name": "Ring Dip", "reps": 5, "skill": "ring_dip" }, { "name": "Pike Push-Up", "reps": 10 }],
-      [{ "name": "Wall Handstand Push-Up", "reps": 5, "skill": "hspu" }, { "name": "One-Arm Push-Up", "reps": 3 }],
-      []
-    ],
-    "pull": [
-      [{ "name": "Ring Row", "reps": 10 }],
-      [{ "name": "Pull-Up", "reps": 5, "skill": "pullup" }, { "name": "Ring Row (Füße erhöht)", "reps": 10 }],
-      [{ "name": "Pull-Up", "reps": 10 }, { "name": "Archer Ring Row", "reps": 6 }],
-      [{ "name": "Muscle-Up", "reps": 1, "skill": "muscle_up" }, { "name": "Archer Pull-Up", "reps": 3 }],
-      [{ "name": "One-Arm Pull-Up", "reps": 1, "skill": "one_arm" }, { "name": "Front Lever", "seconds": 5, "skill": "front_lever" }]
-    ],
-    "legs": [
-      [{ "name": "Bodyweight Squat", "reps": 20 }],
-      [{ "name": "Bulgarian Split Squat", "reps": 10 }, { "name": "Nordic Curl Negative", "reps": 5 }],
-      [{ "name": "Pistol Squat (Box)", "reps": 5 }, { "name": "Nordic Curl", "reps": 3, "skill": "nordic" }],
-      [{ "name": "Shrimp Squat", "reps": 5 }, { "name": "Nordic Curl", "reps": 5 }],
-      [{ "name": "Pistol Squat", "reps": 5, "skill": "pistol" }]
-    ],
-    "control": [
-      [{ "name": "Hollow Hold", "seconds": 30 }, { "name": "Crow Pose", "seconds": 10 }],
-      [{ "name": "Wall Handstand (Brust zur Wand)", "seconds": 30, "skill": "handstand_wall" }, { "name": "L-Sit (Tuck)", "seconds": 10 }],
-      [{ "name": "L-Sit", "seconds": 10, "skill": "l_sit" }, { "name": "Freier Handstand (Versuche)", "seconds": 5, "skill": "handstand_free" }],
-      [{ "name": "Freier Handstand (Versuche)", "seconds": 30 }, { "name": "Tuck Planche", "seconds": 5 }],
-      [{ "name": "Planche", "seconds": 5, "skill": "planche" }, { "name": "Dragon Flag", "reps": 5, "skill": "dragon_flag" }]
-    ]
-  },
-  "legacy": {
-    "pullup": ["pull", 2], "muscle_up": ["pull", 4], "front_lever": ["pull", 5], "one_arm": ["pull", 5],
-    "dip": ["push", 2], "ring_dip": ["push", 3], "hspu": ["push", 4],
-    "nordic": ["legs", 3], "pistol": ["legs", 5],
-    "handstand_wall": ["control", 2], "l_sit": ["control", 3], "handstand_free": ["control", 3], "planche": ["control", 5], "dragon_flag": ["control", 5]
-  }
+ "_info": "Skill-Sterne (1.51, Friedrich; seit 1.51.3 strenger): vier Dimensionen, je bis zu fünf Sterne. Ein Stern gilt erst, wenn ALLE seine Kriterien geschafft sind (geloggt: ein erledigter Satz mit so vielen Wiederholungen bzw. Sekunden; oder das Können-Häkchen skill des Kriteriums). Ein höherer Stern schließt die niedrigeren ein. paths: Lernpfad je Kriterium, die Schritte davor in Reihenfolge (Progressionen nach Low, 2016); die Schwerpunkt-Karte übt den ersten noch nicht geschafften Schritt, der am Ort geht, zuletzt das Kriterium selbst.",
+ "dims": {
+  "push": "Drücken",
+  "pull": "Ziehen",
+  "legs": "Beine",
+  "control": "Körperbeherrschung"
+ },
+ "stars": {
+  "push": [
+   [
+    {
+     "name": "Knee Push-Up",
+     "reps": 10
+    }
+   ],
+   [
+    {
+     "name": "Push-Up",
+     "reps": 20
+    },
+    {
+     "name": "Deficit Push-Up",
+     "reps": 10
+    },
+    {
+     "name": "Dip",
+     "reps": 5,
+     "skill": "dip"
+    }
+   ],
+   [
+    {
+     "name": "Archer Push-Up",
+     "reps": 5
+    },
+    {
+     "name": "Ring Dip",
+     "reps": 5,
+     "skill": "ring_dip"
+    },
+    {
+     "name": "Pike Push-Up",
+     "reps": 10
+    }
+   ],
+   [
+    {
+     "name": "Wall Handstand Push-Up",
+     "reps": 5,
+     "skill": "hspu"
+    },
+    {
+     "name": "One-Arm Push-Up",
+     "reps": 3
+    }
+   ],
+   []
+  ],
+  "pull": [
+   [
+    {
+     "name": "Ring Row",
+     "reps": 10
+    }
+   ],
+   [
+    {
+     "name": "Pull-Up",
+     "reps": 5,
+     "skill": "pullup"
+    },
+    {
+     "name": "Ring Row (Füße erhöht)",
+     "reps": 10
+    }
+   ],
+   [
+    {
+     "name": "Pull-Up",
+     "reps": 10
+    },
+    {
+     "name": "Archer Ring Row",
+     "reps": 6
+    }
+   ],
+   [
+    {
+     "name": "Muscle-Up",
+     "reps": 1,
+     "skill": "muscle_up"
+    },
+    {
+     "name": "Archer Pull-Up",
+     "reps": 3
+    }
+   ],
+   [
+    {
+     "name": "One-Arm Pull-Up",
+     "reps": 1,
+     "skill": "one_arm"
+    },
+    {
+     "name": "Front Lever",
+     "seconds": 5,
+     "skill": "front_lever"
+    }
+   ]
+  ],
+  "legs": [
+   [
+    {
+     "name": "Bodyweight Squat",
+     "reps": 20
+    }
+   ],
+   [
+    {
+     "name": "Bulgarian Split Squat",
+     "reps": 10
+    },
+    {
+     "name": "Nordic Curl Negative",
+     "reps": 5
+    }
+   ],
+   [
+    {
+     "name": "Pistol Squat (Box)",
+     "reps": 5
+    },
+    {
+     "name": "Nordic Curl",
+     "reps": 3,
+     "skill": "nordic"
+    }
+   ],
+   [
+    {
+     "name": "Shrimp Squat",
+     "reps": 5
+    },
+    {
+     "name": "Nordic Curl",
+     "reps": 5
+    }
+   ],
+   [
+    {
+     "name": "Pistol Squat",
+     "reps": 5,
+     "skill": "pistol"
+    }
+   ]
+  ],
+  "control": [
+   [
+    {
+     "name": "Hollow Hold",
+     "seconds": 30
+    },
+    {
+     "name": "Crow Pose",
+     "seconds": 10
+    }
+   ],
+   [
+    {
+     "name": "Wall Handstand (Brust zur Wand)",
+     "seconds": 30,
+     "skill": "handstand_wall"
+    },
+    {
+     "name": "L-Sit (Tuck)",
+     "seconds": 10
+    }
+   ],
+   [
+    {
+     "name": "L-Sit",
+     "seconds": 10,
+     "skill": "l_sit"
+    },
+    {
+     "name": "Freier Handstand (Versuche)",
+     "seconds": 5,
+     "skill": "handstand_free"
+    }
+   ],
+   [
+    {
+     "name": "Freier Handstand (Versuche)",
+     "seconds": 30
+    },
+    {
+     "name": "Tuck Planche",
+     "seconds": 5
+    }
+   ],
+   [
+    {
+     "name": "Planche",
+     "seconds": 5,
+     "skill": "planche"
+    },
+    {
+     "name": "Dragon Flag",
+     "reps": 5,
+     "skill": "dragon_flag"
+    }
+   ]
+  ]
+ },
+ "paths": {
+  "Knee Push-Up": [
+   {
+    "name": "Incline Push-Up",
+    "reps": 10
+   }
+  ],
+  "Push-Up": [
+   {
+    "name": "Knee Push-Up",
+    "reps": 15
+   },
+   {
+    "name": "Push-Up",
+    "reps": 10
+   }
+  ],
+  "Deficit Push-Up": [
+   {
+    "name": "Push-Up",
+    "reps": 15
+   }
+  ],
+  "Dip": [
+   {
+    "name": "Chair Dip",
+    "reps": 15
+   },
+   {
+    "name": "Dip Negative",
+    "reps": 5
+   }
+  ],
+  "Archer Push-Up": [
+   {
+    "name": "Push-Up",
+    "reps": 20
+   },
+   {
+    "name": "Incline Archer Push-Up",
+    "reps": 6
+   }
+  ],
+  "Ring Dip": [
+   {
+    "name": "Ring Support Hold",
+    "seconds": 30
+   },
+   {
+    "name": "Dip",
+    "reps": 8
+   },
+   {
+    "name": "Ring Dip Negative",
+    "reps": 3
+   }
+  ],
+  "Pike Push-Up": [
+   {
+    "name": "Pike Push-Up",
+    "reps": 5
+   }
+  ],
+  "Wall Handstand Push-Up": [
+   {
+    "name": "Pike Push-Up (Füße erhöht)",
+    "reps": 8
+   },
+   {
+    "name": "Wall Handstand Push-Up (Teilbereich)",
+    "reps": 5
+   },
+   {
+    "name": "Wall Handstand Push-Up Negative",
+    "reps": 3
+   }
+  ],
+  "One-Arm Push-Up": [
+   {
+    "name": "Archer Push-Up",
+    "reps": 8
+   },
+   {
+    "name": "Incline One-Arm Push-Up",
+    "reps": 5
+   }
+  ],
+  "Pull-Up": [
+   {
+    "name": "Negative Chin-Up",
+    "reps": 5
+   },
+   {
+    "name": "Band-Assisted Pull-Up",
+    "reps": 8
+   },
+   {
+    "name": "Pull-Up",
+    "reps": 3
+   },
+   {
+    "name": "Pull-Up",
+    "reps": 7
+   }
+  ],
+  "Ring Row (Füße erhöht)": [
+   {
+    "name": "Ring Row",
+    "reps": 15
+   }
+  ],
+  "Archer Ring Row": [
+   {
+    "name": "Ring Row (Füße erhöht)",
+    "reps": 12
+   }
+  ],
+  "Muscle-Up": [
+   {
+    "name": "Chest-to-Bar Pull-Up",
+    "reps": 5
+   },
+   {
+    "name": "Muscle-Up-Übergang (Band)",
+    "reps": 5
+   },
+   {
+    "name": "Muscle-Up Negative",
+    "reps": 3
+   }
+  ],
+  "Archer Pull-Up": [
+   {
+    "name": "Pull-Up",
+    "reps": 10
+   },
+   {
+    "name": "Archer Pull-Up Negative",
+    "reps": 3
+   }
+  ],
+  "One-Arm Pull-Up": [
+   {
+    "name": "Archer Pull-Up",
+    "reps": 5
+   },
+   {
+    "name": "Band-Assisted One-Arm Chin-Up",
+    "reps": 3
+   },
+   {
+    "name": "One-Arm Chin-Up (Finger-Hilfe)",
+    "reps": 3
+   },
+   {
+    "name": "One-Arm Chin-Up Negative",
+    "reps": 3
+   },
+   {
+    "name": "One-Arm Chin-Up",
+    "reps": 1
+   }
+  ],
+  "Front Lever": [
+   {
+    "name": "Front Lever (Tuck)",
+    "seconds": 10
+   },
+   {
+    "name": "Front Lever (Advanced Tuck)",
+    "seconds": 10
+   },
+   {
+    "name": "Front Lever (ein Bein)",
+    "seconds": 8
+   },
+   {
+    "name": "Front Lever (Straddle)",
+    "seconds": 5
+   }
+  ],
+  "Bulgarian Split Squat": [
+   {
+    "name": "Split Squat",
+    "reps": 10
+   }
+  ],
+  "Nordic Curl Negative": [
+   {
+    "name": "Nordic Curl Negative",
+    "reps": 3
+   }
+  ],
+  "Pistol Squat (Box)": [
+   {
+    "name": "Bulgarian Split Squat",
+    "reps": 12
+   }
+  ],
+  "Nordic Curl": [
+   {
+    "name": "Nordic Curl Negative",
+    "reps": 8
+   }
+  ],
+  "Shrimp Squat": [
+   {
+    "name": "Shrimp Squat (mit Hilfe)",
+    "reps": 5
+   }
+  ],
+  "Pistol Squat": [
+   {
+    "name": "Pistol Squat (Box)",
+    "reps": 8
+   },
+   {
+    "name": "Pistol Squat (Gegengewicht)",
+    "reps": 5
+   }
+  ],
+  "Wall Handstand (Brust zur Wand)": [
+   {
+    "name": "Pike Hold",
+    "seconds": 30
+   },
+   {
+    "name": "Wall Handstand (Brust zur Wand)",
+    "seconds": 15
+   }
+  ],
+  "L-Sit (Tuck)": [
+   {
+    "name": "Support Hold",
+    "seconds": 30
+   }
+  ],
+  "L-Sit": [
+   {
+    "name": "L-Sit (Tuck)",
+    "seconds": 20
+   },
+   {
+    "name": "L-Sit (ein Bein)",
+    "seconds": 10
+   }
+  ],
+  "Freier Handstand (Versuche)": [
+   {
+    "name": "Wall Handstand (Brust zur Wand)",
+    "seconds": 60
+   },
+   {
+    "name": "Wall Handstand (Zehen weg)",
+    "seconds": 20
+   },
+   {
+    "name": "Freier Handstand (Versuche)",
+    "seconds": 5
+   },
+   {
+    "name": "Freier Handstand (Versuche)",
+    "seconds": 15
+   }
+  ],
+  "Tuck Planche": [
+   {
+    "name": "Planche Lean",
+    "seconds": 20
+   },
+   {
+    "name": "Crow Pose",
+    "seconds": 30
+   }
+  ],
+  "Planche": [
+   {
+    "name": "Tuck Planche",
+    "seconds": 15
+   },
+   {
+    "name": "Advanced Tuck Planche",
+    "seconds": 10
+   },
+   {
+    "name": "Pseudo Planche Push-Up",
+    "reps": 10
+   },
+   {
+    "name": "Straddle Planche",
+    "seconds": 5
+   }
+  ],
+  "Dragon Flag": [
+   {
+    "name": "Dragon Flag Negative",
+    "reps": 5
+   },
+   {
+    "name": "Tuck Dragon Flag",
+    "reps": 5
+   }
+  ]
+ }
 }

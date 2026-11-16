@@ -19,7 +19,7 @@
   "week_3": ["flash_a", "flash_b", "flash_c"],
   "roles": {
     "flash_a": {
-      "name": "Herald A", "location": "home", "minutes": 20,
+      "name": "Herald A", "location": "home", "minutes": 25,
       "warmup": ["short_base", "stab_prep", "lower_prep"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
@@ -34,7 +34,7 @@
       ]
     },
     "flash_b": {
-      "name": "Herald B", "location": "home", "minutes": 25,
+      "name": "Herald B", "location": "home", "minutes": 30,
       "warmup": ["short_base", "stab_prep", "lower_prep"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [
@@ -49,7 +49,7 @@
       ]
     },
     "flash_c": {
-      "name": "Herald C", "location": "home", "minutes": 20,
+      "name": "Herald C", "location": "home", "minutes": 25,
       "warmup": ["short_base", "stab_prep", "lower_prep"], "cooldown": [],
       "blocks": [
         {"type": "superset", "rest": 60, "slots": [

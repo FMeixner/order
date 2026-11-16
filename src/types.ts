@@ -191,6 +191,9 @@ export interface Exercise {
   /** Braucht Strecke (Lunge Walk, Crawl, Carry, Weitsprung): an Tagen ohne Platz ersetzt */
   space?: boolean;
   desc?: string;
+  /** Eigene Wiederholungsgrenze (sonst nach Hauptmuskel), danach mit Zusatzlast im Bereich loadedReps (1.51.3) */
+  repCap?: number;
+  loadedReps?: string;
 }
 
 export interface Beast {

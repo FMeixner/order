@@ -2,6 +2,23 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.3] – 2026-11-16
+
+### Neu
+- **Lernpfade für alle Skill-Sterne:** Jedes Kriterium hat Vorstufen, etwa zum einarmigen Klimmzug: Archer-Klimmzug → einarmig mit Band → mit Finger-Hilfe → einarmige Negative → einarmiger Klimmzug im Untergriff. Die Skill-Karte übt die erste offene Vorstufe. 21 neue Übungen dafür.
+- **Sterne aufklappen:** Unter Setup › Können zeigt jeder Bereich alle Sterne mit ihren Kriterien, was geschafft ist und den Weg zum nächsten Stern.
+- **Side Hyperextension** (seitlich auf der 45°-Bank) als Tauschoption für den KB Russian Twist: 24 Wiederholungen (12 je Seite) mit Körpergewicht, danach mit Scheibe.
+
+### Geändert
+- Ein Stern gilt erst, wenn **alle** seine Kriterien geschafft sind. Ein einzelnes Können-Häkchen (etwa Dragon Flag) gibt keine ganzen Sterne mehr.
+- Skill-Karte: zwei Sätze statt drei. Sie bleibt in der laufenden Einheit stehen, auch wenn du dort ein Kriterium schaffst.
+- Karten zeigen keine Pausen- und Übergangszeiten mehr in der Überschrift (der Timer läuft weiter).
+- Leitern zeigen keinen Rechenhinweis zum Zug-Vermögen mehr.
+- Skipping Jumps: Beschreibung korrigiert (Skipping auf der Stelle wie im Lauf-ABC).
+- **Zwei Bestien in einem Slot:** je Bestie eine eigene Karte mit eigener Dauer, eigenem Timer, eigenen Runden und eigener Bestzeit.
+- Cool-down nach Muskel-, Dehn- und Freitagseinheiten (u. a. Slayer): ohne Türrahmen-Dehnung am Ende.
+- **Jede Einheit endet mit Trapez und Nacken lösen:** Duoball an der Wand, 60 s je Seite; ohne Ball Trapez-Dehnung mit Anspannen und Loslassen. Dafür sind einige kurze Einheiten (Herald, Scout Schwert, Pilgrim Intervalle, Alchemist Stab und Atem) mit 5 Minuten mehr angegeben.
+
 ## [1.51.2] – 2026-11-16
 
 ### Geändert

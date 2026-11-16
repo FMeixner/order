@@ -109,6 +109,8 @@ export function available(name: string, p: EquipmentProfile, skills?: SkillSet):
     if (n === "box" && !p.has.box) return false;
     if (n === "dip" && !p.has.dip) return false;
     if (n === "wheel" && !p.has.wheel) return false;
+    // Gerät im Studio (z. B. 45°-Bank / Roman Chair): da, wo Maschinen stehen
+    if (n === "machines" && !p.has.machines) return false;
     if (n === "sword" && !p.has.sword) return false;
     // Springseil: fehlt der Eintrag im Profil, gilt es als vorhanden
     if (n === "rope" && p.has.rope === false) return false;

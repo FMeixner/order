@@ -912,7 +912,8 @@ export function warmLists(role: Role, week: number): string[] {
 }
 
 export function roleDrills(role: Role, kind: "wu" | "cd", p: EquipmentProfile | undefined, user: UserProfile, week: number): DrillView[] {
-  const lists = kind === "wu" ? warmLists(role, week).filter((l) => !l.startsWith("sword") || !!p?.has.sword) : role.cooldown ?? ["cd_general"];
+  // Jede Einheit endet mit Trapez und Nacken lösen (1.51.3, Friedrich: fürs freie Sprechen): Duoball, sonst Dehnung
+  const lists = kind === "wu" ? warmLists(role, week).filter((l) => !l.startsWith("sword") || !!p?.has.sword) : [...(role.cooldown ?? ["cd_general"]).filter((l) => l !== "cd_trap"), "cd_trap"];
   const ed = role.drillEdit?.[kind];
   // Ausrüstung: fehlt Black Roll oder Ball am Ort (ausdrücklich abgewählt), gilt der Ersatz oder die Übung fällt weg
   const missing = (d: Drill) => (d.needs ?? []).some((n) => p?.has[n] === false);

@@ -46,7 +46,7 @@
   },
   "roles": {
     "intervalle": {
-      "name": "Intervalle", "location": "reise", "minutes": 50,
+      "name": "Intervalle", "location": "reise", "minutes": 55,
       "warmup": ["short_base", "run_prep", "shoulder_prep", "lower_prep"], "cooldown": ["cd_general"],
       "blocks": [
         {"type": "single", "slot": {"id": "rh-i-1", "name": "Intervalle 4 × 4 Min", "kind": "interval", "interval": {"work": 240, "rest": 180, "rounds": 4}, "prog": "none", "note": "85–95 % der maximalen Herzfrequenz. Lauf, Rad oder Rudern."}},

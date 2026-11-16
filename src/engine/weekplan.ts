@@ -16,7 +16,8 @@ import { dayMods, remembered } from "./dayadj";
 import { applySlots } from "./sharpen";
 import { deloadShape, isDeloaded } from "./deload";
 
-const est = planMinutes;
+// Ohne den Trapez-Ausklang (1.51.3, 2 Min), der jede Einheit beendet: Er soll keine Übung aus der Drei-Tage-Form verdrängen
+const est = (r: Role) => planMinutes(r) - 2;
 
 const groupOf = (name: string) => Object.entries(SWAP_GROUPS).find(([, m]) => m.includes(name))?.[0] ?? name;
 const slotsOf = (b: Block): Slot[] => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy] : []);

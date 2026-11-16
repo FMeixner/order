@@ -13,7 +13,7 @@ import { focusFor, guidedLevel } from "../../engine/weekplan";
 import { boostOf, runSubOf, type SessionCtx, sessionId, skillSet } from "./ctx";
 import { type CardioSub, SUB_EXERCISE } from "../../engine/cardio";
 import { goalFill, isFillMarker } from "./fill";
-import { critText, practiceFor, practiceSlot, starLevels, starLine, weakestDims, type StarDim } from "../../engine/stars";
+import { practiceFor, practiceSlot, starLevels, starLine, starLog, weakestDims, type StarDim } from "../../engine/stars";
 
 /* ---------- Slots dieser Einheit sammeln ---------- */
 export interface Item { /** Bestie mit ruhiger Alternative (1.51): Block-Id, gewählt ja/nein, Name der Alternative */ alt?: { blockId: string; on: boolean; label: string }; call?: CallView; block: Block; resolved: Resolved[]; beast?: Beast | null; drills?: DrillView[]; /** Laufen in der Bestie ersetzt durch dieses Gerät */ cardio?: CardioSub; /** Waffenblock (Messer, Langschwert, Stab), der hier mangels Schwert und Stock ersetzt ist (die Vorschau zeigt ihn trotzdem) */ sword?: Extract<Block, { type: "module" }> & { module: WeaponModule }; /** „Mehr vom Ordensziel“: Überschrift der Karte */ fill?: string; /** Isolationsübungen, für die es am Ort gar keinen Ersatz gibt (1.49): entfallen still */ dropped?: string[] }
@@ -242,13 +242,18 @@ export function pinBeasts(s: Session, items: Item[]): Session {
 
 /** Schwerpunkt Skill (1.51): Übung(en) für den nächsten Stern der schwächsten Dimension; bei Gleichstand zwei im Wechsel */
 function skillItem(ctx: SessionCtx, b: Block): Item {
-  const lv = starLevels(ctx.state);
+  // Eingefroren (1.51.3): Was in dieser Einheit geloggt wird, zählt erst ab der nächsten — die Karte springt nicht um
+  const sid = sessionId(ctx.block.id, ctx.week, ctx.roleKey);
+  const log = starLog(ctx.state, sid);
+  const ticks = new Set(ctx.state.user.skills ?? []);
+  const lv = starLevels(ctx.state, sid);
   const weak = weakestDims(lv, ctx.week);
   const dims = weak.length > 1 && lv[weak[0]] === lv[weak[1]] ? weak.slice(0, 2) : weak.slice(0, 1);
-  const slots = dims.map((d) => ({ d, s: practiceSlot(d, lv[d], ctx.profile, ctx.roleKey) })).filter((x): x is { d: StarDim; s: Slot } => !!x.s);
-  if (!slots.length) return { block: b, resolved: [] };
-  const resolved = slots.map((x) => resolveSlot(x.s, ctx.profile, false)).filter((r): r is Resolved => !!r);
-  const title = `Schwerpunkt: Skill · ${slots.map((x) => `${starLine(x.d, lv[x.d])} → ${critText(practiceFor(x.d, lv[x.d], ctx.profile)!.crit)}`).join(" · ")}`;
-  const block: Block = slots.length > 1 ? { type: "superset", rest: 90, slots: slots.map((x) => x.s) } : { type: "single", slot: slots[0].s };
+  const picks = dims.map((d) => ({ d, x: practiceFor(d, lv[d], ctx.profile, log, ticks), s: practiceSlot(d, lv[d], ctx.profile, ctx.roleKey, log, ticks) }))
+    .filter((x): x is { d: StarDim; x: NonNullable<ReturnType<typeof practiceFor>>; s: Slot } => !!x.s && !!x.x);
+  if (!picks.length) return { block: b, resolved: [] };
+  const resolved = picks.map((x) => resolveSlot(x.s, ctx.profile, false)).filter((r): r is Resolved => !!r);
+  const title = `Schwerpunkt: Skill · ${picks.map(({ d, x }) => `${starLine(d, lv[d])} → ${x.crit.name}`).join(" · ")}`;
+  const block: Block = picks.length > 1 ? { type: "superset", rest: 120, slots: picks.map((x) => x.s) } : { type: "single", slot: picks[0].s };
   return { block, resolved, fill: title };
 }
