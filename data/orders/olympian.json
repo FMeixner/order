@@ -5,6 +5,7 @@
   "tagline": "Schnell und sprungkräftig, auf Kraft gebaut.",
   "description": "Explosivität auf einer Kraftbasis: Kontrastpaare aus schwer und explosiv, Sprints und Sprünge mit voller Pause, immer am Anfang, solange du frisch bist. Nordic Curls schützen die hinteren Oberschenkel. Fortschritt heißt schneller und höher; die Bestien bleiben kurz, damit nichts die Spritzigkeit frisst.",
   "goals": {"primary": "power", "secondary": ["speed", "strength"]},
+  "class": {"primary": "athletik", "secondary": "kraft"},
   "nutrition": "maintenance",
   "load_fit": "medium",
   "level": "intermediate",

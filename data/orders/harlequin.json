@@ -5,6 +5,7 @@
   "tagline": "Jede Woche ein anderer Orden.",
   "description": "Allgemeine Fitness gegen Langeweile: Jede Woche läuft ein anderer Orden, im Wechsel zwischen Kraft und Kondition, sodass nie lange etwas fehlt. Verwandte Orden sind zusammengefasst; Gewichte und Stufen laufen mit denselben Übungen weiter, und Bestien gibt es in jeder Woche.",
   "goals": {"primary": "conditioning", "secondary": ["strength", "endurance", "skill", "mobility"]},
+  "class": {"primary": "mischung"},
   "nutrition": "maintenance",
   "load_fit": "medium",
   "level": "intermediate",

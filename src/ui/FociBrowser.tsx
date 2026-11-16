@@ -1,3 +1,4 @@
+import { ORDER_CLASS_LABEL } from "../types";
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
 import { CALLS, FLOWS, FOCI, FOCUS_BY_ID, KLAMMERN } from "../data";
@@ -104,7 +105,7 @@ export function FocusDetail({ f, profile, skills, days }: { f: Focus; profile?: 
         <div className="stack">
           <p>{f.description}</p>
           <div className="kv">
-            <span>Ziel</span><span>{GOAL_LABEL[f.goals.primary]}{f.goals.secondary.length ? `, dazu ${f.goals.secondary.map((g) => GOAL_LABEL[g]).join(", ")}` : ""}</span>
+            <span>Ziel</span><span>{f.class ? `${ORDER_CLASS_LABEL[f.class.primary]}${f.class.secondary ? `, dazu ${ORDER_CLASS_LABEL[f.class.secondary]}` : ""}` : `${GOAL_LABEL[f.goals.primary]}${f.goals.secondary.length ? `, dazu ${f.goals.secondary.map((g) => GOAL_LABEL[g]).join(", ")}` : ""}`}</span>
             <span>Ernährung</span><span>{NUTR[f.nutrition]}</span>
             <span>Passt</span><span>{LOAD_FIT_LABEL[f.load_fit]}</span>
             <span>Unterwegs</span><span>{f.travel ? "ja" : "nein"}</span>

@@ -46,7 +46,7 @@ describe("Laufender Stand aus dem Log (1.47)", () => {
 });
 
 describe("Checkpoints und Freigabe des Schwerpunkts (1.47)", () => {
-  const b: PlanBlock = { id: "b1", focusId: "slayer", label: "", start: "2026-09-01", end: "2026-12-31", load: "medium", travel: false };
+  const b: PlanBlock = { id: "b1", focusId: "knight", label: "", start: "2026-09-01", end: "2026-12-31", load: "medium", travel: false };
   it("fällig ab vier Wochen in der Phase, dann alle vier Wochen", () => {
     const st = base([]);
     expect(checkpointDue(st, b.start, "power", "2026-09-20")).toBe(false);

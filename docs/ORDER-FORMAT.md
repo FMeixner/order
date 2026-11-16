@@ -136,3 +136,7 @@ Die App kürzt `rest` aus den Orden um 15 s: ab 150 s nie unter 120 s, ab 75 s n
 ## Start-Bestie
 
 Ein Bestien-Block kann mit `"first": "<Bestien-Id>"` die Bestie der ersten Woche festlegen (Assassin: Undine). Fehlen Skills, kommt sie als hexed-Variante. Danach gilt `draw` wie gewohnt.
+
+## Klassifikation und feste Regeln für geführte Varianten (1.50)
+- `class`: `{"primary": "muskel", "secondary": "athletik"}` — genau ein Primär- und ein Sekundärziel aus muskel, kraft, athletik, kondition, ausdauer, skill, beweglichkeit, wohlbefinden (Harlequin: `mischung`, ohne Sekundärziel). Das Sekundärziel graut passende Schwerpunkte aus (athletik → Sprungkraft, Schnelligkeit; kondition → Anaerob; ausdauer → Ausdauer; skill → Skill).
+- Slot `guided`: `"never"` bleibt bei hoher Last immer frei, `"high"` wird bei hoher Last immer geführt (auch als schwerer Kontrastpartner). Ohne Angabe gilt die Hälfte-Regel.

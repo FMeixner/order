@@ -5,6 +5,7 @@
   "tagline": "Sehnen stählen, Gelenke wappnen.",
   "description": "Belastbarkeit für die Strukturen, die Schwert und Schreibtisch gemeinsam fordern: Sehnen, Knie, Hüfte, Schulter, Ellbogen, Nacken und Handgelenke. Langsame Wirbelsäulenarbeit, isometrische Halte, und das Messer trainiert die Handgelenke mit. Fortschritt misst sich an Haltedauer und belastbaren Positionen.",
   "goals": {"primary": "mobility", "secondary": ["strength", "conditioning"]},
+  "class": {"primary": "beweglichkeit", "secondary": "kraft"},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "beginner–intermediate",

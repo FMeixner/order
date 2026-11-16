@@ -5,6 +5,7 @@
   "tagline": "Leichter werden, stark bleiben.",
   "description": "Der Orden für das Defizit: Die Last bleibt, das Volumen sinkt, die Bewegung wird schärfer. Der größte Teil der Woche ist Kraft mit wenigen, gut gewählten Übungen; ein Teil gehört dem Messer und einer Bestie. Drop-Sets am Ende mancher Übungen halten den Muskelreiz, wo das Volumen fehlt. Stark bleiben ist hier der Erfolg.",
   "goals": {"primary": "fatloss", "secondary": ["strength", "skill"]},
+  "class": {"primary": "kondition", "secondary": "kraft"},
   "nutrition": "deficit",
   "load_fit": "medium",
   "level": "intermediate",

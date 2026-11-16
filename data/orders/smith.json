@@ -5,6 +5,7 @@
   "tagline": "Schwer, ehrlich, Maximalkraft.",
   "description": "Maximalkraft mit der Langhantel: Hauptlifts als Top-Satz mit Back-off-Sätzen, gesteuert über deine Rückmeldung, und kein Hauptlift zweimal pro Woche in derselben Form. Ohne Langhantel verliert der Orden seinen Sinn, darum gibt es keine Reisefassung.",
   "goals": {"primary": "strength", "secondary": ["hypertrophy"]},
+  "class": {"primary": "kraft", "secondary": "muskel"},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "intermediate–advanced",

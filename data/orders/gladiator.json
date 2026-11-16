@@ -5,6 +5,7 @@
   "tagline": "Die Grube vergisst keine Zeit.",
   "description": "Kondition als Wettkampf, nicht als Hintergrundrauschen. Die Sandsack-Familie hebt und trägt — das Gewicht lebt, der Rumpf lernt mitzugehen. Seil, Burpees und Swing-Supersets jagen den Puls, Langhantel und Rudern halten die Kraft, Antritt, Sprung und Wurf werden gemessen. Ausdauer und Kraft werden besser; die Bestie hinter den Lasten bleibt kurz und gemein.",
   "goals": {"primary": "conditioning", "secondary": ["strength", "endurance"]},
+  "class": {"primary": "kondition", "secondary": "kraft"},
   "nutrition": "maintenance",
   "load_fit": "medium",
   "level": "intermediate",

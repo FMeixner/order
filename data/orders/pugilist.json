@@ -5,6 +5,7 @@
   "tagline": "Rumpf, Nacken, Runden.",
   "description": "Kampfsportnahes Training: Rumpf, Nacken, Rotationskraft und Kondition in Runden wie im Ring. Schattenboxen auf Ansage — die App ruft die Schläge, du antwortest — und Schwertarbeit, wenn das Profil eins hat. Kraft vor allem mit dem eigenen Körper, dazu Rotation am Kabel oder mit der Kettlebell.",
   "goals": {"primary": "skill", "secondary": ["conditioning", "strength"]},
+  "class": {"primary": "skill", "secondary": "kondition"},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "beginner–intermediate",

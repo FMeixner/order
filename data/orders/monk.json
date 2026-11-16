@@ -5,6 +5,7 @@
   "tagline": "Kraft und Ruhe im Gleichgewicht.",
   "description": "Kraft und Yoga mit Meditation zu gleichen Teilen. Yoga und Krafttraining gehören zu den wirksamsten Bewegungsformen gegen depressive Symptome; die Wirkung hängt an Bewegung über Wochen, nicht an einem einzelnen Orden. Darum passt Monk als kurze Atempause ebenso wie als langer Block.",
   "goals": {"primary": "wellbeing", "secondary": ["strength", "mobility"]},
+  "class": {"primary": "wohlbefinden", "secondary": "beweglichkeit"},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "beginner–intermediate",

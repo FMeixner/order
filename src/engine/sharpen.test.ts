@@ -35,7 +35,7 @@ describe("Schwerpunkt-Slot", () => {
     expect(p.s2.domain).toBeNull();
   });
   it("Testdefizit geht vor: schwächster Bereich, den der Orden nicht selbst trainiert", () => {
-    const s = base(mobKe, [blk("slayer")]);
+    const s = base(mobKe, [blk("knight")]);
     const p = slotsFor(s, s.plan[1]);
     expect(p.s1.domain).toBe("power");
     expect(p.s1.purpose).toBe("defizit");
@@ -44,7 +44,7 @@ describe("Schwerpunkt-Slot", () => {
     expect(p2.s1.domain).toBe("power"); // Pilgrim trainiert Ausdauer selbst
   });
   it("Nie gegen den Orden: Ausdauer stört Muskelaufbau und geht in die Blockfolge", () => {
-    const s = base(aerobKe, [blk("slayer")]);
+    const s = base(aerobKe, [blk("knight")]);
     const p = slotsFor(s, s.plan[1]);
     expect(p.s1.domain).not.toBe("aerob");
     expect(p.deferred.map((d) => d.id)).toContain("aerob");
@@ -59,7 +59,7 @@ describe("Schwerpunkt-Slot", () => {
     expect(y.domain).not.toBe(x.domain);
   });
   it("Aus und eigene Wahl", () => {
-    const s = base(mobKe, [blk("slayer")]);
+    const s = base(mobKe, [blk("knight")]);
     expect(slotsFor(s, { ...s.plan[1], sharpen: "off" }).s1.source).toBe("off");
     expect(slotsFor(s, { ...s.plan[1], sharpen: "power" }).s1.domain).toBe("power");
   });
@@ -68,8 +68,8 @@ describe("Schwerpunkt-Slot", () => {
     for (const id of ["slayer", "assassin", "smith", "knight", "olympian", "conqueror"]) expect(slotEligible(FOCUS_BY_ID[id]), id).toBe(true);
   });
   it("Anaerob einmal am Ende, Schnelligkeit zweimal am Anfang, Slot unter dem Budget", () => {
-    const s = base(mobKe, [blk("slayer")]);
-    const f = FOCUS_BY_ID.slayer;
+    const s = base(mobKe, [blk("knight")]);
+    const f = FOCUS_BY_ID.knight;
     const roles = rolesFor(s, s.plan[1], f);
     const withAn = applySlots(f, s, { ...s.plan[1], sharpen: "anaerob" });
     expect(roles.filter((rk) => { const x = withAn.roles[rk].blocks.at(-1); return x?.type === "module" && x.module === "sharpen"; }).length).toBe(1);
@@ -85,8 +85,8 @@ describe("Schwerpunkt-Slot", () => {
     }
   });
   it("Ein Slot je Rolle", () => {
-    const s = base(mobKe, [blk("slayer")]);
-    const f = FOCUS_BY_ID.slayer;
+    const s = base(mobKe, [blk("knight")]);
+    const f = FOCUS_BY_ID.knight;
     const roles = rolesFor(s, s.plan[1], f);
     const x = applySlots(f, s, s.plan[1]);
     for (const rk of roles) expect(x.roles[rk].blocks.filter((b0) => b0.type === "module" && b0.module === "sharpen").length).toBeLessThanOrEqual(1);
@@ -96,7 +96,7 @@ describe("Schwerpunkt-Slot", () => {
     expect(suggestSequence(plan, "2026-12-10", "kraft").items[0].focusId).toBe("smith");
   });
   it("Blockfolge „Defizite zuerst“ bevorzugt Orden für die schwachen Bereiche", () => {
-    const plan: PlanBlock[] = [{ ...blk("slayer", "p1"), start: "2027-01-04", end: "2027-03-07" }];
+    const plan: PlanBlock[] = [{ ...blk("knight", "p1"), start: "2027-01-04", end: "2027-03-07" }];
     const allround = suggestSequence(plan, "2026-12-10", "allround");
     const def = suggestSequence(plan, "2026-12-10", "deficits", [{ axis: "ausdauer", w: 1 }]);
     const ae = (id: string) => FOCUS_BY_ID[id].goals.primary === "endurance" || FOCUS_BY_ID[id].goals.secondary.includes("endurance");

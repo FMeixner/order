@@ -5,6 +5,7 @@
   "tagline": "Reaktiv in jede Richtung.",
   "description": "Kurze, frische Einheiten: Reaktion auf Ansage, Seilsprints, die Klinge schnell mit Drehhau-Serien und gerufenen Hieben, dazu Kraft mit Hang Power Clean, Kniebeuge und Nordic Curls. Reaktion und Drehtempo leben von Qualität: volle Geschwindigkeit nur frisch, jeder Reiz zählt.",
   "goals": {"primary": "speed", "secondary": ["power", "strength"]},
+  "class": {"primary": "athletik", "secondary": "kraft"},
   "nutrition": "maintenance",
   "load_fit": "medium",
   "level": "intermediate",

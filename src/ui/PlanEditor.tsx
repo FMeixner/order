@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OrderMark } from "./OrderIcon";
 import { FOCI, FOCUS_BY_ID, SHARPEN } from "../data";
-import { domainName, interferes, PURPOSE_LABEL, slotEligible, type DomainId, type SlotPlan, type SlotsPlan } from "../engine/sharpen";
+import { coveredBy, domainName, interferes, PURPOSE_LABEL, slotEligible, type DomainId, type SlotPlan, type SlotsPlan } from "../engine/sharpen";
 import type { DeficitWeights } from "../engine/sequence";
 import { timeBias } from "../engine/sequence";
 import { KCAL_LABEL } from "../engine/kcal";
@@ -231,7 +231,7 @@ function SlotField({ f, label, hint, value, auto, onChange }: { f: Focus; label:
       <select value={value ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
         <option value="">Automatisch{auto?.domain ? `: ${domainName(auto.domain)}${auto.purpose ? ` · ${PURPOSE_LABEL[auto.purpose]}` : ""}` : slotEligible(f) ? ": mehr vom Ordensziel" : " (derzeit keiner)"}</option>
         {/* Kurze Orden (unter 45 Min) haben keinen Slot: nur Automatisch (mehr vom Ordensziel) oder Aus */}
-        {slotEligible(f) && Object.entries(SHARPEN).map(([id, d]) => <option key={id} value={id} disabled={interferes(f, id as DomainId)}>{d.name}{interferes(f, id as DomainId) ? " (stört das Ziel dieses Ordens)" : ""}</option>)}
+        {slotEligible(f) && Object.entries(SHARPEN).map(([id, d]) => <option key={id} value={id} disabled={interferes(f, id as DomainId) || coveredBy(f, id as DomainId)}>{d.name}{interferes(f, id as DomainId) ? " (widerspricht dem Ziel des Ordens)" : coveredBy(f, id as DomainId) ? " (trainiert der Orden schon)" : ""}</option>)}
         <option value="off">Aus</option>
       </select>
     </Field>

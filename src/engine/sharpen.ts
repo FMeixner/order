@@ -12,7 +12,7 @@
       oder, ohne Norm, wenn Tests jenseits des Messfehlers schlechter wurden und keiner besser.
    Seit 0.93 heilt auch der Spezialist mit (Slot 1); die Allrounder/Spezialist-Wahl steuert nur Slot 2.
    Laufende Phasen bekommen Slot 1 nur, wenn vor ihrem Start getestet wurde; Slot 2 läuft auch ohne Testwoche. */
-import { DOMAINS, SHARPEN } from "../data";
+import { DOMAINS, SHARPEN, FOCUS_BY_ID } from "../data";
 import type { AppState, Block, Focus, Goal, PlanBlock } from "../types";
 import type { AxisId } from "./balance";
 import { estimateRole } from "./duration";
@@ -47,6 +47,16 @@ export function slotEligible(f: Focus): boolean {
   return f.session_min >= 45 && !f.medley?.length;
 }
 export const interferes = (f: Focus, d: DomainId) => (d === "aerob" || d === "anaerob") && INTERFERE_GOALS.includes(f.goals.primary);
+/** Schwerpunkte, die eine Ordensklasse schon abdeckt (1.50): Athletik = Sprungkraft und Schnelligkeit usw. */
+const CLASS_DOMAINS: Partial<Record<string, DomainId[]>> = { athletik: ["speed", "power"], kondition: ["anaerob"], ausdauer: ["aerob"], skill: ["skill"] };
+/** Trainiert der Orden diesen Bereich schon als Sekundärziel? Dann ist der Slot dafür ausgegraut und wird nicht gewählt. */
+export const coveredBy = (f: Focus, d: DomainId) => {
+  // Eingefrorene Fassungen laufender Phasen kennen die Klassifikation noch nicht: dann gilt die aktuelle Ordensdatei
+  const sec = (f.class ?? FOCUS_BY_ID[f.id]?.class)?.secondary;
+  return !!sec && !!CLASS_DOMAINS[sec]?.includes(d);
+};
+/** Für den Slot gesperrt: stört das Ziel oder ist schon abgedeckt */
+export const blockedFor = (f: Focus, d: DomainId) => interferes(f, d) || coveredBy(f, d);
 
 /** Defizite aus einer Testauswertung, schwächstes zuerst */
 export function deficitsOf(state: AppState, blockId: string): Deficit[] {
@@ -147,7 +157,7 @@ export function yearSlots(state: AppState, today: string = isoDate(new Date())):
     const defs = deficitsBefore(state, b.start)?.list ?? [];
     let best: { d: DomainId; s: number; purpose: SlotPurpose; reason: string } | null = null;
     for (const d of Object.keys(SHARPEN) as DomainId[]) {
-      if (interferes(f, d) || b.sharpenReleased?.includes(d)) continue;
+      if (blockedFor(f, d) || b.sharpenReleased?.includes(d)) continue;
       let sc = 0, purpose: SlotPurpose = "sekundaer", reason = "";
       const def = defs.find((x) => x.id === d);
       const c = clockOfDomain(d);
@@ -166,7 +176,7 @@ export function yearSlots(state: AppState, today: string = isoDate(new Date())):
     let chosen: DomainId | null = best?.d ?? null;
     // Laufende Phase: die automatische Wahl ist festgehalten (sharpenAuto) und springt nicht mehr
     // Ein festgehaltener Bereich, den es als Schwerpunkt nicht mehr gibt (Kraftausdauer, Beweglichkeit seit 1.47), gilt nicht
-    const pinned = b.sharpenAuto && !(b.sharpen && b.sharpen !== "off" && SHARPEN[b.sharpen]) && b.sharpen !== "off" && pinOk(b.sharpenAuto) ? b.sharpenAuto : null;
+    const pinned = b.sharpenAuto && !(b.sharpen && b.sharpen !== "off" && SHARPEN[b.sharpen]) && b.sharpen !== "off" && pinOk(b.sharpenAuto, b) ? b.sharpenAuto : null;
     if (pinned) { chosen = (pinned.domain as DomainId | null) ?? null; out.set(b.id, { domain: chosen, purpose: pinned.purpose as SlotPurpose | undefined, reason: pinned.reason }); }
     else if (b.sharpen === "off") { chosen = null; out.set(b.id, { domain: null, reason: "Für diese Phase ausgeschaltet." }); }
     else if (b.sharpen && SHARPEN[b.sharpen]) { chosen = b.sharpen as DomainId; out.set(b.id, { domain: chosen, reason: "Selbst gewählt." }); }
@@ -188,7 +198,7 @@ export function slotsFor(state: AppState, b: PlanBlock): SlotsPlan {
   const src = deficitsBefore(state, b.start);
   const list = src?.list ?? [];
   const own = new Set(GOAL_DOMAINS[f.goals.primary]);
-  for (const d of list) if (!own.has(d.id) && (!SHARPEN[d.id] || interferes(f, d.id)) && !deferred.includes(d)) deferred.push(d);
+  for (const d of list) if (!own.has(d.id) && (!SHARPEN[d.id] || blockedFor(f, d.id)) && !deferred.includes(d)) deferred.push(d);
 
   // --- Slot 1: Schwachstelle (auch für Spezialisten), manuell übersteuerbar, abschaltbar
   const s1: SlotPlan = (() => {
@@ -271,10 +281,15 @@ export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
 
 /** 1.47: Sobald eine Phase läuft, wird ihre automatische Wahl festgehalten. Testwerte, Training und Schwerpunkt-Einheiten
     verschieben die Uhren; ohne Festhalten sprang „Automatisch“ dadurch mitten in der Phase (Schnelligkeit → Beweglichkeit). */
-const pinOk = (p: { domain: string | null }) => p.domain == null || !!SHARPEN[p.domain];
+const pinOk = (p: { domain: string | null }, b?: PlanBlock) => {
+  if (p.domain == null) return true;
+  if (!SHARPEN[p.domain]) return false;
+  const f = b ? FOCUS_BY_ID[b.focusId] : undefined;
+  return !f || !coveredBy(f, p.domain as DomainId);
+};
 export function pinAutoSlots(state: AppState, today: string = isoDate(new Date())): AppState | null {
   // Ungültige Festlegungen (Bereich ohne Schwerpunkt-Modul) erst lösen, dann neu festhalten
-  if (state.plan.some((b) => b.sharpenAuto && !pinOk(b.sharpenAuto))) state = { ...state, plan: state.plan.map((b) => (b.sharpenAuto && !pinOk(b.sharpenAuto) ? { ...b, sharpenAuto: undefined } : b)) };
+  if (state.plan.some((b) => b.sharpenAuto && !pinOk(b.sharpenAuto, b))) state = { ...state, plan: state.plan.map((b) => (b.sharpenAuto && !pinOk(b.sharpenAuto, b) ? { ...b, sharpenAuto: undefined } : b)) };
   const ys = yearSlots(state, today);
   let changed = false;
   const plan = state.plan.map((b) => {

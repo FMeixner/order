@@ -5,6 +5,7 @@
   "tagline": "Wach im Gelände.",
   "description": "Parkour-Grundlagen draußen: Landen, Rollen, Bewegen auf Linien und Geländern, dann Präzisionssprünge und Vaults, sobald die Landung sitzt. Dazu Kraft und Sprung und jede Woche eine andere Bestie. Fortschritt heißt sauber höher und weiter, auf einer Kraftbasis, die das trägt.",
   "goals": {"primary": "skill", "secondary": ["conditioning", "power"]},
+  "class": {"primary": "skill", "secondary": "kondition"},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "intermediate",

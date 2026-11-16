@@ -5,6 +5,7 @@
   "tagline": "Klassischer Muskelaufbau.",
   "description": "Muskelaufbau im Studio, wie er sein soll: jeder Muskel mehrmals pro Woche, Übungen mit Betonung der Dehnposition, sauber gesteigert. Erst wächst das Volumen, dann die Last — und dann beginnt die nächste Welle.",
   "goals": {"primary": "hypertrophy", "secondary": ["strength"]},
+  "class": {"primary": "muskel", "secondary": "kraft"},
   "nutrition": "surplus",
   "load_fit": "high",
   "level": "beginner–intermediate",

@@ -5,6 +5,8 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 ## [Unveröffentlicht]
 
 ### Geändert
+- **Jeder Orden hat ein Primär- und ein Sekundärziel** (Muskel, Kraft, Athletik, Kondition, Ausdauer, Skill, Beweglichkeit, Wohlbefinden). Zu sehen im Almanach bei den Orden.
+- **Schwerpunkt ausgegraut, wenn der Orden ihn schon trainiert:** Was das Sekundärziel abdeckt, steht im Schwerpunkt-Slot als „trainiert der Orden schon“ und wird nicht automatisch gewählt (Athletik = Sprungkraft und Schnelligkeit, Kondition = Anaerob, Ausdauer = Ausdauer). Beim Slayer bleibt damit vorerst kein Schwerpunkt übrig; die App füllt „mehr vom Ordensziel“ auf, bis der Schwerpunkt Skill kommt.
 - **Slayer, Kraft Kontrast:** Die Kontrastpaare stehen in beiden Wochen am Anfang der Einheit (B-Woche: erst Kreuzheben mit Weitsprung und Rudern mit Jump Shrug, dann Kniebeuge und Bankdrücken). Bei hoher Last bleiben Kniebeuge und Bankdrücken immer frei, Kreuzheben und RDL werden immer zum Cable Pull-Through, Rudern zum Kabelrudern – auch als Kontrastpartner. Gilt für eine laufende Slayer-Phase nach „Übernehmen“ im Plan.
 - **Steigern ohne feste Obergrenze:** Bei der doppelten Progression steigen die Wiederholungen jetzt so weit, bis der nächste Gewichtssprung nach Epley am unteren Ende des Bereichs oder höchstens 2 darunter landet. Beim Seitheben 12–15 mit 1,5-kg-Hanteln heißt das: mit 4 kg bis 25 Wiederholungen, dann 5,5 kg ab etwa 10. Die alte Grenze von 15 Wiederholungen entfällt. Ortswechsel bleiben wie gehabt.
 

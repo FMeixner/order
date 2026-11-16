@@ -5,6 +5,7 @@
   "tagline": "Tief, stark, fließend.",
   "description": "Beweglichkeit, die etwas aushält: Hüfte unter Last in der Dehnung, Schulter über Kopf mit Kontrolle, tiefe Beuge ohne Einbruch — die Grundlage für lange Ausfälle, weite Stiche und den Overhead im Tanz. Ein Teil der Woche gehört dem Stab im Fluss; der Zeptertanz ist der Tanz dieses Ordens. Fortschritt misst sich an Tiefe und Haltezeit.",
   "goals": {"primary": "mobility", "secondary": ["strength", "skill"]},
+  "class": {"primary": "beweglichkeit", "secondary": "skill"},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "intermediate–advanced",

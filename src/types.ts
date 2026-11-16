@@ -123,6 +123,9 @@ export interface Role {
 export interface DrillEdit { off: string[]; add: string[] }
 export type DrillEdits = { wu?: DrillEdit; cd?: DrillEdit };
 
+export type OrderClass = "muskel" | "kraft" | "athletik" | "kondition" | "ausdauer" | "skill" | "beweglichkeit" | "wohlbefinden" | "mischung";
+export const ORDER_CLASS_LABEL: Record<OrderClass, string> = { muskel: "Muskel", kraft: "Kraft", athletik: "Athletik", kondition: "Kondition", ausdauer: "Ausdauer", skill: "Skill", beweglichkeit: "Beweglichkeit", wohlbefinden: "Wohlbefinden", mischung: "Mischung" };
+
 export interface Focus {
   schema: 1;
   /** Dosis je Achse (1.22): überschreibt, was aus den Zielen folgt (progress | soft | maintain) */
@@ -132,6 +135,9 @@ export interface Focus {
   tagline: string;
   description: string;
   goals: { primary: Goal; secondary: Goal[] };
+  /** Klassifikation (1.50, Friedrich): genau ein Primär- und ein Sekundärziel. Steuert, welche Schwerpunkte der Orden
+      schon selbst abdeckt (ausgegraut) und die Bestienregel für Muskel- und Kraft-Orden. */
+  class?: { primary: OrderClass; secondary?: OrderClass };
   nutrition: "deficit" | "maintenance" | "surplus" | "any";
   load_fit: Load;
   level: string;

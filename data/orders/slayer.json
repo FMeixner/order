@@ -5,6 +5,7 @@
   "tagline": "Masse oben, Athletik unten, Schwert in der Hand.",
   "description": "Klarer Fokus auf Muskelaufbau im Oberkörper, mit Betonung der Dehnposition. Die Beine laufen athletisch: schwer und explosiv in Kontrastpaaren, Kraftausdauer über die Bestien. Ein Teil der Woche gehört dem Schwert auf deiner Stufe im Lernweg. Läuft eine Körpergewichtsübung aus, wechselt sie zur Weste und steigt mit ihr weiter.",
   "goals": {"primary": "hypertrophy", "secondary": ["strength", "power", "skill"]},
+  "class": {"primary": "muskel", "secondary": "athletik"},
   "nutrition": "surplus",
   "load_fit": "high",
   "level": "intermediate",

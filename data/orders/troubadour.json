@@ -5,6 +5,7 @@
   "tagline": "Kraft und Ausdauer, eins zu eins.",
   "description": "Kraft und Ausdauer zu gleichen Teilen, an getrennten Tagen — und beide werden besser. Das ausgewogene Gerüst für alle, die nichts verlieren und alles weiterbringen wollen. Die Sorge vor dem Interferenzeffekt ist für Muskelmasse und Maximalkraft weitgehend unbegründet.",
   "goals": {"primary": "strength", "secondary": ["endurance", "wellbeing"]},
+  "class": {"primary": "kraft", "secondary": "ausdauer"},
   "nutrition": "maintenance",
   "load_fit": "high",
   "level": "beginner–intermediate",

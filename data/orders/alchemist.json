@@ -5,6 +5,7 @@
   "tagline": "Ruhiger Stand, klare Stimme.",
   "description": "Bereitet Körper und Nerven auf den Auftritt vor: Stab und Atem, Balance, Haltungskraft für Nacken, Schultern und Rumpf, Dehnung für Brust, Nacken und Kiefer. Dazu eine aerobe Grundlage, die Woche für Woche wächst, weil sie Stress abfängt. Du bleibst stark, deine Ausdauer wird besser. Trainierte reagieren im Rede-Stresstest gelassener, langsames Atmen beruhigt.",
   "goals": {"primary": "mobility", "secondary": ["wellbeing", "endurance", "strength"]},
+  "class": {"primary": "beweglichkeit", "secondary": "wohlbefinden"},
   "dose": {"muscle": "maintain", "cardio": "soft"},
   "nutrition": "maintenance",
   "load_fit": "high",

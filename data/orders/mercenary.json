@@ -5,6 +5,7 @@
   "tagline": "Kurzhanteln gibt es überall. Kraft auch.",
   "description": "Kraft mit dem, was überall steht: zum größten Teil Kurzhantel, gewürzt mit Körperkraft-Skills wie Archer Pull-Ups, Archer Push-Ups und Pistols, dazu explosive Snatches. Keine schwere Last vom Boden, darum auch in vollen Wochen gut verträglich.",
   "goals": {"primary": "strength", "secondary": ["skill", "hypertrophy"]},
+  "class": {"primary": "kraft", "secondary": "skill"},
   "nutrition": "any",
   "load_fit": "high",
   "level": "intermediate",

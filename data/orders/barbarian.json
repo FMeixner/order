@@ -5,6 +5,7 @@
   "tagline": "Masse, wo immer du bist.",
   "description": "Muskelaufbau ohne Studio: Kurzhanteln, Bänder, Klimmzugstange und der eigene Körper, zu Hause, im Hotel, unterwegs. Klarer Fokus auf Muskelaufbau, mit Übungen in tiefer Dehnung und nah am Muskelversagen, weil die Lasten leichter sind als im Studio. Jede Einheit beginnt mit einer Isolation für den Muskel, den die erste Grundübung trifft. Bestien tragen mit.",
   "goals": {"primary": "hypertrophy", "secondary": ["strength"]},
+  "class": {"primary": "muskel", "secondary": "kraft"},
   "nutrition": "surplus",
   "load_fit": "high",
   "level": "beginner–intermediate",

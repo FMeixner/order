@@ -5,6 +5,7 @@
   "tagline": "Leicht, schnell, draußen.",
   "description": "Sprungkraft und Antritt im Freien, mit dem eigenen Körper, Band, Klimmzugstange und einer Kettlebell, die oft mit auf Reisen geht. Sprünge, Sprints, Richtungswechsel auf Ansage und explosives Ziehen und Drücken — wenige Wiederholungen, volle Pausen, nie ausbelastet. Darum auch in vollen Wochen verträglich.",
   "goals": {"primary": "power", "secondary": ["speed", "skill"]},
+  "class": {"primary": "athletik", "secondary": "skill"},
   "nutrition": "any",
   "load_fit": "high",
   "level": "intermediate",
