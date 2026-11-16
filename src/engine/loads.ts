@@ -54,7 +54,13 @@ export function loadScale(p: EquipmentProfile, equip: Equip): { list: number[] }
 export function stepLoad(p: EquipmentProfile, equip: Equip, w: number, n: number): number {
   const sc = loadScale(p, equip);
   if (!sc) return w;
-  if ("step" in sc) return Math.max(0, round(w + n * sc.step));
+  if ("step" in sc) {
+    // Vom Raster aus zählen (1.51.2): ein geschätztes oder umgerechnetes Gewicht neben dem Raster (Kabel 13,19 kg)
+    // landet so auf der nächsten echten Stufe statt daneben (Kabel in 1,25er-Stufen: 13,19 → 13,75 statt 14,44)
+    const k = w / sc.step;
+    const g = n >= 0 ? Math.floor(k + 1e-6) : Math.ceil(k - 1e-6);
+    return Math.max(0, round((g + n) * sc.step));
+  }
   const list = sc.list;
   if (!list.length) return w;
   if (n >= 0) {

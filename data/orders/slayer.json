@@ -28,7 +28,7 @@
         {"type": "single", "slot": {"id": "w-mo-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
         {"type": "superset", "rest": 60, "slots": [
           {"id": "w-mo-sk", "name": "Skipping Jumps", "sets": 3, "reps": "30", "prog": "none", "note": "Immer 30, so schnell wie möglich."},
-          {"id": "w-do-6a", "name": "KB Russian Twist", "reise": {"name": "Russian Twist", "reps": "24", "prog": "reps"}, "sets": 3, "reps": "24", "prog": "double", "note": "24 Wdh = 12 je Seite."}
+          {"id": "w-do-6a", "name": "KB Russian Twist", "guided": "never", "reise": {"name": "Russian Twist", "reps": "24", "prog": "reps"}, "sets": 3, "reps": "24", "prog": "double", "note": "24 Wdh = 12 je Seite."}
         ]}
       ]
     },

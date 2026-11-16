@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.2] – 2026-11-16
+
+### Geändert
+- **Slayer, Montag:** Der KB Russian Twist bleibt immer frei, auch in Wochen mit hoher Last (kein Tausch gegen den Cable Woodchopper mehr).
+- **Warm-up bei Überkopfdrücken:** Zusätzlich Brustwirbelsäule strecken (Rolle, ohne Rolle im Stehen) und Latissimus an der Box dehnen. Beide begrenzen oft, wie weit die Arme über den Kopf kommen.
+
+### Behoben
+- Gewichte neben den Stufen eines Geräts (etwa Kabel 13,19 kg nach einer Umrechnung) landen jetzt auf der nächsten echten Stufe, auch beim nächsten Sprung.
+
 ## [1.51.1] – 2026-11-16
 
 ### Geändert

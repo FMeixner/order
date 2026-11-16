@@ -898,7 +898,8 @@ export function autoWarmLists(role: Role, week: number): string[] {
   if (upper) out.push("wu_doorway");
   if (lower) out.push("wu_knight");
   if (lower && strength.some((s) => DEEP_LOWER.test(s.name))) out.push("wu_frog", "lower_prep");
-  if (upper && strength.some((s) => OVERHEAD.test(s.name))) out.push("shoulder_prep");
+  // Überkopf (1.51.2, Friedrich): dazu Brustwirbelsäule strecken und Latissimus dehnen — beide begrenzen die Armhebung
+  if (upper && strength.some((s) => OVERHEAD.test(s.name))) out.push("shoulder_prep", "thoracic_roller", "lat_box");
   if (sword) out.push("sword_prep");
   if (runs) out.push("run_prep");
   if (explosive) out.push("jump_prep");
