@@ -137,8 +137,11 @@ describe("Slayer", () => {
     expect(b[0]).toMatchObject({ type: "module", module: "longsword", variant: "stufe" });
     expect(names("home_hypertrophie")).not.toMatch(/Squat|Lunge|Swing|Deadlift|Jump/);
   });
-  it("Montag ohne schwere Kniebeuge, dafür Bein-Plage", () => {
+  it("Blueprint-Pilot (1.50): Montag ohne Kniebeuge und ohne Bestie; die einzige Bestie der Woche steht am Donnerstag und füllt auf", () => {
     expect(names("kraft_a")).not.toMatch(/Back Squat/);
-    expect(w.roles.kraft_a.blocks.some((b) => b.type === "beast" && b.pool?.length)).toBe(true);
+    expect(w.roles.kraft_a.blocks.some((b) => b.type === "beast")).toBe(false);
+    const beasts = Object.entries(w.roles).filter(([k]) => k !== "wochenende_kondition").flatMap(([k, r]) => r.blocks.filter((b) => b.type === "beast" || (b.type === "superset" && b.finisher)).map(() => k));
+    expect(beasts).toEqual(["home_hypertrophie"]);
+    expect(w.roles.home_hypertrophie.blocks.find((b) => b.type === "beast")).toMatchObject({ fill: true });
   });
 });

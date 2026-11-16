@@ -106,6 +106,8 @@
     ],
     "Ziehen senkrecht, Untergriff": [
       "Chin-Up",
+      "Close-Grip Chin-Up",
+      "Close-Grip Lat Pulldown",
       "Lat Pulldown (Untergriff)",
       "Lat Pulldown (V-Griff)",
       "Band-Assisted Chin-Up"
@@ -179,6 +181,7 @@
     "Bauch": [
       "Weighted Sit-Up",
       "Cable Crunch",
+      "Seated Cable Crunch",
       "Ab Crunch Machine",
       "Sit-Up",
       "Reverse Crunch",

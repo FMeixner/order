@@ -114,6 +114,7 @@ export function Help() {
       </Sec>
       <Sec title="Bestien">
       <ul>
+        <li><strong>Auffüll-Bestie</strong> (seit 1.50, Slayer am Donnerstag): Hier geht der Bedarf vor die Abwechslung. Die App wählt die Bestie, die die Lücken der Woche je Muskelgruppe am besten schließt, den Rumpf eingeschlossen – nur nie dieselbe wie letzte Woche.</li>
         <li>Zwei Familien: <strong>Morgenlandbestien</strong> (Namen aus Mesopotamien, Persien und Arabien: Humbaba, Lamassu, Simurgh, Ifrit …) arbeiten gegen externen Widerstand, also Hanteln, Kettlebell, Langhantel, Band oder Sandsack. <strong>Nordbestien</strong> (Volkssagen aus Wald, Moor und Gebirge: Kobold, Undine, Kelpie …) nur mit dem eigenen Körper; Stange, Ringe oder Rudergerät können dazugehören.</li>
         <li>Lastbestien (Morgenland) brauchen genau ein Item (Langhantel, Kurzhantel, Kettlebell, Band oder Sandsack) und haben einen festen Timecap. Alle Lastübungen laufen mit demselben Gewicht bzw. Band. Der Rekord ist das schwerste Gewicht (oder stärkste Band), mit dem du die Bestie im Timecap bezwingst. „Bench Press 50 %“ heißt 50 % deines 1RM; ist es noch unbekannt, legst du das Gewicht selbst fest.</li>
         <li>Mutierte Lastbestie: Liegt das vorhandene Gewicht mehr als 10 % neben dem Vorschlag (etwa nur ein 15- oder 25-kg-Sack, Sandsäcke im Equipment-Profil eintragen), passt die App die Wiederholungen der Lastübungen an: schwerer Sack, weniger Wiederholungen; leichter, mehr — so dass Gewicht mal Wiederholungen etwa gleich bleibt (Faktor 0,5 bis 1,5, eine Faustregel ohne eigene Studienlage). Der Timecap bleibt. Mutierte Läufe zählen nicht als Rekord und verschieben den nächsten Vorschlag nicht.</li>
@@ -153,6 +154,13 @@ export function Help() {
         <li>Die Notiz steht als graue Zeile unter dem Namen und gilt je Übung und Ort — die Beinpresse im Studio hat eine andere als die im Labor —, über alle Orden und Wochen. Tauschst du die Übung, gilt die Notiz der neuen.</li>
       </ul>
 
+      </Sec>
+      <Sec title="Warm-up je Einheit">
+      <ul>
+        <li>Seit 1.50 (zuerst im Slayer) leitet die App das Warm-up aus den Übungen des Tages ab: erst mobilisieren, dann kurz dehnen, zuletzt aktivieren. Jeden Tag Cat-Cow; an Oberkörpertagen Nacken (Chin Tucks, seitliche Dehnung), Türrahmen-Dehnung und Ausschultern, bei Überkopfdrücken dazu Außenrotation und Wall Slides; an Unterkörpertagen Kneeling Knight (Hüftbeuger) und 90/90, bei Kniebeuge oder Kreuzheben dazu Frosch (Adduktoren), Squat to Toe Touch und Glute Bridge. Ein reiner Oberkörpertag dehnt nichts am Unterkörper und umgekehrt. Sprünge und Sprints bekommen die Sprungvorbereitung am Schluss, das Schwert seine eigene.</li>
+        <li>Die Grundannahme: Wer am Schreibtisch arbeitet, hat oft feste Hüftbeuger, einen nach vorn geschobenen Kopf und nach vorn gerollte Schultern. Das ist eine vernünftige Vorgabe, kein Befund – ob Haltung und Beschwerden ursächlich zusammenhängen, ist schwach belegt. Kurze statische Dehnung vor dem Training kostet kaum Leistung, wenn dynamische Arbeit folgt (Behm et al., 2016).</li>
+        <li>Slayer, Montag: Am Ende des Warm-ups 2 × 40 m Sprint, wo der Ort Sprints erlaubt, sonst 15 High Jumps.</li>
+      </ul>
       </Sec>
       <Sec title="Testwoche">
       <ul>

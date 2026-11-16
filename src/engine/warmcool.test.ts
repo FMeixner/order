@@ -10,7 +10,7 @@ import { isStrength } from "./slots";
 describe("Warm-up und Cool-down (1.5)", () => {
   it("Warm-up-Listen enthalten keine Kraft- oder Aufbauübungen", () => {
     for (const gone of ["neck_complex", "core_prep", "db_er", "muscleup_tech"]) expect(DRILL_LISTS[gone]).toBeUndefined();
-    for (const f of Object.values(FOCUS_BY_ID)) for (const r of Object.values(f.roles)) for (const l of r.warmup ?? []) expect(DRILL_LISTS[l], `${f.id}: ${l}`).toBeDefined();
+    for (const f of Object.values(FOCUS_BY_ID)) for (const r of Object.values(f.roles)) for (const l of r.warmup ?? []) if (l !== "auto") expect(DRILL_LISTS[l], `${f.id}: ${l}`).toBeDefined();
   });
   it("Cool-down: große Dehnungen 45–60 s", () => {
     for (const l of ["cd_general", "cd_upper", "cd_lower"]) for (const d of DRILL_LISTS[l]) if (d.mode === "hold") expect(d.value).toBeGreaterThanOrEqual(45);
@@ -21,7 +21,7 @@ describe("Warm-up und Cool-down (1.5)", () => {
   });
   it("Ohne Black Roll: Brustwirbelsäule im Stehen statt auf der Rolle", () => {
     const user = emptyState().user;
-    const role = { ...FOCUS_BY_ID.slayer.roles.kraft_a, drillEdit: undefined };
+    const role = { ...FOCUS_BY_ID.barbarian.roles.oben_b, drillEdit: undefined };
     const base = EQUIPMENT_PRESETS[0].make();
     const p = { ...base, has: { ...base.has, roll: false } };
     const names = roleDrills(role, "wu", p, user, 1).map((d) => d.name);
@@ -77,5 +77,32 @@ describe("Ausklang (1.29)", () => {
     const r = role([{ type: "superset", slots: [slot, { ...slot, id: "s2" }], finisher: { pool: ["huldra"], only: "A" } }]);
     expect(isHardEnd(r, 1)).toBe(true);
     expect(isHardEnd(r, 2)).toBe(false);
+  });
+});
+
+describe("Warm-up aus den Übungen des Tages (1.50)", () => {
+  const user = emptyState().user;
+  const gym = { ...EQUIPMENT_PRESETS[0].make(), has: { ...EQUIPMENT_PRESETS[0].make().has, sprint: false } };
+  const names = (rk: string, p = gym, week = 1) => roleDrills({ ...FOCUS_BY_ID.slayer.roles[rk], drillEdit: undefined }, "wu", p, user, week).map((d) => d.name);
+  it("Oberkörpertag (Slayer Mo): Cat-Cow, Nacken, Türrahmen – nichts am Unterkörper; am Schluss High Jumps ohne Sprintstrecke", () => {
+    const n = names("kraft_a");
+    expect(n[0]).toBe("Cat-Cow");
+    expect(n).toContain("Türrahmen-Dehnung");
+    expect(n).toContain("Chin Tucks");
+    expect(n.join()).not.toMatch(/Kneeling Knight|Frosch|90\/90/);
+    expect(n[n.length - 1]).toBe("High Jumps");
+    expect(names("kraft_a", { ...gym, has: { ...gym.has, sprint: true } }).at(-1)).toBe("Sprint 2 × 40 m");
+  });
+  it("Kraft Kontrast (Fr): Hüftbeuger, Frosch und Sprungvorbereitung, wegen Bankdrücken auch Türrahmen", () => {
+    const n = names("kraft_contrast");
+    expect(n).toContain("Kneeling Knight (Hüftbeuger)");
+    expect(n).toContain("Frosch (Adduktoren)");
+    expect(n).toContain("Türrahmen-Dehnung");
+    expect(n).toContain("Pogo Hops");
+  });
+  it("Eitelkeitstag (Di) mit Überkopfdrücken: Schultervorbereitung, nichts am Unterkörper", () => {
+    const n = names("arme_kurz");
+    expect(n).toContain("Scapular Wall Slides");
+    expect(n.join()).not.toMatch(/Kneeling Knight|Frosch/);
   });
 });

@@ -12,7 +12,6 @@ import { allRuns } from "../engine/runs";
 import { warmupKeys } from "../engine/warmup";
 import { fmt, useTimer } from "./Timer";
 import { Collapse } from "./common";
-import { Sign } from "./Signs";
 import { BeastCard } from "./session/BeastCard";
 import { CallCard } from "./session/CallCard";
 import { allDrillsDone, DrillList, DrillSection, toggleDrill } from "./session/Drills";
@@ -28,19 +27,6 @@ import { Who5 } from "./Who5";
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
 const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile), ctx.profile, ctx.state.user, ctx.week, ctx.reduced, boostOf(ctx)).total / 5) * 5);
-
-/** Geführte Übungen bei hoher Phasenlast (1.19): Begründung hinter dem Lastsymbol, ein Tap klappt sie auf (1.40) */
-function GuidedNote() {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <button className="info-btn" onClick={() => setOpen((o) => !o)} aria-label="Warum heute geführte Übungen?" aria-expanded={open} title="Hohe Alltagslast — Begründung anzeigen">
-        <Sign kind="load-high" size={16} />
-      </button>
-      {open && <p className="note">Phase mit hoher Alltagslast: Etwa die Hälfte der Übungen läuft heute an Maschine oder Kabel. Der erste große Lift bleibt frei.</p>}
-    </>
-  );
-}
 
 /* ---------- Hauptansicht ---------- */
 export function SessionView(ctx: SessionCtx) {
@@ -97,7 +83,6 @@ export function SessionView(ctx: SessionCtx) {
         <div className="session-title"><span className="muted small">etwa {minutesFor(ctx)} Min{ctx.modsLabel ? ` · ${ctx.modsLabel}` : ""}</span>{ctx.headAction}</div>
         {ctx.headPanel}
         {role.note && <p className="note">{role.note}</p>}
-        {items.some((it) => it.resolved.some((r) => r.guided)) && <GuidedNote />}
         {session?.done && <p className="note ok">Abgeschlossen am {session.date.split("-").reverse().join(".")}. Änderungen sind noch möglich, die Progression ist aber schon fortgeschrieben.</p>}
       </div>
 

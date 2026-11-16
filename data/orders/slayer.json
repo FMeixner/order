@@ -19,43 +19,41 @@
   "week_3": ["kraft_a", "home_hypertrophie", "kraft_contrast"],
   "roles": {
     "kraft_a": {
-      "name": "Oberkörper schwer", "location": "gym", "minutes": 50,
-      "warmup": ["short_base", "thoracic_roller", "dislocate", "shoulder_prep"], "cooldown": ["cd_mdf"],
+      "name": "Oberkörper schwer", "location": "gym", "minutes": 55,
+      "warmup": ["auto", "speed_finish"], "cooldown": ["cd_mdf"],
       "blocks": [
-        {"type": "superset", "rest": 120, "slots": [
-          {"id": "w-mo-2", "core": true, "name": "Bench Press", "home": "DB Floor Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double"},
-          {"id": "w-mo-4", "core": true, "name": "Barbell Row", "home": "Double DB Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double"}
-        ]},
-        {"type": "superset", "rest": 90, "slots": [
-          {"id": "w-mo-3", "name": "Dip", "load": "plate", "home": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
-          {"id": "w-mo-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
-          {"id": "w-mo-5c", "name": "Cable Lateral Raise", "home": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}
-        ]},
-        {"type": "beast", "id": "w-mo-bst", "classes": ["plage"], "pool": ["ng-sindrar", "ng-sol", "ng-balder", "ng-hugin", "ng-tyr", "ng-mimir", "ng-fenja", "ng-odinsson", "ng-heimdall"]}
+        {"type": "single", "slot": {"id": "w-mo-2", "core": true, "name": "Bench Press", "home": "DB Floor Press", "reise": {"name": "Deficit Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 4, "reps": "8-10", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "w-mo-4c", "core": true, "name": "Close-Grip Chin-Up", "load": "plate", "guided": "high", "reise": {"name": "Band Pulldown", "reps": "12-15", "prog": "reps"}, "sets": 4, "reps": "6-10", "prog": "double", "rest": 150}},
+        {"type": "single", "slot": {"id": "w-mo-3", "name": "Dip", "load": "plate", "home": "Ring Dip", "reise": {"name": "Chair Dip", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "single", "slot": {"id": "w-mo-5a", "name": "DB Rear Delt Fly", "reise": {"name": "Band Pull-Apart", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "w-mo-sk", "name": "Skipping Jumps", "sets": 3, "reps": "30", "prog": "none", "note": "Immer 30, so schnell wie möglich."},
+          {"id": "w-do-6a", "name": "KB Russian Twist", "reise": {"name": "Russian Twist", "reps": "24", "prog": "reps"}, "sets": 3, "reps": "24", "prog": "double", "note": "24 Wdh = 12 je Seite."}
+        ]}
       ]
     },
     "arme_kurz": {
-      "name": "Schultern und Arme", "location": "gym", "minutes": 45,
-      "warmup": ["short_base", "thoracic_standing", "windmill", "shoulder_prep"], "cooldown": ["cd_di"],
+      "name": "Arme und Schultern", "location": "gym", "minutes": 45,
+      "warmup": ["auto"], "cooldown": ["cd_di"],
       "blocks": [
-        {"type": "superset", "rest": 90, "slots": [
-          {"id": "w-di-3", "name": "Band Face Pull", "sets": 3, "reps": "12-15", "prog": "reps", "note": "Band an der Multipresse auf Augenhöhe befestigen. Zum Einstieg: wärmt die Schulter vor."},
-          {"id": "w-fr-5", "core": true, "name": "Smith Machine Shoulder Press", "home": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
-          {"id": "w-di-6", "name": "Dead Bug", "sets": 3, "reps": "8/Seite", "prog": "reps"}
-        ]},
-        {"type": "superset", "rest": 90, "slots": [
-          {"id": "w-di-7", "core": true, "name": "Smith Machine Close-Grip Bench Press", "home": "DB Floor Press", "reise": {"name": "Diamond Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double"},
-          {"id": "w-di-8", "name": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"}
+        {"type": "single", "slot": {"id": "w-fr-5", "core": true, "name": "Smith Machine Shoulder Press", "home": "Seated DB Shoulder Press", "reise": {"name": "Pike Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "double", "rest": 120}},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "w-di-8", "name": "Incline DB Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
+          {"id": "w-di-2", "core": true, "name": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"}
         ]},
         {"type": "superset", "rest": 60, "slots": [
-          {"id": "w-di-2", "core": true, "name": "DB Overhead Triceps Extension", "reise": {"name": "Band Overhead Triceps Extension", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double", "note": "Gleiches Kurzhantelgewicht wie der Hammer Curl, wenn es passt."},
-          {"id": "w-di-1", "core": true, "name": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"}
+          {"id": "w-di-1", "core": true, "name": "Hammer Curl", "reise": {"name": "Band Curl", "prog": "reps"}, "sets": 3, "reps": "10-12", "prog": "double"},
+          {"id": "w-di-3", "name": "Face Pull", "reise": {"name": "Band Face Pull", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}
+        ]},
+        {"type": "superset", "rest": 60, "slots": [
+          {"id": "w-di-lr", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"},
+          {"id": "w-di-cc", "name": "Seated Cable Crunch", "reise": {"name": "Reverse Crunch", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double"}
         ]}
       ]
     },
     "home_hypertrophie": {
-      "name": "Schwert und Oberkörper", "location": "home", "minutes": 50,
-      "warmup": ["short_base", "sword_prep", "thoracic_roller", "dislocate"], "cooldown": ["cd_mdf"],
+      "name": "Schwert, Muskel, Bestie", "location": "home", "minutes": 45,
+      "warmup": ["auto"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "module", "module": "longsword", "variant": "stufe", "fallbackFlow": "mobility"},
         {"type": "superset", "rest": 90, "slots": [
@@ -63,15 +61,12 @@
           {"id": "w-do-3", "core": true, "name": "Ring Row", "home": "Ring Row", "reise": {"name": "Band Row", "reps": "12-15", "prog": "reps"}, "sets": 3, "reps": "8-10", "prog": "ladder", "ladder": ["Ring Row", "Ring Row (Füße erhöht)", "Archer Ring Row"]}
         ]},
         {"type": "single", "slot": {"id": "w-do-5c", "name": "DB Lateral Raise", "reise": {"name": "Band Lateral Raise", "prog": "reps"}, "sets": 3, "reps": "12-15", "prog": "double", "rest": 60}},
-        {"type": "superset", "rest": 60, "finisher": {"pool": ["ng-munin", "ng-nidhoggr", "ng-thorsson", "ng-njord", "ng-var", "ng-lagertha"]}, "slots": [
-          {"id": "w-do-6a", "name": "KB Russian Twist", "reise": {"name": "Russian Twist", "prog": "reps"}, "sets": 3, "reps": "12-15/Seite", "prog": "double"},
-          {"id": "w-do-6b", "name": "Band Pallof Press", "sets": 3, "reps": "10/Seite", "prog": "reps"}
-        ]}
+        {"type": "beast", "id": "w-do-bst", "classes": ["bestie"], "fill": true}
       ]
     },
     "kraft_contrast": {
       "name": "Kraft Kontrast", "location": "gym", "minutes": 60,
-      "warmup": ["short_base", "jump_prep", "lat_box", "dislocate"], "cooldown": ["cd_mdf"],
+      "warmup": ["auto"], "cooldown": ["cd_mdf"],
       "blocks": [
         {"type": "contrast", "rotation": "A", "transfer": 20, "rest": 150, "heavy": {"id": "w-fr-1", "core": true, "guided": "never", "name": "Back Squat", "home": "Goblet Squat", "reise": {"name": "Split Squat", "prog": "reps"}, "sets": 3, "reps": "5-6", "prog": "double"}, "explosive": {"id": "w-fr-1x", "name": "Box Jump", "reise": "Squat Jump", "sets": 3, "reps": "5", "prog": "none"}},
         {"type": "contrast", "rotation": "A", "transfer": 20, "rest": 150, "heavy": {"id": "w-fr-2", "core": true, "guided": "never", "name": "Bench Press", "home": "DB Floor Press", "reise": {"name": "Push-Up", "reps": "AMRAP", "prog": "reps"}, "sets": 3, "reps": "5-6", "prog": "double"}, "explosive": {"id": "w-fr-2x", "name": "Clap Push-Up", "sets": 3, "reps": "5", "prog": "none"}},

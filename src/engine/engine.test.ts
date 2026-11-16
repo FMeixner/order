@@ -219,8 +219,9 @@ describe("Geführte Varianten bei hoher Last", () => {
       .map(({ s, group }) => ({ r: resolveSlot(s, gym)!, contrast: false, group }));
     const keys = guidedKeys(list, gym);
     const names = list.filter((x) => keys.has(x.r.key)).map((x) => toGuided(x.r, gym)!.name);
-    // Dip und Rear Delt Fly bleiben frei: ihr Superset-Partner ist schon ein Kabel (Seitheben); Bankdrücken ist der erste Lift
-    expect(names).toEqual(["Seated Cable Row"]);
+    // Bankdrücken ist der erste Lift und bleibt frei; geführt wird u. a. der Dip (seit 1.50 Einzelübungen im Slayer)
+    expect(names).toContain("Seated Dip Machine");
+    expect(names).not.toContain("Chest Press Machine");
     expect(guidedKeys(list, home).size).toBe(0);
   });
   it("Doppelmesser-Schalter wird zu Schwert am Heim-Profil", async () => {

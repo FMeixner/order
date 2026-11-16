@@ -2,9 +2,21 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
-## [Unveröffentlicht]
+## [1.50.0] – 2026-11-16
+
+### Neu
+- **Slayer als Pilot des neuen Wochenaufbaus:**
+  - **Montag (Oberkörper schwer):** Bankdrücken, Close-Grip Chin-ups mit Weste (bei hoher Last Close-Grip-Latzug), Dips, Reverse Fly – jetzt einzeln statt im Superset –, zum Schluss Skipping Jumps (30, so schnell wie möglich) im Wechsel mit KB Russian Twist (24 Wdh, 12 je Seite). Keine Bestie mehr.
+  - **Dienstag (Arme und Schultern):** Schulterdrücken an der Multipresse, Curls, Trizeps über Kopf, Face Pull, Seitheben und neu Seated Cable Crunch mit Seil. Kein enges Bankdrücken, keine Dead Bugs.
+  - **Donnerstag (Schwert, Muskel, Bestie):** Langschwert, Deficit Push-ups mit Ring Rows, Seitheben, dann die einzige Bestie der Woche. Sie füllt auf, was in der Woche fehlt – Bedarf vor Abwechslung, Rumpf eingeschlossen. Pallof Press und Rumpf-Superset entfallen.
+  - **Freitag:** Kraft Kontrast wie zuletzt umgebaut.
+  - Gilt für eine laufende Slayer-Phase nach „Übernehmen“ im Plan.
+- **Warm-up je Einheit (zuerst im Slayer):** Die App stellt das Warm-up aus den Übungen des Tages zusammen – Cat-Cow jeden Tag, Nacken, Türrahmen-Dehnung und Ausschultern für den Oberkörper, Kneeling Knight, 90/90 und bei Kniebeuge oder Kreuzheben Frosch für die Beine. Ein reiner Oberkörpertag dehnt nichts an den Beinen.
+- **Slayer, Montag:** Am Ende des Warm-ups 2 × 40 m Sprint, wo der Ort Sprints erlaubt, sonst 15 High Jumps.
+- Neue Übungen: Close-Grip Chin-Up, Close-Grip-Latzug, Seated Cable Crunch, Skipping Jumps.
 
 ### Geändert
+- Das Lastsymbol unter der Dauer ist weg; die Kopfzeile zeigt die Alltagslast schon.
 - **Jeder Orden hat ein Primär- und ein Sekundärziel** (Muskel, Kraft, Athletik, Kondition, Ausdauer, Skill, Beweglichkeit, Wohlbefinden). Zu sehen im Almanach bei den Orden.
 - **Schwerpunkt ausgegraut, wenn der Orden ihn schon trainiert:** Was das Sekundärziel abdeckt, steht im Schwerpunkt-Slot als „trainiert der Orden schon“ und wird nicht automatisch gewählt (Athletik = Sprungkraft und Schnelligkeit, Kondition = Anaerob, Ausdauer = Ausdauer). Beim Slayer bleibt damit vorerst kein Schwerpunkt übrig; die App füllt „mehr vom Ordensziel“ auf, bis der Schwerpunkt Skill kommt.
 - **Slayer, Kraft Kontrast:** Die Kontrastpaare stehen in beiden Wochen am Anfang der Einheit (B-Woche: erst Kreuzheben mit Weitsprung und Rudern mit Jump Shrug, dann Kniebeuge und Bankdrücken). Bei hoher Last bleiben Kniebeuge und Bankdrücken immer frei, Kreuzheben und RDL werden immer zum Cable Pull-Through, Rudern zum Kabelrudern – auch als Kontrastpartner. Gilt für eine laufende Slayer-Phase nach „Übernehmen“ im Plan.

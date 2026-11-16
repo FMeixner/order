@@ -188,7 +188,7 @@ for (const [f, d] of allFoci) {
   for (const [rk, r] of [...Object.entries(d.roles || {}), ...hl]) {
     const ctx = `${rk}`;
     if (!TIERS.has(r.location)) err(f, `${ctx}: location muss gym, home oder reise sein`);
-    for (const w of [...(r.warmup || []), ...(r.cooldown || [])]) if (!correctives[w]) err(f, `${ctx}: Liste "${w}" fehlt in correctives.json`);
+    for (const w of [...(r.warmup || []), ...(r.cooldown || [])]) if (w !== "auto" && !correctives[w]) err(f, `${ctx}: Liste "${w}" fehlt in correctives.json`);
     for (const b of r.blocks || []) {
       switch (b.type) {
         case "single": checkSlot(b.slot, ctx);

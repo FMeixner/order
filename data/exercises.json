@@ -548,6 +548,18 @@
       "bar"
     ]
   },
+  "Close-Grip Chin-Up": {
+    "equip": "bodyweight",
+    "weighted": true,
+    "needs": [
+      "bar"
+    ],
+    "desc": "Untergriff, Hände etwa schulterbreit oder enger. Aus dem ganz gestreckten Hang ziehen, bis das Kinn über der Stange ist, Ellbogen nah am Körper. Langsam ganz ab. Mit Weste, sobald der Bereich oben erreicht ist."
+  },
+  "Close-Grip Lat Pulldown": {
+    "equip": "cable",
+    "desc": "Enger Untergriff oder V-Griff am Latzug. Brust hoch, Griff bis zur oberen Brust ziehen, Ellbogen nah am Körper, oben ganz strecken."
+  },
   "Clap Push-Up": {
     "equip": "bodyweight",
     "desc": "Liegestütz explosiv abdrücken, in der Luft klatschen, weich landen."
@@ -1254,6 +1266,10 @@
   "Schattenboxen: Technikrunden": {
     "equip": "skill"
   },
+  "Seated Cable Crunch": {
+    "equip": "cable",
+    "desc": "Seil am hohen Kabel über einem Sitz (etwa der Kabelauslass an der Multipresse). Seil neben dem Kopf, sitzend den Oberkörper einrollen, Rippen Richtung Becken. Die Hüfte bewegt sich nicht, langsam zurück."
+  },
   "Seated Cable Row": {
     "equip": "cable"
   },
@@ -1324,6 +1340,16 @@
   },
   "Side Plank": {
     "equip": "bodyweight"
+  },
+  "Skipping Jumps": {
+    "equip": "bodyweight",
+    "loud": true,
+    "desc": "Wie Seilspringen ohne Seil (mit Seil, wenn eins da ist): kleine, schnelle Sprünge auf den Fußballen, Knie locker. 30 Sprünge so schnell wie möglich.",
+    "instead": [
+      {
+        "name": "High Knees auf der Stelle"
+      }
+    ]
   },
   "Skater Jumps": {
     "equip": "bodyweight",

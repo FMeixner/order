@@ -689,6 +689,80 @@
         "value": 90,
         "desc": "Stab oder Schwert beidhändig. Zwei langsame Hiebe je Seite, ein Hieb pro Atemzug: einatmen heben, ausatmen führen. Fährt Puls und Kopf herunter, die Schultern bleiben lang."
       }
+    ],
+    "wu_catcow": [
+      {
+        "id": "wu-catcow",
+        "name": "Cat-Cow",
+        "mode": "activity",
+        "value": 40,
+        "desc": "Auf allen Vieren abwechselnd Rücken rund machen und ins Hohlkreuz gehen. Fließend und langsam."
+      }
+    ],
+    "wu_neck": [
+      {
+        "id": "wu-chin",
+        "name": "Chin Tucks",
+        "mode": "reps",
+        "value": 10,
+        "desc": "Kinn waagerecht nach hinten schieben, 2 Sekunden halten. Nicht nicken."
+      },
+      {
+        "id": "wu-neck",
+        "name": "Neck Lateral Stretch",
+        "mode": "hold",
+        "value": 20,
+        "sides": true,
+        "desc": "Ohr sanft zur Schulter neigen. Gegenüberliegende Schulter unten lassen."
+      }
+    ],
+    "wu_doorway": [
+      {
+        "id": "wu-doorway",
+        "name": "Türrahmen-Dehnung",
+        "mode": "hold",
+        "value": 30,
+        "sides": true,
+        "desc": "Unterarm am Türrahmen, Ellbogen auf Schulterhöhe. Einen Schritt nach vorn, bis die Brust vorn dehnt. Schulter bleibt tief, kein Hohlkreuz."
+      }
+    ],
+    "wu_knight": [
+      {
+        "id": "wu-knight",
+        "name": "Kneeling Knight (Hüftbeuger)",
+        "mode": "hold",
+        "value": 30,
+        "sides": true,
+        "desc": "Kniestand, ein Fuß vorn. Gesäß des hinteren Beins fest anspannen, Becken leicht aufrichten, dann die Hüfte nach vorn schieben. Oberkörper bleibt aufrecht."
+      }
+    ],
+    "wu_frog": [
+      {
+        "id": "wu-frog",
+        "name": "Frosch (Adduktoren)",
+        "mode": "hold",
+        "value": 40,
+        "desc": "Vierfüßlerstand, Knie weit auseinander, Unterschenkel parallel. Becken langsam nach hinten schieben, bis die Innenseite der Oberschenkel dehnt. Ruhig atmen."
+      }
+    ],
+    "speed_finish": [
+      {
+        "id": "wu-sprint40",
+        "name": "Sprint 2 × 40 m",
+        "mode": "reps",
+        "value": 2,
+        "needs": [
+          "sprint"
+        ],
+        "desc": "Zwei Sprints über 40 m, der erste zu etwa 80 %, der zweite voll. Zurück gehen.",
+        "instead": {
+          "id": "wu-highjumps",
+          "name": "High Jumps",
+          "mode": "reps",
+          "value": 15,
+          "desc": "Aus dem Stand so hoch wie möglich springen, Knie zur Brust, weich landen, sofort wieder ab. 15 Sprünge."
+        }
+      }
     ]
   }
 }

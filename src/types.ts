@@ -95,6 +95,9 @@ export type Block =
       benchmark_every?: number; note?: string; rotation?: "A" | "B";
       /** "easy": ruhiges Grundlagentempo, zählt nicht für die Bestzeit */
       pace?: "easy";
+      /** Auffüllen (1.50): Bedarf geht vor Abwechslung — die Bestie, die die Lücken der Woche (Rumpf eingeschlossen) am besten
+          schließt, nur nie dieselbe wie letzte Woche */
+      fill?: boolean;
     }
   | { type: "module"; module: WeaponModule | "flow" | "sharpen" | "call"; variant: string; fallback?: Slot; /** Ohne Schwert und Stock: dieser geführte Flow (flows.json) statt `fallback` */ fallbackFlow?: string; rotation?: "A" | "B"; /** Kurztag: nur die erste Hälfte der Übungen */ short?: true }
 
@@ -226,7 +229,7 @@ export interface Drill {
   /** Sekunden pro Wiederholung, nur für die Zeitschätzung (Flows) */
   rep_s?: number;
   /** Ausrüstung für Warm-up/Cool-down (roll: Black Roll, ball: Black-Roll-Ball); fehlt sie, gilt instead oder die Übung fällt weg */
-  needs?: ("roll" | "ball")[];
+  needs?: ("roll" | "ball" | "sprint")[];
   instead?: Drill;
   note?: string;
   desc?: string;

@@ -754,6 +754,20 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
   let pool = cands.filter(freshC);
   if (!pool.length && block.strict) return null; // Finisher: lieber das Superset als dieselbe Bestie wie letzte Woche
   if (!pool.length) pool = cands;
+  // Auffüllen (1.50, Slayer-Pilot): Bedarf vor Abwechslung. Unter den frischen Kandidaten (nie die Vorwoche) die, die die
+  // Lücken der Woche am besten schließt; ein Überhang über die Obergrenze bis zu einem Satz ist erlaubt.
+  if (block.fill && dw) {
+    const cover = (c: Cand) => {
+      const d = groupShare(candDose(c));
+      let hit = 0;
+      for (const [g, ms] of Object.entries(DOSE_GROUPS)) hit += Math.min(ms.reduce((a0, mu) => a0 + Math.max(0, (dw.muscle[mu] ?? 0) - (dw.fixed[mu] ?? 0) - (weekDose[mu] ?? 0)), 0), d[g] ?? 0);
+      return hit;
+    };
+    const ok = pool.filter((c) => over(c) <= 1);
+    const k0 = (c: Cand) => c.units.map((x) => x.id).join("+");
+    const best = [...(ok.length ? ok : pool)].sort((a0, c0) => cover(c0) - cover(a0) || hash(seed + k0(a0)) - hash(seed + k0(c0)))[0];
+    if (best) return build(best);
+  }
   // Varianz zuerst: die am längsten nicht gelaufenen Bestien. Darin bleibt eine unter der Obergrenze, wenn es geht;
   // sonst der kleinste Überhang, solange er höchstens einen Satz beträgt. Erst bei mehr weicht die Wahl auf die nächste
   // Altersklasse aus, die unter der Obergrenze bleibt. Nie die Vorwoche (oben ausgeschlossen).
@@ -856,8 +870,48 @@ export function coolDrills(role: Role, p: EquipmentProfile | undefined, user: Us
   return isHardEnd(role, week) && !short ? [drillView(CD_WALK, week), ...cd] : cd;
 }
 
+/* Warm-up je Einheit (1.50, „Never train on dysfunction“): Statt fester Listen leitet „auto“ das Warm-up aus den Übungen
+   des Tages ab. Erst mobilisieren, dann kurz dehnen, dann aktivieren, zuletzt das Spezifische (Schwert, Sprung, Lauf).
+   Jeden Tag Cat-Cow; Oberkörper: Nacken, Türrahmen, Ausschultern, bei Überkopfdrücken Schultervorbereitung;
+   Unterkörper: Kneeling Knight, 90/90, bei Kniebeuge oder Kreuzheben Frosch und Beinvorbereitung. Reiner Oberkörpertag
+   dehnt nichts am Unterkörper und umgekehrt. Kurze statische Dehnung vor dem Training kostet kaum Leistung, wenn
+   dynamische Arbeit folgt (Behm et al., 2016). */
+const UPPER = new Set(["Brust", "Rücken", "Schultern", "Bizeps", "Trizeps", "Nacken"]);
+const LOWER = new Set(["Quadrizeps", "Beinbeuger", "Gesäß", "Waden", "Adduktoren"]);
+const OVERHEAD = /shoulder press|overhead press|military|pike push|handstand|push press|landmine press/i;
+const DEEP_LOWER = /squat|deadlift|romanian|rdl|good morning|clean|snatch/i;
+export function autoWarmLists(role: Role, week: number): string[] {
+  const ab = isAWeek(week) ? "A" : "B";
+  const blocks = role.blocks.filter((b) => !b.rotation || b.rotation === ab);
+  const slots = blocks.flatMap((b) => (b.type === "single" ? [b.slot] : b.type === "superset" ? b.slots : b.type === "contrast" ? [b.heavy, b.explosive] : []));
+  // Sprünge, Würfe, Sprints bekommen die Sprungvorbereitung, keine Dehnung der Beine
+  const strength = slots.filter((s) => (s.kind ?? "strength") === "strength" && !EXPLOSIVE.test(s.name));
+  const ms = new Set(strength.flatMap((s) => Object.keys(musclesOf(s.name))));
+  const upper = [...ms].some((m) => UPPER.has(m));
+  const lower = [...ms].some((m) => LOWER.has(m)) || strength.some((s) => DEEP_LOWER.test(s.name));
+  const explosive = slots.some((s) => s.kind !== "interval" && s.kind !== "timer" && EXPLOSIVE.test(s.name));
+  const runs = slots.some((s) => (s.kind === "interval" || s.kind === "timer") && /lauf|run|sprint|jog/i.test(s.name));
+  const sword = blocks.some((b) => b.type === "module" && isWeaponModule(b.module));
+  const out = ["wu_catcow"];
+  if (upper) out.push("wu_neck", "dislocate");
+  if (lower) out.push("hip9090");
+  if (upper) out.push("wu_doorway");
+  if (lower) out.push("wu_knight");
+  if (lower && strength.some((s) => DEEP_LOWER.test(s.name))) out.push("wu_frog", "lower_prep");
+  if (upper && strength.some((s) => OVERHEAD.test(s.name))) out.push("shoulder_prep");
+  if (sword) out.push("sword_prep");
+  if (runs) out.push("run_prep");
+  if (explosive) out.push("jump_prep");
+  return out;
+}
+/** Listen des Warm-ups einer Rolle: „auto“ wird zur abgeleiteten Folge, weitere Namen bleiben an ihrer Stelle */
+export function warmLists(role: Role, week: number): string[] {
+  const raw = role.warmup ?? ["base"];
+  return raw.includes("auto") ? [...new Set(raw.flatMap((l) => (l === "auto" ? autoWarmLists(role, week) : [l])))] : raw;
+}
+
 export function roleDrills(role: Role, kind: "wu" | "cd", p: EquipmentProfile | undefined, user: UserProfile, week: number): DrillView[] {
-  const lists = kind === "wu" ? (role.warmup ?? ["base"]).filter((l) => !l.startsWith("sword") || !!p?.has.sword) : role.cooldown ?? ["cd_general"];
+  const lists = kind === "wu" ? warmLists(role, week).filter((l) => !l.startsWith("sword") || !!p?.has.sword) : role.cooldown ?? ["cd_general"];
   const ed = role.drillEdit?.[kind];
   // Ausrüstung: fehlt Black Roll oder Ball am Ort (ausdrücklich abgewählt), gilt der Ersatz oder die Übung fällt weg
   const missing = (d: Drill) => (d.needs ?? []).some((n) => p?.has[n] === false);

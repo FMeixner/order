@@ -164,7 +164,8 @@ export function shortDay(f: Focus, roleKey: string, user: UserProfile, weekRoles
   //    bis vier Blöcke zusammen sind — ist weniger Kraft da, rücken Timer und Flows nach).
   const ranked = short.blocks.map((b, i) => ({ b, i, r: b.type === "beast" || (b.type === "module" && keptModule(b.module)) ? -1 : rank(b) })).filter((x) => x.r >= 0);
   // A- und B-Woche getrennt: je die vier besten Übungen (Kern zuerst, dann schwer, dann Mehrgelenk)
-  const shortWarm = ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
+  // „auto“ (1.50) leitet das Warm-up aus den verbliebenen Übungen ab und bleibt darum, wie es ist
+  const shortWarm = (short.warmup ?? []).includes("auto") ? ["auto"] : ["short_base", ...(short.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
   const pick = (n: number) => {
     const k = new Set<Block>();
     for (const ab of ["A", "B"]) {
@@ -341,7 +342,7 @@ export function shortDeload(f: Focus, roleKey: string): Focus {
   const keep = new Set<Block>();
   for (const ab of ["A", "B"]) ranked.filter((x) => !x.b.rotation || x.b.rotation === ab).sort((a, c) => c.r - a.r || a.i - c.i).slice(0, SHORT_KEEP).forEach((x) => keep.add(x.b));
   r.blocks = r.blocks.filter((b) => keep.has(b) || b.type === "beast" || (b.type === "module" && keptModule(b.module))).map((b) => (b.type === "module" && keptModule(b.module) ? { ...b, short: true } : b));
-  r.warmup = ["short_base", ...(r.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
+  r.warmup = (r.warmup ?? []).includes("auto") ? ["auto"] : ["short_base", ...(r.warmup ?? []).filter((l) => !/base|run|jump|sword/.test(l)).slice(0, 2)];
   r.cooldown = (r.cooldown ?? []).slice(0, 1);
   r.name = `${r.name} (Kurztag)`;
   for (const t of r.blocks.flatMap(slotsOf).filter((x) => x.kind === "timer")) {
