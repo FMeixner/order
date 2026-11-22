@@ -13,6 +13,9 @@ import { isHeavy, isStrength, planMinutes as est } from "./slots";
 import { musclesOf } from "./volume";
 import { halfOf } from "./warmup";
 import { MAINTAIN, MUSCLES, pairToFit, rank, slotsOf, weekVolume } from "./shortday";
+import { SWAP_GROUPS } from "../data";
+
+const groupOf = (name: string) => Object.entries(SWAP_GROUPS).find(([, m]) => m.includes(name))?.[0] ?? name;
 
 const LOWER = ["Quadrizeps", "Beinbeuger", "Gesäß", "Waden"];
 const MAX_SETS = 5;
@@ -33,6 +36,11 @@ export interface SkipInput {
   dayOf: Record<string, number>;
   /** bis zu 15 Minuten länger erlaubt */
   grow?: boolean;
+  /** Einheiten, die in dieser Woche insgesamt stattfinden (erledigte und offene, ohne ausgefallene und freiwillige).
+      Ganzkörper nur, wenn es nur noch eine ist (1.51.5); sonst blieb etwa von Mo, Di und Fr nur ein zerlegter Freitag. */
+  weekCount?: number;
+  /** A- oder B-Woche: Blöcke der anderen Rotation zählen nicht als „steht schon da“ */
+  ab?: "A" | "B";
 }
 
 export function skipDay(f: Focus, user: UserProfile, inp: SkipInput): Focus {
@@ -44,9 +52,11 @@ export function skipDay(f: Focus, user: UserProfile, inp: SkipInput): Focus {
   const before = weekVolume(inp.weekRoles.map((k) => f.roles[k]).filter(Boolean));
   const strength = gone.blocks.filter((b) => b.type === "single" || b.type === "superset" || b.type === "contrast");
   const flat = strength.flatMap(slotsOf).filter(isStrength);
-  // Kern: markierte Kernübungen, sonst die zwei wichtigsten Kraftübungen (A- und B-Woche getrennt)
+  // Kern: markierte Kernübungen. Ohne markierte wandert nur, was die Erhaltung braucht (Schritt 2) — sonst landeten
+  // etwa Liegestütze auf einem Kontrasttag mit Bankdrücken (1.51.5). Nur die Ganzkörper-Woche nimmt die zwei wichtigsten.
   let core = flat.filter((s) => s.core);
-  if (!core.length) {
+  const wholeBody = others.length === 1 && (inp.weekCount ?? 1) <= 1;
+  if (!core.length && wholeBody) {
     const pick = new Set<Slot>();
     for (const ab of ["A", "B"]) strength.filter((b) => !b.rotation || b.rotation === ab).map((b, i) => ({ b, i, r: rank(b) })).sort((a, c) => c.r - a.r || a.i - c.i).slice(0, 2)
       .forEach((x) => slotsOf(x.b).filter(isStrength).forEach((s) => pick.add(s)));
@@ -58,7 +68,7 @@ export function skipDay(f: Focus, user: UserProfile, inp: SkipInput): Focus {
   const label = (k: string) => roles[k].name;
 
   // Bleibt nur eine Einheit: Ganzkörper aus den Kernübungen beider Tage, je zwei Sätze
-  if (others.length === 1) {
+  if (wholeBody) {
     const k = others[0];
     const r = roles[k];
     const own = r.blocks.flatMap(slotsOf).filter((s) => isStrength(s) && s.core);
@@ -133,6 +143,13 @@ export function skipDay(f: Focus, user: UserProfile, inp: SkipInput): Focus {
       if (same && (same.sets ?? 3) < MAX_SETS && (adds[k] ?? 0) < MAX_ADDS && tryOn(k, same.id, () => { same.sets = (same.sets ?? 3) + 1; same.why = [...(same.why ?? []), "+1 Satz als Ausgleich für den ausgefallenen Tag."]; }, `+1 Satz ${s.name} (${label(k)})`)) {
         adds[k] = (adds[k] ?? 0) + 1; placed.add(s.id); return true;
       }
+    }
+    // Gleiches Bewegungsmuster steht schon an einem Tag (etwa Bankdrücken für Deficit Push-Ups): nicht doppelt
+    // verschieben (1.51.5). Reicht das Volumen nicht, stockt Schritt 2 (Erhaltung) dort auf.
+    const grp = groupOf(s.name);
+    for (const k of others) {
+      const twin = roles[k].blocks.filter((b) => !b.rotation || !inp.ab || b.rotation === inp.ab).flatMap(slotsOf).find((x) => isStrength(x) && x.name !== s.name && groupOf(x.name) === grp);
+      if (twin) return true; // steht dann unter „entfällt“
     }
     const fit = (k: string) => roles[k].blocks.flatMap(slotsOf).filter((x) => isStrength(x) && (lower(x) ? "unten" : "oben") === half).length;
     const order = others.filter((k) => !roles[k].blocks.flatMap(slotsOf).some((x) => x.name === s.name) && !(half === "unten" && legClash(k)))

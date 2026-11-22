@@ -260,7 +260,8 @@ export function applySlots(f: Focus, state: AppState, b: PlanBlock): Focus {
       for (const i of idx) {
         const rk = free[i];
         const r = out[rk];
-        if (!r) continue;
+        // Ausgefallener Tag (Woche verdichten): kein Schwerpunkt auf einem Tag, der nicht stattfindet (1.51.5)
+        if (!r || r.skipped) continue;
         const blk: Block = { type: "module", module: "sharpen", variant: slot.domain };
         out[rk] = { ...r, blocks: mod.place === "start" ? [blk, ...r.blocks] : [...r.blocks, blk] };
       }

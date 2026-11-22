@@ -1,3 +1,4 @@
+import { SWAP_GROUPS } from "../data";
 import { describe, expect, it } from "vitest";
 import { FOCUS_BY_ID } from "../data";
 import { emptyState } from "../store";
@@ -52,7 +53,9 @@ describe("Woche verdichten (Fällt aus)", () => {
         if (targets.length === 1) return;
         // Kernübungen: auf einem anderen Tag oder offen gemeldet
         const cores = f.roles[rk].blocks.flatMap(slotsOf).filter((s) => s.core && isStrength(s));
-        const has = (s: Slot) => targets.some((t) => out.roles[t.role].blocks.flatMap(slotsOf).some((x) => x.name === s.name));
+        // Seit 1.51.5 genügt dasselbe Bewegungsmuster (etwa Bankdrücken für Deficit Push-Ups)
+        const grp = (n: string) => Object.entries(SWAP_GROUPS).find(([, m]) => m.includes(n))?.[0] ?? n;
+        const has = (s: Slot) => targets.some((t) => out.roles[t.role].blocks.flatMap(slotsOf).some((x) => x.name === s.name || (isStrength(x) && grp(x.name) === grp(s.name))));
         for (const s of cores) expect(has(s) || rep.unresolved.some((u) => u.startsWith(s.name)), s.name).toBe(true);
         // Erhaltung: jeder Muskel mindestens 4 Sätze (oder wie vorher, wenn weniger), sonst offen gemeldet
         const before = weekVolume(wr.map((k) => f.roles[k]));

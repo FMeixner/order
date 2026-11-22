@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.5] – 2026-11-22
+
+### Behoben
+- **Einheit fällt aus:** Bleiben in der Woche noch mehrere Einheiten, wird der letzte offene Tag nicht mehr zum zusammengewürfelten Ganzkörpertag (beim Slayer: Donnerstag aus → der Kontrast-Freitag verlor seine Sprünge). Ganzkörper nur noch, wenn in der ganzen Woche nur eine Einheit stattfindet.
+- Eine Übung wandert nicht mehr an einen Tag, der dasselbe Bewegungsmuster schon hat (etwa Deficit Push-Ups zum Bankdrücken). Fehlt dadurch Volumen, stockt die App dort einen Satz auf.
+- Freiwillige Tage (Slayer am Samstag) übernehmen nichts mehr von ausgefallenen Tagen.
+- Ein ausgefallener Tag zeigt keinen Schwerpunkt mehr.
+
 ## [1.51.4] – 2026-11-16
 
 ### Neu

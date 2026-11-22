@@ -10,7 +10,7 @@ import { WEEKDAYS } from "../types";
 import { skipDay } from "./skipweek";
 import { doseMode, wavePos } from "./dose";
 import { isHeavy, isStrength, planMinutes } from "./slots";
-import { applyDrillEdits, blockFocus, blockWeeks, CLASS_ORDER, followedByTest, isTestBlock, isTestWeek, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { applyDrillEdits, isAWeek, blockFocus, blockWeeks, CLASS_ORDER, followedByTest, isTestBlock, isTestWeek, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { pairToFit, shortDay, shortDeload } from "./shortday";
 import { dayMods, remembered } from "./dayadj";
 import { applySlots } from "./sharpen";
@@ -202,8 +202,10 @@ function applySkips(state: AppState, b: PlanBlock, week: number, f: Focus, n: nu
   const dayOf = Object.fromEntries(days.map((d) => [d.role, WEEKDAYS.indexOf(d.day)]));
   const skipped = new Set(skips.map((d) => d.role));
   for (const d of skips) {
-    const targets = days.slice(d.i + 1).filter((x) => !skipped.has(x.role) && !done.has(x.role) && f.roles[x.role]).map((x) => ({ role: x.role, day: WEEKDAYS.indexOf(x.day) }));
-    f = skipDay(f, state.user, { role: d.role, weekRoles, targets, dayOf, grow: d.mods.grow });
+    // Freiwillige Tage (etwa Slayer am Samstag) übernehmen nichts: Sie können selbst ausfallen (1.51.5)
+    const targets = days.slice(d.i + 1).filter((x) => !skipped.has(x.role) && !done.has(x.role) && f.roles[x.role] && !f.roles[x.role].optional).map((x) => ({ role: x.role, day: WEEKDAYS.indexOf(x.day) }));
+    const weekCount = days.filter((x) => !skipped.has(x.role) && f.roles[x.role] && !f.roles[x.role].optional).length;
+    f = skipDay(f, state.user, { role: d.role, weekRoles, targets, dayOf, grow: d.mods.grow, weekCount, ab: isAWeek(week) ? "A" : "B" });
   }
   return f;
 }
