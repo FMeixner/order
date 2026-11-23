@@ -361,8 +361,11 @@ export function shortBeast(b: Beast, k: number): Beast | null {
 /** Grund-Bestien einer Id: "a~hex:x" → a, "a×2+b" → a, b */
 export const beastFamily = (id: string): string[] => id.split("+").map((u) => u.replace(/×\d+$/, "").split("~")[0]);
 
+/** In dieser Woche wurde mindestens eine Einheit erledigt: Dann zählt für die Varianz nur das Geloggte (1.51.6) */
+const loggedWeek = (state: AppState, blockId: string, week: number) => state.sessions.some((s) => s.blockId === blockId && s.week === week && s.done);
+
 /** Bestien der Vorwoche: was dort geloggt wurde (nach Datum, auch aus der vorigen Phase) und was dieser Block dort geplant hatte */
-function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpts): Set<string> {
+export function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpts): Set<string> {
   const out = new Set<string>();
   const add = (id: string) => beastFamily(id).forEach((x) => out.add(x));
   const pb = opts.state.plan.find((p) => p.id === opts.blockId);
@@ -374,7 +377,8 @@ function lastWeekBeasts(block: Extract<Block, { type: "beast" }>, opts: BeastOpt
       allRuns(s).forEach((r) => add(r.id));
     }
   }
-  if (opts.week > 1) {
+  // Wer die Vorwoche geloggt hat, zählt nur, was dort lief: ausgefallene Einheiten geben ihre Bestie zurück (1.51.6)
+  if (opts.week > 1 && !(pb && loggedWeek(opts.state, pb.id, opts.week - 1))) {
     // Geplante Bestien der Vorwoche an allen Trainingstagen, normal oder entlastet, solange nichts geloggt ist
     const targets = pb ? weekBeastBlocks(opts.state, pb, opts.week - 1) : [];
     if (!targets.some(([b]) => b.id === block.id)) targets.push([block, opts.profile]);
@@ -717,19 +721,26 @@ function pickWith(block: Extract<Block, { type: "beast" }>, opts: BeastOpts, avo
     for (let k = 1; k <= opts.week; k++) {
       const targets = weekBeastBlocks(state, pb, k);
       const upto = k < opts.week ? targets.length : targets.findIndex(([b]) => b.id === block.id);
+      // Vorwochen mit Log: Varianz nur aus dem, was lief (unten); Geplantes zählt nur noch für die Dosis (1.51.6)
+      const planMarks = k === opts.week || !loggedWeek(state, pb.id, k);
       for (let i = 0; i < Math.max(0, upto); i++) {
         const [b, prof] = targets[i];
         const x = pickBeast(b, { ...opts, boost: false, week: k, profile: prof, reduced: false });
-        if (x) { mark(x.id, k); const d = beastDose(x, state.user, state); addTo(beastVol, d); if (k === opts.week) { addTo(weekDose, d); weekMin += min(x); } }
+        if (x && planMarks) { mark(x.id, k); const d = beastDose(x, state.user, state); addTo(beastVol, d); if (k === opts.week) { addTo(weekDose, d); weekMin += min(x); } }
       }
       // Block, der nicht im Wochenplan steht (z. B. Test oder Sonderfall): eigene Vorwochen zählen trotzdem
-      if (k < opts.week && !targets.some(([b]) => b.id === block.id)) {
+      if (k < opts.week && planMarks && !targets.some(([b]) => b.id === block.id)) {
         const x = pickBeast(block, { ...opts, boost: false, week: k, reduced: false });
         if (x) mark(x.id, k);
       }
     }
     // Geloggt: nur Vorwochen. Die laufende Woche zählt über die Planung, sonst wechselt die Bestie, sobald man eine Zeit speichert.
-    for (const se of state.sessions) if (se.blockId === opts.blockId && se.week < opts.week) allRuns(se).forEach((r) => mark(r.id, se.week));
+    for (const se of state.sessions) if (se.blockId === opts.blockId && se.week < opts.week) allRuns(se).forEach((r) => {
+      mark(r.id, se.week);
+      // Dosis aus Vorwochen mit Log: nur Gelaufenes (1.51.6)
+      const bx = loggedWeek(state, pb.id, se.week) ? beastById(r.id) : null;
+      if (bx) addTo(beastVol, beastDose(bx, state.user, state));
+    });
   }
   const age = (c: Cand) => Math.max(0, ...c.fam.map((f) => lastUsed.get(f) ?? 0)); // 0 = noch nie
   // Dosis (1.22): Rangfolge Zeitfenster > Obergrenze > Varianz > Dosis.

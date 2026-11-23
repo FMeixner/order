@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.6] – 2026-11-23
+
+### Geändert
+- **Bestien ausgefallener Einheiten zurück in den Pool:** Wer seine Woche loggt, für den zählt bei der Abwechslung nur noch, was wirklich lief. Die Bestie einer ausgefallenen oder nicht gemachten Einheit kann gleich wieder gezogen werden und zählt auch nicht zur Dosis. Ohne jedes Log in einer Woche zählt weiter die Planung.
+
 ## [1.51.5] – 2026-11-22
 
 ### Behoben
