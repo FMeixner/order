@@ -96,3 +96,23 @@ export function setSkip(state: AppState, b: PlanBlock, week: number, role: strin
   if (Object.keys(next).length) adj[id] = next; else delete adj[id];
   return { ...state, dayAdj: adj };
 }
+
+/* Kurz-Woche nach Ausfällen (1.51.7, Friedrich): Sind mindestens zwei Einheiten ausgefallen (diese oder letzte Woche),
+   bietet die App an, die (übrige) Woche kurz zu trainieren — etwa nach Krankheit oder bei hoher Belastung.
+   Ausgefallen = „Fällt aus“ gewählt; in der Vorwoche zählt auch, was nicht gemacht wurde, sofern die Woche geloggt ist. */
+export function missedSessions(state: AppState, b: PlanBlock, week: number, days: { role: string; optional?: boolean }[], prevDays: { role: string; optional?: boolean }[]): { cur: number; prev: number } {
+  const skip = (w: number, role: string) => !!state.dayAdj?.[`${b.id}:${w}:${role}`]?.skip;
+  const done = (w: number, role: string) => state.sessions.some((s) => s.blockId === b.id && s.week === w && s.role === role && s.done);
+  const logged = (w: number) => state.sessions.some((s) => s.blockId === b.id && s.week === w && s.done);
+  const cur = days.filter((d) => !d.optional && skip(week, d.role)).length;
+  const prev = week > 1 ? prevDays.filter((d) => !d.optional && (skip(week - 1, d.role) || (logged(week - 1) && !done(week - 1, d.role)))).length : 0;
+  return { cur, prev };
+}
+
+/** Kurz-Woche annehmen: alle offenen Einheiten dieser Woche auf Kurz */
+export function setShortWeek(state: AppState, b: PlanBlock, week: number, roles: string[], on: boolean): AppState {
+  const key = `${b.id}:${week}`;
+  const dayAdj = { ...(state.dayAdj ?? {}) };
+  if (on) for (const r of roles) dayAdj[`${key}:${r}`] = { ...(dayAdj[`${key}:${r}`] ?? {}), short: true };
+  return { ...state, dayAdj, shortWeek: { ...(state.shortWeek ?? {}), [key]: on ? "ja" : "nein" } };
+}

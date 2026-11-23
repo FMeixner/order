@@ -346,6 +346,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   // Kurz: gekürzte Rolle (die vier Kernübungen, Bestie eine Klasse kürzer, Schwertübungen einen Satz weniger, Ziel 35 Minuten); an jedem Tag möglich.
   // Die übrigen Tage gleichen aus, wenn das Ziel des Ordens leidet.
   // Gemerkter Kurztag: die ganze Woche gleicht aus. Spontan: nur die Tage danach.
+  const shortRoles = new Set<string>();
   if (!base.medley?.length) {
     const weekRoles = defaultRoles(shaped, n);
     const days = dayRoleMap(state, b, shaped, week);
@@ -353,7 +354,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
       .filter((d) => d.mods.short && shaped.roles[d.role])
       .map((d) => ({ ...d, planned: remembered(state, b, d.role, d.day).short && state.dayAdj?.[`${b.id}:${week}:${d.role}`]?.short === undefined }))
       .sort((x, y) => Number(y.planned) - Number(x.planned) || x.i - y.i);
-    const shortened = new Set<string>();
+    const shortened = shortRoles;
     // Entlastungswoche: erst halbieren, dann kürzt Kurz nur noch (keine Verdichtung, kein Ausgleich an anderen Tagen)
     const deload = isDeloaded(state, b, week);
     if (deload) shaped = deloadShape(shaped);
@@ -368,7 +369,10 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   shaped = growIntervals(state, b, week, shaped);
   shaped = applySkips(state, b, week, shaped, n);
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.
-  return applyDrillEdits(applySlots(shaped, state, b), state.drillEdits);
+  // Kurz (1.51.7): auch der Schwerpunkt (z. B. Skill) wird kürzer — einen Satz weniger
+  const slotted = applySlots(shaped, state, b);
+  const out = shortRoles.size ? { ...slotted, roles: Object.fromEntries(Object.entries(slotted.roles).map(([rk, r]) => [rk, shortRoles.has(rk) ? { ...r, blocks: r.blocks.map((x) => (x.type === "module" && x.module === "sharpen" ? { ...x, short: true as const } : x)) } : r])) } : slotted;
+  return applyDrillEdits(out, state.drillEdits);
 }
 
 setWeekFocus(focusFor);

@@ -4,12 +4,12 @@ import { EXERCISES } from "../../data";
 import { type Feedback, FEEDBACK_LABEL, type Finish, type Session, type SessionEntry, type SetEntry } from "../../types";
 import { snapDown, snapNearest } from "../../engine/loads";
 import { daysBetween } from "../../engine/plan";
-import { backoffLoad, capStage, EMPTY_STATE, estimateEnv, packetStage, pullCapacity, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
+import { advance, backoffLoad, capStage, EMPTY_STATE, estimateEnv, packetStage, pullCapacity, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
 import { parseReps, type Resolved, swapKey, swapOptions } from "../../engine/resolve";
 import { WARM_REST, warmupSets } from "../../engine/warmup";
 import { fmt, useTimer } from "../Timer";
 import { Desc, kg, Modal } from "../common";
-import { type SessionCtx, skillSet } from "./ctx";
+import { boostOf, type SessionCtx, skillSet } from "./ctx";
 
 /** Übungen mit Aufwärmsätzen in dieser Einheit (Schlüssel → Anzahl) */
 export const WarmCtx = createContext<Map<string, number>>(new Map());
@@ -78,6 +78,14 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
     raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: cap.stage, target: null }, ctx.week, ctx.profile)};
   else if (seed != null)
     raw0 = { ...suggest(r, { ...(st ?? EMPTY_STATE), stage: seed }, ctx.week, ctx.profile)};
+  // Intensiv (1.51.7): der nächste Schritt, den die App nach einem geschafften Training geben würde (Gewicht oder Wdh).
+  // Gespeichert wird nur, was du einträgst; das läuft danach ganz normal in die Progression.
+  const boosted = boostOf(ctx) && !!st && r.kind === "strength" && raw0.targetReps != null && (r.prog === "double" || r.prog === "reps" || r.prog === "ladder" || r.prog === "weight" || r.prog === "topset");
+  if (boosted) {
+    const fake = { key: r.key, slotId: r.slotId, name: raw0.name, prog: r.prog, stage: raw0.stage, feedback: "ok", sets: Array.from({ length: r.sets }, () => ({ done: true, reps: raw0.targetReps!, weight: raw0.weight })) } as SessionEntry;
+    const next = advance(r, { ...st!, stage: raw0.stage, target: raw0.targetReps, weight: raw0.weight ?? st!.weight }, fake, ctx.profile, ctx.date);
+    raw0 = { ...suggest(r, next, ctx.week, ctx.profile), hint: "Intensiv: ein Schritt mehr als geplant." };
+  }
   // Ältere Stände zählten bei Wiederholungs-Progression vom Ziel statt vom Geschafften (2 × 20 → 16): hier nachziehen
   const lastEntry = [...ctx.state.sessions].filter((x) => x.done && x.entries[r.key]?.sets.some((y) => y.done)).sort((a, b) => b.date.localeCompare(a.date))[0]?.entries[r.key];
   // Auch die letzte Leiterstufe ohne Obergrenze (1.51.4): zuletzt 3 × 12 auf derselben Stufe → heute 13

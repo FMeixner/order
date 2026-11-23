@@ -148,6 +148,16 @@ export function collectItems(ctx: SessionCtx): Item[] {
       }
       return b.type === "beast" ? { ...beastItem(b), ...(cardio ? { cardio } : {}) } : otherItem(b);
     });
+  // Erst geführt tauschen, dann Supersets prüfen (1.51.7): sonst landeten zwei Maschinen im Superset
+  // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
+  const guided = guidedLevel(ctx.state.sections, ctx.block, ctx.week);
+  if (guided) {
+    // Feste Regeln des Ordens (Slot.guided, 1.50) gehen vor: „never“ bleibt frei, „high“ wird immer geführt
+    const flat = all.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })))
+      .filter((x) => !x.r.guideRule);
+    const keys = guidedKeys(flat, ctx.profile, guided - 1);
+    for (const it of all) it.resolved = it.resolved.map((r) => (r.freeChosen || r.swapped || r.guideRule === "never" ? r : (r.guideRule === "high" || keys.has(r.key)) ? toGuided(r, ctx.profile) ?? r : r));
+  }
   // Nie zwei feste Geräte (Maschine, Kabel) im Superset, auch nicht nach Tausch oder Ortswechsel: dann nacheinander.
   // Ebenso, wenn nur ein Teil des Supersets mit Weste läuft.
   const station = (r: Resolved) => r.equip === "machine" || r.equip === "cable";
@@ -174,15 +184,6 @@ export function collectItems(ctx: SessionCtx): Item[] {
   });
   if (ctx.block.unilateral) unilateralize(split, ctx);
   const items: Item[] = split.filter((it) => it.resolved.length || it.beast !== undefined || it.drills || it.sword || it.call || it.dropped?.length);
-  // Phase mit hoher Alltagslast: etwa die Hälfte aller Übungen geführt (schon geführte zählen mit), sofern das Profil Maschinen oder Kabel hat
-  const guided = guidedLevel(ctx.state.sections, ctx.block, ctx.week);
-  if (guided) {
-    // Feste Regeln des Ordens (Slot.guided, 1.50) gehen vor: „never“ bleibt frei, „high“ wird immer geführt
-    const all = items.flatMap((it, g) => it.resolved.map((r, i) => ({ r, contrast: it.block.type === "contrast" && i === 0, group: it.block.type === "superset" ? g : undefined })))
-      .filter((x) => !x.r.guideRule);
-    const keys = guidedKeys(all, ctx.profile, guided - 1);
-    for (const it of items) it.resolved = it.resolved.map((r) => (r.freeChosen || r.swapped || r.guideRule === "never" ? r : (r.guideRule === "high" || keys.has(r.key)) ? toGuided(r, ctx.profile) ?? r : r));
-  }
   return items;
 }
 
@@ -250,7 +251,9 @@ function skillItem(ctx: SessionCtx, b: Block): Item {
   const weak = weakestDims(lv, ctx.week);
   const dims = weak.length > 1 && lv[weak[0]] === lv[weak[1]] ? weak.slice(0, 2) : weak.slice(0, 1);
   const picks = dims.map((d) => ({ d, x: practiceFor(d, lv[d], ctx.profile, log, ticks), s: practiceSlot(d, lv[d], ctx.profile, ctx.roleKey, log, ticks) }))
-    .filter((x): x is { d: StarDim; x: NonNullable<ReturnType<typeof practiceFor>>; s: Slot } => !!x.s && !!x.x);
+    .filter((x): x is { d: StarDim; x: NonNullable<ReturnType<typeof practiceFor>>; s: Slot } => !!x.s && !!x.x)
+    // Kurz (1.51.7): ein Satz statt zwei
+    .map((x) => (b.type === "module" && b.short ? { ...x, s: { ...x.s, sets: 1 } } : x));
   if (!picks.length) return { block: b, resolved: [] };
   const resolved = picks.map((x) => resolveSlot(x.s, ctx.profile, false)).filter((r): r is Resolved => !!r);
   const title = `Schwerpunkt: Skill · ${picks.map(({ d, x }) => `${starLine(d, lv[d])} → ${x.crit.name}`).join(" · ")}`;

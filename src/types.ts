@@ -454,6 +454,8 @@ export interface AppState {
   oneRM?: Record<string, { kg: number; date: string }>;
   /** Entlastungswochen („blockId:week“ → Entscheidung): „ja“ = halbe Sätze, keine Bestien; „nein“ = Empfehlung abgelehnt */
   deload?: Record<string, "ja" | "nein">;
+  /** Kurz-Woche nach Ausfällen (1.51.7): `${Phase}:${Woche}` → angenommen oder abgelehnt */
+  shortWeek?: Record<string, "ja" | "nein">;
   tests: Record<string, TestResult[]>;
   /** Checkpoints (1.47): ein Versuch in der Schwerpunkt-Karte, alle vier Wochen; blockId = Phase */
   checkpoints?: Record<string, TestResult[]>;

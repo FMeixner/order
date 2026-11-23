@@ -2,6 +2,20 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.7] – 2026-11-23
+
+### Neu
+- **Geschätzte Dauer nach deinem Tempo:** Die App lernt aus den Uhrzeiten deiner Häkchen, wie lange Pause und Satz bei dir dauern, getrennt nach Übungsart (Kraft, Körpergewicht, explosiv) und Ausrichtung des Ordens. Median der letzten 30 Zyklen, Ausreißer zählen nicht.
+- **Kurze Woche nach Ausfällen:** Fallen zwei Einheiten aus (diese oder letzte Woche), bietet die App an, die (übrige) Woche kurz zu trainieren.
+
+### Geändert
+- **Intensiv** ist immer wählbar und steigert jetzt auch Gewichts- und Körpergewichtsübungen um den nächsten Schritt (Gewicht oder Wiederholung).
+- **Kurz** kürzt auch die Skill-Karte um einen Satz.
+- **Anpassen-Menü entschlackt:** alle Tagesoptionen in einer Zeile, „Fällt aus“ eingeschlossen; keine Erklärsätze mehr (die stehen in der Hilfe).
+
+### Behoben
+- Bei hoher Alltagslast konnten nach dem Tausch in geführte Varianten zwei Maschinen im Superset landen. Jetzt laufen sie nacheinander.
+
 ## [1.51.6] – 2026-11-23
 
 ### Geändert

@@ -56,7 +56,7 @@ test("Kurz: spontan für heute, als Wochentag merken, kurze Einheit", async ({ p
   await expect(page.getByText(/etwa \d+ Min · Kurz/)).toBeVisible();
   // Kurz behält die Kernübungen, kürzt nur — nie mehr Übungen als vorher
   expect(await page.locator(".slot-name").count()).toBeLessThanOrEqual(before);
-  await page.getByText(/^Kurz für jeden .* fixieren$/).click();
+  await page.getByText(/^Kurz: jeden /).click();
   const st = await stored(page);
   expect(Object.values(st.dayFlags ?? {}).filter((f) => f?.short).length).toBe(1);
 });
@@ -69,7 +69,7 @@ test("Fällt aus: Woche verdichten, Bericht, doch trainieren", async ({ page }) 
   await page.getByRole("button", { name: "Fällt aus", exact: true }).click();
   await expect(page.getByRole("heading", { name: /fällt aus$/ })).toBeVisible();
   await expect(page.locator(".day-btn").first()).toContainText("fällt aus");
-  await expect(page.getByText("Andere Tage dürfen bis zu 15 Minuten länger werden")).toBeVisible();
+  await expect(page.getByText("Andere Tage bis +15 Min")).toBeVisible();
   let st = await stored(page);
   expect(Object.values(st.dayAdj ?? {}).some((x) => (x as { skip?: boolean }).skip)).toBe(true);
   await page.getByRole("button", { name: "Doch trainieren" }).click();

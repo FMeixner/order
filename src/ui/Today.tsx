@@ -4,7 +4,7 @@ import { compassOf } from "../engine/compass";
 import { klammerName } from "../engine/klammer";
 import { KCAL_LABEL } from "../engine/kcal";
 import { KlammerIcon, Sign } from "./Signs";
-import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, isWeaponModule, weaponTag, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
+import { addDays, blockFocus, roleAt, blockAt, daysBetween, focusName, followedByTest, weaponTag, isTestBlock, blockWeeks, dayRoleMap, fmtDate, isDeloadWeek, isTestWeek, mondayOf, nextBlock, weekdayOf, weekInBlock } from "../engine/plan";
 import type { AppState, Weekday } from "../types";
 import { WEEKDAYS } from "../types";
 import { SessionPreview, SessionView } from "./SessionView";
@@ -12,7 +12,7 @@ import { runSubOf, sessionId } from "./session/ctx";
 import { SUB_LABEL } from "../engine/cardio";
 import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
-import { dayMods, rememberMod, remembered, setSkip, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
+import { dayMods, missedSessions, rememberMod, remembered, setShortWeek, setSkip, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
 import { deloadAdvice, isDeloaded, setDeload } from "../engine/deload";
 
 const FIX_LABEL: Record<FixKey, string> = { short: "Kurz", quiet: "Leise", tight: "Kein Platz" };
@@ -167,13 +167,11 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   const hasBeast = !!(role0 && role0.blocks.some((b) => b.type === "beast" || (b.type === "superset" && !!b.finisher)));
   const runSub = sel ? runSubOf(state, sid) : undefined;
   const canAdjust = !!role0 && !future;
-  // Intensiv: nur mit Bestie oder Schwert am Tag und nicht in Wochen, die ohnehin leichter laufen
-  const canBoost = canAdjust && !sysReduced && !beforeTest && !entlastet
-    // Der Tag, wie der Orden ihn vorsieht (Leise kann eine Bestie verschieben, Intensiv soll trotzdem wählbar bleiben)
-    && ((baseFocus.medley ? undefined : baseFocus.roles[sel!.role]) ?? role0!).blocks.some((b) => b.type === "beast" || (b.type === "module" && isWeaponModule(b.module) && !!profile0?.has.sword));
+  // Intensiv (1.51.7): immer wählbar — Kraftübungen einen Schritt mehr, Bestien länger, Schwert +1 Satz
+  const canBoost = canAdjust;
   const chips: { k: DayKey | "intense"; label: string; on: boolean; disabled?: boolean; info: string }[] = mods ? [
     { k: "short", label: "Kurz", on: mods.short, disabled: !role0, info: remembered(state, block, sel!.role, sel!.day).short ? "Die vier Kernübungen, Bestie und Schwerttraining kürzer, Ziel 35 Minuten. Fixiert: Die übrigen Tage der Woche gleichen aus, wenn es das Ziel des Ordens braucht." : days.findIndex((d) => d.day === sel!.day) === days.length - 1 ? "Die vier Kernübungen, Bestie und Schwerttraining kürzer, Ziel 35 Minuten. Letzter Tag der Woche, daher kein Ausgleich." : "Die vier Kernübungen, Bestie und Schwerttraining kürzer, Ziel 35 Minuten. Die Tage danach gleichen aus, wenn es das Ziel des Ordens braucht." },
-    { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Bestien eine Klasse länger, Schwertübungen +1 Satz. Kraft und Ausdauer bleiben." },
+    { k: "intense", label: "Intensiv", on: mods.intense, disabled: !canBoost, info: "Kraftübungen ein Schritt mehr (Gewicht oder Wdh), Bestien eine Klasse länger, Schwertübungen +1 Satz." },
     { k: "quiet", label: "Leise", on: mods.quiet, info: "Leise Bestie und leise Übungen: keine Sprünge, Burpees, Sprints, keine Langhantel vom Boden. Kein Laufen, keine Intervalle, kurzes Warm-up." },
     { k: "tight", label: "Kein Platz", on: mods.tight, info: "Alles auf der Stelle: kein Lunge Walk, Crawl, Carry oder Weitsprung; Bestien ohne Strecke." },
   ] : [];
@@ -198,28 +196,20 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
         <div className="stack">
           <div className="day-mods" role="group" aria-label="Heute">
             {chips.map((c) => (
-              <button key={c.k} className={`mod-chip ${c.on ? "on" : ""}`} aria-pressed={c.on} disabled={c.disabled} onClick={() => flip(c.k)}>{c.label}</button>
+              <button key={c.k} className={`mod-chip ${c.on ? "on" : ""}`} aria-pressed={c.on} disabled={c.disabled} title={c.info} onClick={() => flip(c.k)}>{c.label}</button>
             ))}
+            {!doneRoles.has(sel.role) && <button className={`mod-chip ${mods?.skip ? "on" : ""}`} aria-pressed={!!mods?.skip} onClick={() => skip(!mods?.skip, mods?.grow)}>Fällt aus</button>}
           </div>
-          {chips.filter((c) => c.on).map((c) => <div key={c.k} className="muted small"><strong>{c.label}:</strong> {c.info}</div>)}
-          {!doneRoles.has(sel.role) && (
-            <div className="stack skip-box">
-              <button className={`mod-chip ${mods?.skip ? "on" : ""}`} aria-pressed={!!mods?.skip} onClick={() => skip(!mods?.skip, mods?.grow)}>Fällt aus</button>
-              <span className="muted small">{lastOpen
-                ? "Das Wichtigste wandert auf die offenen Tage danach."
-                : "Diese Woche ist danach nichts mehr offen: Die Einheit entfällt ohne Ausgleich."}</span>
-              {mods?.skip && lastOpen > 0 && (
-                <label className="check small">
-                  <input type="checkbox" checked={!!mods.grow} onChange={(e) => skip(true, e.target.checked)} />
-                  <span>Andere Tage dürfen bis zu 15 Minuten länger werden</span>
-                </label>
-              )}
-            </div>
+          {mods?.skip && lastOpen > 0 && (
+            <label className="check small">
+              <input type="checkbox" checked={!!mods.grow} onChange={(e) => skip(true, e.target.checked)} />
+              <span>Andere Tage bis +15 Min</span>
+            </label>
           )}
           {(["short", "quiet", "tight"] as const).filter((k) => mods?.[k] || mem[k]).map((k) => (
             <label key={k} className="check small">
               <input type="checkbox" checked={mem[k]} onChange={(e) => remember(k, e.target.checked)} />
-              <span>{FIX_LABEL[k]} für jeden {DAY_NAME[sel.day]} fixieren</span>
+              <span>{FIX_LABEL[k]}: jeden {DAY_NAME[sel.day]}</span>
             </label>
           ))}
         </div>
@@ -240,8 +230,6 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
               const nr = { ...(st.noRun ?? {}) }; delete nr[sid];
               return unpinBeasts({ ...st, runSub: rs, noRun: nr }, (s) => s.id === sid);
             })} />
-          {runSub && runSub !== "beast" && <span className="muted small">Umgerechnet nach Belastungszeit, nicht 1:1: 400 m Laufen ≈ 500 m Rudern ≈ 1000 m Rad ≈ 2 Min Seil oder Stepper. Dauerläufe: gleiche Zeit im gleichen Tempo.</span>}
-          {runSub === "beast" && <span className="muted small">Laufblöcke werden zu einer Bestie ähnlicher Dauer.</span>}
         </div>
       )}
     </div>
@@ -253,6 +241,14 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   // Entlastungswoche: Vorschlag nach Rhythmus oder Signalen, nur für die laufende Woche und nie in Test- oder ohnehin leichten Wochen
   const advice = isCur && !test && !sysReduced && !entlastet ? deloadAdvice(state, block, week, today) : null;
   const ease = (v: "ja" | "nein") => update((st) => setDeload(st, block, week, v));
+  // Kurz-Woche nach mindestens zwei Ausfällen (1.51.7)
+  const opt = (f: typeof focus | null, d: { role: string }) => ({ role: d.role, optional: !!f?.roles[d.role]?.optional });
+  const prevFocus = isCur && week > 1 ? focusFor(state, block, week - 1) : null;
+  const missed = isCur && !test && !sysReduced && !entlastet && !state.shortWeek?.[`${block.id}:${week}`]
+    ? missedSessions(state, block, week, days.map((d) => opt(focus, d)), prevFocus ? dayRoleMap(state, block, prevFocus, week - 1).map((d) => opt(prevFocus, d)) : []) : null;
+  const openRoles = days.filter((d) => !doneRoles.has(d.role) && !focus.roles[d.role]?.skipped && !focus.roles[d.role]?.optional).map((d) => d.role);
+  const offerShort = !!missed && (missed.cur >= 2 || missed.prev >= 2) && openRoles.length > 0;
+  const shortWeek = (on: boolean) => update((st) => unpinBeasts(setShortWeek(st, block, week, openRoles, on), (s) => s.blockId === block.id && s.week === week));
   return (
     <div className="stack">
       {isCur && !test && !peeking && !block.interviewed && baseFocus && slotEligible(baseFocus) && <Interview state={state} block={block} update={update} />}
@@ -269,6 +265,15 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
         <div className="note small row between wrap">
           <span>Entlastungswoche: halbe Sätze, keine Bestien. Gewichte, Übungen und Tage bleiben, nächste Woche geht es normal weiter.</span>
           <button className="btn small" onClick={() => ease("nein")}>Weiter normal trainieren</button>
+        </div>
+      )}
+      {offerShort && (
+        <div className="note small row between wrap">
+          <span>{missed!.cur >= 2 ? `${missed!.cur} Einheiten fallen diese Woche aus.` : `Letzte Woche sind ${missed!.prev} Einheiten ausgefallen.`} Krank oder viel los? Eine kurze Woche mit weniger Volumen kann sinnvoll sein.</span>
+          <span className="row">
+            <button className="btn small primary" onClick={() => shortWeek(true)}>{missed!.cur >= 2 ? "Rest der Woche kurz" : "Diese Woche kurz"}</button>
+            <button className="btn small" onClick={() => shortWeek(false)}>Normal</button>
+          </span>
         </div>
       )}
       {advice && (advice.quiet ? (
@@ -363,7 +368,6 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
                 {skipped.moved.length > 0 && <div className="stack"><span className="field-label">Wandert in die Woche</span><ul className="small">{skipped.moved.map((m) => <li key={m}>{m}</li>)}</ul></div>}
                 {skipped.dropped.length > 0 && <div className="muted small">Entfällt: {skipped.dropped.join(", ")}</div>}
                 {skipped.unresolved.length > 0 && <div className="note small">Reicht nicht ganz: {skipped.unresolved.join(" · ")}</div>}
-                {!skipped.moved.length && <div className="muted small">Kein Ausgleich nötig oder möglich. Eine Woche mit weniger Volumen kostet nichts: Etwa ein Drittel des üblichen Volumens hält Kraft und Muskeln (Bickel et al., 2011).</div>}
                 <button className="btn small" onClick={() => skip(false)}>Doch trainieren</button>
               </div>
             </div>

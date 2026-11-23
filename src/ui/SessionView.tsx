@@ -1,6 +1,6 @@
 /* Eine Einheit: Ansicht der laufenden Woche und Vorschau künftiger Wochen. */
 import { useEffect, useMemo, useState } from "react";
-import { FLOWS, SHARPEN } from "../data";
+import { FLOWS, FOCUS_BY_ID, SHARPEN } from "../data";
 import type { BeastResult, Block, Session, WeaponModule } from "../types";
 import { estimateRole } from "../engine/duration";
 import { swapRunBeast } from "../engine/cardio";
@@ -12,6 +12,7 @@ import { allRuns } from "../engine/runs";
 import { warmupKeys } from "../engine/warmup";
 import { fmt, useTimer } from "./Timer";
 import { Collapse, Seg } from "./common";
+import { paceFor } from "../engine/pace";
 import { BeastCard } from "./session/BeastCard";
 import { CallCard } from "./session/CallCard";
 import { allDrillsDone, DrillList, DrillSection, toggleDrill } from "./session/Drills";
@@ -26,7 +27,8 @@ import { who5Due } from "../engine/who5";
 import { Who5 } from "./Who5";
 
 /** Geschätzte Minuten dieser Einheit in dieser Woche, auf 5 gerundet */
-const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile), ctx.profile, ctx.state.user, ctx.week, ctx.reduced, boostOf(ctx)).total / 5) * 5);
+// Dein Tempo (1.51.7): geschätzt aus deinen Häkchen-Uhrzeiten, je Übungsart und Ausrichtung des Ordens
+const minutesFor = (ctx: SessionCtx) => Math.max(5, Math.round(estimateRole(roleAt(ctx.focus.roles[ctx.roleKey], ctx.profile), ctx.profile, ctx.state.user, ctx.week, ctx.reduced, boostOf(ctx), paceFor(ctx.state, (ctx.focus.class ?? FOCUS_BY_ID[ctx.focus.id]?.class)?.primary)).total / 5) * 5);
 
 /* ---------- Hauptansicht ---------- */
 export function SessionView(ctx: SessionCtx) {

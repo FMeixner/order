@@ -17,6 +17,7 @@ export function weaponSeconds(m: WeaponModule, variant: string, skills: string[]
 export const swordSeconds = (variant: string, skills: string[] | null | undefined, boost = false, short = false): number => weaponSeconds("sword", variant, skills, boost, short);
 import { parseReps, resolveSlot, type Resolved } from "./resolve";
 import { WARM_SEC, warmupKeys } from "./warmup";
+import { NEUTRAL_PACE, type Pace, paceCat } from "./pace";
 
 const SEC_PER_REP = 3.5;
 const SETUP = 45; // Umbau, Gewicht holen, einstellen
@@ -72,22 +73,26 @@ export const boostClass = (c: BeastClass): BeastClass => CLASS_ORDER[Math.min(CL
 /** Satzende am letzten Satz: Myo-Reps (Mini-Sätze mit 15 s), Drop-Set (zwei Abstufungen), mechanischer Drop (Kette) */
 export const FINISH_SEC = { myo: 45, drop: 35, mech: 45 } as const;
 
-export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost = false, skills?: string[] | null): number {
+export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost = false, skills?: string[] | null, pace: Pace = NEUTRAL_PACE): number {
   switch (b.type) {
     case "single": {
       const s = b.slot;
       const n = setsOf(s, p, red);
       if (!n) return 0;
       const r = resolveSlot(s, p)!;
-      const rest = r.kind === "timer" || r.kind === "interval" ? 0 : (n - 1) * r.rest;
+      const timed = r.kind === "timer" || r.kind === "interval";
+      const rest = timed ? 0 : (n - 1) * r.rest;
       // Cluster: je Satz (Portionen − 1) kurze Pausen
       const clusterSec = r.cluster ? n * Math.max(0, Math.ceil((parseInt(r.reps) || r.cluster.size) / r.cluster.size) - 1) * r.cluster.rest : 0;
-      return SETUP + n * workOf(s, p, red) + rest + (r.finish ? FINISH_SEC[r.finish.kind] : 0) + clusterSec;
+      const work = workOf(s, p, red);
+      // Dein Tempo (1.51.7): Umbau + erster Satz und jeder weitere Zyklus (Pause + Satz) mit deinem Faktor
+      const k = timed || r.kind === "hold" ? 1 : pace.cycle(paceCat(r.name));
+      return (SETUP + work) * pace.setup + ((n - 1) * work + rest) * k + (r.finish ? FINISH_SEC[r.finish.kind] : 0) + clusterSec;
     }
     case "superset": {
       const rounds = Math.max(...b.slots.map((s) => setsOf(s, p, red)));
       const work = b.slots.reduce((sum, s) => sum + workOf(s, p) + 15, 0);
-      return SETUP * b.slots.length + rounds * work + (rounds - 1) * (b.rest ?? 60);
+      return SETUP * b.slots.length * pace.setup + rounds * work + (rounds - 1) * (b.rest ?? 60);
     }
     case "contrast": {
       const rounds = setsOf(b.heavy, p, red);
@@ -116,7 +121,7 @@ export function blockSeconds(b: Block, p: EquipmentProfile, red = false, boost =
 export interface DurationEstimate { warmup: number; main: number; cooldown: number; total: number }
 
 /** Geschätzte Minuten einer Einheit (A-Woche, ohne −1 Satz). */
-export function estimateRole(role: Role, p: EquipmentProfile, user: UserProfile = NEUTRAL_USER, week = 1, reduced = false, boost = false): DurationEstimate {
+export function estimateRole(role: Role, p: EquipmentProfile, user: UserProfile = NEUTRAL_USER, week = 1, reduced = false, boost = false, pace: Pace = NEUTRAL_PACE): DurationEstimate {
   const ab = week % 2 === 1 ? "A" : "B";
   const blocks = role.blocks.filter((b) => !b.rotation || b.rotation === ab);
   const drills = (kind: "wu" | "cd") => roleDrills(role, kind, p, user, week).reduce((s, d) => s + drillSeconds(d, d.groups), 0);
@@ -125,6 +130,6 @@ export function estimateRole(role: Role, p: EquipmentProfile, user: UserProfile 
   // Aufwärmsätze vor der ersten schweren Mehrgelenksübung je Körperhälfte
   const warmSets = [...warmupKeys(roleSlots(blocks, p)).values()].reduce((a, c) => a + c, 0);
   const skills = user === NEUTRAL_USER ? undefined : user.skills ?? null;
-  const main = (blocks.reduce((s, b) => s + blockSeconds(b, p, reduced, boost && !reduced, skills), 0) + warmSets * WARM_SEC) / 60;
+  const main = (blocks.reduce((s, b) => s + blockSeconds(b, p, reduced, boost && !reduced, skills, pace), 0) + warmSets * WARM_SEC) / 60;
   return { warmup, main, cooldown, total: warmup + main + cooldown };
 }
