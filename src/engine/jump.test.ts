@@ -58,11 +58,12 @@ describe("Archer Ring Row auf der höchsten Stufe (1.51.4)", () => {
   it("das Zug-Vermögen setzt das Ziel nicht mehr auf den Bereichsanfang zurück", () => {
     expect(capStage(r, { weight: null, target: 10, stage: 2, fb: [], topHits: 1, updated: "x" } as never, 3)).toBeNull();
   });
-  it("3 × 12: Ziel bleibt oben (10), nach zweimal oben geht es mit Zusatzlast weiter", () => {
+  it("3 × 12: weiter mit Wiederholungen, je Seite gezählt +2 und gerade (1.51.10)", () => {
     const e = { key: "k", slotId: "w-do-rr", name: "Archer Ring Row", prog: "ladder", stage: 2, feedback: "ok", sets: [12, 12, 12].map((reps) => ({ done: true, reps })) } as never;
     const one = advance(r, { weight: null, target: 10, stage: 2, fb: ["ok"], topHits: 0, updated: "x" } as never, e, gym, "d");
-    expect(suggest(r, one, 1, gym).targetReps).toBe(10);
-    const two = advance(r, one, e, gym, "d");
-    expect(two.loaded).toBe(true);
+    expect(one.target).toBe(14);
+    expect(suggest(r, one, 1, gym)).toMatchObject({ targetReps: 14, repsLabel: "8+" });
+    const odd = suggest(r, { ...one, target: 13 }, 1, gym);
+    expect(odd.targetReps).toBe(14);
   });
 });

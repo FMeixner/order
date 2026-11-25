@@ -193,6 +193,8 @@ export interface Exercise {
   desc?: string;
   /** Eigene Wiederholungsgrenze (sonst nach Hauptmuskel), danach mit Zusatzlast im Bereich loadedReps (1.51.3) */
   repCap?: number;
+  /** Je Seite gleich viele (Archer-Varianten): Wiederholungen immer gerade, Steigerung +2 (1.51.10) */
+  perSide?: boolean;
   loadedReps?: string;
 }
 

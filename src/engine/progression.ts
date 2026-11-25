@@ -83,6 +83,11 @@ const fmtKg = (n: number) => String(n).replace(".", ",");
 /* ---------- Ohne Gewicht bis zur Grenze, dann Zusatzlast ----------
    Nacken, Schienbein, Waden bis 30 Wiederholungen, Rumpf und Beine bis 25, Oberkörper bis 20.
    Danach dieselbe Übung mit Weste oder Gürtel, unteres Ende eines neuen Bereichs, Steigerung wie bei Hanteln. */
+/** Gerade aufrunden (je Seite gezählte Übungen) */
+export const evenUp = (n: number) => Math.ceil(n / 2) * 2;
+/** Schritt beim Steigern der Wiederholungen: 2, wenn je Seite gezählt (1.51.10) */
+export const repStep = (name: string) => (EXERCISES[name]?.perSide ? 2 : 1);
+
 export function repCap(name: string): number {
   const own = EXERCISES[name]?.repCap;
   if (own) return own;
@@ -441,6 +446,8 @@ export function suggest(r: Resolved, st0: SlotState | undefined, weekInBlock = 1
   let minutes: number | null = null;
   if (r.kind === "timer") minutes = r.prog === "minutes" ? Math.min(r.max ?? 999, Math.max(r.minutes ?? 10, s.target ?? r.minutes ?? 10)) : r.minutes ?? 10;
   void weekInBlock;
+  // Je Seite gezählt (Archer-Varianten, 1.51.10): Wiederholungen immer gerade (beide Seiten gleich)
+  if (targetReps != null && EXERCISES[name]?.perSide) targetReps = evenUp(targetReps);
   return { name, stage, weight, backoff, targetReps, repsLabel, seconds, minutes, hint, gap };
 }
 
@@ -554,7 +561,7 @@ export function advance(r: Resolved, st: SlotState | undefined, entry: SessionEn
           s.loaded = true; s.topHits = 0; s.weight = firstLoad(p); s.target = rp.lo;
         }
         // Letzte Stufe ohne Zusatzlast: vom Geschafften weiter, keine Obergrenze (1.51.4)
-        else s.target = s.stage >= r.ladder.length - 1 && !(EXERCISES[r.ladder[s.stage]]?.weighted && loadScale(p, "plate")) ? Math.max(top, minReps + (fb === "sehrleicht" ? 2 : 1)) : top;
+        else s.target = s.stage >= r.ladder.length - 1 && !(EXERCISES[r.ladder[s.stage]]?.weighted && loadScale(p, "plate")) ? Math.max(top, minReps + repStep(r.ladder[s.stage]) * (fb === "sehrleicht" ? 2 : 1)) : top;
       } else {
         s.topHits = 0;
         if (rp.lo !== null) s.target = Math.min(top, Math.max(rp.lo, minReps + 1));

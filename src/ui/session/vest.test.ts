@@ -8,8 +8,11 @@ describe("Weste im Superset (1.46)", () => {
     const home = { ...EQUIPMENT_PRESETS[1].make(), id: "h", vest: [5, 10, 15, 20], has: { ...EQUIPMENT_PRESETS[1].make().has, rings: true, handles: true } };
     const s = emptyState();
     const b = { id: "b1", focusId: "slayer", label: "", start: "2026-11-16", end: "2027-01-24", load: "medium" as const, travel: false };
-    const st = { ...s, equipment: [home], plan: [b], slots: { "w-do-3|Ring Row": { weight: 10, target: 8, stage: 2, fb: [], topHits: 0, updated: "2026-11-10", loaded: true } } };
-    const items = collectItems({ state: st, block: b, focus: FOCUS_BY_ID.slayer, week: 1, roleKey: "home_hypertrophie", profile: home, date: "2026-11-19", reduced: false } as never);
+    const st = { ...s, equipment: [home], plan: [b], slots: { "w-do-3|Ring Row": { weight: 10, target: 8, stage: 1, fb: [], topHits: 0, updated: "2026-11-10", loaded: true } } };
+    // Seit 1.51.10 trägt die Archer Ring Row keine Weste mehr (Wiederholungen steigen weiter); die geteilte Weste
+    // prüfen wir an einer Leiter, deren letzte Stufe Zusatzlast nimmt
+    const focus = JSON.parse(JSON.stringify(FOCUS_BY_ID.slayer).replace('"ladder":["Ring Row","Ring Row (Füße erhöht)","Archer Ring Row"]', '"ladder":["Ring Row","Ring Row (Füße erhöht)"]'));
+    const items = collectItems({ state: st, block: b, focus, week: 1, roleKey: "home_hypertrophie", profile: home, date: "2026-11-19", reduced: false } as never);
     const sup = items.find((x) => x.block.type === "superset" && x.resolved.some((r) => /Ring Row/.test(r.name)))!;
     expect(sup).toBeTruthy();
     expect(sup.resolved.every((r) => r.equip === "plate")).toBe(true);

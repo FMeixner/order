@@ -56,7 +56,8 @@
     "needs": [
       "bar"
     ],
-    "desc": "Weiter Griff, zu einer Hand ziehen, der andere Arm bleibt fast gestreckt und hilft nur so viel wie nötig. Seiten im Wechsel oder eine Seite komplett."
+    "desc": "Weiter Griff, zu einer Hand ziehen, der andere Arm bleibt fast gestreckt und hilft nur so viel wie nötig. Seiten im Wechsel oder eine Seite komplett.",
+    "perSide": true
   },
   "Staggered Stance DB RDL": {
     "equip": "dumbbell",
@@ -75,7 +76,8 @@
     "desc": "Eine Kurzhantel senkrecht vor der Brust. Großer Schritt zurück, hinteres Knie fast zum Boden, über das vordere Bein hoch."
   },
   "Archer Push-Up": {
-    "equip": "bodyweight"
+    "equip": "bodyweight",
+    "perSide": true
   },
   "Assault-Bike oder Rudern 10 × 30 s": {
     "equip": "cardio"
@@ -1247,11 +1249,11 @@
   },
   "Archer Ring Row": {
     "equip": "bodyweight",
-    "weighted": true,
     "needs": [
       "rings"
     ],
-    "desc": "Ringrudern mit einem Arm als Zugarm, der andere bleibt fast gestreckt und hilft nur mit. Körper steif wie ein Brett, Brust zu den Ringen. Seiten im Satz nicht wechseln: erst eine Seite komplett, dann die andere."
+    "desc": "Ringrudern mit einem Arm als Zugarm, der andere bleibt fast gestreckt und hilft nur mit. Körper steif wie ein Brett, Brust zu den Ringen. Seiten im Satz nicht wechseln: erst eine Seite komplett, dann die andere.",
+    "perSide": true
   },
   "Romanian Deadlift": {
     "equip": "barbell",
@@ -1779,7 +1781,8 @@
   },
   "Incline Archer Push-Up": {
     "equip": "bodyweight",
-    "desc": "Archer-Liegestütz mit den Händen erhöht (Bank, Box): zu einer Hand absenken, der andere Arm bleibt gestreckt. Je Seite zählen."
+    "desc": "Archer-Liegestütz mit den Händen erhöht (Bank, Box): zu einer Hand absenken, der andere Arm bleibt gestreckt. Je Seite zählen.",
+    "perSide": true
   },
   "Ring Support Hold": {
     "equip": "bodyweight",

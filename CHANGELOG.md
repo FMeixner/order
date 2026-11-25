@@ -2,6 +2,12 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.10] – 2026-11-25
+
+### Behoben
+- **Archer Ring Rows:** Auf der höchsten Stufe steigen die Wiederholungen weiter (zuletzt 3 × 12 → heute 3 × 14), statt beim Bereichsende 10 stehen zu bleiben und auf Zusatzlast zu warten.
+- Archer-Varianten (Ring Row, Push-Up, Pull-Up) zählen beide Seiten: Wiederholungen sind immer gerade, gesteigert wird um 2.
+
 ## [1.51.9] – 2026-11-25
 
 ### Behoben
