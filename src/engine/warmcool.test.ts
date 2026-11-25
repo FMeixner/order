@@ -57,21 +57,18 @@ describe("Ausklang (1.29)", () => {
   const p = EQUIPMENT_PRESETS[0].make();
   const slot = { id: "s1", name: "Bench Press", sets: 3, reps: "8-10" };
   const role = (blocks: Role["blocks"]): Role => ({ name: "Test", location: "gym", minutes: 45, cooldown: ["cd_upper"], blocks });
-  it("nach Bestie, Finisher oder Satzende: 2 Minuten locker gehen zuerst", () => {
-    for (const r of [
-      role([{ type: "single", slot }, { type: "beast", id: "x" }]),
-      role([{ type: "single", slot: { ...slot, finish: { kind: "myo" } } }]),
-      role([{ type: "superset", slots: [slot, { ...slot, id: "s2" }], finisher: { pool: ["huldra"] } }]),
-    ]) {
-      const cd = coolDrills(r, p, user, 1);
-      expect(cd[0]).toMatchObject({ id: "cd-walk", mode: "hold", value: 120 });
-      expect(cd.length).toBe(roleDrills(r, "cd", p, user, 1).length + 1);
-      expect(isHardEnd(r, 1)).toBe(true);
-    }
+  it("seit 1.51.8 kein lockeres Gehen mehr vorneweg, auch nach harter Bestie", () => {
+    const r = role([{ type: "single", slot }, { type: "beast", id: "x" }]);
+    expect(isHardEnd(r, 1)).toBe(true);
+    expect(coolDrills(r, p, user, 1).some((d) => d.id === "cd-walk")).toBe(false);
   });
-  it("normales Ende und Kurztag: kein Zusatzpunkt", () => {
-    expect(coolDrills(role([{ type: "beast", id: "x" }, { type: "single", slot }]), p, user, 1)[0]?.id).not.toBe("cd-walk");
-    expect(coolDrills(role([{ type: "beast", id: "x" }]), p, user, 1, true)[0]?.id).not.toBe("cd-walk");
+  it("Bauchatmung aus der Bibliothek: Minuten aus dem Profil, Standard 3, ganz am Ende", () => {
+    const r = { ...role([{ type: "single", slot }]), drillEdit: { cd: { off: [], add: ["cd-belly"] } } } as Role;
+    const cd = coolDrills(r, p, user, 1);
+    expect(cd[cd.length - 1]).toMatchObject({ id: "cd-belly" });
+    expect(cd[cd.length - 1].groups[0].value).toBe(180);
+    expect(coolDrills(r, p, { ...user, breathMin: 5 }, 1).at(-1)!.groups[0].value).toBe(300);
+    expect(coolDrills(role([{ type: "single", slot }]), p, user, 1).some((d) => d.id === "cd-belly")).toBe(false);
   });
   it("Finisher nur in seiner Woche (only: A)", () => {
     const r = role([{ type: "superset", slots: [slot, { ...slot, id: "s2" }], finisher: { pool: ["huldra"], only: "A" } }]);

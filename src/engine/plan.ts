@@ -865,7 +865,6 @@ export function drillPool(kind: "wu" | "cd", p?: EquipmentProfile): Drill[] {
 /** Ausklang (1.29): Endet der Trainingsteil hart — Bestie, Finisher statt Superset oder Satzende-Technik —, beginnt
     das Cool-down mit zwei Minuten lockerem Gehen. Sinkt die Intensität zum Ende, wird die Einheit angenehmer
     erinnert (Hutchinson et al., 2020). */
-export const CD_WALK: Drill = { id: "cd-walk", name: "Locker gehen, Atem beruhigen", mode: "hold", value: 120 };
 export function isHardEnd(role: Role, week: number): boolean {
   const ab = isAWeek(week) ? "A" : "B";
   const last = role.blocks.filter((b) => !b.rotation || b.rotation === ab).pop();
@@ -876,9 +875,9 @@ export function isHardEnd(role: Role, week: number): boolean {
   return false;
 }
 /** Cool-down einer Einheit, mit Ausklang nach hartem Ende (nicht am Kurztag) */
-export function coolDrills(role: Role, p: EquipmentProfile | undefined, user: UserProfile, week: number, short = false): DrillView[] {
-  const cd = roleDrills(role, "cd", p, user, week);
-  return isHardEnd(role, week) && !short ? [drillView(CD_WALK, week), ...cd] : cd;
+// Seit 1.51.8 (Friedrich) ohne vorangestelltes Gehen; die Bauchatmung (Bibliothek, wählbar) nimmt ihre Minuten aus dem Profil
+export function coolDrills(role: Role, p: EquipmentProfile | undefined, user: UserProfile, week: number, _short = false): DrillView[] {
+  return roleDrills(role, "cd", p, user, week);
 }
 
 /* Warm-up je Einheit (1.50, „Never train on dysfunction“): Statt fester Listen leitet „auto“ das Warm-up aus den Übungen
@@ -937,7 +936,11 @@ export function roleDrills(role: Role, kind: "wu" | "cd", p: EquipmentProfile | 
   const off = new Set(ed.off);
   const have = new Set(base.map((d) => d.id));
   const pool = new Map(drillPool(kind, p).map((d) => [d.id, d]));
-  const extra = ed.add.filter((id) => !have.has(id) && pool.has(id)).map((id) => drillView(pool.get(id)!, week));
+  const extra = ed.add.filter((id) => !have.has(id) && pool.has(id)).map((id) => {
+    const d = pool.get(id)!;
+    // Bauchatmung (1.51.8): Minuten aus dem Profil, Standard 3
+    return drillView(id === "cd-belly" ? { ...d, value: (user.breathMin ?? 3) * 60 } : d, week);
+  });
   return [...base, ...extra].filter((d) => !off.has(d.id));
 }
 

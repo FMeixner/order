@@ -12,6 +12,7 @@ import { runSubOf, sessionId } from "./session/ctx";
 import { SUB_LABEL } from "../engine/cardio";
 import { isRunBlock, unpinBeasts } from "./session/items";
 import { focusFor } from "../engine/weekplan";
+import { reentryWindow } from "../engine/reentry";
 import { dayMods, missedSessions, rememberMod, remembered, setShortWeek, setSkip, toggleMod, withDay, type DayKey, type FixKey } from "../engine/dayadj";
 import { deloadAdvice, isDeloaded, setDeload } from "../engine/deload";
 
@@ -247,7 +248,12 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   const missed = isCur && !test && !sysReduced && !entlastet && !state.shortWeek?.[`${block.id}:${week}`]
     ? missedSessions(state, block, week, days.map((d) => opt(focus, d)), prevFocus ? dayRoleMap(state, block, prevFocus, week - 1).map((d) => opt(prevFocus, d)) : []) : null;
   const openRoles = days.filter((d) => !doneRoles.has(d.role) && !focus.roles[d.role]?.skipped && !focus.roles[d.role]?.optional).map((d) => d.role);
-  const offerShort = !!missed && (missed.cur >= 2 || missed.prev >= 2) && openRoles.length > 0;
+  const reWin = reentryWindow(state);
+  const reActive = !!reWin && today <= reWin.end;
+  const offerShort = !!missed && (missed.cur >= 2 || missed.prev >= 2) && openRoles.length > 0 && !reActive;
+  // Wiedereinstieg (1.51.8): rollend vier Tage ab der ersten Einheit, wie eine Entlastung
+  const startReentry = () => update((st) => unpinBeasts({ ...st, reentry: { from: today }, shortWeek: { ...(st.shortWeek ?? {}), [`${block.id}:${week}`]: "nein" } }, (s) => s.blockId === block.id && s.week === week));
+  const stopReentry = () => update((st) => unpinBeasts({ ...st, reentry: st.reentry ? { ...st.reentry, off: true } : undefined }, (s) => s.blockId === block.id && s.week === week));
   const shortWeek = (on: boolean) => update((st) => unpinBeasts(setShortWeek(st, block, week, openRoles, on), (s) => s.blockId === block.id && s.week === week));
   return (
     <div className="stack">
@@ -267,11 +273,18 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
           <button className="btn small" onClick={() => ease("nein")}>Weiter normal trainieren</button>
         </div>
       )}
+      {isCur && reActive && (
+        <div className="note small row between wrap">
+          <span>Wiedereinstieg {reWin!.first ? `bis ${fmtDate(reWin!.end)}` : "ab der nächsten Einheit, vier Tage"}: halbe Sätze, gleiche Gewichte, keine Bestien.</span>
+          <button className="btn small" onClick={stopReentry}>Normal weiter</button>
+        </div>
+      )}
       {offerShort && (
         <div className="note small row between wrap">
           <span>{missed!.cur >= 2 ? `${missed!.cur} Einheiten fallen diese Woche aus.` : `Letzte Woche sind ${missed!.prev} Einheiten ausgefallen.`} Krank oder viel los? Eine kurze Woche mit weniger Volumen kann sinnvoll sein.</span>
           <span className="row">
-            <button className="btn small primary" onClick={() => shortWeek(true)}>{missed!.cur >= 2 ? "Rest der Woche kurz" : "Diese Woche kurz"}</button>
+            <button className="btn small primary" onClick={startReentry}>Wiedereinstieg</button>
+            <button className="btn small" onClick={() => shortWeek(true)}>{missed!.cur >= 2 ? "Rest der Woche kurz" : "Diese Woche kurz"}</button>
             <button className="btn small" onClick={() => shortWeek(false)}>Normal</button>
           </span>
         </div>

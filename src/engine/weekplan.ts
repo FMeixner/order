@@ -10,8 +10,9 @@ import { WEEKDAYS } from "../types";
 import { skipDay } from "./skipweek";
 import { doseMode, wavePos } from "./dose";
 import { isHeavy, isStrength, planMinutes } from "./slots";
-import { applyDrillEdits, isAWeek, blockFocus, blockWeeks, CLASS_ORDER, followedByTest, isTestBlock, isTestWeek, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
+import { addDays, applyDrillEdits, isAWeek, blockFocus, mondayOf, blockWeeks, CLASS_ORDER, followedByTest, isTestBlock, isTestWeek, parseIso, canServe, dayRoleMap, defaultRoles, setWeekFocus, trainingDays } from "./plan";
 import { pairToFit, shortDay, shortDeload } from "./shortday";
+import { inReentry } from "./reentry";
 import { dayMods, remembered } from "./dayadj";
 import { applySlots } from "./sharpen";
 import { deloadShape, isDeloaded } from "./deload";
@@ -193,8 +194,22 @@ export function highLoadFinish(f: Focus, b: PlanBlock): Focus {
 }
 
 /** Fällt aus: Kernübungen und Erhaltung wandern auf die offenen Tage danach (Woche verdichten, skipweek.ts) */
+/** Datum eines Wochentags in Woche `week` der Phase */
+const dayDate = (b: PlanBlock, week: number, day: Weekday) => addDays(mondayOf(b.start), (week - 1) * 7 + WEEKDAYS.indexOf(day));
+
+/** Wiedereinstieg (1.51.8): Einheiten im Fenster wie in der Entlastungswoche (halbe Sätze, keine Bestien) */
+function reentryShape(state: AppState, b: PlanBlock, week: number, f: Focus): Focus {
+  if (!state.reentry || state.reentry.off || isDeloaded(state, b, week)) return f;
+  const roles = dayRoleMap(state, b, f, week).filter((d) => f.roles[d.role] && inReentry(state, dayDate(b, week, d.day))).map((d) => d.role);
+  if (!roles.length) return f;
+  const half = deloadShape({ ...f, roles: Object.fromEntries(roles.map((rk) => [rk, f.roles[rk]])) });
+  return { ...f, roles: { ...f.roles, ...half.roles } };
+}
+
 function applySkips(state: AppState, b: PlanBlock, week: number, f: Focus, n: number): Focus {
   const days = dayRoleMap(state, b, f, week);
+  // Wiedereinstieg (1.51.8): Fällt dort eine Einheit aus, wird nichts verschoben; seine Tage nehmen auch nichts auf
+  const re = (day: Weekday) => inReentry(state, dayDate(b, week, day));
   const done = new Set(state.sessions.filter((x) => x.blockId === b.id && x.week === week && x.done).map((x) => x.role));
   const skips = days.map((d, i) => ({ ...d, i, mods: dayMods(state, b, week, d.role, d.day) })).filter((d) => d.mods.skip && f.roles[d.role] && !done.has(d.role));
   if (!skips.length) return f;
@@ -202,8 +217,14 @@ function applySkips(state: AppState, b: PlanBlock, week: number, f: Focus, n: nu
   const dayOf = Object.fromEntries(days.map((d) => [d.role, WEEKDAYS.indexOf(d.day)]));
   const skipped = new Set(skips.map((d) => d.role));
   for (const d of skips) {
+    if (re(d.day)) {
+      const r = f.roles[d.role];
+      const dropped = r.blocks.flatMap((x) => (x.type === "beast" ? ["Bestie"] : slotsOf(x).map((s) => s.name)));
+      f = { ...f, roles: { ...f.roles, [d.role]: { ...r, blocks: [], skipped: { moved: [], dropped, unresolved: [] } } } };
+      continue;
+    }
     // Freiwillige Tage (etwa Slayer am Samstag) übernehmen nichts: Sie können selbst ausfallen (1.51.5)
-    const targets = days.slice(d.i + 1).filter((x) => !skipped.has(x.role) && !done.has(x.role) && f.roles[x.role] && !f.roles[x.role].optional).map((x) => ({ role: x.role, day: WEEKDAYS.indexOf(x.day) }));
+    const targets = days.slice(d.i + 1).filter((x) => !skipped.has(x.role) && !done.has(x.role) && f.roles[x.role] && !f.roles[x.role].optional && !re(x.day)).map((x) => ({ role: x.role, day: WEEKDAYS.indexOf(x.day) }));
     const weekCount = days.filter((x) => !skipped.has(x.role) && f.roles[x.role] && !f.roles[x.role].optional).length;
     f = skipDay(f, state.user, { role: d.role, weekRoles, targets, dayOf, grow: d.mods.grow, weekCount, ab: isAWeek(week) ? "A" : "B" });
   }
@@ -367,6 +388,7 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   } else if (isDeloaded(state, b, week)) shaped = deloadShape(shaped);
   if (isTaperWeek(state, b, week) && !isDeloaded(state, b, week)) shaped = taperShape(shaped);
   shaped = growIntervals(state, b, week, shaped);
+  shaped = reentryShape(state, b, week, shaped);
   shaped = applySkips(state, b, week, shaped, n);
   // Entlastungswoche: halbe Sätze, keine Bestien (auch beim Harlequin). Gewichte, Übungen und Tage bleiben.
   // Kurz (1.51.7): auch der Schwerpunkt (z. B. Skill) wird kürzer — einen Satz weniger

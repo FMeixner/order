@@ -776,6 +776,15 @@
           "desc": "Sitzen, eine Hand unter den Oberschenkel klemmen. Ohr zur anderen Schulter, Kinn leicht nach unten. 5 s die Schulter gegen den Widerstand hochziehen, loslassen und 20 s tiefer in die Dehnung sinken. 3 Runden je Seite."
         }
       }
+    ],
+    "cd_library": [
+      {
+        "id": "cd-belly",
+        "name": "Bauchatmung",
+        "mode": "hold",
+        "value": 180,
+        "desc": "Liegen oder bequem sitzen, eine Hand auf dem Bauch. Durch die Nase ein, der Bauch hebt sich, der Brustkorb bleibt ruhig. Langsam und länger aus, als du einatmest. Minuten auf der Karte wählen."
+      }
     ]
   }
 }

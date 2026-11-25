@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { Session } from "../../types";
 import { drillPool, type DrillView } from "../../engine/plan";
 import { fmt, useTimer } from "../Timer";
-import { Collapse, Desc } from "../common";
+import { Collapse, Desc, Seg } from "../common";
 import type { SessionCtx } from "./ctx";
 
 export function toggleDrill(s: Session, key: string, i: number): Session {
@@ -43,7 +43,7 @@ export function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" |
   const add = (id: string) => setEd((e) => (e.off.includes(id) ? { ...e, off: e.off.filter((x) => x !== id) } : { ...e, add: [...e.add, id] }));
   const shown = new Set(drills.map((d) => d.id));
   const pool = drillPool(kind, ctx.profile).filter((d) => !shown.has(d.id));
-  const title = kind === "wu" ? "Warm-up" : drills[0]?.id === "cd-walk" ? "Ausklang" : "Cool-down";
+  const title = kind === "wu" ? "Warm-up" : "Cool-down";
   // Fertig: alles abgehakt — dann klappt die Karte nach kurzer Zeit ein wie eine Übungskarte
   const allDone = allDrillsDone(drills, session?.drills ?? {}, kind);
   useEffect(() => {
@@ -56,7 +56,8 @@ export function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" |
       extra={<button className={`pen-btn ${edit ? "on" : ""}`} onClick={() => { setEdit((o) => !o); setOpen(true); }} aria-pressed={edit} aria-label={`${title} bearbeiten`} title="Bearbeiten">✎</button>}>
       {edit && <span className="muted small">Änderungen gelten dauerhaft für {ctx.focus.roles[ctx.roleKey]?.name ?? "diesen Tag"}.</span>}
       <DrillList drills={drills} done={session?.drills ?? {}} prefix={kind} onToggle={(k, i) => mut((s) => toggleDrill(s, k, i))}
-        onRemove={edit ? remove : undefined} />
+        onRemove={edit ? remove : undefined}
+        breath={{ min: ctx.state.user.breathMin ?? 3, set: (m) => ctx.update((st) => ({ ...st, user: { ...st.user, breathMin: m } })) }} />
       {edit && (
         <div className="stack">
           {pool.length > 0 && (
@@ -72,7 +73,8 @@ export function DrillSection({ kind, drills, ctx, session, mut }: { kind: "wu" |
   );
 }
 
-export function DrillList({ drills, done, prefix, onToggle, onRemove }: { drills: DrillView[]; done: Record<string, boolean[]>; prefix: string; onToggle: (key: string, i: number) => void; onRemove?: (id: string) => void }) {
+const BREATH_MIN = [2, 3, 5, 10];
+export function DrillList({ drills, done, prefix, onToggle, onRemove, breath }: { drills: DrillView[]; done: Record<string, boolean[]>; prefix: string; onToggle: (key: string, i: number) => void; onRemove?: (id: string) => void; breath?: { min: number; set: (m: number) => void } }) {
   const t = useTimer();
   return (
     <div className="drills">
@@ -98,6 +100,7 @@ export function DrillList({ drills, done, prefix, onToggle, onRemove }: { drills
               {onRemove && <button className="btn ghost small drill-remove" onClick={() => onRemove(d.id)} aria-label={`${d.name} entfernen`}>✕</button>}
             </div>
             {d.note && <div className="muted small">{d.note}</div>}
+            {d.id === "cd-belly" && breath && <Seg value={String(breath.min)} options={BREATH_MIN.map((m) => ({ value: String(m), label: `${m} Min` }))} onChange={(v) => breath.set(Number(v))} />}
             <div className="drill-groups">
               {d.groups.map((g, gi) => (
                 <div key={gi} className="drill-group">

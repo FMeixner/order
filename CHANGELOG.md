@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.8] – 2026-11-25
+
+### Neu
+- **Wiedereinstieg nach Ausfällen:** Neben der kurzen Woche bietet die App nach zwei Ausfällen einen Wiedereinstieg an. Er läuft rollend: ab deiner nächsten Einheit vier Tage lang (sie eingeschlossen), wie eine Entlastung mit halben Sätzen, gleichen Gewichten und ohne Bestien. Fällt darin noch etwas aus, wird nichts verschoben. „Normal weiter“ beendet ihn.
+- **Bauchatmung** in der Cool-down-Bibliothek: über ✎ hinzufügen, Minuten auf der Karte wählen (Standard 3).
+
+### Geändert
+- Das lockere Gehen (2 Minuten) vor dem Cool-down ist entfallen.
+
 ## [1.51.7] – 2026-11-23
 
 ### Neu

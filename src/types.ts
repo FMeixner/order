@@ -337,6 +337,8 @@ export const WEEKDAYS: Weekday[] = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 
 export interface UserProfile {
   name: string;
+  /** Bauchatmung im Cool-down (1.51.8): Minuten, Standard 3 */
+  breathMin?: number;
   /** Veraltet (bis 0.15): Seitengewichtung für Asymmetrien, wird beim Laden entfernt */
   asym?: unknown;
   /** Für die Einordnung der Testwoche. Optional, bleibt auf dem Gerät. */
@@ -456,6 +458,8 @@ export interface AppState {
   deload?: Record<string, "ja" | "nein">;
   /** Kurz-Woche nach Ausfällen (1.51.7): `${Phase}:${Woche}` → angenommen oder abgelehnt */
   shortWeek?: Record<string, "ja" | "nein">;
+  /** Wiedereinstieg (1.51.8): angenommen am Datum, rollend vier Tage ab der ersten Einheit; off = abgewählt */
+  reentry?: { from: string; off?: boolean };
   tests: Record<string, TestResult[]>;
   /** Checkpoints (1.47): ein Versuch in der Schwerpunkt-Karte, alle vier Wochen; blockId = Phase */
   checkpoints?: Record<string, TestResult[]>;
