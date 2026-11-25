@@ -245,14 +245,23 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
   // Kurz-Woche nach mindestens zwei Ausfällen (1.51.7)
   const opt = (f: typeof focus | null, d: { role: string }) => ({ role: d.role, optional: !!f?.roles[d.role]?.optional });
   const prevFocus = isCur && week > 1 ? focusFor(state, block, week - 1) : null;
-  const missed = isCur && !test && !sysReduced && !entlastet && !state.shortWeek?.[`${block.id}:${week}`]
+  const swDecision = state.shortWeek?.[`${block.id}:${week}`];
+  // Bei „Normal“ nicht mehr fragen; nach „kurz“ bleibt der Wechsel zum Wiedereinstieg möglich (1.51.9)
+  const missed = isCur && !test && !sysReduced && !entlastet && swDecision !== "nein"
     ? missedSessions(state, block, week, days.map((d) => opt(focus, d)), prevFocus ? dayRoleMap(state, block, prevFocus, week - 1).map((d) => opt(prevFocus, d)) : []) : null;
   const openRoles = days.filter((d) => !doneRoles.has(d.role) && !focus.roles[d.role]?.skipped && !focus.roles[d.role]?.optional).map((d) => d.role);
   const reWin = reentryWindow(state);
   const reActive = !!reWin && today <= reWin.end;
-  const offerShort = !!missed && (missed.cur >= 2 || missed.prev >= 2) && openRoles.length > 0 && !reActive;
+  const missedTwo = !!missed && (missed.cur >= 2 || missed.prev >= 2) && openRoles.length > 0 && !reActive;
+  const offerShort = missedTwo && !swDecision;
+  const offerSwitch = missedTwo && swDecision === "ja";
   // Wiedereinstieg (1.51.8): rollend vier Tage ab der ersten Einheit, wie eine Entlastung
-  const startReentry = () => update((st) => unpinBeasts({ ...st, reentry: { from: today }, shortWeek: { ...(st.shortWeek ?? {}), [`${block.id}:${week}`]: "nein" } }, (s) => s.blockId === block.id && s.week === week));
+  // Wiedereinstieg statt kurzer Woche: die Kurz-Markierungen der offenen Einheiten fallen weg (Entlastung ersetzt sie)
+  const startReentry = () => update((st) => {
+    const dayAdj = { ...(st.dayAdj ?? {}) };
+    if (swDecision === "ja") for (const r of openRoles) { const k = `${block.id}:${week}:${r}`; if (dayAdj[k]?.short) { const { short: _s, ...rest } = dayAdj[k]!; dayAdj[k] = rest; } }
+    return unpinBeasts({ ...st, dayAdj, reentry: { from: today }, shortWeek: { ...(st.shortWeek ?? {}), [`${block.id}:${week}`]: "nein" } }, (s) => s.blockId === block.id && s.week === week);
+  });
   const stopReentry = () => update((st) => unpinBeasts({ ...st, reentry: st.reentry ? { ...st.reentry, off: true } : undefined }, (s) => s.blockId === block.id && s.week === week));
   const shortWeek = (on: boolean) => update((st) => unpinBeasts(setShortWeek(st, block, week, openRoles, on), (s) => s.blockId === block.id && s.week === week));
   return (
@@ -277,6 +286,12 @@ export function Today({ state, update, today, goPlan, onOptimize }: { state: App
         <div className="note small row between wrap">
           <span>Wiedereinstieg {reWin!.first ? `bis ${fmtDate(reWin!.end)}` : "ab der nächsten Einheit, vier Tage"}: halbe Sätze, gleiche Gewichte, keine Bestien.</span>
           <button className="btn small" onClick={stopReentry}>Normal weiter</button>
+        </div>
+      )}
+      {offerSwitch && (
+        <div className="note small row between wrap">
+          <span>Kurze Woche läuft. Nach Krankheit passt oft ein Wiedereinstieg besser: vier Tage halbe Sätze, gleiche Gewichte, keine Bestien.</span>
+          <button className="btn small" onClick={startReentry}>Stattdessen Wiedereinstieg</button>
         </div>
       )}
       {offerShort && (

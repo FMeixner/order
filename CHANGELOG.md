@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.9] – 2026-11-25
+
+### Behoben
+- Wer nach Ausfällen schon die kurze Woche gewählt hatte, bekam den Wiedereinstieg nicht mehr angeboten. Jetzt steht oben „Stattdessen Wiedereinstieg“; die Kurz-Markierungen der offenen Einheiten fallen dann weg.
+
 ## [1.51.8] – 2026-11-25
 
 ### Neu
