@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.11] – 2026-11-25
+
+### Behoben
+- Eine Einheit, die an einem trainingsfreien Tag nachgeholt wird (etwa die Donnerstags-Einheit am Mittwoch), springt nicht mehr auf den ersten Tag der Woche. Sie bleibt auf ihrem geplanten Tag; ausgefallene Einheiten bleiben auf ihren Tagen, statt mitzurutschen. Damit zeigt die erledigte Einheit auch wieder, was du tatsächlich gemacht hast.
+
 ## [1.51.10] – 2026-11-25
 
 ### Behoben

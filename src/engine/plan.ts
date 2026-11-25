@@ -150,9 +150,17 @@ export function dayRoleMap(state: AppState, b: PlanBlock, focus?: Focus, week?: 
   const done = state.sessions.filter((x) => x.blockId === b.id && x.week === week && x.done && live.some((d) => d.role === x.role));
   if (!done.length) return live;
   const out = new Map<Weekday, string>();
+  // Ausgefallene Einheiten bleiben auf ihrem geplanten Tag (1.51.11): sonst rutschte ihr „Fällt aus“ mit
+  const doneRoles = new Set(done.map((x) => x.role));
+  for (const d of live) if (!doneRoles.has(d.role) && state.dayAdj?.[`${b.id}:${week}:${d.role}`]?.skip) out.set(d.day, d.role);
   for (const x of [...done].sort((p, q) => p.date.localeCompare(q.date))) {
     const wd = weekdayOf(x.date);
-    const day = live.some((d) => d.day === wd) && !out.has(wd) ? wd : live.find((d) => !out.has(d.day))?.day;
+    // An einem Trainingstag: dort. An einem freien Tag (etwa Mittwoch): auf ihrem geplanten Tag, nicht auf dem ersten
+    // freien der Woche (1.51.11; vorher sprang eine am Mittwoch nachgeholte Donnerstags-Einheit auf Montag).
+    const own = live.find((d) => d.role === x.role)?.day;
+    const day = live.some((d) => d.day === wd) && !out.has(wd) ? wd
+      : own && !out.has(own) ? own
+      : live.find((d) => !out.has(d.day))?.day;
     if (day) out.set(day, x.role);
   }
   const used = new Set(out.values());
