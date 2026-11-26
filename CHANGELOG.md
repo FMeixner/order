@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.13] – 2026-11-26
+
+### Geändert
+- **Leichter nach Pause erst ab 21 Tagen:** 21–34 Tage 5 %, ab 35 Tagen 10 % (vorher ab 14 Tagen 10 %). Übungen im A/B-Wechsel, etwa das Kontrasttraining, verlieren damit nicht mehr bei jedem Mal 10 %.
+
 ## [1.51.12] – 2026-11-26
 
 ### Behoben

@@ -70,6 +70,7 @@ export function Help() {
       <Sec title="Eine Übung eintragen">
       <ul>
         <li>Die Vorgabe ist konkret, etwa „3 × 13 · 25 kg“. Gewicht einmal pro Übung eintragen (oder den Vorschlag lassen), nach jedem Satz den Kreis antippen: Das heißt „Ziel geschafft“, die Pause startet. Nur bei AMRAP trägst du die Zahl ein.</li>
+        <li><strong>Nach einer Pause</strong> an einer Übung schlägt die App weniger Gewicht vor: ab 21 Tagen 5 %, ab 35 Tagen 10 %. Danach steigert sie ab deinem neuen Stand normal. Übungen im A/B-Wechsel (alle 14 Tage) sind nie betroffen. Kraft hält bei Trainierten etwa drei Wochen ohne Training (Bosquet et al., 2013; McMaster et al., 2013); für einzelne Übungen im Zwei-Wochen-Rhythmus gibt es keine eigenen Studien.</li>
         <li>Antippen der Vorgabe zeigt die Details: den Bereich dahinter (oben angekommen steigt das Gewicht), was du zuletzt geschafft hast und was als Nächstes kommt.</li>
         <li>Nach dem letzten Satz kurz Feedback geben:
           <strong> Zu schwer</strong> = Ziel verfehlt (die App fragt, wie viele im letzten Satz gingen), <strong>Schwer</strong> = gerade so geschafft, <strong>OK</strong> = letzte Runde mit einer Wiederholung Reserve geschafft,

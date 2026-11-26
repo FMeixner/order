@@ -67,3 +67,10 @@ describe("Archer Ring Row auf der höchsten Stufe (1.51.4)", () => {
     expect(odd.targetReps).toBe(14);
   });
 });
+
+describe("Leichter nach Pause (1.51.13)", () => {
+  it("A/B-Wechsel (14 Tage) ohne Abzug, ab 21 Tagen 5 %, ab 35 Tagen 10 %", async () => {
+    const { pauseCut } = await import("./progression");
+    expect([14, 20, 21, 28, 34, 35, 60].map(pauseCut)).toEqual([0, 0, 0.05, 0.05, 0.05, 0.1, 0.1]);
+  });
+});

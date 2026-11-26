@@ -83,6 +83,9 @@ const fmtKg = (n: number) => String(n).replace(".", ",");
 /* ---------- Ohne Gewicht bis zur Grenze, dann Zusatzlast ----------
    Nacken, Schienbein, Waden bis 30 Wiederholungen, Rumpf und Beine bis 25, Oberkörper bis 20.
    Danach dieselbe Übung mit Weste oder Gürtel, unteres Ende eines neuen Bereichs, Steigerung wie bei Hanteln. */
+/** Abzug nach Pause an einer Übung (1.51.13): unter 21 Tagen keiner, 21–34 Tage 5 %, ab 35 Tagen 10 % */
+export const pauseCut = (days: number) => (days >= 35 ? 0.1 : days >= 21 ? 0.05 : 0);
+
 /** Gerade aufrunden (je Seite gezählte Übungen) */
 export const evenUp = (n: number) => Math.ceil(n / 2) * 2;
 /** Schritt beim Steigern der Wiederholungen: 2, wenn je Seite gezählt (1.51.10) */

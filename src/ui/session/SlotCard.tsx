@@ -4,7 +4,7 @@ import { EXERCISES } from "../../data";
 import { type Feedback, FEEDBACK_LABEL, type Finish, type Session, type SessionEntry, type SetEntry } from "../../types";
 import { snapDown, snapNearest } from "../../engine/loads";
 import { daysBetween } from "../../engine/plan";
-import { advance, backoffLoad, capStage, evenUp, repStep, EMPTY_STATE, estimateEnv, packetStage, pullCapacity, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
+import { advance, backoffLoad, capStage, evenUp, pauseCut, repStep, EMPTY_STATE, estimateEnv, packetStage, pullCapacity, sharedState, suggest, trendOf, type Suggestion } from "../../engine/progression";
 import { parseReps, type Resolved, swapKey, swapOptions } from "../../engine/resolve";
 import { WARM_REST, warmupSets } from "../../engine/warmup";
 import { fmt, useTimer } from "../Timer";
@@ -96,10 +96,13 @@ export function SlotCard({ r, ctx, session, mut, onSetDone }: { r: Resolved; ctx
   const raw: Suggestion = lastMin != null && raw0.targetReps != null && lastMin >= raw0.targetReps
     ? { ...raw0, targetReps: nextReps(lastMin), repsLabel: topRung ? raw0.repsLabel : `${nextReps(lastMin)}${parseReps(r.reps).suffix}` }
     : raw0;
-  // Nach längerer Pause (14 Tage und mehr an dieser Übung): 10 % leichter wieder einsteigen
+  // Nach längerer Pause leichter wieder einsteigen (1.51.13): ab 21 Tagen 5 %, ab 35 Tagen 10 %. Vorher ab 14 Tagen —
+  // das traf jede Übung im A/B-Wechsel bei jedem Mal, und über das Gespeicherte stapelte sich der Abzug.
+  // Kraft hält bei Trainierten etwa drei Wochen (Bosquet et al., 2013; McMaster et al., 2013).
   const pausedDays = st?.updated && /^\d{4}-/.test(st.updated) ? daysBetween(st.updated, ctx.date) : 0;
-  const sug0: Suggestion = pausedDays >= 14 && raw.weight != null && r.loadable
-    ? { ...raw, weight: snapDown(ctx.profile, r.equip, raw.weight * 0.9), gap: `Nach ${pausedDays} Tagen Pause 10 % leichter. Danach geht es normal weiter.` }
+  const cut = pauseCut(pausedDays);
+  const sug0: Suggestion = cut && raw.weight != null && r.loadable
+    ? { ...raw, weight: snapDown(ctx.profile, r.equip, raw.weight * (1 - cut)), gap: `Nach ${pausedDays} Tagen Pause ${Math.round(cut * 100)} % leichter. Danach geht es normal weiter.` }
     : raw;
   // Weste im Superset (1.46): dieselbe Weste wie der Partner, Wiederholungen ab 6
   const sug: Suggestion = r.vestShared
