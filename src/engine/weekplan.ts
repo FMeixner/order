@@ -394,7 +394,12 @@ export function focusFor(state: AppState, b: PlanBlock, week: number): Focus | n
   // Kurz (1.51.7): auch der Schwerpunkt (z. B. Skill) wird kürzer — einen Satz weniger
   const slotted = applySlots(shaped, state, b);
   const out = shortRoles.size ? { ...slotted, roles: Object.fromEntries(Object.entries(slotted.roles).map(([rk, r]) => [rk, shortRoles.has(rk) ? { ...r, blocks: r.blocks.map((x) => (x.type === "module" && x.module === "sharpen" ? { ...x, short: true as const } : x)) } : r])) } : slotted;
-  return applyDrillEdits(out, state.drillEdits);
+  const edited = applyDrillEdits(out, state.drillEdits);
+  // Abgeschlossene Einheiten zeigen ihre Fassung vom Abschließen (1.51.12). Vorher fiel etwa der Ausgleich für
+  // ausgefallene Tage nach dem Abschließen wieder heraus (erledigte Tage nehmen nichts mehr auf), und Langschwert
+  // und Bestie, die ihm Platz gemacht hatten, standen plötzlich offen da.
+  const frozen = state.sessions.filter((s) => s.blockId === b.id && s.week === week && s.done && s.plan && edited.roles[s.role]);
+  return frozen.length ? { ...edited, roles: { ...edited.roles, ...Object.fromEntries(frozen.map((s) => [s.role, s.plan!])) } } : edited;
 }
 
 setWeekFocus(focusFor);

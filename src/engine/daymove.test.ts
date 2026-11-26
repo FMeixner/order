@@ -17,3 +17,19 @@ describe("Nachgeholte Einheit an einem freien Tag", () => {
     expect(m.map((d) => `${d.day}:${d.role}`)).toEqual(["Mo:kraft_a", "Di:arme_kurz", "Do:home_hypertrophie", "Fr:kraft_contrast"]);
   });
 });
+
+describe("Abgeschlossene Einheit bleibt, wie sie gemacht wurde (1.51.12)", () => {
+  const g = { ...EQUIPMENT_PRESETS[0].make(), id: "g" };
+  const b = { id: "b1", focusId: "slayer", label: "", start: "2026-11-09", end: "2027-01-24", load: "medium" as const, travel: false };
+  const base = { ...emptyState(), equipment: [g], plan: [b], schedule: { Mo: "g", Di: "g", Mi: null, Do: "g", Fr: "g", Sa: null, So: null },
+    roleOrder: { b1: ["kraft_a", "arme_kurz", "home_hypertrophie", "kraft_contrast"] },
+    dayAdj: { "b1:3:kraft_a": { skip: true }, "b1:3:arme_kurz": { skip: true } } } as never as ReturnType<typeof emptyState>;
+  const sess = (done: boolean, plan?: unknown) => ({ id: "b1:3:home_hypertrophie", date: "2026-11-25", blockId: "b1", focusId: "slayer", week: 3, role: "home_hypertrophie", profileId: "g", done, drills: {}, entries: {}, ...(plan ? { plan } : {}) });
+  it("mit Ausgleich gemacht, mit Ausgleich abgeschlossen", () => {
+    const open = focusFor({ ...base, sessions: [sess(false)] } as never, b as never, 3)!.roles.home_hypertrophie;
+    const doneNoSnap = focusFor({ ...base, sessions: [sess(true)] } as never, b as never, 3)!.roles.home_hypertrophie;
+    expect(doneNoSnap.blocks).not.toEqual(open.blocks); // das war der Fehler
+    const doneSnap = focusFor({ ...base, sessions: [sess(true, open)] } as never, b as never, 3)!.roles.home_hypertrophie;
+    expect(doneSnap.blocks).toEqual(open.blocks);
+  });
+});

@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.51.12] – 2026-11-26
+
+### Behoben
+- **Abgeschlossene Einheiten bleiben, wie du sie gemacht hast.** Hatte eine Einheit Übungen von ausgefallenen Tagen übernommen (und dafür Langschwert und Bestie abgegeben), fiel dieser Ausgleich nach dem Abschließen wieder heraus: Langschwert und Bestie standen offen da, die übernommenen Übungen fehlten. Jetzt merkt sich die App beim Abschließen die Fassung der Einheit. Gilt für Einheiten, die ab jetzt abgeschlossen werden; eine schon abgeschlossene einmal „Wieder öffnen“ und neu abschließen.
+
 ## [1.51.11] – 2026-11-25
 
 ### Behoben

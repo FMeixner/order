@@ -425,6 +425,9 @@ export interface Session {
   beastParts?: BeastResult[];
   /** Ergebnisse je Bestien-Block (Block-Id): Einzelbestie oder Teile einer Serie */
   beastRuns?: Record<string, BeastRun>;
+  /** Fassung beim Abschließen (1.51.12): So bleibt die Einheit, wie sie gemacht wurde — auch wenn sich danach
+      Ausgleich, Kurz, Wiedereinstieg oder Tageszuordnung ändern */
+  plan?: Role;
   note?: string;
   done: boolean;
 }

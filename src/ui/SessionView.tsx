@@ -74,7 +74,7 @@ export function SessionView(ctx: SessionCtx) {
         const legacy = !cur.beastRuns && (cur.beast?.id === it.beast.id || cur.beastParts?.length) ? { beast: cur.beast, parts: cur.beastParts } : null;
         runs[it.block.id] = legacy ?? (it.beast.parts ? { parts: it.beast.parts.map((p) => ({ id: p.id, seconds: null })) } : { beast: { id: it.beast.id, seconds: null } });
       }
-      return { ...st, slots, beastTimes, feeling: feelingLog, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: true, date: ctx.date, beastRuns: runs, beast: undefined, beastParts: undefined } : s)) };
+      return { ...st, slots, beastTimes, feeling: feelingLog, sessions: st.sessions.map((s) => (s.id === id ? { ...s, done: true, date: ctx.date, beastRuns: runs, beast: undefined, beastParts: undefined, plan: ctx.focus.roles[ctx.roleKey] } : s)) };
     });
   };
 
